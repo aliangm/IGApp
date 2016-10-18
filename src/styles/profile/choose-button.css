@@ -1,0 +1,52 @@
+@import "../global/mixins.css";
+
+.button {
+  width: 74px;
+  height: 74px;
+  border: 1px solid #ced0da;
+  border-radius: 4px;
+  margin-right: 15px;
+  cursor: pointer;
+
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%);
+  flex-direction: column;
+}
+
+.selected-button {
+  composes: button;
+
+  border: 1px solid #5893be;
+  background: linear-gradient(to bottom, #ffffff 0%, #dfe3e7 100%);
+}
+
+.icon {
+  margin: 8px 18px 0;
+  width: 38px;
+  height: 38px;
+  background: none center center no-repeat;
+  background-size: contain;
+}
+
+.text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #354052;
+  text-align: center;
+  overflow: hidden;
+  height: 28px;
+  line-height: 28px;
+}
+
+@mixin icon buttons:b2c, ../../assets/button-icons/b2c-icon;
+@mixin icon buttons:b2b, ../../assets/button-icons/b2b-icon;
+@mixin icon buttons:product, ../../assets/button-icons/product-icon;
+@mixin icon buttons:service, ../../assets/button-icons/service-icon;
+@mixin icon buttons:intro, ../../assets/button-icons/intro-icon;
+@mixin icon buttons:growth, ../../assets/button-icons/growth-icon;
+@mixin icon buttons:mature, ../../assets/button-icons/mature-icon;
+@mixin icon buttons:decline, ../../assets/button-icons/decline-icon;
+@mixin icon buttons:worldwide, ../../assets/button-icons/worldwide-icon;
+@mixin icon buttons:national, ../../assets/button-icons/national-icon;
+@mixin icon buttons:local, ../../assets/button-icons/local-icon;
+@mixin icon buttons:purchase, ../../assets/button-icons/purchase-icon;
+@mixin icon buttons:subscription, ../../assets/button-icons/subscription-icon;

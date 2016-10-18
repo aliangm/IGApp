@@ -1,0 +1,18 @@
+.box {
+  height: 36px;
+}
+
+.input {
+  border: none;
+  box-shadow: 0 0 0 1px #ced0da;
+  background: white;
+  padding: 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  color: #354052;
+  border-radius: 4px;
+  height: 36px;
+  width: 100%;
+  box-sizing: border-box;
+}

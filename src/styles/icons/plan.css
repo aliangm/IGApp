@@ -1,0 +1,22 @@
+@import "../global/mixins.css";
+
+@mixin icon-nodpi plan:facebook, ../../assets/plan_icons/facebook;
+@mixin icon-nodpi plan:youtube, ../../assets/plan_icons/youtube;
+@mixin icon-nodpi plan:advertising, ../../assets/plan_icons/advertising;
+@mixin icon-nodpi plan:twitter, ../../assets/plan_icons/twitter_icon;
+@mixin icon-nodpi plan:affiliate, ../../assets/plan_icons/affiliate_icon;
+@mixin icon-nodpi plan:browser, ../../assets/plan_icons/browser_icon;
+@mixin icon-nodpi plan:download, ../../assets/plan_icons/download_icon;
+@mixin icon-nodpi plan:international, ../../assets/plan_icons/international_icon;
+@mixin icon-nodpi plan:pr, ../../assets/plan_icons/pr_icon;
+@mixin icon-nodpi plan:social, ../../assets/plan_icons/social;
+
+@mixin icon-nodpi plan:google_white, ../../assets/plan_icons/google_white;
+@mixin icon-nodpi plan:magazine_white, ../../assets/plan_icons/magazine_white;
+@mixin icon-nodpi plan:padnote_white, ../../assets/plan_icons/padnote_white;
+@mixin icon-nodpi plan:search_white, ../../assets/plan_icons/search_white;
+
+@mixin icon-nodpi plan:google_black, ../../assets/plan_icons/google_black;
+@mixin icon-nodpi plan:magazine_black, ../../assets/plan_icons/magazine_black;
+@mixin icon-nodpi plan:padnote_black, ../../assets/plan_icons/padnote_black;
+@mixin icon-nodpi plan:search_black, ../../assets/plan_icons/search_black;

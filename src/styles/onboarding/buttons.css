@@ -1,0 +1,7 @@
+@import "../global/mixins.css";
+
+.plan-button {
+  
+}
+
+@mixin icon-nodpi buttons:plan, ../../assets/plan-button-icon;

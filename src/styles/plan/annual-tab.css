@@ -1,0 +1,272 @@
+.wrap {
+  margin: 0 25px;
+  padding: 0 6px;
+  overflow-x: auto;
+  position: relative;
+}
+
+.box {
+  border: 1px solid #ced0da;
+  border-radius: 4px;
+  border-bottom: 1px solid #accab1;
+  overflow: hidden;
+  display: table;
+}
+
+.table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  /*border: 1px solid #ced0da;
+  border-radius: 4px;*/
+
+  color: #273142;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.table :global(tr) {
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+
+.table :global(tr[data-disabled]) {
+  color: rgba(100, 105, 115, 0.8);
+}
+
+.table :global(td) {
+  border-left: 1px solid #ced0da;
+  border-right: 1px solid #ced0da;
+
+  height: 50px;
+  vertical-align: middle;
+
+  white-space: nowrap;
+}
+
+.table :global(td):first-child {
+  border-left: none;
+}
+
+.table :global(td):last-child {
+  border-right: none;
+}
+
+.table-body :global(tr):nth-child(even) {
+  background: #f8f8f8;
+}
+
+.table-body :global(tr):nth-child(odd) {
+  background: white;
+}
+
+.head-row {
+  text-align: center;
+  font-weight: bold;
+  background: #dddee5;
+}
+
+.head-row :global(td) {
+  border-left: 1px solid #f5f5f7;
+  border-right: 1px solid #f5f5f7;
+}
+
+.foot-row {
+  background: #d3efcf;
+  font-weight: bold;
+}
+
+.foot-row :global(td) {
+  border-top: 1px solid #b0e3a8;
+  height: 49px;
+}
+
+.cell-item {
+  padding: 0 12px;
+  box-sizing: border-box;
+  /*height: 50px;*/
+}
+
+.table-button {
+  composes: cell-item;
+
+  color: #1a92ec;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.table-button-selected {
+  composes: table-button;
+
+  color: white;
+  background: #0e568b;
+}
+
+.budget-change-box {
+  padding: 20px 15px;
+  display: flex;
+}
+
+.budget-change-field {
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+.row-title {
+  composes: cell-item;
+
+  padding-right: 10px;
+  padding-left: 50px;
+  position: relative;
+  text-align: left;
+  width: 144px;
+}
+
+.head-title-cell {
+  composes: cell-item;
+  text-align: left;
+  padding-right: 10px;
+  padding-left: 27px;
+  position: relative;
+}
+
+.foot-title-cell {
+  composes: cell-item;
+
+  padding-left: 27px;
+  padding-right: 10px;
+  text-align: left;
+}
+
+.row-arrow {
+  content: '';
+
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  margin-top: -3px;
+
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 7px 5px 0 5px;
+  border-color: #1a92ec transparent transparent transparent;
+  cursor: pointer;
+}
+
+.row-arrow[data-collapsed] {
+  transform: rotate(-90deg);
+}
+
+.row-icon {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 27px;
+  top: 50%;
+  margin-top: -8px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.row-mask-icon {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 27px;
+  top: 50%;
+  margin-top: -8px;
+  background-color: #8560a8;
+}
+
+.table :global(tr[data-disabled]) .row-mask-icon {
+  background-color: #e6e6e7;
+}
+
+.row-mask-icon-inside {
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 14px;
+  height: 10px;
+
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/*.hover-row {
+  padding: 0 6px;
+  margin-left: -6px;
+  margin-top: -6px;
+  border: 1px solid #273142;
+  background: #cfe0ed;
+  z-index: 1;
+
+  color: #273142;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+
+  display: flex;
+  align-items: center;
+}
+
+.hover-row :global(tr[data-disabled]) {
+  color: rgba(100, 105, 115, 0.8);
+}*/
+
+.hover-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.hover-table {
+  composes: table;
+  font-weight: bold;
+}
+
+.hover-table :global(tr) {
+  border: 1px solid #273142;
+  background: #cfe0ed;
+  white-space: nowrap;
+  visibility: hidden;
+}
+
+.hover-table thead,
+.hover-table tfoot {
+  visibility: hidden;
+}
+
+.hover-table td:first-child {
+  padding-left: 7px;
+}
+
+.hover-table td:last-child {
+  padding-right: 7px;
+}
+
+.hover-table .foot-row :global(td) {
+  border-top: 1px solid #273142;
+}
+
+.hover-table tr[data-hovered] {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.hover-table .cell-item {
+  margin-top: 3px;
+}
+
+@media (max-width: 700px) {
+  .wrap {
+    margin: 0 10px;
+  }
+}

@@ -1,0 +1,269 @@
+@import "./global/mixins.css";
+
+.box {
+  display: flex;
+  align-items: center;
+  height: 79px;
+  background: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 11;
+}
+
+.logo {
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  background: #273142 url(assets/logo.png) center center no-repeat;
+  background-size: 92px auto;
+
+  width: 240px;
+  height: 100%;
+}
+
+.logo-menu {
+  background: #273142 url(assets/hamburger.svg) center center no-repeat;
+  background-size: 24px auto;
+  flex-shrink: 0;
+  flex-grow: 0;
+  height: 100%;
+  width: 64px;
+  display: none;
+  cursor: pointer;
+}
+
+.menu {
+  flex-grow: 1;
+  height: 100%;
+  border-bottom: 1px solid #e6eaee;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.menu-small {
+  composes: menu;
+  display: none;
+}
+
+.menu-big {
+  composes: menu;
+}
+
+.items-box {
+  float: right;
+  height: 100%;
+  display: flex;
+}
+
+.item {
+  padding: 0 19px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.link {
+  composes: item;
+
+  cursor: pointer;
+}
+
+.link:hover, .link[data-selected] {
+  background-color: #f6f8fa;
+}
+
+.link-text {
+  composes: link;
+
+  color: #273142;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.logout-item {
+  composes: item;
+}
+
+.settings {
+  width: 26px;
+  height: 26px;
+  background: none center center no-repeat;
+}
+
+@mixin icon-nodpi header:settings, ../assets/settings-icon, png;
+
+.user-box {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  /* To adjust for Pixel Perfect */
+  margin-left: -1px;
+}
+
+.user-item {
+  margin-left: 30px;
+}
+
+.logged {
+  composes: user-item;
+
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 85px;
+}
+
+.user {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 4px;
+  letter-spacing: -0.010em;
+}
+
+.user-logo {
+  composes: user-item;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  background: #e6eaee url(../assets/gdrive_logo.svg) center center no-repeat;
+  background-size: auto 28px;
+  flex-shrink: 0;
+}
+
+.log-out-icon {
+  margin-left: 10px;
+  width: 20px;
+  height: 14px;
+  background: none left top no-repeat;
+  margin-top: 2px;
+}
+
+@mixin icon-nodpi header:log-out, ../assets/log-out-icon, png;
+
+.dropmenu-button {
+  composes: link;
+}
+
+.dropmenu-icon {
+  width: 24px;
+  height: 24px;
+  background: url(../assets/dots-more.svg) center center no-repeat;
+  background-size: auto 24px;
+}
+
+.dropmenu-popup {
+  min-width: 160px !important;
+  top: 100% !important;
+  right: 0 !important;
+  left: auto !important;
+  padding: 4px 0 !important;
+}
+
+.dropmenu-popup .item {
+  padding: 10px 19px;
+}
+
+.user-box-inside {
+  composes: user-box;
+  composes: item;
+
+  display: none;
+}
+
+.user-box-inside .user-item {
+  margin: 0;
+}
+
+.user-box-inside .logged {
+  margin-left: 14px;
+}
+
+.user-box-outside {
+  composes: user-box;
+}
+
+.logout-item-outside {
+  composes: logout-item;
+}
+
+.logout-item-inside {
+  composes: logout-item;
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .logo {
+    background-size: 62px auto;
+    /*width: 100px;*/
+    width: 88px;
+    height: 100%;
+  }
+}
+
+@media (max-width: 830px) {
+  .menu-small {
+    display: block;
+  }
+
+  .menu-big {
+    display: none;
+  }
+
+  .menu {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 560px) {
+  .box {
+    background: #273142;
+    height: 69px;
+  }
+
+  .logo {
+    margin: 0 auto;
+  }
+
+  .logo-menu {
+    display: block;
+  }
+
+  .menu {
+    padding: 0;
+    border-bottom: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .dropmenu-popup {
+    right: 4px !important;
+  }
+
+  .user-box-outside {
+    display: none;
+  }
+
+  .logout-item-outside {
+    display: none;
+  }
+
+  .user-box-inside {
+    display: flex;
+  }
+
+  .logout-item-inside {
+    display: flex;
+  }
+
+  .dropmenu-button:hover, .dropmenu-button[data-selected] {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}

@@ -1,0 +1,20 @@
+@import "../global/mixins.css";
+
+@mixin icon-nodpi indicator:facebook, ../../assets/indicator-icons/facebook_indicator;
+@mixin icon-nodpi indicator:twitter, ../../assets/indicator-icons/twitter_indicator;
+@mixin icon-nodpi indicator:pinterest, ../../assets/indicator-icons/pinterest_indicator;
+@mixin icon-nodpi indicator:linkedin, ../../assets/indicator-icons/linkedin_indicator;
+@mixin icon-nodpi indicator:snapchat, ../../assets/indicator-icons/snapchat_indicator;
+@mixin icon-nodpi indicator:instagram, ../../assets/indicator-icons/instagram_indicator;
+@mixin icon-nodpi indicator:cac, ../../assets/indicator-icons/cac_indicator;
+@mixin icon-nodpi indicator:ltv, ../../assets/indicator-icons/ltv_indicator;
+@mixin icon-nodpi indicator:lead, ../../assets/indicator-icons/lead_indicator;
+@mixin icon-nodpi indicator:sales, ../../assets/indicator-icons/sales_indicator;
+@mixin icon-nodpi indicator:downloads, ../../assets/indicator-icons/downloads_indicator;
+@mixin icon-nodpi indicator:alexa-rank, ../../assets/indicator-icons/alexa_rank_indicator;
+@mixin icon-nodpi indicator:google-rank, ../../assets/indicator-icons/google_rank_indicator;
+@mixin icon-nodpi indicator:mentions, ../../assets/indicator-icons/mentions_indicator;
+@mixin icon-nodpi indicator:engagement, ../../assets/indicator-icons/engagement_indicator;
+@mixin icon-nodpi indicator:users, ../../assets/indicator-icons/users_indicator;
+@mixin icon-nodpi indicator:new-users, ../../assets/indicator-icons/new_users_indicator;
+@mixin icon-nodpi indicator:active-users, ../../assets/indicator-icons/active_users_indicator;

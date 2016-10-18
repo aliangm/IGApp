@@ -1,0 +1,17 @@
+.row {
+  border-bottom: 1px solid #e7e9ed;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.row:last-child {
+  border: none;
+}
+
+@media (max-width: 769px) {
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

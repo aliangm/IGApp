@@ -1,0 +1,96 @@
+.box {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  border-radius: 4px;
+  user-select: none;
+  flex-shrink: 0;
+  flex-grow: 0;
+  text-transform: uppercase;
+}
+
+.cont {
+  height: 36px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  flex-grow: 1;
+}
+
+.icon {
+  height: 36px;
+  width: 36px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 19px;
+  border-right: 1px solid white;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+@define-mixin selected {
+  box-shadow: 0 0 0 1px #5893be;
+  background: linear-gradient(to bottom, #ffffff 0%, #dfe3e7 100%);
+}
+
+.pure {
+  composes: box;
+}
+
+.normal {
+  composes: box;
+
+  box-shadow: 0 0 0 1px #ced0da;
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%);
+  color: #354052;
+}
+
+.normal[data-selected] {
+  @mixin selected;
+}
+
+.normal-accent {
+  composes: normal;
+
+  color: #1165a3;
+}
+
+.normal-accent[data-selected] {
+  @mixin selected;
+}
+
+.accent {
+  composes: box;
+
+  color: white;
+  box-shadow: 0 0 0 1px #249533;
+  background: linear-gradient(to bottom, #39b54a 0%, #33aa44 100%);
+}
+
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.075;
+}
+
+.primary2 {
+  composes: box;
+  color: white;
+  background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
+}
+
+.primary2[data-selected] {
+  background: #0e568b;
+}
+
+.accent2 {
+  composes: box;
+  color: white;
+  letter-spacing: 0.075;
+  background: linear-gradient(to top, #24b00d 0%, #27b210 100%);
+}

@@ -1,0 +1,36 @@
+.tab-button {
+  border-radius: 0;
+  width: 80px;
+}
+
+.tab-button:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.tab-button:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.row {
+  border-bottom: 1px solid #e7e9ed;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.row:last-child {
+  border: none;
+}
+
+@media (max-width: 769px) {
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.content {
+  padding: 0 31px;
+}

@@ -1,0 +1,194 @@
+@import "./global/mixins.css";
+
+.box {
+  width: 240px;
+  position: fixed;
+  top: 79px;
+  left: 0;
+  bottom: 0;
+  background: #1165a3;
+  z-index: 10;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.box::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 1px;
+  background: #273142;
+}
+
+.logo {
+  background: #273142 url(assets/logo.png) center center no-repeat;
+  background-size: 92px auto;
+
+  width: 240px;
+  height: 80px;
+  display: none;
+}
+
+.menu {
+  position: relative;
+  padding-right: 1px;
+  z-index: 1;
+}
+
+.menu-item {
+  height: 64px;
+  background: #1165a3;
+  border-bottom: 1px solid #2975ac;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background: #0e568b;
+}
+
+.menu-item-selected {
+  composes: menu-item;
+
+  border-color: #5994bf;
+  background: #0e568b;
+}
+
+.menu-item-selected::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #5994bf;
+}
+
+.menu-item-selected::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  margin-top: -12px;
+
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 12px 12px 0;
+  border-color: transparent #f6f8fa transparent transparent;
+}
+
+.menu-item-icon {
+  margin-left: 30px;
+  width: 28px;
+  height: 26px;
+  background: none left center no-repeat;
+  flex-shrink: 0;
+}
+
+.menu-item-text {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.010em;
+  margin-left: 14px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/*.menu-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #2975ac;
+}*/
+
+@mixin icon-nodpi sidebar:dashboard, ../assets/sidebar-icons/dashboard-icon, png;
+@mixin icon-nodpi sidebar:goals, ../assets/sidebar-icons/goals-icon, png;
+@mixin icon-nodpi sidebar:indicators, ../assets/sidebar-icons/indicators-icon, png;
+@mixin icon-nodpi sidebar:manual, ../assets/sidebar-icons/manual-campains-icon, png;
+@mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/plan-icon, png;
+@mixin icon-nodpi sidebar:profile, ../assets/sidebar-icons/profile-icon, png;
+@mixin icon-nodpi sidebar:targeting, ../assets/sidebar-icons/targeting-icon, png;
+@mixin icon-nodpi sidebar:user-events, ../assets/sidebar-icons/user-events-icon, png;
+
+.backface {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: none;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@media (min-width: 561px) and (max-width: 1000px) {
+  .box {
+    width: 88px;
+    transition: width 300ms;
+  }
+
+  .menu-item-text {
+    opacity: 0;
+    transition: opacity 300ms;
+  }
+
+  .box:hover {
+    width: 240px;
+  }
+
+  .box:hover .menu-item-text {
+    opacity: 1;
+  }
+
+  .box:hover .menu-item-selected::after {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .box {
+    transform: translate(-100%, 0);
+    transition: transform 300ms;
+    top: 0;
+    z-index: 12;
+  }
+
+  .box[data-open] {
+    transform: translate(0, 0);
+  }
+
+  .logo {
+    display: block;
+  }
+
+  .menu-item-selected::after {
+    display: none;
+  }
+
+  .backface {
+    will-change: opacity;
+    display: block;
+    opacity: 0;
+    transition: opacity 300ms;
+    z-index: 12;
+  }
+
+  .backface[data-open] {
+    opacity: 0.5;
+    pointer-events: auto;
+  }
+}
