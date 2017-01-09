@@ -42,7 +42,7 @@ export default class SignIn extends Component {
           <div style={{
             margin: '12px 0'
           }}>
-            <Link to="/goals" className={ tagsStyle.locals.a }>Goals</Link>
+            <Link to="/preferences" className={ tagsStyle.locals.a }>Preferences</Link>
           </div>
           <div style={{
             margin: '12px 0'

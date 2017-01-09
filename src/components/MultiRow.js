@@ -10,10 +10,19 @@ export default class MultiRow extends Component {
 
   style = style;
   state = {
-    rows: [{ key: 0 }]
+    rows: []
   }
 
-  _uid = 1
+  _uid = this.props.numOfRows;
+
+  componentDidMount() {
+    let currentRows = [];
+    console.log(this.props.numOfRows);
+    for(let i=0; i< this.props.numOfRows; i++) {
+      currentRows.push({key: i});
+    }
+    this.setState({rows: currentRows});
+  }
 
   addRow = () => {
     const rows = this.state.rows;
@@ -29,17 +38,19 @@ export default class MultiRow extends Component {
 
   removeRow = (index) => {
     const rows = this.state.rows;
-
-    rows.splice(index, 1);
-
+    if (rows) {
+      rows.splice(index, 1);
+    }
     this.setState({
       rows: rows
     });
+    this.props.rowRemoved(index);
   }
 
   render() {
     const renderRow = this.props.children;
     const canRemove = this.state.rows.length > 1;
+    const canAdd = this.state.rows.length < 3;
     const rows = this.state.rows.map((row, i) => {
       const rendered = renderRow({
         key: row.key,
@@ -61,10 +72,10 @@ export default class MultiRow extends Component {
 
     return <div className={ this.classes.box }>
       { rows }
-      <div role="button"
-        className={ this.classes.addButton }
-        onClick={ this.addRow }
-      />
+      {canAdd ? <div role="button"
+                     className={ this.classes.addButton }
+                     onClick={ this.addRow }
+      /> : null}
     </div>
   }
 }

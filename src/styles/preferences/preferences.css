@@ -13,4 +13,5 @@
 
 .channels-select {
   flex-grow: 1;
+  white-space: pre;
 }

@@ -36,7 +36,13 @@ export default class ProjectionItem extends Component {
         return 'Grow';
       };
       case 'normal': return 'Stable';
+      case 'decline': {
+        if (this.state.grow) {
+          return `${ this.state.grow }% decline`;
+        }
 
+        return 'Decline';
+      };
       default: return '';
     }
   }

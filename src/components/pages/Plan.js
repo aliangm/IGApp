@@ -29,7 +29,7 @@ export default class Plan extends Component {
 
   render() {
     const tabs = {
-      "Current": CurrentTab,
+      //"Current": CurrentTab,
       "Annual": AnnualTab,
       "Planned vs Actual": PlannedActualTab,
       "Projections": ProjectionsTab

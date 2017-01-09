@@ -10,13 +10,22 @@ import style from 'styles/profile/buttons-set.css';
 
 export default class ButtonsSet extends Component {
   style = style;
-  state = {
-    selectedButton: 0,
-    popupHidden: true
-  };
 
   constructor(props) {
     super(props);
+    this.state = {
+      selectedButton: props.selectedKey || 0,
+      popupHidden: true
+    };
+  }
+  componentWillReceiveProps(nextProps){
+    nextProps.buttons.map((params, i) => {
+      console.log(nextProps.selectedKey, params.key, i);
+      if (nextProps.selectedKey == params.key){
+        console.log(params.text)
+        this.state.selectedButton = params.key;
+      }
+    });
   }
 
   renderItem = ({ selected, key, params, onClick }) => {
@@ -30,10 +39,11 @@ export default class ButtonsSet extends Component {
   }
 
   render() {
+    let selectedIndex = 0;
     const renderItem = this.props.renderItem || this.renderItem;
     const buttons = this.props.buttons.map((params, i) => {
       const key = params.key || i;
-
+    
       return renderItem({
         selected: key === this.state.selectedButton,
         key: key,
@@ -49,7 +59,7 @@ export default class ButtonsSet extends Component {
         }
       });
     });
-
+    
     let help;
 
     if (this.props.help) {

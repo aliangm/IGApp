@@ -49,11 +49,11 @@ export default class Sidebar extends Component {
       <div className={ this.classes.box } data-open={ this.state.open ? true : null }>
         <div className={ this.classes.logo } />
         <div className={ this.classes.menu }>
-          <MenuItem icon="sidebar:dashboard" text="Dashboard" />
+          {/** <MenuItem icon="sidebar:dashboard" text="Dashboard" /> **/}
           <MenuItem icon="sidebar:profile" link="/profile" text="Profile" />
-          <MenuItem icon="sidebar:targeting" link="/target-audience" text="Targeting" />
-          <MenuItem icon="sidebar:goals" link="/goals" text="Goals" />
-          <MenuItem icon="sidebar:manual" link="/manual" text="Manual" />
+          <MenuItem icon="sidebar:targeting" link="/target-audience" text="Target Audience" />
+          <MenuItem icon="sidebar:goals" link="/preferences" text="Preferences" />
+          {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
           <MenuItem icon="sidebar:indicators" link="/indicators" text="Indicators" />
           <MenuItem icon="sidebar:plan" link="/plan" text="Plan" />
         </div>

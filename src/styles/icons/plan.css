@@ -2,7 +2,7 @@
 
 @mixin icon-nodpi plan:facebook, ../../assets/plan_icons/facebook;
 @mixin icon-nodpi plan:youtube, ../../assets/plan_icons/youtube;
-@mixin icon-nodpi plan:advertising, ../../assets/plan_icons/advertising;
+@mixin icon-nodpi plan:Advertising, ../../assets/plan_icons/Advertising;
 @mixin icon-nodpi plan:twitter, ../../assets/plan_icons/twitter_icon;
 @mixin icon-nodpi plan:affiliate, ../../assets/plan_icons/affiliate_icon;
 @mixin icon-nodpi plan:browser, ../../assets/plan_icons/browser_icon;

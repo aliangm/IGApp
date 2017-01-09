@@ -5,7 +5,7 @@ import history from 'history';
 
 import Profile from './components/pages/Profile';
 import Welcome from './components/pages/Welcome';
-import Goals from './components/pages/Goals';
+import Preferences from './components/pages/Preferences';
 import TargetAudience from './components/pages/TargetAudience';
 import Indicators from './components/pages/Indicators';
 import Manual from './components/pages/Manual';
@@ -20,7 +20,7 @@ style.use();
 ReactDOM.render(
   <Router history={ history }>
     <Route path="/profile" component={ Profile } />
-    <Route path="/goals" component={ Goals } />
+    <Route path="/preferences" component={ Preferences } />
     <Route path="/target-audience" component={ TargetAudience } />
     <Route path="/indicators" component={ Indicators } />
     <Route path="/manual" component={ Manual } />

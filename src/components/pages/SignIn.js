@@ -17,22 +17,67 @@ import tagsStyle from 'styles/tags.css';
 import style from 'styles/signin/signin.css';
 
 import history from 'history';
+import serverCommunication from 'data/serverCommunication';
+import { disablePopupMode } from 'modules/popup-mode';
 
 export default class SignIn extends Component {
-  style = style
-  styles = [onboardingStyle, tagsStyle]
+	style = style
+	styles = [onboardingStyle, tagsStyle]
+	/*
+	 state = {
+	 login: true
+	 }*/
+	constructor(props) {
+		super(props);
+		this.state = { login: true };
+		this.handleChange = this.handleChange.bind(this);
+	}
 
-  state = {
-    login: true
-  }
+	handleChange(parameter, event){
+		let update = {};
+		update[parameter] = event.target.value;
+		this.setState(update);
+	}
 
-  render() {
-    return <div>
-      <Header user={ false } />
-      <Page sidebar={ false } width="600px" centered>
-        <Title title="InfiniGrow - Demo" />
-        <div className={ this.classes.switchButtons }>
-          <Button type={ this.state.login ? 'accent' : 'normal' } style={{
+	checkUserAuthorization(route) {
+		var self = this;
+		serverCommunication.serverRequest('POST', route, JSON.stringify({email: self.state.email, password: self.state.password }))
+			.then((response) => {
+				response.json()
+					.then(function (data) {
+						self.setState({isUnauthorized: !data});
+						if (data){
+							if (route == 'login'){
+								disablePopupMode();
+								history.push('/profile');
+							}
+							else {
+								history.push('/welcome');
+							}
+						}
+						else {
+							self.refs.loginEmailInput.focus();
+							self.refs.signupEmailInput.focus();
+						}
+					})
+			})
+			.catch(function (err) {
+				console.log(err);
+			})
+	}
+	
+	handleSubmit = (e) => {
+		e.preventDefault();
+		alert('nice');
+	};
+
+	render() {
+		return <div>
+			<Header user={ false } />
+			<Page sidebar={ false } width="600px" centered>
+				<Title title="InfiniGrow" />
+				<div className={ this.classes.switchButtons }>
+					<Button type={ this.state.login ? 'accent' : 'normal' } style={{
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
             width: '80px'
@@ -40,8 +85,8 @@ export default class SignIn extends Component {
             this.setState({
               login: true
             });
-          }}>Log in</Button>
-          <Button type={ this.state.login ? 'normal' : 'accent' } style={{
+          }}>Login</Button>
+					<Button type={ this.state.login ? 'normal' : 'accent' } style={{
             borderTopLeftRadius: 0,
             borderBottomLeftRadius: 0,
             width: '80px'
@@ -49,140 +94,144 @@ export default class SignIn extends Component {
             this.setState({
               login: false
             });
-          }}>Sign up</Button>
-        </div>
-        <div className={ this.classes.item } hidden={ !this.state.login }>
-          <h2>Log in</h2>
+          }}>Sign Up</Button>
+				</div>
+				<div className={ this.classes.item } hidden={ !this.state.login }>
+					<h2>Login</h2>
 
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <Label className={ this.classes.textLabel }>E-mail / Username</Label>
-              <Textfield defaultValue="" className={ this.classes.rightCol } />
-            </div>
-          </div>
+					<div className={ onboardingStyle.locals.row }>
+						<div className={ this.classes.colsCell }>
+							<Label className={ this.classes.textLabel }>Email</Label>
+							<Textfield type="email" ref="loginEmailInput" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'email')}/>
+						</div>
+					</div>
 
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <Label className={ this.classes.textLabel }>Password</Label>
-              <Textfield type="password" defaultValue="" className={ this.classes.rightCol } />
-            </div>
-          </div>
+					<div className={ onboardingStyle.locals.row }>
+						<div className={ this.classes.colsCell }>
+							<Label className={ this.classes.textLabel }>Password</Label>
+							<Textfield type="password" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+						</div>
+					</div>
+					{/*
+					 <div className={ onboardingStyle.locals.row }>
+					 <div className={ this.classes.colsCell }>
+					 <div className={ this.classes.leftCol }></div>
+					 <div className={ this.classes.rememberCol }>
+					 <label className={ this.classes.rememberMe }>
+					 <input type="checkbox" onChange={() => {}} defaultChecked={ true } style={{
+					 marginRight: '6px'
+					 }} /> Remember me
+					 </label>
+					 <a className={ tagsStyle.locals.a } href="#">
+					 Forgot Your Password?
+					 </a>
+					 </div>
+					 </div>
+					 </div>
+					 */}
+					<div className={ onboardingStyle.locals.row }>
+						<div className={ this.classes.colsCell }>
+							<div className={ this.classes.leftCol }></div>
+							<div className={ this.classes.enterCol }>
+								<Button type="primary2" style={{
+                  width: '100px'
+                }} 	onClick={() => {
+                	this.checkUserAuthorization('login');
+                  //history.push('/welcome')
+                }}>Login</Button>
+								<label hidden={ !this.state.isUnauthorized} style={{ color: 'red' }}>Wrong email or password</label>
+							</div>
+						</div>
+					</div>
+					{/*
+					 <div className={ this.classes.delimiter } data-text="OR" />
+					 <Label>Log in using your account with</Label>
 
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <div className={ this.classes.leftCol }></div>
-              <div className={ this.classes.rememberCol }>
-                <label className={ this.classes.rememberMe }>
-                  <input type="checkbox" onChange={() => {}} defaultChecked={ true } style={{
-                    marginRight: '6px'
-                  }} /> Remember me
-                </label>
-                <a className={ tagsStyle.locals.a } href="#">
-                  Forgot Your Password?
-                </a>
-              </div>
-            </div>
-          </div>
+					 <div className={ onboardingStyle.locals.row }>
+					 <div className={ this.classes.socialLogin }>
+					 <Button
+					 className={ this.classes.linkedinButton }
+					 contClassName={ this.classes.socialButtonCont }
+					 >
+					 <div className={ this.classes.linkedinIcon } data-icon="signin:linkedin" />
+					 Sign in with LinkedIn
+					 </Button>
+					 <div style={{ width: '60px', height: '20px' }} />
+					 <Button
+					 className={ this.classes.googleButton }
+					 contClassName={ this.classes.socialButtonCont }
+					 >
+					 <div className={ this.classes.googleIcon } data-icon="signin:google" />
+					 Sign in with Google
+					 </Button>
+					 </div>
+					 </div>
+					 */}
+				</div>
+				<div className={ this.classes.item } hidden={ this.state.login }>
+					<h2>Sign up</h2>
 
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <div className={ this.classes.leftCol }></div>
-              <div className={ this.classes.enterCol }>
-                <Button type="primary2" style={{
+					<div className={ onboardingStyle.locals.row }>
+						<div className={ this.classes.colsCell }>
+							<Label className={ this.classes.textLabel }>Email</Label>
+							<Textfield ref="signupEmailInput" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'email')} />
+						</div>
+					</div>
+					{/*
+					 <div className={ onboardingStyle.locals.row }>
+					 <div className={ this.classes.colsCell }>
+					 <Label className={ this.classes.textLabel }>Username</Label>
+					 <Textfield defaultValue="" className={ this.classes.rightCol } />
+					 </div>
+					 </div>
+					 */}
+					<div className={ onboardingStyle.locals.row }>
+						<div className={ this.classes.colsCell }>
+							<Label className={ this.classes.textLabel }>Password</Label>
+							<Textfield type="password" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+						</div>
+					</div>
+
+					<div className={ onboardingStyle.locals.row }>
+						<div className={ this.classes.colsCell }>
+							<div className={ this.classes.leftCol }></div>
+							<div className={ this.classes.enterCol }>
+								<Button type="primary2" style={{
                   width: '100px'
                 }} onClick={() => {
-                  history.push('/welcome')
-                }}>Log in</Button>
-              </div>
-            </div>
-          </div>
-
-          {/*<div className={ onboardingStyle.locals.row }>*/}
-            <div className={ this.classes.delimiter } data-text="OR" />
-            <Label>Log in using your account with</Label>
-          {/*</div>*/}
-
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.socialLogin }>
-              <Button
-                className={ this.classes.linkedinButton }
-                contClassName={ this.classes.socialButtonCont }
-              >
-                <div className={ this.classes.linkedinIcon } data-icon="signin:linkedin" />
-                Sign in with LinkedIn
-              </Button>
-              <div style={{ width: '60px', height: '20px' }} />
-              <Button
-                className={ this.classes.googleButton }
-                contClassName={ this.classes.socialButtonCont }
-              >
-                <div className={ this.classes.googleIcon } data-icon="signin:google" />
-                Sign in with Google
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className={ this.classes.item } hidden={ this.state.login }>
-          <h2>Sign up</h2>
-
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <Label className={ this.classes.textLabel }>E-mail</Label>
-              <Textfield defaultValue="" className={ this.classes.rightCol } />
-            </div>
-          </div>
-
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <Label className={ this.classes.textLabel }>Username</Label>
-              <Textfield defaultValue="" className={ this.classes.rightCol } />
-            </div>
-          </div>
-
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <Label className={ this.classes.textLabel }>Password</Label>
-              <Textfield type="password" defaultValue="" className={ this.classes.rightCol } />
-            </div>
-          </div>
-
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.colsCell }>
-              <div className={ this.classes.leftCol }></div>
-              <div className={ this.classes.enterCol }>
-                <Button type="primary2" style={{
-                  width: '100px'
-                }} onClick={() => {
-                  history.push('/welcome')
+                this.checkUserAuthorization('signup');
+					//history.push('/welcome')
                 }}>Sign up</Button>
-              </div>
-            </div>
-          </div>
+								<label hidden={ !this.state.isUnauthorized} style={{ color: 'red' }}>Email already exists</label>
+							</div>
+						</div>
+					</div>
+					{/*
+					 <div className={ this.classes.delimiter } data-text="OR" />
+					 <Label>Sign up using your account with</Label>
 
-          <div className={ this.classes.delimiter } data-text="OR" />
-          <Label>Sign up using your account with</Label>
-
-          <div className={ onboardingStyle.locals.row }>
-            <div className={ this.classes.socialLogin }>
-              <Button
-                className={ this.classes.linkedinButton }
-                contClassName={ this.classes.socialButtonCont }
-              >
-                <div className={ this.classes.linkedinIcon } data-icon="signin:linkedin" />
-                Sign up with LinkedIn
-              </Button>
-              <div style={{ width: '60px', height: '20px' }} />
-              <Button
-                className={ this.classes.googleButton }
-                contClassName={ this.classes.socialButtonCont }
-              >
-                <div className={ this.classes.googleIcon } data-icon="signin:google" />
-                Sign up with Google
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Page>
-    </div>
-  }
+					 <div className={ onboardingStyle.locals.row }>
+					 <div className={ this.classes.socialLogin }>
+					 <Button
+					 className={ this.classes.linkedinButton }
+					 contClassName={ this.classes.socialButtonCont }
+					 >
+					 <div className={ this.classes.linkedinIcon } data-icon="signin:linkedin" />
+					 Sign up with LinkedIn
+					 </Button>
+					 <div style={{ width: '60px', height: '20px' }} />
+					 <Button
+					 className={ this.classes.googleButton }
+					 contClassName={ this.classes.socialButtonCont }
+					 >
+					 <div className={ this.classes.googleIcon } data-icon="signin:google" />
+					 Sign up with Google
+					 </Button>
+					 </div>
+					 </div>
+					 */}
+				</div>
+			</Page>
+		</div>
+	}
 }

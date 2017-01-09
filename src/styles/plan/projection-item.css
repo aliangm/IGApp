@@ -49,6 +49,20 @@
   width: 76px;
   height: 76px;
 }
+.item[data-state="decline"] .inner {
+  border: 1px solid #ce352d;
+  box-shadow: inset 0 0 0 1px #ce352d;
+}
+
+.item[data-state="decline"] .footer {
+  background: #ce352d;
+  color: white;
+}
+
+.item[data-state="decline"] .icon {
+  width: 76px;
+  height: 76px;
+}
 
 .head {
   font-size: 14px;

@@ -15,15 +15,16 @@ import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 
-import annualData from 'data/annual';
+//import annualData from 'data/annual';
+import { parseAnnualPlan } from 'data/parseAnnualPlan';
+import serverCommunication from 'data/serverCommunication';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons];
   style = style;
   state = {
-    budget: 315000,
+    //budget: 315000,
     whatIfSelected: false,
-
     popupShown: false,
     popupLeft: 0,
     pouppTop: 0,
@@ -35,7 +36,45 @@ export default class AnnualTab extends Component {
     tableCollapsed: false
   }
 
-  onHeadClick = (e) => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      //budget: 315000,
+      whatIfSelected: false,
+      popupShown: false,
+      popupLeft: 0,
+      pouppTop: 0,
+
+      budgetField: '$',
+
+      hoverRow: void 0,
+      collapsed: {},
+      tableCollapsed: false,
+      annualData: {}
+    }
+  }
+
+  componentDidMount(){
+    let self = this;
+    serverCommunication.serverRequest('GET', 'usermonthplan')
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              //self.setState({projectedPlan: data.projectedPlan});
+              self.setState({budget: data.annualBudget});
+              self.setState({planDate: data.planDate});
+              self.setState({annualData: parseAnnualPlan(data.projectedPlan)});
+              self.setState({isLoaded: true});
+            }
+          })
+      })
+      .catch(function (err) {
+        console.log(err);
+      })
+  }
+  /**
+   onHeadClick = (e) => {
     const elem = e.currentTarget;
     const rect = elem.getBoundingClientRect();
     const wrapRect = ReactDOM.findDOMNode(this.refs.wrap).getBoundingClientRect();
@@ -48,6 +87,23 @@ export default class AnnualTab extends Component {
       popupLeft: rect.left - wrapRect.left,
       popupTop: rect.top - wrapRect.top + rect.height
     });
+  }
+   **/
+
+  getDates = () => {
+    var monthNames = [
+      "Jan", "Feb", "Mar",
+      "Apr", "May", "Jun", "Jul",
+      "Aug", "Sep", "Oct",
+      "Nov", "Dec"
+    ];
+    var dates = [];
+    for (var i = 0; i < 12; i++) {
+      var date = new Date(this.state.planDate);
+      date.setMonth(date.getMonth() + i);
+      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
+    }
+    return dates;
   }
 
   changeBudget = () => {
@@ -62,7 +118,8 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const data = annualData[this.state.budget];
+    const data = this.state.annualData[this.state.budget];
+
     let rows = [];
     let hoverRows;
 
@@ -74,7 +131,6 @@ export default class AnnualTab extends Component {
 
         let key = parent + ':' + item + '-' + i;
         let collapsed = !!this.state.collapsed[key];
-
         const params = data[item];
         const values = params.values.map(val => '$' + val);
         const titleElem = <div
@@ -92,19 +148,21 @@ export default class AnnualTab extends Component {
                 this.forceUpdate();
               }}
             />
-          : null }
+            : null }
 
           { params.icon ?
-            <div className={ this.classes.rowIcon } data-icon={ params.icon } />
-          : null }
+            <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
+            : null }
 
           { params.icon_mask ?
             <div className={ this.classes.rowMaskIcon }>
-              <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask } />
+              <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
             </div>
-          : null }
-
-          { item }
+            : null }
+          { item.length > 15 ?
+            <div>{item.substr(0, item.lastIndexOf(' ')) } <br/> {item.substr(item.lastIndexOf(' ') + 1, item.length)}
+            </div>
+            : item }
         </div>
 
         const rowProps = {
@@ -152,56 +210,29 @@ export default class AnnualTab extends Component {
         }}
       />
       { 'Promotion Channel' }
-    </div>, [
-      'Jan/16',
-      'Feb/16',
-      <div role="button" className={ this.classes.tableButton }>
-        { 'Mar/16' }
-      </div>,
-      'Apr/16',
-      <div role="button" className={
-          this.state.popupShown ?
-            this.classes.tableButtonSelected :
-            this.classes.tableButton
-        }
-        onClick={ this.onHeadClick }
-      >
-        { 'May/16' }
-      </div>,
-      <div role="button" className={ this.classes.tableButton }>
-        { 'Jun/16' }
-      </div>,
-      'Jul/16',
-      'Aug/16',
-      'Sep/16',
-      'Oct/16',
-      'Nov/16',
-      'Dec/16'
-    ], {
+    </div>, this.getDates(), {
       className: this.classes.headRow
     });
 
     const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-      { 'TOTAL' }
-    </div>, data['__TOTAL__'].values.map(val => '$' + val), {
-      className: this.classes.footRow
-    });
+        { 'TOTAL' }
+      </div>, data['__TOTAL__'].values.map(val => '$' + val), {
+        className: this.classes.footRow
+      });
 
     return <div>
-      <div className={ planStyles.locals.title }>
-        <div className={ planStyles.locals.titleMain }>
-          <div className={ planStyles.locals.titleText }>
-            Annual Budget
+      <div className={ this.classes.wrap } data-loading={ this.state.isLoaded ? null : true }>
+        <div className={ planStyles.locals.title }>
+          <div className={ planStyles.locals.titleMain }>
+            <div className={ planStyles.locals.titleText }>
+              Annual Budget
+            </div>
+            <div className={ planStyles.locals.titlePrice }>
+              ${ this.state.budget }
+            </div>
           </div>
-          <div className={ planStyles.locals.titlePrice }>
-            ${ this.state.budget }
-          </div>
-        </div>
-        <div className={ planStyles.locals.titleButtons }>
-          <Button type="primary2" style={{
-            width: '106px'
-          }}>Export</Button>
-          <Button type="primary2" style={{
+          <div className={ planStyles.locals.titleButtons }>
+            <Button type="primary2" style={{
             marginLeft: '15px',
             width: '106px'
           }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
@@ -212,8 +243,8 @@ export default class AnnualTab extends Component {
             this.refs.budgetPopup.open();
           }}>What if</Button>
 
-          <div style={{ position: 'relative' }}>
-            <PlanPopup ref="budgetPopup" style={{
+            <div style={{ position: 'relative' }}>
+              <PlanPopup ref="budgetPopup" style={{
               width: '367px',
               right: '0',
               left: 'auto',
@@ -224,80 +255,94 @@ export default class AnnualTab extends Component {
                 whatIfSelected: false
               });
             }} title="CHANGE YOUR BUDGET">
-              <div className={ this.classes.budgetChangeBox }>
-                <Textfield
-                  value={ this.state.budgetField }
-                  className={ this.classes.budgetChangeField }
-                  onChange={(e) => {
+                <div className={ this.classes.budgetChangeBox }>
+                  <Textfield
+                    value={ this.state.budgetField }
+                    className={ this.classes.budgetChangeField }
+                    onChange={(e) => {
                     this.setState({
                       budgetField: e.target.value
                     });
                   }}
-                  onKeyDown={(e) => {
+                    onKeyDown={(e) => {
                     if (e.keyCode === 13) {
                       this.changeBudget();
                     }
                   }}
-                />
-                <Button type="accent2" style={{
+                  />
+                  <Button type="accent2" style={{
                   width: '91px',
                   marginLeft: '15px'
                 }} onClick={ this.changeBudget }>Done</Button>
-              </div>
-            </PlanPopup>
+                </div>
+              </PlanPopup>
+            </div>
           </div>
         </div>
-      </div>
-      <div className={ planStyles.locals.innerBox }>
-        <div className={ this.classes.wrap } ref="wrap">
-          <div className={ this.classes.box }>
-            <table className={ this.classes.table }>
-              <thead>
+        <div className={ planStyles.locals.innerBox }>
+          <div className={ this.classes.wrap } ref="wrap">
+            <div className={ this.classes.box }>
+              <table className={ this.classes.table }>
+                <thead>
                 { headRow }
-              </thead>
-              <tbody className={ this.classes.tableBody }>
+                </thead>
+                <tbody className={ this.classes.tableBody }>
                 { rows }
-              </tbody>
-              <tfoot>
+                </tbody>
+                <tfoot>
                 { footRow }
-              </tfoot>
-            </table>
-          </div>
+                </tfoot>
+              </table>
+            </div>
 
-          <div className={ this.classes.hoverBox }>
-            <table className={ this.classes.hoverTable }>
-              <thead>{ headRow }</thead>
-              <tbody>{ rows }</tbody>
-              <tfoot>{ footRow }</tfoot>
-            </table>
-          </div>
+            <div className={ this.classes.hoverBox }>
+              <table className={ this.classes.hoverTable }>
+                <thead>{ headRow }</thead>
+                <tbody>{ rows }</tbody>
+                <tfoot>{ footRow }</tfoot>
+              </table>
+            </div>
 
-          <PlanPopup ref="headPopup" style={{
+            <PlanPopup ref="headPopup" style={{
             width: '350px',
             left: this.state.popupLeft + 'px',
             top: this.state.popupTop + 'px',
             marginTop: '5px'
           }} title="Events: Mar/16"
-            onClose={() => {
+                       onClose={() => {
               this.setState({
                 popupShown: false,
                 popupLeft: 0,
                 popupTop: 0
               });
             }}
-          >
-            <PopupTextContent>
-              <strong>User Events</strong>
-              <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has Louis Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-              <strong>Global Events</strong>
-              <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life” correlate in the form of electrochemical activity in the brain. But it is quite obvious that they do not</p>
-            </PopupTextContent>
-          </PlanPopup>
+            >
+              <PopupTextContent>
+                <strong>User Events</strong>
+                <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has Louis
+                  Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
+                <strong>Global Events</strong>
+                <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
+                  correlate in the form of electrochemical activity in the brain. But it is quite obvious that they do
+                  not</p>
+              </PopupTextContent>
+            </PlanPopup>
+          </div>
         </div>
       </div>
+      { !this.state.isLoaded ?
+        <div className={ this.classes.loading }>
+          <Popup className={ this.classes.popup }>
+            <div>
+              <Loading />
+            </div>
 
-      <Explanation title="Explanation" text="Your strategy was built based on 89 experts and statistical analysis of 23 similar companies.
-The 2 main fields (channels) that are recommended to you in the current month are: Advertising and Public Relations. 81% of similar companies to yours are using Advertising as the main channel in their strategy in we thought that you should too. In contrary, only 22% of these companies are using Public Relations as one of the main channels. But in your case, we thought that this channel would be a perfect fit to your marketing mix due to the fact that your main goal is getting as much awareness as possible." />
+            <div className={ this.classes.popupText }>
+              Please wait while the system creates your plan
+            </div>
+          </Popup>
+        </div>
+        : null }
     </div>
   }
 

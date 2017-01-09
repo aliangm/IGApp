@@ -124,7 +124,7 @@ export default class Manual extends Component {
           </div>
           <div className={ this.classes.footerRight }>
             <BackButton onClick={() => {
-              history.push('/goals');
+              history.push('/preferences');
             }} />
             <div style={{ width: '30px' }} />
             <NextButton onClick={() => {

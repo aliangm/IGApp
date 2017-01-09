@@ -43,13 +43,13 @@ export default class Header extends Component {
           </div>
         : null }
         { hasUser ?
-          <a className={ this.classes.link } href="#">
+          <a className={ this.classes.link } href="#welcome">
             <div className={ this.classes.settings } data-icon="header:settings" />
           </a>
         : null }
-        <a className={ this.classes.linkText } href="#">About</a>
-        <a className={ this.classes.linkText } href="#">Chat</a>
-        <a className={ this.classes.linkText } href="#">Contact</a>
+        <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
+		  {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
+        <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
       </div>
 
       { hasUser ?
@@ -102,13 +102,13 @@ export default class Header extends Component {
               </div>
             : null }
             { hasUser ?
-              <a className={ this.classes.linkText } href="#">
+              <a className={ this.classes.linkText } href="#welcome">
                 Settings
               </a>
             : null }
-            <a className={ this.classes.linkText } href="#">About</a>
-            <a className={ this.classes.linkText } href="#">Chat</a>
-            <a className={ this.classes.linkText } href="#">Contact</a>
+            <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
+           /** <a className={ this.classes.linkText } href="#">Chat</a> **/
+            <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
             { hasUser ?
               <div className={ this.classes.logoutItemInside }>
                 <Button type="normalAccent" style={{
