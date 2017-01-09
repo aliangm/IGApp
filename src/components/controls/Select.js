@@ -25,7 +25,6 @@ export default class Select extends Component {
     }
     
     const select = this.props.select;
-    console.log('this.props.selected', this.props.selected);
 	  for(var i = 0; i < select.options.length;i++){
 		  if (select.options[i].value == this.props.selected){
 			  selected = i;

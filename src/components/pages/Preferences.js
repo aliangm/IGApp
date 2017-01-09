@@ -51,12 +51,10 @@ export default class Preferences extends Component {
           response.json()
             .then(function (data) {
               if (data) {
-                console.log(data);
                 self.setState({annualBudget: data.annualBudget});
-                self.setState({primaryGoal: data.primaryGoal});
-                self.setState({secondaryGoal: data.secondaryGoal});
+                self.setState({goals: data.goals});
                 self.setState({blockedChannels: data.blockedChannels || []});
-                self.setState({maxChannels: data.maxChannels});
+                self.setState({maxChannels: data.channels && data.channels.max});
                 self.setState({isLoaded: true});
               }
             })
@@ -68,40 +66,33 @@ export default class Preferences extends Component {
   }
 
   handleChangeGoals(parameter, event){
-    let update = {};
+    let update = this.state.channels || {};
     update[parameter] = event.value;
-    console.log(update);
-    this.setState(update);
+    this.setState({channels: update});
   }
 
   handleChangeBudget(parameter, event){
     let update = {};
     update[parameter] = parseInt(event.target.value.replace('$',''));
-    console.log(update);
     this.setState(update);
   }
 
   handleChangeBlockedChannels(index, event){
     let update = this.state.blockedChannels || [];
     update.splice(index, 1, event.value);
-    console.log(update);
     this.setState({blockedChannels: update});
   }
 
   handleChangeMax(parameter, event) {
-    let update = {};
     const number = parseInt(event.target.value);
     if (number) {
-      update[parameter] = number;
-      this.setState(update);
+      this.setState({maxChannels: number});
     }
   }
 
   rowRemoved(index){
-    console.log(this.state.blockedChannels);
     let update = this.state.blockedChannels || [];
     update.splice(index, 1);
-    console.log(update);
     this.setState({blockedChannels: update});
   }
 
@@ -327,11 +318,6 @@ export default class Preferences extends Component {
     });
 
     function mapChannel(channel, indent) {
-      /**
-       if (channel.name.length > 22){
-        channel.name = channel.name.substr(0, channel.name.lastIndexOf(' ')) + '        ' + channel.name.substr(channel.name.lastIndexOf(' ') + 1, channel.name.length);
-    }
-       **/
       flatChannels.push({
         label: channel.name,
         value: channel.value,
@@ -421,7 +407,6 @@ export default class Preferences extends Component {
                     return <div style={{
                     width: '292px'
                   }} className={ preferencesStyle.locals.channelsRow }>
-                      {console.log(this.state.blockedChannels, index)}
                       <Select
                         className={ preferencesStyle.locals.channelsSelect }
                         selected={ (this.state.blockedChannels && this.state.blockedChannels[index]) || -1 }
@@ -474,9 +459,8 @@ export default class Preferences extends Component {
           }} />
               <div style={{ width: '30px' }} />
               <NextButton onClick={() => {
-              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, primaryGoal: this.state.primaryGoal, secondaryGoal: this.state.secondaryGoal}))
+              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, primaryGoal: this.state.primaryGoal, secondaryGoal: this.state.secondaryGoal, blockedChannels: this.state.blockedChannels, channels: {max: this.state.maxChannels}}))
 							.then(function(data){
-							console.log(data);
 							});
             history.push('/indicators');
           }} />
@@ -485,10 +469,8 @@ export default class Preferences extends Component {
             :
             <div className={ this.classes.footer }>
               <SaveButton onClick={() => {
-            				console.log(this.state);
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, primaryGoal: this.state.primaryGoal, secondaryGoal: this.state.secondaryGoal, blockedChannels: this.state.blockedChannels}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, primaryGoal: this.state.primaryGoal, secondaryGoal: this.state.secondaryGoal, blockedChannels: this.state.blockedChannels, channels: {max: this.state.maxChannels}}))
 			.then(function(data){
-			  console.log(data);
 			});
             }} />
             </div>

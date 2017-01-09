@@ -17,7 +17,6 @@ export default class MultiRow extends Component {
 
   componentDidMount() {
     let currentRows = [];
-    console.log(this.props.numOfRows);
     for(let i=0; i< this.props.numOfRows; i++) {
       currentRows.push({key: i});
     }
