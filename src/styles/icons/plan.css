@@ -1,6 +1,6 @@
 @import "../global/mixins.css";
 
-@mixin icon-nodpi plan:Advertising, ../../assets/plan_icons/Advertising;
+@mixin icon-nodpi plan:Advertising, ../../assets/plan_icons/advertising;
 @mixin icon-nodpi plan:Display Ads, ../../assets/plan_icons/DisplayAds;
 @mixin icon-nodpi plan:Google AdWords, ../../assets/plan_icons/GoogleAdWords;
 @mixin icon-nodpi plan:Other, ../../assets/plan_icons/Other;
@@ -85,7 +85,7 @@
 @mixin icon-nodpi plan:Twitter Account, ../../assets/plan_icons/TwitterAccount;
 @mixin icon-nodpi plan:Youtube Channel, ../../assets/plan_icons/YoutubeChannel;
 @mixin icon-nodpi plan:Instagram Account, ../../assets/plan_icons/InstagramAccount;
-@mixin icon-nodpi plan:Google+ Page, ../../assets/plan_icons/Google+Page;
+@mixin icon-nodpi plan:Google+ Page, ../../assets/plan_icons/Google+page;
 @mixin icon-nodpi plan:Pinterest Page, ../../assets/plan_icons/Pinterestpage;
 @mixin icon-nodpi plan:LinkedIn Company Profile, ../../assets/plan_icons/LinkedInCompanyProfile;
 @mixin icon-nodpi plan:LinkedIn Group, ../../assets/plan_icons/LinkedInGroup;
