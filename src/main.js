@@ -12,6 +12,7 @@ import Manual from './components/pages/Manual';
 import SignIn from './components/pages/SignIn';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
+import PlannedVsActual from './components/pages/PlannedVsActual';
 
 import style from 'styles/global/main.css';
 
@@ -26,6 +27,7 @@ ReactDOM.render(
     <Route path="/manual" component={ Manual } />
     <Route path="/welcome" component={ Welcome } />
     <Route path="/plan" component={ Plan } />
+    <Route path="/planned-vs-actual" component={ PlannedVsActual } />
     <Route path="/" component={ SignIn } />
   </Router>,
   // <Profile />,

@@ -34,10 +34,21 @@ export default class Preferences extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      goals: {
+        primary: 'InfiniGrow Recommended',
+        secondary: 'InfiniGrow Recommended'
+      },
+      maxChannels: -1,
+      showErrorMessage: [false, false, false]
+    };
     //this.state.targetAudience = { };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.rowRemoved = this.rowRemoved.bind(this);
+  }
+
+  validate() {
+    return this.state.annualBudget;
   }
 
   componentDidMount(){
@@ -51,24 +62,35 @@ export default class Preferences extends Component {
           response.json()
             .then(function (data) {
               if (data) {
-                self.setState({annualBudget: data.annualBudget});
-                self.setState({goals: data.goals});
-                self.setState({blockedChannels: data.blockedChannels || []});
-                self.setState({maxChannels: data.channels && data.channels.max});
-                self.setState({isLoaded: true});
+                if (data.error) {
+                  history.push('/');
+                }
+                else {
+                  self.setState({
+                    annualBudget: data.annualBudget,
+                    goals: {
+                      primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
+                      secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
+                    },
+                    blockedChannels: data.blockedChannels || [],
+                    maxChannels: data.maxChannels || -1,
+                    isLoaded: true
+                  });
+                }
               }
             })
         })
         .catch(function (err) {
+          self.setState({serverDown: true});
           console.log(err);
         })
     }
   }
 
   handleChangeGoals(parameter, event){
-    let update = this.state.channels || {};
+    let update = this.state.goals || {};
     update[parameter] = event.value;
-    this.setState({channels: update});
+    this.setState({goals: update});
   }
 
   handleChangeBudget(parameter, event){
@@ -78,9 +100,19 @@ export default class Preferences extends Component {
   }
 
   handleChangeBlockedChannels(index, event){
-    let update = this.state.blockedChannels || [];
-    update.splice(index, 1, event.value);
-    this.setState({blockedChannels: update});
+    if (typeof event.value === 'string') {
+      var errors = this.state.showErrorMessage;
+      errors[index] = false;
+      this.setState({showErrorMessage: errors});
+      let update = this.state.blockedChannels || [];
+      update.splice(index, 1, event.value);
+      this.setState({blockedChannels: update});
+    }
+    else {
+      var errors = this.state.showErrorMessage;
+      errors[index] = true;
+      this.setState({showErrorMessage: errors});
+    }
   }
 
   handleChangeMax(parameter, event) {
@@ -174,13 +206,13 @@ export default class Preferences extends Component {
           ] },
           { name: 'Social Ads', children: [
             {name: 'SEM (PPC)', children: [
-              {name: 'Facebook Advertising', value: 'advertising_socialAds_SEM_facebookAdvertising'},
-              {name: 'Twitter Advertising', value: 'advertising_socialAds_SEM_twitterAdvertising'},
-              {name: 'LinkedIn Advertising', value: 'advertising_socialAds_SEM_linkedinAdvertising'},
-              {name: 'Instagram Advertising', value: 'advertising_socialAds_SEM_instagramAdvertising'},
-              {name: 'Pinterest Advertising', value: 'advertising_socialAds_SEM_pinterestAdvertising'},
-              {name: 'Google+ Advertising', value: 'advertising_socialAds_SEM_GooglePlusAdvertising'},
-              {name: 'YouTube Advertising', value: 'advertising_socialAds_SEM_youtubeAdvertising' }
+              {name: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
+              {name: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
+              {name: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
+              {name: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
+              {name: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
+              {name: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
+              {name: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising' }
             ]}
           ] },
           { name: 'Offline Ads', children: [
@@ -334,9 +366,12 @@ export default class Preferences extends Component {
     return <div>
       <Header />
       <Sidebar />
-      { this.state.isLoaded ?
-        <Page popup={ isPopupMode() }>
-          <Title title="Preferences" subTitle="Tell us your goals and constrains. Different objectives dictate different strategies" />
+      <Page popup={ isPopupMode() }>
+        <Title title="Preferences" subTitle="Tell us your goals and constrains. Different objectives dictate different strategies" />
+        <div className={ this.classes.error }>
+          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
+        </div>
+        { this.state.isLoaded ?
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
               {/**
@@ -371,29 +406,29 @@ export default class Preferences extends Component {
               // minWidth: '200px',
               width: '258px'
             }}>
-                <Select { ... selects.primary_goal } selected={ this.state.primaryGoal || "InfiniGrow Recommended" } onChange= { this.handleChangeGoals.bind(this, 'primaryGoal') }/>
+                <Select { ... selects.primary_goal } selected={ this.state.goals.primary } onChange= { this.handleChangeGoals.bind(this, 'primary') }/>
               </div>
               <div className={ this.classes.row } style={{
               // maxWidth: '440px',
               // minWidth: '200px',
               width: '258px'
             }}>
-                <Select { ... selects.secondary_goal } selected={ this.state.secondaryGoal || "InfiniGrow Recommended" } onChange= { this.handleChangeGoals.bind(this, 'secondaryGoal') }/>
+                <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary } onChange= { this.handleChangeGoals.bind(this, 'secondary') }/>
+              </div>
+              <div className={ this.classes.row }>
+                <Label question>#of Channels</Label>
+                <div className={ this.classes.cell }>
+                  <Textfield defaultValue="MAX" onChange={ this.handleChangeMax.bind(this, '')} style={{
+                  width: '166px'
+                }} />
+                  {/** <NotSure style={{
+                  marginLeft: '10px'
+                }} /> **/}
+                </div>
               </div>
               <div className={ this.classes.row } style={{
               
             }}>
-                <div className={ this.classes.row }>
-                  <Label question>Channels Limit</Label>
-                  <div className={ this.classes.cell }>
-                    <Textfield defaultValue="MAX" onChange={ this.handleChangeMax.bind(this, '')} style={{
-                  width: '166px'
-                }} />
-                    {/** <NotSure style={{
-                  marginLeft: '10px'
-                }} /> **/}
-                  </div>
-                </div>
                 <h3 style={{
                 marginBottom: '0'
               }}>Blocked Channels</h3>
@@ -402,10 +437,10 @@ export default class Preferences extends Component {
               }}>
                   * Please notice that adding channel constrains is limiting the ideal plan creation
                 </Notice>
-                <MultiRow numOfRows={ (this.state.blockedChannels && this.state.blockedChannels.length) || 0 } rowRemoved={this.rowRemoved}>
+                <MultiRow numOfRows={ (this.state.blockedChannels && this.state.blockedChannels.length) || 0 } rowRemoved={this.rowRemoved} maxNumOfRows= {3} >
                   {({ index, data, update, removeButton }) => {
                     return <div style={{
-                    width: '292px'
+                    width: '492px'
                   }} className={ preferencesStyle.locals.channelsRow }>
                       <Select
                         className={ preferencesStyle.locals.channelsSelect }
@@ -426,6 +461,9 @@ export default class Preferences extends Component {
                       <div className={ preferencesStyle.locals.channelsRemove }>
                         { removeButton }
                       </div>
+                      <div className={ preferencesStyle.locals.error }>
+                        <label hidden={ !this.state.showErrorMessage[index]}>Please choose a leaf channel</label>
+                      </div>
                     </div>
                   }}
                 </MultiRow>
@@ -436,10 +474,10 @@ export default class Preferences extends Component {
 
               <div className={ this.classes.colRight }>
                 <div className={ this.classes.row }>
-                  <ProfileProgress progress={ 61 } image={
-                require('assets/flower/3.png')
+                  <ProfileProgress progress={ 76 } image={
+                require('assets/flower/4.png')
               }
-                                   text="Show me some leafs"/>
+                                   text="You rock!"/>
                 </div>
                 {/**
                  <div className={ this.classes.row }>
@@ -450,33 +488,47 @@ export default class Preferences extends Component {
 
               : null }
           </div>
+          : null }
 
-          { isPopupMode() ?
+        { isPopupMode() ?
 
-            <div className={ this.classes.footer }>
-              <BackButton onClick={() => {
+          <div className={ this.classes.footer }>
+            <div className={ this.classes.almostFooter }>
+              <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
+            </div>
+            <BackButton onClick={() => {
             history.push('/target-audience');
           }} />
-              <div style={{ width: '30px' }} />
-              <NextButton onClick={() => {
-              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, primaryGoal: this.state.primaryGoal, secondaryGoal: this.state.secondaryGoal, blockedChannels: this.state.blockedChannels, channels: {max: this.state.maxChannels}}))
+            <div style={{ width: '30px' }} />
+            <NextButton onClick={() => {
+              if (this.validate()) {
+              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 							.then(function(data){
 							});
             history.push('/indicators');
-          }} />
-            </div>
+            }
+            else {
+            		this.setState({validationError: true});
+            }
+            }
+          } />
+          </div>
 
-            :
-            <div className={ this.classes.footer }>
-              <SaveButton onClick={() => {
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, primaryGoal: this.state.primaryGoal, secondaryGoal: this.state.secondaryGoal, blockedChannels: this.state.blockedChannels, channels: {max: this.state.maxChannels}}))
+          :
+          <div className={ this.classes.footer }>
+            <SaveButton onClick={() => {
+              let self = this;
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 			.then(function(data){
+			  self.setState({saveSuceess: true});
+			})
+			.catch(function(err){
+			  self.setState({saveFail: true});
 			});
-            }} />
-            </div>
-          }
-        </Page>
-        : null }
+            }} success={ this.state.saveSuceess } fail={ this.state.saveFail }/>
+          </div>
+        }
+      </Page>
     </div>
   }
 }

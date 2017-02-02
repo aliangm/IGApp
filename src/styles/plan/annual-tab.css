@@ -27,6 +27,8 @@
 .table :global(tr) {
     border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
+    color: #1165a3;
+    font-weight: bold;
 }
 
 .table :global(tr[data-disabled]) {
@@ -162,12 +164,12 @@
 }
 
 .row-icon {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     position: absolute;
     left: 27px;
     top: 50%;
-    margin-top: -8px;
+    margin-top: -10px;
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -303,8 +305,7 @@
 .popup {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: center;flex-direction: column;
     width: 400px;
     height: 200px;
     position: absolute;
@@ -318,4 +319,8 @@
     font-size: 20px;
     font-weight: 600;
     text-align: center;
+}
+
+.value-cell-first {
+    background: rgba(46,161,248, 0.2);
 }

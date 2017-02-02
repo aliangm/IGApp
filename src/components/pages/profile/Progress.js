@@ -10,8 +10,8 @@ export default class Progress extends Component {
     const progress = this.props.progress;
     const dots = [];
 
-    for (let i = 0; i < 6; i++) {
-      let dotProgress = i * 20;
+    for (let i = 0; i < 5; i++) {
+      let dotProgress = i * 25;
       let className = progress > dotProgress ? this.classes.dotFilled : this.classes.dotEmpty;
 
       dots.push(<div key={ 'dot' + i } className={ className } style={{

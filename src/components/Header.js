@@ -52,7 +52,7 @@ export default class Header extends Component {
         <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
       </div>
 
-      { hasUser ?
+      {/**{ hasUser ?
         <div className={ this.classes.userBox }>
           <div className={ this.classes.logged }>
             Logged in as
@@ -60,7 +60,7 @@ export default class Header extends Component {
           </div>
           <div className={ this.classes.userLogo }></div>
         </div>
-      : null }
+      : null } **/}
     </div>
   }
 
@@ -92,7 +92,7 @@ export default class Header extends Component {
               });
             }}
           >
-            { hasUser ?
+            {/**{ hasUser ? 
               <div className={ this.classes.userBoxInside }>
                 <div className={ this.classes.userLogo }></div>
                 <div className={ this.classes.logged }>
@@ -100,7 +100,7 @@ export default class Header extends Component {
                   <div className={ this.classes.user }>Daniel M.</div>
                 </div>
               </div>
-            : null }
+            : null }**/}
             { hasUser ?
               <a className={ this.classes.linkText } href="#welcome">
                 Settings
@@ -123,7 +123,7 @@ export default class Header extends Component {
         </div>
       </div>
 
-      { hasUser ?
+      {/** {hasUser ?
         <div className={ this.classes.userBoxOutside }>
           <div className={ this.classes.userLogo }></div>
           <div className={ this.classes.logged }>
@@ -131,7 +131,7 @@ export default class Header extends Component {
             <div className={ this.classes.user }>Daniel M.</div>
           </div>
         </div>
-      :null }
+      :null} **/}
     </div>
   }
 

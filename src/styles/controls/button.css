@@ -94,3 +94,8 @@
   letter-spacing: 0.075;
   background: linear-gradient(to top, #24b00d 0%, #27b210 100%);
 }
+
+.normal-accent2 {
+  composes: normal;
+  color: #24b10e;
+}

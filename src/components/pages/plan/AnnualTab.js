@@ -53,8 +53,8 @@ export default class AnnualTab extends Component {
       annualData: {}
     }
   }
-
-  componentDidMount(){
+  /**
+   componentDidMount(){
     let self = this;
     serverCommunication.serverRequest('GET', 'usermonthplan')
       .then((response) => {
@@ -72,7 +72,7 @@ export default class AnnualTab extends Component {
       .catch(function (err) {
         console.log(err);
       })
-  }
+  }**/
   /**
    onHeadClick = (e) => {
     const elem = e.currentTarget;
@@ -99,7 +99,8 @@ export default class AnnualTab extends Component {
     ];
     var dates = [];
     for (var i = 0; i < 12; i++) {
-      var date = new Date(this.state.planDate);
+      var planDate = this.props.planDate.split("/");
+      var date = new Date(planDate[1], planDate[0]-1);
       date.setMonth(date.getMonth() + i);
       dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
     }
@@ -118,121 +119,126 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const data = this.state.annualData[this.state.budget];
+    if (this.props.isLoaded) {
+      if (!this.props.isPlannerLoading) {
+        const planJson = parseAnnualPlan(this.props.projectedPlan);
+        let budget = Object.keys(planJson)[0];
+        const data = planJson[budget];
+        budget = Math.ceil(budget/1000)*1000;
+        let rows = [];
+        let hoverRows;
 
-    let rows = [];
-    let hoverRows;
+        const handleRows = (data, parent, level) => {
+          level = level | 0;
 
-    const handleRows = (data, parent, level) => {
-      level = level | 0;
+          Object.keys(data).forEach((item, i) => {
+            if (item === '__TOTAL__') return null;
 
-      Object.keys(data).forEach((item, i) => {
-        if (item === '__TOTAL__') return null;
-
-        let key = parent + ':' + item + '-' + i;
-        let collapsed = !!this.state.collapsed[key];
-        const params = data[item];
-        const values = params.values.map(val => '$' + val);
-        const titleElem = <div
-          style={{
+            let key = parent + ':' + item + '-' + i;
+            let collapsed = !!this.state.collapsed[key];
+            const params = data[item];
+            const values = params.values.map(val => '$' + val);
+            const titleElem = <div
+              style={{
             marginLeft: (level | 0) * 17 + 'px'
           }}
-          className={ this.classes.rowTitle }
-        >
-          { params.children ?
-            <div
-              className={ this.classes.rowArrow }
-              data-collapsed={ collapsed || null }
-              onClick={() => {
+              className={ this.classes.rowTitle }
+            >
+              { params.children ?
+                <div
+                  className={ this.classes.rowArrow }
+                  data-collapsed={ collapsed || null }
+                  onClick={() => {
                 this.state.collapsed[key] = !collapsed;
                 this.forceUpdate();
               }}
-            />
-            : null }
+                />
+                : null }
 
-          { params.icon ?
-            <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-            : null }
+              { params.icon ?
+                <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
+                : null }
 
-          { params.icon_mask ?
-            <div className={ this.classes.rowMaskIcon }>
-              <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+              { params.icon_mask ?
+                <div className={ this.classes.rowMaskIcon }>
+                  <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                </div>
+                : null }
+              { item.length > 13 ?
+                <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
+                  <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
+                </div>
+                : item }
             </div>
-            : null }
-          { item.length > 15 ?
-            <div>{item.substr(0, item.lastIndexOf(' ')) } <br/> {item.substr(item.lastIndexOf(' ') + 1, item.length)}
-            </div>
-            : item }
-        </div>
 
-        const rowProps = {
-          key: key,
-          onMouseEnter: () => {
-            this.setState({
-              hoverRow: key
-            });
-          },
-          onMouseLeave: () => {
-            this.setState({
-              hoverRow: void 0
-            });
-          }
-        };
+            const rowProps = {
+              key: key,
+              onMouseEnter: () => {
+                this.setState({
+                  hoverRow: key
+                });
+              },
+              onMouseLeave: () => {
+                this.setState({
+                  hoverRow: void 0
+                });
+              }
+            };
 
-        if (params.disabled) {
-          rowProps['data-disabled'] = true;
+            if (params.disabled) {
+              rowProps['data-disabled'] = true;
+            }
+
+            if (this.state.hoverRow === key) {
+              rowProps['data-hovered'] = true;
+            }
+
+            const row = this.getTableRow(titleElem, values, rowProps);
+            rows.push(row);
+
+            if (!collapsed && params.children) {
+              handleRows(params.children, key, level + 1);
+            }
+          });
         }
 
-        if (this.state.hoverRow === key) {
-          rowProps['data-hovered'] = true;
+        if (data && !this.state.tableCollapsed) {
+          handleRows(data);
         }
 
-        const row = this.getTableRow(titleElem, values, rowProps);
-        rows.push(row);
-
-        if (!collapsed && params.children) {
-          handleRows(params.children, key, level + 1);
-        }
-      });
-    }
-
-    if (data && !this.state.tableCollapsed) {
-      handleRows(data);
-    }
-
-    const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
-      <div
-        className={ this.classes.rowArrow }
-        data-collapsed={ this.state.tableCollapsed || null }
-        onClick={() => {
+        const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
+          <div
+            className={ this.classes.rowArrow }
+            data-collapsed={ this.state.tableCollapsed || null }
+            onClick={() => {
           this.state.tableCollapsed = !this.state.tableCollapsed;
           this.forceUpdate();
         }}
-      />
-      { 'Promotion Channel' }
-    </div>, this.getDates(), {
-      className: this.classes.headRow
-    });
+          />
+          { 'Promotion Channel' }
+        </div>, this.getDates(), {
+          className: this.classes.headRow
+        });
 
-    const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-        { 'TOTAL' }
-      </div>, data['__TOTAL__'].values.map(val => '$' + val), {
-        className: this.classes.footRow
-      });
+        const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
+            { 'TOTAL' }
+          </div>, data['__TOTAL__'].values.map(val => '$' + val), {
+            className: this.classes.footRow
+          });
 
-    return <div>
-      <div className={ this.classes.wrap } data-loading={ this.state.isLoaded ? null : true }>
-        <div className={ planStyles.locals.title }>
-          <div className={ planStyles.locals.titleMain }>
-            <div className={ planStyles.locals.titleText }>
-              Annual Budget
-            </div>
-            <div className={ planStyles.locals.titlePrice }>
-              ${ this.state.budget }
-            </div>
-          </div>
-          <div className={ planStyles.locals.titleButtons }>
-            <Button type="primary2" style={{
+        return <div>
+          <div className={ this.classes.wrap } data-loading={ this.props.isLoaded ? null : true }>
+            <div className={ planStyles.locals.title }>
+              <div className={ planStyles.locals.titleMain }>
+                <div className={ planStyles.locals.titleText }>
+                  Annual Budget
+                </div>
+                <div className={ planStyles.locals.titlePrice }>
+                  ${ budget }
+                </div>
+              </div>
+              <div className={ planStyles.locals.titleButtons }>
+                <Button type="primary2" style={{
             marginLeft: '15px',
             width: '106px'
           }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
@@ -243,8 +249,8 @@ export default class AnnualTab extends Component {
             this.refs.budgetPopup.open();
           }}>What if</Button>
 
-            <div style={{ position: 'relative' }}>
-              <PlanPopup ref="budgetPopup" style={{
+                <div style={{ position: 'relative' }}>
+                  <PlanPopup ref="budgetPopup" style={{
               width: '367px',
               right: '0',
               left: 'auto',
@@ -254,84 +260,87 @@ export default class AnnualTab extends Component {
                 budgetField: '$',
                 whatIfSelected: false
               });
-            }} title="CHANGE YOUR BUDGET">
-                <div className={ this.classes.budgetChangeBox }>
-                  <Textfield
-                    value={ this.state.budgetField }
-                    className={ this.classes.budgetChangeField }
-                    onChange={(e) => {
+            }} title="COMING SOON!">
+                    {/**       <div className={ this.classes.budgetChangeBox }>
+                      <Textfield
+                        value={ this.state.budgetField }
+                        className={ this.classes.budgetChangeField }
+                        onChange={(e) => {
                     this.setState({
                       budgetField: e.target.value
                     });
                   }}
-                    onKeyDown={(e) => {
+                        onKeyDown={(e) => {
                     if (e.keyCode === 13) {
                       this.changeBudget();
                     }
                   }}
-                  />
-                  <Button type="accent2" style={{
+                      />
+                      <Button type="accent2" style={{
                   width: '91px',
                   marginLeft: '15px'
                 }} onClick={ this.changeBudget }>Done</Button>
+                    </div>**/}
+                  </PlanPopup>
                 </div>
-              </PlanPopup>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className={ planStyles.locals.innerBox }>
-          <div className={ this.classes.wrap } ref="wrap">
-            <div className={ this.classes.box }>
-              <table className={ this.classes.table }>
-                <thead>
-                { headRow }
-                </thead>
-                <tbody className={ this.classes.tableBody }>
-                { rows }
-                </tbody>
-                <tfoot>
-                { footRow }
-                </tfoot>
-              </table>
-            </div>
+            <div className={ planStyles.locals.innerBox }>
+              <div className={ this.classes.wrap } ref="wrap">
+                <div className={ this.classes.box }>
+                  <table className={ this.classes.table }>
+                    <thead>
+                    { headRow }
+                    </thead>
+                    <tbody className={ this.classes.tableBody }>
+                    { rows }
+                    </tbody>
+                    <tfoot>
+                    { footRow }
+                    </tfoot>
+                  </table>
+                </div>
 
-            <div className={ this.classes.hoverBox }>
-              <table className={ this.classes.hoverTable }>
-                <thead>{ headRow }</thead>
-                <tbody>{ rows }</tbody>
-                <tfoot>{ footRow }</tfoot>
-              </table>
-            </div>
+                <div className={ this.classes.hoverBox }>
+                  <table className={ this.classes.hoverTable }>
+                    <thead>{ headRow }</thead>
+                    <tbody>{ rows }</tbody>
+                    <tfoot>{ footRow }</tfoot>
+                  </table>
+                </div>
 
-            <PlanPopup ref="headPopup" style={{
+                <PlanPopup ref="headPopup" style={{
             width: '350px',
             left: this.state.popupLeft + 'px',
             top: this.state.popupTop + 'px',
             marginTop: '5px'
           }} title="Events: Mar/16"
-                       onClose={() => {
+                           onClose={() => {
               this.setState({
                 popupShown: false,
                 popupLeft: 0,
                 popupTop: 0
               });
             }}
-            >
-              <PopupTextContent>
-                <strong>User Events</strong>
-                <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has Louis
-                  Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-                <strong>Global Events</strong>
-                <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                  correlate in the form of electrochemical activity in the brain. But it is quite obvious that they do
-                  not</p>
-              </PopupTextContent>
-            </PlanPopup>
+                >
+                  <PopupTextContent>
+                    <strong>User Events</strong>
+                    <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
+                      Louis
+                      Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
+                    <strong>Global Events</strong>
+                    <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
+                      correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
+                      do
+                      not</p>
+                  </PopupTextContent>
+                </PlanPopup>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      { !this.state.isLoaded ?
-        <div className={ this.classes.loading }>
+      } else {
+        return <div className={ this.classes.loading }>
           <Popup className={ this.classes.popup }>
             <div>
               <Loading />
@@ -342,15 +351,22 @@ export default class AnnualTab extends Component {
             </div>
           </Popup>
         </div>
-        : null }
-    </div>
+      }
+    }
+    else return null;
   }
 
-  getTableRow(title, items, props) {
+  getTableRow(title, items, props)
+  {
     return <tr {... props}>
       <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
       {
         items.map((item, i) => {
+          if (i==0) {
+            return <td className={ this.classes.valueCellFirst } key={ i }>{
+              this.getCellItem(item)
+            }</td>
+          }
           return <td className={ this.classes.valueCell } key={ i }>{
             this.getCellItem(item)
           }</td>
@@ -359,10 +375,11 @@ export default class AnnualTab extends Component {
     </tr>
   }
 
-  getCellItem(item) {
+  getCellItem(item)
+  {
     let elem;
 
-    if (typeof item !== 'object' ) {
+    if (typeof item !== 'object') {
       elem = <div className={ this.classes.cellItem }>{ item }</div>
     } else {
       elem = item;

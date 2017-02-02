@@ -20,11 +20,11 @@ export default class Label extends Component {
         items = [];
       }
 
-      const contents = items.map(name => {
+      const contents = items.map((name, index) => {
         return <div key={ name }>
           <div className={ this.classes.ttSubTitle }>{ name }</div>
           <div className={ this.classes.ttSubText }>
-            Here goes some description
+            { this.props.description && this.props.description[index] || '' }
           </div>
         </div>
       });

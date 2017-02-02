@@ -29,6 +29,23 @@
   display: flex;
 }
 
+.head-plan {
+  height: 100%;
+ /** padding: 0 32px 0 30px;
+  margin: 0 5px;**/
+  margin-left: 10%;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
+
 .head-tab {
   height: 100%;
   padding: 0 16px 0 15px;
@@ -169,4 +186,16 @@
   .head-title {
     margin: 10px 0;
   }
+}
+
+.error {
+  padding-left: 15px;
+  color: red;
+  font-size: 13px;
+  text-align: left;
+}
+
+.server-down {
+  color: red;
+  font-size: 20px;
 }

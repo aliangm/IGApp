@@ -3,10 +3,10 @@
 }
 
 .inner {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .help-wrap {
-  position: relative;
+    position: relative;
 }

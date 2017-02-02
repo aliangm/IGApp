@@ -3,6 +3,8 @@ import Component from 'components/Component';
 
 import Button from 'components/controls/Button';
 import Item from 'components/pages/plan/ProjectionItem';
+import Popup from 'components/Popup';
+import Loading from 'components/pages/plan/Loading';
 
 import style from 'styles/plan/projections-tab.css';
 import planStyles from 'styles/plan/plan.css';
@@ -39,7 +41,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["grow", "grow", "grow", "grow"],
           defaultValue: ["3500", "3700", "4100", "4500"],
           grow: ["8", "14", "27", "39"],
-          icon: "indicator:facebook",
+          icon: "indicator:facebookEngagement",
           title: "Facebook Engagement",
           key: "facebookEngagement"
         },
@@ -55,7 +57,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["grow", "grow", "grow", "grow"],
           defaultValue: ["4000", "4500", "5100", "6000"],
           grow: ["12", "26", "43", "68"],
-          icon: "indicator:twitter",
+          icon: "indicator:twitterEngagement",
           title: "Twitter Engagement",
           key: "twitterEngagement"
         },
@@ -71,7 +73,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "normal", "normal"],
           defaultValue: ["1100", "1100", "1100", "1100"],
           grow: ["", "", "", ""],
-          icon: "indicator:linkedin",
+          icon: "indicator:linkedinEngagement",
           title: "LinkedIn Engagement",
           key: "linkedinEngagement"
         },
@@ -87,7 +89,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["grow", "grow", "grow", "grow"],
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
-          icon: "indicator:instagram",
+          icon: "indicator:instagramEngagement",
           title: "Instagram Engagement",
           key: "instagramEngagement"
         },
@@ -95,7 +97,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["grow", "grow", "grow", "grow"],
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
-          icon: "indicator:google-rank",
+          icon: "indicator:google",
           title: "Google+ Followers",
           key: "googlePlusFollowers"
         },
@@ -103,7 +105,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["grow", "grow", "grow", "grow"],
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
-          icon: "indicator:google-rank",
+          icon: "indicator:googleEngagement",
           title: "Google+ Engagement",
           key: "googlePlusEngagement"
         },
@@ -119,7 +121,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "normal", "normal"],
           defaultValue: ["1500", "1500", "1500", "1500"],
           grow: ["", "", "", ""],
-          icon: "indicator:pinterest",
+          icon: "indicator:pinterestEngagement",
           title: "Pinterest Engagement",
           key: "pinterestEngagement"
         },
@@ -127,7 +129,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "normal", "normal"],
           defaultValue: ["700", "700", "700", "700"],
           grow: ["", "", "", ""],
-          icon: "indicator:snapchat",
+          icon: "indicator:youtube",
           title: "Youtube Subscribers",
           key: "youtubeSubscribers"
         },
@@ -135,7 +137,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "normal", "normal"],
           defaultValue: ["700", "700", "700", "700"],
           grow: ["", "", "", ""],
-          icon: "indicator:snapchat",
+          icon: "indicator:youtubeEngagement",
           title: "Youtube Engagement",
           key: "youtubeEngagement"
         }
@@ -161,22 +163,6 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
-          icon: "indicator:sales",
-          title: "Number Of Sales",
-          key: "numberOfSales"
-        },
-        {
-          defaultState: ["normal", "normal", "grow", "grow"],
-          defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
-          grow: ["", "", "9", "17"],
-          icon: "indicator:sales",
-          title: "Revenue",
-          key: "revenue"
-        },
-        {
-          defaultState: ["normal", "normal", "grow", "grow"],
-          defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
-          grow: ["", "", "9", "17"],
           icon: "indicator:users",
           title: "Users",
           key: "users"
@@ -185,7 +171,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
-          icon: "indicator:active-users",
+          icon: "indicator:activeUsers",
           title: "Active Users Rate",
           key: "activeUsersRate"
         },
@@ -193,17 +179,9 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
-          icon: "indicator:new-users",
+          icon: "indicator:trialUsers",
           title: "Trial Users",
           key: "trialUsers"
-        },
-        {
-          defaultState: ["normal", "normal", "grow", "grow"],
-          defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
-          grow: ["", "", "9", "17"],
-          icon: "indicator:users",
-          title: "Customer Retention Rate",
-          key: "customerRetentionRate"
         },
 
       ],
@@ -213,7 +191,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "grow", "grow", "grow"],
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
-          icon: "indicator:lead",
+          icon: "indicator:mcl",
           title: "MCL",
           key: "MCL"
         },
@@ -221,7 +199,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "grow", "grow", "grow"],
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
-          icon: "indicator:lead",
+          icon: "indicator:mql",
           title: "MQL",
           key:"MQL"
         },
@@ -229,7 +207,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "grow", "grow", "grow"],
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
-          icon: "indicator:lead",
+          icon: "indicator:sql",
           title: "SQL",
           key: "SQL"
         },
@@ -240,7 +218,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "normal", "grow"],
           defaultValue: ["1650", "1650", "1650", "1900"],
           grow: ["", "", "", "15"],
-          icon: "indicator:mentions",
+          icon: "indicator:googleMentions",
           title: "Google Mentions",
           key: "googleMentions"
         }
@@ -251,7 +229,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:sessions",
           title: "Sessions",
           key: "sessions"
         },
@@ -259,7 +237,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:averageSessionDuration",
           title: "Average Session Duration",
           key: "averageSessionDuration"
         },
@@ -267,7 +245,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:bounceRate",
           title: "Bounce Rate",
           key: "bounceRate"
         },
@@ -275,7 +253,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:blogVisits",
           title: "Blog Visits",
           key: "blogVisits"
         },
@@ -283,7 +261,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:blogSubscribers",
           title: "Blog Subscribers",
           key: "blogSubscribers"
         }
@@ -294,7 +272,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:mrr",
           title: "MRR",
           key: "MRR"
         },
@@ -302,7 +280,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
-          icon: "indicator:downloads",
+          icon: "indicator:churnRate",
           title: "Churn Rate",
           key: "churnRate"
         }
@@ -311,23 +289,22 @@ export default class ProjectionsTab extends Component {
   }
 
   calculateState(item){
-    if (this.state.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] > this.state.actualIndicators[item.key]) {
+    if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] > this.props.actualIndicators[item.key]) {
       return 'grow';
     }
-    else if (this.state.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] < this.state.actualIndicators[item.key]) {
+    else if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] < this.props.actualIndicators[item.key]) {
       return 'decline';
     }
     else return 'normal';
   }
-
-  componentDidMount(){
+  /**
+   componentDidMount(){
     let self = this;
     serverCommunication.serverRequest('GET', 'usermonthplan')
       .then((response) => {
         response.json()
           .then(function (data) {
             if (data) {
-              self.setState({actualIndicators: data.actualIndicators});
               self.setState({projectedPlan: data.projectedPlan});
               self.setState({isLoaded: true});
             }
@@ -336,7 +313,7 @@ export default class ProjectionsTab extends Component {
       .catch(function (err) {
         console.log(err);
       })
-  }
+  }**/
 
   selectTab = (index) => {
     this.setState({
@@ -345,59 +322,76 @@ export default class ProjectionsTab extends Component {
   }
 
   render() {
-    if (this.state.isLoaded) {
-      const selectedTab = this.state.selectedTab;
-      const rows = this.rows.map((items, i) => {
-        items = items.map((item, j) => {
-          return <Item
-            key={ `row${i}-item${j}` }
-            //defaultState={ item.defaultState && item.defaultState[selectedTab] }
-            defaultState={ this.calculateState(item) }
-            //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
-            defaultValue={ this.state.projectedPlan && this.state.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
-            //grow={ item.grow && item.grow[selectedTab] }
-            grow={ Math.ceil(Math.abs((this.state.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] - this.state.actualIndicators[item.key]) / this.state.actualIndicators[item.key]) * 100) }
-            icon={ item.icon }
-            title={ item.title }
-          />
+    if (this.props.isLoaded) {
+      if (!this.props.isPlannerLoading) {
+        const selectedTab = this.state.selectedTab;
+        const rows = this.rows.map((items, i) => {
+          items = items.map((item, j) => {
+            return <Item
+              key={ `row${i}-item${j}` }
+              //defaultState={ item.defaultState && item.defaultState[selectedTab] }
+              defaultState={ this.calculateState(item) }
+              //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
+              defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
+              //grow={ item.grow && item.grow[selectedTab] }
+              grow={ Math.ceil(Math.abs((this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) }
+              icon={ item.icon }
+              title={ item.title }
+            />
+          });
+
+          return <div className={ this.classes.row } key={`row${i}`}>
+            { items }
+          </div>
         });
 
-        return <div className={ this.classes.row } key={`row${i}`}>
-          { items }
-        </div>
-      });
-
-      return <div className={ this.classes.wrap }>
-        <div className={ planStyles.locals.title }>
-          <div className={ planStyles.locals.titleMain }>
-            <div className={ planStyles.locals.titleText }>
-              Projections (months)
+        return <div className={ this.classes.wrap }>
+          <div className={ planStyles.locals.title }>
+            <div className={ planStyles.locals.titleMain }>
+              <div className={ planStyles.locals.titleText }>
+                Projections (months)
+              </div>
             </div>
-          </div>
-          <div className={ planStyles.locals.titleButtons }>
-            {
-              this.tabs.map((tab, i) => {
-                return <Button
-                  key={i}
-                  className={ this.classes.tabButton }
-                  type={ i === this.state.selectedTab ? 'primary2' : 'normal' }
-                  onClick={() => {
+            <div className={ planStyles.locals.titleButtons }>
+              {
+                this.tabs.map((tab, i) => {
+                  return <Button
+                    key={i}
+                    className={ this.classes.tabButton }
+                    type={ i === this.state.selectedTab ? 'primary2' : 'normal' }
+                    onClick={() => {
                   this.selectTab(i);
                 }}
-                >{ tab }</Button>
-              })
-            }
+                  >{ tab }</Button>
+                })
+              }
+            </div>
+          </div>
+          <div className={ planStyles.locals.innerBox }>
+            <div className={ this.classes.content }>
+              { rows }
+            </div>
           </div>
         </div>
-        <div className={ planStyles.locals.innerBox }>
-          <div className={ this.classes.content }>
-            { rows }
-          </div>
+      }
+      else {
+        return <div className={ this.classes.loading }>
+          <Popup className={ this.classes.popup }>
+            <div>
+              <Loading />
+            </div>
+
+            <div className={ this.classes.popupText }>
+              Please wait while the system creates your plan
+            </div>
+          </Popup>
         </div>
-      </div>
+      }
     }
-    else {
-      return null;
-    }
+    else return <div className={ this.classes.error }>
+      <Page>
+        <label hidden={ !this.props.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
+      </Page>
+    </div>;
   }
 }

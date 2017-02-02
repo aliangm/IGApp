@@ -34,6 +34,11 @@
   justify-content: flex-end;
 }
 
+.almost-footer {
+  padding-right: 3%;
+}
+
+
 .footer-cols {
   display: flex;
 }
@@ -88,4 +93,9 @@
   .col-right {
     display: none;
   }
+}
+
+.error {
+  color: red;
+  font-size: 20px;
 }

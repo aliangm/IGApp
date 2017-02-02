@@ -179,3 +179,32 @@
     align-items: center;
   }
 }
+
+.box {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    border-radius: 4px;
+    user-select: none;
+    flex-shrink: 0;
+    flex-grow: 0;
+    text-transform: uppercase;
+}
+
+.primary2 {
+  width: 100px;
+  composes: box;
+  color: white;
+    justify-content: center;
+    background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
+    /**box-shadow: 0 0 0 1px #1991eb !important;**/
+    font-weight: 600;
+    border: none;
+    font-size: 14px;
+}
+
+.primary2[data-selected] {
+  background: #0e568b;
+}

@@ -1,5 +1,5 @@
 //import serverCommunication from './serverCommunication';
-//var json = require('C:/ws/IGPlanner - 20161227 (dev end)/files/.outputPlan.json');
+
 import schema from './channelsSchema';
 import _ from 'lodash';
 

@@ -21,7 +21,7 @@ export default class Select extends Component {
     let selected = -1;
     
     if (this.props.label) {
-      label = <Label question={ this.props.labelQuestion }>{ this.props.label }</Label>
+      label = <Label question={ this.props.labelQuestion } description={ this.props.description }>{ this.props.label }</Label>
     }
     
     const select = this.props.select;

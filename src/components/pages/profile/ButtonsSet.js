@@ -20,9 +20,7 @@ export default class ButtonsSet extends Component {
   }
   componentWillReceiveProps(nextProps){
     nextProps.buttons.map((params, i) => {
-      console.log(nextProps.selectedKey, params.key, i);
       if (nextProps.selectedKey == params.key){
-        console.log(params.text)
         this.state.selectedButton = params.key;
       }
     });

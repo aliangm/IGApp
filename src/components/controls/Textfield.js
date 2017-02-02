@@ -27,15 +27,15 @@ export default class Textfield extends Component {
     }
 
     return <div className={ className } style={ this.props.style }>
-      <input type="text"
+      <input type= {this.props.type }
         ref="input"
         className={ this.classes.input }
         defaultValue={ this.props.defaultValue }
         value={ this.props.value }
         readOnly={ this.props.readOnly }
-
-        type={ this.props.type }
-
+        minLength= {this.props.minLength }
+        //type={ this.props.type }
+        required = {this.props.required }
         onClick={ this.props.onClick }
         onFocus={ this.props.onFocus }
         onBlur={ this.props.onBlur }

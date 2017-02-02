@@ -54,7 +54,8 @@ export default class Sidebar extends Component {
           <MenuItem icon="sidebar:targeting" link="/target-audience" text="Target Audience" />
           <MenuItem icon="sidebar:goals" link="/preferences" text="Preferences" />
           {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
-          <MenuItem icon="sidebar:indicators" link="/indicators" text="Indicators" />
+          <MenuItem icon="sidebar:indicators" link="/indicators" text="Metrics" />
+          <MenuItem icon="sidebar:planned-vs-actual" link="/planned-vs-actual" text="Planned VS Actual" />
           <MenuItem icon="sidebar:plan" link="/plan" text="Plan" />
         </div>
 

@@ -49,6 +49,7 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
-    "lodash": "latest"
+    "lodash": "latest",
+    "react-notification-system": "latest"
   }
 }

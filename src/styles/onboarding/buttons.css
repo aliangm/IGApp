@@ -5,3 +5,4 @@
 }
 
 @mixin icon-nodpi buttons:plan, ../../assets/plan-button-icon;
+@mixin icon-nodpi buttons:replan, ../../assets/replan;
