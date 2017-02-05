@@ -7,7 +7,7 @@ export default {
 		var deferred = q.defer();
 
 		//fetch('http://localhost:3000/' + route, {
-		fetch('http://infinigrowtest.centralus.cloudapp.azure.com/' + route, {	
+		fetch('http://infinigrowtest.centralus.cloudapp.azure.com:3000/' + route, {	
 		method: httpFunc,
 			headers: {
 				'Content-Type': 'application/json'
