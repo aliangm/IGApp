@@ -45,14 +45,13 @@ export default class SignIn extends Component {
     e.preventDefault();
     let route = this.state.login ? 'login' : 'signup';
     var self = this;
-    serverCommunication.serverRequest('POST', route, JSON.stringify({email: self.state.email, password: self.state.password }))
+    serverCommunication.serverRequest('POST', route, JSON.stringify({email: self.state.email, password: self.state.password, promotionCode: self.state.promotionCode }))
       .then((response) => {
         response.json()
           .then(function (data) {
             if (data){
               if (route == 'login'){
-                disablePopupMode();
-                history.push('/profile');
+                history.push('/plan');
               }
               else {
                 history.push('/welcome');
@@ -74,11 +73,6 @@ export default class SignIn extends Component {
         console.log(err);
       })
   }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    alert('nice');
-  };
 
   render() {
     return <div>
@@ -204,7 +198,14 @@ export default class SignIn extends Component {
                 <Textfield type="password" minLength={this.passLength} required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
-
+            
+            <div className={ onboardingStyle.locals.row }>
+              <div className={ this.classes.colsCell }>
+                <Label className={ this.classes.textLabel }>Promotion Code</Label>
+                <Textfield type="text" required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'promotionCode')} />
+              </div>
+            </div>
+            
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
                 <div className={ this.classes.leftCol }></div>

@@ -47,32 +47,27 @@ export default class Profile extends Component {
 
   componentDidMount(){
     let self = this;
-    if (isPopupMode()){
-      self.setState({isLoaded: true});
-    }
-    else {
-      serverCommunication.serverRequest('GET', 'usermonthplan')
-        .then((response) => {
-          response.json()
-            .then(function (data) {
-              if (data) {
-                if (data.err) {
-                  history.push('/');
-                }
-                else {
-                  self.setState({
-                    userProfile: data.userProfile,
-                    isLoaded: true
-                  });
-                }
+    serverCommunication.serverRequest('GET', 'usermonthplan')
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              if (data.error) {
+                history.push('/');
               }
-            })
-        })
-        .catch(function (err) {
-          self.setState({serverDown: true});
-          console.log(err);
-        })
-    }
+              else {
+                self.setState({
+                  userProfile: data.userProfile,
+                  isLoaded: true
+                });
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        self.setState({serverDown: true});
+        console.log(err);
+      })
   }
 
   handleChangeSelect(parameter, event){
@@ -109,6 +104,8 @@ export default class Profile extends Component {
     const selects = {
       vertical: {
         label: 'Vertical',
+        labelQuestion: [],
+        description: [],
         select: {
           name: 'vertical',
           //onChange: () => {  },
@@ -159,6 +156,8 @@ export default class Profile extends Component {
       },
       loyalty: {
         label: 'Loyalty',
+        labelQuestion: [''],
+        description: ['What is the loyalty level of your customers? If a new/existing competitor offers a new similar product/service, what is the possibility that your user will move to his offer? Please take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you. ).'],
         select: {
           name: 'loyalty',
           onChange: () => {},
@@ -172,6 +171,8 @@ export default class Profile extends Component {
       },
       price: {
         label: 'Price',
+        labelQuestion: [''],
+        description: ['What is your main pricing point? \n *In case of SaaS, which annual subscription option is the most popular?'],
         select: {
           name: 'price',
           //onChange: () => {},
@@ -191,6 +192,8 @@ export default class Profile extends Component {
       },
       differentiation: {
         label: 'Differentiation',
+        labelQuestion: [''],
+        description: ['What is your main differentiation from your competitors? If you’re not sure, please choose ‘Other’.'],
         select: {
           name: 'differentiation',
           options: [
@@ -243,165 +246,163 @@ export default class Profile extends Component {
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
-        { this.state.isLoaded ?
-          <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
-              {/**<div className={ this.classes.row } style={{
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
+            {/**<div className={ this.classes.row } style={{
               width: '258px'
             }}>
-               <Select required { ... selects.vertical } selected={ this.state.userProfile.vertical} onChange= { this.handleChangeSelect.bind(this, 'vertical') }/>
-               </div>**/}
-              <div className={ this.classes.row }>
-                <Label question={['IT', 'Martech', 'BI & Analytics', 'Sales']}>Vertical</Label>
-                <ButtonsSet buttons={[
+             <Select required { ... selects.vertical } selected={ this.state.userProfile.vertical} onChange= { this.handleChangeSelect.bind(this, 'vertical') }/>
+             </div>**/}
+            <div className={ this.classes.row }>
+              <Label question={['']} description={['Which vertical/industry does your company work in?']}>Vertical</Label>
+              <ButtonsSet buttons={[
                 { key: 'IT', text: 'IT', icon: 'buttons:IT' },
                 { key: 'Martech', text: 'Martech', icon: 'buttons:martech' },
                 { key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:analytics_BI' },
                 { key: 'Sales', text: 'Sales', icon: 'buttons:sales' },
               ]} selectedKey={ this.state.userProfile.vertical } onChange = {this.handleChangeButton.bind(this, 'vertical')} />
-              </div>
-              {/*<div className={ this.classes.row } style={{
-               width: '258px'
-               }}>
-               <Select { ... selects.category } selected={ this.state.userProfile.category } onChange= { this.handleChangeSelect.bind(this, 'category') }/>
-               </div> */}
-              <div className={ this.classes.row }>
-                <Label question={['B2C', 'B2B']}>Orientation</Label>
-                <ButtonsSet buttons={[
+            </div>
+            {/*<div className={ this.classes.row } style={{
+             width: '258px'
+             }}>
+             <Select { ... selects.category } selected={ this.state.userProfile.category } onChange= { this.handleChangeSelect.bind(this, 'category') }/>
+             </div> */}
+            <div className={ this.classes.row }>
+              <Label question={['']} description={['What is the orientation of your company?']}>Orientation</Label>
+              <ButtonsSet buttons={[
                 { key: 'B2C', text: 'B2C', icon: 'buttons:b2c' },
                 { key: 'B2B', text: 'B2B', icon: 'buttons:b2b' },
               ]}  selectedKey={ this.state.userProfile.orientation } onChange = {this.fakeChange.bind(this, 'orientation', 'B2B')}/>
-              </div>
-              <div className={ this.classes.row }>
-                <Label question={['Product', 'Service']}>Business Model</Label>
-                <ButtonsSet buttons={[
+            </div>
+            <div className={ this.classes.row }>
+              <Label question={['', 'On-prem']} description={['What is your company’s business model?', 'is a shortcut for On-premises software.']}>Business Model</Label>
+              <ButtonsSet buttons={[
                 { key: 'SaaS', text: 'SaaS', icon: 'buttons:SaaS' },
-                { key: 'Software Product', text: 'Software Product', icon: 'buttons:product' },
+                { key: 'On-prem', text: 'On-prem', icon: 'buttons:product' },
                 { key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace' },
                 { key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium' },
               ]} selectedKey={ this.state.userProfile.businessModel } onChange = {this.fakeChange.bind(this, 'businessModel', 'SaaS')} />
-              </div>
-              <div className={ this.classes.row }>
-                <Label question={['Product', 'Service']}>Platform</Label>
-                <ButtonsSet buttons={[
+            </div>
+            <div className={ this.classes.row }>
+              <Label question={['']} description={['What is your main platform? If you’re using all platforms equally, please choose ‘Any’.']}>Platform</Label>
+              <ButtonsSet buttons={[
                 { key: 'Mobile', text: 'Mobile', icon: 'buttons:mobile' },
                 { key: 'Web', text: 'Web', icon: 'buttons:web' },
                 { key: 'Desktop', text: 'Desktop', icon: 'buttons:desktop' },
                 { key: 'Any', text: 'Any', icon: 'buttons:any' },
               ]} selectedKey={ this.state.userProfile.platform } onChange = {this.handleChangeButton.bind(this, 'platform')} />
-              </div>
-              <div className={ this.classes.row }>
-                <Label question={['Intro', 'Growth', 'Mature', 'Decline']}>Life Cycle</Label>
-                <ButtonsSet ref="lifeCycle" buttons={[
+            </div>
+            <div className={ this.classes.row }>
+              <Label question={['', 'Intro', 'Growth', 'Mature', 'Decline']} description={['Which stage of a company lifecycle currently fits your company?', 'pre-product/market fit.', 'reached product/market fit, sales begin to increase.', 'sales reached / are reaching their peak.', 'sales begin to decline as the product reaches its saturation point.']}>Life Cycle</Label>
+              <ButtonsSet ref="lifeCycle" buttons={[
                 { key: 'Intro', text: 'Intro', icon: 'buttons:intro' },
                 { key: 'Growth', text: 'Growth', icon: 'buttons:growth' },
                 { key: 'Mature', text: 'Mature', icon: 'buttons:mature' },
                 { key: 'Decline', text: 'Decline', icon: 'buttons:decline' },
               ]} selectedKey={ this.state.userProfile.lifeCycle } onChange = {this.handleChangeButton.bind(this, 'lifeCycle')}/>
-              </div>
-              <div className={ this.classes.row }>
-                <Label question={['Worldwide', 'National', 'Local']}>Coverage</Label>
-                <ButtonsSet buttons={[
+            </div>
+            <div className={ this.classes.row }>
+              <Label>Coverage</Label>
+              <ButtonsSet buttons={[
                 { key: 'Worldwide', text: 'Worldwide', icon: 'buttons:worldwide' },
                 { key: 'Nationwide', text: 'Nationwide', icon: 'buttons:national' },
                 { key: 'Local', text: 'Local', icon: 'buttons:local' },
                 { key: 'Any', text: 'Any', icon: 'buttons:any2' },
               ]} selectedKey={ this.state.userProfile.coverage } onChange = {this.handleChangeButton.bind(this, 'coverage')} />
-              </div>
-              <div className={ this.classes.row } style={{
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.price } selected={ this.state.userProfile.price} onChange= { this.handleChangeSelect.bind(this, 'price') }/>
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.price } selected={ this.state.userProfile.price} onChange= { this.handleChangeSelect.bind(this, 'price') }/>
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.loyalty } selected={ this.state.userProfile.loyalty} onChange= { this.handleChangeSelect.bind(this, 'loyalty') }/>
-              </div>
-              {/*      <div className={ this.classes.row }>
-               <Label question>{ selects.loyalty.label }</Label>
-               <div className={ this.classes.cell }>
-               <Select { ... selects.loyalty } selected={ this.state.userProfile.loyalty} onchange= { this.handleChangeSelect.bind(this, 'loyalty') } label={ null } style={{
-               width: '258px'
-               }} />
-               </div>
-               </div> */}
-              {/*   <div className={ this.classes.row }>
-               <Label question={['Product', 'Service']}>Differentiation</Label>
-               <ButtonsSet buttons={[
-               { key: 'Technology', text: 'Technology', icon: 'buttons:intro' },
-               { key: 'High-End', text: 'High-End', icon: 'buttons:growth' },
-               { key: 'Low Price', text: 'Low Price', icon: 'buttons:mature' },
-               { key: 'Customized', text: 'Customized', icon: 'buttons:decline' },
-               { key: 'Low Touch', text: 'Low Touch', icon: 'buttons:decline' },
-               { key: 'Unique Value Offer', text: 'Unique Value Offer', icon: 'buttons:decline' },
-               ]} selectedKey={ this.state.userProfile.differentiation } onChange = {this.handleChangeButton.bind(this, 'differentiation')} />
-               </div> */}
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.loyalty } selected={ this.state.userProfile.loyalty} onChange= { this.handleChangeSelect.bind(this, 'loyalty') }/>
+            </div>
+            {/*      <div className={ this.classes.row }>
+             <Label question>{ selects.loyalty.label }</Label>
+             <div className={ this.classes.cell }>
+             <Select { ... selects.loyalty } selected={ this.state.userProfile.loyalty} onchange= { this.handleChangeSelect.bind(this, 'loyalty') } label={ null } style={{
+             width: '258px'
+             }} />
+             </div>
+             </div> */}
+            {/*   <div className={ this.classes.row }>
+             <Label question={['Product', 'Service']}>Differentiation</Label>
+             <ButtonsSet buttons={[
+             { key: 'Technology', text: 'Technology', icon: 'buttons:intro' },
+             { key: 'High-End', text: 'High-End', icon: 'buttons:growth' },
+             { key: 'Low Price', text: 'Low Price', icon: 'buttons:mature' },
+             { key: 'Customized', text: 'Customized', icon: 'buttons:decline' },
+             { key: 'Low Touch', text: 'Low Touch', icon: 'buttons:decline' },
+             { key: 'Unique Value Offer', text: 'Unique Value Offer', icon: 'buttons:decline' },
+             ]} selectedKey={ this.state.userProfile.differentiation } onChange = {this.handleChangeButton.bind(this, 'differentiation')} />
+             </div> */}
+            <div className={ this.classes.row } style={{
               			marginBottom: '200px',
                     width: '258px'
                   }}>
-                <Select { ... selects.differentiation } selected={ this.state.userProfile.differentiation} onChange= { this.handleChangeSelect.bind(this, 'differentiation') }/>
-              </div>
-              {
-                /*
-                 <div className={ this.classes.row }>
-                 <Label question={['Purchase', 'Subscription']}>Acquisition</Label>
-                 <ButtonsSet buttons={[
-                 { text: 'Purchase', icon: 'buttons:purchase' },
-                 { text: 'Subscription', icon: 'buttons:subscription' },
-                 ]} />
-                 </div>
-                 <div className={ this.classes.row }>
-                 <Label question>Price</Label>
-                 <Textfield defaultValue="$" style={{
-                 width: '166px'
-                 }} />
-                 </div>
-
-                 <div className={ this.classes.row }>
-                 <Label>Enter your main competitor’s website (up to 3)</Label>
-                 <Textfield defaultValue="http://" style={{
-                 maxWidth: '440px',
-                 minWidth: '200px',
-                 marginBottom: '16px'
-                 }} />
-                 <Textfield defaultValue="http://" style={{
-                 maxWidth: '440px',
-                 minWidth: '200px',
-                 marginBottom: '16px'
-                 }} />
-                 <Textfield defaultValue="http://" style={{
-                 maxWidth: '440px',
-                 minWidth: '200px',
-                 marginBottom: '16px'
-                 }} />
-                 </div>
-                 */
-              }
-
+              <Select { ... selects.differentiation } selected={ this.state.userProfile.differentiation} onChange= { this.handleChangeSelect.bind(this, 'differentiation') }/>
             </div>
+            {
+              /*
+               <div className={ this.classes.row }>
+               <Label question={['Purchase', 'Subscription']}>Acquisition</Label>
+               <ButtonsSet buttons={[
+               { text: 'Purchase', icon: 'buttons:purchase' },
+               { text: 'Subscription', icon: 'buttons:subscription' },
+               ]} />
+               </div>
+               <div className={ this.classes.row }>
+               <Label question>Price</Label>
+               <Textfield defaultValue="$" style={{
+               width: '166px'
+               }} />
+               </div>
+
+               <div className={ this.classes.row }>
+               <Label>Enter your main competitor’s website (up to 3)</Label>
+               <Textfield defaultValue="http://" style={{
+               maxWidth: '440px',
+               minWidth: '200px',
+               marginBottom: '16px'
+               }} />
+               <Textfield defaultValue="http://" style={{
+               maxWidth: '440px',
+               minWidth: '200px',
+               marginBottom: '16px'
+               }} />
+               <Textfield defaultValue="http://" style={{
+               maxWidth: '440px',
+               minWidth: '200px',
+               marginBottom: '16px'
+               }} />
+               </div>
+               */
+            }
+
+          </div>
 
 
-            { isPopupMode() ?
+          { isPopupMode() ?
 
-              <div className={ this.classes.colRight }>
-                <div className={ this.classes.row }>
-                  <ProfileProgress progress={ 26 } image={
+            <div className={ this.classes.colRight }>
+              <div className={ this.classes.row }>
+                <ProfileProgress progress={ 26 } image={
                 require('assets/flower/1.png')
               }
-                                   text="Congrats! The seeds of GROWTH have been planted"/>
-                </div>
-                {/*
-                 <div className={ this.classes.row }>
-                 <ProfileInsights highlight={ this.state.highlightInsights } />
-                 </div>
-                 */}
+                                 text="Congrats! The seeds of GROWTH have been planted"/>
               </div>
+              {/*
+               <div className={ this.classes.row }>
+               <ProfileInsights highlight={ this.state.highlightInsights } />
+               </div>
+               */}
+            </div>
 
-              : null }
-          </div>
-          : null }
+            : null }
+        </div>
 
         { isPopupMode() ?
           <div className={ this.classes.footer }>
@@ -409,16 +410,19 @@ export default class Profile extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
+             serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
+			        .then(function(data){
             history.push('/welcome');
+            })
           }} />
             <div style={{ width: '30px' }} />
             <NextButton onClick={() =>
               {
               if (this.validate()){
-          	serverCommunication.serverRequest('POST', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
+          	serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
 			        .then(function(data){
+			          history.push('/target-audience');
 			        });
-              history.push('/target-audience');
             }
             else{
               this.setState({validationError: true});

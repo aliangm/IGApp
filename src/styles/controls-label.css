@@ -28,18 +28,18 @@
   position: absolute;
   left: 100%;
   top: -8px;
-  width: 184px;
   min-height: 60px;
   margin-left: 12px;
-
+  width: 380px;
   background: white;
   border: 1px solid #dbdce3;
   border-radius: 4px;
   box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2);
   padding: 0 9px;
   z-index: 1;
-
   text-transform: none;
+  white-space: pre-wrap;
+  line-height: 140%;
 }
 
 .tooltip::before {
@@ -98,12 +98,11 @@
 
 .tt-sub-text {
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   font-style: italic;
   color: #354052;
   margin-top: 4px;
   margin-bottom: 10px;
-
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
 }

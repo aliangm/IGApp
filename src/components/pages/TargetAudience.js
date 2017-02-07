@@ -41,32 +41,27 @@ export default class TargetAudience extends Component {
 
   componentDidMount(){
     let self = this;
-    if (isPopupMode()){
-      self.setState({isLoaded: true});
-    }
-    else {
-      serverCommunication.serverRequest('GET', 'usermonthplan')
-        .then((response) => {
-          response.json()
-            .then(function (data) {
-              if (data) {
-                if (data.error){
-                  history.push('/');
-                }
-                else {
-                  self.setState({
-                    targetAudience: data.targetAudience,
-                    isLoaded: true
-                  });
-                }
+    serverCommunication.serverRequest('GET', 'usermonthplan')
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              if (data.error){
+                history.push('/');
               }
-            })
-        })
-        .catch(function (err) {
-          self.setState({serverDown: true});
-          console.log(err);
-        })
-    }
+              else {
+                self.setState({
+                  targetAudience: data.targetAudience,
+                  isLoaded: true
+                });
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        self.setState({serverDown: true});
+        console.log(err);
+      })
   }
 
   validate() {
@@ -83,7 +78,7 @@ export default class TargetAudience extends Component {
       this.state.targetAudience.children &&
       this.state.targetAudience.community &&
       this.state.targetAudience.location &&
-      this.state.targetAudience.dailyOnlinePresence
+      this.state.targetAudience.dailyOnlinePresence;
   }
 
   handleChange(parameter, event){
@@ -328,150 +323,151 @@ export default class TargetAudience extends Component {
     return <div>
       <Header />
       <Sidebar />
-        <Page popup={ isPopupMode() }>
-          <Title title="Target Audience" subTitle="Who is your target audience? The best marketing strategies are always based on the people you want to reach" />
-          <div className={ this.classes.error }>
-            <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
-          </div>
-          { this.state.isLoaded ?
-            <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
+      <Page popup={ isPopupMode() }>
+        <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
+        <div className={ this.classes.error }>
+          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
+        </div>
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
 
-              <div className={ this.classes.row } style={{
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.role } selected={ this.state.targetAudience.role } onChange= { this.handleChange.bind(this, 'role') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.role } selected={ this.state.targetAudience.role } onChange= { this.handleChange.bind(this, 'role') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.managementLevel } selected={ this.state.targetAudience.managementLevel } onChange= { this.handleChange.bind(this, 'managementLevel') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.managementLevel } selected={ this.state.targetAudience.managementLevel } onChange= { this.handleChange.bind(this, 'managementLevel') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.reportsTo }  />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.reportsTo }  />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.companyType } selected={ this.state.targetAudience.companyType } onChange= { this.handleChange.bind(this, 'companyType') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.companyType } selected={ this.state.targetAudience.companyType } onChange= { this.handleChange.bind(this, 'companyType') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.annualRevenue } selected={ this.state.targetAudience.annualRevenue } onChange= { this.handleChange.bind(this, 'annualRevenue') }/>
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.annualRevenue } selected={ this.state.targetAudience.annualRevenue } onChange= { this.handleChange.bind(this, 'annualRevenue') }/>
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.employees } selected={ this.state.targetAudience.employees } onChange= { this.handleChange.bind(this, 'employees') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.employees } selected={ this.state.targetAudience.employees } onChange= { this.handleChange.bind(this, 'employees') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.age } selected={ this.state.targetAudience.age } onChange= { this.handleChange.bind(this, 'age') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.age } selected={ this.state.targetAudience.age } onChange= { this.handleChange.bind(this, 'age') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.salary } selected={ this.state.targetAudience.salary } onChange= { this.handleChange.bind(this, 'salary') } />
-              </div>
-              {/**	<div className={ this.classes.row }>
-               <Label question>{ selects.loyalty.label }</Label>
-               <div className={ this.classes.cell }>
-               <Select { ... selects.loyalty } label={ null } style={{
+              <Select { ... selects.salary } selected={ this.state.targetAudience.salary } onChange= { this.handleChange.bind(this, 'salary') } />
+            </div>
+            {/**	<div className={ this.classes.row }>
+             <Label question>{ selects.loyalty.label }</Label>
+             <div className={ this.classes.cell }>
+             <Select { ... selects.loyalty } label={ null } style={{
                         width: '258px'
                       }} />
-               <NotSure style={{
+             <NotSure style={{
                         marginLeft: '10px'
                       }} />
-               </div>
-               </div>**/}
-              <div className={ this.classes.row } style={{
+             </div>
+             </div>**/}
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.gender } selected={ this.state.targetAudience.gender } onChange= { this.handleChange.bind(this, 'gender') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.gender } selected={ this.state.targetAudience.gender } onChange= { this.handleChange.bind(this, 'gender') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.education } selected={ this.state.targetAudience.education } onChange= { this.handleChange.bind(this, 'education') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.education } selected={ this.state.targetAudience.education } onChange= { this.handleChange.bind(this, 'education') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.marital_status } selected={ this.state.targetAudience.maritalStatus } onChange= { this.handleChange.bind(this, 'maritalStatus') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.marital_status } selected={ this.state.targetAudience.maritalStatus } onChange= { this.handleChange.bind(this, 'maritalStatus') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.have_children } selected={ this.state.targetAudience.children } onChange= { this.handleChange.bind(this, 'children') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.have_children } selected={ this.state.targetAudience.children } onChange= { this.handleChange.bind(this, 'children') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.community } selected={ this.state.targetAudience.community } onChange= { this.handleChange.bind(this, 'community') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.community } selected={ this.state.targetAudience.community } onChange= { this.handleChange.bind(this, 'community') } />
+            </div>
+            <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                <Select { ... selects.location } selected={ this.state.targetAudience.location } onChange= { this.fakeChange.bind(this, 'location', 'USA') } />
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.location } selected={ this.state.targetAudience.location } onChange= { this.fakeChange.bind(this, 'location', 'USA') } />
+            </div>
+            <div className={ this.classes.row } style={{
 						marginBottom: '200px',
                     width: '258px'
                   }}>
-                <Select { ... selects.dailyOnlinePresence } selected={ this.state.targetAudience.dailyOnlinePresence } onChange= { this.handleChange.bind(this, 'dailyOnlinePresence') } />
-              </div>
+              <Select { ... selects.dailyOnlinePresence } selected={ this.state.targetAudience.dailyOnlinePresence } onChange= { this.handleChange.bind(this, 'dailyOnlinePresence') } />
             </div>
-
-            { isPopupMode() ?
-
-              <div className={ this.classes.colRight }>
-                <div className={ this.classes.row }>
-                  <ProfileProgress progress={ 51 } image={
-                require('assets/flower/3.png')
-              }
-                                   text=" You are starting to GROW"/>
-                </div>
-                {/*
-                 <div className={ this.classes.row }>
-                 <ProfileInsights />
-                 </div>
-                 */}
-              </div>
-
-              : null }
           </div>
-          : null }
 
           { isPopupMode() ?
 
-            <div className={ this.classes.footer }>
-              <div className={ this.classes.almostFooter }>
-                <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
+            <div className={ this.classes.colRight }>
+              <div className={ this.classes.row }>
+                <ProfileProgress progress={ 51 } image={
+                require('assets/flower/3.png')
+              }
+                                 text="You are starting to GROW"/>
               </div>
-              <BackButton onClick={() => {
-            history.push('/profile');
+              {/*
+               <div className={ this.classes.row }>
+               <ProfileInsights />
+               </div>
+               */}
+            </div>
+
+            : null }
+        </div>
+
+        { isPopupMode() ?
+
+          <div className={ this.classes.footer }>
+            <div className={ this.classes.almostFooter }>
+              <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
+            </div>
+            <BackButton onClick={() => {
+            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+							.then(function(data){
+                history.push('/profile');
+            });
           }} />
-              <div style={{ width: '30px' }} />
-              <NextButton onClick={() => {
+            <div style={{ width: '30px' }} />
+            <NextButton onClick={() => {
 						if (this.validate()) {
 						serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
 							.then(function(data){
+                history.push('/preferences');
 							});
-            history.push('/preferences');
             }
             else {
               this.setState({validationError: true});
             }
           }} />
-            </div>
+          </div>
 
-            :
-            <div className={ this.classes.footer }>
-              <SaveButton onClick={() => {
+          :
+          <div className={ this.classes.footer }>
+            <SaveButton onClick={() => {
 						let self = this;
 		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
 			.then(function(data){
@@ -481,9 +477,9 @@ export default class TargetAudience extends Component {
 			  self.setState({saveFail: true});
 			});
             }} success={ this.state.saveSuceess } fail={ this.state.saveFail }/>
-            </div>
-          }
-        </Page>
+          </div>
+        }
+      </Page>
     </div>
   }
 }

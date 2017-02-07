@@ -8,6 +8,7 @@ import Title from 'components/onboarding/Title';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import SaveButton from 'components/pages/profile/SaveButton';
+import Notice from 'components/Notice';
 
 import Popup from 'components/Popup';
 import Loading from 'components/pages/plan/Loading';
@@ -437,8 +438,7 @@ export default class PlannedVsActual extends Component {
       <Header />
       <Sidebar />
       <Page>
-        <Title title="Planned VS Actual"
-               subTitle="Who is your target audience? The best marketing strategies are always based on the people you want to reach"/>
+        <Title title="Planned VS Actual" subTitle="It is very important to keep the data credibility. To optimize your marketing planning every step of the way, InfiniGrow needs to know exactly what your actual marketing investments were (even if they aren’t 1:1 as recommended. )."/>
         <div className={ planStyles.locals.serverDown }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
@@ -486,6 +486,11 @@ export default class PlannedVsActual extends Component {
               </div>
             </div>
           </div>
+          <Notice warning style={{
+                margin: '12px 0'
+              }}>
+            Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively. Please choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.
+          </Notice>
           <MultiRow numOfRows={1} maxNumOfRows={1} >
             {({index, data, update, removeButton}) => {
               return <div style={{

@@ -4,6 +4,7 @@ import Component from 'components/Component';
 import Header from 'components/Header';
 import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
+import Popup from 'components/Popup';
 
 import style from 'styles/plan/plan.css';
 
@@ -14,7 +15,7 @@ import AnnualTab from 'components/pages/plan/AnnualTab';
 import ReplanButton from 'components/pages/plan/ReplanButton';
 import serverCommunication from 'data/serverCommunication';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
-
+import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
 
 export default class Plan extends Component {
@@ -27,6 +28,7 @@ export default class Plan extends Component {
       numberOfPlanUpdates: 0
     }
     this.handleRePlan = this.handleRePlan.bind(this);
+    this.popup = this.popup.bind(this);
   }
 
   componentDidMount(){
@@ -62,9 +64,16 @@ export default class Plan extends Component {
     }
   }
 
+  popup() {
+    this.setState({popup: true});
+  }
+
   handleRePlan(){
-    this.setState({isLoaded: true});
-    this.setState({isPlannerLoading: true});
+    this.setState({
+      isLoaded: true,
+      isPlannerLoading: true,
+      popup: false
+    });
     let self = this;
     serverCommunication.serverRequest('GET', 'plan')
       .then((response) => {
@@ -78,12 +87,12 @@ export default class Plan extends Component {
                 self.setState({
                   actualIndicators: data.actualIndicators,
                   projectedPlan: data.projectedPlan,
+                  numberOfPlanUpdates: data.numberOfPlanUpdates,
                   selectedTab: 0,
                   budget: data.annualBudget,
                   planDate: data.planDate,
                   isPlannerLoading: false
                 });
-                //self.forceUpdate();
               }
             }
             else {
@@ -124,9 +133,23 @@ export default class Plan extends Component {
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
           <div className={this.classes.headPlan } >
-            <ReplanButton numberOfPlanUpdates={ this.state.numberOfPlanUpdates } onClick={this.handleRePlan}/>
+            <ReplanButton numberOfPlanUpdates={ this.state.numberOfPlanUpdates } onClick={ this.popup }/>
+            <Popup style={{
+      width: '400px',
+      top: '180%',
+      transform: 'translate(0, -50%)'
+    }} hidden={ !this.state.popup } onClose={() => {
+      this.setState({
+        popup: false
+      });
+    }}>
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.handleRePlan } onBack={() => {
+     this.setState({
+     popup: false
+     })}} />
+            </Popup>
             <div className={ this.classes.error }>
-              <label hidden={ !this.state.isError}>You've reached the replan limit.<br/> To upgrade, click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
+              <label hidden={ !this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
             </div>
           </div>
           <div className={ this.classes.headTabs }>

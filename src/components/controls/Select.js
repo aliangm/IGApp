@@ -13,7 +13,7 @@ export default class Select extends Component {
   styles = [dropdownStyle];
 
   static defaultProps = {
-    labelQuestion: true
+    labelQuestion: false
   }
 
   render() {

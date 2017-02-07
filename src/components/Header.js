@@ -6,6 +6,8 @@ import style from 'styles/header.css';
 import Button from 'components/controls/Button';
 import Popup from 'components/Popup';
 import global from 'global';
+import serverCommunication from 'data/serverCommunication';
+import history from 'history';
 
 export default class Header extends Component {
   style = style
@@ -34,7 +36,7 @@ export default class Header extends Component {
       <div className={ this.classes.itemsBox }>
         { hasUser ?
           <div className={ this.classes.item }>
-            <Button type="normalAccent" style={{
+            <Button type="normalAccent" onClick={ this.logout } style={{
               width: '120px'
             }}>
               Log Out
@@ -50,6 +52,7 @@ export default class Header extends Component {
         <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
 		  {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
         <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
+        <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
       </div>
 
       {/**{ hasUser ?
@@ -71,7 +74,7 @@ export default class Header extends Component {
       <div className={ this.classes.itemsBox }>
         { hasUser ?
           <div className={ this.classes.logoutItemOutside }>
-            <Button type="normalAccent" style={{
+            <Button type="normalAccent" onClick={ this.logout } style={{
               width: '120px'
             }}>
               Log Out
@@ -107,11 +110,12 @@ export default class Header extends Component {
               </a>
             : null }
             <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
-           /** <a className={ this.classes.linkText } href="#">Chat</a> **/
+            {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
             <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
+            <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
             { hasUser ?
               <div className={ this.classes.logoutItemInside }>
-                <Button type="normalAccent" style={{
+                <Button type="normalAccent" onClick={ this.logout } style={{
                   width: '120px'
                 }}>
                   Log Out
@@ -133,6 +137,13 @@ export default class Header extends Component {
         </div>
       :null} **/}
     </div>
+  }
+
+  logout() {
+    serverCommunication.serverRequest('GET', 'logout')
+      .then(function(data){
+        history.push('/');
+      });
   }
 
   render() {

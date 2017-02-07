@@ -42,7 +42,6 @@ export default class Preferences extends Component {
       maxChannels: -1,
       showErrorMessage: [false, false, false]
     };
-    //this.state.targetAudience = { };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.rowRemoved = this.rowRemoved.bind(this);
   }
@@ -53,38 +52,34 @@ export default class Preferences extends Component {
 
   componentDidMount(){
     let self = this;
-    if (isPopupMode()){
-      self.setState({isLoaded: true});
-    }
-    else {
-      serverCommunication.serverRequest('GET', 'usermonthplan')
-        .then((response) => {
-          response.json()
-            .then(function (data) {
-              if (data) {
-                if (data.error) {
-                  history.push('/');
-                }
-                else {
-                  self.setState({
-                    annualBudget: data.annualBudget,
-                    goals: {
-                      primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                      secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                    },
-                    blockedChannels: data.blockedChannels || [],
-                    maxChannels: data.maxChannels || -1,
-                    isLoaded: true
-                  });
-                }
+    serverCommunication.serverRequest('GET', 'usermonthplan')
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              if (data.error) {
+                history.push('/');
               }
-            })
-        })
-        .catch(function (err) {
-          self.setState({serverDown: true});
-          console.log(err);
-        })
-    }
+              else {
+                self.setState({
+                  annualBudget: data.annualBudget,
+                  goals: {
+                    primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
+                    secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
+                  },
+                  blockedChannels: data.blockedChannels || [],
+                  maxChannels: data.maxChannels || -1,
+                  isLoaded: true
+                });
+                self.forceUpdate();
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        self.setState({serverDown: true});
+        console.log(err);
+      });
   }
 
   handleChangeGoals(parameter, event){
@@ -144,6 +139,8 @@ export default class Preferences extends Component {
       }, **/
       primary_goal: {
         label: 'Primary Goal',
+        labelQuestion: [''],
+        description: ['What is your company main goal for marketing? The goal should be aligned with and support your business goals. By default, InfiniGrow will choose the goal it thinks is the most relevant, based on your data.'],
         select: {
           name: 'primary_goal',
           onChange: () => {},
@@ -154,11 +151,11 @@ export default class Preferences extends Component {
             { value: 'Number of Users', label: 'Number of Users' },
             { value: 'Reputation', label: 'Reputation' },
             { value: 'Marketing ROI', label: 'Marketing ROI' },
-            { value: 'Grow Market Share', label: 'Grow Market Share' },
+            { value: 'Market Share', label: 'Market Share' },
             { value: 'Brand Awareness', label: 'Brand Awareness' },
             { value: 'Better Quality Customers', label: 'Better Quality Customers' },
-            { value: 'Target New Customers', label: 'Target New Customers' },
-            { value: 'Increase Retention Rates', label: 'Increase Retention Rates' },
+            { value: 'New Customers', label: 'New Customers' },
+            { value: 'Retention Rates', label: 'Retention Rates' },
             { value: 'Number Of Job Applicants', label: 'Number Of Job Applicants' },
             { value: 'Thought Leadership', label: 'Thought Leadership' }
           ]
@@ -166,6 +163,8 @@ export default class Preferences extends Component {
       },
       secondary_goal: {
         label: 'Secondary Goal',
+        labelQuestion: [''],
+        description: ['What is your company secondary goal for marketing? The goal should be aligned with and support your business goals. By default, InfiniGrow will choose the goal it thinks is the most relevant, based on your data.'],
         select: {
           name: 'secondary_goal',
           onChange: () => {},
@@ -195,25 +194,23 @@ export default class Preferences extends Component {
         children: [
           { name: 'Display Ads', children: [
             { name: 'Google AdWords', value: 'advertising_displayAds_googleAdwords' },
-            { name: 'Other', value: 'advertising_displayAds_other' },
+            { name: 'Other (not Google Ads)', value: 'advertising_displayAds_other' },
           ] },
           { name: 'Search Marketing', children: [
             { name: 'SEO', value: 'advertising_searchMarketing_SEO' },
             { name: 'SEM (PPC)', children: [
               { name: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords' },
-              { name: 'Other', value: 'advertising_searchMarketing_SEM_other' }
+              { name: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other' }
             ] },
           ] },
           { name: 'Social Ads', children: [
-            {name: 'SEM (PPC)', children: [
-              {name: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
-              {name: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
-              {name: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
-              {name: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
-              {name: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
-              {name: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
-              {name: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising' }
-            ]}
+            {name: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
+            {name: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
+            {name: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
+            {name: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
+            {name: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
+            {name: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
+            {name: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising' }
           ] },
           { name: 'Offline Ads', children: [
             {name: 'TV', children: [
@@ -258,12 +255,12 @@ export default class Preferences extends Component {
           { name: 'Content Discovery', children: [
             { name: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain' },
             { name: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola' },
-            { name: 'Other', value: 'content_contentPromotion_contentDiscovery_other' }
+            { name: 'General', value: 'content_contentPromotion_contentDiscovery_other' }
           ] },
           { name: 'Forums', children: [
             { name: 'Reddit', value: 'content_contentPromotion_forums_reddit' },
             { name: 'Quora', value: 'content_contentPromotion_forums_quora' },
-            { name: 'Other', value: 'content_contentPromotion_forums_other' }
+            { name: 'Niche Specific', value: 'content_contentPromotion_forums_other' }
           ] },
           { name: 'EBooks' },
         ] },
@@ -287,7 +284,7 @@ export default class Preferences extends Component {
         { name: 'Calculator', value: 'engineeringAsMarketing_calculator' },
         { name: 'Widget', value: 'engineeringAsMarketing_widget' },
         { name: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites' },
-        { name: 'Other', value: 'engineeringAsMarketing_other' }
+        { name: 'Any', value: 'engineeringAsMarketing_other' }
       ]},
       { name: 'Events', children: [
         { name: 'Offline Events' , children: [
@@ -367,77 +364,83 @@ export default class Preferences extends Component {
       <Header />
       <Sidebar />
       <Page popup={ isPopupMode() }>
-        <Title title="Preferences" subTitle="Tell us your goals and constrains. Different objectives dictate different strategies" />
+        <Title title="Preferences" subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies" />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
-        { this.state.isLoaded ?
-          <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
-              {/**
-               <div className={ this.classes.row } style={{
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
+            {/**
+             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
-               <Label question>Start Date</Label>
-               <Calendar />
-               </div> **/}
-              <div className={ this.classes.row }>
-                <Label question>Plan Annual Budget ($)</Label>
-                <div className={ this.classes.cell }>
-                  <Textfield defaultValue={"$" + (this.state.annualBudget || '')} onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
+             <Label question>Start Date</Label>
+             <Calendar />
+             </div> **/}
+            <div className={ this.classes.row }>
+              <Label question={['']} description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget ($)</Label>
+              <div className={ this.classes.cell }>
+                <Textfield value={"$" + (this.state.annualBudget || '')} onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }} />
-                  {/** <NotSure style={{
+                {/** <NotSure style={{
                   marginLeft: '10px'
                 }} /> **/}
-                </div>
               </div>
-              {/**
-               <div className={ this.classes.row } style={{
+            </div>
+            {/**
+             <div className={ this.classes.row } style={{
               // maxWidth: '440px',
               // minWidth: '200px',
               width: '258px'
             }}>
-               <Select { ... selects.plan } />
-               </div>
-               **/}
-              <div className={ this.classes.row } style={{
+             <Select { ... selects.plan } />
+             </div>
+             **/}
+            <div className={ this.classes.row } style={{
               // maxWidth: '440px',
               // minWidth: '200px',
               width: '258px'
             }}>
-                <Select { ... selects.primary_goal } selected={ this.state.goals.primary } onChange= { this.handleChangeGoals.bind(this, 'primary') }/>
-              </div>
-              <div className={ this.classes.row } style={{
+              <Select { ... selects.primary_goal } selected={ this.state.goals.primary } onChange= { this.handleChangeGoals.bind(this, 'primary') }/>
+            </div>
+            <div className={ this.classes.row } style={{
               // maxWidth: '440px',
               // minWidth: '200px',
               width: '258px'
             }}>
-                <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary } onChange= { this.handleChangeGoals.bind(this, 'secondary') }/>
-              </div>
-              <div className={ this.classes.row }>
-                <Label question>#of Channels</Label>
-                <div className={ this.classes.cell }>
-                  <Textfield defaultValue="MAX" onChange={ this.handleChangeMax.bind(this, '')} style={{
-                  width: '166px'
-                }} />
-                  {/** <NotSure style={{
-                  marginLeft: '10px'
-                }} /> **/}
-                </div>
-              </div>
-              <div className={ this.classes.row } style={{
-              
-            }}>
-                <h3 style={{
-                marginBottom: '0'
-              }}>Blocked Channels</h3>
-                <Notice warning style={{
+              <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary } onChange= { this.handleChangeGoals.bind(this, 'secondary') }/>
+            </div>
+            <div className={ this.classes.row }>
+              <Label question={['']} description={['Do you want to limit the number of channels that will be included in your 12 months’ plan?']} >max number of Channels</Label>
+              <Notice warning style={{
                 margin: '12px 0'
               }}>
-                  * Please notice that adding channel constrains is limiting the ideal plan creation
-                </Notice>
-                <MultiRow numOfRows={ (this.state.blockedChannels && this.state.blockedChannels.length) || 0 } rowRemoved={this.rowRemoved} maxNumOfRows= {3} >
+                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+              </Notice>
+              <div className={ this.classes.cell }>
+                <Textfield value={ this.state.maxChannels != -1 ? this.state.maxChannels : 'MAX' } onChange={ this.handleChangeMax.bind(this, '')} style={{
+                  width: '166px'
+                }} />
+                {/** <NotSure style={{
+                  marginLeft: '10px'
+                }} /> **/}
+              </div>
+            </div>
+            <div className={ this.classes.row } style={{
+              
+            }}>
+              <Label style={{
+                marginBottom: '0',
+                fontWeight: '600'
+              }} question={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']} >Blocked Channels</Label>
+              <Notice warning style={{
+                margin: '12px 0'
+              }}>
+                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+              </Notice>
+              {this.state.isLoaded ?
+                <MultiRow numOfRows={ this.state.blockedChannels.length } rowRemoved={this.rowRemoved} maxNumOfRows= {3} >
                   {({ index, data, update, removeButton }) => {
                     return <div style={{
                     width: '492px'
@@ -467,28 +470,28 @@ export default class Preferences extends Component {
                     </div>
                   }}
                 </MultiRow>
-              </div>
+                : null }
             </div>
+          </div>
 
-            { isPopupMode() ?
+          { isPopupMode() ?
 
-              <div className={ this.classes.colRight }>
-                <div className={ this.classes.row }>
-                  <ProfileProgress progress={ 76 } image={
+            <div className={ this.classes.colRight }>
+              <div className={ this.classes.row }>
+                <ProfileProgress progress={ 76 } image={
                 require('assets/flower/4.png')
               }
-                                   text="You rock!"/>
-                </div>
-                {/**
-                 <div className={ this.classes.row }>
-                 <ProfileInsights />
-                 </div>
-                 **/}
+                                 text="You rock! Hope you’re starting to get excited about planning the right way"/>
               </div>
+              {/**
+               <div className={ this.classes.row }>
+               <ProfileInsights />
+               </div>
+               **/}
+            </div>
 
-              : null }
-          </div>
-          : null }
+            : null }
+        </div>
 
         { isPopupMode() ?
 
@@ -497,15 +500,18 @@ export default class Preferences extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
-            history.push('/target-audience');
+             serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
+							.then(function(data){
+                history.push('/target-audience');
+            });
           }} />
             <div style={{ width: '30px' }} />
             <NextButton onClick={() => {
               if (this.validate()) {
               serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 							.then(function(data){
+							            history.push('/indicators');
 							});
-            history.push('/indicators');
             }
             else {
             		this.setState({validationError: true});

@@ -8,6 +8,8 @@
   letter-spacing: -0.010em;
   color: #273142;
   text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dddee5;
 }
 
 .choose {
@@ -15,6 +17,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  white-space: pre-wrap;
+  text-transform: none;
+  text-align: left;
 }
 
 .nav {

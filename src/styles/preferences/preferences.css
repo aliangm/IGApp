@@ -24,3 +24,9 @@
   flex-grow: 0;
   width: 200px;
 }
+
+.blocked-label {
+  font-weight: 600;
+  color: #24b10e;
+  margin-bottom: 0px;
+}

@@ -44,7 +44,7 @@
 @mixin icon-nodpi plan:Reddit, ../../assets/plan_icons/Reddit;
 @mixin icon-nodpi plan:Quora, ../../assets/plan_icons/Quora;
 @mixin icon-nodpi plan:Content Creation, ../../assets/plan_icons/ContentCreation;
-@mixin icon-nodpi plan:Blog Posts - Company Blog (On Website), ../../assets/plan_icons/BlogPosts-CompanyBlog;
+@mixin icon-nodpi plan:Blog Posts - Company Blog, ../../assets/plan_icons/BlogPosts-CompanyBlog;
 @mixin icon-nodpi plan:Images & Infographics, ../../assets/plan_icons/Images&Infographics;
 @mixin icon-nodpi plan:Presentations, ../../assets/plan_icons/Presentations;
 @mixin icon-nodpi plan:Report Sponsorship, ../../assets/plan_icons/ReportSponsorship;
