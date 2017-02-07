@@ -23,7 +23,8 @@ import { disablePopupMode } from 'modules/popup-mode';
 export default class SignIn extends Component {
   style = style
   styles = [onboardingStyle, tagsStyle]
-  passLength = 4
+  passLength = 8
+  pattern = "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
   /*
    state = {
    login: true
@@ -112,8 +113,8 @@ export default class SignIn extends Component {
 
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel }>Password</Label>
-                <Textfield type="password" minLength={this.passLength} required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+                <Label className={ this.classes.textLabel } question={['']} description={['Password should be... ']}>Password</Label>
+                <Textfield type="password" minLength={this.passLength} required pattern={ this.pattern } defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
             {/*
@@ -194,8 +195,8 @@ export default class SignIn extends Component {
              */}
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel }>Password</Label>
-                <Textfield type="password" minLength={this.passLength} required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+                <Label className={ this.classes.textLabel } question={['']} description={['Password should be...']}>Password</Label>
+                <Textfield type="password" minLength={this.passLength} required defaultValue="" pattern={ this.pattern } className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
             
