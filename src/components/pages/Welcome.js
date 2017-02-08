@@ -90,7 +90,7 @@ export default class Welcome extends Component {
           options: [
             { value: 'CMO', label: 'CMO' },
             { value: 'VP Marketing', label: 'VP Marketing' },
-            { value: 'Chief Marketing Technologist (CMT)', label: 'Chief Marketing Technologist (CMT)' },
+            { value: 'Chief Marketing Technologist', label: 'Chief Marketing Technologist' },
             { value: 'Director of Marketing', label: 'Director of Marketing' },
             { value: 'Head of Marketing', label: 'Head of Marketing' },
             { value: 'Marketing Manager', label: 'Marketing Manager' },

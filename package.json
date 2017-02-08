@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "lodash": "latest",
-    "react-notification-system": "latest"
+    "react-notification-system": "latest",
+    "whatwg-fetch": "^2.0.2"
   }
 }

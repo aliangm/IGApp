@@ -156,6 +156,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
           icon: "indicator:cac",
+          directionDown: true,
           title: "Customer acquisition cost",
           key: "CAC"
         },
@@ -246,6 +247,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:bounceRate",
+          directionDown: true,
           title: "Bounce Rate",
           key: "bounceRate"
         },
@@ -281,6 +283,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:churnRate",
+          directionDown: true,
           title: "Churn Rate",
           key: "churnRate"
         }
@@ -290,10 +293,10 @@ export default class ProjectionsTab extends Component {
 
   calculateState(item){
     if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] > this.props.actualIndicators[item.key]) {
-      return 'grow';
+      return item.directionDown ? 'decline' : 'grow';
     }
     else if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] < this.props.actualIndicators[item.key]) {
-      return 'decline';
+      return item.directionDown ? 'grow' : 'decline';
     }
     else return 'normal';
   }

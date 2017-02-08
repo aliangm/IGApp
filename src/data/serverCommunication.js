@@ -1,5 +1,11 @@
 import q from 'q';
+/**
+import 'whatwg-fetch';
+import Promise from 'promise-polyfill';
 
+if (!window.Promise) {
+  window.Promise = Promise;
+}**/
 export default {
 
 	serverRequest(httpFunc, route, body, handleResponse) {

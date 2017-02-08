@@ -90,7 +90,7 @@ export default class Preferences extends Component {
 
   handleChangeBudget(parameter, event){
     let update = {};
-    update[parameter] = parseInt(event.target.value.replace('$',''));
+    update[parameter] = parseInt(event.target.value.replace('$','').replace(',',''));
     this.setState(update);
   }
 
@@ -114,6 +114,9 @@ export default class Preferences extends Component {
     const number = parseInt(event.target.value);
     if (number) {
       this.setState({maxChannels: number});
+    }
+    else {
+      this.setState({maxChannels: -1});
     }
   }
 
@@ -380,7 +383,7 @@ export default class Preferences extends Component {
             <div className={ this.classes.row }>
               <Label question={['']} description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget ($)</Label>
               <div className={ this.classes.cell }>
-                <Textfield value={"$" + (this.state.annualBudget || '')} onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
+                <Textfield value={"$" + (this.state.annualBudget ? this.state.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }} />
                 {/** <NotSure style={{
@@ -412,15 +415,15 @@ export default class Preferences extends Component {
               <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary } onChange= { this.handleChangeGoals.bind(this, 'secondary') }/>
             </div>
             <div className={ this.classes.row }>
-              <Label question={['']} description={['Do you want to limit the number of channels that will be included in your 12 months’ plan?']} >max number of Channels</Label>
+              <Label question={['']} description={['Do you want to limit the number of channels that will be included in your 12 months’ plan? \n To set the number to max available channels, please leave it blank.']} >max number of Channels</Label>
               <Notice warning style={{
                 margin: '12px 0'
               }}>
                 * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
               </Notice>
               <div className={ this.classes.cell }>
-                <Textfield value={ this.state.maxChannels != -1 ? this.state.maxChannels : 'MAX' } onChange={ this.handleChangeMax.bind(this, '')} style={{
-                  width: '166px'
+                <Textfield type="number" value={ this.state.maxChannels != -1 ? this.state.maxChannels : '' } onChange={ this.handleChangeMax.bind(this, '')} style={{
+                  width: '83px'
                 }} />
                 {/** <NotSure style={{
                   marginLeft: '10px'

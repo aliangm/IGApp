@@ -65,10 +65,10 @@ export default class ProjectionItem extends Component {
     }
 
     if (isFinite(value)) {
-      return value;
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    return value;
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   render() {

@@ -5,29 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="037ce301-4ff8-4d88-82da-a0a3181c1561" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/engagement-calculator/img/white logo.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Indicators.js" afterPath="$PROJECT_DIR$/src/components/pages/Indicators.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Plan.js" afterPath="$PROJECT_DIR$/src/components/pages/Plan.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/controls/Textfield.js" afterPath="$PROJECT_DIR$/src/components/controls/Textfield.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" afterPath="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/SignIn.js" afterPath="$PROJECT_DIR$/src/components/pages/SignIn.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Preferences.js" afterPath="$PROJECT_DIR$/src/components/pages/Preferences.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Profile.js" afterPath="$PROJECT_DIR$/src/components/pages/Profile.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/TargetAudience.js" afterPath="$PROJECT_DIR$/src/components/pages/TargetAudience.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Welcome.js" afterPath="$PROJECT_DIR$/src/components/pages/Welcome.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/indicators/Item.js" afterPath="$PROJECT_DIR$/src/components/pages/indicators/Item.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" afterPath="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/data/channelsSchema.js" afterPath="$PROJECT_DIR$/src/data/channelsSchema.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js" afterPath="$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" afterPath="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/data/serverCommunication.js" afterPath="$PROJECT_DIR$/src/data/serverCommunication.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/css/new-age.css" afterPath="$PROJECT_DIR$/src/engagement-calculator/css/new-age.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/css/new-age.min.css" afterPath="$PROJECT_DIR$/src/engagement-calculator/css/new-age.min.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/css/style.css" afterPath="$PROJECT_DIR$/src/engagement-calculator/css/style.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/index.html" afterPath="$PROJECT_DIR$/src/engagement-calculator/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/js/index.js" afterPath="$PROJECT_DIR$/src/engagement-calculator/js/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/less/variables.less" afterPath="$PROJECT_DIR$/src/engagement-calculator/less/variables.less" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/modules/popup-mode.js" afterPath="$PROJECT_DIR$/src/modules/popup-mode.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/styles/icons/plan.css" afterPath="$PROJECT_DIR$/src/styles/icons/plan.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/styles/indicators/item.css" afterPath="$PROJECT_DIR$/src/styles/indicators/item.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/styles/plan/annual-tab.css" afterPath="$PROJECT_DIR$/src/styles/plan/annual-tab.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/styles/profile/progress.css" afterPath="$PROJECT_DIR$/src/styles/profile/progress.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webpack.config.builder.js" afterPath="$PROJECT_DIR$/webpack.config.builder.js" />
     </list>
     <ignored path="InfiniGrow_dist_PopupModeFixed.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,11 +39,70 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="SignIn.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/SignIn.js">
+      <file leaf-file-name="Indicators.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="55" column="43" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
+            <state relative-caret-position="-238">
+              <caret line="114" column="61" selection-start-line="114" selection-start-column="61" selection-end-line="114" selection-end-column="61" />
+              <folding>
+                <element signature="e#1918#3449#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serverCommunication.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/data/serverCommunication.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="88">
+              <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Item.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="471">
+              <caret line="65" column="66" selection-start-line="65" selection-start-column="66" selection-end-line="65" selection-end-column="66" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+                <element signature="n#ProgressCircle#0" expanded="false" />
+                <marker date="1486565694599" expanded="true" signature="2768:2859" ph="..." />
+                <marker date="1486565694599" expanded="true" signature="2789:2845" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlannedVsActual.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/PlannedVsActual.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="401">
+              <caret line="170" column="81" selection-start-line="170" selection-start-column="81" selection-end-line="170" selection-end-column="81" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AnnualTab.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="115">
+              <caret line="139" column="110" selection-start-line="139" selection-start-column="110" selection-end-line="139" selection-end-column="110" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProjectionsTab.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-538">
+              <caret line="293" column="21" selection-start-line="293" selection-start-column="21" selection-end-line="293" selection-end-column="21" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -60,33 +110,45 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serverCommunication.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/data/serverCommunication.js">
+      <file leaf-file-name="ProjectionItem.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="popup-mode.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/modules/popup-mode.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="880">
-              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+            <state relative-caret-position="176">
+              <caret line="59" column="14" selection-start-line="59" selection-start-column="2" selection-end-line="59" selection-end-column="14" />
               <folding>
-                <element signature="e#0#59#0" expanded="true" />
+                <element signature="e#0#26#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Plan.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/Plan.js">
+      <file leaf-file-name="Preferences.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/Preferences.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1386">
-              <caret line="94" column="32" selection-start-line="94" selection-start-column="32" selection-end-line="94" selection-end-column="32" />
+            <state relative-caret-position="220">
+              <caret line="385" column="139" selection-start-line="385" selection-start-column="90" selection-end-line="385" selection-end-column="139" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Textfield.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/controls/Textfield.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="292">
+              <caret line="38" column="30" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TargetAudience.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/TargetAudience.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="419">
+              <caret line="302" column="53" selection-start-line="302" selection-start-column="53" selection-end-line="302" selection-end-column="53" />
               <folding />
             </state>
           </provider>
@@ -100,7 +162,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/styles/sidebar.css" />
         <option value="$PROJECT_DIR$/src/components/pages/profile/SaveButton.js" />
         <option value="$PROJECT_DIR$/src/styles/signin/signin.css" />
         <option value="$PROJECT_DIR$/src/styles/plan/planned-actual-tab.css" />
@@ -110,47 +171,48 @@
         <option value="$PROJECT_DIR$/src/styles/icons/indicators.css" />
         <option value="$PROJECT_DIR$/src/components/MultiRow.js" />
         <option value="$PROJECT_DIR$/src/components/pages/profile/Progress.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" />
         <option value="$PROJECT_DIR$/src/styles/plan/plan.css" />
         <option value="$PROJECT_DIR$/src/styles/onboarding/onboarding.css" />
         <option value="$PROJECT_DIR$/src/components/Sidebar.js" />
         <option value="$PROJECT_DIR$/src/styles/controls-label.css" />
         <option value="$PROJECT_DIR$/src/components/controls/Select.js" />
         <option value="$PROJECT_DIR$/src/styles/preferences/preferences.css" />
-        <option value="$PROJECT_DIR$/src/components/pages/Preferences.js" />
         <option value="$PROJECT_DIR$/src/components/pages/plan/ReplanButton.js" />
         <option value="$PROJECT_DIR$/src/components/pages/profile/ButtonsSet.js" />
         <option value="$PROJECT_DIR$/src/components/pages/plan/PlanNextMonthPopup.js" />
         <option value="$PROJECT_DIR$/src/styles/profile/product-launch-popup.css" />
-        <option value="$PROJECT_DIR$/src/components/pages/Profile.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/TargetAudience.js" />
         <option value="$PROJECT_DIR$/src/components/Header.js" />
-        <option value="$PROJECT_DIR$/src/components/controls/Textfield.js" />
-        <option value="$PROJECT_DIR$/src/data/serverCommunication.js" />
         <option value="$PROJECT_DIR$/src/styles/profile/progress.css" />
         <option value="$PROJECT_DIR$/webpack.config.builder.js" />
         <option value="$PROJECT_DIR$/output/engagement-calculator/index.html" />
-        <option value="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" />
         <option value="$PROJECT_DIR$/src/styles/plan/annual-tab.css" />
         <option value="$PROJECT_DIR$/src/styles/icons/plan.css" />
         <option value="$PROJECT_DIR$/src/data/channelsSchema.js" />
         <option value="$PROJECT_DIR$/src/components/pages/Plan.js" />
         <option value="$PROJECT_DIR$/src/index.html" />
         <option value="$PROJECT_DIR$/src/styles/indicators/item.css" />
-        <option value="$PROJECT_DIR$/src/components/pages/Welcome.js" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/js/index.js" />
         <option value="$PROJECT_DIR$/src/components/pages/Indicators.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/indicators/Item.js" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/less/variables.less" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/css/new-age.css" />
         <option value="$PROJECT_DIR$/output/engagement-calculator/css/style.css" />
         <option value="$PROJECT_DIR$/output/engagement-calculator/css/new-age.min.css" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/css/new-age.min.css" />
-        <option value="$PROJECT_DIR$/src/engagement-calculator/index.html" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/css/style.css" />
         <option value="$PROJECT_DIR$/src/modules/popup-mode.js" />
         <option value="$PROJECT_DIR$/src/components/pages/SignIn.js" />
+        <option value="$PROJECT_DIR$/src/engagement-calculator/index.html" />
+        <option value="$PROJECT_DIR$/src/components/pages/Profile.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/Welcome.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/TargetAudience.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" />
+        <option value="$PROJECT_DIR$/src/components/controls/Textfield.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/Preferences.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/indicators/Item.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js" />
+        <option value="$PROJECT_DIR$/src/data/serverCommunication.js" />
       </list>
     </option>
   </component>
@@ -262,6 +324,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="engagement-calculator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="data" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -306,6 +386,80 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pages" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pages" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="indicators" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controls" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
@@ -313,7 +467,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/index.js" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../training-center2" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
@@ -444,12 +598,12 @@
       <workItem from="1486028114218" duration="30151000" />
       <workItem from="1486316214864" duration="1650000" />
       <workItem from="1486366467277" duration="32089000" />
-      <workItem from="1486468158799" duration="26313000" />
+      <workItem from="1486468158799" duration="37769000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="578407000" />
+    <option name="totallyTimeSpent" value="589863000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
@@ -464,7 +618,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33041576" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32932165" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31400436" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21115974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39934355" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -557,37 +711,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/components/pages/profile/ButtonsSet.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="112" column="6" selection-start-line="104" selection-start-column="24" selection-end-line="112" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/onboarding/NotSure.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/styles/popup.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Popup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="6" column="33" selection-start-line="6" selection-start-column="33" selection-end-line="6" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/pages/plan/PlanNextMonthPopup.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="462">
@@ -644,21 +767,6 @@
           <folding>
             <element signature="n#!!block;n#fillZeros#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/controls/Textfield.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="36" column="29" selection-start-line="36" selection-start-column="29" selection-end-line="36" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/TargetAudience.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8756">
-          <caret line="426" column="28" selection-start-line="426" selection-start-column="28" selection-end-line="426" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -727,24 +835,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Profile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="342" column="20" selection-start-line="342" selection-start-column="20" selection-end-line="342" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/PlannedVsActual.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="492" column="29" selection-start-line="492" selection-start-column="29" selection-end-line="492" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/styles/plan/annual-tab.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1087">
@@ -758,16 +848,6 @@
         <state relative-caret-position="192">
           <caret line="278" column="15" selection-start-line="278" selection-start-column="15" selection-end-line="278" selection-end-column="15" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1188">
-          <caret line="172" column="18" selection-start-line="172" selection-start-column="18" selection-end-line="172" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -843,14 +923,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Welcome.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/engagement-calculator/js/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -907,18 +979,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/engagement-calculator/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="51" column="104" selection-start-line="51" selection-start-column="104" selection-end-line="51" selection-end-column="104" />
-          <folding>
-            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#nav#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#h1#0;n#div#5;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#header#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#form#0;n#div#5;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#header#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/engagement-calculator/css/style.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
@@ -927,44 +987,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="180" column="65" selection-start-line="180" selection-start-column="65" selection-end-line="180" selection-end-column="65" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-            <element signature="n#ProgressCircle#0" expanded="false" />
-            <marker date="1486487674319" expanded="true" signature="2670:2761" ph="..." />
-            <marker date="1486487674319" expanded="true" signature="2691:2747" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="114" column="61" selection-start-line="114" selection-start-column="61" selection-end-line="114" selection-end-column="61" />
-          <folding>
-            <element signature="e#1918#3449#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/pages/SignIn.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
           <caret line="55" column="43" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/serverCommunication.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -981,7 +1010,136 @@
         <state relative-caret-position="880">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
           <folding>
-            <element signature="e#0#59#0" expanded="true" />
+            <element signature="e#0#59#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/engagement-calculator/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="51" column="130" selection-start-line="51" selection-start-column="130" selection-end-line="51" selection-end-column="130" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Profile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="463">
+          <caret line="304" column="149" selection-start-line="304" selection-start-column="149" selection-end-line="304" selection-end-column="149" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Welcome.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="97" column="39" selection-start-line="97" selection-start-column="39" selection-end-line="97" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/TargetAudience.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="419">
+          <caret line="302" column="53" selection-start-line="302" selection-start-column="53" selection-end-line="302" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/controls/Textfield.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="38" column="30" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-238">
+          <caret line="114" column="61" selection-start-line="114" selection-start-column="61" selection-end-line="114" selection-end-column="61" />
+          <folding>
+            <element signature="e#1918#3449#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/EcmaScript.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Preferences.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="385" column="139" selection-start-line="385" selection-start-column="90" selection-end-line="385" selection-end-column="139" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="471">
+          <caret line="65" column="66" selection-start-line="65" selection-start-column="66" selection-end-line="65" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+            <element signature="n#ProgressCircle#0" expanded="false" />
+            <marker date="1486565694599" expanded="true" signature="2768:2859" ph="..." />
+            <marker date="1486565694599" expanded="true" signature="2789:2845" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/PlannedVsActual.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="401">
+          <caret line="170" column="81" selection-start-line="170" selection-start-column="81" selection-end-line="170" selection-end-column="81" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="139" column="110" selection-start-line="139" selection-start-column="110" selection-end-line="139" selection-end-column="110" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-538">
+          <caret line="293" column="21" selection-start-line="293" selection-start-column="21" selection-end-line="293" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="59" column="14" selection-start-line="59" selection-start-column="2" selection-end-line="59" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/serverCommunication.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>

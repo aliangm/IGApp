@@ -157,7 +157,7 @@ export default class Profile extends Component {
       loyalty: {
         label: 'Loyalty',
         labelQuestion: [''],
-        description: ['What is the loyalty level of your customers? If a new/existing competitor offers a new similar product/service, what is the possibility that your user will move to his offer? Please take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you. ).'],
+        description: ['What is the loyalty level of your customers? If a new/existing competitor offers a new similar product/service, what is the possibility that your user will move to his offer? Please take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you 😃).'],
         select: {
           name: 'loyalty',
           onChange: () => {},
@@ -186,7 +186,7 @@ export default class Profile extends Component {
             { value: '$2501-$5000', label: '$2501 to $5000' },
             { value: '$5001-$7500', label: '$5001 to $7500' },
             { value: '$7501-$10000', label: '$7501 to $10,000' },
-            { value: '>$10000', label: '$10,000 or more' }
+            { value: '>$10000', label: '$10,001 or more' }
           ]
         }
       },
@@ -275,7 +275,7 @@ export default class Profile extends Component {
               ]}  selectedKey={ this.state.userProfile.orientation } onChange = {this.fakeChange.bind(this, 'orientation', 'B2B')}/>
             </div>
             <div className={ this.classes.row }>
-              <Label question={['', 'On-prem']} description={['What is your company’s business model?', 'is a shortcut for On-premises software.']}>Business Model</Label>
+              <Label question={['']} description={['What is your company’s business model?  \n On-prem is a shortcut for On-premises software.']}>Business Model</Label>
               <ButtonsSet buttons={[
                 { key: 'SaaS', text: 'SaaS', icon: 'buttons:SaaS' },
                 { key: 'On-prem', text: 'On-prem', icon: 'buttons:product' },
@@ -302,7 +302,7 @@ export default class Profile extends Component {
               ]} selectedKey={ this.state.userProfile.lifeCycle } onChange = {this.handleChangeButton.bind(this, 'lifeCycle')}/>
             </div>
             <div className={ this.classes.row }>
-              <Label>Coverage</Label>
+              <Label question={['']} description={['What is your distribution strategy in terms of location? If you’re not sure, please choose ‘Any’.']}>Coverage</Label>
               <ButtonsSet buttons={[
                 { key: 'Worldwide', text: 'Worldwide', icon: 'buttons:worldwide' },
                 { key: 'Nationwide', text: 'Nationwide', icon: 'buttons:national' },

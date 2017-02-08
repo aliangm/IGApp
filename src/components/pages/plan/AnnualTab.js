@@ -137,7 +137,7 @@ export default class AnnualTab extends Component {
             let key = parent + ':' + item + '-' + i;
             let collapsed = !!this.state.collapsed[key];
             const params = data[item];
-            const values = params.values.map(val => '$' + val);
+            const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
             const titleElem = <div
               style={{
             marginLeft: (level | 0) * 17 + 'px'
@@ -216,14 +216,14 @@ export default class AnnualTab extends Component {
           this.forceUpdate();
         }}
           />
-          { 'Promotion Channel' }
+          { 'Marketing Channel' }
         </div>, this.getDates(), {
           className: this.classes.headRow
         });
 
         const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
             { 'TOTAL' }
-          </div>, data['__TOTAL__'].values.map(val => '$' + val), {
+          </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
             className: this.classes.footRow
           });
 

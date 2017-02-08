@@ -60,10 +60,10 @@ export default class Item extends Component {
     }
 
     if (isFinite(status)) {
-      return status;
+      return status.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    return status;
+    return status.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   needProgress() {

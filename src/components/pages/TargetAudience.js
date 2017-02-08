@@ -294,13 +294,13 @@ export default class TargetAudience extends Component {
           onChange: () => {},
           options: [
             { value: 'USA', label: 'USA' },
-            { value: 'Canada', label: 'Canada' },
-            { value: 'Western Europe', label: 'Western Europe' },
-            { value: 'Eastern Europe', label: 'Eastern Europe' },
-            { value: 'Latin America', label: 'Latin America' },
-            { value: 'Asia', label: 'Asia' },
-            { value: 'Australia', label: 'Australia' },
-            { value: 'Any', label: 'Any' }
+            { value: 'Canada', label: 'Canada- Coming Soon!' },
+            { value: 'Western Europe', label: 'Western Europe- Coming Soon!' },
+            { value: 'Eastern Europe', label: 'Eastern Europe- Coming Soon!' },
+            { value: 'Latin America', label: 'Latin America- Coming Soon!' },
+            { value: 'Asia', label: 'Asia- Coming Soon!' },
+            { value: 'Australia', label: 'Australia- Coming Soon!' },
+            { value: 'Any', label: 'Any- Coming Soon!' }
           ]
         }
       },

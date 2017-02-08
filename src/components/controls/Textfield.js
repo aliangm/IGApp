@@ -36,6 +36,7 @@ export default class Textfield extends Component {
         minLength= {this.props.minLength }
         pattern= { this.props.pattern } 
         //type={ this.props.type }
+        min= {this.props.min }
         required = {this.props.required }
         onClick={ this.props.onClick }
         onFocus={ this.props.onFocus }
