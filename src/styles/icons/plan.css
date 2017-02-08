@@ -3,7 +3,9 @@
 @mixin icon-nodpi plan:Advertising, ../../assets/plan_icons/advertising;
 @mixin icon-nodpi plan:Display Ads, ../../assets/plan_icons/DisplayAds;
 @mixin icon-nodpi plan:Google AdWords, ../../assets/plan_icons/GoogleAdWords;
-@mixin icon-nodpi plan:Other, ../../assets/plan_icons/Other;
+@mixin icon-nodpi plan:Other (not Google Ads), ../../assets/plan_icons/Other;
+@mixin icon-nodpi plan:General, ../../assets/plan_icons/Other;
+@mixin icon-nodpi plan:Niche Specific, ../../assets/plan_icons/Other;
 @mixin icon-nodpi plan:Search Marketing, ../../assets/plan_icons/SearchMarketing;
 @mixin icon-nodpi plan:SEO, ../../assets/plan_icons/SEO;
 @mixin icon-nodpi plan:SEM (PPC), ../../assets/plan_icons/SEM;
@@ -48,7 +50,7 @@
 @mixin icon-nodpi plan:Images & Infographics, ../../assets/plan_icons/Images&Infographics;
 @mixin icon-nodpi plan:Presentations, ../../assets/plan_icons/Presentations;
 @mixin icon-nodpi plan:Report Sponsorship, ../../assets/plan_icons/ReportSponsorship;
-@mixin icon-nodpi plan:Research Paper (Whitepaper), ../../assets/plan_icons/ResearchPaper;
+@mixin icon-nodpi plan:Whitepaper, ../../assets/plan_icons/ResearchPaper;
 @mixin icon-nodpi plan:E-book, ../../assets/plan_icons/E-book;
 @mixin icon-nodpi plan:Videos, ../../assets/plan_icons/Videos;
 @mixin icon-nodpi plan:Case Studies, ../../assets/plan_icons/CaseStudies;
@@ -63,8 +65,8 @@
 @mixin icon-nodpi plan:Events, ../../assets/plan_icons/Events;
 @mixin icon-nodpi plan:Offline Events, ../../assets/plan_icons/OfflineEvents;
 @mixin icon-nodpi plan:Sponsorship, ../../assets/plan_icons/Sponsorship;
-@mixin icon-nodpi plan:Speaking Engagements (Conferences), ../../assets/plan_icons/SpeakingEngagements;
-@mixin icon-nodpi plan:Showcase (Trade Shows, Exhibitions), ../../assets/plan_icons/Showcase;
+@mixin icon-nodpi plan:Speaking Engagements, ../../assets/plan_icons/SpeakingEngagements;
+@mixin icon-nodpi plan:Showcase, ../../assets/plan_icons/Showcase;
 @mixin icon-nodpi plan:Running, ../../assets/plan_icons/Running;
 @mixin icon-nodpi plan:Online Events (Running), ../../assets/plan_icons/OnlineEvents;
 @mixin icon-nodpi plan:Webinar, ../../assets/plan_icons/Webinar;

@@ -161,9 +161,9 @@ export default class Welcome extends Component {
             }}>Skip this step</Button>
             </div>
             <div className={ this.classes.footerRight }>
-              <BackButton onClick={() => {
+              {/**              <BackButton onClick={() => {
               history.push('/signin');
-            }} />
+            }} />**/}
               <div style={{ width: '30px' }} />
               <NextButton onClick={() => {
 		serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(this.state.userAccount))

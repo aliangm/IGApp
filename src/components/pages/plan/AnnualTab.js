@@ -164,11 +164,12 @@ export default class AnnualTab extends Component {
                   <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
                 </div>
                 : null }
-              { item.length > 13 ?
+              {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
                 </div>
-                : item }
+                : item }**/}
+              {item}
             </div>
 
             const rowProps = {

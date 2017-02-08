@@ -176,6 +176,11 @@ export default class Item extends Component {
           }}>
             Inactive
           </div>
+          { this.props.link ?
+          <div className={ this.classes.menuItem } onClick={() => { }}>
+            <a href={'/engagement-calculator#' + this.props.link} target="_blank"> Calculate </a>
+          </div>
+            : null }
         </div>
       </div>
 

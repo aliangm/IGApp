@@ -91,7 +91,8 @@ export default class Plan extends Component {
                   selectedTab: 0,
                   budget: data.annualBudget,
                   planDate: data.planDate,
-                  isPlannerLoading: false
+                  isPlannerLoading: false,
+                  isError: false
                 });
               }
             }

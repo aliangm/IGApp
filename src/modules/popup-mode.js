@@ -1,11 +1,43 @@
-const isPopupForced = window.location.search === '?popup';
-let isPopup = isPopupForced || !sessionStorage.getItem("noPopup");
+import serverCommunication from 'data/serverCommunication';
+import q from 'q';
+let popup;
 
 export function isPopupMode() {
-  return isPopup;
+  return popup;
 }
 
 export function disablePopupMode() {
-  sessionStorage.setItem('noPopup', '1');
-  isPopup = isPopupForced;
+  var deferred = q.defer();
+  serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify({onboarding: false}))
+    .then((response) => {
+      response.json()
+        .then(function (data) {
+          if (data){
+            popup = false;
+            deferred.resolve(popup);
+          }
+        })
+    })
+    .catch(function (err) {
+      deferred.reject(err);
+    });
+  return deferred.promise;
+}
+
+export function checkIfPopup () {
+  var deferred = q.defer();
+  serverCommunication.serverRequest('GET', 'useraccount')
+    .then((response) => {
+      response.json()
+        .then(function (data) {
+          if (data){
+            popup = data.onboarding;
+            deferred.resolve(popup);
+          }
+        })
+    })
+    .catch(function (err) {
+      deferred.reject(err);
+    });
+  return deferred.promise;
 }

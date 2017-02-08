@@ -69,4 +69,6 @@
   height: 80px;
   display: flex;
   align-items: center;
+  align: center;
+  justify-content: center;
 }

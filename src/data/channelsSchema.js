@@ -253,7 +253,7 @@ module.exports = {
       ],
       "maxMatchValue":5000,
       "minMonthBudget":50,
-      "title":"Events / Offline Events / Showcase (Trade Shows, Exhibitions)",
+      "title":"Events / Offline Events / Showcase",
       "type":"integer"
     },
     "events_offlineEvents_speakingEngagements":{
@@ -262,7 +262,7 @@ module.exports = {
       ],
       "maxMatchValue":5000,
       "minMonthBudget":50,
-      "title":"Events / Offline Events / Speaking Engagements (Conferences)",
+      "title":"Events / Offline Events / Speaking Engagements",
       "type":"integer"
     },
     "events_offlineEvents_sponsorship":{
@@ -370,7 +370,7 @@ module.exports = {
       ],
       "maxMatchValue":5000,
       "minMonthBudget":50,
-      "title":"Content / Content Creation / Research Paper (Whitepaper)",
+      "title":"Content / Content Creation / Whitepaper",
       "type":"integer"
     },
     "content_contentCreation_reportSponsorship":{
@@ -406,7 +406,7 @@ module.exports = {
       ],
       "maxMatchValue":5000,
       "minMonthBudget":50,
-      "title":"Content / Content Creation / Blog Posts - Company Blog (on website)",
+      "title":"Content / Content Creation / Blog Posts - Company Blog",
       "type":"integer"
     },
     "content_contentPromotion_forums_other":{
@@ -469,7 +469,7 @@ module.exports = {
       ],
       "maxMatchValue":5000,
       "minMonthBudget":50,
-      "title":"Content / Content Promotion / Targeting Blogs (guest)",
+      "title":"Content / Content Promotion / Targeting Blogs (Guest)",
       "type":"integer"
     },
     "advertising_celebrityEndorsements":{

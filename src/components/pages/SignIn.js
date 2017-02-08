@@ -18,13 +18,13 @@ import style from 'styles/signin/signin.css';
 
 import history from 'history';
 import serverCommunication from 'data/serverCommunication';
-import { disablePopupMode } from 'modules/popup-mode';
+import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
 
 export default class SignIn extends Component {
   style = style
   styles = [onboardingStyle, tagsStyle]
-  passLength = 8
-  pattern = "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
+  //passLength = 8
+  pattern = '(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z]).{8,}';
   /*
    state = {
    login: true
@@ -51,12 +51,15 @@ export default class SignIn extends Component {
         response.json()
           .then(function (data) {
             if (data){
-              if (route == 'login'){
-                history.push('/plan');
-              }
-              else {
-                history.push('/welcome');
-              }
+              checkIfPopup()
+                .then(function (data) {
+                  if (route == 'login' && !data){
+                    history.push('/plan');
+                  }
+                  else {
+                    history.push('/welcome');
+                  }
+                });
             }
             else {
               if (route == 'login') {
@@ -72,7 +75,7 @@ export default class SignIn extends Component {
       })
       .catch(function (err) {
         console.log(err);
-      })
+      });
   }
 
   render() {
@@ -114,7 +117,7 @@ export default class SignIn extends Component {
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
                 <Label className={ this.classes.textLabel } question={['']} description={['Password should be... ']}>Password</Label>
-                <Textfield type="password" minLength={this.passLength} required pattern={ this.pattern } defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+                <Textfield type="password" required pattern={ this.pattern } defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
             {/*
@@ -196,7 +199,7 @@ export default class SignIn extends Component {
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
                 <Label className={ this.classes.textLabel } question={['']} description={['Password should be...']}>Password</Label>
-                <Textfield type="password" minLength={this.passLength} required defaultValue="" pattern={ this.pattern } className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+                <Textfield type="password" required defaultValue="" pattern={ this.pattern } className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
             

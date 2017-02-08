@@ -28,6 +28,9 @@ $('.form').find('input, textarea').on('keyup blur focus', function (e) {
 
 });
 
+
+
+
 $('.tab a').on('click', function (e) {
   
   e.preventDefault();
@@ -43,6 +46,9 @@ $('.tab a').on('click', function (e) {
   
 });
 $('#iidd').click();
+ var hash = $.trim( window.location.hash );
+
+    if (hash) $('.tab-group a[href$="'+hash+'"]').trigger('click');
 
 $('#fbbtn').on('click', function (e) {
   

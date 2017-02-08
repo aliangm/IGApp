@@ -119,12 +119,12 @@
 
 .row-title {
     composes: cell-item;
-
-    padding-right: 10px;
-    padding-left: 50px;
+    white-space: pre-line;
+    padding-right: 1px;
+    padding-left: 54px;
     position: relative;
     text-align: left;
-    width: 144px;
+    width: 146px;
 }
 
 .head-title-cell {
@@ -237,7 +237,7 @@
 .hover-table :global(tr) {
     border: 1px solid #273142;
     background: #cfe0ed;
-    white-space: nowrap;
+    white-space: pre-line;
     visibility: hidden;
 }
 
@@ -264,7 +264,7 @@
 }
 
 .hover-table .cell-item {
-    margin-top: 3px;
+    /**margin-top: 3px;**/
 }
 
 @media (max-width: 700px) {
