@@ -1,15 +1,16 @@
 @import "../global/mixins.css";
 
-@mixin icon-nodpi plan:Advertising, ../../assets/plan_icons/advertising;
-@mixin icon-nodpi plan:Display Ads, ../../assets/plan_icons/DisplayAds;
+@mixin icon-nodpi plan:Advertising, ../../assets/plan_icons/dver;
+@mixin icon-nodpi plan:Display Ads, ../../assets/plan_icons/disp;
 @mixin icon-nodpi plan:Google AdWords, ../../assets/plan_icons/GoogleAdWords;
 @mixin icon-nodpi plan:Other (not Google Ads), ../../assets/plan_icons/Other;
 @mixin icon-nodpi plan:General, ../../assets/plan_icons/Other;
+@mixin icon-nodpi plan:Any, ../../assets/plan_icons/Other;
 @mixin icon-nodpi plan:Niche Specific, ../../assets/plan_icons/Other;
 @mixin icon-nodpi plan:Search Marketing, ../../assets/plan_icons/SearchMarketing;
 @mixin icon-nodpi plan:SEO, ../../assets/plan_icons/SEO;
 @mixin icon-nodpi plan:SEM (PPC), ../../assets/plan_icons/SEM;
-@mixin icon-nodpi plan:Social Ads, ../../assets/plan_icons/SocialAds;
+@mixin icon-nodpi plan:Social Ads, ../../assets/plan_icons/soci;
 @mixin icon-nodpi plan:Facebook Advertising, ../../assets/plan_icons/FacebookAdvertising;
 @mixin icon-nodpi plan:Twitter Advertising, ../../assets/plan_icons/TwitterAdvertising;
 @mixin icon-nodpi plan:LinkedIn Advertising, ../../assets/plan_icons/LinkedInAdvertising;
