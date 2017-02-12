@@ -31,6 +31,9 @@ function parseMonth(title, budget, month, current, sum){
   if (title.length == 1) {
     sum.values[month] += budget;
     if (current && current[title[0]]){
+      for(var i=current[title[0]].values.length; i< month ; i++){
+        current[title[0]].values.push(0);
+      }
       current[title[0]].values.push(budget);
       return {};
     }
@@ -51,6 +54,9 @@ function parseMonth(title, budget, month, current, sum){
         current[title[0]].values[month]+= budget;
       }
       else {
+        for(var i=current[title[0]].values.length; i< month ; i++){
+          current[title[0]].values.push(0);
+        }
         current[title[0]].values.push(budget);
       }
       var obj = {};
