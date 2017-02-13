@@ -1,11 +1,11 @@
 import q from 'q';
-/**
+
 import 'whatwg-fetch';
 import Promise from 'promise-polyfill';
 
 if (!window.Promise) {
   window.Promise = Promise;
-}**/
+}
 export default {
 
 	serverRequest(httpFunc, route, body, handleResponse) {
@@ -13,7 +13,7 @@ export default {
 		var deferred = q.defer();
 
 		//fetch('http://localhost:3000/' + route, {
-		fetch('http://infinigrowtest.centralus.cloudapp.azure.com:3000/' + route, {	
+		fetch('http://infinigrowtest.centralus.cloudapp.azure.com:3000/' + route, {
 		method: httpFunc,
 			headers: {
 				'Content-Type': 'application/json'

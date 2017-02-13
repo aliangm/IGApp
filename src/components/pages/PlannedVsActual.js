@@ -77,7 +77,7 @@ export default class PlannedVsActual extends Component {
   }
 
   addChannel(event) {
-    this.setState({showErrorMessage: false});
+    this.setState({notLeafChannelError: false, channelAlreadyExistsError: false});
     if (!event){
       var update = this.state.unknownChannels;
       update[this.state.otherChannel] = 0;
@@ -93,13 +93,21 @@ export default class PlannedVsActual extends Component {
           this.setState({showText: true});
         }
         else {
-          var update = this.state.knownChannels;
-          update[event.value] = 0;
-          this.setState({knownChannels: update});
+          var alreadyExist = Object.keys(this.state.plannedChannelBudgets);
+          alreadyExist = alreadyExist.concat(Object.keys(this.state.knownChannels), Object.keys(this.state.unknownChannels));
+          if (alreadyExist.indexOf(event.value) === -1) {
+            var update = this.state.knownChannels;
+            update[event.value] = 0;
+            this.setState({knownChannels: update}); 
+          }
+          else {
+            this.setState({channelAlreadyExistsError: true});
+
+          }
         }
       }
       else {
-        this.setState({showErrorMessage: true});
+        this.setState({notLeafChannelError: true});
       }
     }
     this.forceUpdate();
@@ -426,12 +434,6 @@ export default class PlannedVsActual extends Component {
           });
         }
       }
-
-      var alreadyExist = Object.keys(this.state.plannedChannelBudgets);
-      alreadyExist = alreadyExist.concat(Object.keys(this.state.knownChannels), Object.keys(this.state.unknownChannels));
-      flatChannels = flatChannels.filter(function (item) {
-        return alreadyExist.indexOf(item.value) === -1;
-      });
     }
 
     return <div>
@@ -508,10 +510,11 @@ export default class PlannedVsActual extends Component {
                   onChange={ this.addChannel.bind(this) }
                   label={ `Add a channel` }
                   labelQuestion={ [''] }
-                  description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively. Please choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
+                  description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
                 />
-                <div className={ this.classes.channelsRemove }>
-                  <label className={ this.classes.error } hidden={ !this.state.showErrorMessage}>Please choose a leaf channel</label>
+                <div className={ this.classes.channelsRemove } style={{ paddingTop: '4px' }}>
+                  <label className={ this.classes.error } hidden={ !this.state.notLeafChannelError}>Please choose a leaf channel</label>
+                  <label className={ this.classes.error } hidden={ !this.state.channelAlreadyExistsError}>channel already in use</label>
                 </div>
               </div>
             }}
@@ -535,6 +538,7 @@ export default class PlannedVsActual extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
             let self = this;
+            self.setState({saveFail: false, saveSuceess: false});
 		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}))
 			.then(function(data){
 			  self.setState({saveSuceess: true});

@@ -292,10 +292,10 @@ export default class ProjectionsTab extends Component {
   }
 
   calculateState(item){
-    if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] > this.props.actualIndicators[item.key]) {
+    if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] > (this.props.actualIndicators[item.key] > 0 ? this.props.actualIndicators[item.key] : 0)) {
       return item.directionDown ? 'decline' : 'grow';
     }
-    else if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] < this.props.actualIndicators[item.key]) {
+    else if (this.props.projectedPlan[this.monthMap[this.state.selectedTab]].projectedIndicatorValues[item.key] < (this.props.actualIndicators[item.key] > 0 ? this.props.actualIndicators[item.key] : 0)) {
       return item.directionDown ? 'grow' : 'decline';
     }
     else return 'normal';

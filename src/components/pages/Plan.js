@@ -77,35 +77,48 @@ export default class Plan extends Component {
     let self = this;
     serverCommunication.serverRequest('GET', 'plan')
       .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              if (data.error){
-                self.setState({isPlannerLoading: false, isError: true});
+        if (response.ok) {
+          response.json()
+            .then(function (data) {
+              if (data) {
+                if (data.error) {
+                  self.setState({isPlannerLoading: false, isError: true});
+                }
+                else {
+                  self.setState({
+                    actualIndicators: data.actualIndicators,
+                    projectedPlan: data.projectedPlan,
+                    numberOfPlanUpdates: data.numberOfPlanUpdates,
+                    selectedTab: 0,
+                    budget: data.annualBudget,
+                    planDate: data.planDate,
+                    isPlannerLoading: false,
+                    isError: false
+                  });
+                }
               }
               else {
-                self.setState({
-                  actualIndicators: data.actualIndicators,
-                  projectedPlan: data.projectedPlan,
-                  numberOfPlanUpdates: data.numberOfPlanUpdates,
-                  selectedTab: 0,
-                  budget: data.annualBudget,
-                  planDate: data.planDate,
-                  isPlannerLoading: false,
-                  isError: false
-                });
               }
-            }
-            else {
-            }
-          })
+            })
+        }
+        else {
+          if (response.status == 401){
+            history.push('/');
+          }
+          if (response.status == 400){
+            self.setState({isError: true, isPlannerLoading: false});
+          }
+          else {
+            self.setState({serverDown: true, isPlannerLoading: false});
+          }
+        }
       })
       .catch(function (err) {
         self.setState({
           isPlannerLoading: false,
           serverDown: true
         });
-        console.log(err);
+        console.log('err', err);
       })
   }
 

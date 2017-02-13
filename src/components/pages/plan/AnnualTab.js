@@ -235,7 +235,7 @@ export default class AnnualTab extends Component {
                   Annual Budget
                 </div>
                 <div className={ planStyles.locals.titlePrice }>
-                  ${ budget }
+                  ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
                 </div>
               </div>
               <div className={ planStyles.locals.titleButtons }>

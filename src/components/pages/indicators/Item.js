@@ -92,13 +92,15 @@ export default class Item extends Component {
   }
 
   useStatus = () => {
-    const status = this.refs.statusText.getValue();
-
-    this.setState({
-      status: this.props.isPercentage ? status + '%' : status,
-      statusPopupHidden: true
-    });
-    this.props.updateIndicator(this.props.name, status);
+    let status = this.refs.statusText.getValue();
+    status = parseInt(status.replace(/[%$,]/g, ''));
+    if (status && status>0) {
+      this.setState({
+        status: this.props.isPercentage ? (status > 100 ? 100 : status) + '%' : status,
+        statusPopupHidden: true
+      });
+      this.props.updateIndicator(this.props.name, status);
+    }
   }
 
   showSocialPopup = () => {
@@ -149,6 +151,11 @@ export default class Item extends Component {
         </div>
 
         <div className={ this.classes.menu } hidden={ !this.state.menuShown }>
+          { this.props.link ?
+            <div className={ this.classes.menuItem } onClick={() => { }}>
+              <a href={'/engagement-calculator#' + this.props.link} target="_blank"> Calculate </a>
+            </div>
+            : null }
           {/**
            <div className={ this.classes.menuItem } onClick={() => {
             this.selectState('auto');
@@ -176,11 +183,6 @@ export default class Item extends Component {
           }}>
             Inactive
           </div>
-          { this.props.link ?
-          <div className={ this.classes.menuItem } onClick={() => { }}>
-            <a href={'/engagement-calculator#' + this.props.link} target="_blank"> Calculate </a>
-          </div>
-            : null }
         </div>
       </div>
 

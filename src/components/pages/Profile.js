@@ -275,7 +275,7 @@ export default class Profile extends Component {
               ]}  selectedKey={ this.state.userProfile.orientation } onChange = {this.fakeChange.bind(this, 'orientation', 'B2B')}/>
             </div>
             <div className={ this.classes.row }>
-              <Label question={['']} description={['What is your company’s business model?  \n On-prem is a shortcut for On-premises software.']}>Business Model</Label>
+              <Label question={['']} description={['What is your company’s business model? \n *”On-prem” is a shortcut for On-premises software.']}>Business Model</Label>
               <ButtonsSet buttons={[
                 { key: 'SaaS', text: 'SaaS', icon: 'buttons:SaaS' },
                 { key: 'On-prem', text: 'On-prem', icon: 'buttons:product' },
@@ -433,6 +433,7 @@ export default class Profile extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
               let self = this;
+              self.setState({saveFail: false, saveSuceess: false});
 		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
 			.then(function(data){
 			  self.setState({saveSuceess: true});

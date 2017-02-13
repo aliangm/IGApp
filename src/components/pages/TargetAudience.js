@@ -469,6 +469,7 @@ export default class TargetAudience extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
 						let self = this;
+						self.setState({saveFail: false, saveSuceess: false});
 		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
 			.then(function(data){
 			  self.setState({saveSuceess: true});

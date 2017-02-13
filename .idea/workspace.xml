@@ -6,19 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="037ce301-4ff8-4d88-82da-a0a3181c1561" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/controls/Textfield.js" afterPath="$PROJECT_DIR$/src/components/controls/Textfield.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Indicators.js" afterPath="$PROJECT_DIR$/src/components/pages/Indicators.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Plan.js" afterPath="$PROJECT_DIR$/src/components/pages/Plan.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" afterPath="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Preferences.js" afterPath="$PROJECT_DIR$/src/components/pages/Preferences.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Profile.js" afterPath="$PROJECT_DIR$/src/components/pages/Profile.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/SignIn.js" afterPath="$PROJECT_DIR$/src/components/pages/SignIn.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/TargetAudience.js" afterPath="$PROJECT_DIR$/src/components/pages/TargetAudience.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/Welcome.js" afterPath="$PROJECT_DIR$/src/components/pages/Welcome.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/indicators/Item.js" afterPath="$PROJECT_DIR$/src/components/pages/indicators/Item.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" afterPath="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js" afterPath="$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" afterPath="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/data/serverCommunication.js" afterPath="$PROJECT_DIR$/src/data/serverCommunication.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/engagement-calculator/index.html" afterPath="$PROJECT_DIR$/src/engagement-calculator/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/styles/indicators/item.css" afterPath="$PROJECT_DIR$/src/styles/indicators/item.css" />
     </list>
     <ignored path="InfiniGrow_dist_PopupModeFixed.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,106 +38,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="Indicators.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
+      <file leaf-file-name="Profile.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/Profile.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-238">
-              <caret line="114" column="61" selection-start-line="114" selection-start-column="61" selection-end-line="114" selection-end-column="61" />
-              <folding>
-                <element signature="e#1918#3449#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="serverCommunication.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/data/serverCommunication.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Item.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="471">
-              <caret line="65" column="66" selection-start-line="65" selection-start-column="66" selection-end-line="65" selection-end-column="66" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-                <element signature="n#ProgressCircle#0" expanded="false" />
-                <marker date="1486565694599" expanded="true" signature="2768:2859" ph="..." />
-                <marker date="1486565694599" expanded="true" signature="2789:2845" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlannedVsActual.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/PlannedVsActual.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="170" column="81" selection-start-line="170" selection-start-column="81" selection-end-line="170" selection-end-column="81" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AnnualTab.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="115">
-              <caret line="139" column="110" selection-start-line="139" selection-start-column="110" selection-end-line="139" selection-end-column="110" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProjectionsTab.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-538">
-              <caret line="293" column="21" selection-start-line="293" selection-start-column="21" selection-end-line="293" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProjectionItem.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="59" column="14" selection-start-line="59" selection-start-column="2" selection-end-line="59" selection-end-column="14" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Preferences.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/pages/Preferences.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="385" column="139" selection-start-line="385" selection-start-column="90" selection-end-line="385" selection-end-column="139" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Textfield.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/controls/Textfield.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="38" column="30" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
+            <state relative-caret-position="-7975">
+              <caret line="66" column="12" selection-start-line="66" selection-start-column="7" selection-end-line="66" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -147,8 +51,96 @@
       <file leaf-file-name="TargetAudience.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/pages/TargetAudience.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="419">
-              <caret line="302" column="53" selection-start-line="302" selection-start-column="53" selection-end-line="302" selection-end-column="53" />
+            <state relative-caret-position="165">
+              <caret line="471" column="12" selection-start-line="471" selection-start-column="12" selection-end-line="471" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Indicators.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="451">
+              <caret line="144" column="174" selection-start-line="144" selection-start-column="174" selection-end-line="144" selection-end-column="174" />
+              <folding>
+                <element signature="e#1918#3449#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Preferences.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/Preferences.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="352">
+              <caret line="207" column="22" selection-start-line="207" selection-start-column="22" selection-end-line="207" selection-end-column="22" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProjectionsTab.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="291">
+              <caret line="297" column="201" selection-start-line="297" selection-start-column="201" selection-end-line="297" selection-end-column="201" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Item.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="250">
+              <caret line="95" column="50" selection-start-line="95" selection-start-column="29" selection-end-line="95" selection-end-column="50" />
+              <folding>
+                <element signature="n#ProgressCircle#0" expanded="false" />
+                <marker date="1486969777552" expanded="true" signature="2887:2978" ph="..." />
+                <marker date="1486969777552" expanded="true" signature="2908:2964" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="item.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/styles/indicators/item.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="236">
+              <caret line="164" column="33" selection-start-line="164" selection-start-column="33" selection-end-line="164" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SignIn.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/SignIn.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="220">
+              <caret line="48" column="67" selection-start-line="48" selection-start-column="67" selection-end-line="48" selection-end-column="67" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Plan.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/Plan.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="159">
+              <caret line="111" column="68" selection-start-line="111" selection-start-column="68" selection-end-line="111" selection-end-column="68" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AnnualTab.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2581">
+              <caret line="237" column="76" selection-start-line="237" selection-start-column="76" selection-end-line="237" selection-end-column="76" />
               <folding />
             </state>
           </provider>
@@ -162,14 +154,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/components/pages/profile/SaveButton.js" />
-        <option value="$PROJECT_DIR$/src/styles/signin/signin.css" />
-        <option value="$PROJECT_DIR$/src/styles/plan/planned-actual-tab.css" />
-        <option value="$PROJECT_DIR$/src/styles/profile/choose-button.css" />
         <option value="$PROJECT_DIR$/src/components/ControlsLabel.js" />
         <option value="$PROJECT_DIR$/src/data/parsePlannedVsActual.js" />
         <option value="$PROJECT_DIR$/src/styles/icons/indicators.css" />
-        <option value="$PROJECT_DIR$/src/components/MultiRow.js" />
         <option value="$PROJECT_DIR$/src/components/pages/profile/Progress.js" />
         <option value="$PROJECT_DIR$/src/styles/plan/plan.css" />
         <option value="$PROJECT_DIR$/src/styles/onboarding/onboarding.css" />
@@ -186,13 +173,9 @@
         <option value="$PROJECT_DIR$/webpack.config.builder.js" />
         <option value="$PROJECT_DIR$/output/engagement-calculator/index.html" />
         <option value="$PROJECT_DIR$/src/styles/plan/annual-tab.css" />
-        <option value="$PROJECT_DIR$/src/styles/icons/plan.css" />
         <option value="$PROJECT_DIR$/src/data/channelsSchema.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/Plan.js" />
         <option value="$PROJECT_DIR$/src/index.html" />
-        <option value="$PROJECT_DIR$/src/styles/indicators/item.css" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/js/index.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/Indicators.js" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/less/variables.less" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/css/new-age.css" />
         <option value="$PROJECT_DIR$/output/engagement-calculator/css/style.css" />
@@ -200,19 +183,28 @@
         <option value="$PROJECT_DIR$/src/engagement-calculator/css/new-age.min.css" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/css/style.css" />
         <option value="$PROJECT_DIR$/src/modules/popup-mode.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/SignIn.js" />
         <option value="$PROJECT_DIR$/src/engagement-calculator/index.html" />
-        <option value="$PROJECT_DIR$/src/components/pages/Profile.js" />
         <option value="$PROJECT_DIR$/src/components/pages/Welcome.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/TargetAudience.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" />
         <option value="$PROJECT_DIR$/src/components/controls/Textfield.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/Preferences.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/indicators/Item.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" />
-        <option value="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" />
         <option value="$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js" />
+        <option value="$PROJECT_DIR$/output/main.js" />
+        <option value="$PROJECT_DIR$/src/styles/icons/plan.css" />
+        <option value="$PROJECT_DIR$/src/components/MultiRow.js" />
         <option value="$PROJECT_DIR$/src/data/serverCommunication.js" />
+        <option value="$PROJECT_DIR$/src/styles/plan/planned-actual-tab.css" />
+        <option value="$PROJECT_DIR$/src/data/parseAnnualPlanTEST.js" />
+        <option value="$PROJECT_DIR$/src/data/parseAnnualPlan.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/TargetAudience.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/Indicators.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/PlannedVsActual.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/indicators/Item.js" />
+        <option value="$PROJECT_DIR$/src/styles/indicators/item.css" />
+        <option value="$PROJECT_DIR$/src/components/pages/Profile.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/SignIn.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/Plan.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js" />
+        <option value="$PROJECT_DIR$/src/components/pages/Preferences.js" />
       </list>
     </option>
   </component>
@@ -289,6 +281,68 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="styles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="styles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="styles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="indicators" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -460,6 +514,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InfiniGrow_dist_PopupModeFixed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="node_modules" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
@@ -467,7 +535,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../training-center2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../InfiniGrowServer" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
@@ -475,6 +543,13 @@
     <property name="two.files.diff.last.used.file" value="$USER_HOME$/Downloads/index.js" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\data" />
+      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\engagement-calculator\img" />
+      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src" />
+      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\output" />
+      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\components\pages\plan" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\assets\indicator-icons" />
       <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\assets\button-icons" />
@@ -482,16 +557,12 @@
       <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\assets" />
       <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\assets\plan_icons" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\engagement-calculator\img" />
-      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src" />
-      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\output" />
-      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\components\pages\plan" />
-      <recent name="C:\ws\InfiniGrow_dist_PopupModeFixed\src\assets\plan_icons" />
-    </key>
   </component>
-  <component name="RunManager" selected="Node.js.parseAnnualPlan.js">
+  <component name="RunManager" selected="Node.js.parseAnnualPlanTEST.js">
     <configuration default="false" name="parseAnnualPlan.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="parseAnnualPlan.js" working-dir="$PROJECT_DIR$/src/data">
+      <method />
+    </configuration>
+    <configuration default="false" name="parseAnnualPlanTEST.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="parseAnnualPlanTEST.js" working-dir="$PROJECT_DIR$/src/data">
       <method />
     </configuration>
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
@@ -547,12 +618,14 @@
       <recursive>false</recursive>
       <method />
     </configuration>
-    <list size="1">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="Node.js.parseAnnualPlan.js" />
+      <item index="1" class="java.lang.String" itemvalue="Node.js.parseAnnualPlanTEST.js" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Node.js.parseAnnualPlan.js" />
+      <list size="2">
+        <item index="0" class="java.lang.String" itemvalue="Node.js.parseAnnualPlanTEST.js" />
+        <item index="1" class="java.lang.String" itemvalue="Node.js.parseAnnualPlan.js" />
       </list>
     </recent_temporary>
   </component>
@@ -598,29 +671,31 @@
       <workItem from="1486028114218" duration="30151000" />
       <workItem from="1486316214864" duration="1650000" />
       <workItem from="1486366467277" duration="32089000" />
-      <workItem from="1486468158799" duration="37769000" />
+      <workItem from="1486468158799" duration="43553000" />
+      <workItem from="1486631097392" duration="7277000" />
+      <workItem from="1486662825980" duration="25467000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="589863000" />
+    <option name="totallyTimeSpent" value="628391000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23333333" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.61487967" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33041576" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32932165" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32853982" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21115974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24179432" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39934355" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21017699" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -667,7 +742,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/components/pages/indicators/Item.js</url>
-          <line>207</line>
+          <line>209</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -682,12 +757,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/data/parseAnnualPlan.js</url>
-          <line>75</line>
+          <line>81</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/data/parseAnnualPlan.js</url>
-          <line>74</line>
+          <line>80</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -700,8 +775,48 @@
           <line>2</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/pages/Preferences.js</url>
+          <line>564</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/pages/Preferences.js</url>
+          <line>568</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/data/parseAnnualPlan.js</url>
+          <line>8</line>
+          <properties />
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/data/parseAnnualPlanTEST.js</url>
+          <line>101</line>
+          <properties />
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/src/data/parseAnnualPlanTEST.js</url>
+          <line>35</line>
+          <properties />
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/src/data/parseAnnualPlanTEST.js</url>
+          <line>58</line>
+          <properties />
+          <option name="timeStamp" value="44" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/data/parseAnnualPlanTEST.js</url>
+          <line>27</line>
+          <properties />
+          <option name="timeStamp" value="45" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="32" />
+      <option name="time" value="46" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="NodeJSConfigurationType">
@@ -711,72 +826,10 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/PlanNextMonthPopup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="24" column="286" selection-start-line="24" selection-start-column="286" selection-end-line="24" selection-end-column="286" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/styles/profile/product-launch-popup.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/styles/plan/popup.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="11" column="2" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/Popup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1034">
-          <caret line="47" column="4" selection-start-line="47" selection-start-column="4" selection-end-line="47" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/jspm-npm/node_modules/caseless/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-271">
-          <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/data/parseAnnualPlan.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="43" column="24" selection-start-line="43" selection-start-column="20" selection-end-line="43" selection-end-column="24" />
-          <folding>
-            <element signature="n#!!block;n#fillZeros#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/pages/profile/Progress.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="682">
           <caret line="34" column="25" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -784,7 +837,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1518">
           <caret line="69" column="16" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -797,7 +849,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2612">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -813,7 +864,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="402">
           <caret line="49" column="41" selection-start-line="49" selection-start-column="41" selection-end-line="49" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -821,7 +871,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="205">
           <caret line="267" column="31" selection-start-line="267" selection-start-column="31" selection-end-line="267" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -835,14 +884,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/styles/plan/annual-tab.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1087">
-          <caret line="123" column="22" selection-start-line="123" selection-start-column="22" selection-end-line="123" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/annual.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="192">
@@ -851,19 +892,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/styles/icons/plan.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="37" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/data/channelsSchema.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
           <caret line="772" column="2" selection-start-line="0" selection-start-column="0" selection-end-line="772" selection-end-column="2" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -871,7 +903,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -887,7 +918,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-192">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -895,7 +925,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -911,15 +940,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="296">
           <caret line="37" column="82" selection-start-line="37" selection-start-column="82" selection-end-line="37" selection-end-column="82" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/styles/indicators/item.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="153" column="19" selection-start-line="153" selection-start-column="19" selection-end-line="153" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -927,7 +947,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -935,7 +954,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
           <caret line="6" column="26" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -959,7 +977,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
           <caret line="215" column="1" selection-start-line="215" selection-start-column="1" selection-end-line="215" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -983,25 +1000,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
           <caret line="219" column="1" selection-start-line="219" selection-start-column="1" selection-end-line="219" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/SignIn.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="55" column="43" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Plan.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1386">
-          <caret line="94" column="32" selection-start-line="94" selection-start-column="32" selection-end-line="94" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1009,9 +1007,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="880">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#59#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1019,15 +1014,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="462">
           <caret line="51" column="130" selection-start-line="51" selection-start-column="130" selection-end-line="51" selection-end-column="130" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Profile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="463">
-          <caret line="304" column="149" selection-start-line="304" selection-start-column="149" selection-end-line="304" selection-end-column="149" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1036,16 +1022,8 @@
         <state relative-caret-position="422">
           <caret line="97" column="39" selection-start-line="97" selection-start-column="39" selection-end-line="97" selection-end-column="39" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/TargetAudience.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="419">
-          <caret line="302" column="53" selection-start-line="302" selection-start-column="53" selection-end-line="302" selection-end-column="53" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1053,93 +1031,210 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="292">
           <caret line="38" column="30" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-238">
-          <caret line="114" column="61" selection-start-line="114" selection-start-column="61" selection-end-line="114" selection-end-column="61" />
-          <folding>
-            <element signature="e#1918#3449#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/EcmaScript.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/Preferences.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="385" column="139" selection-start-line="385" selection-start-column="90" selection-end-line="385" selection-end-column="139" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="471">
-          <caret line="65" column="66" selection-start-line="65" selection-start-column="66" selection-end-line="65" selection-end-column="66" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-            <element signature="n#ProgressCircle#0" expanded="false" />
-            <marker date="1486565694599" expanded="true" signature="2768:2859" ph="..." />
-            <marker date="1486565694599" expanded="true" signature="2789:2845" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/PlannedVsActual.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="170" column="81" selection-start-line="170" selection-start-column="81" selection-end-line="170" selection-end-column="81" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="139" column="110" selection-start-line="139" selection-start-column="110" selection-end-line="139" selection-end-column="110" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-538">
-          <caret line="293" column="21" selection-start-line="293" selection-start-column="21" selection-end-line="293" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionItem.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
+        <state relative-caret-position="1122">
           <caret line="59" column="14" selection-start-line="59" selection-start-column="2" selection-end-line="59" selection-end-column="14" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/output/sw.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="106">
+          <caret line="359" column="61" selection-start-line="359" selection-start-column="61" selection-end-line="359" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/output/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="58612" column="31" selection-start-line="58612" selection-start-column="31" selection-end-line="58612" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/MultiRow.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1034">
+          <caret line="50" column="34" selection-start-line="50" selection-start-column="34" selection-end-line="50" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/styles/icons/plan.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="7" column="26" selection-start-line="7" selection-start-column="26" selection-end-line="7" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/EcmaScript.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/EcmaScript6.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/data/serverCommunication.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="88">
-          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/styles/plan/planned-actual-tab.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6270">
+          <caret line="285" column="8" selection-start-line="285" selection-start-column="8" selection-end-line="285" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/styles/plan/annual-tab.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="466">
+          <caret line="123" column="22" selection-start-line="123" selection-start-column="22" selection-end-line="123" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/parseAnnualPlan.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="29" column="56" selection-start-line="29" selection-start-column="55" selection-end-line="29" selection-end-column="56" />
+          <folding>
+            <element signature="e#60#98#0" expanded="true" />
+            <element signature="n#!!block;n#fillZeros#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/data/parseAnnualPlanTEST.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-693">
+          <caret line="35" column="6" selection-start-line="34" selection-start-column="0" selection-end-line="36" selection-end-column="7" />
+          <folding>
+            <element signature="n#!!block;n#fillZeros#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/PlannedVsActual.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="540" column="12" selection-start-line="540" selection-start-column="12" selection-end-line="540" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Indicators.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="451">
+          <caret line="144" column="174" selection-start-line="144" selection-start-column="174" selection-end-line="144" selection-end-column="174" />
+          <folding>
+            <element signature="e#1918#3449#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/styles/indicators/item.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="236">
+          <caret line="164" column="33" selection-start-line="164" selection-start-column="33" selection-end-line="164" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/SignIn.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="48" column="67" selection-start-line="48" selection-start-column="67" selection-end-line="48" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Profile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7975">
+          <caret line="66" column="12" selection-start-line="66" selection-start-column="7" selection-end-line="66" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/AnnualTab.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2581">
+          <caret line="237" column="76" selection-start-line="237" selection-start-column="76" selection-end-line="237" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Plan.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="111" column="68" selection-start-line="111" selection-start-column="68" selection-end-line="111" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/TargetAudience.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="471" column="12" selection-start-line="471" selection-start-column="12" selection-end-line="471" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/indicators/Item.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="95" column="50" selection-start-line="95" selection-start-column="29" selection-end-line="95" selection-end-column="50" />
+          <folding>
+            <element signature="n#ProgressCircle#0" expanded="false" />
+            <marker date="1486969777552" expanded="true" signature="2887:2978" ph="..." />
+            <marker date="1486969777552" expanded="true" signature="2908:2964" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/plan/ProjectionsTab.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="291">
+          <caret line="297" column="201" selection-start-line="297" selection-start-column="201" selection-end-line="297" selection-end-column="201" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/pages/Preferences.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="207" column="22" selection-start-line="207" selection-start-column="22" selection-end-line="207" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>

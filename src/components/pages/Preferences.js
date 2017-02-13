@@ -40,7 +40,8 @@ export default class Preferences extends Component {
         secondary: 'InfiniGrow Recommended'
       },
       maxChannels: -1,
-      showErrorMessage: [false, false, false]
+      notLeafChannelError: [false, false, false],
+      channelAlreadyExistsError: [false, false, false]
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.rowRemoved = this.rowRemoved.bind(this);
@@ -90,29 +91,55 @@ export default class Preferences extends Component {
 
   handleChangeBudget(parameter, event){
     let update = {};
-    update[parameter] = parseInt(event.target.value.replace('$','').replace(',',''));
+    update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
     this.setState(update);
   }
 
   handleChangeBlockedChannels(index, event){
-    if (typeof event.value === 'string') {
-      var errors = this.state.showErrorMessage;
+    /**if (typeof event.value === 'string') {
+      var errors = this.state.notLeafChannelError;
       errors[index] = false;
-      this.setState({showErrorMessage: errors});
+      this.setState({notLeafChannelError: errors});
+      let update = this.state.blockedChannels || [];
+      update.splice(index, 1, event.value);
+      this.setState({blockedChannels: update});
+    }
+     else {
+      var errors = this.state.notLeafChannelError;
+      errors[index] = true;
+      this.setState({notLeafChannelError: errors});
+      let update = this.state.blockedChannels || [];
+      update.splice(index, 1, event.value);
+      this.setState({blockedChannels: update});
+    }**/
+    var notLeafChannelError = this.state.notLeafChannelError;
+    var channelAlreadyExistsError = this.state.channelAlreadyExistsError;
+    notLeafChannelError[index] = false;
+    channelAlreadyExistsError[index] = false;
+    this.setState({notLeafChannelError: notLeafChannelError, channelAlreadyExistsError: channelAlreadyExistsError});
+    
+    if (this.state.blockedChannels.indexOf(event.value) === -1) {
+      var errors = this.state.notLeafChannelError;
+      errors[index] = (typeof event.value === 'string') ? false : true;
+      this.setState({notLeafChannelError: errors});
       let update = this.state.blockedChannels || [];
       update.splice(index, 1, event.value);
       this.setState({blockedChannels: update});
     }
     else {
-      var errors = this.state.showErrorMessage;
+      var errors = this.state.channelAlreadyExistsError;
       errors[index] = true;
-      this.setState({showErrorMessage: errors});
+      this.setState({channelAlreadyExistsError: errors});
+      let update = this.state.blockedChannels || [];
+      update.splice(index, 1);
+      this.setState({blockedChannels: update});
     }
+
   }
 
   handleChangeMax(parameter, event) {
     const number = parseInt(event.target.value);
-    if (number) {
+    if (number && number > 0) {
       this.setState({maxChannels: number});
     }
     else {
@@ -151,13 +178,13 @@ export default class Preferences extends Component {
             { value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended' },
             { value: 'Revenue - Long Term', label: 'Revenue - Long Term' },
             { value: 'Revenue - Short Term', label: 'Revenue - Short Term' },
-            { value: 'Number of Users', label: 'Number of Users' },
+            { value: 'Lead Generation', label: 'Number of Users' },
             { value: 'Reputation', label: 'Reputation' },
             { value: 'Marketing ROI', label: 'Marketing ROI' },
             { value: 'Market Share', label: 'Market Share' },
             { value: 'Brand Awareness', label: 'Brand Awareness' },
             { value: 'Better Quality Customers', label: 'Better Quality Customers' },
-            { value: 'New Customers', label: 'New Customers' },
+            { value: 'Number of Customers', label: 'New Customers' },
             { value: 'Retention Rates', label: 'Retention Rates' },
             { value: 'Number Of Job Applicants', label: 'Number Of Job Applicants' },
             { value: 'Thought Leadership', label: 'Thought Leadership' }
@@ -175,14 +202,14 @@ export default class Preferences extends Component {
             { value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended' },
             { value: 'Revenue - Long Term', label: 'Revenue - Long Term' },
             { value: 'Revenue - Short Term', label: 'Revenue - Short Term' },
-            { value: 'Number of Users', label: 'Number of Users' },
+            { value: 'Lead Generation', label: 'Number of Users' },
             { value: 'Reputation', label: 'Reputation' },
             { value: 'Marketing ROI', label: 'Marketing ROI' },
-            { value: 'Grow Market Share', label: 'Grow Market Share' },
+            { value: 'Market Share', label: 'Grow Market Share' },
             { value: 'Brand Awareness', label: 'Brand Awareness' },
             { value: 'Better Quality Customers', label: 'Better Quality Customers' },
-            { value: 'Target New Customers', label: 'Target New Customers' },
-            { value: 'Increase Retention Rates', label: 'Increase Retention Rates' },
+            { value: 'Number of Customers', label: 'Target New Customers' },
+            { value: 'Retention Rates', label: 'Increase Retention Rates' },
             { value: 'Number Of Job Applicants', label: 'Number Of Job Applicants' },
             { value: 'Thought Leadership', label: 'Thought Leadership' }
           ]
@@ -422,7 +449,7 @@ export default class Preferences extends Component {
                 * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
               </Notice>
               <div className={ this.classes.cell }>
-                <Textfield type="number" value={ this.state.maxChannels != -1 ? this.state.maxChannels : '' } onChange={ this.handleChangeMax.bind(this, '')} style={{
+                <Textfield value={ this.state.maxChannels != -1 ? this.state.maxChannels : '' } onChange={ this.handleChangeMax.bind(this, '')} style={{
                   width: '83px'
                 }} />
                 {/** <NotSure style={{
@@ -468,7 +495,8 @@ export default class Preferences extends Component {
                         { removeButton }
                       </div>
                       <div className={ preferencesStyle.locals.error }>
-                        <label hidden={ !this.state.showErrorMessage[index]}>Please choose a leaf channel</label>
+                        <label hidden={ !this.state.notLeafChannelError[index]}>Please choose a leaf channel</label>
+                        <label hidden={ !this.state.channelAlreadyExistsError[index]}>channel already in use</label>
                       </div>
                     </div>
                   }}
@@ -527,10 +555,16 @@ export default class Preferences extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
               let self = this;
+              self.setState({saveFail: false, saveSuceess: false});
 		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 			.then(function(data){
-			  self.setState({saveSuceess: true});
-			})
+			   if (data.ok){
+			    self.setState({saveSuceess: true});
+		  	}
+			  else {
+			    self.setState({saveFail: true});
+			    }
+		  	})
 			.catch(function(err){
 			  self.setState({saveFail: true});
 			});

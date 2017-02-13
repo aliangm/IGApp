@@ -46,32 +46,48 @@ export default class SignIn extends Component {
     e.preventDefault();
     let route = this.state.login ? 'login' : 'signup';
     var self = this;
+    self.setState({isSignupError: false, isPromotionError: false});
     serverCommunication.serverRequest('POST', route, JSON.stringify({email: self.state.email, password: self.state.password, promotionCode: self.state.promotionCode }))
       .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data){
-              checkIfPopup()
-                .then(function (data) {
-                  if (route == 'login' && !data){
-                    history.push('/plan');
-                  }
-                  else {
-                    history.push('/welcome');
-                  }
-                });
-            }
-            else {
-              if (route == 'login') {
-                self.setState({isLoginError: !data});
-                self.refs.loginEmailInput.focus();
-              } 
-              else {
-                self.setState({isSignupError: !data});
-                self.refs.signupEmailInput.focus();
+        if (response.ok) {
+          response.json()
+            .then(function (data) {
+              if (data) {
+                checkIfPopup()
+                  .then(function (data) {
+                    if (route == 'login' && !data) {
+                      history.push('/plan');
+                    }
+                    else {
+                      history.push('/welcome');
+                    }
+                  });
               }
-            }
-          })
+              else {
+                if (route == 'login') {
+                  self.setState({isLoginError: !data});
+                  self.refs.loginEmailInput.focus();
+                }
+                else {
+                  self.setState({isSignupError: !data});
+                  self.refs.signupEmailInput.focus();
+                }
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+        }
+        else {
+          if (response.status == 500){
+            self.setState({isPromotionError: true});
+            self.refs.signupPromotionInput.focus();
+          }
+          else if (response.status == 409){
+            self.setState({isSignupError: true});
+            self.refs.signupEmailInput.focus();
+          }
+        }
       })
       .catch(function (err) {
         console.log(err);
@@ -206,7 +222,7 @@ export default class SignIn extends Component {
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
                 <Label className={ this.classes.textLabel }>Promotion Code</Label>
-                <Textfield type="text" required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'promotionCode')} />
+                <Textfield ref="signupPromotionInput" type="text" required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'promotionCode')} />
               </div>
             </div>
             
@@ -222,6 +238,7 @@ export default class SignIn extends Component {
                     }}>Sign up</Button> **/}
                   <button className={ this.classes.primary2 } type="submit" >Sign up</button>
                   <label hidden={ !this.state.isSignupError} style={{ color: 'red' }}>Email already exists</label>
+                  <label hidden={ !this.state.isPromotionError} style={{ color: 'red' }}>Promotion code doesn't exists</label>
                 </div>
               </div>
             </div>

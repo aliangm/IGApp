@@ -94,8 +94,11 @@ export default class Indicators extends Component {
 
   handleChange(name, value){
     let update = Object.assign({}, this.state.actualIndicators);
-    update[name] = value;
-    this.setState({ actualIndicators: update});
+    value = parseInt(value);
+    if (!isNaN(value)) {
+      update[name] = value;
+      this.setState({actualIndicators: update});
+    }
   }
 
   render() {
@@ -207,6 +210,7 @@ export default class Indicators extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
               let self = this;
+              self.setState({saveFail: false, saveSuceess: false});
 		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}))
 			.then(function(data){
 			  self.setState({saveSuceess: true});
