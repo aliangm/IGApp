@@ -117,7 +117,7 @@ export default class Preferences extends Component {
     notLeafChannelError[index] = false;
     channelAlreadyExistsError[index] = false;
     this.setState({notLeafChannelError: notLeafChannelError, channelAlreadyExistsError: channelAlreadyExistsError});
-    
+
     if (this.state.blockedChannels.indexOf(event.value) === -1) {
       var errors = this.state.notLeafChannelError;
       errors[index] = (typeof event.value === 'string') ? false : true;
@@ -178,13 +178,12 @@ export default class Preferences extends Component {
             { value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended' },
             { value: 'Revenue - Long Term', label: 'Revenue - Long Term' },
             { value: 'Revenue - Short Term', label: 'Revenue - Short Term' },
-            { value: 'Lead Generation', label: 'Number of Users' },
             { value: 'Reputation', label: 'Reputation' },
             { value: 'Marketing ROI', label: 'Marketing ROI' },
             { value: 'Market Share', label: 'Market Share' },
             { value: 'Brand Awareness', label: 'Brand Awareness' },
             { value: 'Better Quality Customers', label: 'Better Quality Customers' },
-            { value: 'Number of Customers', label: 'New Customers' },
+            { value: 'Lead Generation', label: 'Lead Generation' },
             { value: 'Retention Rates', label: 'Retention Rates' },
             { value: 'Number Of Job Applicants', label: 'Number Of Job Applicants' },
             { value: 'Thought Leadership', label: 'Thought Leadership' }
@@ -202,14 +201,13 @@ export default class Preferences extends Component {
             { value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended' },
             { value: 'Revenue - Long Term', label: 'Revenue - Long Term' },
             { value: 'Revenue - Short Term', label: 'Revenue - Short Term' },
-            { value: 'Lead Generation', label: 'Number of Users' },
             { value: 'Reputation', label: 'Reputation' },
             { value: 'Marketing ROI', label: 'Marketing ROI' },
-            { value: 'Market Share', label: 'Grow Market Share' },
+            { value: 'Market Share', label: 'Market Share' },
             { value: 'Brand Awareness', label: 'Brand Awareness' },
             { value: 'Better Quality Customers', label: 'Better Quality Customers' },
-            { value: 'Number of Customers', label: 'Target New Customers' },
-            { value: 'Retention Rates', label: 'Increase Retention Rates' },
+            { value: 'Lead Generation', label: 'Lead Generation' },
+            { value: 'Retention Rates', label: 'Retention Rates' },
             { value: 'Number Of Job Applicants', label: 'Number Of Job Applicants' },
             { value: 'Thought Leadership', label: 'Thought Leadership' }
           ]

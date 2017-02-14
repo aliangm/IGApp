@@ -49,8 +49,13 @@ export default class Welcome extends Component {
       .then((response) => {
         response.json()
           .then(function (data) {
-            self.setState({userAccount: data});
-            self.setState({isLoaded: true});
+            if (data) {
+              if (data.error) {
+                history.push('/');
+              }
+              self.setState({userAccount: data});
+              self.setState({isLoaded: true});
+            }
           })
       })
       .catch(function (err) {
@@ -178,6 +183,7 @@ export default class Welcome extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
             let self = this;
+            self.setState({saveFail: false, saveSuceess: false});
 		serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(this.state.userAccount))
 			.then(function(data){
 			  self.setState({saveSuceess: true});

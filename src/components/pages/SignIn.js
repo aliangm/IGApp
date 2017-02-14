@@ -132,7 +132,7 @@ export default class SignIn extends Component {
 
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel } question={['']} description={['Password should be... ']}>Password</Label>
+                <Label className={ this.classes.textLabel } question={['']} description={['Password must contain a minimum of 1 lower case letter, 1 upper case letter, 1 numeric character, and at least 8 characters.']}>Password</Label>
                 <Textfield type="password" required pattern={ this.pattern } defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
@@ -214,11 +214,10 @@ export default class SignIn extends Component {
              */}
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel } question={['']} description={['Password should be...']}>Password</Label>
+                <Label className={ this.classes.textLabel } question={['']} description={['Password must contain a minimum of 1 lower case letter, 1 upper case letter, 1 numeric character, and at least 8 characters.']}>Password</Label>
                 <Textfield type="password" required defaultValue="" pattern={ this.pattern } className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
               </div>
             </div>
-            
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
                 <Label className={ this.classes.textLabel }>Promotion Code</Label>

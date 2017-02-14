@@ -9,6 +9,7 @@ import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Notice from 'components/Notice';
+import history from 'history';
 
 import Popup from 'components/Popup';
 import Loading from 'components/pages/plan/Loading';
@@ -491,7 +492,7 @@ export default class PlannedVsActual extends Component {
           <MultiRow numOfRows={1} maxNumOfRows={1} >
             {({index, data, update, removeButton}) => {
               return <div style={{
-                    paddingBottom: '100px',
+                    paddingBottom: '20px',
                     width: '500px'
                   }} className={ this.classes.channelsRow }>
                 <Select
