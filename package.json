@@ -49,7 +49,8 @@
     "webpack": "^1.13.1",
     "babel-polyfill": "^6.23.0",
     "lodash": "latest",
-    "whatwg-fetch": "^2.0.2"
+    "whatwg-fetch": "^2.0.2",
+    "promise-polyfill": "^6.0.2"
   },
   "dependencies": {
 

@@ -1,6 +1,7 @@
 import q from 'q';
 //SAFARI BUG FIX - no default fetch, need to use external library
 import 'whatwg-fetch';
+//SAFARI BUG FIX - no default promise, need to use external library
 import Promise from 'promise-polyfill';
 
 if (!window.Promise) {
