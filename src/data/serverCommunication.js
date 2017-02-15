@@ -1,12 +1,12 @@
 import q from 'q';
-/**
+//SAFARI BUG FIX - no default fetch, need to use external library
 import 'whatwg-fetch';
 import Promise from 'promise-polyfill';
 
 if (!window.Promise) {
   window.Promise = Promise;
 }
- **/
+
 export default {
 
 	serverRequest(httpFunc, route, body, handleResponse) {
