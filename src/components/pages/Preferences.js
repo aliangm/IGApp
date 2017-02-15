@@ -87,6 +87,14 @@ export default class Preferences extends Component {
     let update = this.state.goals || {};
     update[parameter] = event.value;
     this.setState({goals: update});
+    if (this.state.goals.primary == 'InfiniGrow Recommended' && this.state.goals.secondary != 'InfiniGrow Recommended') {
+      this.setState({
+        goals: {
+          primary: this.state.goals.secondary,
+          secondary: 'InfiniGrow Recommended'
+        }
+      })
+    }
   }
 
   handleChangeBudget(parameter, event){

@@ -8,7 +8,6 @@ import Loading from 'components/pages/plan/Loading';
 
 import style from 'styles/plan/projections-tab.css';
 import planStyles from 'styles/plan/plan.css';
-import serverCommunication from 'data/serverCommunication';
 
 export default class ProjectionsTab extends Component {
   styles = [planStyles];

@@ -53,7 +53,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 6px;
-  @mixin font-smooth-auto;
+@mixin font-smooth-auto;
 }
 
 .delimiter {
@@ -76,7 +76,7 @@
 
 .delimiter::after {
   content: attr(data-text);
-  @mixin font-smooth-auto;
+@mixin font-smooth-auto;
   text-transform: uppercase;
   background: white;
   padding: 4px 8px;
@@ -181,28 +181,29 @@
 }
 
 .box {
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-    border-radius: 4px;
-    user-select: none;
-    flex-shrink: 0;
-    flex-grow: 0;
-    text-transform: uppercase;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  border-radius: 4px;
+  user-select: none;
+  flex-shrink: 0;
+  flex-grow: 0;
+  text-transform: uppercase;
 }
 
 .primary2 {
   width: 100px;
   composes: box;
   color: white;
-    justify-content: center;
-    background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
-    /**box-shadow: 0 0 0 1px #1991eb !important;**/
-    font-weight: 600;
-    border: none;
-    font-size: 14px;
+  justify-content: center;
+  background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
+  /**box-shadow: 0 0 0 1px #1991eb !important;**/
+  font-weight: 600;
+  border: none;
+  font-size: 14px;
+  display: inline-block;
 }
 
 .primary2[data-selected] {

@@ -186,7 +186,8 @@ export default class Profile extends Component {
             { value: '$2501-$5000', label: '$2501 to $5000' },
             { value: '$5001-$7500', label: '$5001 to $7500' },
             { value: '$7501-$10000', label: '$7501 to $10,000' },
-            { value: '>$10000', label: '$10,001 or more' }
+            { value: '$10001-$75000', label: '$10,001 to $75,000' },
+            { value: '>$75000', label: '$75,001 or more' }
           ]
         }
       },

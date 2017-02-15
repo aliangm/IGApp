@@ -49,6 +49,7 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "lodash": "latest",
     "react-notification-system": "latest",
     "whatwg-fetch": "^2.0.2"

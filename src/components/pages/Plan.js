@@ -72,7 +72,8 @@ export default class Plan extends Component {
     this.setState({
       isLoaded: true,
       isPlannerLoading: true,
-      popup: false
+      popup: false,
+      serverDown: false
     });
     let self = this;
     serverCommunication.serverRequest('GET', 'plan')
