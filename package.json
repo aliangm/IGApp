@@ -46,12 +46,12 @@
     "react-router": "^2.6.0",
     "strict-loader": "^1.1.0",
     "style-loader": "git+https://github.com/NekR/style-loader.git",
-    "webpack": "^1.13.1"
-  },
-  "dependencies": {
+    "webpack": "^1.13.1",
     "babel-polyfill": "^6.23.0",
     "lodash": "latest",
-    "react-notification-system": "latest",
     "whatwg-fetch": "^2.0.2"
+  },
+  "dependencies": {
+
   }
 }
