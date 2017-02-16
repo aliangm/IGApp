@@ -536,7 +536,7 @@ export default class PlannedVsActual extends Component {
               </Button>
             </div>
             : null }
-          <div className={ this.classes.footer }>
+          <div className={ this.classes.footer } style={{ marginTop: '100px' }}>
             <SaveButton onClick={() => {
             let self = this;
             self.setState({saveFail: false, saveSuceess: false});

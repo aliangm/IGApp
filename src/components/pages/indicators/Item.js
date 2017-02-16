@@ -55,6 +55,10 @@ export default class Item extends Component {
   getStatusText() {
     const status = this.state.status;
 
+    if (status == 0){
+      return '0';
+    }
+    
     if (!status) {
       return '\u00A0';
     }
@@ -94,7 +98,7 @@ export default class Item extends Component {
   useStatus = () => {
     let status = this.refs.statusText.getValue();
     status = parseInt(status.replace(/[%$,]/g, ''));
-    if (status && status>0) {
+    if ((status && status>0) || status == 0) {
       this.setState({
         status: this.props.isPercentage ? (status > 100 ? 100 : status) + '%' : status,
         statusPopupHidden: true

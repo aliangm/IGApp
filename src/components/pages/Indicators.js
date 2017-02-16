@@ -145,7 +145,7 @@ export default class Indicators extends Component {
               <Item icon="indicator:sql" title="SQL" name="SQL" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.SQL } maxValue={2000} />
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.googleMentions } maxValue={1000000} />
+              <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.googleMentions } maxValue={200000} />
             </div>
             <div className={ indiStyle.locals.row }>
               <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.sessions } maxValue={300000} />
