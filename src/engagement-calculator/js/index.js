@@ -59,7 +59,7 @@ $('#fbbtn').on('click', function (e) {
   var fbshare = parseInt($('#fbshare').val());
   var fblikeT = parseInt($('#fblikeT').val());
   var fbposts = parseInt($('#fbposts').val());
-  var res=(fblike*1+fbclik*3+fbcmt*5+fbshare*9)/fblikeT*100*(Math.pow(fbposts, 0.5));
+  var res=(fblike*1+fbclik*3+fbcmt*5+fbshare*9)/fblikeT*100*(Math.pow(fbposts, 0.6));
    $('#fbout').val(""+res);
   
 });
