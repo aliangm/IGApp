@@ -247,46 +247,6 @@ export default class TargetAudience extends Component {
           ]
         }
       },
-      marital_status: {
-        label: 'Marital Status',
-        select: {
-          name: 'marital_status',
-          onChange: () => {},
-          options: [
-            { value: 'Never married', label: 'Never married' },
-            { value: 'Married', label: 'Married' },
-            { value: 'Separated', label: 'Separated' },
-            { value: 'Divorced', label: 'Divorced' },
-            { value: 'Widowed', label: 'Widowed' },
-            { value: 'Any', label: 'Any' },
-          ]
-        }
-      },
-      have_children: {
-        label: 'Have Children',
-        select: {
-          name: 'have_children',
-          onChange: () => {},
-          options: [
-            { value: 'Yes', label: 'Yes' },
-            { value: 'No', label: 'No' },
-            { value: 'Any', label: 'Any' }
-          ]
-        }
-      },
-      community: {
-        label: 'Community',
-        select: {
-          name: 'community',
-          onChange: () => {},
-          options: [
-            { value: 'Suburban', label: 'Suburban' },
-            { value: 'City', label: 'City' },
-            { value: 'Rural', label: 'Rural' },
-            { value: 'Any', label: 'Any' }
-          ]
-        }
-      },
       location: {
         label: 'Location',
         select: {
@@ -391,21 +351,6 @@ export default class TargetAudience extends Component {
                     width: '258px'
                   }}>
               <Select { ... selects.education } selected={ this.state.targetAudience.education } onChange= { this.handleChange.bind(this, 'education') } />
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.marital_status } selected={ this.state.targetAudience.maritalStatus } onChange= { this.handleChange.bind(this, 'maritalStatus') } />
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.have_children } selected={ this.state.targetAudience.children } onChange= { this.handleChange.bind(this, 'children') } />
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.community } selected={ this.state.targetAudience.community } onChange= { this.handleChange.bind(this, 'community') } />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
