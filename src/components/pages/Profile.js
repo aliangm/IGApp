@@ -92,10 +92,11 @@ export default class Profile extends Component {
     return this.state.userProfile.vertical &&
       this.state.userProfile.orientation &&
       this.state.userProfile.businessModel &&
+      this.state.userProfile.seatsPerAccount &&
+      this.state.userProfile.price &&
       this.state.userProfile.platform &&
       this.state.userProfile.lifeCycle &&
       this.state.userProfile.coverage &&
-      this.state.userProfile.price &&
       this.state.userProfile.loyalty &&
       this.state.userProfile.differentiation
   }
@@ -206,6 +207,21 @@ export default class Profile extends Component {
             {value: 'Other', label: 'Other'},
           ]
         }
+      },
+      seatsPerAccount: {
+        label: 'Number Of Seats Per Account',
+        select: {
+          name: 'seatsPerAccount',
+          options: [
+            { value: '1', label: '1' },
+            { value: '2-5', label: '2-5' },
+            { value: '6-15', label: '6-15' },
+            { value: '16-50', label: '16-50' },
+            { value: '51-100', label: '51-100' },
+            { value: '>100', label: 'More than 100' },
+            { value: 'Any', label: 'Any' },
+          ]
+        }
       }
     };
     /*
@@ -284,6 +300,16 @@ export default class Profile extends Component {
                 { key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium' },
               ]} selectedKey={ this.state.userProfile.businessModel } onChange = {this.fakeChange.bind(this, 'businessModel', 'SaaS')} />
             </div>
+            <div className={ this.classes.row } style={{
+              width: '258px'
+            }}>
+              <Select { ... selects.seatsPerAccount } selected={ this.state.userProfile.seatsPerAccount} onChange= { this.handleChangeSelect.bind(this, 'seatsPerAccount') }/>
+            </div>
+            <div className={ this.classes.row } style={{
+              width: '258px'
+            }}>
+              <Select { ... selects.price } selected={ this.state.userProfile.price} onChange= { this.handleChangeSelect.bind(this, 'price') }/>
+            </div>
             <div className={ this.classes.row }>
               <Label question={['']} description={['What is your main platform? If you’re using all platforms equally, please choose ‘Any’.']}>Platform</Label>
               <ButtonsSet buttons={[
@@ -310,11 +336,6 @@ export default class Profile extends Component {
                 { key: 'Local', text: 'Local', icon: 'buttons:local' },
                 { key: 'Any', text: 'Any', icon: 'buttons:any2' },
               ]} selectedKey={ this.state.userProfile.coverage } onChange = {this.handleChangeButton.bind(this, 'coverage')} />
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.price } selected={ this.state.userProfile.price} onChange= { this.handleChangeSelect.bind(this, 'price') }/>
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
