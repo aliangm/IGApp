@@ -67,6 +67,7 @@ export default class TargetAudience extends Component {
   validate() {
     return this.state.targetAudience.role &&
       this.state.targetAudience.managementLevel &&
+      this.state.targetAudience.teamSize &&
       this.state.targetAudience.employees &&
       this.state.targetAudience.annualRevenue &&
       this.state.targetAudience.companyType &&
@@ -131,6 +132,22 @@ export default class TargetAudience extends Component {
           name: 'reportsTo',
           onChange: () => {},
           options: [
+          ]
+        }
+      },
+      teamSize: {
+        label: 'Team Size',
+        select: {
+          name: 'teamSize',
+          onChange: () => {},
+          options: [
+            { value: '1', label: '1' },
+            { value: '2-5', label: '2-5' },
+            { value: '6-15', label: '6-15' },
+            { value: '16-50', label: '16-50' },
+            { value: '51-100', label: '51-100' },
+            { value: '>100', label: 'More than 100' },
+            { value: 'Any', label: 'Any' },
           ]
         }
       },
@@ -302,6 +319,11 @@ export default class TargetAudience extends Component {
                     width: '258px'
                   }}>
               <Select { ... selects.reportsTo }  />
+            </div>
+            <div className={ this.classes.row } style={{
+              width: '258px'
+            }}>
+              <Select { ... selects.teamSize } selected={ this.state.targetAudience.teamSize } onChange= { this.handleChange.bind(this, 'teamSize') } />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
