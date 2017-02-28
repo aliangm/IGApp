@@ -33,6 +33,7 @@ export default class Welcome extends Component {
         companyName: '',
         firstName: '',
         lastName: '',
+        teamSize: -1,
         companyWebsite: 'http://',
         competitorsWebsites: ['http://', 'http://', 'http://']
       }
@@ -66,6 +67,16 @@ export default class Welcome extends Component {
   handleChange(parameter, event){
     let update = Object.assign({}, this.state.userAccount);
     update[parameter] = event.target.value;
+    this.setState({userAccount: update});
+  }
+
+  handleChangeNumber(parameter, event) {
+    let number = parseInt(event.target.value);
+    if (isNaN(number)) {
+      number = -1;
+    }
+    let update = Object.assign({}, this.state.userAccount);
+    update[parameter] = number;
     this.setState({userAccount: update});
   }
 
@@ -140,6 +151,10 @@ export default class Welcome extends Component {
                <div className={ welcomeStyle.locals.logo }></div>
                </div>
                </div> */}
+            </div>
+            <div className={ this.classes.row }>
+              <Label>Marketing Team Size</Label>
+              <Textfield type="number" value={ this.state.userAccount.teamSize == -1 ? '' : this.state.userAccount.teamSize } onChange={ this.handleChangeNumber.bind(this, 'teamSize')} style={{ width: '80px' }}/>
             </div>
             <div className={ this.classes.row }>
               <Label>Enter your main competitor’s website (up to 3)</Label>
