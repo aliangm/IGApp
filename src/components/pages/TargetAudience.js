@@ -74,9 +74,6 @@ export default class TargetAudience extends Component {
       this.state.targetAudience.salary &&
       this.state.targetAudience.gender &&
       this.state.targetAudience.education &&
-      this.state.targetAudience.maritalStatus &&
-      this.state.targetAudience.children &&
-      this.state.targetAudience.community &&
       this.state.targetAudience.location &&
       this.state.targetAudience.dailyOnlinePresence;
   }
