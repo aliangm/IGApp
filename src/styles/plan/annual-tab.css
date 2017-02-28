@@ -108,8 +108,23 @@
 }
 
 .budget-change-box {
-    padding: 20px 15px;
+    padding: 5px 12px;
     display: flex;
+    justify-content: flex-end;
+}
+
+.left {
+    width: 50%;
+    display: flex;
+    justify-content: flex-start;
+    -webkit-box-pack: start;
+}
+
+.right {
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+    -webkit-box-pack: end;
 }
 
 .budget-change-field {

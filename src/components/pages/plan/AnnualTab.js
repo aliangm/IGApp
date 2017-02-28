@@ -10,6 +10,7 @@ import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
 import Explanation from 'components/pages/plan/Explanation';
+import Label from 'components/ControlsLabel';
 
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
@@ -22,19 +23,6 @@ import serverCommunication from 'data/serverCommunication';
 export default class AnnualTab extends Component {
   styles = [planStyles, icons];
   style = style;
-  state = {
-    //budget: 315000,
-    whatIfSelected: false,
-    popupShown: false,
-    popupLeft: 0,
-    pouppTop: 0,
-
-    budgetField: '$',
-
-    hoverRow: void 0,
-    collapsed: {},
-    tableCollapsed: false
-  }
 
   constructor(props) {
     super(props);
@@ -45,13 +33,20 @@ export default class AnnualTab extends Component {
       popupLeft: 0,
       pouppTop: 0,
 
-      budgetField: '$',
+      budgetField: props.budget || '',
+      maxChannelsField: props.maxChannels || '',
 
       hoverRow: void 0,
       collapsed: {},
       tableCollapsed: false,
       annualData: {}
     }
+    this.whatIf = this.whatIf.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ budgetField: nextProps.budget });
+    this.setState({maxChannelsField: nextProps.maxChannels});
   }
   /**
    componentDidMount(){
@@ -107,15 +102,51 @@ export default class AnnualTab extends Component {
     return dates;
   }
 
-  changeBudget = () => {
-    const budget = parseInt(this.state.budgetField.replace(/^\$/, ''));
+  whatIf = (isCommitted, callback) => {
+    this.setState({whatIfSelected: false});
+    let preferences = {};
 
-    this.refs.budgetPopup.close();
-
-    this.setState({
+    const budget = parseInt(this.state.budgetField);
+    if (budget) {
+      preferences.annualBudget = budget;
+    }
+    const maxChannels = parseInt(this.state.maxChannelsField);
+    if (isNaN(maxChannels)) {
+      preferences.maxChannels = -1;
+    }
+    else {
+      preferences.maxChannels = maxChannels;
+    }
+    if (Object.keys(preferences).length == 2) {
+      this.props.whatIf(isCommitted, preferences, callback);
+    }
+    /**
+     this.setState({
       budget: budget,
       budgetField: '$'
-    });
+    });**/
+  }
+
+  whatIfCommit = () => {
+    let callback = () => {
+      this.refs.whatIfPopup.close();
+      this.setState({whatIfSelected: false, isTemp: false});
+    }
+    this.whatIf(true, callback);
+  }
+
+  whatIfTry = () => {
+    let callback = () => {
+      this.refs.whatIfPopup.open();
+      this.setState({whatIfSelected: true, isTemp: true});
+    }
+    this.whatIf(false, callback);
+  }
+
+  whatIfCancel = () => {
+    this.refs.whatIfPopup.close();
+    this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
+    this.props.cancel();
   }
 
   render() {
@@ -140,8 +171,8 @@ export default class AnnualTab extends Component {
             const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
             const titleElem = <div
               style={{
-            marginLeft: (level | 0) * 17 + 'px'
-          }}
+                marginLeft: (level | 0) * 17 + 'px'
+              }}
               className={ this.classes.rowTitle }
             >
               { params.children ?
@@ -149,9 +180,9 @@ export default class AnnualTab extends Component {
                   className={ this.classes.rowArrow }
                   data-collapsed={ collapsed || null }
                   onClick={() => {
-                this.state.collapsed[key] = !collapsed;
-                this.forceUpdate();
-              }}
+                    this.state.collapsed[key] = !collapsed;
+                    this.forceUpdate();
+                  }}
                 />
                 : null }
 
@@ -212,9 +243,9 @@ export default class AnnualTab extends Component {
             className={ this.classes.rowArrow }
             data-collapsed={ this.state.tableCollapsed || null }
             onClick={() => {
-          this.state.tableCollapsed = !this.state.tableCollapsed;
-          this.forceUpdate();
-        }}
+              this.state.tableCollapsed = !this.state.tableCollapsed;
+              this.forceUpdate();
+            }}
           />
           { 'Marketing Channel' }
         </div>, this.getDates(), {
@@ -234,54 +265,89 @@ export default class AnnualTab extends Component {
                 <div className={ planStyles.locals.titleText }>
                   Annual Budget
                 </div>
-                <div className={ planStyles.locals.titlePrice }>
-                  ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
+                <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
+                  ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
                 </div>
               </div>
               <div className={ planStyles.locals.titleButtons }>
                 <Button type="primary2" style={{
-            marginLeft: '15px',
-            width: '106px'
-          }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-            this.setState({
-              whatIfSelected: true
-            });
+                  marginLeft: '15px',
+                  width: '106px'
+                }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
+                  this.setState({
+                    whatIfSelected: true
+                  });
 
-            this.refs.budgetPopup.open();
-          }}>What if</Button>
+                  this.refs.whatIfPopup.open();
+                }}>What if</Button>
 
                 <div style={{ position: 'relative' }}>
-                  <PlanPopup ref="budgetPopup" style={{
-              width: '367px',
-              right: '0',
-              left: 'auto',
-              top: '20px'
-            }} onClose={() => {
-              this.setState({
-                budgetField: '$',
-                whatIfSelected: false
-              });
-            }} title="COMING SOON!">
-                    {/**       <div className={ this.classes.budgetChangeBox }>
-                      <Textfield
-                        value={ this.state.budgetField }
-                        className={ this.classes.budgetChangeField }
-                        onChange={(e) => {
-                    this.setState({
-                      budgetField: e.target.value
-                    });
-                  }}
-                        onKeyDown={(e) => {
-                    if (e.keyCode === 13) {
-                      this.changeBudget();
-                    }
-                  }}
-                      />
-                      <Button type="accent2" style={{
-                  width: '91px',
-                  marginLeft: '15px'
-                }} onClick={ this.changeBudget }>Done</Button>
-                    </div>**/}
+                  <PlanPopup ref="whatIfPopup" style={{
+                    width: '367px',
+                    right: '110px',
+                    left: 'auto',
+                    top: '-35px'
+                  }} hideClose={ true } title="What If - Scenarios Management">
+                    <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
+                      <div className={ this.classes.left }>
+                        <Label style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                      </div>
+                      <div className={ this.classes.right }>
+                        <Textfield style={{ maxWidth: '140px' }}
+                                   value={ '$' + this.state.budgetField }
+                                   className={ this.classes.budgetChangeField }
+                                   onChange={(e) => {
+                                     this.setState({
+                                       budgetField: e.target.value.replace(/^\$/, '')
+                                     });
+                                   }}
+                                   onKeyDown={(e) => {
+                                     if (e.keyCode === 13) {
+                                       this.whatIf();
+                                     }
+                                   }}
+                        />
+                      </div>
+                    </div>
+                    <div className={ this.classes.budgetChangeBox }>
+                      <div className={ this.classes.left }>
+                        <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                      </div>
+                      <div className={ this.classes.right }>
+                        <Textfield style={{
+                          maxWidth: '140px' }}
+                                   value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
+                                   className={ this.classes.budgetChangeField }
+                                   onChange={(e) => {
+                                     this.setState({
+                                       maxChannelsField: e.target.value
+                                     });
+                                   }}
+                                   onKeyDown={(e) => {
+                                     if (e.keyCode === 13) {
+                                       this.whatIf();
+                                     }
+                                   }}
+                        />
+                      </div>
+                    </div>
+                    <div className={ this.classes.budgetChangeBox }>
+                      <Button type="primary2" style={{
+                        width: '100px'
+                      }} onClick={ this.whatIfTry }>Try</Button>
+                    </div>
+                    <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
+                      <div className={ this.classes.left }>
+                        <Button type="normal" style={{
+                          width: '100px'
+                        }} onClick={ this.whatIfCancel }>Cancel</Button>
+                      </div>
+                      <div className={ this.classes.right }>
+                        <Button type="accent2" style={{
+                          width: '100px'
+                        }} onClick={ this.whatIfCommit }>Commit</Button>
+                      </div>
+                    </div>
                   </PlanPopup>
                 </div>
               </div>
@@ -311,18 +377,18 @@ export default class AnnualTab extends Component {
                 </div>
 
                 <PlanPopup ref="headPopup" style={{
-            width: '350px',
-            left: this.state.popupLeft + 'px',
-            top: this.state.popupTop + 'px',
-            marginTop: '5px'
-          }} title="Events: Mar/16"
+                  width: '350px',
+                  left: this.state.popupLeft + 'px',
+                  top: this.state.popupTop + 'px',
+                  marginTop: '5px'
+                }} title="Events: Mar/16"
                            onClose={() => {
-              this.setState({
-                popupShown: false,
-                popupLeft: 0,
-                popupTop: 0
-              });
-            }}
+                             this.setState({
+                               popupShown: false,
+                               popupLeft: 0,
+                               popupTop: 0
+                             });
+                           }}
                 >
                   <PopupTextContent>
                     <strong>User Events</strong>
