@@ -54,6 +54,9 @@ export default class Item extends Component {
 
   getStatusText() {
     const status = this.state.status;
+    if (status == ''){
+      return '';
+    }
 
     if (status == 0){
       return '0';
