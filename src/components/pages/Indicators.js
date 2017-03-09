@@ -156,7 +156,7 @@ export default class Indicators extends Component {
             </div>
             <div className={ indiStyle.locals.row }>
               <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.MRR } maxValue={1000000} />
-              <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isPercentage = { true } isDirectionDown= { true } />
+              <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } />
             </div>
           </div>
 
