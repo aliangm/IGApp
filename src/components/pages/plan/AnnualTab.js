@@ -146,7 +146,7 @@ export default class AnnualTab extends Component {
   whatIfCancel = () => {
     this.refs.whatIfPopup.close();
     this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.cancel();
+    this.props.close();
   }
 
   render() {

@@ -46,6 +46,7 @@ export default class Textfield extends Component {
         onKeyUp={ this.props.onKeyUp }
         onKeyPress={ this.props.onKeyPress }
         onInput={ this.props.onInput }
+        placeholder={ this.props.placeHolder }
       />
     </div>
   }

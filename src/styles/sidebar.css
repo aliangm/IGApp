@@ -123,7 +123,7 @@
 @mixin icon-nodpi sidebar:targeting, ../assets/sidebar-icons/targeting-icon, png;
 @mixin icon-nodpi sidebar:user-events, ../assets/sidebar-icons/user-events-icon, png;
 @mixin icon-nodpi sidebar:planned-vs-actual, ../assets/sidebar-icons/balance, png;
-@mixin icon-nodpi sidebar:planned-vs-actual2, ../assets/sidebar-icons/football-signal-of-a-game-announcement-of-one-team-vs-other, png;
+@mixin icon-nodpi sidebar:campaigns, ../assets/sidebar-icons/elections-day, png;
 
 .backface {
   position: fixed;

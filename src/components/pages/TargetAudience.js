@@ -132,6 +132,7 @@ export default class TargetAudience extends Component {
           name: 'reportsTo',
           onChange: () => {},
           options: [
+            { value: 'Coming Soon', label: 'Coming Soon' },
           ]
         }
       },
@@ -318,7 +319,7 @@ export default class TargetAudience extends Component {
             <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-              <Select { ... selects.reportsTo }  />
+              <Select { ... selects.reportsTo } selected="Coming Soon"/>
             </div>
             <div className={ this.classes.row } style={{
               width: '258px'

@@ -210,6 +210,8 @@ export default class Profile extends Component {
       },
       seatsPerAccount: {
         label: 'Number Of Seats Per Account',
+        labelQuestion: [''],
+        description: ['If SaaS, what is your average number of seats per account?'],
         select: {
           name: 'seatsPerAccount',
           options: [
