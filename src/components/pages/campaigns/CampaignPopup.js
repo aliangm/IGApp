@@ -100,29 +100,37 @@ export default class CampaignPopup extends Component {
   }
 
   getEmailHeader() {
-    return "New InfiniGrow Campaign - " + this.state.campaign.name;
+    return "InfiniGrow  - New Marketing Campaign - " + this.state.campaign.name;
   }
 
   getEmailBody() {
     const newLine = "\r\n";
-    return "Congrats! you have been assigned to a new campaign at InfiniGrow. Let's have a look at the details:" + newLine +
-      "Source: " + this.props.channelTitle + newLine +
-      "Campaign Name: " + this.state.campaign.name + newLine +
-      "Campaign Budget: " + (this.state.campaign.actualSpent || this.state.campaign.budget) + newLine +
-      "Status: " + this.state.campaign.status + newLine +
-      "Marketing time needed: " + this.state.campaign.time.marketing + "h" + newLine +
-      "Development time needed: " + this.state.campaign.time.development + "h" + newLine +
-      "Design time needed: " + this.state.campaign.time.design + "h" + newLine +
-      "Due date: " + this.state.campaign.dueDate + newLine +
+    return "Congrats! you have been assigned to a new marketing campaign through InfiniGrow. Let's have a look at the brief:" + newLine +
+      newLine +
+      "- Source: " + this.props.channelTitle + newLine +
+      "- Campaign Name: " + this.state.campaign.name + newLine +
+      "- Campaign Budget: " + (this.state.campaign.actualSpent || this.state.campaign.budget) + newLine +
+      "- Status: " + this.state.campaign.status + newLine +
+      newLine +
+      (this.state.campaign.time.marketing ? ("- Expected marketing time: " + this.state.campaign.time.marketing + " hours" + newLine) : '') +
+      (this.state.campaign.time.development ? ("- Expected development time: " + this.state.campaign.time.development + " hours" + newLine) : '') +
+      (this.state.campaign.time.design ? ("- Expected design time: " + this.state.campaign.time.design + " hours" + newLine) : '') +
+      newLine +
+      (this.state.campaign.dueDate ? ("Due date: " + this.state.campaign.dueDate + newLine + newLine) : '') +
       "Campaign objectives:" + newLine +
-      this.state.campaign.objectives.kpi[0] + " - " + this.state.campaign.objectives.growth[0] + newLine +
-      this.state.campaign.objectives.kpi[1] + " - " + this.state.campaign.objectives.growth[1] + newLine +
-      this.state.campaign.objectives.kpi[2] + " - " + this.state.campaign.objectives.growth[2] + newLine +
-      "Target audience:" + newLine + this.state.campaign.targetAudience + newLine +
-      "Campaign description:" + newLine + this.state.campaign.description + newLine +
-      "Reference projects:" + newLine + this.state.campaign.referenceProjects + newLine +
-      "Keywords:" + newLine + this.state.campaign.keywords + newLine +
-      "Additional information:" + newLine + this.state.campaign.additionalInformation + newLine +
+      (this.state.campaign.objectives.kpi[0] ? ("- KPI: " + this.state.campaign.objectives.kpi[0] + ", Growth: " + this.state.campaign.objectives.growth[0] + newLine) : '') +
+      (this.state.campaign.objectives.kpi[1] ? ("- KPI: " + this.state.campaign.objectives.kpi[1] + ", Growth: " + this.state.campaign.objectives.growth[1] + newLine) : '') +
+      (this.state.campaign.objectives.kpi[2] ? ("- KPI: " + this.state.campaign.objectives.kpi[2] + ", Growth: " + this.state.campaign.objectives.growth[2] + newLine) : '') +
+      newLine +
+      (this.state.campaign.targetAudience ? ("Target audience:" + newLine + this.state.campaign.targetAudience + newLine + newLine) : '') +
+      (this.state.campaign.description ? ("Campaign description:" + newLine + this.state.campaign.description + newLine + newLine) : '') +
+      (this.state.campaign.referenceProjects ? ("Reference projects:" + newLine + this.state.campaign.referenceProjects + newLine + newLine) : '') +
+      (this.state.campaign.keywords ? ("Keywords:" + newLine + this.state.campaign.keywords + newLine + newLine) : '') +
+      (this.state.campaign.additionalInformation ? ("Additional information:" + newLine + this.state.campaign.additionalInformation + newLine + newLine) : '') +
+        "Tracking (Coming Soon): " + newLine +
+      (this.state.campaign.tracking.UTM ? ("- UTM: " + this.state.campaign.tracking.UTM + newLine) : '') +
+      (this.state.campaign.tracking.URL ? ("- URL: " + this.state.campaign.tracking.URL + newLine) : '') +
+      newLine +
       "Thanks!";
   }
 

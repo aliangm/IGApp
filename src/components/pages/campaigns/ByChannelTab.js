@@ -56,7 +56,7 @@ export default class ByChannelTab extends Component {
             { this.getDateString(this.props.planDate) } - Campaigns
           </div>
           <div className={ this.classes.titleBudget }>
-            Budget left to spend - $0
+            Budget left to spend - coming soon
           </div>
         </div>
         { page }

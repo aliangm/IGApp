@@ -76,7 +76,7 @@ export default class Calendar extends Component {
             className={ this.classes.input }
             onFocus={ this.openCalendar }
             readOnly
-            value={ this.props.value || dateFormatter.format(defaultCalendarValue)}
+            value={ this.props.value }
           />
         }}
       </DatePicker>

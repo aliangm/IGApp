@@ -27,7 +27,7 @@ export default class Plan extends Component {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
-      cancel: this.componentDidMount.bind(this)
+      close: this.componentDidMount.bind(this)
     }
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
