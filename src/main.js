@@ -10,6 +10,7 @@ import TargetAudience from './components/pages/TargetAudience';
 import Indicators from './components/pages/Indicators';
 import Manual from './components/pages/Manual';
 import SignIn from './components/pages/SignIn';
+import Campaigns from './components/pages/Campaigns';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
 import PlannedVsActual from './components/pages/PlannedVsActual';
@@ -28,6 +29,7 @@ ReactDOM.render(
     <Route path="/welcome" component={ Welcome } />
     <Route path="/plan" component={ Plan } />
     <Route path="/planned-vs-actual" component={ PlannedVsActual } />
+    <Route path="/campaigns" component={ Campaigns } />
     <Route path="/" component={ SignIn } />
   </Router>,
   // <Profile />,

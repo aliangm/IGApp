@@ -21,7 +21,7 @@ const CalendarLocale = assign({}, _CalendarLocale, {
 });
 
 // const dateFormatter = new DateTimeFormat('MM/dd/yyyy');
-const dateFormatter = new DateTimeFormat('yyyy-MM-dd');
+const dateFormatter = new DateTimeFormat('MM-dd-yyyy');
 
 // const defaultCalendarValue = new GregorianCalendar(en_US);
 // defaultCalendarValue.setTime(Date.now());
@@ -40,6 +40,9 @@ export default class Calendar extends Component {
 
   onChange = (value) => {
     this.setState({ value });
+    if (this.props.onChange) {
+      this.props.onChange(dateFormatter.format(value));
+    }
   }
 
   openCalendar = () => {
@@ -53,7 +56,7 @@ export default class Calendar extends Component {
       formatter={ dateFormatter }
       disabledTime={ null }
       timePicker={ null }
-      defaultValue={ defaultCalendarValue }
+      defaultValue={ this.props.value ? dateFormatter.parse(this.props.value) : defaultCalendarValue }
       showDateInput={ false }
       disabledDate={ disabledDate }
     />;
@@ -66,14 +69,14 @@ export default class Calendar extends Component {
         value={ this.state.value }
         formatter={ dateFormatter }
         onChange={ this.onChange }
-        defaultValue={ defaultCalendarValue }
+        defaultValue={ this.props.value ? dateFormatter.parse(this.props.value) : defaultCalendarValue }
       >
         {({ value }) => {
           return <Textfield
             className={ this.classes.input }
             onFocus={ this.openCalendar }
             readOnly
-            value={ value && dateFormatter.format(value) || ''}
+            value={ this.props.value }
           />
         }}
       </DatePicker>

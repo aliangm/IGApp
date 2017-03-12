@@ -16,7 +16,7 @@ export default {
 
 		//fetch('http://localhost:3000/' + route, {
 		//fetch('http://infinigrowtest.centralus.cloudapp.azure.com:3000/' + route, {
-		fetch('https://app.infinigrow.com:8443/' + route, {
+		fetch(window.location.protocol + '//' + window.location.hostname + ':8443/' + route, {
 		method: httpFunc,
 			headers: {
 				'Content-Type': 'application/json'

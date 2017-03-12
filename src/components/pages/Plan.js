@@ -25,9 +25,11 @@ export default class Plan extends Component {
     super(props);
     this.state = {
       selectedTab: 0,
-      numberOfPlanUpdates: 0
+      numberOfPlanUpdates: 0,
+      whatIf: this.plan.bind(this),
+      close: this.componentDidMount.bind(this)
     }
-    this.handleRePlan = this.handleRePlan.bind(this);
+    this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
   }
 
@@ -35,7 +37,7 @@ export default class Plan extends Component {
     let self = this;
     if (isPopupMode()) {
       disablePopupMode();
-      this.handleRePlan();
+      this.plan(true, null, null);
     }
     else {
       serverCommunication.serverRequest('GET', 'usermonthplan')
@@ -51,6 +53,7 @@ export default class Plan extends Component {
                   self.setState({numberOfPlanUpdates: data.numberOfPlanUpdates});
                   self.setState({projectedPlan: data.projectedPlan});
                   self.setState({budget: data.annualBudget});
+                  self.setState({maxChannels: data.maxChannels});
                   self.setState({planDate: data.planDate});
                   self.setState({isLoaded: true});
                 }
@@ -68,7 +71,9 @@ export default class Plan extends Component {
     this.setState({popup: true});
   }
 
-  handleRePlan(){
+  plan(isCommitted, preferences, callback){
+    let body = preferences ? JSON.stringify(preferences) : null;
+    let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     this.setState({
       isLoaded: true,
       isPlannerLoading: true,
@@ -76,7 +81,7 @@ export default class Plan extends Component {
       serverDown: false
     });
     let self = this;
-    serverCommunication.serverRequest('GET', 'plan')
+    serverCommunication.serverRequest(func, 'plan', body)
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -93,9 +98,13 @@ export default class Plan extends Component {
                     selectedTab: 0,
                     budget: data.annualBudget,
                     planDate: data.planDate,
+                    maxChannels: data.maxChannels,
                     isPlannerLoading: false,
                     isError: false
                   });
+                  if (callback) {
+                    callback();
+                  }
                 }
               }
               else {
@@ -120,7 +129,7 @@ export default class Plan extends Component {
           serverDown: true
         });
         console.log('err', err);
-      })
+      });
   }
 
   selectTab(index) {
@@ -150,18 +159,18 @@ export default class Plan extends Component {
           <div className={this.classes.headPlan } >
             <ReplanButton numberOfPlanUpdates={ this.state.numberOfPlanUpdates } onClick={ this.popup }/>
             <Popup style={{
-      width: '400px',
-      top: '180%',
-      transform: 'translate(0, -50%)'
-    }} hidden={ !this.state.popup } onClose={() => {
-      this.setState({
-        popup: false
-      });
-    }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.handleRePlan } onBack={() => {
-     this.setState({
-     popup: false
-     })}} />
+              width: '400px',
+              top: '180%',
+              transform: 'translate(0, -50%)'
+            }} hidden={ !this.state.popup } onClose={() => {
+              this.setState({
+                popup: false
+              });
+            }}>
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan } onBack={() => {
+                this.setState({
+                  popup: false
+                })}} />
             </Popup>
             <div className={ this.classes.error }>
               <label hidden={ !this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
