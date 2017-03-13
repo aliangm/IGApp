@@ -45,6 +45,7 @@ export default class Welcome extends Component {
     this.handleChangeArray = this.handleChangeArray.bind(this);
     this.addMember = this.addMember.bind(this);
     this.changeMembers = this.changeMembers.bind(this);
+    this.removeMember = this.removeMember.bind(this);
   }
 
   componentDidMount() {
@@ -108,11 +109,18 @@ export default class Welcome extends Component {
     this.setState({userAccount: update});
   }
 
+  removeMember(index) {
+    let update = Object.assign({}, this.state.userAccount);
+    update.teamMembers.splice(index, 1);
+    this.setState({userAccount: update});
+  }
+
   render() {
     const headRow = this.getTableRow(null, [
       'Name',
       'Email',
-      'Role'
+      'Role',
+      ''
     ], {
       className: PlannedVsActualstyle.locals.headRow
     });
@@ -132,7 +140,11 @@ export default class Welcome extends Component {
           <Textfield style={{
             minWidth: '117px'
           }} value={ item.role } onChange={ this.changeMembers.bind(this, i, 'role') }/>
-        </div>
+        </div>,
+        <div
+          className={ welcomeStyle.locals.removeButton }
+          onClick={ this.removeMember.bind(this, i) }
+        />
       ], {
         key: i
       });
