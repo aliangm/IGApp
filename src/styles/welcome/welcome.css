@@ -35,3 +35,17 @@
     width: 100%;
   }
 }
+
+.inner-box {
+  margin: 31px 0;
+  /*padding: 0 31px;*/
+  /*min-height: 300px;*/
+}
+
+.add-button {
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+  background: url(../../assets/plus.svg) center center no-repeat;
+  background-size: 24px auto;
+}
