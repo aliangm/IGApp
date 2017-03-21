@@ -32,6 +32,8 @@ export default class Preferences extends Component {
   style = style
   styles = [preferencesStyle]
 
+  budgetWeights= [0.07,	0.11,	0.13,	0.13,	0.11,	0.05,	0.04,	0.04,	0.09,	0.09,	0.12,	0.02];
+
   constructor(props) {
     super(props);
     this.state = {
@@ -64,6 +66,8 @@ export default class Preferences extends Component {
               else {
                 self.setState({
                   annualBudget: data.annualBudget,
+                  annualBudgetArray: data.annualBudgetArray || [],
+                  planDate: data.planDate,
                   goals: {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
                     secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
@@ -100,6 +104,16 @@ export default class Preferences extends Component {
   handleChangeBudget(parameter, event){
     let update = {};
     update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
+
+    let planDate = this.state.planDate.split("/");
+    let firstMonth = parseInt(planDate[0])-1;
+
+    let budget = [];
+    this.budgetWeights.forEach((element, index) => {
+      budget[(index+12-firstMonth)%12]= Math.round(element * update[parameter]);
+    });
+    update['annualBudgetArray'] = budget;
+
     this.setState(update);
   }
 
@@ -562,7 +576,7 @@ export default class Preferences extends Component {
             <SaveButton onClick={() => {
               let self = this;
               self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, annualBudgetArray: this.state.annualBudgetArray, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 			.then(function(data){
 			   if (data.ok){
 			    self.setState({saveSuceess: true});

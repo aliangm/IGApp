@@ -24,6 +24,8 @@ export default class AnnualTab extends Component {
   styles = [planStyles, icons];
   style = style;
 
+  budgetWeights= [0.07,	0.11,	0.13,	0.13,	0.11,	0.05,	0.04,	0.04,	0.09,	0.09,	0.12,	0.02];
+
   constructor(props) {
     super(props);
     this.state = {
@@ -107,7 +109,16 @@ export default class AnnualTab extends Component {
     let preferences = {};
 
     const budget = parseInt(this.state.budgetField);
+
     if (budget) {
+      let planDate = this.props.planDate.split("/");
+      let firstMonth = parseInt(planDate[0])-1;
+
+      let budgetArray = [];
+      this.budgetWeights.forEach((element, index) => {
+        budgetArray[(index+12-firstMonth)%12]= Math.round(element * budget);
+      });
+      preferences.annualBudgetArray = budgetArray;
       preferences.annualBudget = budget;
     }
     const maxChannels = parseInt(this.state.maxChannelsField);
@@ -117,7 +128,7 @@ export default class AnnualTab extends Component {
     else {
       preferences.maxChannels = maxChannels;
     }
-    if (Object.keys(preferences).length == 2) {
+    if (Object.keys(preferences).length == 3) {
       this.props.whatIf(isCommitted, preferences, callback);
     }
     /**
