@@ -61,7 +61,7 @@ export default class Header extends Component {
             {this.state.userCompany}
             <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
           </div>
-          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + this.state.logoURL + ')' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
         </div>
       : null }
     </div>
@@ -97,7 +97,7 @@ export default class Header extends Component {
           >
             { hasUser ?
               <div className={ this.classes.userBoxInside }>
-                <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + this.state.logoURL  + ')' }} />
+                <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
                 <div className={ this.classes.logged }>
                   {this.state.userCompany}
                   <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
@@ -129,7 +129,7 @@ export default class Header extends Component {
 
        {hasUser ?
         <div className={ this.classes.userBoxOutside }>
-          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + this.state.logoURL + ')' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
           <div className={ this.classes.logged }>
             {this.state.userCompany}
             <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
