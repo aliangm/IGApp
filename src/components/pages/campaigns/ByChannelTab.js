@@ -38,6 +38,12 @@ export default class ByChannelTab extends Component {
   render() {
     if (this.props.isLoaded){
       let channelTitles = {};
+      let budgetLeftToSpend = this.props.monthBudget;
+      Object.keys(this.props.campaigns).forEach((channel) => {
+        this.props.campaigns[channel].forEach((campaign) => {
+          budgetLeftToSpend -= campaign.actualSpent || campaign.budget;
+        });
+      });
       let channelIcons = {};
       let channels = _.merge(this.props.plannedChannelBudgets, this.props.knownChannels, this.props.unknownChannels);
       const channelNames = Object.keys(channels).sort();
@@ -56,7 +62,10 @@ export default class ByChannelTab extends Component {
             { this.getDateString(this.props.planDate) } - Campaigns
           </div>
           <div className={ this.classes.titleBudget }>
-            Budget left to spend - coming soon
+            Budget left to spend
+            <div className={ this.classes.titleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
+              ${ budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
+            </div>
           </div>
         </div>
         { page }
