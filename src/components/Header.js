@@ -43,27 +43,27 @@ export default class Header extends Component {
               <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
             </Button>
           </div>
-        : null }
+          : null }
         { hasUser ?
           <a className={ this.classes.link } href="#welcome">
             <div className={ this.classes.settings } data-icon="header:settings" />
           </a>
-        : null }
+          : null }
         <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
-		  {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
+        {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
         <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
         <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
       </div>
 
-      {/**{ hasUser ?
+      { hasUser ?
         <div className={ this.classes.userBox }>
           <div className={ this.classes.logged }>
-            Logged in as
-            <div className={ this.classes.user }>Daniel M.</div>
+            {this.state.userCompany}
+            <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
           </div>
-          <div className={ this.classes.userLogo }></div>
+          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + this.state.logoURL + ')' }} />
         </div>
-      : null } **/}
+      : null }
     </div>
   }
 
@@ -81,34 +81,34 @@ export default class Header extends Component {
               <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
             </Button>
           </div>
-        : null }
+          : null }
         <div className={ this.classes.dropmenuButton }
-          data-selected={ this.state.dropmenuVisible ? true : null }
-          role="button"
-          onClick={ this.showDropmenu }
+             data-selected={ this.state.dropmenuVisible ? true : null }
+             role="button"
+             onClick={ this.showDropmenu }
         >
           <div className={ this.classes.dropmenuIcon } />
           <Popup className={ this.classes.dropmenuPopup }
-            hidden={ !this.state.dropmenuVisible } onClose={() => {
-              this.setState({
-                dropmenuVisible: false
-              });
-            }}
+                 hidden={ !this.state.dropmenuVisible } onClose={() => {
+            this.setState({
+              dropmenuVisible: false
+            });
+          }}
           >
-            {/**{ hasUser ? 
+            { hasUser ?
               <div className={ this.classes.userBoxInside }>
-                <div className={ this.classes.userLogo }></div>
+                <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + this.state.logoURL  + ')' }} />
                 <div className={ this.classes.logged }>
-                  Logged in as
-                  <div className={ this.classes.user }>Daniel M.</div>
+                  {this.state.userCompany}
+                  <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
                 </div>
               </div>
-            : null }**/}
+            : null }
             { hasUser ?
               <a className={ this.classes.linkText } href="#welcome">
                 Settings
               </a>
-            : null }
+              : null }
             <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
             {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
             <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
@@ -122,20 +122,20 @@ export default class Header extends Component {
                   <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
                 </Button>
               </div>
-            : null }
+              : null }
           </Popup>
         </div>
       </div>
 
-      {/** {hasUser ?
+       {hasUser ?
         <div className={ this.classes.userBoxOutside }>
-          <div className={ this.classes.userLogo }></div>
+          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + this.state.logoURL + ')' }} />
           <div className={ this.classes.logged }>
-            Logged in as
-            <div className={ this.classes.user }>Daniel M.</div>
+            {this.state.userCompany}
+            <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
           </div>
         </div>
-      :null} **/}
+      :null}
     </div>
   }
 
@@ -144,6 +144,30 @@ export default class Header extends Component {
       .then(function(data){
         history.push('/');
       });
+  }
+
+  componentDidMount(){
+    if (!this.state.isLoaded) {
+      let self = this;
+      serverCommunication.serverRequest('GET', 'useraccount')
+        .then((response) => {
+          response.json()
+            .then(function (data) {
+              if (data) {
+                self.setState({
+                  userFirstName: data.firstName,
+                  userLastName: data.lastName,
+                  userCompany: data.companyName,
+                  logoURL: "https://logo.clearbit.com/" + data.companyWebsite,
+                  isLoaded: true
+                });
+              }
+            })
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    }
   }
 
   render() {
