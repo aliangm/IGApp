@@ -167,7 +167,7 @@ export default class Plan extends Component {
                 popup: false
               });
             }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan } onBack={() => {
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false) } onBack={() => {
                 this.setState({
                   popup: false
                 })}} />
