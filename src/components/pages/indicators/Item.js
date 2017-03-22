@@ -4,6 +4,7 @@ import names from 'classnames';
 
 import style from 'styles/indicators/item.css';
 import icons from 'styles/icons/indicators.css';
+import tooltipStyle from 'styles/controls-label.css';
 
 import Popup from 'components/Popup';
 import Textfield from 'components/controls/Textfield';
@@ -11,17 +12,18 @@ import Button from 'components/controls/Button';
 
 export default class Item extends Component {
   style = style;
-  styles = [icons]
+  styles = [icons, tooltipStyle]
 
   constructor(props) {
     super(props);
     this.state = {
       state: props.defaultStatus ? (props.defaultStatus == -1 ? 'inactive' : 'manual') : undefined,
-      status: props.defaultStatus == -1 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : props.defaultStatus || ''),
+      status: props.defaultStatus == -1 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus  || '' : props.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
       name: props.name,
-      maxValue: props.maxValue / 100 || 1
+      maxValue: props.maxValue / 100 || 1,
+      displayHelp: false
     };
   }
 
@@ -61,7 +63,7 @@ export default class Item extends Component {
     if (status == 0){
       return '0';
     }
-    
+
     if (!status) {
       return '\u00A0';
     }
@@ -103,7 +105,7 @@ export default class Item extends Component {
     status = parseInt(status.replace(/[%$,]/g, ''));
     if ((status && status>0) || status == 0) {
       this.setState({
-        status: this.props.isPercentage ? (status > 100 ? 100 : status) + '%' : status,
+        status: this.props.isPercentage ? (status > 100 ? 100 : status) + '%' : (this.props.isDollar ? '$' + status : status),
         statusPopupHidden: true
       });
       this.props.updateIndicator(this.props.name, status);
@@ -138,11 +140,36 @@ export default class Item extends Component {
   }
 
   render() {
+    let tooltip = null;
+    if (this.state.displayHelp) {
+      tooltip = <div className={ tooltipStyle.locals.tooltip } style={{ left: '75%', top: '71px', width: '222px', zIndex: '3'}}>
+        <div className={ tooltipStyle.locals.ttLabel }>
+          { this.props.title }
+        </div>
+        <div className={ tooltipStyle.locals.ttContent }>
+          <div>
+            <div className={ tooltipStyle.locals.ttSubText }>
+              tooltip is coming soon
+            </div>
+          </div>
+        </div>
+      </div>
+    }
     return <div className={ this.classes.item } data-state={ this.state.state }>
       <div className={ this.classes.inner }>
         <div className={ this.classes.head }>{ this.props.title }</div>
         <div className={ this.classes.content }>
-          <div className={ this.classes.iconWrap }>
+          <div className={ this.classes.iconWrap }
+               onMouseOver={() => {
+                 this.setState({
+                   displayHelp: true
+                 })
+               }}
+               onMouseOut={() => {
+                 this.setState({
+                   displayHelp: false
+                 })
+               }}>
             { this.needProgress() ?
               <ProgressCircle progress={ this.getStatusProgress() } />
               : null }
@@ -156,12 +183,18 @@ export default class Item extends Component {
           <div className={ this.classes.footerButton } onClick={ this.showMenu } />
           <div className={ this.classes.footerState }>{ this.getStateText() }</div>
         </div>
-
-        <div className={ this.classes.menu } hidden={ !this.state.menuShown }>
+        <Popup className={ this.classes.menu } hidden={ !this.state.menuShown } onClose={() => {
+          this.setState({
+            menuShown: false
+          });
+        }}>
+          {/* <div className={ this.classes.menu } hidden={ !this.state.menuShown } > */}
           { this.props.link ?
-            <div className={ this.classes.menuItem } onClick={() => { }}>
-              <a href={'/engagement-calculator#' + this.props.link} target="_blank"> Calculate </a>
-            </div>
+            <a href={'/engagement-calculator#' + this.props.link} target="_blank">
+              <div className={ this.classes.menuItem } style={{ color: '-webkit-link' }}>
+                Calculate
+              </div>
+            </a>
             : null }
           {/**
            <div className={ this.classes.menuItem } onClick={() => {
@@ -190,13 +223,16 @@ export default class Item extends Component {
           }}>
             Inactive
           </div>
-        </div>
+        </Popup>
       </div>
 
       <Popup
         className={ this.classes.statusPopup }
         hidden={ this.state.statusPopupHidden }
-      >
+        onClose={() => {
+          this.setState({
+            statusPopupHidden: true
+          })}}>
         <div className={ this.classes.statusPopupRow }>
           <div className={ this.classes.statusPopupTitle }>
             Indicator current status
@@ -221,6 +257,7 @@ export default class Item extends Component {
           </div>
         </div>
       </Popup>
+      { tooltip }
     </div>
   }
 }
