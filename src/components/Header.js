@@ -158,7 +158,7 @@ export default class Header extends Component {
                   userFirstName: data.firstName,
                   userLastName: data.lastName,
                   userCompany: data.companyName,
-                  logoURL: "https://logo.clearbit.com/" + data.companyWebsite,
+                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
                   isLoaded: true
                 });
               }
