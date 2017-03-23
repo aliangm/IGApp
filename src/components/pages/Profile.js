@@ -275,10 +275,12 @@ export default class Profile extends Component {
             <div className={ this.classes.row }>
               <Label question={['']} description={['Which vertical/industry does your company work in?']}>Vertical</Label>
               <ButtonsSet buttons={[
-                { key: 'IT', text: 'IT', icon: 'buttons:IT' },
                 { key: 'Martech', text: 'Martech', icon: 'buttons:martech' },
                 { key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:analytics_BI' },
                 { key: 'Sales', text: 'Sales', icon: 'buttons:sales' },
+                { key: 'Security', text: 'Security', icon: 'buttons:security' },
+                { key: 'IT', text: 'IT', icon: 'buttons:IT' },
+                { key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity' },
               ]} selectedKey={ this.state.userProfile.vertical } onChange = {this.handleChangeButton.bind(this, 'vertical')} />
             </div>
             {/*<div className={ this.classes.row } style={{

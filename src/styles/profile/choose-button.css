@@ -62,4 +62,6 @@
 @mixin icon-nodpi buttons:analytics_BI, ../../assets/button-icons/analytics_BI;
 @mixin icon-nodpi buttons:any, ../../assets/button-icons/batman;
 @mixin icon-nodpi buttons:any2, ../../assets/button-icons/confused-face;
+@mixin icon-nodpi buttons:security, ../../assets/button-icons/security;
+@mixin icon-nodpi buttons:productivity, ../../assets/button-icons/productivity;
 
