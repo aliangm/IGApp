@@ -551,7 +551,7 @@ export default class Preferences extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
-             serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
+             serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, annualBudgetArray: this.state.annualBudgetArray, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 							.then(function(data){
                 history.push('/target-audience');
             });
@@ -559,7 +559,7 @@ export default class Preferences extends Component {
             <div style={{ width: '30px' }} />
             <NextButton onClick={() => {
               if (this.validate()) {
-              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
+              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({annualBudget: this.state.annualBudget, annualBudgetArray: this.state.annualBudgetArray, goals: { primary: this.state.goals.primary, secondary: this.state.goals.secondary }, blockedChannels: this.state.blockedChannels, maxChannels: this.state.maxChannels}))
 							.then(function(data){
 							            history.push('/indicators');
 							});
