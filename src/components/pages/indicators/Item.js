@@ -40,9 +40,14 @@ export default class Item extends Component {
   getStatusProgress() {
     let value;
     if (typeof this.state.status === 'string' || this.state.status instanceof String) {
-      const percents = this.state.status.match(/^(\d+)%$/);
+      const percents = this.state.status.match(/^(\d+)%/);
       if (percents) {
         value =  +percents[1];
+      }
+      const dollars = this.state.status.match(/^\$(\d+)/);
+      if (dollars) {
+        value =  +dollars[1];
+        return value / this.state.maxValue;
       }
       value = parseInt(this.state.status) / this.state.maxValue || 0;
     } else {
