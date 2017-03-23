@@ -164,7 +164,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
           icon: "indicator:users",
-          title: "Users",
+          title: "Accounts",
           key: "users"
         },
         {
@@ -285,6 +285,14 @@ export default class ProjectionsTab extends Component {
           directionDown: true,
           title: "Churn Rate",
           key: "churnRate"
+        },
+        {
+          defaultState: ["normal", "normal", "grow", "grow"],
+          defaultValue: ["7000", "7000", "10000", "15000"],
+          grow: ["", "", "42", "114"],
+          icon: "indicator:arpa",
+          title: "ARPA (monthly)",
+          key: "ARPA"
         }
       ]
     ];

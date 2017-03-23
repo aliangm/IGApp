@@ -89,7 +89,8 @@ export default class Indicators extends Component {
       this.state.actualIndicators.blogVisits &&
       this.state.actualIndicators.blogSubscribers &&
       this.state.actualIndicators.MRR &&
-      this.state.actualIndicators.churnRate;
+      this.state.actualIndicators.churnRate &&
+      this.state.actualIndicators.ARPA;
   }
 
   handleChange(name, value){
@@ -134,7 +135,7 @@ export default class Indicators extends Component {
               <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.CAC } maxValue={700} isDirectionDown= { true } isDollar={true} />
               {/** <Item icon="indicator:numberOfSales" title="Number Of Sales" name="numberOfSales" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.numberOfSales } />
                <Item icon="indicator:sales" title="Sales Revenue" name="salesRevenue" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.salesRevenue } /> **/}
-              <Item icon="indicator:users" title="Users" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.users } maxValue={15000} />
+              <Item icon="indicator:users" title="Accounts" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.users } maxValue={15000} />
               <Item icon="indicator:activeUsers" title="Active Users Rate" name="activeUsersRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.activeUsersRate } maxValue={100} isPercentage = {true} />
               <Item icon="indicator:trialUsers" title="Trial Users" name="trialUsers" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.trialUsers } maxValue={2500} />
               {/**<Item icon="indicator:customerRetentionRate" title="Customer Retention Rate" name="customerRetentionRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.customerRetentionRate } isPercentage = 'true' />**/}
@@ -157,6 +158,7 @@ export default class Indicators extends Component {
             <div className={ indiStyle.locals.row }>
               <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.MRR } maxValue={1000000} isDollar={true} />
               <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } />
+              <Item icon="indicator:arpa" title="ARPA (monthly)" name="ARPA" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.ARPA } maxValue={11000} isDollar={true} />
             </div>
           </div>
 
