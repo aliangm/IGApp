@@ -89,7 +89,8 @@ export default class Indicators extends Component {
       this.state.actualIndicators.blogVisits &&
       this.state.actualIndicators.blogSubscribers &&
       this.state.actualIndicators.MRR &&
-      this.state.actualIndicators.churnRate;
+      this.state.actualIndicators.churnRate &&
+      this.state.actualIndicators.ARPA;
   }
 
   handleChange(name, value){
@@ -105,7 +106,7 @@ export default class Indicators extends Component {
     return <div>
       <Header />
       <Sidebar />
-      <Page popup={ isPopupMode() }>
+      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Metrics" subTitle="Marketing is great, but without measuring the impact on your metrics, there is no real point in it." />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
@@ -130,11 +131,11 @@ export default class Indicators extends Component {
               <Item icon="indicator:youtubeEngagement" link='utu' title="Youtube Engagement" name="youtubeEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.youtubeEngagement } maxValue={100} isPercentage = {true} />
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.LTV } maxValue={12000} />
-              <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.CAC } maxValue={700} isDirectionDown= { true } />
+              <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.LTV } maxValue={12000} isDollar={true} />
+              <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.CAC } maxValue={700} isDirectionDown= { true } isDollar={true} />
               {/** <Item icon="indicator:numberOfSales" title="Number Of Sales" name="numberOfSales" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.numberOfSales } />
                <Item icon="indicator:sales" title="Sales Revenue" name="salesRevenue" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.salesRevenue } /> **/}
-              <Item icon="indicator:users" title="Users" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.users } maxValue={15000} />
+              <Item icon="indicator:users" title="Accounts" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.users } maxValue={15000} />
               <Item icon="indicator:activeUsers" title="Active Users Rate" name="activeUsersRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.activeUsersRate } maxValue={100} isPercentage = {true} />
               <Item icon="indicator:trialUsers" title="Trial Users" name="trialUsers" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.trialUsers } maxValue={2500} />
               {/**<Item icon="indicator:customerRetentionRate" title="Customer Retention Rate" name="customerRetentionRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.customerRetentionRate } isPercentage = 'true' />**/}
@@ -155,8 +156,9 @@ export default class Indicators extends Component {
               <Item icon="indicator:blogSubscribers" title="Blog Subscribers" name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.blogSubscribers } maxValue={ 7000 } />
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.MRR } maxValue={1000000} />
+              <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.MRR } maxValue={1000000} isDollar={true} />
               <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } />
+              <Item icon="indicator:arpa" title="ARPA (monthly)" name="ARPA" updateIndicator = { this.handleChange } defaultStatus = { this.state.actualIndicators.ARPA } maxValue={11000} isDollar={true} />
             </div>
           </div>
 

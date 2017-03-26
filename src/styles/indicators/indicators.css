@@ -1,6 +1,6 @@
 .row {
   border-bottom: 1px solid #e7e9ed;
-  overflow: hidden;
+  display: inline-block;
   margin-bottom: 15px;
 }
 

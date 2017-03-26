@@ -35,3 +35,29 @@
     width: 100%;
   }
 }
+
+.inner-box {
+  margin: 31px 0;
+  /*padding: 0 31px;*/
+  /*min-height: 300px;*/
+}
+
+.add-button {
+  padding-left: 6px;
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+  background: url(../../assets/plus.svg) center center no-repeat;
+  background-size: 24px auto;
+}
+
+.remove-button {
+  padding: 2px;
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+  background: url(../../assets/trash.svg) center center no-repeat;
+  background-size: 24px auto;
+  flex-grow: 0;
+  flex-shrink: 0
+}

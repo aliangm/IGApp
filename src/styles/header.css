@@ -133,8 +133,8 @@
   width: 44px;
   height: 44px;
   border-radius: 4px;
-  background: #e6eaee url(../assets/gdrive_logo.svg) center center no-repeat;
-  background-size: auto 28px;
+  background: center center no-repeat;
+  background-size: auto 44px;
   flex-shrink: 0;
 }
 

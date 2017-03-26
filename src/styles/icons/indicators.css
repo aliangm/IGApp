@@ -34,3 +34,4 @@
 @mixin icon-nodpi indicator:blogSubscribers, ../../assets/indicator-icons/blog_subscribers_indicator;
 @mixin icon-nodpi indicator:mrr, ../../assets/indicator-icons/MRR_indicator;
 @mixin icon-nodpi indicator:churnRate, ../../assets/indicator-icons/churnRate_indicator;
+@mixin icon-nodpi indicator:arpa, ../../assets/indicator-icons/ARPA_indicator;

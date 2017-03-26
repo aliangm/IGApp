@@ -104,6 +104,7 @@ export default class TargetAudience extends Component {
             { value: 'Marketing', label: 'Marketing' },
             { value: 'R&D', label: 'R&D' },
             { value: 'IT', label: 'IT' },
+            { value: 'Security', label: 'Security' },
             { value: 'Finance', label: 'Finance' },
             { value: 'HR', label: 'HR' },
             { value: 'Design', label: 'Design' },

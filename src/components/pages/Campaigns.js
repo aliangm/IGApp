@@ -35,6 +35,7 @@ export default class Campaigns extends Component {
               else {
                 self.setState({
                   plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
+                  monthBudget: data.projectedPlan[0].monthBudget,
                   knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
                   unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
                   planDate: data.planDate,
