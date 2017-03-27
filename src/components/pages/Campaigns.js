@@ -24,6 +24,7 @@ export default class Campaigns extends Component {
 
   componentDidMount(){
     let self = this;
+    let requests = 0;
     serverCommunication.serverRequest('GET', 'usermonthplan')
       .then((response) => {
         response.json()
@@ -33,6 +34,7 @@ export default class Campaigns extends Component {
                 history.push('/');
               }
               else {
+                requests++;
                 self.setState({
                   plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
                   monthBudget: data.projectedPlan[0].monthBudget,
@@ -40,7 +42,29 @@ export default class Campaigns extends Component {
                   unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
                   planDate: data.planDate,
                   campaigns: data.campaigns || {},
-                  isLoaded: true
+                  isLoaded: requests == 2
+                });
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        self.setState({serverDown: true});
+        console.log(err);
+      });
+    serverCommunication.serverRequest('GET', 'useraccount')
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              if (data.error) {
+                history.push('/');
+              }
+              else {
+                requests++;
+                self.setState({
+                  teamMembers: data.teamMembers,
+                  isLoaded: requests == 2
                 });
               }
             }

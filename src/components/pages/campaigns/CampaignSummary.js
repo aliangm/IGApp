@@ -91,7 +91,7 @@ export default class CampaignSummary extends Component {
         </div>
       </div>
       <div hidden={ !this.state.showPopup }>
-        <CampaignPopup campaign={ this.props.campaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } close={ this.close } updateCampaign={ this.props.updateCampaign } index={ this.props.index }/>
+        <CampaignPopup campaign={ this.props.campaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } close={ this.close } updateCampaign={ this.props.updateCampaign } index={ this.props.index } teamMembers={ this.props.teamMembers }/>
       </div>
     </div>
   }

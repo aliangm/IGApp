@@ -53,7 +53,7 @@ export default class ByChannelTab extends Component {
         channelIcons[channel] = "plan:" + channelHierarchy[channelHierarchy.length-1];
       });
       const page = channelNames.map( (channel) => {
-          return <ChannelCampaigns channelTitle = { channelTitles[channel] } channelBudget = { channels[channel] } key = { channel } channel={ channel } campaigns={ this.props.campaigns[channel] } channelIcon={ channelIcons[channel] } updateChannelCampaigns={ this.updateChannelCampaigns }/>
+          return <ChannelCampaigns channelTitle = { channelTitles[channel] } channelBudget = { channels[channel] } key = { channel } channel={ channel } campaigns={ this.props.campaigns[channel] } channelIcon={ channelIcons[channel] } updateChannelCampaigns={ this.updateChannelCampaigns } teamMembers={ this.props.teamMembers }/>
         }
       );
       return <div className={ this.classes.wrap }>
