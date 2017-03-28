@@ -62,8 +62,10 @@ export default class Campaigns extends Component {
               }
               else {
                 requests++;
+                let teamMembers = data.teamMembers;
+                teamMembers.push({name: (data.firstName ? data.firstName + " (me)" : "Me"), email: data.email, role: data.role});
                 self.setState({
-                  teamMembers: data.teamMembers,
+                  teamMembers: teamMembers,
                   isLoaded: requests == 2
                 });
               }
