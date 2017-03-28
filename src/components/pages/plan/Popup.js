@@ -1,6 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import names from 'classnames';
+import Button from 'components/controls/Button';
 
 import _Popup from 'components/Popup';
 import style from 'styles/plan/popup.css';
@@ -46,6 +47,12 @@ export default class Popup extends Component {
              hidden={ this.props.hideClose }
         ></div>
       </div>
+      <Button className={ this.classes.hide }
+           type="normal"
+           role="button"
+           onClick={ this.close }
+           hidden={ !this.props.hideClose }
+      >Hide</Button>
       <div className={ this.classes.content }>
         { this.props.children }
       </div>

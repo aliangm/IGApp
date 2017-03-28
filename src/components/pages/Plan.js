@@ -53,6 +53,7 @@ export default class Plan extends Component {
                   self.setState({numberOfPlanUpdates: data.numberOfPlanUpdates});
                   self.setState({projectedPlan: data.projectedPlan});
                   self.setState({budget: data.annualBudget});
+                  self.setState({budgetArray: data.annualBudgetArray});
                   self.setState({maxChannels: data.maxChannels});
                   self.setState({planDate: data.planDate});
                   self.setState({isLoaded: true});
@@ -97,6 +98,7 @@ export default class Plan extends Component {
                     numberOfPlanUpdates: data.numberOfPlanUpdates,
                     selectedTab: 0,
                     budget: data.annualBudget,
+                    budgetArray: data.annualBudgetArray,
                     planDate: data.planDate,
                     maxChannels: data.maxChannels,
                     isPlannerLoading: false,

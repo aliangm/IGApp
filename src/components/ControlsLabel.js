@@ -65,6 +65,7 @@ export default class Label extends Component {
     }
 
     return <div className={ className } style={ this.props.style }>
+      { (this.props.checkbox != undefined) ? <input type="checkbox" checked={ this.props.checkbox } onChange={ this.props.toggleCheck }/> : null }
       { this.props.children }
       { question }
     </div>
