@@ -5,6 +5,7 @@ import _ from 'lodash';
 import byChannelTabStyle from 'styles/campaigns/by-channel-tab.css';
 import ChannelCampaigns from 'components/pages/campaigns/ChannelCampaigns';
 import channelsSchema from 'data/channelsSchema';
+import Paging from 'components/Paging';
 
 export default class ByChannelTab extends Component {
 
@@ -57,6 +58,7 @@ export default class ByChannelTab extends Component {
         }
       );
       return <div className={ this.classes.wrap }>
+        <Paging month={ this.props.planDate } getUserMonthPlan={ this.props.getUserMonthPlan }/>
         <div className={ this.classes.title }>
           <div className={ this.classes.titleDate }>
             { this.getDateString(this.props.planDate) } - Campaigns

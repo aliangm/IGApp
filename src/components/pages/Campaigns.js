@@ -18,40 +18,15 @@ export default class Campaigns extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      saveCampaigns: this.saveCampaigns.bind(this)
+      saveCampaigns: this.saveCampaigns.bind(this),
+      getUserMonthPlan: this.getUserMonthPlan.bind(this)
     };
   }
 
   componentDidMount(){
     let self = this;
     let requests = 0;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              if (data.error) {
-                history.push('/');
-              }
-              else {
-                requests++;
-                self.setState({
-                  plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
-                  monthBudget: data.projectedPlan[0].monthBudget,
-                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                  planDate: data.planDate,
-                  campaigns: data.campaigns || {},
-                  isLoaded: requests == 2
-                });
-              }
-            }
-          })
-      })
-      .catch(function (err) {
-        self.setState({serverDown: true});
-        console.log(err);
-      });
+    this.getUserMonthPlan();
     serverCommunication.serverRequest('GET', 'useraccount')
       .then((response) => {
         response.json()
@@ -65,8 +40,7 @@ export default class Campaigns extends Component {
                 let teamMembers = data.teamMembers;
                 teamMembers.push({name: (data.firstName ? data.firstName + " (me)" : "Me"), email: data.email, role: data.role});
                 self.setState({
-                  teamMembers: teamMembers,
-                  isLoaded: requests == 2
+                  teamMembers: teamMembers
                 });
               }
             }
@@ -80,7 +54,7 @@ export default class Campaigns extends Component {
 
   saveCampaigns(campaigns) {
     let self = this;
-    return serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({campaigns: campaigns}))
+    return serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({campaigns: campaigns}), this.state.planDate)
       .then(function(response){
         if (response.ok){
           response.json()
@@ -103,6 +77,37 @@ export default class Campaigns extends Component {
         console.log(err);
       });
   }
+
+  getUserMonthPlan(newPlanDate){
+    let self = this;
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, newPlanDate)
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              if (data.error) {
+                history.push('/');
+              }
+              else {
+                self.setState({
+                  plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
+                  monthBudget: data.projectedPlan[0].monthBudget,
+                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
+                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+                  planDate: data.planDate,
+                  campaigns: data.campaigns || {},
+                  isLoaded: true
+                });
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        self.setState({serverDown: true});
+        console.log(err);
+      });
+  }
+
 
   render() {
     const tabs = {
