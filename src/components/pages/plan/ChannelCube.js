@@ -109,7 +109,7 @@ export default class ChannelCube extends Component {
     if (data.children) {
       content = Object.keys(data.children).map((childName) => {
         return this.renderDeepLevel(childName, data.children[childName]);
-      })
+      });
     }
 
     return (
@@ -173,9 +173,11 @@ export default class ChannelCube extends Component {
         onInfoClick={this.handleBoxInfoClick}
       >
         {
+          data.children ?
           Object.keys(data.children).map((childName) => {
-            return this.renderFirstLevel(childName, data.children[childName]);
-          })
+          return this.renderFirstLevel(childName, data.children[childName]);
+        })
+        : null
         }
 
         <PlanPopup
@@ -184,7 +186,7 @@ export default class ChannelCube extends Component {
           title={`${title} : Why should you use it?`}
         >
           <PopupTextContent>
-            <p>{data.info || 'Description was here'}</p>
+            <p>{data.info || 'COMING SOON...'}</p>
           </PopupTextContent>
         </PlanPopup>
         <PlanPopup
@@ -193,7 +195,7 @@ export default class ChannelCube extends Component {
           title={`${infoItem.title} : What is it?`}
         >
           <PopupTextContent>
-            <p>{infoItem.info || 'Description was here'}</p>
+            <p>{infoItem.info || 'COMING SOON...'}</p>
           </PopupTextContent>
         </PlanPopup>
         <PlanPopup

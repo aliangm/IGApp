@@ -137,9 +137,7 @@ export class Level extends Component {
 
     return <div className={ this.classes.level }>
       <div className={ boxClassName }>
-        <div className={ this.classes.levelIcon }>
-          <div className={ this.classes.levelIconInside } data-icon={ this.props.icon } />
-        </div>
+        <div className={ this.classes.levelIcon } data-icon={ this.props.icon } />
         <div className={ this.classes.levelText }>
           { this.props.title }
         </div>
@@ -150,12 +148,16 @@ export class Level extends Component {
             opacity: '0.19',
             marginRight: '6px',
             visibility: this.props.disabled ? 'hidden' : ''
-          }} />
-          <div className={ this.classes.infoIconE }role="button" style={{
+          }} onClick={(e) => {
+            this.props.onInfoClick(e, 0);
+          }}/>
+          <div className={ this.classes.infoIconE } role="button" style={{
             opacity: '0.19',
             marginRight: '8px',
             visibility: this.props.disabled ? 'hidden' : ''
-          }} />
+          }} onClick={(e) => {
+            this.props.onInfoClick(e, 1);
+          }}/>
         </div>
       </div>
 

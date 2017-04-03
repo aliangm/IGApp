@@ -42,6 +42,7 @@
   font-weight: 600;
   text-transform: uppercase;
   margin-top: 5px;
+  max-width: 80%;
 }
 
 .head-progress {
@@ -175,6 +176,7 @@
   font-weight: 600;
   letter-spacing: -0.030em;
   line-height: 16px;
+  width: 140px;
 }
 
 .row-link {
@@ -269,6 +271,7 @@
 }
 
 .level-icon {
+  flex-shrink: 0;
   width: 26px;
   height: 26px;
   position: relative;
@@ -300,6 +303,7 @@
   font-weight: 600;
   letter-spacing: -0.030em;
   line-height: 16px;
+  padding-right: 6px;
 }
 
 .level-right {

@@ -35,24 +35,24 @@ export default class Popup extends Component {
 
   render() {
     const className = names(this.classes.popup, this.props.className);
-
     return <_Popup { ... this.props } onClose={ null } className={ className } hidden={ !this.state.visible }>
       <div className={ this.classes.header }>
         <div className={ this.classes.title }>
           { this.props.title }
         </div>
         <div className={ this.classes.close }
-          role="button"
-          onClick={ this.close }
+             role="button"
+             onClick={ this.close }
              hidden={ this.props.hideClose }
         ></div>
       </div>
-      <Button className={ this.classes.hide }
-           type="normal"
-           role="button"
-           onClick={ this.close }
-           hidden={ !this.props.hideClose }
-      >Hide</Button>
+      <div hidden={ !this.props.hideClose }>
+        <Button className={ this.classes.hide }
+                type="normal"
+                role="button"
+                onClick={ this.close }
+        >Hide</Button>
+      </div>
       <div className={ this.classes.content }>
         { this.props.children }
       </div>

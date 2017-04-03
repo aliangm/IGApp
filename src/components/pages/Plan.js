@@ -27,42 +27,42 @@ export default class Plan extends Component {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
-      close: this.componentDidMount.bind(this)
+      close: this.componentDidMount.bind(this),
+      isLoaded: false,
     }
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
   }
 
-  componentDidMount(){
-    let self = this;
+  componentDidMount() {
     if (isPopupMode()) {
       disablePopupMode();
       this.plan(true, null, null);
-    }
-    else {
+    } else {
       serverCommunication.serverRequest('GET', 'usermonthplan')
         .then((response) => {
           response.json()
-            .then(function (data) {
+            .then((data) => {
               if (data) {
                 if (data.error) {
                   history.push('/');
-                }
-                else {
-                  self.setState({actualIndicators: data.actualIndicators});
-                  self.setState({numberOfPlanUpdates: data.numberOfPlanUpdates});
-                  self.setState({projectedPlan: data.projectedPlan});
-                  self.setState({budget: data.annualBudget});
-                  self.setState({budgetArray: data.annualBudgetArray});
-                  self.setState({maxChannels: data.maxChannels});
-                  self.setState({planDate: data.planDate});
-                  self.setState({isLoaded: true});
+                } else {
+                  this.setState({
+                      actualIndicators: data.actualIndicators,
+                      numberOfPlanUpdates: data.numberOfPlanUpdates,
+                      projectedPlan: data.projectedPlan,
+                      budget: data.annualBudget,
+                      budgetArray: data.annualBudgetArray,
+                      maxChannels: data.maxChannels,
+                      planDate: data.planDate,
+                      isLoaded: true,
+                  });
                 }
               }
             })
         })
-        .catch(function (err) {
-          self.setState({serverDown: true});
+        .catch((err) => {
+          this.setState({serverDown: true});
           console.log(err);
         });
     }
@@ -142,7 +142,7 @@ export default class Plan extends Component {
 
   render() {
     const tabs = {
-      //"Current": CurrentTab,
+      "Current": CurrentTab,
       "Annual": AnnualTab,
       //"Planned vs Actual": PlannedActualTab,
       "Projections": ProjectionsTab
@@ -155,7 +155,7 @@ export default class Plan extends Component {
     return <div>
       <Header />
       <Sidebar />
-      <Page contentClassName={ this.classes.content } width="1180px">
+      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="1180px">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
           <div className={this.classes.headPlan } >

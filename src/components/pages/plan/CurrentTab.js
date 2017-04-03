@@ -17,10 +17,10 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 
 function formatDate(dateStr) {
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const [monthNum, yearNum] = dateStr.split("/");
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const [monthNum, yearNum] = dateStr.split("/");
 
-    return `${monthNames[monthNum - 1]} ${yearNum}`;
+  return `${monthNames[monthNum - 1]} ${yearNum}`;
 }
 
 export default class CurrentTab extends Component {
@@ -38,9 +38,12 @@ export default class CurrentTab extends Component {
   style = style;
 
   render() {
-    const { isLoaded, planDate, projectedPlan } = this.props;
+    const { isLoaded, planDate, projectedPlan, isPlannerLoading } = this.props;
 
     if (!isLoaded) {
+      return null;
+    }
+    if (isPlannerLoading) {
       return (
         <div className={ this.classes.wrap } data-loading="true">
           <div className={ this.classes.loading }>
@@ -112,9 +115,10 @@ export default class CurrentTab extends Component {
           }
         </Masonry>
       </div>
-
-      <Explanation title="Explanation" text="Your strategy was built based on 89 experts and statistical analysis of 23 similar companies.
-The 2 main fields (channels) that are recommended to you in the current month are: Advertising and Public Relations. 81% of similar companies to yours are using Advertising as the main channel in their strategy in we thought that you should too. In contrary, only 22% of these companies are using Public Relations as one of the main channels. But in your case, we thought that this channel would be a perfect fit to your marketing mix due to the fact that your main goal is getting as much awareness as possible." />
+      {/*
+       <Explanation title="Explanation" text="Your strategy was built based on 89 experts and statistical analysis of 23 similar companies.
+       The 2 main fields (channels) that are recommended to you in the current month are: Advertising and Public Relations. 81% of similar companies to yours are using Advertising as the main channel in their strategy in we thought that you should too. In contrary, only 22% of these companies are using Public Relations as one of the main channels. But in your case, we thought that this channel would be a perfect fit to your marketing mix due to the fact that your main goal is getting as much awareness as possible." />
+       */}
     </div>
   }
 }
