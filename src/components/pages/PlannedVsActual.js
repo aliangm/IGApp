@@ -440,7 +440,7 @@ export default class PlannedVsActual extends Component {
     return <div>
       <Header />
       <Sidebar />
-      <Page>
+      <Page width={'1051px'}>
         <Title title="Planned VS Actual" subTitle="It is very important to keep the data credibility. To optimize your marketing planning every step of the way, InfiniGrow needs to know exactly what your actual marketing investments were (even if they aren’t 1:1 as recommended)."/>
         <div className={ planStyles.locals.serverDown }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>

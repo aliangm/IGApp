@@ -565,7 +565,7 @@ export default class Preferences extends Component {
     return <div>
       <Header />
       <Sidebar />
-      <Page popup={ isPopupMode() }>
+      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Preferences"
                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
         <div className={ this.classes.error }>

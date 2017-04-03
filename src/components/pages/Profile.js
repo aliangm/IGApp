@@ -260,7 +260,7 @@ export default class Profile extends Component {
     return <div>
       <Header />
       <Sidebar />
-      <Page popup={ isPopupMode() }>
+      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Profile" subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications" />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
