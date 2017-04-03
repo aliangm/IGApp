@@ -47,7 +47,8 @@ export default class Preferences extends Component {
       channelAlreadyExistsError: [false, false, false]
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
-    this.rowRemoved = this.rowRemoved.bind(this);
+    this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
+    this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
   }
 
@@ -76,6 +77,8 @@ export default class Preferences extends Component {
                     secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
                   },
                   blockedChannels: data.blockedChannels || [],
+                  inHouseChannels: data.inHouseChannels || [],
+                  userMinMonthBudgets: data.userMinMonthBudgets || {},
                   maxChannels: data.maxChannels || -1,
                   isCheckAnnual: data.annualBudget!==null,
                   isLoaded: true
@@ -178,10 +181,37 @@ export default class Preferences extends Component {
     }
   }
 
-  rowRemoved(index) {
+  blockedChannelRemove(index) {
     let update = this.state.blockedChannels || [];
     update.splice(index, 1);
     this.setState({blockedChannels: update});
+  }
+
+  minimumBudgetRemove(index) {
+    let update = this.state.userMinMonthBudgets || {};
+    let channel = Object.keys(update)[index];
+    delete update[channel];
+    this.setState({userMinMonthBudgets: update});
+  }
+
+  handleChangeMinChannel(index, event) {
+    let update = this.state.userMinMonthBudgets || {};
+    let channel = Object.keys(update)[index];
+    if (channel) {
+      update[event.value] = update[channel];
+      delete update[channel];
+    }
+    else {
+      update[event.value] = null;
+    }
+    this.setState({userMinMonthBudgets: update});
+  }
+
+  handleChangeMinBudget(index, event) {
+    let update = this.state.userMinMonthBudgets || {};
+    let channel = Object.keys(update)[index];
+    update[channel] = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    this.setState({userMinMonthBudgets: update});
   }
 
   getDates = () => {
@@ -621,6 +651,56 @@ export default class Preferences extends Component {
                 marginBottom: '0',
                 fontWeight: '600'
               }} question={['']}
+                     description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>Minimum Budgets</Label>
+              <Notice warning style={{
+                margin: '12px 0'
+              }}>
+                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+              </Notice>
+              {this.state.isLoaded ?
+                //TODO: change numOfRows and add on change and selected
+                <MultiRow numOfRows={ (Object.keys(this.state.userMinMonthBudgets)).length } rowRemoved={this.minimumBudgetRemove}>
+                  {({index, data, update, removeButton}) => {
+                    return <div style={{
+                      width: '623px'
+                    }} className={ preferencesStyle.locals.channelsRow }>
+                      <Select
+                        className={ preferencesStyle.locals.channelsSelect }
+                        selected={ (this.state.userMinMonthBudgets && Object.keys(this.state.userMinMonthBudgets)[index]) || -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: flatChannels
+                        }}
+                        onChange={ this.handleChangeMinChannel.bind(this, index) }
+                        label={ `#${ index + 1 } (optional)` }
+                      />
+                      <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgets[(Object.keys(this.state.userMinMonthBudgets))[index]] ? this.state.userMinMonthBudgets[(Object.keys(this.state.userMinMonthBudgets))[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                                 onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
+                        width: '82px'
+                      }} disabled={ !Object.keys(this.state.userMinMonthBudgets)[index] }/>
+                      <div className={ preferencesStyle.locals.channelsRemove }>
+                        { removeButton }
+                      </div>
+                      <div className={ preferencesStyle.locals.error }>
+                        <label hidden={ true }>please choose a leaf channel</label>
+                        <label hidden={ true }>channel already in use</label>
+                      </div>
+                    </div>
+                  }}
+                </MultiRow>
+                : null }
+            </div>
+            <div className={ this.classes.row } style={{}}>
+              <Label style={{
+                marginBottom: '0',
+                fontWeight: '600'
+              }} question={['']}
                      description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>Blocked
                 Channels</Label>
               <Notice warning style={{
@@ -629,7 +709,7 @@ export default class Preferences extends Component {
                 * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
               </Notice>
               {this.state.isLoaded ?
-                <MultiRow numOfRows={ this.state.blockedChannels.length } rowRemoved={this.rowRemoved}
+                <MultiRow numOfRows={ this.state.blockedChannels.length } rowRemoved={this.blockedChannelRemove}
                           maxNumOfRows={3}>
                   {({index, data, update, removeButton}) => {
                     return <div style={{
@@ -655,7 +735,7 @@ export default class Preferences extends Component {
                         { removeButton }
                       </div>
                       <div className={ preferencesStyle.locals.error }>
-                        <label hidden={ !this.state.notLeafChannelError[index]}>Please choose a leaf channel</label>
+                        <label hidden={ !this.state.notLeafChannelError[index]}>please choose a leaf channel</label>
                         <label hidden={ !this.state.channelAlreadyExistsError[index]}>channel already in use</label>
                       </div>
                     </div>
@@ -697,6 +777,7 @@ export default class Preferences extends Component {
                 annualBudgetArray: this.state.annualBudgetArray,
                 goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
                 blockedChannels: this.state.blockedChannels,
+                userMinMonthBudgets: this.state.userMinMonthBudgets,
                 maxChannels: this.state.maxChannels
               }))
                 .then(function (data) {
@@ -711,6 +792,7 @@ export default class Preferences extends Component {
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
                   blockedChannels: this.state.blockedChannels,
+                  userMinMonthBudgets: this.state.userMinMonthBudgets,
                   maxChannels: this.state.maxChannels
                 }))
                   .then(function (data) {
@@ -735,6 +817,7 @@ export default class Preferences extends Component {
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
                   blockedChannels: this.state.blockedChannels,
+                  userMinMonthBudgets: this.state.userMinMonthBudgets,
                   maxChannels: this.state.maxChannels
                 }))
                   .then(function (data) {

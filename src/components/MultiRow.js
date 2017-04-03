@@ -49,7 +49,7 @@ export default class MultiRow extends Component {
   render() {
     const renderRow = this.props.children;
     const canRemove = this.state.rows.length > 0;
-    const canAdd = this.state.rows.length < this.props.maxNumOfRows;
+    const canAdd = this.props.maxNumOfRows ? this.state.rows.length < this.props.maxNumOfRows : true;
     const rows = this.state.rows.map((row, i) => {
       const rendered = renderRow({
         key: row.key,
