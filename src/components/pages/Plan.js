@@ -55,6 +55,7 @@ export default class Plan extends Component {
                       budgetArray: data.annualBudgetArray,
                       maxChannels: data.maxChannels,
                       planDate: data.planDate,
+                      events: data.events || [],
                       isLoaded: true,
                   });
                 }

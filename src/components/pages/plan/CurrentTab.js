@@ -65,6 +65,12 @@ export default class CurrentTab extends Component {
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
 
+    const events = this.props.events.map((event) => {
+      return <p>
+        {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
+      </p>
+    });
+
     return <div className={ this.classes.wrap }>
       <div className={ planStyles.locals.title }>
         <div className={ planStyles.locals.titleMain }>
@@ -88,10 +94,7 @@ export default class CurrentTab extends Component {
               top: '20px'
             }} title="EVENTS">
               <PopupTextContent>
-                <strong>User Events</strong>
-                <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has Louis Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-                <strong>Global Events</strong>
-                <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life” correlate in the form of electrochemical activity in the brain. But it is quite obvious that they do not</p>
+                 {events}
               </PopupTextContent>
             </PlanPopup>
           </div>
