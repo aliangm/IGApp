@@ -220,7 +220,7 @@ export default class SignIn extends Component {
             </div>
             <div className={ onboardingStyle.locals.row }>
               <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel }>Promotion Code</Label>
+                <Label className={ this.classes.textLabel }>Access Code</Label>
                 <Textfield ref="signupPromotionInput" type="text" required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'promotionCode')} />
               </div>
             </div>
