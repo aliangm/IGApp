@@ -27,6 +27,18 @@ export default class Item extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      state: nextProps.defaultStatus ? (nextProps.defaultStatus == -1 ? 'inactive' : 'manual') : undefined,
+      status: nextProps.defaultStatus == -1 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus  || '' : nextProps.defaultStatus || '')),
+      menuShown: false,
+      statusPopupHidden: true,
+      name: nextProps.name,
+      maxValue: nextProps.maxValue / 100 || 1,
+      displayHelp: false
+    });
+  }
+
   getStateText() {
     switch (this.state.state) {
       case 'auto': return 'Automatic';

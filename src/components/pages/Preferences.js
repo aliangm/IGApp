@@ -53,6 +53,7 @@ export default class Preferences extends Component {
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   validate() {
@@ -61,8 +62,12 @@ export default class Preferences extends Component {
   }
 
   componentDidMount() {
+    this.getUserMonthPlan(localStorage.getItem('region'));
+  }
+
+  getUserMonthPlan(region, planDate) {
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -75,6 +80,7 @@ export default class Preferences extends Component {
                   annualBudget: data.annualBudget,
                   annualBudgetArray: data.annualBudgetArray || [],
                   planDate: data.planDate,
+                  region: data.region,
                   goals: {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
                     secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
@@ -94,6 +100,10 @@ export default class Preferences extends Component {
         self.setState({serverDown: true});
         console.log(err);
       });
+  }
+
+  changeRegion(region){
+    this.getUserMonthPlan(region);
   }
 
   handleChangeGoals(parameter, event) {
@@ -598,7 +608,7 @@ export default class Preferences extends Component {
     }
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Preferences"
@@ -860,7 +870,7 @@ export default class Preferences extends Component {
                 inHouseChannels: this.state.inHouseChannels,
                 userMinMonthBudgets: this.state.userMinMonthBudgets,
                 maxChannels: this.state.maxChannels
-              }))
+              }), this.state.region, this.state.planDate)
                 .then(function (data) {
                   history.push('/target-audience');
                 });
@@ -876,7 +886,7 @@ export default class Preferences extends Component {
                   inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
                   maxChannels: this.state.maxChannels
-                }))
+                }), this.state.region, this.state.planDate)
                   .then(function (data) {
                     history.push('/indicators');
                   });
@@ -902,7 +912,7 @@ export default class Preferences extends Component {
                   inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
                   maxChannels: this.state.maxChannels
-                }))
+                }), this.state.region, this.state.planDate)
                   .then(function (data) {
                     if (data.ok) {
                       self.setState({saveSuceess: true});

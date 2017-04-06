@@ -12,7 +12,7 @@ export default class Paging extends Component {
     let planDate = this.props.month.split("/");
     let date = new Date(planDate[1], planDate[0]-1+monthDiff);
     let newPlanDate = (date.getMonth()+1) + '/' + date.getFullYear();
-    this.props.getUserMonthPlan(newPlanDate)
+    this.props.getUserMonthPlan(this.props.region ,newPlanDate)
   }
 
   render() {

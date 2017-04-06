@@ -22,6 +22,7 @@ import PlannedVsActualstyle from 'styles/plan/planned-actual-tab.css';
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import serverCommunication from 'data/serverCommunication';
+import RegionPopup from 'components/RegionPopup';
 
 export default class Welcome extends Component {
   style = style;
@@ -37,7 +38,8 @@ export default class Welcome extends Component {
         teamSize: -1,
         companyWebsite: 'http://',
         competitorsWebsites: ['http://', 'http://', 'http://'],
-        teamMembers: []
+        teamMembers: [],
+        createNewVisible: false
       }
     };
     this.handleChange = this.handleChange.bind(this);
@@ -255,7 +257,7 @@ export default class Welcome extends Component {
                 letterSpacing: '0.075',
                 width: '150px'
               }} onClick={() => {
-                history.push('/profile');
+                this.setState({createNewVisible: true});
               }}>Skip this step</Button>
             </div>
             <div className={ this.classes.footerRight }>
@@ -266,7 +268,7 @@ export default class Welcome extends Component {
               <NextButton onClick={() => {
                 serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(this.state.userAccount))
                   .then(function (data) {
-                    history.push('/profile');
+                    this.setState({createNewVisible: true});
                   });
               }}/>
             </div>
@@ -288,6 +290,7 @@ export default class Welcome extends Component {
           </div>
         }
       </Page>
+      <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }}/>
     </div>
   }
 

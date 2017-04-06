@@ -39,11 +39,16 @@ export default class TargetAudience extends Component {
     this.state.targetAudience = { };
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
     this.handleChangeButton = this.handleChangeButton.bind(this);
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
+    this.getUserMonthPlan(localStorage.getItem('region'));
+  }
+
+  getUserMonthPlan(region, planDate) {
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -54,6 +59,8 @@ export default class TargetAudience extends Component {
               else {
                 self.setState({
                   targetAudience: data.targetAudience,
+                  planDate: data.planDate,
+                  region: data.region,
                   isLoaded: true
                 });
               }
@@ -64,6 +71,10 @@ export default class TargetAudience extends Component {
         self.setState({serverDown: true});
         console.log(err);
       })
+  }
+
+  changeRegion(region){
+    this.getUserMonthPlan(region);
   }
 
   validate() {
@@ -241,7 +252,7 @@ export default class TargetAudience extends Component {
     };
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
@@ -381,7 +392,7 @@ export default class TargetAudience extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
-            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}), this.state.region, this.state.planDate)
 							.then(function(data){
                 history.push('/profile');
             });
@@ -389,7 +400,7 @@ export default class TargetAudience extends Component {
             <div style={{ width: '30px' }} />
             <NextButton onClick={() => {
 						if (this.validate()) {
-						serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+						serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}), this.state.region, this.state.planDate)
 							.then(function(data){
                 history.push('/preferences');
 							});
@@ -405,7 +416,7 @@ export default class TargetAudience extends Component {
             <SaveButton onClick={() => {
 						let self = this;
 						self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}), this.state.region, this.state.planDate)
 			.then(function(data){
 			  self.setState({saveSuceess: true});
 			})

@@ -32,11 +32,16 @@ export default class Indicators extends Component {
     super(props);
     this.state = {actualIndicators: {} };
     this.handleChange = this.handleChange.bind(this);
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
+    this.getUserMonthPlan(localStorage.getItem('region'));
+  }
+
+  getUserMonthPlan(region, planDate) {
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -47,6 +52,8 @@ export default class Indicators extends Component {
               else {
                 self.setState({
                   actualIndicators: data.actualIndicators,
+                  planDate: data.planDate,
+                  region: data.region,
                   isLoaded: true
                 });
               }
@@ -57,6 +64,10 @@ export default class Indicators extends Component {
         self.setState({serverDown: true});
         console.log(err);
       });
+  }
+
+  changeRegion(region){
+    this.getUserMonthPlan(region);
   }
 
   validate() {
@@ -104,7 +115,7 @@ export default class Indicators extends Component {
 
   render() {
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Metrics" subTitle="Marketing is great, but without measuring the impact on your metrics, there is no real point in it." />
@@ -189,7 +200,7 @@ export default class Indicators extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
-            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}))
+            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}), this.state.region, this.state.planDate)
 			      .then(function(data){
               history.push('/preferences');
             });
@@ -197,7 +208,7 @@ export default class Indicators extends Component {
             <div style={{ width: '30px' }} />
             <PlanButton onClick={() => {
               if (this.validate()){
-          serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}))
+          serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}), this.state.region, this.state.planDate)
 			      .then(function(data){
               history.push('/plan');
 		      	});
@@ -213,7 +224,7 @@ export default class Indicators extends Component {
             <SaveButton onClick={() => {
               let self = this;
               self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualIndicators: this.state.actualIndicators}), this.state.region, this.state.planDate)
 			.then(function(data){
 			  self.setState({saveSuceess: true});
 			})

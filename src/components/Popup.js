@@ -53,6 +53,12 @@ export default class Popup extends Component {
     this.props.onClose();
   }
 
+  hide() {
+    this.setState({
+      hidden: true
+    });
+  }
+
   listenGlobal() {
     document.addEventListener('mousedown', this.onOutsideClick, true);
     document.addEventListener('touchstart', this.onOutsideClick, true);

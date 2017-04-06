@@ -65,11 +65,13 @@ export default class CurrentTab extends Component {
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
 
-    const events = this.props.events.map((event) => {
-      return <p>
-        {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
-      </p>
-    });
+    const events = this.props.events ?
+      this.props.events.map((event, index) => {
+        return <p key={ index }>
+          {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
+        </p>
+      })
+      : null;
 
     return <div className={ this.classes.wrap }>
       <div className={ planStyles.locals.title }>
@@ -94,7 +96,7 @@ export default class CurrentTab extends Component {
               top: '20px'
             }} title="EVENTS">
               <PopupTextContent>
-                 {events}
+                {events}
               </PopupTextContent>
             </PlanPopup>
           </div>

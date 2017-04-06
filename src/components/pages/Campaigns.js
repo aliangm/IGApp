@@ -21,12 +21,13 @@ export default class Campaigns extends Component {
       saveCampaigns: this.saveCampaigns.bind(this),
       getUserMonthPlan: this.getUserMonthPlan.bind(this)
     };
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
     let self = this;
     let requests = 0;
-    this.getUserMonthPlan();
+    this.getUserMonthPlan(localStorage.getItem('region'));
     serverCommunication.serverRequest('GET', 'useraccount')
       .then((response) => {
         response.json()
@@ -54,7 +55,7 @@ export default class Campaigns extends Component {
 
   saveCampaigns(campaigns) {
     let self = this;
-    return serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({campaigns: campaigns}), this.state.planDate)
+    return serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({campaigns: campaigns}),this.state.region, this.state.planDate)
       .then(function(response){
         if (response.ok){
           response.json()
@@ -78,9 +79,9 @@ export default class Campaigns extends Component {
       });
   }
 
-  getUserMonthPlan(newPlanDate){
+  getUserMonthPlan(region, planDate){
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan', null, newPlanDate)
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -95,6 +96,7 @@ export default class Campaigns extends Component {
                   knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
                   unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
                   planDate: data.planDate,
+                  region: data.region,
                   campaigns: data.campaigns || {},
                   isLoaded: true
                 });
@@ -108,6 +110,9 @@ export default class Campaigns extends Component {
       });
   }
 
+  changeRegion(region, ){
+    this.getUserMonthPlan(region);
+  }
 
   render() {
     const tabs = {
@@ -119,7 +124,7 @@ export default class Campaigns extends Component {
     const selectedTab = tabs[selectedName];
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page contentClassName={ this.classes.content } width="1180px">
         <div className={ this.classes.head }>

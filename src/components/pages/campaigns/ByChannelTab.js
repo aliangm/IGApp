@@ -58,7 +58,7 @@ export default class ByChannelTab extends Component {
         }
       );
       return <div className={ this.classes.wrap }>
-        <Paging month={ this.props.planDate } getUserMonthPlan={ this.props.getUserMonthPlan }/>
+        <Paging month={ this.props.planDate } getUserMonthPlan={ this.props.getUserMonthPlan } region={ this.props.region }/>
         <div className={ this.classes.title }>
           <div className={ this.classes.titleDate }>
             { this.getDateString(this.props.planDate) } - Campaigns

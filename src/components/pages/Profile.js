@@ -38,16 +38,22 @@ export default class Profile extends Component {
    */
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+    };
     this.state.userProfile = { };
 
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
     this.handleChangeButton = this.handleChangeButton.bind(this);
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
+    this.getUserMonthPlan(localStorage.getItem('region'));
+  }
+
+  getUserMonthPlan(region, planDate){
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -58,6 +64,8 @@ export default class Profile extends Component {
               else {
                 self.setState({
                   userProfile: data.userProfile,
+                  region: data.region,
+                  planDate: data.planDate,
                   isLoaded: true
                 });
               }
@@ -68,6 +76,10 @@ export default class Profile extends Component {
         self.setState({serverDown: true});
         console.log(err);
       })
+  }
+
+  changeRegion(region){
+    this.getUserMonthPlan(region);
   }
 
   handleChangeSelect(parameter, event){
@@ -258,9 +270,9 @@ export default class Profile extends Component {
 
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
+      <Page popup={ isPopupMode() } width={ isPopupMode() ? 'initial' : '1051px'}>
         <Title title="Profile" subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications" />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
@@ -436,7 +448,7 @@ export default class Profile extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
-             serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
+             serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}), this.state.region, this.state.planDate)
 			        .then(function(data){
             history.push('/welcome');
             })
@@ -445,7 +457,7 @@ export default class Profile extends Component {
             <NextButton onClick={() =>
               {
               if (this.validate()){
-          	serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
+          	serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}), this.state.region, this.state.planDate)
 			        .then(function(data){
 			          history.push('/target-audience');
 			        });
@@ -460,7 +472,7 @@ export default class Profile extends Component {
             <SaveButton onClick={() => {
               let self = this;
               self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}), this.state.region, this.state.planDate)
 			.then(function(data){
 			  self.setState({saveSuceess: true});
 			})

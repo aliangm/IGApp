@@ -121,7 +121,7 @@ export default class AnnualTab extends Component {
     }
     let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
     if (filterNanArray.length == 12 && preferences.maxChannels) {
-      this.props.whatIf(isCommitted, preferences, callback);
+      this.props.whatIf(isCommitted, preferences, callback, this.props.region);
     }
     /**
      this.setState({
@@ -149,7 +149,7 @@ export default class AnnualTab extends Component {
   whatIfCancel = () => {
     this.refs.whatIfPopup.close();
     this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.close();
+    this.props.close(this.props.region);
   }
 
   handleChangeBudget(event) {

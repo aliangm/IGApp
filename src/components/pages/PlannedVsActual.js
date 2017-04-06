@@ -45,11 +45,16 @@ export default class PlannedVsActual extends Component {
     //this.data = clone(plannedActualData);
     //this.keys = Object.keys(this.data);
     this.keys = [''];
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
+    this.getUserMonthPlan(localStorage.getItem('region'));
+  }
+
+  getUserMonthPlan(region, planDate) {
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -63,6 +68,7 @@ export default class PlannedVsActual extends Component {
                   knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
                   unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
                   planDate: data.planDate,
+                  region: data.region,
                   isLoaded: true
                 });
                 //self.setState({planDate: data.planDate});
@@ -75,6 +81,10 @@ export default class PlannedVsActual extends Component {
         self.setState({serverDown: true});
         console.log(err);
       })
+  }
+
+  changeRegion(region){
+    this.getUserMonthPlan(region);
   }
 
   addChannel(event) {
@@ -438,7 +448,7 @@ export default class PlannedVsActual extends Component {
     }
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page width={'1051px'}>
         <Title title="Planned VS Actual" subTitle="It is very important to keep the data credibility. To optimize your marketing planning every step of the way, InfiniGrow needs to know exactly what your actual marketing investments were (even if they aren’t 1:1 as recommended)."/>
@@ -540,7 +550,7 @@ export default class PlannedVsActual extends Component {
             <SaveButton onClick={() => {
             let self = this;
             self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}), this.state.region, this.state.planDate)
 			.then(function(data){
 			  self.setState({saveSuceess: true});
 			})
