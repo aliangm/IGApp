@@ -43,11 +43,14 @@ export default class Preferences extends Component {
       },
       isCheckAnnual: true,
       maxChannels: -1,
-      notLeafChannelError: [false, false, false],
-      channelAlreadyExistsError: [false, false, false]
+      notLeafBlockedChannelError: [false, false, false],
+      blockedChannelAlreadyExistsError: [false, false, false],
+      notLeafInHouseChannelError: [false, false, false],
+      inHouseChannelAlreadyExistsError: [false, false, false]
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
+    this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
   }
@@ -131,42 +134,68 @@ export default class Preferences extends Component {
 
   handleChangeBlockedChannels(index, event) {
     /**if (typeof event.value === 'string') {
-      var errors = this.state.notLeafChannelError;
+      var errors = this.state.notLeafBlockedChannelError;
       errors[index] = false;
-      this.setState({notLeafChannelError: errors});
+      this.setState({notLeafBlockedChannelError: errors});
       let update = this.state.blockedChannels || [];
       update.splice(index, 1, event.value);
       this.setState({blockedChannels: update});
     }
      else {
-      var errors = this.state.notLeafChannelError;
+      var errors = this.state.notLeafBlockedChannelError;
       errors[index] = true;
-      this.setState({notLeafChannelError: errors});
+      this.setState({notLeafBlockedChannelError: errors});
       let update = this.state.blockedChannels || [];
       update.splice(index, 1, event.value);
       this.setState({blockedChannels: update});
     }**/
-    var notLeafChannelError = this.state.notLeafChannelError;
-    var channelAlreadyExistsError = this.state.channelAlreadyExistsError;
+    var notLeafChannelError = this.state.notLeafBlockedChannelError;
+    var channelAlreadyExistsError = this.state.blockedChannelAlreadyExistsError;
     notLeafChannelError[index] = false;
     channelAlreadyExistsError[index] = false;
-    this.setState({notLeafChannelError: notLeafChannelError, channelAlreadyExistsError: channelAlreadyExistsError});
+    this.setState({notLeafBlockedChannelError: notLeafChannelError, blockedChannelAlreadyExistsError: channelAlreadyExistsError});
 
     if (this.state.blockedChannels.indexOf(event.value) === -1) {
-      var errors = this.state.notLeafChannelError;
+      var errors = this.state.notLeafBlockedChannelError;
       errors[index] = (typeof event.value === 'string') ? false : true;
-      this.setState({notLeafChannelError: errors});
+      this.setState({notLeafBlockedChannelError: errors});
       let update = this.state.blockedChannels || [];
       update.splice(index, 1, event.value);
       this.setState({blockedChannels: update});
     }
     else {
-      var errors = this.state.channelAlreadyExistsError;
+      var errors = this.state.blockedChannelAlreadyExistsError;
       errors[index] = true;
-      this.setState({channelAlreadyExistsError: errors});
+      this.setState({blockedChannelAlreadyExistsError: errors});
       let update = this.state.blockedChannels || [];
       update.splice(index, 1);
       this.setState({blockedChannels: update});
+    }
+
+  }
+
+  handleChangeInHouseChannels(index, event) {
+    let notLeafChannelError = this.state.notLeafInHouseChannelError;
+    let channelAlreadyExistsError = this.state.inHouseChannelAlreadyExistsError;
+    notLeafChannelError[index] = false;
+    channelAlreadyExistsError[index] = false;
+    this.setState({notLeafInHouseChannelError: notLeafChannelError, inHouseChannelAlreadyExistsError: channelAlreadyExistsError});
+
+    if (this.state.inHouseChannels.indexOf(event.value) === -1) {
+      let errors = this.state.notLeafInHouseChannelError;
+      errors[index] = typeof event.value !== 'string';
+      this.setState({notLeafInHouseChannelError: errors});
+      let update = this.state.inHouseChannels || [];
+      update.splice(index, 1, event.value);
+      this.setState({inHouseChannels: update});
+    }
+    else {
+      let errors = this.state.inHouseChannelAlreadyExistsError;
+      errors[index] = true;
+      this.setState({inHouseChannelAlreadyExistsError: errors});
+      let update = this.state.inHouseChannels || [];
+      update.splice(index, 1);
+      this.setState({inHouseChannels: update});
     }
 
   }
@@ -179,6 +208,12 @@ export default class Preferences extends Component {
     else {
       this.setState({maxChannels: -1});
     }
+  }
+
+  inHouseChannelRemove(index) {
+    let update = this.state.inHouseChannels || [];
+    update.splice(index, 1);
+    this.setState({inHouseChannels: update});
   }
 
   blockedChannelRemove(index) {
@@ -701,6 +736,51 @@ export default class Preferences extends Component {
                 marginBottom: '0',
                 fontWeight: '600'
               }} question={['']}
+                     description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>In-house Channels</Label>
+              <Notice warning style={{
+                margin: '12px 0'
+              }}>
+                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+              </Notice>
+              {this.state.isLoaded ?
+                <MultiRow numOfRows={ this.state.inHouseChannels.length } rowRemoved={this.inHouseChannelRemove}>
+                  {({index, data, update, removeButton}) => {
+                    return <div style={{
+                      width: '492px'
+                    }} className={ preferencesStyle.locals.channelsRow }>
+                      <Select
+                        className={ preferencesStyle.locals.channelsSelect }
+                        selected={ (this.state.inHouseChannels && this.state.inHouseChannels[index]) || -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: flatChannels
+                        }}
+                        onChange={ this.handleChangeInHouseChannels.bind(this, index) }
+                        label={ `#${ index + 1 } (optional)` }
+                      />
+                      <div className={ preferencesStyle.locals.channelsRemove }>
+                        { removeButton }
+                      </div>
+                      <div className={ preferencesStyle.locals.error }>
+                        <label hidden={ !this.state.notLeafInHouseChannelError[index]}>please choose a leaf channel</label>
+                        <label hidden={ !this.state.inHouseChannelAlreadyExistsError[index]}>channel already in use</label>
+                      </div>
+                    </div>
+                  }}
+                </MultiRow>
+                : null }
+            </div>
+            <div className={ this.classes.row } style={{}}>
+              <Label style={{
+                marginBottom: '0',
+                fontWeight: '600'
+              }} question={['']}
                      description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>Blocked
                 Channels</Label>
               <Notice warning style={{
@@ -735,8 +815,8 @@ export default class Preferences extends Component {
                         { removeButton }
                       </div>
                       <div className={ preferencesStyle.locals.error }>
-                        <label hidden={ !this.state.notLeafChannelError[index]}>please choose a leaf channel</label>
-                        <label hidden={ !this.state.channelAlreadyExistsError[index]}>channel already in use</label>
+                        <label hidden={ !this.state.notLeafBlockedChannelError[index]}>please choose a leaf channel</label>
+                        <label hidden={ !this.state.blockedChannelAlreadyExistsError[index]}>channel already in use</label>
                       </div>
                     </div>
                   }}
@@ -777,6 +857,7 @@ export default class Preferences extends Component {
                 annualBudgetArray: this.state.annualBudgetArray,
                 goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
                 blockedChannels: this.state.blockedChannels,
+                inHouseChannels: this.state.inHouseChannels,
                 userMinMonthBudgets: this.state.userMinMonthBudgets,
                 maxChannels: this.state.maxChannels
               }))
@@ -792,6 +873,7 @@ export default class Preferences extends Component {
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
                   blockedChannels: this.state.blockedChannels,
+                  inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
                   maxChannels: this.state.maxChannels
                 }))
@@ -817,6 +899,7 @@ export default class Preferences extends Component {
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
                   blockedChannels: this.state.blockedChannels,
+                  inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
                   maxChannels: this.state.maxChannels
                 }))
