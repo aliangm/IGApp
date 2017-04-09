@@ -254,7 +254,7 @@ export default class TargetAudience extends Component {
     return <div>
       <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
+      <Page popup={ isPopupMode() }>
         <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>

@@ -610,7 +610,7 @@ export default class Preferences extends Component {
     return <div>
       <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
+      <Page popup={ isPopupMode() }>
         <Title title="Preferences"
                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
         <div className={ this.classes.error }>

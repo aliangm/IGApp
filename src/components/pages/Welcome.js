@@ -177,7 +177,7 @@ export default class Welcome extends Component {
     return <div>
       <Header user={ false }/>
       <Sidebar />
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
+      <Page popup={ isPopupMode() }>
         <Title title={ title } subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
         <div className={ this.classes.cols }>
