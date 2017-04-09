@@ -166,7 +166,7 @@ export default class Item extends Component {
         <div className={ tooltipStyle.locals.ttContent }>
           <div>
             <div className={ tooltipStyle.locals.ttSubText }>
-              tooltip is coming soon
+              { this.props.description }
             </div>
           </div>
         </div>
