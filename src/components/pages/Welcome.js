@@ -213,15 +213,6 @@ export default class Welcome extends Component {
               <Textfield type="number" value={ this.state.userAccount.teamSize == -1 ? '' : this.state.userAccount.teamSize } onChange={ this.handleChangeNumber.bind(this, 'teamSize')} style={{width: '80px'}}/>
             </div>
             <div className={ this.classes.row }>
-              <Label>Enter your main competitor’s website (up to 3)</Label>
-              <Textfield value={ this.state.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
-                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
-              <Textfield value={ this.state.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
-                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 1)}/>
-              <Textfield value={ this.state.userAccount.competitorsWebsites[2] } style={{marginBottom: '16px'}}
-                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
-            </div>
-            <div className={ this.classes.row }>
               <Label>Team Members</Label>
               <div className={ welcomeStyle.locals.innerBox }>
                 <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial' }}>
@@ -241,6 +232,15 @@ export default class Welcome extends Component {
                 </div>
               </div>
               <div role="button" className={ welcomeStyle.locals.addButton } onClick={ this.addMember }/>
+            </div>
+            <div className={ this.classes.row }>
+              <Label>Enter your main competitor’s website (up to 3)</Label>
+              <Textfield value={ this.state.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
+                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
+              <Textfield value={ this.state.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
+                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 1)}/>
+              <Textfield value={ this.state.userAccount.competitorsWebsites[2] } style={{marginBottom: '16px'}}
+                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
             </div>
           </div>
         </div>
