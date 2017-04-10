@@ -70,7 +70,7 @@ export default class Header extends Component {
             <Popup className={ this.classes.dropmenuPopup }
                    hidden={ !this.state.regionsVisible } ref="regionsPopup">
               { regions }
-              <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }}>Add new</a>
+              <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }} style={{ fontWeight: 'bold', color: '#1165A3' }}>+ Add new</a>
             </Popup>
           </div>
           : null }
@@ -127,7 +127,7 @@ export default class Header extends Component {
             <Popup className={ this.classes.dropmenuPopup }
                    hidden={ !this.state.regionsVisible } ref="regionsPopup">
               { regions }
-              <a className={ this.classes.linkText } key={ '-1' }>Add new</a>
+              <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }} style={{ fontWeight: 'bold', color: '#1165A3' }}>+ Add new</a>
             </Popup>
           </div>
           : null }

@@ -50,7 +50,7 @@ export default class RegionPopup extends Component {
             <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
           </div>
           <div className={ this.classes.footerRight }>
-            <Button type="primary2" style={{ width: '100px' }} onClick={ this.createNewRegion }>Create!</Button>
+            <Button type="primary2" style={{ width: '100px' }} onClick={ this.createNewRegion }>Create</Button>
           </div>
         </div>
       </Page>
