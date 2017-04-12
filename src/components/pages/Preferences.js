@@ -696,7 +696,7 @@ export default class Preferences extends Component {
                 marginBottom: '0',
                 fontWeight: '600'
               }} question={['']}
-                     description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>Minimum Budgets</Label>
+                     description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum Budgets</Label>
               <Notice warning style={{
                 margin: '12px 0'
               }}>
@@ -746,7 +746,7 @@ export default class Preferences extends Component {
                 marginBottom: '0',
                 fontWeight: '600'
               }} question={['']}
-                     description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>In-house Channels</Label>
+                     description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}>In-house Channels</Label>
               <Notice warning style={{
                 margin: '12px 0'
               }}>
