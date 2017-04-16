@@ -37,13 +37,19 @@ export default class Page extends Component {
       contentClassName += ' ' + this.props.contentClassName;
     }
 
+    let innerClassName = this.classes.inner;
+
+    if (this.props.innerClassName) {
+      innerClassName += ' ' + this.props.innerClassName;
+    }
+
     return <div
       className={ className }
       style={ this.props.style }
       data-sidebar={ this.props.sidebar }
     >
       <div className={ this.classes.box } style={ boxStyle }>
-        <div className={ this.classes.inner }>
+        <div className={ innerClassName }>
           <div className={ contentClassName }>
             { this.props.children }
           </div>

@@ -18,13 +18,17 @@ export default class Campaigns extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      saveCampaigns: this.saveCampaigns.bind(this)
+      saveCampaigns: this.saveCampaigns.bind(this),
+      getUserMonthPlan: this.getUserMonthPlan.bind(this)
     };
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    let requests = 0;
+    this.getUserMonthPlan(localStorage.getItem('region'));
+    serverCommunication.serverRequest('GET', 'useraccount')
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -33,14 +37,11 @@ export default class Campaigns extends Component {
                 history.push('/');
               }
               else {
+                requests++;
+                let teamMembers = data.teamMembers;
+                teamMembers.push({name: (data.firstName ? data.firstName + " (me)" : "Me"), email: data.email, role: data.role});
                 self.setState({
-                  plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
-                  monthBudget: data.projectedPlan[0].monthBudget,
-                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                  planDate: data.planDate,
-                  campaigns: data.campaigns || {},
-                  isLoaded: true
+                  teamMembers: teamMembers
                 });
               }
             }
@@ -54,7 +55,7 @@ export default class Campaigns extends Component {
 
   saveCampaigns(campaigns) {
     let self = this;
-    return serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({campaigns: campaigns}))
+    return serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({campaigns: campaigns}),this.state.region, this.state.planDate)
       .then(function(response){
         if (response.ok){
           response.json()
@@ -78,6 +79,41 @@ export default class Campaigns extends Component {
       });
   }
 
+  getUserMonthPlan(region, planDate){
+    let self = this;
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
+      .then((response) => {
+        response.json()
+          .then(function (data) {
+            if (data) {
+              if (data.error) {
+                history.push('/');
+              }
+              else {
+                self.setState({
+                  plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
+                  monthBudget: data.projectedPlan[0].monthBudget,
+                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
+                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+                  planDate: data.planDate,
+                  region: data.region,
+                  campaigns: data.campaigns || {},
+                  isLoaded: true
+                });
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        self.setState({serverDown: true});
+        console.log(err);
+      });
+  }
+
+  changeRegion(region, ){
+    this.getUserMonthPlan(region);
+  }
+
   render() {
     const tabs = {
       "Campaigns": ByChannelTab,
@@ -88,7 +124,7 @@ export default class Campaigns extends Component {
     const selectedTab = tabs[selectedName];
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page contentClassName={ this.classes.content } width="1180px">
         <div className={ this.classes.head }>

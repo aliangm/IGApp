@@ -11,6 +11,7 @@ import Calendar from 'components/controls/Calendar';
 import Label from 'components/ControlsLabel';
 import Notice from 'components/Notice';
 import MultiRow from 'components/MultiRow';
+import ButtonsSet from 'components/pages/profile/ButtonsSet';
 
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
@@ -36,12 +37,18 @@ export default class TargetAudience extends Component {
     super(props);
     this.state = { };
     this.state.targetAudience = { };
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeSelect = this.handleChangeSelect.bind(this);
+    this.handleChangeButton = this.handleChangeButton.bind(this);
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount(){
+    this.getUserMonthPlan(localStorage.getItem('region'));
+  }
+
+  getUserMonthPlan(region, planDate) {
     let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         response.json()
           .then(function (data) {
@@ -52,6 +59,8 @@ export default class TargetAudience extends Component {
               else {
                 self.setState({
                   targetAudience: data.targetAudience,
+                  planDate: data.planDate,
+                  region: data.region,
                   isLoaded: true
                 });
               }
@@ -62,6 +71,10 @@ export default class TargetAudience extends Component {
         self.setState({serverDown: true});
         console.log(err);
       })
+  }
+
+  changeRegion(region){
+    this.getUserMonthPlan(region);
   }
 
   validate() {
@@ -79,9 +92,15 @@ export default class TargetAudience extends Component {
       this.state.targetAudience.dailyOnlinePresence;
   }
 
-  handleChange(parameter, event){
+  handleChangeSelect(parameter, event){
     let update = Object.assign({}, this.state.targetAudience);
     update[parameter] = event.value;
+    this.setState({targetAudience: update});
+  }
+
+  handleChangeButton(parameter, event){
+    let update = Object.assign({}, this.state.targetAudience);
+    update[parameter] = event;
     this.setState({targetAudience: update});
   }
 
@@ -93,42 +112,8 @@ export default class TargetAudience extends Component {
 
   render() {
     const selects = {
-      role: {
-        label: 'Role',
-        select: {
-          name: 'role',
-          onChange: () => {},
-          options: [
-            { value: 'General', label: 'General' },
-            { value: 'Sales', label: 'Sales' },
-            { value: 'Marketing', label: 'Marketing' },
-            { value: 'R&D', label: 'R&D' },
-            { value: 'IT', label: 'IT' },
-            { value: 'Security', label: 'Security' },
-            { value: 'Finance', label: 'Finance' },
-            { value: 'HR', label: 'HR' },
-            { value: 'Design', label: 'Design' },
-            { value: 'BizDev', label: 'BizDev' },
-            { value: 'Other', label: 'Other' }
-          ]
-        }
-      },
-      managementLevel: {
-        label: 'Management Level',
-        select: {
-          name: 'managementLevel',
-          onChange: () => {},
-          options: [
-            { value: 'C-Level', label: 'C-Level' },
-            { value: 'Management', label: 'Management' },
-            { value: 'Employee', label: 'Employee' },
-          ]
-        }
-      },
       reportsTo: {
         label: 'Reports To',
-        labelQuestion: ['Coming Soon!'],
-        description: [],
         select: {
           name: 'reportsTo',
           onChange: () => {},
@@ -153,26 +138,8 @@ export default class TargetAudience extends Component {
           ]
         }
       },
-      companyType: {
-        label: 'Company Type',
-        select: {
-          name: 'companyType',
-          onChange: () => {},
-          options: [
-            { value: 'B2B Software', label: 'B2B Software' },
-            { value: 'B2C Software', label: 'B2C Software' },
-            { value: 'Consumer Services & Retail', label: 'Consumer Services & Retail' },
-            { value: 'CPG', label: 'CPG' },
-            { value: 'E-commerce', label: 'E-commerce' },
-            { value: 'Food & Beverage', label: 'Food & Beverage' },
-            { value: 'Entertainment', label: 'Entertainment' },
-            { value: 'Professional Services', label: 'Professional Services' },
-            { value: 'Any', label: 'Any' },
-          ]
-        }
-      },
       annualRevenue: {
-        label: 'Annual Revenue',
+        label: 'Company\'s Annual Revenue',
         select: {
           name: 'annualRevenue',
           onChange: () => {},
@@ -188,7 +155,7 @@ export default class TargetAudience extends Component {
         }
       },
       employees: {
-        label: 'Employees',
+        label: 'Number Of Employees',
         select: {
           name: 'employees',
           onChange: () => {},
@@ -232,18 +199,6 @@ export default class TargetAudience extends Component {
             { value: '$150,000 to $199,999', label: '$150,000 to $199,999' },
             { value: '$200,000 to $499,999', label: '$200,000 to $499,999' },
             { value: '>$500,000', label: '$500,000 or more' }
-          ]
-        }
-      },
-      gender: {
-        label: 'Gender',
-        select: {
-          name: 'gender',
-          onChange: () => {},
-          options: [
-            { value: 'Male', label: 'Male' },
-            { value: 'Female', label: 'Female' },
-            { value: 'Any', label: 'Both' },
           ]
         }
       },
@@ -297,7 +252,7 @@ export default class TargetAudience extends Component {
     };
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
       <Page popup={ isPopupMode() }>
         <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
@@ -306,16 +261,53 @@ export default class TargetAudience extends Component {
         </div>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.role } selected={ this.state.targetAudience.role } onChange= { this.handleChange.bind(this, 'role') } />
+            <div className={ this.classes.row }>
+              <Label>Company Type</Label>
+              <ButtonsSet buttons={[
+                { key: 'B2B Software', text: 'B2B Software', icon: 'buttons:b2bSoftware' },
+                { key: 'B2C Software', text: 'B2C Software', icon: 'buttons:b2cSoftware' },
+                { key: 'Consumer Services & Retail', text: 'Retailer', icon: 'buttons:retailer' },
+                { key: 'CPG', text: 'CPG', icon: 'buttons:cpg' },
+                { key: 'E-commerce', text: 'E-commerce', icon: 'buttons:ecommerce' },
+                { key: 'Food & Beverage', text: 'Food', icon: 'buttons:foodAndBeverage' },
+                { key: 'Entertainment', text: 'Entertaiment', icon: 'buttons:entertaiment' },
+                { key: 'Professional Services', text: 'Pro Services', icon: 'buttons:professional' },
+                { key: 'Any', text: 'Any', icon: 'buttons:any' },
+              ]} selectedKey={ this.state.targetAudience.companyType } onChange = {this.handleChangeButton.bind(this, 'companyType')} />
             </div>
             <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.managementLevel } selected={ this.state.targetAudience.managementLevel } onChange= { this.handleChange.bind(this, 'managementLevel') } />
+              width: '258px'
+            }}>
+              <Select { ... selects.annualRevenue } selected={ this.state.targetAudience.annualRevenue } onChange= { this.handleChangeSelect.bind(this, 'annualRevenue') }/>
+            </div>
+            <div className={ this.classes.row } style={{
+              width: '258px'
+            }}>
+              <Select { ... selects.employees } selected={ this.state.targetAudience.employees } onChange= { this.handleChangeSelect.bind(this, 'employees') } />
+            </div>
+            <div className={ this.classes.row }>
+              <Label>Role</Label>
+              <ButtonsSet buttons={[
+                { key: 'General', text: 'General', icon: 'buttons:general' },
+                { key: 'Sales', text: 'Sales', icon: 'buttons:sales-role' },
+                { key: 'Marketing', text: 'Marketing', icon: 'buttons:marketing' },
+                { key: 'R&D', text: 'R&D', icon: 'buttons:rd' },
+                { key: 'IT', text: 'IT', icon: 'buttons:IT' },
+                { key: 'Security', text: 'Security', icon: 'buttons:security' },
+                { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
+                { key: 'HR', text: 'HR', icon: 'buttons:hr' },
+                { key: 'Design', text: 'Design', icon: 'buttons:design' },
+                { key: 'BizDev', text: 'BizDev', icon: 'buttons:bizdev' },
+                { key: 'Other', text: 'Other', icon: 'buttons:any' },
+              ]} selectedKey={ this.state.targetAudience.role } onChange = {this.handleChangeButton.bind(this, 'role')} />
+            </div>
+            <div className={ this.classes.row }>
+              <Label>Management Level</Label>
+              <ButtonsSet buttons={[
+                { key: 'C-Level', text: 'C-Level', icon: 'buttons:cxo' },
+                { key: 'Management', text: 'Management', icon: 'buttons:manager' },
+                { key: 'Employee', text: 'Employee', icon: 'buttons:employee' },
+              ]} selectedKey={ this.state.targetAudience.managementLevel } onChange = {this.handleChangeButton.bind(this, 'managementLevel')} />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
@@ -325,32 +317,17 @@ export default class TargetAudience extends Component {
             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
-              <Select { ... selects.teamSize } selected={ this.state.targetAudience.teamSize } onChange= { this.handleChange.bind(this, 'teamSize') } />
+              <Select { ... selects.teamSize } selected={ this.state.targetAudience.teamSize } onChange= { this.handleChangeSelect.bind(this, 'teamSize') } />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-              <Select { ... selects.companyType } selected={ this.state.targetAudience.companyType } onChange= { this.handleChange.bind(this, 'companyType') } />
+              <Select { ... selects.age } selected={ this.state.targetAudience.age } onChange= { this.handleChangeSelect.bind(this, 'age') } />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-              <Select { ... selects.annualRevenue } selected={ this.state.targetAudience.annualRevenue } onChange= { this.handleChange.bind(this, 'annualRevenue') }/>
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.employees } selected={ this.state.targetAudience.employees } onChange= { this.handleChange.bind(this, 'employees') } />
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.age } selected={ this.state.targetAudience.age } onChange= { this.handleChange.bind(this, 'age') } />
-            </div>
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.salary } selected={ this.state.targetAudience.salary } onChange= { this.handleChange.bind(this, 'salary') } />
+              <Select { ... selects.salary } selected={ this.state.targetAudience.salary } onChange= { this.handleChangeSelect.bind(this, 'salary') } />
             </div>
             {/**	<div className={ this.classes.row }>
              <Label question>{ selects.loyalty.label }</Label>
@@ -363,15 +340,18 @@ export default class TargetAudience extends Component {
                       }} />
              </div>
              </div>**/}
-            <div className={ this.classes.row } style={{
-                    width: '258px'
-                  }}>
-              <Select { ... selects.gender } selected={ this.state.targetAudience.gender } onChange= { this.handleChange.bind(this, 'gender') } />
+            <div className={ this.classes.row }>
+              <Label>Gender</Label>
+              <ButtonsSet buttons={[
+                { key: 'Male', text: 'Male', icon: 'buttons:male' },
+                { key: 'Female', text: 'Female', icon: 'buttons:female' },
+                { key: 'Any', text: 'Both', icon: 'buttons:both' },
+              ]} selectedKey={ this.state.targetAudience.gender } onChange = {this.handleChangeButton.bind(this, 'gender')} />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-              <Select { ... selects.education } selected={ this.state.targetAudience.education } onChange= { this.handleChange.bind(this, 'education') } />
+              <Select { ... selects.education } selected={ this.state.targetAudience.education } onChange= { this.handleChangeSelect.bind(this, 'education') } />
             </div>
             <div className={ this.classes.row } style={{
                     width: '258px'
@@ -382,7 +362,7 @@ export default class TargetAudience extends Component {
 						marginBottom: '200px',
                     width: '258px'
                   }}>
-              <Select { ... selects.dailyOnlinePresence } selected={ this.state.targetAudience.dailyOnlinePresence } onChange= { this.handleChange.bind(this, 'dailyOnlinePresence') } />
+              <Select { ... selects.dailyOnlinePresence } selected={ this.state.targetAudience.dailyOnlinePresence } onChange= { this.handleChangeSelect.bind(this, 'dailyOnlinePresence') } />
             </div>
           </div>
 
@@ -412,7 +392,7 @@ export default class TargetAudience extends Component {
               <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
             </div>
             <BackButton onClick={() => {
-            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+            serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}), this.state.region, this.state.planDate)
 							.then(function(data){
                 history.push('/profile');
             });
@@ -420,7 +400,7 @@ export default class TargetAudience extends Component {
             <div style={{ width: '30px' }} />
             <NextButton onClick={() => {
 						if (this.validate()) {
-						serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+						serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}), this.state.region, this.state.planDate)
 							.then(function(data){
                 history.push('/preferences');
 							});
@@ -436,7 +416,7 @@ export default class TargetAudience extends Component {
             <SaveButton onClick={() => {
 						let self = this;
 						self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}))
+		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({targetAudience: this.state.targetAudience}), this.state.region, this.state.planDate)
 			.then(function(data){
 			  self.setState({saveSuceess: true});
 			})

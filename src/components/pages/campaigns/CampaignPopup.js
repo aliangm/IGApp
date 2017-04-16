@@ -28,6 +28,7 @@ export default class CampaignPopup extends Component {
     this.save = this.save.bind(this);
     this.getEmailBody = this.getEmailBody.bind(this);
     this.getEmailHeader = this.getEmailHeader.bind(this);
+    this.getEmailTo = this.getEmailTo.bind(this);
   }
 
   handleChangeBudget(parameter, event){
@@ -82,7 +83,6 @@ export default class CampaignPopup extends Component {
     if (this.validate()) {
       this.props.updateCampaign(this.state.campaign, this.props.index)
         .then(function (){
-          self.setState({campaign: { name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''] }, tracking: {UTM: '', URL: ''}}});
           self.props.close();
         })
         .catch(function (err) {
@@ -97,6 +97,18 @@ export default class CampaignPopup extends Component {
         this.refs.budget.focus();
       }
     }
+  }
+
+  getEmailTo() {
+    return (this.state.campaign.owner ?
+      this.props.teamMembers
+        .filter((item) => {
+          return item.name == this.state.campaign.owner;
+        })
+        .map((item) => {
+          return item.email;
+        })
+      : '');
   }
 
   getEmailHeader() {
@@ -127,7 +139,7 @@ export default class CampaignPopup extends Component {
       (this.state.campaign.referenceProjects ? ("Reference projects:" + newLine + this.state.campaign.referenceProjects + newLine + newLine) : '') +
       (this.state.campaign.keywords ? ("Keywords:" + newLine + this.state.campaign.keywords + newLine + newLine) : '') +
       (this.state.campaign.additionalInformation ? ("Additional information:" + newLine + this.state.campaign.additionalInformation + newLine + newLine) : '') +
-        "Tracking (Coming Soon): " + newLine +
+      "Tracking (Coming Soon): " + newLine +
       (this.state.campaign.tracking.UTM ? ("- UTM: " + this.state.campaign.tracking.UTM + newLine) : '') +
       (this.state.campaign.tracking.URL ? ("- URL: " + this.state.campaign.tracking.URL + newLine) : '') +
       newLine +
@@ -141,7 +153,7 @@ export default class CampaignPopup extends Component {
         select: {
           name: 'owner',
           options: [
-            {value: 'Coming Soon', label: 'Coming Soon'}
+            {value: 'Other', label: 'Other'}
           ]
         }
       },
@@ -334,7 +346,13 @@ export default class CampaignPopup extends Component {
         }
       }
     };
-
+    if (this.props.teamMembers) {
+      this.props.teamMembers.forEach((member) => {
+        if (member.name != '') {
+          selects.owner.select.options.push({value: member.name, label: member.name});
+        }
+      });
+    }
     return <div>
       <Page popup={ true } width={'800px'}>
         <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>
@@ -353,7 +371,7 @@ export default class CampaignPopup extends Component {
               }} />
             </div>
             <div className={ this.classes.colRight }>
-              <Select { ... selects.owner } style={{ width: '166px' }} selected="Coming Soon"/>
+              <Select { ... selects.owner } style={{ width: '166px' }} selected={ this.state.campaign.owner } onChange= { this.handleChangeSelect.bind(this, 'owner') }/>
             </div>
           </div>
         </div>
@@ -500,7 +518,7 @@ export default class CampaignPopup extends Component {
           </div>
           <div className={ this.classes.footerRight }>
             <Button type="primary2" style={{ width: '100px', marginRight: '30px' }}>
-              <a className={ campaignPopupStyle.locals.export } href={ encodeURI("mailto:?&subject=" + this.getEmailHeader() + "&body=" + this.getEmailBody()) } target="_blank">Export</a>
+              <a className={ campaignPopupStyle.locals.export } href={ encodeURI("mailto:" + this.getEmailTo() + "?&subject=" + this.getEmailHeader() + "&body=" + this.getEmailBody()) } target="_blank">Export</a>
             </Button>
             <SaveButton onClick={ this.save } />
           </div>

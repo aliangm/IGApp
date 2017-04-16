@@ -10,13 +10,23 @@ if (!window.Promise) {
 
 export default {
 
-	serverRequest(httpFunc, route, body, handleResponse) {
+	serverRequest(httpFunc, route, body, region, planDate) {
 		
-		var deferred = q.defer();
+		const deferred = q.defer();
 
+		let URL = window.location.protocol + '//' + window.location.hostname + ':8443/' + route;
+    if (region || planDate) {
+      URL += '?';
+    }
+    if (region) {
+    	URL += 'region=' + region + '&';
+		}
+		if (planDate) {
+			URL += 'planDate=' + planDate;
+		}
 		//fetch('http://localhost:3000/' + route, {
 		//fetch('http://infinigrowtest.centralus.cloudapp.azure.com:3000/' + route, {
-		fetch(window.location.protocol + '//' + window.location.hostname + ':8443/' + route, {
+		fetch(encodeURI(URL), {
 		method: httpFunc,
 			headers: {
 				'Content-Type': 'application/json'

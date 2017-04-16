@@ -1,9 +1,12 @@
 import serverCommunication from 'data/serverCommunication';
 import q from 'q';
-let popup;
 
 export function isPopupMode() {
-  return popup;
+  return localStorage.getItem('popup') == "true";
+}
+
+export function temporaryEnablePopupMode() {
+  return localStorage.setItem('popup', true);
 }
 
 export function disablePopupMode() {
@@ -13,8 +16,8 @@ export function disablePopupMode() {
       response.json()
         .then(function (data) {
           if (data){
-            popup = false;
-            deferred.resolve(popup);
+            localStorage.setItem('popup', false);
+            deferred.resolve(false);
           }
         })
     })
@@ -31,8 +34,8 @@ export function checkIfPopup () {
       response.json()
         .then(function (data) {
           if (data){
-            popup = data.onboarding;
-            deferred.resolve(popup);
+            localStorage.setItem('popup', data.onboarding);
+            deferred.resolve(data.onboarding);
           }
         })
     })

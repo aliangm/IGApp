@@ -11,6 +11,12 @@
   width: 28px;
 }
 
+.channels-budget {
+  margin-top: 32px;
+  margin-left: 22px;
+  margin-right: 16px;
+}
+
 .channels-select {
   flex-grow: 1;
   white-space: pre;

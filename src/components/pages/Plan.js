@@ -27,51 +27,59 @@ export default class Plan extends Component {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
-      close: this.componentDidMount.bind(this)
+      close: this.getUserMonthPlan.bind(this),
+      isLoaded: false,
     }
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
+    this.changeRegion = this.changeRegion.bind(this);
   }
 
-  componentDidMount(){
-    let self = this;
+  componentDidMount() {
     if (isPopupMode()) {
       disablePopupMode();
-      this.plan(true, null, null);
+      this.plan(true, null, null, localStorage.getItem('region'));
+    } else {
+      this.getUserMonthPlan(localStorage.getItem('region'));
     }
-    else {
-      serverCommunication.serverRequest('GET', 'usermonthplan')
-        .then((response) => {
-          response.json()
-            .then(function (data) {
-              if (data) {
-                if (data.error) {
-                  history.push('/');
-                }
-                else {
-                  self.setState({actualIndicators: data.actualIndicators});
-                  self.setState({numberOfPlanUpdates: data.numberOfPlanUpdates});
-                  self.setState({projectedPlan: data.projectedPlan});
-                  self.setState({budget: data.annualBudget});
-                  self.setState({maxChannels: data.maxChannels});
-                  self.setState({planDate: data.planDate});
-                  self.setState({isLoaded: true});
-                }
+  }
+
+  getUserMonthPlan(region, planDate) {
+    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
+      .then((response) => {
+        response.json()
+          .then((data) => {
+            if (data) {
+              if (data.error) {
+                history.push('/');
+              } else {
+                this.setState({
+                  actualIndicators: data.actualIndicators,
+                  numberOfPlanUpdates: data.numberOfPlanUpdates,
+                  projectedPlan: data.projectedPlan,
+                  budget: data.annualBudget,
+                  budgetArray: data.annualBudgetArray,
+                  maxChannels: data.maxChannels,
+                  planDate: data.planDate,
+                  region: data.region,
+                  events: data.events || [],
+                  isLoaded: true,
+                });
               }
-            })
-        })
-        .catch(function (err) {
-          self.setState({serverDown: true});
-          console.log(err);
-        });
-    }
+            }
+          })
+      })
+      .catch((err) => {
+        this.setState({serverDown: true});
+        console.log(err);
+      });
   }
 
   popup() {
     this.setState({popup: true});
   }
 
-  plan(isCommitted, preferences, callback){
+  plan(isCommitted, preferences, callback, region){
     let body = preferences ? JSON.stringify(preferences) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     this.setState({
@@ -81,7 +89,7 @@ export default class Plan extends Component {
       serverDown: false
     });
     let self = this;
-    serverCommunication.serverRequest(func, 'plan', body)
+    serverCommunication.serverRequest(func, 'plan', body, region)
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -95,8 +103,8 @@ export default class Plan extends Component {
                     actualIndicators: data.actualIndicators,
                     projectedPlan: data.projectedPlan,
                     numberOfPlanUpdates: data.numberOfPlanUpdates,
-                    selectedTab: 0,
                     budget: data.annualBudget,
+                    budgetArray: data.annualBudgetArray,
                     planDate: data.planDate,
                     maxChannels: data.maxChannels,
                     isPlannerLoading: false,
@@ -132,6 +140,10 @@ export default class Plan extends Component {
       });
   }
 
+  changeRegion(region){
+    this.getUserMonthPlan(region);
+  }
+
   selectTab(index) {
     this.setState({
       selectedTab: index
@@ -140,7 +152,7 @@ export default class Plan extends Component {
 
   render() {
     const tabs = {
-      //"Current": CurrentTab,
+      "Current": CurrentTab,
       "Annual": AnnualTab,
       //"Planned vs Actual": PlannedActualTab,
       "Projections": ProjectionsTab
@@ -151,9 +163,9 @@ export default class Plan extends Component {
     const selectedTab = tabs[selectedName];
 
     return <div>
-      <Header />
+      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
       <Sidebar />
-      <Page contentClassName={ this.classes.content } width="1180px">
+      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="1180px">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
           <div className={this.classes.headPlan } >
@@ -167,7 +179,7 @@ export default class Plan extends Component {
                 popup: false
               });
             }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false) } onBack={() => {
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false, this.state.region) } onBack={() => {
                 this.setState({
                   popup: false
                 })}} />

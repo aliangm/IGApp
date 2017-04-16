@@ -85,6 +85,11 @@
   text-decoration: none;
 }
 
+.link-text[data-selected] {
+  color: white;
+  background-color: #24B10E;
+}
+
 .logout-item {
   composes: item;
 }
@@ -159,12 +164,20 @@
   background-size: auto 24px;
 }
 
+.location-icon {
+  width: 24px;
+  height: 24px;
+  background: url(../assets/location2.svg) center center no-repeat;
+  background-size: auto 24px;
+}
+
 .dropmenu-popup {
   min-width: 160px !important;
   top: 100% !important;
   right: 0 !important;
   left: auto !important;
   padding: 4px 0 !important;
+  min-height: inherit !important;
 }
 
 .dropmenu-popup .item {
@@ -263,7 +276,7 @@
     display: flex;
   }
 
-  .dropmenu-button:hover, .dropmenu-button[data-selected] {
+  .dropmenu-button:hover .dropmenu-button[data-selected] {
     background: rgba(255, 255, 255, 0.2);
   }
 }

@@ -81,11 +81,14 @@
   background: #0e568b;
 }
 
+.pageInner {
+  overflow: visible!important;
+}
+
 .content {
   margin: 0 !important;
   padding: 0 !important;
   background: #f2f2f2;
-  overflow: hidden;
 }
 
 .title {

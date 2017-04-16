@@ -8,11 +8,15 @@ import Popup from 'components/Popup';
 import global from 'global';
 import serverCommunication from 'data/serverCommunication';
 import history from 'history';
+import RegionPopup from 'components/RegionPopup';
 
 export default class Header extends Component {
   style = style
   state = {
-    dropmenuVisible: false
+    dropmenuVisible: false,
+    regionsVisible: false,
+    createNewVisible: false,
+    regions: []
   };
 
   static defaultProps = {
@@ -29,9 +33,21 @@ export default class Header extends Component {
     });
   }
 
+  toggleRegions = () => {
+    let currentVisible = this.state.regionsVisible;
+    this.setState({
+      regionsVisible: !currentVisible
+    });
+  }
+
   get menuBig() {
     const hasUser = this.props.user;
 
+    const regions = hasUser ?
+      this.state.regions.map((region) => {
+        return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.selectedRegion ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
+      })
+      :null;
     return <div className={ this.classes.menuBig }>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
@@ -42,6 +58,20 @@ export default class Header extends Component {
               Log Out
               <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
             </Button>
+          </div>
+          : null }
+        { hasUser ?
+          <div className={ this.classes.dropmenuButton }
+               data-selected={ this.state.regionsVisible ? true : null }
+               role="button"
+               onClick={ this.toggleRegions }
+          >
+            <div className={ this.classes.locationIcon } />
+            <Popup className={ this.classes.dropmenuPopup }
+                   hidden={ !this.state.regionsVisible } ref="regionsPopup">
+              { regions }
+              <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }} style={{ fontWeight: 'bold', color: '#1165A3' }}>+ Add new</a>
+            </Popup>
           </div>
           : null }
         { hasUser ?
@@ -63,12 +93,17 @@ export default class Header extends Component {
           </div>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
         </div>
-      : null }
+        : null }
     </div>
   }
 
   get menuSmall() {
     const hasUser = this.props.user;
+    const regions = hasUser ?
+      this.state.regions.map((region) => {
+        return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.selectedRegion ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
+      })
+      : null;
 
     return <div className={ this.classes.menuSmall }>
       <div className={ this.classes.itemsBox }>
@@ -80,6 +115,20 @@ export default class Header extends Component {
               Log Out
               <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
             </Button>
+          </div>
+          : null }
+        { hasUser ?
+          <div className={ this.classes.dropmenuButton }
+               data-selected={ this.state.regionsVisible ? true : null }
+               role="button"
+               onClick={ this.toggleRegions }
+          >
+            <div className={ this.classes.locationIcon } />
+            <Popup className={ this.classes.dropmenuPopup }
+                   hidden={ !this.state.regionsVisible } ref="regionsPopup">
+              { regions }
+              <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }} style={{ fontWeight: 'bold', color: '#1165A3' }}>+ Add new</a>
+            </Popup>
           </div>
           : null }
         <div className={ this.classes.dropmenuButton }
@@ -103,7 +152,7 @@ export default class Header extends Component {
                   <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
                 </div>
               </div>
-            : null }
+              : null }
             { hasUser ?
               <a className={ this.classes.linkText } href="#welcome">
                 Settings
@@ -127,7 +176,7 @@ export default class Header extends Component {
         </div>
       </div>
 
-       {hasUser ?
+      {hasUser ?
         <div className={ this.classes.userBoxOutside }>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
           <div className={ this.classes.logged }>
@@ -135,7 +184,7 @@ export default class Header extends Component {
             <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
           </div>
         </div>
-      :null}
+        :null}
     </div>
   }
 
@@ -146,20 +195,43 @@ export default class Header extends Component {
       });
   }
 
+  changeRegion(region) {
+    localStorage.setItem('region', region);
+    this.props.changeRegion(region);
+  }
+
   componentDidMount(){
     if (!this.state.isLoaded) {
       let self = this;
+      let count = 0;
       serverCommunication.serverRequest('GET', 'useraccount')
         .then((response) => {
           response.json()
             .then(function (data) {
               if (data) {
+                count++;
                 self.setState({
                   userFirstName: data.firstName,
                   userLastName: data.lastName,
                   userCompany: data.companyName,
                   logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                  isLoaded: true
+                  isLoaded: count == 2
+                });
+              }
+            })
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+      serverCommunication.serverRequest('GET', 'regions')
+        .then((response) => {
+          response.json()
+            .then(function (data) {
+              if (data) {
+                count++;
+                self.setState({
+                  regions: data,
+                  isLoaded: count == 2
                 });
               }
             })
@@ -176,6 +248,7 @@ export default class Header extends Component {
       <div className={ this.classes.logo }></div>
       { this.menuBig }
       { this.menuSmall }
+      <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }}/>
     </div>
   }
 }

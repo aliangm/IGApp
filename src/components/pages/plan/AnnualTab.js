@@ -15,7 +15,6 @@ import Label from 'components/ControlsLabel';
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
-
 //import annualData from 'data/annual';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import serverCommunication from 'data/serverCommunication';
@@ -36,7 +35,9 @@ export default class AnnualTab extends Component {
       pouppTop: 0,
 
       budgetField: props.budget || '',
+      budgetArrayField: props.budgetArray || [],
       maxChannelsField: props.maxChannels || '',
+      isCheckAnnual: !!props.budget,
 
       hoverRow: void 0,
       collapsed: {},
@@ -48,6 +49,7 @@ export default class AnnualTab extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ budgetField: nextProps.budget });
+    this.setState({ budgetArrayField: nextProps.budgetArray });
     this.setState({maxChannelsField: nextProps.maxChannels});
   }
   /**
@@ -108,19 +110,8 @@ export default class AnnualTab extends Component {
     this.setState({whatIfSelected: false});
     let preferences = {};
 
-    const budget = parseInt(this.state.budgetField);
-
-    if (budget) {
-      let planDate = this.props.planDate.split("/");
-      let firstMonth = parseInt(planDate[0])-1;
-
-      let budgetArray = [];
-      this.budgetWeights.forEach((element, index) => {
-        budgetArray[(index+12-firstMonth)%12]= Math.round(element * budget);
-      });
-      preferences.annualBudgetArray = budgetArray;
-      preferences.annualBudget = budget;
-    }
+    preferences.annualBudgetArray = this.state.budgetArrayField;
+    preferences.annualBudget = this.state.budgetField;
     const maxChannels = parseInt(this.state.maxChannelsField);
     if (isNaN(maxChannels)) {
       preferences.maxChannels = -1;
@@ -128,8 +119,9 @@ export default class AnnualTab extends Component {
     else {
       preferences.maxChannels = maxChannels;
     }
-    if (Object.keys(preferences).length == 3) {
-      this.props.whatIf(isCommitted, preferences, callback);
+    let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
+    if (filterNanArray.length == 12 && preferences.maxChannels) {
+      this.props.whatIf(isCommitted, preferences, callback, this.props.region);
     }
     /**
      this.setState({
@@ -157,7 +149,67 @@ export default class AnnualTab extends Component {
   whatIfCancel = () => {
     this.refs.whatIfPopup.close();
     this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.close();
+    this.props.close(this.props.region);
+  }
+
+  handleChangeBudget(event) {
+    let update = {};
+    update.budgetField = parseInt(event.target.value.replace(/[-$,]/g, ''));
+
+    let planDate = this.props.planDate.split("/");
+    let firstMonth = parseInt(planDate[0]) - 1;
+
+    let budget = [];
+    this.budgetWeights.forEach((element, index) => {
+      budget[(index + 12 - firstMonth) % 12] = Math.round(element * update.budgetField);
+    });
+    update.budgetArrayField = budget;
+
+    this.setState(update);
+  }
+
+  handleChangeBudgetArray(index, event) {
+    let update = this.state.budgetArrayField || [];
+    update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
+    this.setState({budgetArrayField: update});
+  }
+
+  monthBudgets() {
+    const datesArray = this.getDates();
+    return datesArray.map((month, index) => {
+      return <div className={ this.classes.budgetChangeBox } key={index} style={{ marginLeft: '8px', paddingBottom: '0px', paddingTop: '0px' }}>
+        <div className={ this.classes.left }>
+          <Label style={{width: '70px', marginTop: '8px'}}>{month}</Label>
+        </div>
+        <div className={ this.classes.right }>
+          <Textfield
+            value={"$" + (this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+            onChange={ this.handleChangeBudgetArray.bind(this, index) } style={{
+            width: '110px'
+          }}/>
+        </div>
+      </div>
+    });
+  }
+
+  toggleCheck() {
+    if (this.state.isCheckAnnual) {
+      let prevBudget = this.state.budgetField;
+      let planDate = this.props.planDate.split("/");
+      let firstMonth = parseInt(planDate[0]) - 1;
+
+      let budget = [];
+      this.budgetWeights.forEach((element, index) => {
+        budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
+      });
+
+      this.setState({budgetField: null, budgetArrayField: budget});
+    }
+    else {
+      let sum = this.state.budgetArrayField.reduce((a, b) => a + b, 0);
+      this.setState({budgetField: sum});
+    }
+    this.setState({isCheckAnnual: !this.state.isCheckAnnual});
   }
 
   render() {
@@ -297,28 +349,33 @@ export default class AnnualTab extends Component {
                     width: '367px',
                     right: '110px',
                     left: 'auto',
-                    top: '-35px'
+                    top: '-37px'
                   }} hideClose={ true } title="What If - Scenarios Management">
                     <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
                       <div className={ this.classes.left }>
-                        <Label style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                        <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
                       </div>
                       <div className={ this.classes.right }>
-                        <Textfield style={{ maxWidth: '140px' }}
-                                   value={ '$' + this.state.budgetField }
+                        <Textfield style={{ maxWidth: '110px' }}
+                                   value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
                                    className={ this.classes.budgetChangeField }
-                                   onChange={(e) => {
-                                     this.setState({
-                                       budgetField: e.target.value.replace(/^\$/, '')
-                                     });
-                                   }}
+                                   onChange={ this.handleChangeBudget.bind(this) }
                                    onKeyDown={(e) => {
                                      if (e.keyCode === 13) {
                                        this.whatIf();
                                      }
                                    }}
+                                   disabled={ !this.state.isCheckAnnual }
                         />
                       </div>
+                    </div>
+                    <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
+                      <div className={ this.classes.left }>
+                        <div className={ this.classes.left }>
+                          <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                        </div>
+                      </div>
+                      { this.state.isCheckAnnual ? null : this.monthBudgets() }
                     </div>
                     <div className={ this.classes.budgetChangeBox }>
                       <div className={ this.classes.left }>
@@ -326,7 +383,7 @@ export default class AnnualTab extends Component {
                       </div>
                       <div className={ this.classes.right }>
                         <Textfield style={{
-                          maxWidth: '140px' }}
+                          maxWidth: '110px' }}
                                    value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
                                    className={ this.classes.budgetChangeField }
                                    onChange={(e) => {
@@ -344,18 +401,18 @@ export default class AnnualTab extends Component {
                     </div>
                     <div className={ this.classes.budgetChangeBox }>
                       <Button type="primary2" style={{
-                        width: '100px'
+                        width: '110px'
                       }} onClick={ this.whatIfTry }>Try</Button>
                     </div>
                     <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
                       <div className={ this.classes.left }>
                         <Button type="normal" style={{
-                          width: '100px'
+                          width: '110px'
                         }} onClick={ this.whatIfCancel }>Cancel</Button>
                       </div>
                       <div className={ this.classes.right }>
                         <Button type="accent2" style={{
-                          width: '100px'
+                          width: '110px'
                         }} onClick={ this.whatIfCommit }>Commit</Button>
                       </div>
                     </div>
