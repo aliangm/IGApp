@@ -23,6 +23,15 @@ export default class MultiRow extends Component {
     this.setState({rows: currentRows});
   }
 
+  componentWillReceiveProps(nextProps) {
+    this._uid = nextProps.numOfRows;
+    let currentRows = [];
+    for(let i=0; i< nextProps.numOfRows; i++) {
+      currentRows.push({key: i});
+    }
+    this.setState({rows: currentRows});
+  }
+
   addRow = () => {
     const rows = this.state.rows;
 

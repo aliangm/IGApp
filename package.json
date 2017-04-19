@@ -50,9 +50,7 @@
     "babel-polyfill": "^6.23.0",
     "lodash": "latest",
     "whatwg-fetch": "^2.0.2",
-    "promise-polyfill": "^6.0.2"
-  },
-  "dependencies": {
-
+    "promise-polyfill": "^6.0.2",
+    "react-select-plus": "^1.0.0-rc.3.patch3"
   }
 }

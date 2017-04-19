@@ -7,7 +7,7 @@ import Label from 'components/ControlsLabel';
 
 import style from 'react-select-plus/dist/react-select-plus.css';
 
-export default class Select extends Component {
+export default class MultiSelect extends Component {
   style = style;
 
   static defaultProps = {
@@ -23,9 +23,9 @@ export default class Select extends Component {
 
     const select = this.props.select;
 
-    return <div style={ this.props.style } className={ this.props.className }>
-      { label }
-      <ReactSelect { ... select } openOnFocus={ true } value={ this.props.selected } onChange= { this.props.onChange } clearable={ false } style={{
+    return <div style={{ width: '460px' }}>
+      {label}
+      <ReactSelect { ... select } value={ this.props.selected } multi={ true } openOnFocus={ true } onChange={ this.props.onChange } style={{
         background: 'linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%)',
         border: '1px solid #ced0da',
         color: '#535b69'
