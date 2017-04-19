@@ -699,7 +699,7 @@ export default class Preferences extends Component {
               <MultiSelect { ... channels } selected={ this.state.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
             </div>
             <div className={ this.classes.row } style={{ marginBottom: '200px' }}>
-              <MultiSelect { ... blockedChannels  } selected={ this.state.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}/>
+              <MultiSelect { ... blockedChannels  } selected={ this.state.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
             </div>
           </div>
 
