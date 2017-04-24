@@ -22,6 +22,7 @@ import serverCommunication from 'data/serverCommunication';
 import style from 'styles/plan/planned-actual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
+import Paging from 'components/Paging';
 
 import clone from 'clone';
 
@@ -46,6 +47,7 @@ export default class PlannedVsActual extends Component {
     //this.keys = Object.keys(this.data);
     this.keys = [''];
     this.changeRegion = this.changeRegion.bind(this);
+    this.getUserMonthPlan = this.getUserMonthPlan.bind(this);
   }
 
   componentDidMount(){
@@ -441,30 +443,7 @@ export default class PlannedVsActual extends Component {
         </div>
         { this.state.isLoaded ? <div>
           <div className={ planStyles.locals.title }>
-            <div className={ this.classes.titleBox }>
-              <Button type="primary2" style={{
-            width: '36px',
-            // margin: '0 20px'
-          }} onClick={() => {
-            this.changeMonth(-1);
-          }}>
-                <div className={ this.classes.arrowLeft }/>
-              </Button>
-              <div className={ planStyles.locals.titleText } style={{
-            width: '200px',
-            textAlign: 'center'
-          }}>
-                { month }
-              </div>
-              <Button type="primary2" style={{
-            width: '36px',
-            // margin: '0 20px'
-          }} onClick={() => {
-            this.changeMonth(1);
-          }}>
-                <div className={ this.classes.arrowRight }/>
-              </Button>
-            </div>
+            <Paging month={ this.state.planDate } getUserMonthPlan={ this.getUserMonthPlan } region={ this.state.region }/>
           </div>
           <div className={ planStyles.locals.innerBox }>
             <div className={ this.classes.wrap } ref="wrap">

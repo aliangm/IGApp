@@ -15,6 +15,7 @@ import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import style from 'styles/plan/current-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
+import Paging from 'components/Paging';
 
 function formatDate(dateStr) {
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -38,7 +39,7 @@ export default class CurrentTab extends Component {
   style = style;
 
   render() {
-    const { isLoaded, planDate, projectedPlan, isPlannerLoading } = this.props;
+    const { isLoaded, planDate, projectedPlan, isPlannerLoading, close, region } = this.props;
 
     if (!isLoaded) {
       return null;
@@ -74,6 +75,7 @@ export default class CurrentTab extends Component {
       : null;
 
     return <div className={ this.classes.wrap }>
+      <Paging month={ planDate } getUserMonthPlan={ close } region={ region }/>
       <div className={ planStyles.locals.title }>
         <div className={ planStyles.locals.titleMain }>
           <div className={ planStyles.locals.titleText }>
