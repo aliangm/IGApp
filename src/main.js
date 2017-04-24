@@ -14,23 +14,32 @@ import Campaigns from './components/pages/Campaigns';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
 import PlannedVsActual from './components/pages/PlannedVsActual';
+import AuthService from './components/utils/AuthService'
 
 import style from 'styles/global/main.css';
 
 style.use();
+const auth = new AuthService();
+
+// validate authentication for private routes
+const requireAuth = (nextState, replace) => {
+  if (!auth.loggedIn()) {
+    replace({ pathname: '/' })
+  }
+}
 
 ReactDOM.render(
   <Router history={ history }>
-    <Route path="/profile" component={ Profile } />
-    <Route path="/preferences" component={ Preferences } />
-    <Route path="/target-audience" component={ TargetAudience } />
-    <Route path="/indicators" component={ Indicators } />
-    <Route path="/manual" component={ Manual } />
-    <Route path="/welcome" component={ Welcome } />
-    <Route path="/plan" component={ Plan } />
-    <Route path="/planned-vs-actual" component={ PlannedVsActual } />
-    <Route path="/campaigns" component={ Campaigns } />
-    <Route path="/" component={ SignIn } />
+    <Route path="/profile" component={ Profile } onEnter={ requireAuth }/>
+    <Route path="/preferences" component={ Preferences } onEnter={ requireAuth }/>
+    <Route path="/target-audience" component={ TargetAudience } onEnter={ requireAuth }/>
+    <Route path="/indicators" component={ Indicators } onEnter={ requireAuth }/>
+    <Route path="/manual" component={ Manual } onEnter={ requireAuth }/>
+    <Route path="/welcome" component={ Welcome } onEnter={ requireAuth }/>
+    <Route path="/plan" component={ Plan } onEnter={ requireAuth }/>
+    <Route path="/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAuth }/>
+    <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
+    <Route path="/" component={ SignIn }/>
   </Router>,
   // <Profile />,
   document.querySelector('#main')
