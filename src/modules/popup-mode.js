@@ -38,6 +38,7 @@ export function checkIfPopup () {
             deferred.resolve(data.onboarding);
           }
           else {
+            localStorage.setItem('popup', true);
             deferred.resolve(null);
           }
         })

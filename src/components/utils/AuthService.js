@@ -2,31 +2,45 @@ import Auth0Lock from 'auth0-lock'
 import history from 'history';
 
 export default class AuthService {
-  constructor() {
-    // Configure Auth0
-    this.lock = new Auth0Lock('En6sYxyCeCWBwHSORHGxVfBoNjWWp41c', 'infinigrow-test.auth0.com', {
+
+  options= {
       auth: {
-//        redirectUrl: 'http://localhost:7272/',
+        redirectUrl: window.location.href,
         responseType: 'token'
+        //autoParseHash: true
       },
       languageDictionary: {
         title: ''
       },
-      autoclose: true,
-      popupOptions: { width: '450px', height: '600px' },
-      theme: {
-        primaryColor: '#1165a3',
-        logo: 'http://localhost:7272/icons/logo-on-white-bg.png'
-      },
-      socialButtonStyle: 'small'
-    });
+      //autoclose: true,
+      closable: false,
+//      popupOptions: { width: '450px', height: '600px' },
+    theme: {
+      primaryColor: '#1165a3',
+      logo: '/icons/logo-on-white-bg.png'
+    },
+    socialButtonStyle: 'small',
+    additionalSignUpFields: [{
+      name: "access_code",
+      placeholder: "your access code",
+      // The following properties are optional
+      icon: "/icons/pad.png",
+    }]
+  };
+  constructor() {
+    // Configure Auth0
+    this.lock = new Auth0Lock('En6sYxyCeCWBwHSORHGxVfBoNjWWp41c', 'infinigrow-test.auth0.com', this.options);
     // Add callback for lock `authenticated` event
-    this.lock.on('authenticated', this._doAuthentication.bind(this))
+    this.lock.on('authenticated', this._doAuthentication.bind(this));
+
+    this.lock.on('authorization_error', this.authenticationError.bind(this));
+
     // binds login functions to keep this context
-    this.login = this.login.bind(this)
+    this.login = this.login.bind(this);
   }
 
   _doAuthentication(authResult) {
+    localStorage.removeItem('login_error');
     // Saves the user token
     this.setToken(authResult.idToken);
     // navigate to the home route
@@ -41,6 +55,16 @@ export default class AuthService {
       }
     })
      **/
+  }
+
+  authenticationError(error) {
+    localStorage.setItem('login_error', true);
+    this.options.flashMessage = {
+      type: 'error',
+      text: error.error_description.split('?')[0]
+    };
+    this.lock.show(this.options);
+
   }
 
   login() {

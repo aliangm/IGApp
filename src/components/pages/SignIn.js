@@ -20,7 +20,6 @@ import history from 'history';
 import serverCommunication from 'data/serverCommunication';
 import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
 import AuthService from 'components/utils/AuthService';
-import AccessCodePopup from 'components/AccessCodePopup';
 
 export default class SignIn extends Component {
   style = style
@@ -46,21 +45,18 @@ export default class SignIn extends Component {
     if (this.lock.loggedIn()) {
       checkIfPopup()
         .then((popup)=> {
-          if (popup == null) {
-            this.setState({createNewVisible: true});
+          if (popup == null || popup) {
+            history.push('/welcome');
           }
           else {
-            if (popup) {
-              history.push('/welcome');
-            }
-            else {
-              history.push('/plan')
-            }
+            history.push('/plan')
           }
         });
     }
     else {
-      this.lock.login();
+      if (!localStorage.getItem('login_error')){
+        this.lock.login();
+      }
     }
   }
 
@@ -124,12 +120,11 @@ export default class SignIn extends Component {
 
   render() {
     return <div>
-      <AccessCodePopup hidden={ !this.state.createNewVisible }/>
       {/**   <Header user={ false } />
-      <Page sidebar={ false } width="600px" centered>
-        <Title title="InfiniGrow" />
-        <div className={ this.classes.switchButtons }>
-          <Button type={ this.state.login ? 'accent' : 'normal' } style={{
+       <Page sidebar={ false } width="600px" centered>
+       <Title title="InfiniGrow" />
+       <div className={ this.classes.switchButtons }>
+       <Button type={ this.state.login ? 'accent' : 'normal' } style={{
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
             width: '80px'
@@ -138,7 +133,7 @@ export default class SignIn extends Component {
               login: true
             });
           }}>Login</Button>
-          <Button type={ this.state.login ? 'normal' : 'accent' } style={{
+       <Button type={ this.state.login ? 'normal' : 'accent' } style={{
             borderTopLeftRadius: 0,
             borderBottomLeftRadius: 0,
             width: '80px'
@@ -147,71 +142,71 @@ export default class SignIn extends Component {
               login: false
             });
           }}>Sign Up</Button>
-        </div>
-        <div className={ this.classes.item } hidden={ !this.state.login }>
-          <form onSubmit={ this.checkUserAuthorization } >
-            <h2>Login</h2>
+       </div>
+       <div className={ this.classes.item } hidden={ !this.state.login }>
+       <form onSubmit={ this.checkUserAuthorization } >
+       <h2>Login</h2>
 
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel }>Email</Label>
-                <Textfield type="email" required ref="loginEmailInput" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'email')}/>
-              </div>
-            </div>
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <Label className={ this.classes.textLabel }>Email</Label>
+       <Textfield type="email" required ref="loginEmailInput" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'email')}/>
+       </div>
+       </div>
 
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel } question={['']} description={['Password must contain a minimum of 1 lower case letter, 1 upper case letter, 1 numeric character, and at least 8 characters.']}>Password</Label>
-                <Textfield type="password" required pattern={ this.pattern } defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
-              </div>
-            </div>
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <div className={ this.classes.leftCol }></div>
-                <div className={ this.classes.enterCol }>
-                  <button className={ this.classes.primary2 } type="submit" >Login</button>
-                  <label hidden={ !this.state.isLoginError} style={{ color: 'red' }}>Wrong email or password</label>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div className={ this.classes.item } hidden={ this.state.login }>
-          <form onSubmit={ this.checkUserAuthorization } >
-            <h2>Sign up</h2>
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <Label className={ this.classes.textLabel } question={['']} description={['Password must contain a minimum of 1 lower case letter, 1 upper case letter, 1 numeric character, and at least 8 characters.']}>Password</Label>
+       <Textfield type="password" required pattern={ this.pattern } defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+       </div>
+       </div>
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <div className={ this.classes.leftCol }></div>
+       <div className={ this.classes.enterCol }>
+       <button className={ this.classes.primary2 } type="submit" >Login</button>
+       <label hidden={ !this.state.isLoginError} style={{ color: 'red' }}>Wrong email or password</label>
+       </div>
+       </div>
+       </div>
+       </form>
+       </div>
+       <div className={ this.classes.item } hidden={ this.state.login }>
+       <form onSubmit={ this.checkUserAuthorization } >
+       <h2>Sign up</h2>
 
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel }>Email</Label>
-                <Textfield type="email" required ref="signupEmailInput" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'email')} />
-              </div>
-            </div>
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel } question={['']} description={['Password must contain a minimum of 1 lower case letter, 1 upper case letter, 1 numeric character, and at least 8 characters.']}>Password</Label>
-                <Textfield type="password" required defaultValue="" pattern={ this.pattern } className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
-              </div>
-            </div>
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <Label className={ this.classes.textLabel }>Access Code</Label>
-                <Textfield ref="signupPromotionInput" type="text" required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'promotionCode')} />
-              </div>
-            </div>
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <Label className={ this.classes.textLabel }>Email</Label>
+       <Textfield type="email" required ref="signupEmailInput" defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'email')} />
+       </div>
+       </div>
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <Label className={ this.classes.textLabel } question={['']} description={['Password must contain a minimum of 1 lower case letter, 1 upper case letter, 1 numeric character, and at least 8 characters.']}>Password</Label>
+       <Textfield type="password" required defaultValue="" pattern={ this.pattern } className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'password')} />
+       </div>
+       </div>
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <Label className={ this.classes.textLabel }>Access Code</Label>
+       <Textfield ref="signupPromotionInput" type="text" required defaultValue="" className={ this.classes.rightCol } onChange={ this.handleChange.bind(this, 'promotionCode')} />
+       </div>
+       </div>
 
-            <div className={ onboardingStyle.locals.row }>
-              <div className={ this.classes.colsCell }>
-                <div className={ this.classes.leftCol }></div>
-                <div className={ this.classes.enterCol }>
-                  <button className={ this.classes.primary2 } type="submit" >Sign up</button>
-                  <label hidden={ !this.state.isSignupError} style={{ color: 'red' }}>Email already exists</label>
-                  <label hidden={ !this.state.isPromotionError} style={{ color: 'red' }}>Promotion code doesn't exists</label>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </Page>**/}
+       <div className={ onboardingStyle.locals.row }>
+       <div className={ this.classes.colsCell }>
+       <div className={ this.classes.leftCol }></div>
+       <div className={ this.classes.enterCol }>
+       <button className={ this.classes.primary2 } type="submit" >Sign up</button>
+       <label hidden={ !this.state.isSignupError} style={{ color: 'red' }}>Email already exists</label>
+       <label hidden={ !this.state.isPromotionError} style={{ color: 'red' }}>Promotion code doesn't exists</label>
+       </div>
+       </div>
+       </div>
+       </form>
+       </div>
+       </Page>**/}
     </div>
   }
 }
