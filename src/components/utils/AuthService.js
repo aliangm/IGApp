@@ -48,7 +48,7 @@ export default class AuthService {
     // Saves the user token
     this.setToken(authResult.idToken);
     // navigate to the home route
-    // history.push('/');
+    history.push('/');
     // Async loads the user profile data
     /**
     this.lock.getProfile(authResult.idToken, (error, profile) => {
