@@ -42,6 +42,7 @@ export default class Preferences extends Component {
         primary: 'InfiniGrow Recommended',
         secondary: 'InfiniGrow Recommended'
       },
+      objectives: [],
       isCheckAnnual: true,
       maxChannels: -1,
       userMinMonthBudgets: {},
@@ -52,6 +53,7 @@ export default class Preferences extends Component {
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
+    this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
     this.changeRegion = this.changeRegion.bind(this);
   }
@@ -85,6 +87,7 @@ export default class Preferences extends Component {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
                     secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
                   },
+                  objectives: data.objectives || [],
                   blockedChannels: data.blockedChannels || [],
                   inHouseChannels: data.inHouseChannels || [],
                   userMinMonthBudgets: data.userMinMonthBudgets || {},
@@ -205,6 +208,39 @@ export default class Preferences extends Component {
     this.setState({userMinMonthBudgets: update});
   }
 
+  handleChangeObjectivesSelect(index, parameter, event) {
+    let update = this.state.objectives || [];
+    if (!update[index]) {
+      update[index] = {};
+    }
+    update[index][parameter] = event.value;
+    this.setState({objectives: update});
+  }
+
+  handleChangeObjectivesNumber(index, parameter, event) {
+    let update = this.state.objectives || [];
+    if (!update[index]) {
+      update[index] = {};
+    }
+    update[index][parameter] = parseInt(event.target.value);
+    this.setState({objectives: update});
+  }
+
+  handleChangeDate(index, value) {
+    let update = this.state.objectives || [];
+    if (!update[index]) {
+      update[index] = {};
+    }
+    update[index].timeFrame = value;
+    this.setState({objectives: update});
+  }
+
+  objectiveRemove(index) {
+    let update = this.state.objectives || [];
+    update.splice(index,1);
+    this.setState({objectives: update});
+  }
+
   getDates = () => {
     var monthNames = [
       "Jan", "Feb", "Mar",
@@ -271,9 +307,9 @@ export default class Preferences extends Component {
         }
       }, **/
       primary_goal: {
-        label: 'Primary Goal',
+        label: 'Primary Focus',
         labelQuestion: [''],
-        description: ['What is your company main goal for marketing? The goal should be aligned with and support your business goals. By default, InfiniGrow will choose the goal it thinks is the most relevant, based on your data.'],
+        description: ['What is your company main focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
         select: {
           name: 'primary_goal',
           onChange: () => {},
@@ -294,9 +330,9 @@ export default class Preferences extends Component {
         }
       },
       secondary_goal: {
-        label: 'Secondary Goal',
+        label: 'Secondary Focus',
         labelQuestion: [''],
-        description: ['What is your company secondary goal for marketing? The goal should be aligned with and support your business goals. By default, InfiniGrow will choose the goal it thinks is the most relevant, based on your data.'],
+        description: ['What is your company secondary focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
         select: {
           name: 'secondary_goal',
           onChange: () => {},
@@ -541,6 +577,41 @@ export default class Preferences extends Component {
       }
     };
 
+    const indicatorsOptions = [
+      { label: 'Facebook Likes', value: 'facebookLikes' },
+      { label: 'Facebook Engagement', value: 'facebookEngagement' },
+      { label: 'Twitter Followers', value: 'twitterFollowers' },
+      { label: 'Twitter Engagement', value: 'twitterEngagement' },
+      { label: 'LinkedIn Followers', value: 'linkedinFollowers' },
+      { label: 'LinkedIn Engagement', value: 'linkedinEngagement' },
+      { label: 'Instagram Followers', value: 'instagramFollowers' },
+      { label: 'Instagram Engagement', value: 'instagramEngagement' },
+      { label: 'Google+ Followers', value: 'googlePlusFollowers' },
+      { label: 'Google+ Engagement', value: 'googlePlusEngagement' },
+      { label: 'Pinterest Followers', value: 'pinterestFollowers' },
+      { label: 'Pinterest Engagement', value: 'pinterestEngagement' },
+      { label: 'Youtube Subscribers', value: 'youtubeSubscribers' },
+      { label: 'Youtube Engagement', value: 'youtubeEngagement' },
+      { label: 'LTV', value: 'LTV' },
+      { label: 'CAC', value: 'CAC' },
+      { label: 'Users', value: 'users' },
+      { label: 'Active Users Rate', value: 'activeUsersRate' },
+      { label: 'Trial Users', value: 'trialUsers' },
+      { label: 'MCL', value: 'MCL' },
+      { label: 'MQL', value: 'MQL' },
+      { label: 'SQL', value: 'SQL' },
+      { label: 'Google Mentions', value: 'googleMentions' },
+      { label: 'Sessions', value: 'sessions' },
+      { label: 'Average Session Duration',
+        value: 'averageSessionDuration' },
+      { label: 'Bounce Rate', value: 'bounceRate' },
+      { label: 'Blog Visits', value: 'blogVisits' },
+      { label: 'Blog Subscribers', value: 'blogSubscribers' },
+      { label: 'MRR', value: 'MRR' },
+      { label: 'Churn Rate', value: 'churnRate' },
+      { label: 'ARPA (monthly)', value: 'ARPA' }
+    ];
+
     let preventDuplicates = (value) => {
       if (value.options) {
         value.options.map(preventDuplicates);
@@ -635,6 +706,84 @@ export default class Preferences extends Component {
               <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary }
                       onChange={ this.handleChangeGoals.bind(this, 'secondary') }/>
             </div>
+            <div className={ this.classes.row } style={{}}>
+              <Label style={{
+                marginBottom: '12px',
+                fontWeight: '600'
+              }} question={['']}
+                     description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
+              <MultiRow numOfRows={ this.state.objectives.length } rowRemoved={this.objectiveRemove}>
+                {({index, data, update, removeButton}) => {
+                  return <div>
+                    <div className={ preferencesStyle.locals.channelsRow }>
+                      <Label style={{
+                        marginBottom: '0',
+                        fontWeight: '600'
+                      }}>{ `#${ index + 1 }` } </Label>
+                    </div>
+                    <div style={{
+                    }} className={ preferencesStyle.locals.channelsRow }>
+                      <div className={ preferencesStyle.locals.objectiveText }>I want</div>
+                      <Textfield type="number" value={ this.state.objectives[index] ? this.state.objectives[index].amount : '' } style={{width: '60px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
+                      <Select
+                        className={ preferencesStyle.locals.objectiveSelect }
+                        selected={ this.state.objectives[index] ? this.state.objectives[index].isPercentage : -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'type',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: [{ label: '%', value: true}, {label: '(num)', value: false}]
+                        }}
+                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'isPercentage') }
+                      />
+                      <Select
+                        className={ preferencesStyle.locals.objectiveSelect }
+                        selected={ this.state.objectives[index] ? this.state.objectives[index].direction : -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: [{ label: 'increase', value: 'increase'}, {label: 'decrease', value: 'decrease'}, {label: '(target)', value: 'equals'}]
+                        }}
+                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'direction') }
+                      />
+                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>in</div>
+                      <Select
+                        className={ preferencesStyle.locals.objectiveSelect }
+                        selected={ this.state.objectives[index] ? this.state.objectives[index].indicator : -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: indicatorsOptions
+                        }}
+                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
+                        style={{ width: '200px' }}
+                      />
+                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>until</div>
+                      <div style={{ marginLeft: '10px', width: '205px' }}>
+                        <Calendar value={ this.state.objectives[index] ? this.state.objectives[index].timeFrame : '' } onChange={ this.handleChangeDate.bind(this, index) }/>
+                      </div>
+                      <div className={ preferencesStyle.locals.channelsRemove } style={{ marginTop: '5px' }}>
+                        { removeButton }
+                      </div>
+                    </div>
+                  </div>
+                }}
+              </MultiRow>
+            </div>
             <div className={ this.classes.row }>
               <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Channel Constrains (Optional)</Label>
               <Notice warning style={{
@@ -663,37 +812,37 @@ export default class Preferences extends Component {
                 fontWeight: '600'
               }} question={['']}
                      description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum Budgets</Label>
-                <MultiRow numOfRows={ userMinMonthBudgetsArray.length } rowRemoved={this.minimumBudgetRemove}>
-                  {({index, data, update, removeButton}) => {
-                    return <div style={{
-                      width: '460px'
-                    }} className={ preferencesStyle.locals.channelsRow }>
-                      <Select
-                        className={ preferencesStyle.locals.channelsSelect }
-                        selected={ (this.state.userMinMonthBudgets && userMinMonthBudgetsArray[index]) || -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: channels.select.options
-                        }}
-                        onChange={ this.handleChangeMinChannel.bind(this, index) }
-                        label={ `#${ index + 1 } (optional)` }
-                      />
-                      <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]] ? this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                                 onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
-                        width: '82px'
-                      }} disabled={ !userMinMonthBudgetsArray[index] }/>
-                      <div className={ preferencesStyle.locals.channelsRemove }>
-                        { removeButton }
-                      </div>
+              <MultiRow numOfRows={ userMinMonthBudgetsArray.length } rowRemoved={this.minimumBudgetRemove}>
+                {({index, data, update, removeButton}) => {
+                  return <div style={{
+                    width: '460px'
+                  }} className={ preferencesStyle.locals.channelsRow }>
+                    <Select
+                      className={ preferencesStyle.locals.channelsSelect }
+                      selected={ (this.state.userMinMonthBudgets && userMinMonthBudgetsArray[index]) || -1 }
+                      select={{
+                        menuTop: true,
+                        name: 'channels',
+                        onChange: (selected) => {
+                          update({
+                            selected: selected
+                          });
+                        },
+                        options: channels.select.options
+                      }}
+                      onChange={ this.handleChangeMinChannel.bind(this, index) }
+                      label={ `#${ index + 1 } (optional)` }
+                    />
+                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]] ? this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                               onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
+                      width: '82px'
+                    }} disabled={ !userMinMonthBudgetsArray[index] }/>
+                    <div className={ preferencesStyle.locals.channelsRemove }>
+                      { removeButton }
                     </div>
-                  }}
-                </MultiRow>
+                  </div>
+                }}
+              </MultiRow>
             </div>
             <div className={ this.classes.row }>
               <MultiSelect { ... channels } selected={ this.state.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
@@ -734,6 +883,7 @@ export default class Preferences extends Component {
                 annualBudget: this.state.annualBudget,
                 annualBudgetArray: this.state.annualBudgetArray,
                 goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
+                objectives: this.state.objectives,
                 blockedChannels: this.state.blockedChannels,
                 inHouseChannels: this.state.inHouseChannels,
                 userMinMonthBudgets: this.state.userMinMonthBudgets,
@@ -750,6 +900,7 @@ export default class Preferences extends Component {
                   annualBudget: this.state.annualBudget,
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
+                  objectives: this.state.objectives,
                   blockedChannels: this.state.blockedChannels,
                   inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
@@ -776,6 +927,7 @@ export default class Preferences extends Component {
                   annualBudget: this.state.annualBudget,
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
+                  objectives: this.state.objectives,
                   blockedChannels: this.state.blockedChannels,
                   inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
