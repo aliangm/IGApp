@@ -29,7 +29,11 @@ export default class AuthService {
   };
   constructor() {
     // Configure Auth0
-    this.lock = new Auth0Lock('En6sYxyCeCWBwHSORHGxVfBoNjWWp41c', 'infinigrow-test.auth0.com', this.options);
+    this.lock = new Auth0Lock('ZPLaIfv_lyA2N5PghXNjWSjah6aE1y9e', 'infinigrow.auth0.com', this.options);
+
+    // Test configuration
+    // this.lock = new Auth0Lock('En6sYxyCeCWBwHSORHGxVfBoNjWWp41c', 'infinigrow-test.auth0.com', this.options);
+
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this));
 
