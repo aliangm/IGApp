@@ -20,6 +20,7 @@ import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import NotSure from 'components/onboarding/NotSure';
+import MultiSelect from 'components/controls/MultiSelect';
 
 import style from 'styles/onboarding/onboarding.css';
 import preferencesStyle from 'styles/preferences/preferences.css';
@@ -41,17 +42,18 @@ export default class Preferences extends Component {
         primary: 'InfiniGrow Recommended',
         secondary: 'InfiniGrow Recommended'
       },
+      objectives: [],
       isCheckAnnual: true,
       maxChannels: -1,
-      notLeafBlockedChannelError: [false, false, false],
-      blockedChannelAlreadyExistsError: [false, false, false],
-      notLeafInHouseChannelError: [false, false, false],
-      inHouseChannelAlreadyExistsError: [false, false, false]
+      userMinMonthBudgets: {},
+      blockedChannels: [],
+      inHouseChannels: []
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
+    this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
     this.changeRegion = this.changeRegion.bind(this);
   }
@@ -85,6 +87,7 @@ export default class Preferences extends Component {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
                     secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
                   },
+                  objectives: data.objectives || [],
                   blockedChannels: data.blockedChannels || [],
                   inHouseChannels: data.inHouseChannels || [],
                   userMinMonthBudgets: data.userMinMonthBudgets || {},
@@ -142,72 +145,18 @@ export default class Preferences extends Component {
     this.setState({annualBudgetArray: update});
   }
 
-  handleChangeBlockedChannels(index, event) {
-    /**if (typeof event.value === 'string') {
-      var errors = this.state.notLeafBlockedChannelError;
-      errors[index] = false;
-      this.setState({notLeafBlockedChannelError: errors});
-      let update = this.state.blockedChannels || [];
-      update.splice(index, 1, event.value);
-      this.setState({blockedChannels: update});
-    }
-     else {
-      var errors = this.state.notLeafBlockedChannelError;
-      errors[index] = true;
-      this.setState({notLeafBlockedChannelError: errors});
-      let update = this.state.blockedChannels || [];
-      update.splice(index, 1, event.value);
-      this.setState({blockedChannels: update});
-    }**/
-    var notLeafChannelError = this.state.notLeafBlockedChannelError;
-    var channelAlreadyExistsError = this.state.blockedChannelAlreadyExistsError;
-    notLeafChannelError[index] = false;
-    channelAlreadyExistsError[index] = false;
-    this.setState({notLeafBlockedChannelError: notLeafChannelError, blockedChannelAlreadyExistsError: channelAlreadyExistsError});
-
-    if (this.state.blockedChannels.indexOf(event.value) === -1) {
-      var errors = this.state.notLeafBlockedChannelError;
-      errors[index] = (typeof event.value === 'string') ? false : true;
-      this.setState({notLeafBlockedChannelError: errors});
-      let update = this.state.blockedChannels || [];
-      update.splice(index, 1, event.value);
-      this.setState({blockedChannels: update});
-    }
-    else {
-      var errors = this.state.blockedChannelAlreadyExistsError;
-      errors[index] = true;
-      this.setState({blockedChannelAlreadyExistsError: errors});
-      let update = this.state.blockedChannels || [];
-      update.splice(index, 1);
-      this.setState({blockedChannels: update});
-    }
-
+  handleChangeBlockedChannels(event) {
+    let update = event.map((obj) => {
+      return obj.value;
+    });
+    this.setState({blockedChannels: update});
   }
 
-  handleChangeInHouseChannels(index, event) {
-    let notLeafChannelError = this.state.notLeafInHouseChannelError;
-    let channelAlreadyExistsError = this.state.inHouseChannelAlreadyExistsError;
-    notLeafChannelError[index] = false;
-    channelAlreadyExistsError[index] = false;
-    this.setState({notLeafInHouseChannelError: notLeafChannelError, inHouseChannelAlreadyExistsError: channelAlreadyExistsError});
-
-    if (this.state.inHouseChannels.indexOf(event.value) === -1) {
-      let errors = this.state.notLeafInHouseChannelError;
-      errors[index] = typeof event.value !== 'string';
-      this.setState({notLeafInHouseChannelError: errors});
-      let update = this.state.inHouseChannels || [];
-      update.splice(index, 1, event.value);
-      this.setState({inHouseChannels: update});
-    }
-    else {
-      let errors = this.state.inHouseChannelAlreadyExistsError;
-      errors[index] = true;
-      this.setState({inHouseChannelAlreadyExistsError: errors});
-      let update = this.state.inHouseChannels || [];
-      update.splice(index, 1);
-      this.setState({inHouseChannels: update});
-    }
-
+  handleChangeInHouseChannels(event) {
+    let update = event.map((obj) => {
+      return obj.value;
+    });
+    this.setState({inHouseChannels: update});
   }
 
   handleChangeMax(parameter, event) {
@@ -257,6 +206,39 @@ export default class Preferences extends Component {
     let channel = Object.keys(update)[index];
     update[channel] = parseInt(event.target.value.replace(/[-$,]/g, ''));
     this.setState({userMinMonthBudgets: update});
+  }
+
+  handleChangeObjectivesSelect(index, parameter, event) {
+    let update = this.state.objectives || [];
+    if (!update[index]) {
+      update[index] = {};
+    }
+    update[index][parameter] = event.value;
+    this.setState({objectives: update});
+  }
+
+  handleChangeObjectivesNumber(index, parameter, event) {
+    let update = this.state.objectives || [];
+    if (!update[index]) {
+      update[index] = {};
+    }
+    update[index][parameter] = parseInt(event.target.value);
+    this.setState({objectives: update});
+  }
+
+  handleChangeDate(index, value) {
+    let update = this.state.objectives || [];
+    if (!update[index]) {
+      update[index] = {};
+    }
+    update[index].timeFrame = value;
+    this.setState({objectives: update});
+  }
+
+  objectiveRemove(index) {
+    let update = this.state.objectives || [];
+    update.splice(index,1);
+    this.setState({objectives: update});
   }
 
   getDates = () => {
@@ -325,9 +307,9 @@ export default class Preferences extends Component {
         }
       }, **/
       primary_goal: {
-        label: 'Primary Goal',
+        label: 'Primary Focus',
         labelQuestion: [''],
-        description: ['What is your company main goal for marketing? The goal should be aligned with and support your business goals. By default, InfiniGrow will choose the goal it thinks is the most relevant, based on your data.'],
+        description: ['What is your company main focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
         select: {
           name: 'primary_goal',
           onChange: () => {},
@@ -348,9 +330,9 @@ export default class Preferences extends Component {
         }
       },
       secondary_goal: {
-        label: 'Secondary Goal',
+        label: 'Secondary Focus',
         labelQuestion: [''],
-        description: ['What is your company secondary goal for marketing? The goal should be aligned with and support your business goals. By default, InfiniGrow will choose the goal it thinks is the most relevant, based on your data.'],
+        description: ['What is your company secondary focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
         select: {
           name: 'secondary_goal',
           onChange: () => {},
@@ -372,240 +354,292 @@ export default class Preferences extends Component {
       }
     };
 
-    const flatChannels = [];
-    const channels = [
-      {
-        name: 'Advertising',
-        children: [
+    const channels = {
+      select: {
+        name: "channels",
+        options: [
           {
-            name: 'Display Ads', children: [
-            {name: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
-            {name: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
+            label: 'Advertising',
+            options: [
+              {
+                label: 'Display Ads', options: [
+                {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
+                {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
+              ]
+              },
+              {
+                label: 'Search Marketing', options: [
+                {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
+                {
+                  label: 'SEM (PPC)', options: [
+                  {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
+                  {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
+                ]
+                },
+              ]
+              },
+              {
+                label: 'Social Ads', options: [
+                {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
+                {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
+                {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
+                {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
+                {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
+                {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
+                {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
+              ]
+              },
+              {
+                label: 'Offline Ads', options: [
+                {
+                  label: 'TV', options: [
+                  {label: 'Local', value: 'advertising_offlineAds_TV_local'},
+                  {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
+                  {label: 'International', value: 'advertising_offlineAds_TV_international'}
+                ]
+                },
+                {label: 'Radio', value: 'advertising_offlineAds_radio'},
+                {
+                  label: 'Newspaper', options: [
+                  {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
+                  {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
+                  {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
+                ]
+                },
+                {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
+                {label: 'SMS', value: 'advertising_offlineAds_SMS'},
+              ]
+              },
+              {
+                label: 'Mobile', options: [
+                {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
+                {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
+                {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
+                {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
+              ]
+              },
+              {
+                label: 'Magazines', options: [
+                {
+                  label: 'Consumers', options: [
+                  {label: 'Local', value: 'advertising_magazines_consumers_local'},
+                  {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
+                  {label: 'International', value: 'advertising_magazines_consumers_international'},
+                ]
+                },
+                {
+                  label: 'Professional', options: [
+                  {label: 'Local', value: 'advertising_magazines_professional_local'},
+                  {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
+                  {label: 'International', value: 'advertising_magazines_professional_international'},
+                ]
+                },
+              ]
+              },
+              {label: 'Paid Reviews', value: 'advertising_paidReviews'},
+              {label: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
+            ]
+          },
+          {
+            label: 'Content', options: [
+            {
+              label: 'Content Promotion', options: [
+              {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
+              {
+                label: 'Content Discovery', options: [
+                {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
+                {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
+                {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
+              ]
+              },
+              {
+                label: 'Forums', options: [
+                {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
+                {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
+                {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
+              ]
+              },
+              {label: 'EBooks'},
+            ]
+            },
+            {
+              label: 'Content Creation', options: [
+              {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
+              {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
+              {label: 'Presentations', value: 'content_contentCreation_presentations'},
+              {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
+              {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
+              {label: 'E-book', value: 'content_contentCreation_eBook'},
+              {label: 'Videos', value: 'content_contentCreation_videos'},
+              {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
+            ]
+            }
           ]
           },
           {
-            name: 'Search Marketing', children: [
-            {name: 'SEO', value: 'advertising_searchMarketing_SEO'},
+            label: 'Email', options: [
+            {label: 'Marketing Email', value: 'email_marketingEmail'},
+            {label: 'Transactional Email', value: 'email_transactionalEmail'},
+          ]
+          },
+          {
+            label: 'Engineering as Marketing', options: [
+            {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
+            {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
+            {label: 'Widget', value: 'engineeringAsMarketing_widget'},
+            {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
+            {label: 'Any', value: 'engineeringAsMarketing_other'}
+          ]
+          },
+          {
+            label: 'Events', options: [
             {
-              name: 'SEM (PPC)', children: [
-              {name: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
-              {name: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
+              label: 'Offline Events', options: [
+              {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
+              {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
+              {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
+              {label: 'Running', value: 'events_offlineEvents_running'}
+            ]
+            },
+            {
+              label: 'Online Events (Running)', options: [
+              {label: 'Webinar', value: 'events_onlineEvents_webinar'},
+              {label: 'Podcast', value: 'events_onlineEvents_podcast'},
+              {label: 'Workshop', value: 'events_onlineEvents_workshop'}
             ]
             },
           ]
           },
           {
-            name: 'Social Ads', children: [
-            {name: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
-            {name: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
-            {name: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
-            {name: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
-            {name: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
-            {name: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
-            {name: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
+            label: 'Mobile', options: [
+            {label: 'Mobile App', value: 'mobile_mobileApp'},
+            {label: 'Mobile Site', value: 'mobile_mobileSite'}
           ]
           },
           {
-            name: 'Offline Ads', children: [
-            {
-              name: 'TV', children: [
-              {name: 'Local', value: 'advertising_offlineAds_TV_local'},
-              {name: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
-              {name: 'International', value: 'advertising_offlineAds_TV_international'}
-            ]
-            },
-            {name: 'Radio', value: 'advertising_offlineAds_radio'},
-            {
-              name: 'Newspaper', children: [
-              {name: 'Local', value: 'advertising_offlineAds_newspaper_local'},
-              {name: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
-              {name: 'International', value: 'advertising_offlineAds_newspaper_international'}
-            ]
-            },
-            {name: 'Billboard', value: 'advertising_offlineAds_billboard'},
-            {name: 'SMS', value: 'advertising_offlineAds_SMS'},
+            label: 'Partners', options: [
+            {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
           ]
           },
           {
-            name: 'Mobile', children: [
-            {name: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
-            {name: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
-            {name: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
-            {name: 'In-app ads', value: 'advertising_mobile_inAppAds'}
-          ]
-          },
-          {
-            name: 'Magazines', children: [
+            label: 'PR', options: [
             {
-              name: 'Consumers', children: [
-              {name: 'Local', value: 'advertising_magazines_consumers_local'},
-              {name: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
-              {name: 'International', value: 'advertising_magazines_consumers_international'},
+              label: 'Unconventional PR', options: [
+              {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
+              {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
             ]
             },
             {
-              name: 'Professional', children: [
-              {name: 'Local', value: 'advertising_magazines_professional_local'},
-              {name: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
-              {name: 'International', value: 'advertising_magazines_professional_international'},
+              label: 'Publicity', options: [
+              {
+                label: 'Press Releases', options: [
+                {label: 'Local', value: 'PR_publicity_pressReleases_local'},
+                {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
+                {label: 'International', value: 'PR_publicity_pressReleases_international'},
+              ]
+              }
             ]
-            },
-          ]
-          },
-          {name: 'Paid Reviews', value: 'advertising_paidReviews'},
-          {name: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
-        ]
-      },
-      {
-        name: 'Content', children: [
-        {
-          name: 'Content Promotion', children: [
-          {name: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
-          {
-            name: 'Content Discovery', children: [
-            {name: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
-            {name: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
-            {name: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
+            }
           ]
           },
           {
-            name: 'Forums', children: [
-            {name: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
-            {name: 'Quora', value: 'content_contentPromotion_forums_quora'},
-            {name: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
+            label: 'Social', options: [
+            {label: 'Facebook Page', value: 'social_facebookPage'},
+            {label: 'Twitter Account', value: 'social_twitterAccount'},
+            {label: 'Youtube Channel', value: 'social_youtubeChannel'},
+            {label: 'Instagram Account', value: 'social_instagramAccount'},
+            {label: 'Google+ Page', value: 'social_googlePlusPage'},
+            {label: 'Pinterest Page', value: 'social_pinterestPage'},
+            {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
+            {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
+            {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
+            {label: 'Community Building', value: 'social_communityBuilding'},
+            {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
           ]
           },
-          {name: 'EBooks'},
-        ]
-        },
-        {
-          name: 'Content Creation', children: [
-          {name: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
-          {name: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
-          {name: 'Presentations', value: 'content_contentCreation_presentations'},
-          {name: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
-          {name: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
-          {name: 'E-book', value: 'content_contentCreation_eBook'},
-          {name: 'Videos', value: 'content_contentCreation_videos'},
-          {name: 'Case Studies', value: 'content_contentCreation_caseStudies'}
-        ]
-        }
-      ]
-      },
-      {
-        name: 'Email', children: [
-        {name: 'Marketing Email', value: 'email_marketingEmail'},
-        {name: 'Transactional Email', value: 'email_transactionalEmail'},
-      ]
-      },
-      {
-        name: 'Engineering as Marketing', children: [
-        {name: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
-        {name: 'Calculator', value: 'engineeringAsMarketing_calculator'},
-        {name: 'Widget', value: 'engineeringAsMarketing_widget'},
-        {name: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
-        {name: 'Any', value: 'engineeringAsMarketing_other'}
-      ]
-      },
-      {
-        name: 'Events', children: [
-        {
-          name: 'Offline Events', children: [
-          {name: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
-          {name: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
-          {name: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
-          {name: 'Running', value: 'events_offlineEvents_running'}
-        ]
-        },
-        {
-          name: 'Online Events (Running)', children: [
-          {name: 'Webinar', value: 'events_onlineEvents_webinar'},
-          {name: 'Podcast', value: 'events_onlineEvents_podcast'},
-          {name: 'Workshop', value: 'events_onlineEvents_workshop'}
-        ]
-        },
-      ]
-      },
-      {
-        name: 'Mobile', children: [
-        {name: 'Mobile App', value: 'mobile_mobileApp'},
-        {name: 'Mobile Site', value: 'mobile_mobileSite'}
-      ]
-      },
-      {
-        name: 'Partners', children: [
-        {name: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
-      ]
-      },
-      {
-        name: 'PR', children: [
-        {
-          name: 'Unconventional PR', children: [
-          {name: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
-          {name: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
-        ]
-        },
-        {
-          name: 'Publicity', children: [
+          {label: 'Telemarketing', value: 'telemarketing'},
           {
-            name: 'Press Releases', children: [
-            {name: 'Local', value: 'PR_publicity_pressReleases_local'},
-            {name: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
-            {name: 'International', value: 'PR_publicity_pressReleases_international'},
+            label: 'Viral', options: [
+            {
+              label: 'Recommend a Friend', options: [
+              {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
+            ]
+            }
+          ]
+          },
+          {
+            label: 'Web', options: [
+            {label: 'Company’s Website', value: 'web_companyWebsite'},
+            {label: 'Landing Pages', value: 'web_landingPages'}
           ]
           }
         ]
-        }
-      ]
-      },
-      {
-        name: 'Social', children: [
-        {name: 'Facebook Page', value: 'social_facebookPage'},
-        {name: 'Twitter Account', value: 'social_twitterAccount'},
-        {name: 'Youtube Channel', value: 'social_youtubeChannel'},
-        {name: 'Instagram Account', value: 'social_instagramAccount'},
-        {name: 'Google+ Page', value: 'social_googlePlusPage'},
-        {name: 'Pinterest Page', value: 'social_pinterestPage'},
-        {name: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
-        {name: 'LinkedIn Group', value: 'social_linkedinGroup'},
-        {name: 'Influencer Outreach', value: 'social_influencerOutreach'},
-        {name: 'Community Building', value: 'social_communityBuilding'},
-        {name: 'Product Hunt (Launch)', value: 'social_productHunt'}
-      ]
-      },
-      {name: 'Telemarketing', value: 'telemarketing'},
-      {
-        name: 'Viral', children: [
-        {
-          name: 'Recommend a Friend', children: [
-          {name: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
-        ]
-        }
-      ]
-      },
-      {
-        name: 'Web', children: [
-        {name: 'Company’s Website', value: 'web_companyWebsite'},
-        {name: 'Landing Pages', value: 'web_landingPages'}
-      ]
       }
-    ].forEach((channel) => {
-      mapChannel(channel, 0);
-    });
+    };
 
-    function mapChannel(channel, indent) {
-      flatChannels.push({
-        label: channel.name,
-        value: channel.value,
-        indent: indent
-      });
+    const indicatorsOptions = [
+      { label: 'Facebook Likes', value: 'facebookLikes' },
+      { label: 'Facebook Engagement', value: 'facebookEngagement' },
+      { label: 'Twitter Followers', value: 'twitterFollowers' },
+      { label: 'Twitter Engagement', value: 'twitterEngagement' },
+      { label: 'LinkedIn Followers', value: 'linkedinFollowers' },
+      { label: 'LinkedIn Engagement', value: 'linkedinEngagement' },
+      { label: 'Instagram Followers', value: 'instagramFollowers' },
+      { label: 'Instagram Engagement', value: 'instagramEngagement' },
+      { label: 'Google+ Followers', value: 'googlePlusFollowers' },
+      { label: 'Google+ Engagement', value: 'googlePlusEngagement' },
+      { label: 'Pinterest Followers', value: 'pinterestFollowers' },
+      { label: 'Pinterest Engagement', value: 'pinterestEngagement' },
+      { label: 'Youtube Subscribers', value: 'youtubeSubscribers' },
+      { label: 'Youtube Engagement', value: 'youtubeEngagement' },
+      { label: 'LTV', value: 'LTV' },
+      { label: 'CAC', value: 'CAC' },
+      { label: 'Users', value: 'users' },
+      { label: 'Active Users Rate', value: 'activeUsersRate' },
+      { label: 'Trial Users', value: 'trialUsers' },
+      { label: 'MCL', value: 'MCL' },
+      { label: 'MQL', value: 'MQL' },
+      { label: 'SQL', value: 'SQL' },
+      { label: 'Google Mentions', value: 'googleMentions' },
+      { label: 'Sessions', value: 'sessions' },
+      { label: 'Average Session Duration',
+        value: 'averageSessionDuration' },
+      { label: 'Bounce Rate', value: 'bounceRate' },
+      { label: 'Blog Visits', value: 'blogVisits' },
+      { label: 'Blog Subscribers', value: 'blogSubscribers' },
+      { label: 'MRR', value: 'MRR' },
+      { label: 'Churn Rate', value: 'churnRate' },
+      { label: 'ARPA (monthly)', value: 'ARPA' }
+    ];
 
-      if (channel.children) {
-        channel.children.forEach((channel) => {
-          mapChannel(channel, indent + 1);
-        });
+    let preventDuplicates = (value) => {
+      if (value.options) {
+        value.options.map(preventDuplicates);
       }
+      value.disabled = this.state.blockedChannels.includes(value.value) || this.state.inHouseChannels.includes(value.value) || Object.keys(this.state.userMinMonthBudgets).includes(value.value);
+      return value;
+    };
+
+    let maxChannels = (value) => {
+      if (value.options) {
+        value.options.map(maxChannels);
+      }
+      else {
+        value.disabled = true;
+        return value;
+      }
+    };
+
+    channels.select.options.map(preventDuplicates);
+    // Deep copy
+    const blockedChannels = JSON.parse(JSON.stringify(channels));
+    // We allow only 3 blocked channels.
+    if (this.state.blockedChannels.length >= 3) {
+      // Disable all options
+      blockedChannels.select.options.map(maxChannels);
     }
+
+    const userMinMonthBudgetsArray = Object.keys(this.state.userMinMonthBudgets);
 
     return <div>
       <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
@@ -672,15 +706,96 @@ export default class Preferences extends Component {
               <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary }
                       onChange={ this.handleChangeGoals.bind(this, 'secondary') }/>
             </div>
+            <div className={ this.classes.row } style={{}}>
+              <Label style={{
+                marginBottom: '12px',
+                fontWeight: '600'
+              }} question={['']}
+                     description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
+              <MultiRow numOfRows={ this.state.objectives.length } rowRemoved={this.objectiveRemove}>
+                {({index, data, update, removeButton}) => {
+                  return <div>
+                    <div className={ preferencesStyle.locals.channelsRow }>
+                      <Label style={{
+                        marginBottom: '0',
+                        fontWeight: '600'
+                      }}>{ `#${ index + 1 }` } </Label>
+                    </div>
+                    <div style={{
+                    }} className={ preferencesStyle.locals.channelsRow }>
+                      <div className={ preferencesStyle.locals.objectiveText }>I want</div>
+                      <Textfield type="number" value={ this.state.objectives[index] ? this.state.objectives[index].amount : '' } style={{width: '60px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
+                      <Select
+                        className={ preferencesStyle.locals.objectiveSelect }
+                        selected={ this.state.objectives[index] ? this.state.objectives[index].isPercentage : -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'type',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: [{ label: '%', value: true}, {label: '(num)', value: false}]
+                        }}
+                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'isPercentage') }
+                      />
+                      <Select
+                        className={ preferencesStyle.locals.objectiveSelect }
+                        selected={ this.state.objectives[index] ? this.state.objectives[index].direction : -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: [{ label: 'increase', value: 'increase'}, {label: 'decrease', value: 'decrease'}, {label: '(target)', value: 'equals'}]
+                        }}
+                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'direction') }
+                      />
+                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>in</div>
+                      <Select
+                        className={ preferencesStyle.locals.objectiveSelect }
+                        selected={ this.state.objectives[index] ? this.state.objectives[index].indicator : -1 }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: indicatorsOptions
+                        }}
+                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
+                        style={{ width: '200px' }}
+                      />
+                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>until</div>
+                      <div style={{ marginLeft: '10px', width: '205px' }}>
+                        <Calendar value={ this.state.objectives[index] ? this.state.objectives[index].timeFrame : '' } onChange={ this.handleChangeDate.bind(this, index) }/>
+                      </div>
+                      <div className={ preferencesStyle.locals.channelsRemove } style={{ marginTop: '5px' }}>
+                        { removeButton }
+                      </div>
+                    </div>
+                  </div>
+                }}
+              </MultiRow>
+            </div>
             <div className={ this.classes.row }>
-              <Label question={['']}
-                     description={['Do you want to limit the number of channels that will be included in your 12 months’ plan? \n To set the number to max available channels, please leave it blank.']}>max
-                number of Channels</Label>
+              <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Channel Constrains (Optional)</Label>
               <Notice warning style={{
                 margin: '12px 0'
               }}>
                 * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
               </Notice>
+            </div>
+            <div className={ this.classes.row }>
+              <Label question={['']}
+                     description={['Do you want to limit the number of channels that will be included in your 12 months’ plan? \n To set the number to max available channels, please leave it blank.']}>max
+                number of Channels</Label>
               <div className={ this.classes.cell }>
                 <Textfield value={ this.state.maxChannels != -1 ? this.state.maxChannels : '' }
                            onChange={ this.handleChangeMax.bind(this, '')} style={{
@@ -693,145 +808,47 @@ export default class Preferences extends Component {
             </div>
             <div className={ this.classes.row } style={{}}>
               <Label style={{
-                marginBottom: '0',
+                marginBottom: '12px',
                 fontWeight: '600'
               }} question={['']}
                      description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum Budgets</Label>
-              <Notice warning style={{
-                margin: '12px 0'
-              }}>
-                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
-              </Notice>
-              {this.state.isLoaded ?
-                //TODO: change numOfRows and add on change and selected
-                <MultiRow numOfRows={ (Object.keys(this.state.userMinMonthBudgets)).length } rowRemoved={this.minimumBudgetRemove}>
-                  {({index, data, update, removeButton}) => {
-                    return <div style={{
-                      width: '623px'
-                    }} className={ preferencesStyle.locals.channelsRow }>
-                      <Select
-                        className={ preferencesStyle.locals.channelsSelect }
-                        selected={ (this.state.userMinMonthBudgets && Object.keys(this.state.userMinMonthBudgets)[index]) || -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: flatChannels
-                        }}
-                        onChange={ this.handleChangeMinChannel.bind(this, index) }
-                        label={ `#${ index + 1 } (optional)` }
-                      />
-                      <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgets[(Object.keys(this.state.userMinMonthBudgets))[index]] ? this.state.userMinMonthBudgets[(Object.keys(this.state.userMinMonthBudgets))[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                                 onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
-                        width: '82px'
-                      }} disabled={ !Object.keys(this.state.userMinMonthBudgets)[index] }/>
-                      <div className={ preferencesStyle.locals.channelsRemove }>
-                        { removeButton }
-                      </div>
-                      <div className={ preferencesStyle.locals.error }>
-                        <label hidden={ true }>please choose a leaf channel</label>
-                        <label hidden={ true }>channel already in use</label>
-                      </div>
+              <MultiRow numOfRows={ userMinMonthBudgetsArray.length } rowRemoved={this.minimumBudgetRemove}>
+                {({index, data, update, removeButton}) => {
+                  return <div style={{
+                    width: '460px'
+                  }} className={ preferencesStyle.locals.channelsRow }>
+                    <Select
+                      className={ preferencesStyle.locals.channelsSelect }
+                      selected={ (this.state.userMinMonthBudgets && userMinMonthBudgetsArray[index]) || -1 }
+                      select={{
+                        menuTop: true,
+                        name: 'channels',
+                        onChange: (selected) => {
+                          update({
+                            selected: selected
+                          });
+                        },
+                        options: channels.select.options
+                      }}
+                      onChange={ this.handleChangeMinChannel.bind(this, index) }
+                      label={ `#${ index + 1 } (optional)` }
+                    />
+                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]] ? this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                               onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
+                      width: '82px'
+                    }} disabled={ !userMinMonthBudgetsArray[index] }/>
+                    <div className={ preferencesStyle.locals.channelsRemove }>
+                      { removeButton }
                     </div>
-                  }}
-                </MultiRow>
-                : null }
+                  </div>
+                }}
+              </MultiRow>
             </div>
-            <div className={ this.classes.row } style={{}}>
-              <Label style={{
-                marginBottom: '0',
-                fontWeight: '600'
-              }} question={['']}
-                     description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}>In-house Channels</Label>
-              <Notice warning style={{
-                margin: '12px 0'
-              }}>
-                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
-              </Notice>
-              {this.state.isLoaded ?
-                <MultiRow numOfRows={ this.state.inHouseChannels.length } rowRemoved={this.inHouseChannelRemove}>
-                  {({index, data, update, removeButton}) => {
-                    return <div style={{
-                      width: '492px'
-                    }} className={ preferencesStyle.locals.channelsRow }>
-                      <Select
-                        className={ preferencesStyle.locals.channelsSelect }
-                        selected={ (this.state.inHouseChannels && this.state.inHouseChannels[index]) || -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: flatChannels
-                        }}
-                        onChange={ this.handleChangeInHouseChannels.bind(this, index) }
-                        label={ `#${ index + 1 } (optional)` }
-                      />
-                      <div className={ preferencesStyle.locals.channelsRemove }>
-                        { removeButton }
-                      </div>
-                      <div className={ preferencesStyle.locals.error }>
-                        <label hidden={ !this.state.notLeafInHouseChannelError[index]}>please choose a leaf channel</label>
-                        <label hidden={ !this.state.inHouseChannelAlreadyExistsError[index]}>channel already in use</label>
-                      </div>
-                    </div>
-                  }}
-                </MultiRow>
-                : null }
+            <div className={ this.classes.row }>
+              <MultiSelect { ... channels } selected={ this.state.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
             </div>
-            <div className={ this.classes.row } style={{}}>
-              <Label style={{
-                marginBottom: '0',
-                fontWeight: '600'
-              }} question={['']}
-                     description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning?']}>Blocked
-                Channels</Label>
-              <Notice warning style={{
-                margin: '12px 0'
-              }}>
-                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
-              </Notice>
-              {this.state.isLoaded ?
-                <MultiRow numOfRows={ this.state.blockedChannels.length } rowRemoved={this.blockedChannelRemove}
-                          maxNumOfRows={3}>
-                  {({index, data, update, removeButton}) => {
-                    return <div style={{
-                      width: '492px'
-                    }} className={ preferencesStyle.locals.channelsRow }>
-                      <Select
-                        className={ preferencesStyle.locals.channelsSelect }
-                        selected={ (this.state.blockedChannels && this.state.blockedChannels[index]) || -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: flatChannels
-                        }}
-                        onChange={ this.handleChangeBlockedChannels.bind(this, index) }
-                        label={ `#${ index + 1 } (optional)` }
-                      />
-                      <div className={ preferencesStyle.locals.channelsRemove }>
-                        { removeButton }
-                      </div>
-                      <div className={ preferencesStyle.locals.error }>
-                        <label hidden={ !this.state.notLeafBlockedChannelError[index]}>please choose a leaf channel</label>
-                        <label hidden={ !this.state.blockedChannelAlreadyExistsError[index]}>channel already in use</label>
-                      </div>
-                    </div>
-                  }}
-                </MultiRow>
-                : null }
+            <div className={ this.classes.row } style={{ marginBottom: '200px' }}>
+              <MultiSelect { ... blockedChannels  } selected={ this.state.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
             </div>
           </div>
 
@@ -866,6 +883,7 @@ export default class Preferences extends Component {
                 annualBudget: this.state.annualBudget,
                 annualBudgetArray: this.state.annualBudgetArray,
                 goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
+                objectives: this.state.objectives,
                 blockedChannels: this.state.blockedChannels,
                 inHouseChannels: this.state.inHouseChannels,
                 userMinMonthBudgets: this.state.userMinMonthBudgets,
@@ -882,6 +900,7 @@ export default class Preferences extends Component {
                   annualBudget: this.state.annualBudget,
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
+                  objectives: this.state.objectives,
                   blockedChannels: this.state.blockedChannels,
                   inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,
@@ -908,6 +927,7 @@ export default class Preferences extends Component {
                   annualBudget: this.state.annualBudget,
                   annualBudgetArray: this.state.annualBudgetArray,
                   goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
+                  objectives: this.state.objectives,
                   blockedChannels: this.state.blockedChannels,
                   inHouseChannels: this.state.inHouseChannels,
                   userMinMonthBudgets: this.state.userMinMonthBudgets,

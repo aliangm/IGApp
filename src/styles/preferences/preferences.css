@@ -34,5 +34,15 @@
 .blocked-label {
   font-weight: 600;
   color: #24b10e;
-  margin-bottom: 0px;
+  margin-bottom: 0;
+}
+
+.objective-select {
+  width: 100px;
+  margin-left: 10px;
+}
+
+.objective-text {
+  margin-top: 7px;
+  font-weight: 600;
 }

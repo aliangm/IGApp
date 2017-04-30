@@ -9,6 +9,7 @@ import global from 'global';
 import serverCommunication from 'data/serverCommunication';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
+import AuthService from 'components/utils/AuthService';
 
 export default class Header extends Component {
   style = style
@@ -189,10 +190,9 @@ export default class Header extends Component {
   }
 
   logout() {
-    serverCommunication.serverRequest('GET', 'logout')
-      .then(function(data){
-        history.push('/');
-      });
+    const auth = new AuthService();
+    auth.logout();
+    history.push('/');
   }
 
   changeRegion(region) {

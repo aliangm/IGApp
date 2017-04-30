@@ -266,9 +266,10 @@ export default class Welcome extends Component {
             }} />**/}
               <div style={{width: '30px'}}/>
               <NextButton onClick={() => {
+                let self = this;
                 serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(this.state.userAccount))
                   .then(function (data) {
-                    this.setState({createNewVisible: true});
+                    self.setState({createNewVisible: true});
                   });
               }}/>
             </div>

@@ -3,6 +3,7 @@ import q from 'q';
 import 'whatwg-fetch';
 //SAFARI BUG FIX - no default promise, need to use external library
 import Promise from 'promise-polyfill';
+import AuthService from 'components/utils/AuthService';
 
 if (!window.Promise) {
   window.Promise = Promise;
@@ -13,7 +14,7 @@ export default {
 	serverRequest(httpFunc, route, body, region, planDate) {
 		
 		const deferred = q.defer();
-
+		const lock = new AuthService();
 		let URL = window.location.protocol + '//' + window.location.hostname + ':8443/' + route;
     if (region || planDate) {
       URL += '?';
@@ -29,7 +30,8 @@ export default {
 		fetch(encodeURI(URL), {
 		method: httpFunc,
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + lock.getToken()
 			},
 			body: body,
 			credentials: 'include'

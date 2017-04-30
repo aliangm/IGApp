@@ -272,6 +272,7 @@ export default class TargetAudience extends Component {
                 { key: 'Food & Beverage', text: 'Food', icon: 'buttons:foodAndBeverage' },
                 { key: 'Entertainment', text: 'Entertaiment', icon: 'buttons:entertaiment' },
                 { key: 'Professional Services', text: 'Pro Services', icon: 'buttons:professional' },
+                { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
                 { key: 'Any', text: 'Any', icon: 'buttons:any' },
               ]} selectedKey={ this.state.targetAudience.companyType } onChange = {this.handleChangeButton.bind(this, 'companyType')} />
             </div>

@@ -87,3 +87,4 @@
 @mixin icon-nodpi buttons:cpg, ../../assets/button-icons/CPG;
 @mixin icon-nodpi buttons:b2cSoftware, ../../assets/button-icons/b2cSoftware;
 @mixin icon-nodpi buttons:b2bSoftware, ../../assets/button-icons/b2bSoftware;
+@mixin icon-nodpi buttons:finance, ../../assets/button-icons/dollar-symbol;

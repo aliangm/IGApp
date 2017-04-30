@@ -37,6 +37,10 @@ export function checkIfPopup () {
             localStorage.setItem('popup', data.onboarding);
             deferred.resolve(data.onboarding);
           }
+          else {
+            localStorage.setItem('popup', true);
+            deferred.resolve(null);
+          }
         })
     })
     .catch(function (err) {
