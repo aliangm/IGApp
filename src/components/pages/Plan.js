@@ -155,7 +155,7 @@ export default class Plan extends Component {
       "Current": CurrentTab,
       "Annual": AnnualTab,
       //"Planned vs Actual": PlannedActualTab,
-      "Projections": ProjectionsTab
+      "Forecasting": ProjectionsTab
     };
 
     const tabNames = Object.keys(tabs);

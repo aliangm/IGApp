@@ -359,7 +359,7 @@ export default class ProjectionsTab extends Component {
           <div className={ planStyles.locals.title }>
             <div className={ planStyles.locals.titleMain }>
               <div className={ planStyles.locals.titleText }>
-                Projections (months)
+                Forecasting (months)
               </div>
             </div>
             <div className={ planStyles.locals.titleButtons }>
