@@ -28,11 +28,16 @@ export default class Plan extends Component {
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
       close: this.getUserMonthPlan.bind(this),
+      updateUserMonthPlan: this.updateUserMonthPlan.bind(this),
+      editChannel: this.editChannel.bind(this),
+      editUpdate: this.editUpdate.bind(this),
+      approveAll: this.approveAll.bind(this),
       isLoaded: false,
     }
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
     this.changeRegion = this.changeRegion.bind(this);
+    this.updateUserMonthPlan = this.updateUserMonthPlan.bind(this);
   }
 
   componentDidMount() {
@@ -57,6 +62,7 @@ export default class Plan extends Component {
                   actualIndicators: data.actualIndicators,
                   numberOfPlanUpdates: data.numberOfPlanUpdates,
                   projectedPlan: data.projectedPlan,
+                  approvedPlan: data.approvedPlan || [],
                   budget: data.annualBudget,
                   budgetArray: data.annualBudgetArray,
                   maxChannels: data.maxChannels,
@@ -73,6 +79,55 @@ export default class Plan extends Component {
         this.setState({serverDown: true});
         console.log(err);
       });
+  }
+
+  updateUserMonthPlan(body, region, planDate) {
+    serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify(body), region, planDate)
+      .then((response) => {
+        response.json()
+          .then((data) => {
+            if (data) {
+              if (data.error) {
+                history.push('/');
+              } else {
+                this.setState({
+                  actualIndicators: data.actualIndicators,
+                  numberOfPlanUpdates: data.numberOfPlanUpdates,
+                  projectedPlan: data.projectedPlan,
+                  approvedPlan: data.approvedPlan || [],
+                  budget: data.annualBudget,
+                  budgetArray: data.annualBudgetArray,
+                  maxChannels: data.maxChannels,
+                  planDate: data.planDate,
+                  region: data.region,
+                  events: data.events || [],
+                  isLoaded: true,
+                });
+              }
+            }
+          })
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }
+
+  editChannel(i, channel, event) {
+    let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    let projectedPlan = this.state.projectedPlan;
+    let approvedPlan = this.state.approvedPlan;
+    projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
+    approvedPlan[i][channel] = value;
+    this.setState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+  }
+
+  editUpdate() {
+    this.updateUserMonthPlan({projectedPlan: this.state.projectedPlan, approvedPlan: this.state.approvedPlan}, this.state.region, this.state.planDate);
+  }
+
+  approveAll() {
+    const projectedBudgets = this.state.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
+    this.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.state.region, this.state.planDate);
   }
 
   popup() {
@@ -102,6 +157,7 @@ export default class Plan extends Component {
                   self.setState({
                     actualIndicators: data.actualIndicators,
                     projectedPlan: data.projectedPlan,
+                    approvedPlan: data.approvedPlan || [],
                     numberOfPlanUpdates: data.numberOfPlanUpdates,
                     budget: data.annualBudget,
                     budgetArray: data.annualBudgetArray,

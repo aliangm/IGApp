@@ -6,3 +6,5 @@
 
 @mixin icon-nodpi buttons:plan, ../../assets/plan-button-icon;
 @mixin icon-nodpi buttons:replan, ../../assets/replan;
+@mixin icon-nodpi buttons:edit, ../../assets/edit;
+@mixin icon-nodpi buttons:like, ../../assets/like;
