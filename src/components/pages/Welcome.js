@@ -1,10 +1,7 @@
 import React from 'react';
 
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
-import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 
@@ -21,26 +18,28 @@ import PlannedVsActualstyle from 'styles/plan/planned-actual-tab.css';
 
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
-import serverCommunication from 'data/serverCommunication';
 import RegionPopup from 'components/RegionPopup';
 
 export default class Welcome extends Component {
   style = style;
   styles = [welcomeStyle, PlannedVsActualstyle]
 
+  static defaultProps = {
+    userAccount: {
+      companyName: '',
+      firstName: '',
+      lastName: '',
+      teamSize: -1,
+      companyWebsite: 'http://',
+      competitorsWebsites: ['http://', 'http://', 'http://'],
+      teamMembers: [],
+      createNewVisible: false
+    }
+  };
+  
   constructor(props) {
     super(props);
     this.state = {
-      userAccount: {
-        companyName: '',
-        firstName: '',
-        lastName: '',
-        teamSize: -1,
-        companyWebsite: 'http://',
-        competitorsWebsites: ['http://', 'http://', 'http://'],
-        teamMembers: [],
-        createNewVisible: false
-      }
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
@@ -50,30 +49,10 @@ export default class Welcome extends Component {
     this.removeMember = this.removeMember.bind(this);
   }
 
-  componentDidMount() {
-    let self = this;
-    serverCommunication.serverRequest('GET', 'useraccount')
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              if (data.error) {
-                history.push('/');
-              }
-              self.setState({userAccount: data});
-              self.setState({isLoaded: true});
-            }
-          })
-      })
-      .catch(function (err) {
-        console.log(err);
-      })
-  }
-
   handleChange(parameter, event) {
-    let update = Object.assign({}, this.state.userAccount);
+    let update = Object.assign({}, this.props.userAccount);
     update[parameter] = event.target.value;
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   handleChangeNumber(parameter, event) {
@@ -81,40 +60,39 @@ export default class Welcome extends Component {
     if (isNaN(number)) {
       number = -1;
     }
-    let update = Object.assign({}, this.state.userAccount);
+    let update = Object.assign({}, this.props.userAccount);
     update[parameter] = number;
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   handleChangeSelect(parameter, event) {
-    let update = Object.assign({}, this.state.userAccount);
+    let update = Object.assign({}, this.props.userAccount);
     update[parameter] = event.value;
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   handleChangeArray(parameter, index, event) {
-    let update = Object.assign({}, this.state.userAccount);
-    //update[parameter] = this.state.userAccount[parameter].slice()
+    let update = Object.assign({}, this.props.userAccount);
     update[parameter][index] = event.target.value;
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   addMember() {
-    let update = Object.assign({}, this.state.userAccount);
+    let update = Object.assign({}, this.props.userAccount);
     update.teamMembers.push({name: '', email: '', role: ''});
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   changeMembers(index, property, e) {
-    let update = Object.assign({}, this.state.userAccount);
+    let update = Object.assign({}, this.props.userAccount);
     update.teamMembers[index][property] = e.target.value;
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   removeMember(index) {
-    let update = Object.assign({}, this.state.userAccount);
+    let update = Object.assign({}, this.props.userAccount);
     update.teamMembers.splice(index, 1);
-    this.setState({userAccount: update});
+    this.props.updateState({userAccount: update});
   }
 
   render() {
@@ -126,7 +104,7 @@ export default class Welcome extends Component {
     ], {
       className: PlannedVsActualstyle.locals.headRow
     });
-    const rows = this.state.userAccount.teamMembers.map((item, i) => {
+    const rows = this.props.userAccount.teamMembers.map((item, i) => {
       return this.getTableRow(null, [
         <div className={ PlannedVsActualstyle.locals.cellItem }>
           <Textfield style={{
@@ -175,8 +153,6 @@ export default class Welcome extends Component {
     };
     const title = isPopupMode() ? "Welcome! Let's get you started" : "Account";
     return <div>
-      <Header user={ false }/>
-      <Sidebar />
       <Page popup={ isPopupMode() }>
         <Title title={ title } subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
@@ -184,33 +160,26 @@ export default class Welcome extends Component {
           <div className={ this.classes.colCenter }>
             <div className={ this.classes.row }>
               <Label>Enter your brand/company name</Label>
-              <Textfield value={ this.state.userAccount.companyName } onChange={ this.handleChange.bind(this, 'companyName')}/>
+              <Textfield value={ this.props.userAccount.companyName } onChange={ this.handleChange.bind(this, 'companyName')}/>
             </div>
             <div className={ this.classes.row }>
               <Label>Company Website</Label>
-              <Textfield value={ this.state.userAccount.companyWebsite } onChange={ this.handleChange.bind(this, 'companyWebsite')}/>
+              <Textfield value={ this.props.userAccount.companyWebsite } onChange={ this.handleChange.bind(this, 'companyWebsite')}/>
             </div>
             <div className={ this.classes.row }>
               <Label>First Name</Label>
-              <Textfield value={ this.state.userAccount.firstName } onChange={ this.handleChange.bind(this, 'firstName')}/>
+              <Textfield value={ this.props.userAccount.firstName } onChange={ this.handleChange.bind(this, 'firstName')}/>
             </div>
             <div className={ this.classes.row }>
               <Label>Last Name</Label>
-              <Textfield value={ this.state.userAccount.lastName } onChange={ this.handleChange.bind(this, 'lastName')}/>
+              <Textfield value={ this.props.userAccount.lastName } onChange={ this.handleChange.bind(this, 'lastName')}/>
             </div>
             <div className={ this.classes.row }>
-              <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.state.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
-              { /*	<div className={ welcomeStyle.locals.logoCell }>
-               <Select { ... selects.role } className={ welcomeStyle.locals.select } />
-               <div className={ welcomeStyle.locals.logoWrap }>
-               <Label>Logo</Label>
-               <div className={ welcomeStyle.locals.logo }></div>
-               </div>
-               </div> */}
+              <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
             </div>
             <div className={ this.classes.row }>
               <Label>Marketing Team Size</Label>
-              <Textfield type="number" value={ this.state.userAccount.teamSize == -1 ? '' : this.state.userAccount.teamSize } onChange={ this.handleChangeNumber.bind(this, 'teamSize')} style={{width: '80px'}}/>
+              <Textfield type="number" value={ this.props.userAccount.teamSize == -1 ? '' : this.props.userAccount.teamSize } onChange={ this.handleChangeNumber.bind(this, 'teamSize')} style={{width: '80px'}}/>
             </div>
             <div className={ this.classes.row }>
               <Label>Team Members</Label>
@@ -218,9 +187,6 @@ export default class Welcome extends Component {
                 <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial' }}>
                   <div className={ PlannedVsActualstyle.locals.box }>
                     <table className={ PlannedVsActualstyle.locals.table }>
-                      {/*<col style={{ width: '50%' }} />
-                       <col style={{ width: '25%' }} />
-                       <col style={{ width: '25%' }} />*/}
                       <thead>
                       { headRow }
                       </thead>
@@ -235,11 +201,11 @@ export default class Welcome extends Component {
             </div>
             <div className={ this.classes.row }>
               <Label>Enter your main competitor’s website (up to 3)</Label>
-              <Textfield value={ this.state.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
+              <Textfield value={ this.props.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
                          onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
-              <Textfield value={ this.state.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
+              <Textfield value={ this.props.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
                          onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 1)}/>
-              <Textfield value={ this.state.userAccount.competitorsWebsites[2] } style={{marginBottom: '16px'}}
+              <Textfield value={ this.props.userAccount.competitorsWebsites[2] } style={{marginBottom: '16px'}}
                          onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
             </div>
           </div>
@@ -261,15 +227,11 @@ export default class Welcome extends Component {
               }}>Skip this step</Button>
             </div>
             <div className={ this.classes.footerRight }>
-              {/**              <BackButton onClick={() => {
-              history.push('/signin');
-            }} />**/}
               <div style={{width: '30px'}}/>
               <NextButton onClick={() => {
-                let self = this;
-                serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(this.state.userAccount))
-                  .then(function (data) {
-                    self.setState({createNewVisible: true});
+                this.props.updateUserAccount(this.props.userAccount)
+                  .then(() => {
+                    this.setState({createNewVisible: true});
                   });
               }}/>
             </div>
@@ -278,20 +240,19 @@ export default class Welcome extends Component {
           :
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
-              let self = this;
-              self.setState({saveFail: false, saveSuceess: false});
-              serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(this.state.userAccount))
-                .then(function (data) {
-                  self.setState({saveSuceess: true});
+              this.setState({saveFail: false, saveSuccess: false});
+              this.props.updateUserAccount(this.props.userAccount)
+                .then(() => {
+                  this.setState({saveSuccess: true});
                 })
-                .catch(function (err) {
-                  self.setState({saveFail: true});
+                .catch(() => {
+                  this.setState({saveFail: true});
                 });
-            }} success={ this.state.saveSuceess } fail={ this.state.saveFail }/>
+            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }
       </Page>
-      <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }}/>
+      <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }} createUserMonthPlan={ this.props.createUserMonthPlan }/>
     </div>
   }
 

@@ -18,32 +18,49 @@ import icons from 'styles/icons/plan.css';
 import Paging from 'components/Paging';
 
 function formatDate(dateStr) {
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const [monthNum, yearNum] = dateStr.split("/");
+  if (dateStr) {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [monthNum, yearNum] = dateStr.split("/");
 
-  return `${monthNames[monthNum - 1]} ${yearNum}`;
+    return `${monthNames[monthNum - 1]} ${yearNum}`;
+  }
+  else return null;
 }
 
 export default class CurrentTab extends Component {
   static propTypes = {
     planDate: PropTypes.string,
-    projectedPlan: PropTypes.array,
-    isLoaded: PropTypes.bool,
+    projectedPlan: PropTypes.array
   };
 
   static defaultProps = {
-    isLoaded: true,
+    planDate: null
   };
 
   styles = [planStyles, icons];
   style = style;
 
-  render() {
-    const { isLoaded, planDate, projectedPlan, isPlannerLoading, close, region } = this.props;
+  constructor(props) {
+    super(props);
+    this.state  = props;
+    this.pagingUpdateState = this.pagingUpdateState.bind(this);
+  }
 
-    if (!isLoaded) {
-      return null;
-    }
+  componentWillReceiveProps(nextProps) {
+    this.setState(nextProps);
+  }
+
+  pagingUpdateState(data) {
+    this.setState({
+      planDate: data.planDate,
+      region: data.region,
+      projectedPlan: data.projectedPlan,
+    });
+  }
+
+  render() {
+    const { planDate, projectedPlan, isPlannerLoading, region } = this.state;
+
     if (isPlannerLoading) {
       return (
         <div className={ this.classes.wrap } data-loading="true">
@@ -66,8 +83,8 @@ export default class CurrentTab extends Component {
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
 
-    const events = this.props.events ?
-      this.props.events.map((event, index) => {
+    const events = this.state.events ?
+      this.state.events.map((event, index) => {
         return <p key={ index }>
           {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
         </p>
@@ -75,7 +92,7 @@ export default class CurrentTab extends Component {
       : null;
 
     return <div className={ this.classes.wrap }>
-      <Paging month={ planDate } getUserMonthPlan={ close } region={ region }/>
+      <Paging month={ planDate } pagingUpdateState={ this.pagingUpdateState } region={ region }/>
       <div className={ planStyles.locals.title }>
         <div className={ planStyles.locals.titleMain }>
           <div className={ planStyles.locals.titleText }>

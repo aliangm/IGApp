@@ -1,5 +1,3 @@
-//import serverCommunication from './serverCommunication';
-
 import schema from './channelsSchema';
 import _ from 'lodash';
 
@@ -22,14 +20,16 @@ export function parseAnnualPlan(projectedPlan, approvedPlan) {
   });
   if (approvedPlan) {
     approvedPlan.forEach((channels, month) => {
-      Object.keys(channels).forEach((channel) => {
-        if (channel != '_id') {
-          var title = schema.properties[channel].title
-            .split('/')
-            .map(item => item.trim());
-          parseActuals(title, returnObj, channels[channel], channel, month);
-        }
-      });
+      if (channels) {
+        Object.keys(channels).forEach((channel) => {
+          if (channel != '_id') {
+            var title = schema.properties[channel].title
+              .split('/')
+              .map(item => item.trim());
+            parseActuals(title, returnObj, channels[channel], channel, month);
+          }
+        });
+      }
     });
   }
   fillZeros(returnObj, approvedPlan ? approvedPlan : new Array(12).fill(null));

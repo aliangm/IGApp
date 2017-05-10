@@ -17,7 +17,6 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 //import annualData from 'data/annual';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
-import serverCommunication from 'data/serverCommunication';
 import PlanCell from 'components/pages/plan/PlanCell';
 
 export default class AnnualTab extends Component {
@@ -25,6 +24,11 @@ export default class AnnualTab extends Component {
   style = style;
 
   budgetWeights= [0.07,	0.11,	0.13,	0.13,	0.11,	0.05,	0.04,	0.04,	0.09,	0.09,	0.12,	0.02];
+
+  static defaultProps = {
+    projectedPlan: [],
+    approvedPlan: []
+  };
 
   constructor(props) {
     super(props);
@@ -54,26 +58,7 @@ export default class AnnualTab extends Component {
     this.setState({ budgetArrayField: nextProps.budgetArray });
     this.setState({maxChannelsField: nextProps.maxChannels});
   }
-  /**
-   componentDidMount(){
-    let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              //self.setState({projectedPlan: data.projectedPlan});
-              self.setState({budget: data.annualBudget});
-              self.setState({planDate: data.planDate});
-              self.setState({annualData: parseAnnualPlan(data.projectedPlan)});
-              self.setState({isLoaded: true});
-            }
-          })
-      })
-      .catch(function (err) {
-        console.log(err);
-      })
-  }**/
+
   /**
    onHeadClick = (e) => {
     const elem = e.currentTarget;
@@ -151,7 +136,7 @@ export default class AnnualTab extends Component {
   whatIfCancel = () => {
     this.refs.whatIfPopup.close();
     this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.close(this.props.region);
+    this.props.getUserMonthPlan(this.props.region);
   }
 
   handleChangeBudget(event) {
@@ -231,7 +216,6 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    if (this.props.isLoaded) {
       if (!this.props.isPlannerLoading) {
         const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan);
         let budget = Object.keys(planJson)[0];
@@ -343,7 +327,7 @@ export default class AnnualTab extends Component {
           });
 
         return <div>
-          <div className={ this.classes.wrap } data-loading={ this.props.isLoaded ? null : true }>
+          <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
             <div className={ planStyles.locals.title }>
               <div className={ planStyles.locals.titleMain }>
                 <div className={ planStyles.locals.titleText }>
@@ -538,8 +522,6 @@ export default class AnnualTab extends Component {
           </Popup>
         </div>
       }
-    }
-    else return null;
   }
 
   getTableRow(title, items, props, channel, approvedValues)

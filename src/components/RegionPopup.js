@@ -5,7 +5,6 @@ import Title from 'components/onboarding/Title';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/onboarding/onboarding.css';
 import Button from 'components/controls/Button';
-import serverCommunication from 'data/serverCommunication';
 import history from 'history';
 import { temporaryEnablePopupMode } from 'modules/popup-mode'
 export default class RegionPopup extends Component {
@@ -25,15 +24,14 @@ export default class RegionPopup extends Component {
   }
 
   createNewRegion() {
-    let self = this;
-    serverCommunication.serverRequest('POST', 'usermonthplan', JSON.stringify({ region: this.state.regionName}))
-      .then(function (data) {
-        localStorage.setItem('region', self.state.regionName);
+    this.props.createUserMonthPlan({ region: this.state.regionName})
+      .then(() => {
+        localStorage.setItem('region', this.state.regionName);
         temporaryEnablePopupMode();
-        self.props.close();
+        this.props.close();
         history.push('/profile');
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.log(err);
       });
   }
