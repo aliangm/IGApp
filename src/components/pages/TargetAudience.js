@@ -379,13 +379,13 @@ export default class TargetAudience extends Component {
           :
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
-              this.setState({saveFail: false, saveSuceess: false});
+              this.setState({saveFail: false, saveSuccess: false});
               this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
                 .then(() => {
-                  this.setState({saveSuceess: true});
+                  this.setState({saveSuccess: true});
                 })
                 .catch(() => {
-                  self.setState({saveFail: true});
+                  this.setState({saveFail: true});
                 });
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
