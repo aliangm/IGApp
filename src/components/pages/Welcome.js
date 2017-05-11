@@ -223,7 +223,12 @@ export default class Welcome extends Component {
                 letterSpacing: '0.075',
                 width: '150px'
               }} onClick={() => {
-                this.setState({createNewVisible: true});
+                if (this.props.region) {
+                  history.push('/profile')
+                }
+                else {
+                  this.setState({createNewVisible: true});
+                }
               }}>Skip this step</Button>
             </div>
             <div className={ this.classes.footerRight }>
@@ -231,7 +236,12 @@ export default class Welcome extends Component {
               <NextButton onClick={() => {
                 this.props.updateUserAccount(this.props.userAccount)
                   .then(() => {
-                    this.setState({createNewVisible: true});
+                    if (this.props.region) {
+                      history.push('/profile')
+                    }
+                    else {
+                      this.setState({createNewVisible: true});
+                    }
                   });
               }}/>
             </div>
