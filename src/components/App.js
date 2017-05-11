@@ -76,6 +76,7 @@ export default class AppComponent extends Component {
                   annualBudget: data.annualBudget,
                   annualBudgetArray: data.annualBudgetArray || [],
                   planDate: data.planDate,
+                  planDay: data.planDay,
                   region: data.region,
                   goals: {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
@@ -128,6 +129,7 @@ export default class AppComponent extends Component {
                   annualBudgetArray: data.annualBudgetArray || [],
                   planDate: data.planDate,
                   region: data.region,
+                  planDay: data.planDay,
                   goals: {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
                     secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
@@ -200,6 +202,7 @@ export default class AppComponent extends Component {
                   annualBudget: data.annualBudget,
                   annualBudgetArray: data.annualBudgetArray || [],
                   planDate: data.planDate,
+                  planDay: data.planDay,
                   region: data.region,
                   goals: {
                     primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
