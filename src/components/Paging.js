@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/paging.css';
 import serverCommunication from 'data/serverCommunication';
+import history from 'history';
 
 export default class Paging extends Component {
 
@@ -25,6 +26,9 @@ export default class Paging extends Component {
                this.props.pagingUpdateState(data);
               }
             })
+        }
+        else if (response.status == 401){
+          history.push('/');
         }
       })
       .catch((err) => {

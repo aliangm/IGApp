@@ -5,6 +5,7 @@ import Sidebar from 'components/Sidebar';
 import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
 import serverCommunication from 'data/serverCommunication';
 import q from 'q';
+import history from 'history';
 
 export default class AppComponent extends Component {
 
@@ -22,19 +23,24 @@ export default class AppComponent extends Component {
   componentDidMount() {
     serverCommunication.serverRequest('GET', 'useraccount')
       .then((response) => {
-        response.json()
-          .then((data) => {
-            if (data) {
-              this.setState({
-                userAccount: data,
-                userFirstName: data.firstName,
-                userLastName: data.lastName,
-                userCompany: data.companyName,
-                logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                teamMembers: data.teamMembers,
-              });
-            }
-          })
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  userAccount: data,
+                  userFirstName: data.firstName,
+                  userLastName: data.lastName,
+                  userCompany: data.companyName,
+                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                  teamMembers: data.teamMembers,
+                });
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -42,14 +48,19 @@ export default class AppComponent extends Component {
 
     serverCommunication.serverRequest('GET', 'regions')
       .then((response) => {
-        response.json()
-          .then((data) => {
-            if (data) {
-              this.setState({
-                regions: data
-              });
-            }
-          })
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  regions: data
+                });
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -105,6 +116,10 @@ export default class AppComponent extends Component {
               deferred.resolve(data);
             })
         }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -156,6 +171,9 @@ export default class AppComponent extends Component {
               }
             })
         }
+        else if (response.status == 401){
+          history.push('/');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -169,7 +187,7 @@ export default class AppComponent extends Component {
         if (response.ok) {
           response.json()
             .then((data) => {
-            this.setState({
+              this.setState({
                 userAccount: data,
                 userFirstName: data.firstName,
                 userLastName: data.lastName,
@@ -179,6 +197,10 @@ export default class AppComponent extends Component {
               });
               deferred.resolve();
             });
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
         }
       })
       .catch(function (err) {
@@ -230,6 +252,10 @@ export default class AppComponent extends Component {
                 deferred.resolve();
               }
             })
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
         }
       })
       .catch((err) => {
