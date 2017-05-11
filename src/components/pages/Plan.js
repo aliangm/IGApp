@@ -111,7 +111,7 @@ export default class Plan extends Component {
             history.push('/');
           }
           if (response.status == 400){
-            self.setState({isError: true, isPlannerLoading: false});
+            this.setState({isError: true, isPlannerLoading: false});
           }
           else {
             this.setState({serverDown: true, isPlannerLoading: false});
@@ -142,7 +142,6 @@ export default class Plan extends Component {
     const tabNames = Object.keys(tabs);
     const selectedName = tabNames[this.state.selectedTab];
     const selectedTab = tabs[selectedName];
-
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="1180px">
         <div className={ this.classes.head }>
