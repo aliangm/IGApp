@@ -681,7 +681,7 @@ export default class Preferences extends Component {
             <div className={ this.classes.row } style={{
               // maxWidth: '440px',
               // minWidth: '200px',
-              width: '100px'
+              width: '70px'
             }}>
               <Select { ... selects.planDay } selected={ this.props.planDay } onChange={ this.handleChangePlanDay.bind(this) }/>
             </div>
