@@ -203,6 +203,8 @@ export default class TargetAudience extends Component {
       },
       dailyOnlinePresence: {
         label: 'Daily Online Presence',
+        labelQuestion: [''],
+        description: ['How much of his/her day, your target persona is online?'],
         select: {
           name: 'dailyOnlinePresence',
           onChange: () => {},
