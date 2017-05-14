@@ -374,7 +374,7 @@ export default class ProjectionsTab extends Component {
           </div>
 
           <div className={ this.classes.popupText }>
-            Please wait while the system creates your plan
+            Please wait while the system optimizes your plan
           </div>
         </Popup>
       </div>
