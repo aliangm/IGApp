@@ -1,8 +1,6 @@
 import React from 'react';
 
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
 
 import Title from 'components/onboarding/Title';
@@ -16,15 +14,12 @@ import MarketFitPopup from 'components/pages/profile/MarketFitPopup';
 import ProductLaunchPopup from 'components/pages/profile/ProductLaunchPopup';
 
 import Select from 'components/controls/Select';
-import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 
 import style from 'styles/onboarding/onboarding.css';
 
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
-import serverCommunication from 'data/serverCommunication';
-
 
 export default class Profile extends Component {
 
@@ -36,80 +31,47 @@ export default class Profile extends Component {
    lifeCyclePopup: 'first'
    };
    */
+  static defaultProps = {
+    userProfile: {}
+  };
+
   constructor(props) {
     super(props);
     this.state = {};
-    this.state.userProfile = {};
 
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
     this.handleChangeButton = this.handleChangeButton.bind(this);
-    this.changeRegion = this.changeRegion.bind(this);
-  }
-
-  componentDidMount() {
-    this.getUserMonthPlan(localStorage.getItem('region'));
-  }
-
-  getUserMonthPlan(region, planDate) {
-    let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              if (data.error) {
-                history.push('/');
-              }
-              else {
-                self.setState({
-                  userProfile: data.userProfile,
-                  region: data.region,
-                  planDate: data.planDate,
-                  isLoaded: true
-                });
-              }
-            }
-          })
-      })
-      .catch(function (err) {
-        self.setState({serverDown: true});
-        console.log(err);
-      })
-  }
-
-  changeRegion(region) {
-    this.getUserMonthPlan(region);
   }
 
   handleChangeSelect(parameter, event) {
-    let update = Object.assign({}, this.state.userProfile);
+    let update = Object.assign({}, this.props.userProfile);
     update[parameter] = event.value;
-    this.setState({userProfile: update});
+    this.props.updateState({userProfile: update});
   }
 
   handleChangeButton(parameter, event) {
-    let update = Object.assign({}, this.state.userProfile);
+    let update = Object.assign({}, this.props.userProfile);
     update[parameter] = event;
-    this.setState({userProfile: update});
+    this.props.updateState({userProfile: update});
   }
 
   fakeChange(parameter, value) {
-    let update = Object.assign({}, this.state.userProfile);
+    let update = Object.assign({}, this.props.userProfile);
     update[parameter] = value;
-    this.setState({userProfile: update});
+    this.props.updateState({userProfile: update});
   }
 
   validate() {
-    return this.state.userProfile.vertical &&
-      this.state.userProfile.orientation &&
-      this.state.userProfile.businessModel &&
-      this.state.userProfile.seatsPerAccount &&
-      this.state.userProfile.price &&
-      this.state.userProfile.platform &&
-      this.state.userProfile.lifeCycle &&
-      this.state.userProfile.coverage &&
-      this.state.userProfile.loyalty &&
-      this.state.userProfile.differentiation
+    return this.props.userProfile.vertical &&
+      this.props.userProfile.orientation &&
+      this.props.userProfile.businessModel &&
+      this.props.userProfile.seatsPerAccount &&
+      this.props.userProfile.price &&
+      this.props.userProfile.platform &&
+      this.props.userProfile.lifeCycle &&
+      this.props.userProfile.coverage &&
+      this.props.userProfile.loyalty &&
+      this.props.userProfile.differentiation
   }
 
   render() {
@@ -270,8 +232,6 @@ export default class Profile extends Component {
 
 
     return <div>
-      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
-      <Sidebar />
       <Page popup={ isPopupMode() }>
         <Title title="Profile"
                subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/>
@@ -284,7 +244,7 @@ export default class Profile extends Component {
             {/**<div className={ this.classes.row } style={{
               width: '258px'
             }}>
-             <Select required { ... selects.vertical } selected={ this.state.userProfile.vertical} onChange= { this.handleChangeSelect.bind(this, 'vertical') }/>
+             <Select required { ... selects.vertical } selected={ this.props.userProfile.vertical} onChange= { this.handleChangeSelect.bind(this, 'vertical') }/>
              </div>**/}
             <div className={ this.classes.row }>
               <Label question={['']}
@@ -296,20 +256,20 @@ export default class Profile extends Component {
                 {key: 'Security', text: 'Security', icon: 'buttons:security'},
                 {key: 'IT', text: 'IT', icon: 'buttons:IT'},
                 {key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity'},
-              ]} selectedKey={ this.state.userProfile.vertical }
+              ]} selectedKey={ this.props.userProfile.vertical }
                           onChange={this.handleChangeButton.bind(this, 'vertical')}/>
             </div>
             {/*<div className={ this.classes.row } style={{
              width: '258px'
              }}>
-             <Select { ... selects.category } selected={ this.state.userProfile.category } onChange= { this.handleChangeSelect.bind(this, 'category') }/>
+             <Select { ... selects.category } selected={ this.props.userProfile.category } onChange= { this.handleChangeSelect.bind(this, 'category') }/>
              </div> */}
             <div className={ this.classes.row }>
               <Label question={['']} description={['What is the orientation of your company?']}>Orientation</Label>
               <ButtonsSet buttons={[
                 {key: 'B2C', text: 'B2C', icon: 'buttons:b2c'},
                 {key: 'B2B', text: 'B2B', icon: 'buttons:b2b'},
-              ]} selectedKey={ this.state.userProfile.orientation }
+              ]} selectedKey={ this.props.userProfile.orientation }
                           onChange={this.fakeChange.bind(this, 'orientation', 'B2B')}/>
             </div>
             <div className={ this.classes.row }>
@@ -321,19 +281,19 @@ export default class Profile extends Component {
                 {key: 'On-prem', text: 'On-prem', icon: 'buttons:product'},
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
                 {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'},
-              ]} selectedKey={ this.state.userProfile.businessModel }
+              ]} selectedKey={ this.props.userProfile.businessModel }
                           onChange={this.fakeChange.bind(this, 'businessModel', 'SaaS')}/>
             </div>
             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
-              <Select { ... selects.seatsPerAccount } selected={ this.state.userProfile.seatsPerAccount}
+              <Select { ... selects.seatsPerAccount } selected={ this.props.userProfile.seatsPerAccount}
                       onChange={ this.handleChangeSelect.bind(this, 'seatsPerAccount') }/>
             </div>
             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
-              <Select { ... selects.price } selected={ this.state.userProfile.price}
+              <Select { ... selects.price } selected={ this.props.userProfile.price}
                       onChange={ this.handleChangeSelect.bind(this, 'price') }/>
             </div>
             <div className={ this.classes.row }>
@@ -344,7 +304,7 @@ export default class Profile extends Component {
                 {key: 'Web', text: 'Web', icon: 'buttons:web'},
                 {key: 'Desktop', text: 'Desktop', icon: 'buttons:desktop'},
                 {key: 'Any', text: 'Any', icon: 'buttons:any'},
-              ]} selectedKey={ this.state.userProfile.platform }
+              ]} selectedKey={ this.props.userProfile.platform }
                           onChange={this.handleChangeButton.bind(this, 'platform')}/>
             </div>
             <div className={ this.classes.row }>
@@ -356,7 +316,7 @@ export default class Profile extends Component {
                 {key: 'Growth', text: 'Growth', icon: 'buttons:growth'},
                 {key: 'Mature', text: 'Mature', icon: 'buttons:mature'},
                 {key: 'Decline', text: 'Decline', icon: 'buttons:decline'},
-              ]} selectedKey={ this.state.userProfile.lifeCycle }
+              ]} selectedKey={ this.props.userProfile.lifeCycle }
                           onChange={this.handleChangeButton.bind(this, 'lifeCycle')}/>
             </div>
             <div className={ this.classes.row }>
@@ -367,19 +327,19 @@ export default class Profile extends Component {
                 {key: 'Nationwide', text: 'Nationwide', icon: 'buttons:national'},
                 {key: 'Local', text: 'Local', icon: 'buttons:local'},
                 {key: 'Any', text: 'Any', icon: 'buttons:any2'},
-              ]} selectedKey={ this.state.userProfile.coverage }
+              ]} selectedKey={ this.props.userProfile.coverage }
                           onChange={this.handleChangeButton.bind(this, 'coverage')}/>
             </div>
             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
-              <Select { ... selects.loyalty } selected={ this.state.userProfile.loyalty}
+              <Select { ... selects.loyalty } selected={ this.props.userProfile.loyalty}
                       onChange={ this.handleChangeSelect.bind(this, 'loyalty') }/>
             </div>
             {/*      <div className={ this.classes.row }>
              <Label question>{ selects.loyalty.label }</Label>
              <div className={ this.classes.cell }>
-             <Select { ... selects.loyalty } selected={ this.state.userProfile.loyalty} onchange= { this.handleChangeSelect.bind(this, 'loyalty') } label={ null } style={{
+             <Select { ... selects.loyalty } selected={ this.props.userProfile.loyalty} onchange= { this.handleChangeSelect.bind(this, 'loyalty') } label={ null } style={{
              width: '258px'
              }} />
              </div>
@@ -393,13 +353,13 @@ export default class Profile extends Component {
              { key: 'Customized', text: 'Customized', icon: 'buttons:decline' },
              { key: 'Low Touch', text: 'Low Touch', icon: 'buttons:decline' },
              { key: 'Unique Value Offer', text: 'Unique Value Offer', icon: 'buttons:decline' },
-             ]} selectedKey={ this.state.userProfile.differentiation } onChange = {this.handleChangeButton.bind(this, 'differentiation')} />
+             ]} selectedKey={ this.props.userProfile.differentiation } onChange = {this.handleChangeButton.bind(this, 'differentiation')} />
              </div> */}
             <div className={ this.classes.row } style={{
               marginBottom: '200px',
               width: '258px'
             }}>
-              <Select { ... selects.differentiation } selected={ this.state.userProfile.differentiation}
+              <Select { ... selects.differentiation } selected={ this.props.userProfile.differentiation}
                       onChange={ this.handleChangeSelect.bind(this, 'differentiation') }/>
             </div>
             {
@@ -468,16 +428,16 @@ export default class Profile extends Component {
                 fields</label>
             </div>
             <BackButton onClick={() => {
-              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}), this.state.region, this.state.planDate)
-                .then(function (data) {
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile}, this.props.region, this.props.planDate)
+                .then(() => {
                   history.push('/welcome');
-                })
+                });
             }}/>
             <div style={{width: '30px'}}/>
             <NextButton onClick={() => {
               if (this.validate()) {
-                serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}), this.state.region, this.state.planDate)
-                  .then(function (data) {
+                this.props.updateUserMonthPlan({userProfile: this.props.userProfile}, this.props.region, this.props.planDate)
+                  .then(() => {
                     history.push('/target-audience');
                   });
               }
@@ -489,16 +449,15 @@ export default class Profile extends Component {
           :
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
-              let self = this;
-              self.setState({saveFail: false, saveSuceess: false});
-              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({userProfile: this.state.userProfile}), this.state.region, this.state.planDate)
-                .then(function (data) {
-                  self.setState({saveSuceess: true});
+              this.setState({saveFail: false, saveSuccess: false});
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile}, this.props.region, this.props.planDate)
+                .then(()=>{
+                  this.setState({saveSuccess: true});
                 })
-                .catch(function (err) {
-                  self.setState({saveFail: true});
+                .catch(()=>{
+                  this.setState({saveFail: true})
                 });
-            }} success={ this.state.saveSuceess } fail={ this.state.saveFail }/>
+            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }
       </Page>

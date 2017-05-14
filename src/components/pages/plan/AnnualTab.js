@@ -17,13 +17,18 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 //import annualData from 'data/annual';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
-import serverCommunication from 'data/serverCommunication';
+import PlanCell from 'components/pages/plan/PlanCell';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons];
   style = style;
 
   budgetWeights= [0.07,	0.11,	0.13,	0.13,	0.11,	0.05,	0.04,	0.04,	0.09,	0.09,	0.12,	0.02];
+
+  static defaultProps = {
+    projectedPlan: [],
+    approvedPlan: []
+  };
 
   constructor(props) {
     super(props);
@@ -42,7 +47,8 @@ export default class AnnualTab extends Component {
       hoverRow: void 0,
       collapsed: {},
       tableCollapsed: false,
-      annualData: {}
+      annualData: {},
+      editMode: false
     }
     this.whatIf = this.whatIf.bind(this);
   }
@@ -52,26 +58,7 @@ export default class AnnualTab extends Component {
     this.setState({ budgetArrayField: nextProps.budgetArray });
     this.setState({maxChannelsField: nextProps.maxChannels});
   }
-  /**
-   componentDidMount(){
-    let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              //self.setState({projectedPlan: data.projectedPlan});
-              self.setState({budget: data.annualBudget});
-              self.setState({planDate: data.planDate});
-              self.setState({annualData: parseAnnualPlan(data.projectedPlan)});
-              self.setState({isLoaded: true});
-            }
-          })
-      })
-      .catch(function (err) {
-        console.log(err);
-      })
-  }**/
+
   /**
    onHeadClick = (e) => {
     const elem = e.currentTarget;
@@ -149,7 +136,7 @@ export default class AnnualTab extends Component {
   whatIfCancel = () => {
     this.refs.whatIfPopup.close();
     this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.close(this.props.region);
+    this.props.getUserMonthPlan(this.props.region);
   }
 
   handleChangeBudget(event) {
@@ -212,10 +199,25 @@ export default class AnnualTab extends Component {
     this.setState({isCheckAnnual: !this.state.isCheckAnnual});
   }
 
+  approveChannel(month, channel, budget){
+    let approvedPlan = this.props.approvedPlan;
+    let approvedMonth = this.props.approvedPlan[month] || {};
+    approvedMonth[channel] = parseInt(budget.replace(/[-$,]/g, ''));
+    approvedPlan[month] = approvedMonth;
+    this.props.updateUserMonthPlan({approvedPlan: approvedPlan}, this.props.region, this.props.planDate);
+  }
+
+  declineChannel(month, channel, budget){
+    let projectedPlan = this.props.projectedPlan;
+    let projectedMonth = this.props.projectedPlan[month];
+    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.replace(/[-$,]/g, ''));
+    projectedPlan[month] = projectedMonth;
+    this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
+  }
+
   render() {
-    if (this.props.isLoaded) {
       if (!this.props.isPlannerLoading) {
-        const planJson = parseAnnualPlan(this.props.projectedPlan);
+        const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan);
         let budget = Object.keys(planJson)[0];
         const data = planJson[budget];
         budget = Math.ceil(budget/1000)*1000;
@@ -232,7 +234,8 @@ export default class AnnualTab extends Component {
             let collapsed = !!this.state.collapsed[key];
             const params = data[item];
             const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-            const titleElem = <div
+            const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
+            const  titleElem = <div
               style={{
                 marginLeft: (level | 0) * 17 + 'px'
               }}
@@ -288,7 +291,7 @@ export default class AnnualTab extends Component {
               rowProps['data-hovered'] = true;
             }
 
-            const row = this.getTableRow(titleElem, values, rowProps);
+            const row = this.getTableRow(titleElem, values, rowProps, params.channel, approvedValues);
             rows.push(row);
 
             if (!collapsed && params.children) {
@@ -300,6 +303,8 @@ export default class AnnualTab extends Component {
         if (data && !this.state.tableCollapsed) {
           handleRows(data);
         }
+
+        const budgetLeftToPlan = budget - data['__TOTAL__'].values.reduce((a, b) => a + b, 0);
 
         const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
           <div
@@ -322,7 +327,7 @@ export default class AnnualTab extends Component {
           });
 
         return <div>
-          <div className={ this.classes.wrap } data-loading={ this.props.isLoaded ? null : true }>
+          <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
             <div className={ planStyles.locals.title }>
               <div className={ planStyles.locals.titleMain }>
                 <div className={ planStyles.locals.titleText }>
@@ -333,9 +338,30 @@ export default class AnnualTab extends Component {
                 </div>
               </div>
               <div className={ planStyles.locals.titleButtons }>
+                <Button type="accent2" style={{
+                  marginLeft: '15px',
+                  width: '102px'
+                }} onClick={() => {
+                  this.props.approveAll();
+                }}>
+                  Accept All
+                </Button>
+                <Button type="normalAccent" style={{
+                  marginLeft: '15px',
+                  width: '102px'
+                }} selected={ this.state.editMode ? true : null } onClick={() => {
+                  if (this.state.editMode) {
+                    this.props.editUpdate();
+                  }
+                  this.setState({
+                    editMode: !this.state.editMode
+                  });
+                }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
+                  { this.state.editMode ? "Done" : "Edit" }
+                </Button>
                 <Button type="primary2" style={{
                   marginLeft: '15px',
-                  width: '106px'
+                  width: '102px'
                 }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
                   this.setState({
                     whatIfSelected: true
@@ -343,7 +369,6 @@ export default class AnnualTab extends Component {
 
                   this.refs.whatIfPopup.open();
                 }}>What if</Button>
-
                 <div style={{ position: 'relative' }}>
                   <PlanPopup ref="whatIfPopup" style={{
                     width: '367px',
@@ -420,7 +445,17 @@ export default class AnnualTab extends Component {
                 </div>
               </div>
             </div>
-            <div className={ planStyles.locals.innerBox }>
+            <div className={ planStyles.locals.title } style={{ height: '40px' }}>
+              <div className={ planStyles.locals.titleMain }>
+                <div className={ this.classes.titleBudget }>
+                  Budget left to plan
+                </div>
+                <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
+                  ${ budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
+                </div>
+              </div>
+            </div>
+            <div className={ this.classes.innerBox }>
               <div className={ this.classes.wrap } ref="wrap">
                 <div className={ this.classes.box }>
                   <table className={ this.classes.table }>
@@ -487,24 +522,26 @@ export default class AnnualTab extends Component {
           </Popup>
         </div>
       }
-    }
-    else return null;
   }
 
-  getTableRow(title, items, props)
+  getTableRow(title, items, props, channel, approvedValues)
   {
     return <tr {... props}>
       <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
       {
         items.map((item, i) => {
-          if (i==0) {
-            return <td className={ this.classes.valueCellFirst } key={ i }>{
-              this.getCellItem(item)
+          if (channel && item != approvedValues[i]) {
+            return <PlanCell item={ item } approved={ approvedValues[i] } key={ i }
+                             approveChannel={ this.approveChannel.bind(this, i, channel, item) } declineChannel={ this.declineChannel.bind(this, i, channel, approvedValues[i]) }/>
+          }
+          else if (channel && this.state.editMode) {
+            return <td className={ this.classes.valueCell } key={ i }>{
+              <input type="text" value={ item } className={ this.classes.edit } onChange={ this.props.editChannel.bind(this, i, channel) }/>
             }</td>
           }
-          return <td className={ this.classes.valueCell } key={ i }>{
-            this.getCellItem(item)
-          }</td>
+          else return <td className={ this.classes.valueCell } key={ i }>{
+              this.getCellItem(item)
+            }</td>
         })
       }
     </tr>

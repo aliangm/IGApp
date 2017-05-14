@@ -6,23 +6,28 @@ import style from 'styles/header.css';
 import Button from 'components/controls/Button';
 import Popup from 'components/Popup';
 import global from 'global';
-import serverCommunication from 'data/serverCommunication';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
-import AuthService from 'components/utils/AuthService';
 
 export default class Header extends Component {
   style = style
-  state = {
-    dropmenuVisible: false,
-    regionsVisible: false,
-    createNewVisible: false,
-    regions: []
-  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      dropmenuVisible: false,
+      regionsVisible: false,
+      createNewVisible: false,
+      regions: []
+    };
+
+    this.logout = this.logout.bind(this);
+  }
 
   static defaultProps = {
-    user: true
-  }
+    user: true,
+    regions: []
+  };
 
   openSidebar = () => {
     global.dispatchEvent('sidebar:open');
@@ -45,8 +50,8 @@ export default class Header extends Component {
     const hasUser = this.props.user;
 
     const regions = hasUser ?
-      this.state.regions.map((region) => {
-        return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.selectedRegion ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
+      this.props.regions.map((region) => {
+        return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.region ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
       })
       :null;
     return <div className={ this.classes.menuBig }>
@@ -89,10 +94,10 @@ export default class Header extends Component {
       { hasUser ?
         <div className={ this.classes.userBox }>
           <div className={ this.classes.logged }>
-            {this.state.userCompany}
-            <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
+            {this.props.userCompany}
+            <div className={ this.classes.user }>{this.props.userFirstName} {this.props.userLastName}</div>
           </div>
-          <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
         </div>
         : null }
     </div>
@@ -101,8 +106,8 @@ export default class Header extends Component {
   get menuSmall() {
     const hasUser = this.props.user;
     const regions = hasUser ?
-      this.state.regions.map((region) => {
-        return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.selectedRegion ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
+      this.props.regions.map((region) => {
+        return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.region ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
       })
       : null;
 
@@ -147,10 +152,10 @@ export default class Header extends Component {
           >
             { hasUser ?
               <div className={ this.classes.userBoxInside }>
-                <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
+                <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
                 <div className={ this.classes.logged }>
-                  {this.state.userCompany}
-                  <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
+                  {this.props.userCompany}
+                  <div className={ this.classes.user }>{this.props.userFirstName} {this.props.userLastName}</div>
                 </div>
               </div>
               : null }
@@ -179,10 +184,10 @@ export default class Header extends Component {
 
       {hasUser ?
         <div className={ this.classes.userBoxOutside }>
-          <div className={ this.classes.userLogo } style={{ backgroundImage: this.state.logoURL ? 'url(' + this.state.logoURL + ')' : '' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
           <div className={ this.classes.logged }>
-            {this.state.userCompany}
-            <div className={ this.classes.user }>{this.state.userFirstName} {this.state.userLastName}</div>
+            {this.props.userCompany}
+            <div className={ this.classes.user }>{this.props.userFirstName} {this.props.userLastName}</div>
           </div>
         </div>
         :null}
@@ -190,56 +195,13 @@ export default class Header extends Component {
   }
 
   logout() {
-    const auth = new AuthService();
-    auth.logout();
+    this.props.auth.logout();
     history.push('/');
   }
 
   changeRegion(region) {
     localStorage.setItem('region', region);
-    this.props.changeRegion(region);
-  }
-
-  componentDidMount(){
-    if (!this.state.isLoaded) {
-      let self = this;
-      let count = 0;
-      serverCommunication.serverRequest('GET', 'useraccount')
-        .then((response) => {
-          response.json()
-            .then(function (data) {
-              if (data) {
-                count++;
-                self.setState({
-                  userFirstName: data.firstName,
-                  userLastName: data.lastName,
-                  userCompany: data.companyName,
-                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                  isLoaded: count == 2
-                });
-              }
-            })
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-      serverCommunication.serverRequest('GET', 'regions')
-        .then((response) => {
-          response.json()
-            .then(function (data) {
-              if (data) {
-                count++;
-                self.setState({
-                  regions: data,
-                  isLoaded: count == 2
-                });
-              }
-            })
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-    }
+    this.props.getUserMonthPlan(region);
   }
 
   render() {
@@ -248,7 +210,7 @@ export default class Header extends Component {
       <div className={ this.classes.logo }></div>
       { this.menuBig }
       { this.menuSmall }
-      <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }}/>
+      <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }} createUserMonthPlan={ this.props.createUserMonthPlan }/>
     </div>
   }
 }

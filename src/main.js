@@ -15,6 +15,7 @@ import Campaigns from './components/pages/Campaigns';
 import Plan from './components/pages/Plan';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import AuthService from './components/utils/AuthService'
+import App from './components/App';
 
 import style from 'styles/global/main.css';
 
@@ -30,16 +31,18 @@ const requireAuth = (nextState, replace) => {
 
 ReactDOM.render(
   <Router history={ history }>
-    <Route path="/profile" component={ Profile } onEnter={ requireAuth }/>
-    <Route path="/preferences" component={ Preferences } onEnter={ requireAuth }/>
-    <Route path="/target-audience" component={ TargetAudience } onEnter={ requireAuth }/>
-    <Route path="/indicators" component={ Indicators } onEnter={ requireAuth }/>
-    <Route path="/manual" component={ Manual } onEnter={ requireAuth }/>
-    <Route path="/welcome" component={ Welcome } onEnter={ requireAuth }/>
-    <Route path="/plan" component={ Plan } onEnter={ requireAuth }/>
-    <Route path="/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAuth }/>
-    <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
-    <Route path="/" component={ SignIn }/>
+    <Route path="/" component={ SignIn } />
+    <Route component={ App } auth={ auth } onEnter={ requireAuth }>
+      <Route path="/profile" component={ Profile } onEnter={ requireAuth }/>
+      <Route path="/preferences" component={ Preferences } onEnter={ requireAuth }/>
+      <Route path="/target-audience" component={ TargetAudience } onEnter={ requireAuth }/>
+      <Route path="/indicators" component={ Indicators } onEnter={ requireAuth }/>
+      <Route path="/manual" component={ Manual } onEnter={ requireAuth }/>
+      <Route path="/welcome" component={ Welcome } onEnter={ requireAuth }/>
+      <Route path="/plan" component={ Plan } onEnter={ requireAuth }/>
+      <Route path="/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAuth }/>
+      <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
+    </Route>
   </Router>,
   // <Profile />,
   document.querySelector('#main')

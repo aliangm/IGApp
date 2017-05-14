@@ -31,6 +31,10 @@ export default class CampaignPopup extends Component {
     this.getEmailTo = this.getEmailTo.bind(this);
   }
 
+  static defaultProps = {
+    teamMembers: []
+  };
+
   handleChangeBudget(parameter, event){
     let update = Object.assign({}, this.state.campaign);
     update[parameter] = parseInt(event.target.value.replace(/[-$h,]/g, ''));
@@ -82,10 +86,10 @@ export default class CampaignPopup extends Component {
     let self = this;
     if (this.validate()) {
       this.props.updateCampaign(this.state.campaign, this.props.index)
-        .then(function (){
+        .then(() => {
           self.props.close();
         })
-        .catch(function (err) {
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -101,13 +105,15 @@ export default class CampaignPopup extends Component {
 
   getEmailTo() {
     return (this.state.campaign.owner ?
-      this.props.teamMembers
-        .filter((item) => {
-          return item.name == this.state.campaign.owner;
-        })
-        .map((item) => {
-          return item.email;
-        })
+      this.state.campaign.owner.value == "me" ?
+        this.props.email :
+        this.props.teamMembers
+          .filter((item) => {
+            return item.name == this.state.campaign.owner;
+          })
+          .map((item) => {
+            return item.email;
+          })
       : '');
   }
 
@@ -353,6 +359,7 @@ export default class CampaignPopup extends Component {
         }
       });
     }
+    selects.owner.select.options.push({value: "me", label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
     return <div>
       <Page popup={ true } width={'800px'}>
         <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>

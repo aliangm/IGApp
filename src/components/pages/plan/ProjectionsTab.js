@@ -307,23 +307,6 @@ export default class ProjectionsTab extends Component {
     }
     else return 'normal';
   }
-  /**
-   componentDidMount(){
-    let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan')
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              self.setState({projectedPlan: data.projectedPlan});
-              self.setState({isLoaded: true});
-            }
-          })
-      })
-      .catch(function (err) {
-        console.log(err);
-      })
-  }**/
 
   selectTab = (index) => {
     this.setState({
@@ -332,76 +315,69 @@ export default class ProjectionsTab extends Component {
   }
 
   render() {
-    if (this.props.isLoaded) {
-      if (!this.props.isPlannerLoading) {
-        const selectedTab = this.state.selectedTab;
-        const rows = this.rows.map((items, i) => {
-          items = items.map((item, j) => {
-            return <Item
-              key={ `row${i}-item${j}` }
-              //defaultState={ item.defaultState && item.defaultState[selectedTab] }
-              defaultState={ this.calculateState(item) }
-              //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
-              defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
-              //grow={ item.grow && item.grow[selectedTab] }
-              grow={ Math.ceil(Math.abs((this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) }
-              icon={ item.icon }
-              title={ item.title }
-            />
-          });
-
-          return <div className={ this.classes.row } key={`row${i}`}>
-            { items }
-          </div>
+    if (!this.props.isPlannerLoading) {
+      const selectedTab = this.state.selectedTab;
+      const rows = this.rows.map((items, i) => {
+        items = items.map((item, j) => {
+          return <Item
+            key={ `row${i}-item${j}` }
+            //defaultState={ item.defaultState && item.defaultState[selectedTab] }
+            defaultState={ this.calculateState(item) }
+            //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
+            defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
+            //grow={ item.grow && item.grow[selectedTab] }
+            grow={ Math.ceil(Math.abs((this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) }
+            icon={ item.icon }
+            title={ item.title }
+          />
         });
 
-        return <div className={ this.classes.wrap }>
-          <div className={ planStyles.locals.title }>
-            <div className={ planStyles.locals.titleMain }>
-              <div className={ planStyles.locals.titleText }>
-                Projections (months)
-              </div>
-            </div>
-            <div className={ planStyles.locals.titleButtons }>
-              {
-                this.tabs.map((tab, i) => {
-                  return <Button
-                    key={i}
-                    className={ this.classes.tabButton }
-                    type={ i === this.state.selectedTab ? 'primary2' : 'normal' }
-                    onClick={() => {
-                  this.selectTab(i);
-                }}
-                  >{ tab }</Button>
-                })
-              }
-            </div>
-          </div>
-          <div className={ planStyles.locals.innerBox }>
-            <div className={ this.classes.content }>
-              { rows }
-            </div>
-          </div>
+        return <div className={ this.classes.row } key={`row${i}`}>
+          { items }
         </div>
-      }
-      else {
-        return <div className={ this.classes.loading }>
-          <Popup className={ this.classes.popup }>
-            <div>
-              <Loading />
-            </div>
+      });
 
-            <div className={ this.classes.popupText }>
-              Please wait while the system creates your plan
+      return <div className={ this.classes.wrap }>
+        <div className={ planStyles.locals.title }>
+          <div className={ planStyles.locals.titleMain }>
+            <div className={ planStyles.locals.titleText }>
+              Forecasting (months)
             </div>
-          </Popup>
+          </div>
+          <div className={ planStyles.locals.titleButtons }>
+            {
+              this.tabs.map((tab, i) => {
+                return <Button
+                  key={i}
+                  className={ this.classes.tabButton }
+                  type={ i === this.state.selectedTab ? 'primary2' : 'normal' }
+                  onClick={() => {
+                    this.selectTab(i);
+                  }}
+                >{ tab }</Button>
+              })
+            }
+          </div>
         </div>
-      }
+        <div className={ planStyles.locals.innerBox }>
+          <div className={ this.classes.content }>
+            { rows }
+          </div>
+        </div>
+      </div>
     }
-    else return <div className={ this.classes.error }>
-      <Page>
-        <label hidden={ !this.props.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
-      </Page>
-    </div>;
+    else {
+      return <div className={ this.classes.loading }>
+        <Popup className={ this.classes.popup }>
+          <div>
+            <Loading />
+          </div>
+
+          <div className={ this.classes.popupText }>
+            Please wait while the system creates your plan
+          </div>
+        </Popup>
+      </div>
+    }
   }
 }

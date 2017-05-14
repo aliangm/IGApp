@@ -1,92 +1,51 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
 import Title from 'components/onboarding/Title';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import SaveButton from 'components/pages/profile/SaveButton';
-import Notice from 'components/Notice';
-import history from 'history';
-
-import Popup from 'components/Popup';
-import Loading from 'components/pages/plan/Loading';
 import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
-import serverCommunication from 'data/serverCommunication';
 import style from 'styles/plan/planned-actual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import Paging from 'components/Paging';
 
-import clone from 'clone';
-
-import plannedActualData from 'data/planned_actual';
-
 export default class PlannedVsActual extends Component {
   styles = [planStyles];
   style = style
 
+  static defaultProps = {
+    plannedChannelBudgets: {},
+    knownChannels: {},
+    unknownChannels: {},
+    hoverRow: void 0,
+    month: 0,
+  };
+
   constructor(props) {
     super(props);
+    this.state = props;
 
-    this.state = {
-      hoverRow: void 0,
-      month: 0,
-      plannedChannelBudgets: {},
-      knownChannels: {},
-      unknownChannels: {}
-    };
-
-    //this.data = clone(plannedActualData);
-    //this.keys = Object.keys(this.data);
     this.keys = [''];
-    this.changeRegion = this.changeRegion.bind(this);
-    this.getUserMonthPlan = this.getUserMonthPlan.bind(this);
+    this.pagingUpdateState = this.pagingUpdateState.bind(this);
   }
 
-  componentDidMount(){
-    this.getUserMonthPlan(localStorage.getItem('region'));
+  componentWillReceiveProps(nextProps) {
+    this.setState(nextProps);
   }
 
-  getUserMonthPlan(region, planDate) {
-    let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              if (data.error) {
-                history.push('/');
-              }
-              else {
-                self.setState({
-                  plannedChannelBudgets: data.projectedPlan[0].plannedChannelBudgets,
-                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                  planDate: data.planDate,
-                  region: data.region,
-                  isLoaded: true
-                });
-                //self.setState({planDate: data.planDate});
-                //self.keys.push(data.planDate);
-              }
-            }
-          })
-      })
-      .catch(function (err) {
-        self.setState({serverDown: true});
-        console.log(err);
-      })
-  }
-
-  changeRegion(region){
-    this.getUserMonthPlan(region);
+  pagingUpdateState(data) {
+    this.setState({
+      planDate: data.planDate,
+      region: data.region,
+      plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
+      knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
+      unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+      monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
+      campaigns: data.campaigns || {}
+    });
   }
 
   addChannel(event) {
@@ -110,7 +69,7 @@ export default class PlannedVsActual extends Component {
           if (alreadyExist.indexOf(event.value) === -1) {
             var update = this.state.knownChannels;
             update[event.value] = 0;
-            this.setState({knownChannels: update}); 
+            this.setState({knownChannels: update});
           }
         }
       }
@@ -134,20 +93,6 @@ export default class PlannedVsActual extends Component {
     }
   }
 
-  changeMonth(dir) {
-    let month = this.state.month + dir;
-
-    if (month >= this.keys.length) {
-      month = 0;
-    } else if (month < 0) {
-      month = this.keys.length - 1;
-    }
-
-    this.setState({
-      month: month
-    });
-  }
-
   getDates = () => {
     var dates = [];
     var monthNames = [
@@ -156,10 +101,13 @@ export default class PlannedVsActual extends Component {
       "Aug", "Sep", "Oct",
       "Nov", "Dec"
     ];
-    var planDate = this.state.planDate.split("/");
-    var date = new Date(planDate[1], planDate[0]-1);
-    dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
-    return dates;
+    var planDate = this.state.planDate ? this.state.planDate .split("/") : null;
+    if (planDate) {
+      var date = new Date(planDate[1], planDate[0] - 1);
+      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
+      return dates;
+    }
+    else return [];
   }
 
   render() {
@@ -167,359 +115,350 @@ export default class PlannedVsActual extends Component {
     let headRow;
     let rows;
     let channelOptions = [];
-    if (this.state.isLoaded) {
-      this.keys = this.getDates();
-      month = this.keys[this.state.month];
-      const data = parsePlannedVsActual(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
-      if (data) {
-        rows = data.map((item, i) => {
-          return this.getTableRow(null, [
-            item.channel,
-            '$' + item.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-            <div className={ this.classes.cellItem }>
-              <Textfield style={{
+    this.keys = this.getDates();
+    month = this.keys[this.state.month];
+    const data = parsePlannedVsActual(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
+    if (data) {
+      rows = data.map((item, i) => {
+        return this.getTableRow(null, [
+          item.channel,
+          '$' + item.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+          <div className={ this.classes.cellItem }>
+            <Textfield style={{
               minWidth: '72px'
             }} value={ '$' + item.actual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } onChange={(e) => {
-            let value = parseInt(e.target.value.replace(/^\$/, '').replace(',','')) || '';
-            this.updateActual(item.key, value);
+              let value = parseInt(e.target.value.replace(/^\$/, '').replace(',','')) || '';
+              this.updateActual(item.key, value);
             }}/>
-            </div>
-          ], {
-            key: month + i
-          });
+          </div>
+        ], {
+          key: month + i
         });
-      }
-
-      headRow = this.getTableRow(null, [
-        'Channels',
-        'Planned',
-        'Actual'
-      ], {
-        className: this.classes.headRow
       });
-
-      channelOptions = [
-            {
-              label: 'Advertising',
-              options: [
-                {
-                  label: 'Display Ads', options: [
-                  {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
-                  {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
-                ]
-                },
-                {
-                  label: 'Search Marketing', options: [
-                  {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
-                  {
-                    label: 'SEM (PPC)', options: [
-                    {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
-                    {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
-                  ]
-                  },
-                ]
-                },
-                {
-                  label: 'Social Ads', options: [
-                  {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
-                  {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
-                  {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
-                  {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
-                  {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
-                  {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
-                  {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
-                ]
-                },
-                {
-                  label: 'Offline Ads', options: [
-                  {
-                    label: 'TV', options: [
-                    {label: 'Local', value: 'advertising_offlineAds_TV_local'},
-                    {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
-                    {label: 'International', value: 'advertising_offlineAds_TV_international'}
-                  ]
-                  },
-                  {label: 'Radio', value: 'advertising_offlineAds_radio'},
-                  {
-                    label: 'Newspaper', options: [
-                    {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
-                    {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
-                    {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
-                  ]
-                  },
-                  {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
-                  {label: 'SMS', value: 'advertising_offlineAds_SMS'},
-                ]
-                },
-                {
-                  label: 'Mobile', options: [
-                  {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
-                  {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
-                  {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
-                  {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
-                ]
-                },
-                {
-                  label: 'Magazines', options: [
-                  {
-                    label: 'Consumers', options: [
-                    {label: 'Local', value: 'advertising_magazines_consumers_local'},
-                    {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
-                    {label: 'International', value: 'advertising_magazines_consumers_international'},
-                  ]
-                  },
-                  {
-                    label: 'Professional', options: [
-                    {label: 'Local', value: 'advertising_magazines_professional_local'},
-                    {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
-                    {label: 'International', value: 'advertising_magazines_professional_international'},
-                  ]
-                  },
-                ]
-                },
-                {label: 'Paid Reviews', value: 'advertising_paidReviews'},
-                {label: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
-              ]
-            },
-            {
-              label: 'Content', options: [
-              {
-                label: 'Content Promotion', options: [
-                {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
-                {
-                  label: 'Content Discovery', options: [
-                  {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
-                  {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
-                  {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
-                ]
-                },
-                {
-                  label: 'Forums', options: [
-                  {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
-                  {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
-                  {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
-                ]
-                },
-                {label: 'EBooks'},
-              ]
-              },
-              {
-                label: 'Content Creation', options: [
-                {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
-                {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
-                {label: 'Presentations', value: 'content_contentCreation_presentations'},
-                {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
-                {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
-                {label: 'E-book', value: 'content_contentCreation_eBook'},
-                {label: 'Videos', value: 'content_contentCreation_videos'},
-                {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
-              ]
-              }
-            ]
-            },
-            {
-              label: 'Email', options: [
-              {label: 'Marketing Email', value: 'email_marketingEmail'},
-              {label: 'Transactional Email', value: 'email_transactionalEmail'},
-            ]
-            },
-            {
-              label: 'Engineering as Marketing', options: [
-              {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
-              {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
-              {label: 'Widget', value: 'engineeringAsMarketing_widget'},
-              {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
-              {label: 'Any', value: 'engineeringAsMarketing_other'}
-            ]
-            },
-            {
-              label: 'Events', options: [
-              {
-                label: 'Offline Events', options: [
-                {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
-                {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
-                {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
-                {label: 'Running', value: 'events_offlineEvents_running'}
-              ]
-              },
-              {
-                label: 'Online Events (Running)', options: [
-                {label: 'Webinar', value: 'events_onlineEvents_webinar'},
-                {label: 'Podcast', value: 'events_onlineEvents_podcast'},
-                {label: 'Workshop', value: 'events_onlineEvents_workshop'}
-              ]
-              },
-            ]
-            },
-            {
-              label: 'Mobile', options: [
-              {label: 'Mobile App', value: 'mobile_mobileApp'},
-              {label: 'Mobile Site', value: 'mobile_mobileSite'}
-            ]
-            },
-            {
-              label: 'Partners', options: [
-              {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
-            ]
-            },
-            {
-              label: 'PR', options: [
-              {
-                label: 'Unconventional PR', options: [
-                {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
-                {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
-              ]
-              },
-              {
-                label: 'Publicity', options: [
-                {
-                  label: 'Press Releases', options: [
-                  {label: 'Local', value: 'PR_publicity_pressReleases_local'},
-                  {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
-                  {label: 'International', value: 'PR_publicity_pressReleases_international'},
-                ]
-                }
-              ]
-              }
-            ]
-            },
-            {
-              label: 'Social', options: [
-              {label: 'Facebook Page', value: 'social_facebookPage'},
-              {label: 'Twitter Account', value: 'social_twitterAccount'},
-              {label: 'Youtube Channel', value: 'social_youtubeChannel'},
-              {label: 'Instagram Account', value: 'social_instagramAccount'},
-              {label: 'Google+ Page', value: 'social_googlePlusPage'},
-              {label: 'Pinterest Page', value: 'social_pinterestPage'},
-              {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
-              {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
-              {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
-              {label: 'Community Building', value: 'social_communityBuilding'},
-              {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
-            ]
-            },
-            {label: 'Telemarketing', value: 'telemarketing'},
-            {
-              label: 'Viral', options: [
-              {
-                label: 'Recommend a Friend', options: [
-                {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
-              ]
-              }
-            ]
-            },
-            {
-              label: 'Web', options: [
-              {label: 'Company’s Website', value: 'web_companyWebsite'},
-              {label: 'Landing Pages', value: 'web_landingPages'}
-            ]
-            },
-            {
-              label: 'Other?', value: 'OTHER'
-            }
-          ];
-
-      let preventDuplicates = (value) => {
-        if (value.options) {
-          value.options.map(preventDuplicates);
-        }
-        else {
-          value.disabled = Object.keys(this.state.knownChannels).includes(value.value) || Object.keys(this.state.plannedChannelBudgets).includes(value.value);
-          return value;
-        }
-      };
-
-      channelOptions.map(preventDuplicates);
-
     }
 
+    headRow = this.getTableRow(null, [
+      'Channels',
+      'Planned',
+      'Actual'
+    ], {
+      className: this.classes.headRow
+    });
+
+    channelOptions = [
+      {
+        label: 'Advertising',
+        options: [
+          {
+            label: 'Display Ads', options: [
+            {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
+            {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
+          ]
+          },
+          {
+            label: 'Search Marketing', options: [
+            {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
+            {
+              label: 'SEM (PPC)', options: [
+              {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
+              {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
+            ]
+            },
+          ]
+          },
+          {
+            label: 'Social Ads', options: [
+            {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
+            {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
+            {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
+            {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
+            {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
+            {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
+            {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
+          ]
+          },
+          {
+            label: 'Offline Ads', options: [
+            {
+              label: 'TV', options: [
+              {label: 'Local', value: 'advertising_offlineAds_TV_local'},
+              {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
+              {label: 'International', value: 'advertising_offlineAds_TV_international'}
+            ]
+            },
+            {label: 'Radio', value: 'advertising_offlineAds_radio'},
+            {
+              label: 'Newspaper', options: [
+              {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
+              {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
+              {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
+            ]
+            },
+            {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
+            {label: 'SMS', value: 'advertising_offlineAds_SMS'},
+          ]
+          },
+          {
+            label: 'Mobile', options: [
+            {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
+            {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
+            {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
+            {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
+          ]
+          },
+          {
+            label: 'Magazines', options: [
+            {
+              label: 'Consumers', options: [
+              {label: 'Local', value: 'advertising_magazines_consumers_local'},
+              {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
+              {label: 'International', value: 'advertising_magazines_consumers_international'},
+            ]
+            },
+            {
+              label: 'Professional', options: [
+              {label: 'Local', value: 'advertising_magazines_professional_local'},
+              {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
+              {label: 'International', value: 'advertising_magazines_professional_international'},
+            ]
+            },
+          ]
+          },
+          {label: 'Paid Reviews', value: 'advertising_paidReviews'},
+          {label: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
+        ]
+      },
+      {
+        label: 'Content', options: [
+        {
+          label: 'Content Promotion', options: [
+          {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
+          {
+            label: 'Content Discovery', options: [
+            {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
+            {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
+            {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
+          ]
+          },
+          {
+            label: 'Forums', options: [
+            {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
+            {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
+            {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
+          ]
+          },
+          {label: 'EBooks'},
+        ]
+        },
+        {
+          label: 'Content Creation', options: [
+          {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
+          {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
+          {label: 'Presentations', value: 'content_contentCreation_presentations'},
+          {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
+          {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
+          {label: 'E-book', value: 'content_contentCreation_eBook'},
+          {label: 'Videos', value: 'content_contentCreation_videos'},
+          {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
+        ]
+        }
+      ]
+      },
+      {
+        label: 'Email', options: [
+        {label: 'Marketing Email', value: 'email_marketingEmail'},
+        {label: 'Transactional Email', value: 'email_transactionalEmail'},
+      ]
+      },
+      {
+        label: 'Engineering as Marketing', options: [
+        {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
+        {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
+        {label: 'Widget', value: 'engineeringAsMarketing_widget'},
+        {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
+        {label: 'Any', value: 'engineeringAsMarketing_other'}
+      ]
+      },
+      {
+        label: 'Events', options: [
+        {
+          label: 'Offline Events', options: [
+          {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
+          {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
+          {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
+          {label: 'Running', value: 'events_offlineEvents_running'}
+        ]
+        },
+        {
+          label: 'Online Events (Running)', options: [
+          {label: 'Webinar', value: 'events_onlineEvents_webinar'},
+          {label: 'Podcast', value: 'events_onlineEvents_podcast'},
+          {label: 'Workshop', value: 'events_onlineEvents_workshop'}
+        ]
+        },
+      ]
+      },
+      {
+        label: 'Mobile', options: [
+        {label: 'Mobile App', value: 'mobile_mobileApp'},
+        {label: 'Mobile Site', value: 'mobile_mobileSite'}
+      ]
+      },
+      {
+        label: 'Partners', options: [
+        {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
+      ]
+      },
+      {
+        label: 'PR', options: [
+        {
+          label: 'Unconventional PR', options: [
+          {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
+          {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
+        ]
+        },
+        {
+          label: 'Publicity', options: [
+          {
+            label: 'Press Releases', options: [
+            {label: 'Local', value: 'PR_publicity_pressReleases_local'},
+            {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
+            {label: 'International', value: 'PR_publicity_pressReleases_international'},
+          ]
+          }
+        ]
+        }
+      ]
+      },
+      {
+        label: 'Social', options: [
+        {label: 'Facebook Page', value: 'social_facebookPage'},
+        {label: 'Twitter Account', value: 'social_twitterAccount'},
+        {label: 'Youtube Channel', value: 'social_youtubeChannel'},
+        {label: 'Instagram Account', value: 'social_instagramAccount'},
+        {label: 'Google+ Page', value: 'social_googlePlusPage'},
+        {label: 'Pinterest Page', value: 'social_pinterestPage'},
+        {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
+        {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
+        {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
+        {label: 'Community Building', value: 'social_communityBuilding'},
+        {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
+      ]
+      },
+      {label: 'Telemarketing', value: 'telemarketing'},
+      {
+        label: 'Viral', options: [
+        {
+          label: 'Recommend a Friend', options: [
+          {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
+        ]
+        }
+      ]
+      },
+      {
+        label: 'Web', options: [
+        {label: 'Company’s Website', value: 'web_companyWebsite'},
+        {label: 'Landing Pages', value: 'web_landingPages'}
+      ]
+      },
+      {
+        label: 'Other?', value: 'OTHER'
+      }
+    ];
+
+    let preventDuplicates = (value) => {
+      if (value.options) {
+        value.options.map(preventDuplicates);
+      }
+      else {
+        value.disabled = Object.keys(this.state.knownChannels).includes(value.value) || Object.keys(this.state.plannedChannelBudgets).includes(value.value);
+        return value;
+      }
+    };
+
+    channelOptions.map(preventDuplicates);
+
     return <div>
-      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
-      <Sidebar />
       <Page>
         <Title title="Planned VS Actual" subTitle="It is very important to keep the data credibility. To optimize your marketing planning every step of the way, InfiniGrow needs to know exactly what your actual marketing investments were (even if they aren’t 1:1 as recommended)."/>
         <div className={ planStyles.locals.serverDown }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
-        { this.state.isLoaded ? <div>
-          <div className={ planStyles.locals.title }>
-            <Paging month={ this.state.planDate } getUserMonthPlan={ this.getUserMonthPlan } region={ this.state.region }/>
-          </div>
-          <div className={ planStyles.locals.innerBox }>
-            <div className={ this.classes.wrap } ref="wrap">
-              <div className={ this.classes.box }>
-                <table className={ this.classes.table }>
-                  {/*<col style={{ width: '50%' }} />
-                   <col style={{ width: '25%' }} />
-                   <col style={{ width: '25%' }} />*/}
-                  <thead>
-                  { headRow }
-                  </thead>
-                  <tbody className={ this.classes.tableBody }>
-                  { rows }
-                  </tbody>
-                </table>
-              </div>
+        <div className={ planStyles.locals.title }>
+          <Paging month={ this.state.planDate } pagingUpdateState={ this.pagingUpdateState } region={ this.state.region }/>
+        </div>
+        <div className={ planStyles.locals.innerBox }>
+          <div className={ this.classes.wrap } ref="wrap">
+            <div className={ this.classes.box }>
+              <table className={ this.classes.table }>
+                {/*<col style={{ width: '50%' }} />
+                 <col style={{ width: '25%' }} />
+                 <col style={{ width: '25%' }} />*/}
+                <thead>
+                { headRow }
+                </thead>
+                <tbody className={ this.classes.tableBody }>
+                { rows }
+                </tbody>
+              </table>
             </div>
-          </div>
-          <MultiRow numOfRows={1} maxNumOfRows={1} >
-            {({index, data, update, removeButton}) => {
-              return <div style={{
-                    paddingBottom: '25px',
-                    width: '460px'
-                  }} className={ this.classes.channelsRow }>
-                <Select
-                  className={ this.classes.channelsSelect }
-                  selected={ -1 }
-                  select={{
-                        menuTop: true,
-                        name: 'channels',
-                        onChange: (selected) => {
-                          update({
-                            selected: selected
-                          });
-                        },
-                        options: channelOptions
-                      }}
-                  onChange={ this.addChannel.bind(this) }
-                  label={ `Add a channel` }
-                  labelQuestion={ [''] }
-                  description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
-                />
-              </div>
-            }}
-          </MultiRow>
-          { this.state.showText ?
-            <div className={ this.classes.channelsRow }>
-              <Textfield style={{
-              width: '292px'
-            }}  onChange={(e) => {
-                this.addOtherChannel(e);
-            }}/>
-              <Button type="primary2" style={{
-            width: '72px',
-             margin: '0 20px'
-          }} onClick={() => {
-              this.addChannel();
-          }}> Enter
-              </Button>
-            </div>
-            : null }
-          <div className={ this.classes.footer } style={{ marginTop: '150px' }}>
-            <SaveButton onClick={() => {
-            let self = this;
-            self.setState({saveFail: false, saveSuceess: false});
-		serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}), this.state.region, this.state.planDate)
-			.then(function(data){
-			  self.setState({saveSuceess: true});
-			})
-			.catch(function(err){
-			  self.setState({saveFail: true});
-			});
-            }} success={ this.state.saveSuceess } fail={ this.state.saveFail }/>
           </div>
         </div>
+        <MultiRow numOfRows={1} maxNumOfRows={1} >
+          {({index, data, update, removeButton}) => {
+            return <div style={{
+              paddingBottom: '25px',
+              width: '460px'
+            }} className={ this.classes.channelsRow }>
+              <Select
+                className={ this.classes.channelsSelect }
+                selected={ -1 }
+                select={{
+                  menuTop: true,
+                  name: 'channels',
+                  onChange: (selected) => {
+                    update({
+                      selected: selected
+                    });
+                  },
+                  options: channelOptions
+                }}
+                onChange={ this.addChannel.bind(this) }
+                label={ `Add a channel` }
+                labelQuestion={ [''] }
+                description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
+              />
+            </div>
+          }}
+        </MultiRow>
+        { this.state.showText ?
+          <div className={ this.classes.channelsRow }>
+            <Textfield style={{
+              width: '292px'
+            }}  onChange={(e) => {
+              this.addOtherChannel(e);
+            }}/>
+            <Button type="primary2" style={{
+              width: '72px',
+              margin: '0 20px'
+            }} onClick={() => {
+              this.addChannel();
+            }}> Enter
+            </Button>
+          </div>
           : null }
+        <div className={ this.classes.footer } style={{ marginTop: '150px' }}>
+          <SaveButton onClick={() => {
+            this.setState({saveFail: false, saveSuccess: false});
+            this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
+              .then(() => {
+                this.setState({saveSuccess: true});
+              })
+              .catch(() => {
+                this.setState({saveFail: true});
+              });
+          }} success={ this.state.saveSuccess} fail={ this.state.saveFail }/>
+        </div>
       </Page>
     </div>
   }

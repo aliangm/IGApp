@@ -51,6 +51,9 @@ export default class SignIn extends Component {
           else {
             history.push('/plan')
           }
+        })
+        .catch((err) => {
+          this.lock.login();
         });
     }
     else {

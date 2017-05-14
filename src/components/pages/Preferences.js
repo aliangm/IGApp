@@ -1,8 +1,6 @@
 import React from 'react';
 
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
 
 import Select from 'components/controls/Select';
@@ -18,7 +16,6 @@ import ProfileInsights from 'components/pages/profile/Insights';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
-import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import NotSure from 'components/onboarding/NotSure';
 import MultiSelect from 'components/controls/MultiSelect';
 
@@ -27,7 +24,6 @@ import preferencesStyle from 'styles/preferences/preferences.css';
 
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
-import serverCommunication from 'data/serverCommunication';
 
 export default class Preferences extends Component {
   style = style
@@ -35,88 +31,44 @@ export default class Preferences extends Component {
 
   budgetWeights = [0.07, 0.11, 0.13, 0.13, 0.11, 0.05, 0.04, 0.04, 0.09, 0.09, 0.12, 0.02];
 
+  static defaultProps = {
+    goals: {
+      primary: 'InfiniGrow Recommended',
+      secondary: 'InfiniGrow Recommended'
+    },
+    objectives: [],
+    isCheckAnnual: true,
+    maxChannels: -1,
+    userMinMonthBudgets: {},
+    blockedChannels: [],
+    inHouseChannels: [],
+    planDay: 1
+  };
+
   constructor(props) {
     super(props);
-    this.state = {
-      goals: {
-        primary: 'InfiniGrow Recommended',
-        secondary: 'InfiniGrow Recommended'
-      },
-      objectives: [],
-      isCheckAnnual: true,
-      maxChannels: -1,
-      userMinMonthBudgets: {},
-      blockedChannels: [],
-      inHouseChannels: []
-    };
+    this.state = {};
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
     this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
-    this.changeRegion = this.changeRegion.bind(this);
   }
 
   validate() {
-    let filterNanArray = this.state.annualBudgetArray.filter((value)=>{return !!value});
+    let filterNanArray = this.props.annualBudgetArray.filter((value)=>{return !!value});
     return filterNanArray.length == 12;
   }
 
-  componentDidMount() {
-    this.getUserMonthPlan(localStorage.getItem('region'));
-  }
-
-  getUserMonthPlan(region, planDate) {
-    let self = this;
-    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
-      .then((response) => {
-        response.json()
-          .then(function (data) {
-            if (data) {
-              if (data.error) {
-                history.push('/');
-              }
-              else {
-                self.setState({
-                  annualBudget: data.annualBudget,
-                  annualBudgetArray: data.annualBudgetArray || [],
-                  planDate: data.planDate,
-                  region: data.region,
-                  goals: {
-                    primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                    secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                  },
-                  objectives: data.objectives || [],
-                  blockedChannels: data.blockedChannels || [],
-                  inHouseChannels: data.inHouseChannels || [],
-                  userMinMonthBudgets: data.userMinMonthBudgets || {},
-                  maxChannels: data.maxChannels || -1,
-                  isCheckAnnual: data.annualBudget!==null,
-                  isLoaded: true
-                });
-              }
-            }
-          })
-      })
-      .catch(function (err) {
-        self.setState({serverDown: true});
-        console.log(err);
-      });
-  }
-
-  changeRegion(region){
-    this.getUserMonthPlan(region);
-  }
-
   handleChangeGoals(parameter, event) {
-    let update = this.state.goals || {};
+    let update = this.props.goals || {};
     update[parameter] = event.value;
-    this.setState({goals: update});
-    if (this.state.goals.primary == 'InfiniGrow Recommended' && this.state.goals.secondary != 'InfiniGrow Recommended') {
-      this.setState({
+    this.props.updateState({goals: update});
+    if (this.props.goals.primary == 'InfiniGrow Recommended' && this.props.goals.secondary != 'InfiniGrow Recommended') {
+      this.props.updateState({
         goals: {
-          primary: this.state.goals.secondary,
+          primary: this.props.goals.secondary,
           secondary: 'InfiniGrow Recommended'
         }
       })
@@ -127,7 +79,7 @@ export default class Preferences extends Component {
     let update = {};
     update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
 
-    let planDate = this.state.planDate.split("/");
+    let planDate = this.props.planDate.split("/");
     let firstMonth = parseInt(planDate[0]) - 1;
 
     let budget = [];
@@ -136,60 +88,64 @@ export default class Preferences extends Component {
     });
     update['annualBudgetArray'] = budget;
 
-    this.setState(update);
+    this.props.updateState(update);
   }
 
   handleChangeBudgetArray(index, event) {
-    let update = this.state.annualBudgetArray || [];
+    let update = this.props.annualBudgetArray || [];
     update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
-    this.setState({annualBudgetArray: update});
+    this.props.updateState({annualBudgetArray: update});
+  }
+
+  handleChangePlanDay(event) {
+    this.props.updateState({planDay: event.value});
   }
 
   handleChangeBlockedChannels(event) {
     let update = event.map((obj) => {
       return obj.value;
     });
-    this.setState({blockedChannels: update});
+    this.props.updateState({blockedChannels: update});
   }
 
   handleChangeInHouseChannels(event) {
     let update = event.map((obj) => {
       return obj.value;
     });
-    this.setState({inHouseChannels: update});
+    this.props.updateState({inHouseChannels: update});
   }
 
   handleChangeMax(parameter, event) {
     const number = parseInt(event.target.value);
     if (number && number > 0) {
-      this.setState({maxChannels: number});
+      this.props.updateState({maxChannels: number});
     }
     else {
-      this.setState({maxChannels: -1});
+      this.props.updateState({maxChannels: -1});
     }
   }
 
   inHouseChannelRemove(index) {
-    let update = this.state.inHouseChannels || [];
+    let update = this.props.inHouseChannels || [];
     update.splice(index, 1);
-    this.setState({inHouseChannels: update});
+    this.props.updateState({inHouseChannels: update});
   }
 
   blockedChannelRemove(index) {
-    let update = this.state.blockedChannels || [];
+    let update = this.props.blockedChannels || [];
     update.splice(index, 1);
-    this.setState({blockedChannels: update});
+    this.props.updateState({blockedChannels: update});
   }
 
   minimumBudgetRemove(index) {
-    let update = this.state.userMinMonthBudgets || {};
+    let update = this.props.userMinMonthBudgets || {};
     let channel = Object.keys(update)[index];
     delete update[channel];
-    this.setState({userMinMonthBudgets: update});
+    this.props.updateState({userMinMonthBudgets: update});
   }
 
   handleChangeMinChannel(index, event) {
-    let update = this.state.userMinMonthBudgets || {};
+    let update = this.props.userMinMonthBudgets || {};
     let channel = Object.keys(update)[index];
     if (channel) {
       update[event.value] = update[channel];
@@ -198,47 +154,47 @@ export default class Preferences extends Component {
     else {
       update[event.value] = null;
     }
-    this.setState({userMinMonthBudgets: update});
+    this.props.updateState({userMinMonthBudgets: update});
   }
 
   handleChangeMinBudget(index, event) {
-    let update = this.state.userMinMonthBudgets || {};
+    let update = this.props.userMinMonthBudgets || {};
     let channel = Object.keys(update)[index];
     update[channel] = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    this.setState({userMinMonthBudgets: update});
+    this.props.updateState({userMinMonthBudgets: update});
   }
 
   handleChangeObjectivesSelect(index, parameter, event) {
-    let update = this.state.objectives || [];
+    let update = this.props.objectives || [];
     if (!update[index]) {
       update[index] = {};
     }
     update[index][parameter] = event.value;
-    this.setState({objectives: update});
+    this.props.updateState({objectives: update});
   }
 
   handleChangeObjectivesNumber(index, parameter, event) {
-    let update = this.state.objectives || [];
+    let update = this.props.objectives || [];
     if (!update[index]) {
       update[index] = {};
     }
     update[index][parameter] = parseInt(event.target.value);
-    this.setState({objectives: update});
+    this.props.updateState({objectives: update});
   }
 
   handleChangeDate(index, value) {
-    let update = this.state.objectives || [];
+    let update = this.props.objectives || [];
     if (!update[index]) {
       update[index] = {};
     }
     update[index].timeFrame = value;
-    this.setState({objectives: update});
+    this.props.updateState({objectives: update});
   }
 
   objectiveRemove(index) {
-    let update = this.state.objectives || [];
+    let update = this.props.objectives || [];
     update.splice(index,1);
-    this.setState({objectives: update});
+    this.props.updateState({objectives: update});
   }
 
   getDates = () => {
@@ -250,10 +206,12 @@ export default class Preferences extends Component {
     ];
     var dates = [];
     for (var i = 0; i < 12; i++) {
-      var planDate = this.state.planDate.split("/");
-      var date = new Date(planDate[1], planDate[0] - 1);
-      date.setMonth(date.getMonth() + i);
-      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
+      var planDate = this.props.planDate ? this.props.planDate.split("/") : null;
+      if (planDate) {
+        var date = new Date(planDate[1], planDate[0] - 1);
+        date.setMonth(date.getMonth() + i);
+        dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
+      }
     }
     return dates;
   }
@@ -264,7 +222,7 @@ export default class Preferences extends Component {
       return <div className={ this.classes.cell } key={index}>
         <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
         <Textfield
-          value={"$" + (this.state.annualBudgetArray[index] ? this.state.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+          value={"$" + (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
           onChange={ this.handleChangeBudgetArray.bind(this, index)} style={{
           width: '166px'
         }}/>
@@ -273,23 +231,25 @@ export default class Preferences extends Component {
   }
 
   toggleCheck() {
-    if (this.state.isCheckAnnual) {
-      let prevBudget = this.state.annualBudget;
-      let planDate = this.state.planDate.split("/");
-      let firstMonth = parseInt(planDate[0]) - 1;
+    if (this.props.planDate) {
+      if (this.props.isCheckAnnual) {
+        let prevBudget = this.props.annualBudget;
+        let planDate = this.props.planDate.split("/");
+        let firstMonth = parseInt(planDate[0]) - 1;
 
-      let budget = [];
-      this.budgetWeights.forEach((element, index) => {
-        budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
-      });
+        let budget = [];
+        this.budgetWeights.forEach((element, index) => {
+          budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
+        });
 
-      this.setState({annualBudget: null, annualBudgetArray: budget});
+        this.props.updateState({annualBudget: null, annualBudgetArray: budget});
+      }
+      else {
+        let sum = this.props.annualBudgetArray.reduce((a, b) => a + b, 0);
+        this.props.updateState({annualBudget: sum});
+      }
+      this.props.updateState({isCheckAnnual: !this.props.isCheckAnnual});
     }
-    else {
-      let sum = this.state.annualBudgetArray.reduce((a, b) => a + b, 0);
-      this.setState({annualBudget: sum});
-    }
-    this.setState({isCheckAnnual: !this.state.isCheckAnnual});
   }
 
   render() {
@@ -349,6 +309,45 @@ export default class Preferences extends Component {
             {value: 'Retention Rates', label: 'Retention Rates'},
             {value: 'Number Of Job Applicants', label: 'Number Of Job Applicants'},
             {value: 'Thought Leadership', label: 'Thought Leadership'}
+          ]
+        }
+      },
+      planDay: {
+        label: 'Plan-Next-Month Day',
+        labelQuestion: [''],
+        description: ['Choose the next-plan-month day. After this day in the month, re-planning will plan your next month (re-planning before this day will plan the current month).'],
+        select: {
+          name: 'planDay',
+          onChange: () => {},
+          options: [
+            {value:1 , label: 1},
+            {value:2 , label: 2},
+            {value:3 , label: 3},
+            {value:4 , label: 4},
+            {value:5 , label: 5},
+            {value:6 , label: 6},
+            {value:7 , label: 7},
+            {value:8 , label: 8},
+            {value:9 , label: 9},
+            {value:10 , label: 10},
+            {value:11 , label: 11},
+            {value:12 , label: 12},
+            {value:13 , label: 13},
+            {value:14 , label: 14},
+            {value:15 , label: 15},
+            {value:16 , label: 16},
+            {value:17 , label: 17},
+            {value:18 , label: 18},
+            {value:19 , label: 19},
+            {value:20 , label: 20},
+            {value:21 , label: 21},
+            {value:22 , label: 22},
+            {value:23 , label: 23},
+            {value:24 , label: 24},
+            {value:25 , label: 25},
+            {value:26 , label: 26},
+            {value:27 , label: 27},
+            {value:28 , label: 28},
           ]
         }
       }
@@ -616,7 +615,7 @@ export default class Preferences extends Component {
       if (value.options) {
         value.options.map(preventDuplicates);
       }
-      value.disabled = this.state.blockedChannels.includes(value.value) || this.state.inHouseChannels.includes(value.value) || Object.keys(this.state.userMinMonthBudgets).includes(value.value);
+      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || Object.keys(this.props.userMinMonthBudgets).includes(value.value);
       return value;
     };
 
@@ -634,21 +633,19 @@ export default class Preferences extends Component {
     // Deep copy
     const blockedChannels = JSON.parse(JSON.stringify(channels));
     // We allow only 3 blocked channels.
-    if (this.state.blockedChannels.length >= 3) {
+    if (this.props.blockedChannels.length >= 3) {
       // Disable all options
       blockedChannels.select.options.map(maxChannels);
     }
 
-    const userMinMonthBudgetsArray = Object.keys(this.state.userMinMonthBudgets);
+    const userMinMonthBudgetsArray = Object.keys(this.props.userMinMonthBudgets);
 
     return <div>
-      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
-      <Sidebar />
       <Page popup={ isPopupMode() }>
         <Title title="Preferences"
                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
         <div className={ this.classes.error }>
-          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our
+          <label hidden={ !this.props.serverDown }> It look's like our server is down... :( <br/> Please contact our
             support. </label>
         </div>
         <div className={ this.classes.cols }>
@@ -661,12 +658,12 @@ export default class Preferences extends Component {
              <Calendar />
              </div> **/}
             <div className={ this.classes.row }>
-              <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
+              <Label checkbox={this.props.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget
                 ($)</Label>
               <div className={ this.classes.cell }>
-                <Textfield disabled={!this.state.isCheckAnnual}
-                           value={"$" + (this.state.annualBudget ? this.state.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                <Textfield disabled={!this.props.isCheckAnnual}
+                           value={"$" + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
                            onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }}/>
@@ -676,10 +673,17 @@ export default class Preferences extends Component {
               </div>
             </div>
             <div className={ this.classes.row }>
-              <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
+              <Label checkbox={!this.props.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Monthly Budget
                 ($)</Label>
-              { this.state.isCheckAnnual ? null : this.monthBudgets() }
+              { this.props.isCheckAnnual ? null : this.monthBudgets() }
+            </div>
+            <div className={ this.classes.row } style={{
+              // maxWidth: '440px',
+              // minWidth: '200px',
+              width: '100px'
+            }}>
+              <Select { ... selects.planDay } selected={ this.props.planDay } onChange={ this.handleChangePlanDay.bind(this) }/>
             </div>
             {/**
              <div className={ this.classes.row } style={{
@@ -695,7 +699,7 @@ export default class Preferences extends Component {
               // minWidth: '200px',
               width: '258px'
             }}>
-              <Select { ... selects.primary_goal } selected={ this.state.goals.primary }
+              <Select { ... selects.primary_goal } selected={ this.props.goals.primary }
                       onChange={ this.handleChangeGoals.bind(this, 'primary') }/>
             </div>
             <div className={ this.classes.row } style={{
@@ -703,7 +707,7 @@ export default class Preferences extends Component {
               // minWidth: '200px',
               width: '258px'
             }}>
-              <Select { ... selects.secondary_goal } selected={ this.state.goals.secondary }
+              <Select { ... selects.secondary_goal } selected={ this.props.goals.secondary }
                       onChange={ this.handleChangeGoals.bind(this, 'secondary') }/>
             </div>
             <div className={ this.classes.row } style={{}}>
@@ -712,7 +716,7 @@ export default class Preferences extends Component {
                 fontWeight: '600'
               }} question={['']}
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
-              <MultiRow numOfRows={ this.state.objectives.length } rowRemoved={this.objectiveRemove}>
+              <MultiRow numOfRows={ this.props.objectives.length } rowRemoved={this.objectiveRemove}>
                 {({index, data, update, removeButton}) => {
                   return <div>
                     <div className={ preferencesStyle.locals.channelsRow }>
@@ -724,10 +728,10 @@ export default class Preferences extends Component {
                     <div style={{
                     }} className={ preferencesStyle.locals.channelsRow }>
                       <div className={ preferencesStyle.locals.objectiveText }>I want</div>
-                      <Textfield type="number" value={ this.state.objectives[index] ? this.state.objectives[index].amount : '' } style={{width: '60px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
+                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '60px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
                       <Select
                         className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.state.objectives[index] ? this.state.objectives[index].isPercentage : -1 }
+                        selected={ this.props.objectives[index] ? this.props.objectives[index].isPercentage : -1 }
                         select={{
                           menuTop: true,
                           name: 'type',
@@ -742,7 +746,7 @@ export default class Preferences extends Component {
                       />
                       <Select
                         className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.state.objectives[index] ? this.state.objectives[index].direction : -1 }
+                        selected={ this.props.objectives[index] ? this.props.objectives[index].direction : -1 }
                         select={{
                           menuTop: true,
                           name: 'channels',
@@ -758,7 +762,7 @@ export default class Preferences extends Component {
                       <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>in</div>
                       <Select
                         className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.state.objectives[index] ? this.state.objectives[index].indicator : -1 }
+                        selected={ this.props.objectives[index] ? this.props.objectives[index].indicator : -1 }
                         select={{
                           menuTop: true,
                           name: 'channels',
@@ -774,7 +778,7 @@ export default class Preferences extends Component {
                       />
                       <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>until</div>
                       <div style={{ marginLeft: '10px', width: '205px' }}>
-                        <Calendar value={ this.state.objectives[index] ? this.state.objectives[index].timeFrame : '' } onChange={ this.handleChangeDate.bind(this, index) }/>
+                        <Calendar value={ this.props.objectives[index] ? this.props.objectives[index].timeFrame : '' } onChange={ this.handleChangeDate.bind(this, index) }/>
                       </div>
                       <div className={ preferencesStyle.locals.channelsRemove } style={{ marginTop: '5px' }}>
                         { removeButton }
@@ -797,7 +801,7 @@ export default class Preferences extends Component {
                      description={['Do you want to limit the number of channels that will be included in your 12 months’ plan? \n To set the number to max available channels, please leave it blank.']}>max
                 number of Channels</Label>
               <div className={ this.classes.cell }>
-                <Textfield value={ this.state.maxChannels != -1 ? this.state.maxChannels : '' }
+                <Textfield value={ this.props.maxChannels != -1 ? this.props.maxChannels : '' }
                            onChange={ this.handleChangeMax.bind(this, '')} style={{
                   width: '83px'
                 }}/>
@@ -819,7 +823,7 @@ export default class Preferences extends Component {
                   }} className={ preferencesStyle.locals.channelsRow }>
                     <Select
                       className={ preferencesStyle.locals.channelsSelect }
-                      selected={ (this.state.userMinMonthBudgets && userMinMonthBudgetsArray[index]) || -1 }
+                      selected={ (this.props.userMinMonthBudgets && userMinMonthBudgetsArray[index]) || -1 }
                       select={{
                         menuTop: true,
                         name: 'channels',
@@ -833,7 +837,7 @@ export default class Preferences extends Component {
                       onChange={ this.handleChangeMinChannel.bind(this, index) }
                       label={ `#${ index + 1 } (optional)` }
                     />
-                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]] ? this.state.userMinMonthBudgets[userMinMonthBudgetsArray[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.props.userMinMonthBudgets[userMinMonthBudgetsArray[index]] ? this.props.userMinMonthBudgets[userMinMonthBudgetsArray[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
                                onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
                       width: '82px'
                     }} disabled={ !userMinMonthBudgetsArray[index] }/>
@@ -845,10 +849,10 @@ export default class Preferences extends Component {
               </MultiRow>
             </div>
             <div className={ this.classes.row }>
-              <MultiSelect { ... channels } selected={ this.state.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
+              <MultiSelect { ... channels } selected={ this.props.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
             </div>
             <div className={ this.classes.row } style={{ marginBottom: '200px' }}>
-              <MultiSelect { ... blockedChannels  } selected={ this.state.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
+              <MultiSelect { ... blockedChannels  } selected={ this.props.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
             </div>
           </div>
 
@@ -875,38 +879,40 @@ export default class Preferences extends Component {
 
           <div className={ this.classes.footer }>
             <div className={ this.classes.almostFooter }>
-              <label hidden={ !this.state.validationError} style={{color: 'red'}}>Please fill all the required
+              <label hidden={ !this.props.validationError} style={{color: 'red'}}>Please fill all the required
                 fields</label>
             </div>
             <BackButton onClick={() => {
-              serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({
-                annualBudget: this.state.annualBudget,
-                annualBudgetArray: this.state.annualBudgetArray,
-                goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
-                objectives: this.state.objectives,
-                blockedChannels: this.state.blockedChannels,
-                inHouseChannels: this.state.inHouseChannels,
-                userMinMonthBudgets: this.state.userMinMonthBudgets,
-                maxChannels: this.state.maxChannels
-              }), this.state.region, this.state.planDate)
-                .then(function (data) {
+              this.props.updateUserMonthPlan({
+                annualBudget: this.props.annualBudget,
+                annualBudgetArray: this.props.annualBudgetArray,
+                goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
+                objectives: this.props.objectives,
+                blockedChannels: this.props.blockedChannels,
+                inHouseChannels: this.props.inHouseChannels,
+                userMinMonthBudgets: this.props.userMinMonthBudgets,
+                maxChannels: this.props.maxChannels,
+                planDay: this.props.planDay
+              }, this.props.region, this.props.planDate)
+                .then(() => {
                   history.push('/target-audience');
                 });
             }}/>
             <div style={{width: '30px'}}/>
             <NextButton onClick={() => {
               if (this.validate()) {
-                serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({
-                  annualBudget: this.state.annualBudget,
-                  annualBudgetArray: this.state.annualBudgetArray,
-                  goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
-                  objectives: this.state.objectives,
-                  blockedChannels: this.state.blockedChannels,
-                  inHouseChannels: this.state.inHouseChannels,
-                  userMinMonthBudgets: this.state.userMinMonthBudgets,
-                  maxChannels: this.state.maxChannels
-                }), this.state.region, this.state.planDate)
-                  .then(function (data) {
+                this.props.updateUserMonthPlan({
+                  annualBudget: this.props.annualBudget,
+                  annualBudgetArray: this.props.annualBudgetArray,
+                  goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
+                  objectives: this.props.objectives,
+                  blockedChannels: this.props.blockedChannels,
+                  inHouseChannels: this.props.inHouseChannels,
+                  userMinMonthBudgets: this.props.userMinMonthBudgets,
+                  maxChannels: this.props.maxChannels,
+                  planDay: this.props.planDay
+                }, this.props.region, this.props.planDate)
+                  .then(() => {
                     history.push('/indicators');
                   });
               }
@@ -921,34 +927,29 @@ export default class Preferences extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
               if (this.validate()) {
-                let self = this;
-                self.setState({saveFail: false, saveSuceess: false});
-                serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify({
-                  annualBudget: this.state.annualBudget,
-                  annualBudgetArray: this.state.annualBudgetArray,
-                  goals: {primary: this.state.goals.primary, secondary: this.state.goals.secondary},
-                  objectives: this.state.objectives,
-                  blockedChannels: this.state.blockedChannels,
-                  inHouseChannels: this.state.inHouseChannels,
-                  userMinMonthBudgets: this.state.userMinMonthBudgets,
-                  maxChannels: this.state.maxChannels
-                }), this.state.region, this.state.planDate)
-                  .then(function (data) {
-                    if (data.ok) {
-                      self.setState({saveSuceess: true});
-                    }
-                    else {
-                      self.setState({saveFail: true});
-                    }
+                this.setState({saveFail: false, saveSuccess: false});
+                this.props.updateUserMonthPlan({
+                  annualBudget: this.props.annualBudget,
+                  annualBudgetArray: this.props.annualBudgetArray,
+                  goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
+                  objectives: this.props.objectives,
+                  blockedChannels: this.props.blockedChannels,
+                  inHouseChannels: this.props.inHouseChannels,
+                  userMinMonthBudgets: this.props.userMinMonthBudgets,
+                  maxChannels: this.props.maxChannels,
+                  planDay: this.props.planDay
+                }, this.props.region, this.props.planDate)
+                  .then(() => {
+                    this.setState({saveSuccess: true});
                   })
-                  .catch(function (err) {
-                    self.setState({saveFail: true});
+                  .catch(() => {
+                    this.setState({saveFail: true});
                   });
               }
               else {
                 this.setState({saveFail: true});
               }
-            }} success={ this.state.saveSuceess } fail={ this.state.saveFail }/>
+            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }
       </Page>

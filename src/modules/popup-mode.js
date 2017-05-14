@@ -42,6 +42,9 @@ export function checkIfPopup () {
             deferred.resolve(null);
           }
         })
+        .catch(function (err) {
+          deferred.reject(err);
+        });
     })
     .catch(function (err) {
       deferred.reject(err);

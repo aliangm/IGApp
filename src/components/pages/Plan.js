@@ -1,8 +1,6 @@
 import React from 'react';
-
+import _ from 'lodash';
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
 import Popup from 'components/Popup';
 
@@ -11,7 +9,6 @@ import style from 'styles/plan/plan.css';
 import CurrentTab from 'components/pages/plan/CurrentTab';
 import ProjectionsTab from 'components/pages/plan/ProjectionsTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
-//import PlannedActualTab from 'components/pages/plan/PlannedActualTab';
 import ReplanButton from 'components/pages/plan/ReplanButton';
 import serverCommunication from 'data/serverCommunication';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
@@ -21,58 +18,47 @@ import history from 'history';
 export default class Plan extends Component {
   style = style;
 
+  static defaultProps = {
+    projectedPlan: []
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
-      close: this.getUserMonthPlan.bind(this),
-      isLoaded: false,
-    }
+      editChannel: this.editChannel.bind(this),
+      editUpdate: this.editUpdate.bind(this),
+      approveAll: this.approveAll.bind(this)
+    };
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
-    this.changeRegion = this.changeRegion.bind(this);
   }
 
   componentDidMount() {
     if (isPopupMode()) {
       disablePopupMode();
       this.plan(true, null, null, localStorage.getItem('region'));
-    } else {
-      this.getUserMonthPlan(localStorage.getItem('region'));
     }
   }
 
-  getUserMonthPlan(region, planDate) {
-    serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
-      .then((response) => {
-        response.json()
-          .then((data) => {
-            if (data) {
-              if (data.error) {
-                history.push('/');
-              } else {
-                this.setState({
-                  actualIndicators: data.actualIndicators,
-                  numberOfPlanUpdates: data.numberOfPlanUpdates,
-                  projectedPlan: data.projectedPlan,
-                  budget: data.annualBudget,
-                  budgetArray: data.annualBudgetArray,
-                  maxChannels: data.maxChannels,
-                  planDate: data.planDate,
-                  region: data.region,
-                  events: data.events || [],
-                  isLoaded: true,
-                });
-              }
-            }
-          })
-      })
-      .catch((err) => {
-        this.setState({serverDown: true});
-        console.log(err);
-      });
+  editChannel(i, channel, event) {
+    let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    let projectedPlan = this.props.projectedPlan;
+    let approvedPlan = this.props.approvedPlan;
+    projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
+    approvedPlan[i][channel] = value;
+    this.setState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+  }
+
+  editUpdate() {
+    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan}, this.props.region, this.props.planDate);
+  }
+
+  approveAll() {
+    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
+    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   popup() {
@@ -83,30 +69,31 @@ export default class Plan extends Component {
     let body = preferences ? JSON.stringify(preferences) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     this.setState({
-      isLoaded: true,
       isPlannerLoading: true,
       popup: false,
       serverDown: false
     });
-    let self = this;
     serverCommunication.serverRequest(func, 'plan', body, region)
       .then((response) => {
         if (response.ok) {
           response.json()
-            .then(function (data) {
+            .then((data) => {
               if (data) {
                 if (data.error) {
-                  self.setState({isPlannerLoading: false, isError: true});
+                  this.setState({isPlannerLoading: false, isError: true});
                 }
                 else {
-                  self.setState({
+                  this.props.updateState({
                     actualIndicators: data.actualIndicators,
                     projectedPlan: data.projectedPlan,
+                    approvedPlan: data.approvedPlan || [],
                     numberOfPlanUpdates: data.numberOfPlanUpdates,
                     budget: data.annualBudget,
                     budgetArray: data.annualBudgetArray,
                     planDate: data.planDate,
                     maxChannels: data.maxChannels,
+                  });
+                  this.setState({
                     isPlannerLoading: false,
                     isError: false
                   });
@@ -124,24 +111,19 @@ export default class Plan extends Component {
             history.push('/');
           }
           if (response.status == 400){
-            self.setState({isError: true, isPlannerLoading: false});
+            this.setState({isError: true, isPlannerLoading: false});
           }
           else {
-            self.setState({serverDown: true, isPlannerLoading: false});
+            this.setState({serverDown: true, isPlannerLoading: false});
           }
         }
       })
-      .catch(function (err) {
-        self.setState({
+      .catch((err) => {
+        this.setState({
           isPlannerLoading: false,
           serverDown: true
         });
-        console.log('err', err);
       });
-  }
-
-  changeRegion(region){
-    this.getUserMonthPlan(region);
   }
 
   selectTab(index) {
@@ -154,22 +136,18 @@ export default class Plan extends Component {
     const tabs = {
       "Current": CurrentTab,
       "Annual": AnnualTab,
-      //"Planned vs Actual": PlannedActualTab,
-      "Projections": ProjectionsTab
+      "Forecasting": ProjectionsTab
     };
 
     const tabNames = Object.keys(tabs);
     const selectedName = tabNames[this.state.selectedTab];
     const selectedTab = tabs[selectedName];
-
     return <div>
-      <Header selectedRegion={this.state.region} changeRegion={ this.changeRegion }/>
-      <Sidebar />
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="1180px">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
           <div className={this.classes.headPlan } >
-            <ReplanButton numberOfPlanUpdates={ this.state.numberOfPlanUpdates } onClick={ this.popup }/>
+            <ReplanButton numberOfPlanUpdates={ this.props.numberOfPlanUpdates } onClick={ this.popup }/>
             <Popup style={{
               width: '400px',
               top: '180%',
@@ -179,7 +157,7 @@ export default class Plan extends Component {
                 popup: false
               });
             }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false, this.state.region) } onBack={() => {
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false, this.props.region) } onBack={() => {
                 this.setState({
                   popup: false
                 })}} />
@@ -210,7 +188,7 @@ export default class Plan extends Component {
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
         <div>
-          { selectedTab ? React.createElement(selectedTab, this.state) : null }
+          { selectedTab ? React.createElement(selectedTab, _.merge(this.props, this.state)) : null }
         </div>
       </Page>
     </div>
