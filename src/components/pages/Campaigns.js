@@ -2,55 +2,114 @@ import React from 'react';
 import _ from 'lodash';
 import Component from 'components/Component';
 import Page from 'components/Page';
+import Paging from 'components/Paging';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
-import style from 'styles/plan/plan.css';
+import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
+import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
+import campaignsStyle from 'styles/campaigns/campaigns.css';
+
+const tabs = {
+	'By Channel': ByChannelTab,
+	'By Status': ByStatusTab
+};
+
+const tabNames = Object.keys(tabs);
+
+function getDateString(stringDate) {
+	if (stringDate) {
+		const monthNames = [
+			"Jan", "Feb", "Mar",
+			"Apr", "May", "Jun", "Jul",
+			"Aug", "Sep", "Oct",
+			"Nov", "Dec"
+		];
+		const planDate = stringDate.split("/");
+		const date = new Date(planDate[1], planDate[0] - 1);
+
+		return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
+	}
+
+	return null;
+}
 
 export default class Campaigns extends Component {
-
-  style = style
-  styles = [icons]
+	styles = [planStyle, icons];
+  style = campaignsStyle;
 
   constructor(props) {
     super(props);
+
     this.state = {
+			...props,
+			selectedIndex: 0
     };
   }
 
-  render() {
-    const tabs = {
-      "Campaigns": ByChannelTab,
-    };
+	componentWillReceiveProps(nextProps) {
+		this.setState(nextProps);
+	}
 
-    const tabNames = Object.keys(tabs);
-    const selectedName = tabNames[0];
+	pagingUpdateState = (data) => {
+  	console.log('PAGING UPDATE STATE', data);
+		this.setState({
+			planDate: data.planDate,
+			region: data.region,
+			plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
+			knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
+			unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+			monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
+			campaigns: data.campaigns || {}
+		});
+	};
+
+	handleTabSelect = (e) => {
+    this.setState({
+      selectedIndex: +e.target.dataset.id
+    })
+  };
+
+  render() {
+    const { selectedIndex, planDate, region, monthBudget } = this.state;
+    const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
+
     return <div>
-      <Page contentClassName={ this.classes.content } width="1180px">
-        <div className={ this.classes.head }>
-          <div className={ this.classes.headTitle }>Campaign Management</div>
-          <div className={ this.classes.headTabs }>
+      <Page contentClassName={ planStyle.locals.content } width="1180px">
+        <div className={ planStyle.locals.head }>
+          <div className={ planStyle.locals.headTitle }>Campaign Management</div>
+          <div className={ planStyle.locals.headTabs }>
             {
               tabNames.map((name, i) => {
                 let className;
 
-                if (i === 0) {
-                  className = this.classes.headTabSelected;
+                if (i === selectedIndex) {
+                  className = planStyle.locals.headTabSelected;
                 } else {
-                  className = this.classes.headTab;
+                  className = planStyle.locals.headTab;
                 }
 
-                return <div className={ className } key={ i } onClick={() => {
-                  this.selectTab(i);
-                }}>{ name }</div>
+                return <div className={className} key={i} data-id={i} onClick={this.handleTabSelect}>{name}</div>
               })
             }
           </div>
         </div>
-        <div className={ this.classes.serverDown } style={{ padding: '30px 30px' }}>
+        <div className={ planStyle.locals.serverDown } style={{ padding: '30px 30px' }}>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
         <div>
+          <Paging month={planDate} region={region} pagingUpdateState={this.pagingUpdateState}/>
+          {/*<div className={ this.classes.campaignsTitle }>*/}
+            {/*<div className={ this.classes.campaignsTitleDate }>*/}
+							{/*{ getDateString(this.state.planDate) } - Campaigns*/}
+            {/*</div>*/}
+            {/*<div className={ this.classes.campaignsTitleBudget }>*/}
+              {/*Budget left to spend*/}
+              {/*<div className={ this.classes.campaignsTitleArrow } style={{ color: monthBudget >= 0 ? '#2ecc71' : '#ce352d' }}>*/}
+                {/*${ monthBudget ? monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' }*/}
+              {/*</div>*/}
+            {/*</div>*/}
+          {/*</div>*/}
           { selectedTab ? React.createElement(selectedTab, _.merge(this.props, this.state)) : null }
         </div>
       </Page>

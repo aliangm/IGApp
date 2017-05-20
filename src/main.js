@@ -24,6 +24,8 @@ const auth = new AuthService();
 
 // validate authentication for private routes
 const requireAuth = (nextState, replace) => {
+  return
+
   if (!auth.loggedIn()) {
     replace({ pathname: '/' })
   }
@@ -31,7 +33,7 @@ const requireAuth = (nextState, replace) => {
 
 ReactDOM.render(
   <Router history={ history }>
-    <Route path="/" component={ SignIn } />
+    {/*<Route path="/" component={ SignIn } />*/}
     <Route component={ App } auth={ auth } onEnter={ requireAuth }>
       <Route path="/profile" component={ Profile } onEnter={ requireAuth }/>
       <Route path="/preferences" component={ Preferences } onEnter={ requireAuth }/>
