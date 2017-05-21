@@ -127,11 +127,10 @@ export default class TargetAudience extends Component {
           onChange: () => {},
           options: [
             { value: '1-10', label: '1-10' },
-            { value: '11-50', label: '11-50' },
-            { value: '51-100', label: '51-100' },
-            { value: '101-500', label: '101-500' },
-            { value: '501-1000', label: '501-1000' },
-            { value: '>1000', label: 'More than 1000' },
+            { value: '11-100', label: '11-100' },
+            { value: '101-1000', label: '101-1,000' },
+            { value: '1001-10000', label: '1,001-10,000' },
+            { value: '>10000', label: 'More than 10,000' },
           ]
         }
       },
