@@ -5,6 +5,8 @@ import Page from 'components/Page';
 import Paging from 'components/Paging';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
+import channelsSchema from 'data/channelsSchema';
+
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
@@ -41,6 +43,9 @@ export default class Campaigns extends Component {
     super(props);
 
     this.state = {
+			campaigns: {},
+			monthBudget: 0,
+			teamMembers: [],
 			...props,
 			selectedIndex: 0
     };
@@ -63,6 +68,10 @@ export default class Campaigns extends Component {
 		});
 	};
 
+	updateCampaigns = (campaigns) => {
+		return this.state.updateUserMonthPlan({ campaigns }, this.state.region, this.state.planDate);
+	};
+
 	handleTabSelect = (e) => {
     this.setState({
       selectedIndex: +e.target.dataset.id
@@ -73,6 +82,28 @@ export default class Campaigns extends Component {
     const { selectedIndex, planDate, region, monthBudget } = this.state;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
+
+		let channels = _.merge(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
+		const processedChannels = {
+			titles: { },
+			icons: { },
+			budgets: channels,
+			names: Object.keys(channels).sort()
+		};
+		let budgetLeftToSpend = Object.keys(this.state.campaigns).reduce((res, channel) => {
+			this.state.campaigns[channel].forEach((campaign) => {
+				res -= campaign.actualSpent || campaign.budget;
+			});
+
+			return res;
+		}, monthBudget);
+
+		processedChannels.names.forEach((channel) => {
+			const title = channelsSchema.properties[channel] ? channelsSchema.properties[channel].title : channel;
+			processedChannels.titles[channel] = title;
+			let channelHierarchy = title.split('/').map(item => item.trim());
+			processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
+		});
 
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="1180px">
@@ -99,18 +130,23 @@ export default class Campaigns extends Component {
         </div>
         <div>
           <Paging month={planDate} region={region} pagingUpdateState={this.pagingUpdateState}/>
-          {/*<div className={ this.classes.campaignsTitle }>*/}
-            {/*<div className={ this.classes.campaignsTitleDate }>*/}
-							{/*{ getDateString(this.state.planDate) } - Campaigns*/}
-            {/*</div>*/}
-            {/*<div className={ this.classes.campaignsTitleBudget }>*/}
-              {/*Budget left to spend*/}
-              {/*<div className={ this.classes.campaignsTitleArrow } style={{ color: monthBudget >= 0 ? '#2ecc71' : '#ce352d' }}>*/}
-                {/*${ monthBudget ? monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' }*/}
-              {/*</div>*/}
-            {/*</div>*/}
-          {/*</div>*/}
-          { selectedTab ? React.createElement(selectedTab, _.merge(this.props, this.state)) : null }
+          <div className={ this.classes.campaignsTitle }>
+            <div className={ this.classes.campaignsTitleDate }>
+							{ getDateString(this.state.planDate) } - Campaigns
+            </div>
+            <div className={ this.classes.campaignsTitleBudget }>
+              Budget left to spend
+              <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
+                ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' }
+              </div>
+            </div>
+          </div>
+          {
+          	selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, this.state, {
+          		processedChannels,
+							updateCampaigns: this.updateCampaigns
+          	}))
+          }
         </div>
       </Page>
     </div>

@@ -1,0 +1,84 @@
+.card-container {
+    width: 90%;
+    margin: 0 auto 10px;
+    background: #fff;
+    min-height: 100px;
+    border-radius: 4px;
+    box-shadow: 0 0 1px 1px rgba(0,0,0,0.1);
+    color: #354052;
+    transition: 0.15s;
+    cursor: pointer;
+}
+
+.card {
+    width: 100%;
+}
+
+.card-container:hover {
+    background: #f7f7f7;
+}
+
+.card-name {
+    padding: 5px 10px;
+    white-space: normal;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.card-inner {
+    padding: 10px;
+}
+
+.card-avatar-wrap {
+    width: 70px;
+    float: left;
+    margin-bottom: 5px;
+}
+
+.card-avatar-wrap img {
+    width: 50px;
+    height: 50px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 1px solid #dbdbdb;
+}
+
+.card-content {
+    white-space: normal;
+}
+
+.card-author {
+    font-size: 16px;
+    font-weight: bolder;
+}
+
+.card-content p {
+    margin: 5px 0;
+}
+
+.campaign {
+    width: 80%;
+    margin-left: 20%;
+
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 0 1px 1px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+
+    background-color: #fff;
+}
+
+.campaign:hover {
+    background-color: #f7f7f7;
+}
+
+.campaign-name {
+
+}
+
+.campaign-budget {
+
+}

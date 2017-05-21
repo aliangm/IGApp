@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { DragLayer } from 'react-dnd';
 
-import CardDragPreview from './CardDragPreview';
+import { ChannelCardDragPreview, CampaignCardDragPreview } from './CardDragPreview';
 import snapToGrid from './snapToGrid';
 
 
@@ -15,7 +15,7 @@ const layerStyles = {
   zIndex: 100000
 };
 
-function getItemStyles(props, layer) {
+function getItemStyles(props) {
   const { initialOffset, currentOffset } = props;
   if (!initialOffset || !currentOffset) {
     return {
@@ -24,18 +24,6 @@ function getItemStyles(props, layer) {
   }
 
   let { x, y } = currentOffset;
-  let left = 0;
-  let top = 0;
-
-  if (layer) {
-    const rect = layer.getBoundingClientRect();
-
-		left = rect.left;
-		top = rect.top;
-  }
-
-  x -= left;
-  y -= top;
 
   if (props.snapToGrid) {
 		// x -= initialOffset.x;
@@ -72,8 +60,12 @@ class CustomDragLayer extends Component {
     switch (type) {
       case 'card':
         return (
-          <CardDragPreview card={item} />
+          <ChannelCardDragPreview card={item} />
         );
+			case 'campaignCard':
+				return (
+          <CampaignCardDragPreview card={item} />
+				);
       default:
         return null;
     }
@@ -88,8 +80,8 @@ class CustomDragLayer extends Component {
 
 
     return (
-      <div ref={ref => this.layer = ref} style={layerStyles}>
-        <div style={getItemStyles(this.props, this.layer)}>
+      <div style={layerStyles}>
+        <div style={getItemStyles(this.props)}>
           {this.renderItem(itemType, item)}
         </div>
       </div>

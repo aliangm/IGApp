@@ -1,8 +1,13 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { DropTarget } from 'react-dnd';
 import { findDOMNode } from 'react-dom';
+import Component from 'components/Component';
+import classnames from 'classnames'
 
 import Card from './DraggableCard';
+
+import style from 'styles/campaigns/cards.css';
+import cardStyle from 'styles/campaigns/card.css';
 
 const CARD_HEIGHT = 161;  // height of a single card(excluding marginBottom/paddingBottom)
 const CARD_MARGIN = 10;  // height of a marginBottom+paddingBottom
@@ -22,10 +27,11 @@ function getPlaceholderIndex(y, scrollY) {
 
 const specs = {
   drop(props, monitor, component) {
-    document.getElementById(monitor.getItem().id).style.display = 'block';
+    // document.getElementById(monitor.getItem().id).style.display = 'block';
     const { placeholderIndex } = component.state;
-    const lastX = monitor.getItem().x;
-    const lastY = monitor.getItem().y;
+    const item = monitor.getItem()
+    const lastX = item.x;
+    const lastY = item.y;
     const nextX = props.x;
     let nextY = placeholderIndex;
 
@@ -35,13 +41,19 @@ const specs = {
       nextY += 1;
     }
 
-    if (lastX === nextX && lastY === nextY) { // if position equel
+    if (lastX === nextX && (lastY === nextY || item.type === 'campaign')) { // if position equal
       return;
     }
 
     props.moveCard(lastX, lastY, nextX, nextY);
   },
   hover(props, monitor, component) {
+		const item = monitor.getItem();
+
+		if (item.type === 'campaign' && monitor.getItem().x === props.x) {
+		  return;
+    }
+
     // defines where placeholder is rendered
     const placeholderIndex = getPlaceholderIndex(
       monitor.getClientOffset().y,
@@ -72,13 +84,16 @@ const specs = {
     component.setState({ placeholderIndex });
 
     // when drag begins, we hide the card and only display cardDragPreview
-    const item = monitor.getItem();
-    document.getElementById(item.id).style.display = 'none';
+    // const item = monitor.getItem();
+    // document.getElementById(item.id).style.display = 'none';
   }
 };
 
 
 class Cards extends Component {
+  style = style;
+  styles = [cardStyle];
+
   static propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     moveCard: PropTypes.func.isRequired,
@@ -110,7 +125,9 @@ class Cards extends Component {
       if (isOver && canDrop) {
         isPlaceHold = false;
         if (i === 0 && placeholderIndex === -1) {
-          cardList.push(<div key="placeholder" className="desk-item desk-items-placeholder" />);
+          cardList.push(
+            <div key="placeholder" className={classnames(cardStyle.locals.cardContainer, this.classes.cardsPlaceholder)} />
+          );
         } else if (placeholderIndex > i) {
           isPlaceHold = true;
         }
@@ -125,29 +142,35 @@ class Cards extends Component {
         );
       }
       if (isOver && canDrop && placeholderIndex === i) {
-        cardList.push(<div key="placeholder" className="desk-item desk-items-placeholder" />);
+        cardList.push(
+          <div key="placeholder" className={classnames(cardStyle.locals.cardContainer, this.classes.cardsPlaceholder)} />
+        );
       }
     });
 
     // if placeholder index is greater than array.length, display placeholder as last
     if (isPlaceHold) {
-      cardList.push(<div key="placeholder" className="desk-item desk-items-placeholder" />);
+      cardList.push(
+        <div key="placeholder" className={classnames(cardStyle.locals.cardContainer, this.classes.cardsPlaceholder)} />
+      );
     }
 
     // if there is no items in cards currently, display a placeholder anyway
     if (isOver && canDrop && cards.length === 0) {
-      cardList.push(<div key="placeholder" className="desk-item desk-items-placeholder" />);
+      cardList.push(
+        <div key="placeholder" className={classnames(cardStyle.locals.cardContainer, this.classes.cardsPlaceholder)} />
+      );
     }
 
     return connectDropTarget(
-      <div className="desk-items">
+      <div className={this.classes.cards}>
         {cardList}
       </div>
     );
   }
 }
 
-export default DropTarget('card', specs, (connectDragSource, monitor) => ({
+export default DropTarget(['card', 'campaignCard'], specs, (connectDragSource, monitor) => ({
 	connectDropTarget: connectDragSource.dropTarget(),
 	isOver: monitor.isOver(),
 	canDrop: monitor.canDrop(),

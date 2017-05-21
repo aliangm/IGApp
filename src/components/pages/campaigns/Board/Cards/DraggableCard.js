@@ -3,12 +3,12 @@ import { findDOMNode } from 'react-dom';
 import { DragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import Card from './Card';
+import Card from './ChannelCard';
 
 
 function getStyles(isDragging) {
   return {
-    display: isDragging ? 0.5 : 1
+    opacity: isDragging ? 0.5 : 1
   };
 }
 
@@ -18,31 +18,23 @@ const cardSource = {
     const { id, title } = item;
     const { clientWidth, clientHeight } = findDOMNode(component);
 
-    return { id, title, item, x, y, clientWidth, clientHeight };
+    return { id, title, item, x, y, clientWidth, clientHeight, type: 'channel'  };
   },
   endDrag(props, monitor) {
-    document.getElementById(monitor.getItem().id).style.display = 'block';
+    // document.getElementById(monitor.getItem().id).style.display = 'block';
     props.stopScrolling();
   },
   isDragging(props, monitor) {
-    const isDragging = props.item && props.item.id === monitor.getItem().id;
-    return isDragging;
+    return props.item && props.item.id === monitor.getItem().id;
   }
 };
 
 // options: 4rd param to DragSource https://gaearon.github.io/react-dnd/docs-drag-source.html
 const OPTIONS = {
-  arePropsEqual: function arePropsEqual(props, otherProps) {
-    let isEqual = true;
-    if (props.item.id === otherProps.item.id &&
-        props.x === otherProps.x &&
-        props.y === otherProps.y
-       ) {
-      isEqual = true;
-    } else {
-      isEqual = false;
-    }
-    return isEqual;
+  arePropsEqual(props, otherProps) {
+    return props.item.id === otherProps.item.id &&
+			props.x === otherProps.x &&
+			props.y === otherProps.y;
   }
 };
 

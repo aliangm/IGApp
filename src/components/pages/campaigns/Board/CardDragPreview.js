@@ -1,17 +1,13 @@
 import React, { PropTypes } from 'react';
-import Card from './Cards/Card';
+import Card from './Cards/ChannelCard';
+import CampaignCard from './Cards/CampaignCard';
 
-const styles = {
-  display: 'inline-block',
-};
-
-const propTypes = {
-  card: PropTypes.object
-};
-
-const CardDragPreview = (props) => {
-  styles.width = `${props.card.clientWidth || 243}px`;
-  styles.height = `${props.card.clientHeight || 243}px`;
+export const ChannelCardDragPreview = (props) => {
+	const styles = {
+		display: 'inline-block',
+		width: `${props.card.clientWidth || 243}px`,
+		height: `${props.card.clientHeight || 243}px`,
+	};
 
   return (
     <div style={styles}>
@@ -20,6 +16,16 @@ const CardDragPreview = (props) => {
   );
 };
 
-CardDragPreview.propTypes = propTypes;
+export const CampaignCardDragPreview = (props) => {
+	const styles = {
+		display: 'inline-block',
+		width: `${props.card.clientWidth || 243}px`,
+		height: `${props.card.clientHeight || 243}px`,
+	};
 
-export default CardDragPreview;
+	return (
+    <div style={styles}>
+      <CampaignCard campaign={props.card.item} />
+    </div>
+	);
+};

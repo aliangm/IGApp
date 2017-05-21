@@ -1,0 +1,35 @@
+.board {
+    padding: 50px 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+    position: relative;
+    background-color: #f2f2f2;
+}
+
+.desk, .desk-placeholder, .desk-placeholder:hover {
+    width: 270px;
+    display: inline-block;
+    height: 100%;
+    overflow: hidden;
+    min-height: 100px;
+    background-color: #fff;
+    box-shadow: -0.7px 3px 1px 1px rgba(0,0,0,0.05);
+    border-radius: 3px;
+    padding-bottom: 20px;
+    margin-right: 20px;
+    vertical-align: top;
+}
+
+.desk-head {
+    padding: 5px 8px;
+    margin-bottom: 10px;
+}
+
+.desk-name {
+    font-weight: bold;
+    white-space: normal;
+    width: 100%;
+}

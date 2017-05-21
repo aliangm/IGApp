@@ -1,83 +1,54 @@
-import React, { Component } from 'react';
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import faker from 'faker'
+import React  from 'react';
+import Component from 'components/Component';
 
-import CardsContainer from './Cards/CardsContainer';
+// import CardsContainer from './Cards/CardsContainer';
+import Cards from './Cards/Cards';
 import CustomDragLayer from './CustomDragLayer';
 
+import style from 'styles/campaigns/board.css';
+
 class Board extends Component {
-  state = {
-  	isScrolling: false,
-		lists: [ ],
-  };
+	style = style;
 
-  componentWillMount() {
-    this.getLists(10);
-  }
+	constructor(props) {
+		super(props);
 
-	getLists = (quantity) => {
-		setTimeout(() => {
-			const lists = [];
-			let count = 0;
+		this.state = {
+			isScrolling: false,
+			lists: props.lists
+		};
+	}
 
-			for (let i = 0; i < quantity; i++) {
-				const cards = [];
-				const randomQuantity = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
-				for (let ic = 0; ic < randomQuantity; ic++) {
-					cards.push({
-						id: count,
-						firstName: faker.name.firstName(),
-						lastName: faker.name.lastName(),
-						title: faker.name.jobTitle()
-					});
-					count = count + 1;
-				}
-				lists.push({
-					id: i,
-					name: faker.commerce.productName(),
-					cards
-				});
-			}
-
-			this.setState({ lists })
-		}, 1000); // fake delay
-	};
-
-	moveList = (listId, nextX) => {
-		const { lastX } = this.findList(listId);
-		const newLists = this.state.lists.slice();
-		const t = newLists.splice(lastX, 1)[0];
-
-		newLists.splice(nextX, 0, t);
-
-		this.setState({ lists: newLists })
-	};
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.lists !== this.props.lists) {
+			this.setState({
+				lists: nextProps.lists
+			});
+		}
+	}
 
 	moveCard = (lastX, lastY, nextX, nextY) => {
 		const newLists = this.state.lists.slice();
+		const card = newLists[lastX].cards[lastY];
 
 		if (lastX === nextX) {
 			newLists[lastX].cards.splice(nextY, 0, newLists[lastX].cards.splice(lastY, 1)[0]);
+
+			this.setState({ lists: newLists })
 		} else {
 			// move element to new place
 			newLists[nextX].cards.splice(nextY, 0, newLists[lastX].cards[lastY]);
 			// delete element from old place
 			newLists[lastX].cards.splice(lastY, 1);
+
+			if (card.campaigns.length > 0) {
+				this.props.onCampaignsUpdate(card.campaigns.map(campaign => ({
+					id: campaign.id,
+					status: this.state.lists[nextX].name
+				})))
+			}
 		}
-
-		this.setState({ lists: newLists })
 	};
-
-  findList = (id) => {
-    const { lists } = this.props;
-    const list = lists.filter(l => l.id === id)[0];
-
-    return {
-      list,
-      lastX: lists.indexOf(list)
-    };
-  };
 
 	startScrolling = (direction) => {
 		// if (!this.state.isScrolling) {
@@ -95,16 +66,18 @@ class Board extends Component {
 	};
 
 	scrollRight = () => {
-		function scroll() {
-			document.querySelector('.board').scrollLeft += 10;
-		}
+		const scroll = () => {
+			this.board.scrollLeft += 10;
+		};
+
 		this.scrollInterval = setInterval(scroll, 10);
 	};
 
 	scrollLeft = () => {
-		function scroll() {
-			document.querySelector('.board').scrollLeft -= 10;
-		}
+		const scroll = () => {
+			this.board.scrollLeft -= 10;
+		};
+
 		this.scrollInterval = setInterval(scroll, 10);
 	};
 
@@ -112,28 +85,34 @@ class Board extends Component {
 		this.setState({ isScrolling: false }, clearInterval(this.scrollInterval));
 	};
 
+	renderColumn = (item, i) => {
+		return (
+			<div className={this.classes.desk}>
+				<div className={this.classes.deskHead}>
+					<div className={this.classes.deskName}>{item.name}</div>
+				</div>
+				<Cards
+					moveCard={this.moveCard}
+					x={i}
+					cards={item.cards}
+					startScrolling={this.startScrolling}
+					stopScrolling={this.stopScrolling}
+					isScrolling={this.state.isScrolling}
+				/>
+			</div>
+		);
+	};
+
   render() {
     const { lists } = this.state;
 
     return (
-      <div style={{ height: '100%' }}>
+      <div className={this.classes.board} style={{ height: '100%' }} ref={ref => this.board = ref}>
         <CustomDragLayer snapToGrid={false} />
-        {lists.map((item, i) =>
-          <CardsContainer
-            key={item.id}
-            id={item.id}
-            item={item}
-            moveCard={this.moveCard}
-            moveList={this.moveList}
-            startScrolling={this.startScrolling}
-            stopScrolling={this.stopScrolling}
-            isScrolling={this.state.isScrolling}
-            x={i}
-          />
-        )}
+        {lists.map(this.renderColumn)}
       </div>
     );
   }
 }
 
-export default DragDropContext(HTML5Backend)(Board)
+export default Board
