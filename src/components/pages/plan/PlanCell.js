@@ -41,9 +41,9 @@ export default class PlanCell extends Component {
           </div>
         </div>
       </div>
-      <div className={ this.classes.cellItem } style={{ color: '#1991eb' }}>
+      <div className={ this.classes.cellItem } style={{ color: this.state.hoverCell ? '#25AE88' : '#1991eb' }}>
         { this.state.hoverCell ? '' : '*' }{this.props.item}
-      <div hidden={ !this.state.hoverCell } className={ cellStyle.locals.budget }>
+      <div hidden={ !this.state.hoverCell } className={ cellStyle.locals.budget } style={{ color: '#D75A4A' }}>
           ({ this.props.approved })
         </div>
       </div>
