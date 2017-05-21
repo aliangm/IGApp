@@ -728,7 +728,7 @@ export default class Preferences extends Component {
                     <div style={{
                     }} className={ preferencesStyle.locals.channelsRow }>
                       <div className={ preferencesStyle.locals.objectiveText }>I want</div>
-                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '60px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
+                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
                       <Select
                         className={ preferencesStyle.locals.objectiveSelect }
                         selected={ this.props.objectives[index] ? this.props.objectives[index].isPercentage : -1 }
@@ -740,6 +740,7 @@ export default class Preferences extends Component {
                               selected: selected
                             });
                           },
+                          placeholder: '%/num',
                           options: [{ label: '%', value: true}, {label: '(num)', value: false}]
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'isPercentage') }
@@ -755,6 +756,7 @@ export default class Preferences extends Component {
                               selected: selected
                             });
                           },
+                          placeholder: 'Direction',
                           options: [{ label: 'increase', value: 'increase'}, {label: 'decrease', value: 'decrease'}, {label: '(target)', value: 'equals'}]
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'direction') }
@@ -771,6 +773,7 @@ export default class Preferences extends Component {
                               selected: selected
                             });
                           },
+                          placeholder: 'KPI',
                           options: indicatorsOptions
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
