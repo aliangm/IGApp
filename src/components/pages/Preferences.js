@@ -788,8 +788,8 @@ export default class Preferences extends Component {
                 }}
               </MultiRow>
             </div>
-            <div className={ this.classes.row }>
-              <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Channel Constrains (Optional)</Label>
+            <div className={ this.classes.row } style={{ marginTop: '96px' }}>
+              <Label style={{ fontSize: '20px', fontWeight: 'bold' }}>Channel Constraints (Optional)</Label>
               <Notice warning style={{
                 margin: '12px 0'
               }}>
