@@ -68,7 +68,7 @@ function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
   }
   else {
     if (current && current[title[0]]) {
-      if (current[title[0]].values[month]){
+      if (current[title[0]].values[month] != null){
         current[title[0]].values[month]+= budget;
       }
       else {
