@@ -96,6 +96,10 @@ export default class AuthService {
     localStorage.setItem('profile', JSON.stringify(profile))
     // Triggers profile_updated event to update the UI
     // this.emit('profile_updated', profile)
+    FS.identify(profile.user_id, {
+      displayName: profile.email,
+      email: profile.email
+    });
   }
 
   getProfile() {
@@ -108,5 +112,6 @@ export default class AuthService {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
     localStorage.removeItem('profile');
+    FS.clearUserCookie(true);
   }
 }
