@@ -16,7 +16,10 @@ export default {
 		const deferred = q.defer();
 		const lock = new AuthService();
 		let URL = window.location.protocol + '//' + window.location.hostname + ':8443/' + route;
-    if (region || planDate) {
+    if (lock.getProfile().isAdmin === false){
+    	URL += '/' + lock.getProfile().app_metadata.UID+ '/';
+		}
+		if (region || planDate) {
       URL += '?';
     }
     if (region) {

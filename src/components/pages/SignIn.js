@@ -44,12 +44,17 @@ export default class SignIn extends Component {
   componentDidMount() {
     if (this.lock.loggedIn()) {
       checkIfPopup()
-        .then((popup)=> {
-          if (popup == null || popup) {
-            history.push('/welcome');
+        .then((popup) => {
+          if (this.lock.getProfile().app_metadata && !this.lock.getProfile().app_metadata.isAdmin) {
+            history.push('/campaigns');
           }
           else {
-            history.push('/plan')
+            if (popup == null || popup) {
+              history.push('/welcome');
+            }
+            else {
+              history.push('/plan')
+            }
           }
         })
         .catch((err) => {

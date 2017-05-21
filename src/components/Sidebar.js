@@ -43,20 +43,24 @@ export default class Sidebar extends Component {
   render() {
     return <div>
       <div className={ this.classes.backface }
-        onClick={ this.close }
-        data-open={ this.state.open ? true : null }
+           onClick={ this.close }
+           data-open={ this.state.open ? true : null }
       />
       <div className={ this.classes.box } data-open={ this.state.open ? true : null }>
         <div className={ this.classes.logo } />
         <div className={ this.classes.menu }>
-          {/** <MenuItem icon="sidebar:dashboard" text="Dashboard" /> **/}
-          <MenuItem icon="sidebar:profile" link="/profile" text="Profile" />
-          <MenuItem icon="sidebar:targeting" link="/target-audience" text="Target Audience" />
-          <MenuItem icon="sidebar:goals" link="/preferences" text="Preferences" />
-          {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
-          <MenuItem icon="sidebar:indicators" link="/indicators" text="Metrics" />
-          <MenuItem icon="sidebar:plan" link="/plan" text="Plan" />
-          <MenuItem icon="sidebar:planned-vs-actual" link="/planned-vs-actual" text="Planned VS Actual" />
+          {this.props.auth.getProfile().app_metadata.isAdmin ?
+            <div>
+              <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard"/>
+              < MenuItem icon="sidebar:profile" link="/profile" text="Profile" />
+              <MenuItem icon="sidebar:targeting" link="/target-audience" text="Target Audience" />
+              <MenuItem icon="sidebar:goals" link="/preferences" text="Preferences" />
+              {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
+              <MenuItem icon="sidebar:indicators" link="/indicators" text="Metrics" />
+              <MenuItem icon="sidebar:plan" link="/plan" text="Plan" />
+              <MenuItem icon="sidebar:planned-vs-actual" link="/planned-vs-actual" text="Planned VS Actual" />
+            </div>
+            : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" />
         </div>
 
@@ -72,12 +76,12 @@ export class MenuItem extends Component {
     let className = this.classes.menuItem;
 
     /*if (this.props.selected) {
-      className = this.classes.menuItemSelected;
-    }*/
+     className = this.classes.menuItemSelected;
+     }*/
 
     return <Link to={ this.props.link || '/' }
-      activeClassName={ this.classes.menuItemSelected }
-      className={ className }
+                 activeClassName={ this.classes.menuItemSelected }
+                 className={ className }
     >
       <div className={ this.classes.menuItemIcon } data-icon={ this.props.icon } />
       <div className={ this.classes.menuItemText }>

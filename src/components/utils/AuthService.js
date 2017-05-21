@@ -50,7 +50,7 @@ export default class AuthService {
     // navigate to the home route
     history.push('/');
     // Async loads the user profile data
-    /**
+
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
         console.log('Error loading the Profile', error)
@@ -58,7 +58,7 @@ export default class AuthService {
         this.setProfile(profile)
       }
     })
-     **/
+
   }
 
   authenticationError(error) {
@@ -90,7 +90,7 @@ export default class AuthService {
     // Retrieves the user token from local storage
     return localStorage.getItem('id_token')
   }
-/**
+
   setProfile(profile) {
     // Saves profile data to local storage
     localStorage.setItem('profile', JSON.stringify(profile))
@@ -103,10 +103,10 @@ export default class AuthService {
     const profile = localStorage.getItem('profile')
     return profile ? JSON.parse(localStorage.profile) : {}
   }
-**/
+
   logout() {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
-    //localStorage.removeItem('profile');
+    localStorage.removeItem('profile');
   }
 }
