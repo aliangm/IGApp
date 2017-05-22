@@ -1,3 +1,4 @@
+import config from 'components/utils/configuration';
 import q from 'q';
 //SAFARI BUG FIX - no default fetch, need to use external library
 import 'whatwg-fetch';
@@ -15,7 +16,7 @@ export default {
 		
 		const deferred = q.defer();
 		const lock = new AuthService();
-		let URL = window.location.protocol + '//' + window.location.hostname + ':8443/' + route;
+		let URL = window.location.protocol + '//' + window.location.hostname + ':' + config.port + '/' + route;
     if (lock.getProfile().isAdmin === false){
     	URL += '/' + lock.getProfile().app_metadata.UID+ '/';
 		}
