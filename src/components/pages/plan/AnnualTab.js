@@ -222,7 +222,6 @@ export default class AnnualTab extends Component {
         const data = planJson[budget];
         budget = Math.ceil(budget/1000)*1000;
         let rows = [];
-        let hoverRows;
 
         const handleRows = (data, parent, level) => {
           level = level | 0;
