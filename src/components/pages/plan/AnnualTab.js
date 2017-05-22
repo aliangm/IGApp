@@ -339,11 +339,11 @@ export default class AnnualTab extends Component {
               <div className={ planStyles.locals.titleButtons }>
                 <Button type="accent2" style={{
                   marginLeft: '15px',
-                  width: '102px'
+                  width: '114px'
                 }} onClick={() => {
                   this.props.approveAll();
                 }}>
-                  Accept All
+                  Approve All
                 </Button>
                 <Button type="normalAccent" style={{
                   marginLeft: '15px',

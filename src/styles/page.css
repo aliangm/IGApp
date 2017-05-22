@@ -36,7 +36,7 @@
 
 .inner {
   background: white;
-  box-shadow: 0 0 0 1px #e6eaee;
+  box-shadow: 0 0 0 2px #e6eaee;
   border-radius: 4px;
   overflow: hidden;
 }
