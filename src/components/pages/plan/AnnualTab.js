@@ -227,7 +227,7 @@ export default class AnnualTab extends Component {
         const handleRows = (data, parent, level) => {
           level = level | 0;
 
-          Object.keys(data).forEach((item, i) => {
+          Object.keys(data).sort().forEach((item, i) => {
             if (item === '__TOTAL__') return null;
 
             let key = parent + ':' + item + '-' + i;
