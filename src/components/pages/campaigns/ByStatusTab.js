@@ -31,7 +31,7 @@ export default class ByChannelTab extends Component {
 
 	setLists() {
 		const { processedChannels, /*campaigns*/ } = this.props;
-		const campaigns = this.state.campaigns || this.props.campaigns; // for testing
+		const campaigns = this.state.campaigns || this.props.campaigns; // TODO - for testing - remove it
 		const lists = [
 			{
 				id: 'new',
@@ -41,6 +41,7 @@ export default class ByChannelTab extends Component {
 					name,
 					budget: processedChannels.budgets[name],
 					title: processedChannels.titles[name],
+					icon: processedChannels.icons[name],
 					campaigns: []
 				}))
 			},
@@ -98,6 +99,7 @@ export default class ByChannelTab extends Component {
 							id: channelName,
 							name: channelName,
 							title: processedChannels.titles[channelName],
+							icon: processedChannels.icons[channelName],
 							budget: processedChannels.budgets[channelName],
 							campaigns: [extendedCampaign]
 						});
@@ -109,7 +111,7 @@ export default class ByChannelTab extends Component {
 		this.setState({ lists })
 	}
 
-	handleCampaignsUpdate = (updates) => {
+	handleCampaignsStatusChange = (updates) => {
 		const newCampaigns = merge({ }, this.props.campaigns);
 
 		updates.forEach(({ id, status }) => {
@@ -128,12 +130,22 @@ export default class ByChannelTab extends Component {
 		// this.props.updateCampaigns(newCampaigns);
 	};
 
+	handleCampaignUpdate = (campaign, index) => {
+		// TODO
+		return this.props.updateCampaigns(/***/);
+	};
+
 	render() {
 		console.log('PROPS', this.props.processedChannels, this.props.campaigns, this.state.campaigns);
 
 		return (
 			<div className={styles.wrap}>
-				<Board lists={this.state.lists} onCampaignsUpdate={this.handleCampaignsUpdate}/>
+				<Board
+					lists={this.state.lists}
+					onCampaignsStatusChange={this.handleCampaignsStatusChange}
+					onCampaignUpdate={this.handleCampaignUpdate}
+					teamMembers={ this.props.teamMembers }
+				/>
 			</div>
 		);
 	}

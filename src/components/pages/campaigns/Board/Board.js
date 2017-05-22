@@ -1,9 +1,9 @@
 import React  from 'react';
 import Component from 'components/Component';
 
-// import CardsContainer from './Cards/CardsContainer';
 import Cards from './Cards/Cards';
 import CustomDragLayer from './CustomDragLayer';
+import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 
 import style from 'styles/campaigns/board.css';
 
@@ -15,6 +15,7 @@ class Board extends Component {
 
 		this.state = {
 			isScrolling: false,
+			showPopup: false,
 			lists: props.lists
 		};
 	}
@@ -99,6 +100,10 @@ class Board extends Component {
 					stopScrolling={this.stopScrolling}
 					isScrolling={this.state.isScrolling}
 				/>
+
+				<button className={ this.classes.addButton } onClick={ () => { this.setState({ showPopup: true }) }}>
+					Add Compaign
+				</button>
 			</div>
 		);
 	};
@@ -110,6 +115,13 @@ class Board extends Component {
       <div className={this.classes.board} style={{ height: '100%' }} ref={ref => this.board = ref}>
         <CustomDragLayer snapToGrid={false} />
         {lists.map(this.renderColumn)}
+				<div hidden={!this.state.showPopup}>
+					<CampaignPopup
+						updateCampaign={ this.props.onCampaignUpdate }
+						close={ () => { this.setState({ showPopup: false }) } }
+						teamMembers={ this.props.teamMembers }
+					/>
+				</div>
       </div>
     );
   }

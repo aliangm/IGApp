@@ -64,11 +64,11 @@ class CardComponent extends Component {
 	}
 
 	render() {
-		const { isDragging, connectDragSource, item } = this.props;
+		const { isDragging, connectDragSource, item, onClick } = this.props;
 
 		return connectDragSource(
 			<div>
-				<Card style={getStyles(isDragging)} item={item} />
+				<Card style={getStyles(isDragging)} item={item} onClick={onClick}/>
 			</div>
 		);
 	}

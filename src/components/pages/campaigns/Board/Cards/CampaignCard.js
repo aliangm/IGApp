@@ -12,10 +12,10 @@ class CampaignCard extends Component {
 	};
 
 	render() {
-		const { item } = this.props;
+		const { item, onClick } = this.props;
 
 		return (
-			<div className={this.classes.campaign} id={item.id}>
+			<div className={this.classes.campaign} id={item.id} onClick={onClick}>
 				<span className={this.classes.campaignName}>{item.name}</span>
 				<span className={this.classes.campaignBudget}>{item.budget}</span>
 			</div>

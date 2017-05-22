@@ -10,26 +10,38 @@
 }
 
 .desk, .desk-placeholder, .desk-placeholder:hover {
-    width: 270px;
+    width: 330px;
     display: inline-block;
     height: 100%;
     overflow: hidden;
-    min-height: 100px;
+    min-height: 200px;
     background-color: #fff;
     box-shadow: -0.7px 3px 1px 1px rgba(0,0,0,0.05);
     border-radius: 3px;
     padding-bottom: 20px;
-    margin-right: 20px;
+    margin-right: 30px;
     vertical-align: top;
 }
 
 .desk-head {
-    padding: 5px 8px;
-    margin-bottom: 10px;
+    font-size: 26px;
+    padding: 20px 9% 12px;
 }
 
 .desk-name {
     font-weight: bold;
     white-space: normal;
     width: 100%;
+}
+
+.add-button {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    font-size: 20px;
+    cursor: pointer;
 }
