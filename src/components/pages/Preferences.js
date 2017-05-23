@@ -378,7 +378,7 @@ export default class Preferences extends Component {
               ]
               },
               {
-                label: 'Social Ads', options: [
+                label: 'Social Paid', options: [
                 {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
                 {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
                 {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
