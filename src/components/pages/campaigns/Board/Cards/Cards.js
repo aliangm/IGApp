@@ -11,7 +11,7 @@ import cardStyle from 'styles/campaigns/card.css';
 
 const CARD_HEIGHT = 161;  // height of a single card(excluding marginBottom/paddingBottom)
 const CARD_MARGIN = 15;  // height of a marginBottom+paddingBottom
-const OFFSET_HEIGHT = 84; // height offset from the top of the page
+const OFFSET_HEIGHT = 260; // height offset from the top of the page
 
 function getPlaceholderIndex(y, scrollY) {
   // shift placeholder if y position more than card height / 2
@@ -29,7 +29,7 @@ const specs = {
   drop(props, monitor, component) {
     // document.getElementById(monitor.getItem().id).style.display = 'block';
     const { placeholderIndex } = component.state;
-    const item = monitor.getItem()
+    const item = monitor.getItem();
     const lastX = item.x;
     const lastY = item.y;
     const nextX = props.x;
@@ -45,7 +45,6 @@ const specs = {
       return;
     }
 
-    console.error('DROP');
     props.moveCard(lastX, lastY, nextX, nextY, { type: item.type, item: item.item });
   },
   hover(props, monitor, component) {
@@ -55,22 +54,27 @@ const specs = {
 		  return;
     }
 
+		const { container } = component.context;
+		const containerRect = container.getBoundingClientRect();
+
     // defines where placeholder is rendered
     const placeholderIndex = getPlaceholderIndex(
       monitor.getClientOffset().y,
-      findDOMNode(component).scrollTop
+			-containerRect.top
     );
 
+    const SCROLL_THRESHOLD = 150;
     // horizontal scroll
     if (!props.isScrolling) {
-      if (window.innerWidth - monitor.getClientOffset().x < 200) {
+      if (containerRect.right - monitor.getClientOffset().x < SCROLL_THRESHOLD) {
         props.startScrolling('toRight');
-      } else if (monitor.getClientOffset().x < 200) {
+      } else if (monitor.getClientOffset().x - containerRect.left < SCROLL_THRESHOLD) {
         props.startScrolling('toLeft');
       }
     } else {
-      if (window.innerWidth - monitor.getClientOffset().x > 200 &&
-          monitor.getClientOffset().x > 200
+      if (
+        containerRect.right - monitor.getClientOffset().x > SCROLL_THRESHOLD &&
+				monitor.getClientOffset().x - containerRect.left > SCROLL_THRESHOLD
       ) {
         props.stopScrolling();
       }
@@ -83,10 +87,6 @@ const specs = {
     // on the component from here outside the component.
     // https://github.com/gaearon/react-dnd/issues/179
     component.setState({ placeholderIndex });
-
-    // when drag begins, we hide the card and only display cardDragPreview
-    // const item = monitor.getItem();
-    // document.getElementById(item.id).style.display = 'none';
   }
 };
 
@@ -106,7 +106,11 @@ class Cards extends Component {
     startScrolling: PropTypes.func,
     stopScrolling: PropTypes.func,
     isScrolling: PropTypes.bool
-  }
+  };
+
+	static contextTypes = {
+		container: PropTypes.element,
+	};
 
   constructor(props) {
     super(props);
@@ -119,7 +123,6 @@ class Cards extends Component {
   render() {
     const { connectDropTarget, x, cards, isOver, canDrop } = this.props;
     const { placeholderIndex } = this.state;
-    console.log('NEW CARDS', cards);
 
     let isPlaceHold = false;
     let cardList = [];
