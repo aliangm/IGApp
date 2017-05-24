@@ -26,6 +26,7 @@
 @mixin icon-nodpi indicator:mcl, ../../assets/indicator-icons/MCL_indicator;
 @mixin icon-nodpi indicator:mql, ../../assets/indicator-icons/MQL_indicator;
 @mixin icon-nodpi indicator:sql, ../../assets/indicator-icons/SQL_indicator;
+@mixin icon-nodpi indicator:opps, ../../assets/indicator-icons/opps_indicator;
 @mixin icon-nodpi indicator:googleMentions, ../../assets/indicator-icons/google_mentions_indicator;
 @mixin icon-nodpi indicator:sessions, ../../assets/indicator-icons/sessions_indicator;
 @mixin icon-nodpi indicator:averageSessionDuration, ../../assets/indicator-icons/average_sessions_duration_indicator;

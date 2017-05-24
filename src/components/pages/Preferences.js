@@ -599,6 +599,7 @@ export default class Preferences extends Component {
       { label: 'MCL', value: 'MCL' },
       { label: 'MQL', value: 'MQL' },
       { label: 'SQL', value: 'SQL' },
+      { label: 'Opps', value: 'opps' },
       { label: 'Google Mentions', value: 'googleMentions' },
       { label: 'Sessions', value: 'sessions' },
       { label: 'Average Session Duration',

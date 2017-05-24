@@ -58,6 +58,28 @@
   user-select: none;
 }
 
+.item[data-state="irrelevant"] .inner {
+  border: 1px solid #83858a;
+  background: #a5a7aa;
+}
+
+.item[data-state="irrelevant"] .footer {
+  background: #83858a;
+  color: white;
+}
+
+.item[data-state="irrelevant"] .icon {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  opacity: 0.3;
+  width: 76px;
+  height: 76px;
+}
+
+.item[data-state="irrelevant"] .status {
+  user-select: none;
+}
+
 .item[data-state="auto"] .inner {
   border: 1px solid #ffba00;
   box-shadow: inset 0 0 0 1px #ffba00;

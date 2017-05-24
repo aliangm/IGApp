@@ -211,6 +211,14 @@ export default class ProjectionsTab extends Component {
           title: "SQL",
           key: "SQL"
         },
+        {
+          defaultState: ["normal", "grow", "grow", "grow"],
+          defaultValue: ["2500", "2700", "4700", "6000"],
+          grow: ["", "8", "88", "140"],
+          icon: "indicator:opps",
+          title: "Opps",
+          key: "opps"
+        },
       ],
 
       [
@@ -326,7 +334,7 @@ export default class ProjectionsTab extends Component {
             //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
             defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
             //grow={ item.grow && item.grow[selectedTab] }
-            grow={ Math.ceil(Math.abs((this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) }
+            grow={ this.props.actualIndicators[item.key] ? Math.ceil(Math.abs((this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) : this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] * 100 }
             icon={ item.icon }
             title={ item.title }
           />

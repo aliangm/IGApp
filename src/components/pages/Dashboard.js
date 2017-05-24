@@ -75,11 +75,19 @@ export default class Profile extends Component {
       '#D66511',
       '#95AFBA'
     ];
-    const funnel = [
-      { name: 'MCL', value: actualIndicators.MCL },
-      { name: 'MQL', value: actualIndicators.MQL },
-      { name: 'SQL', value: actualIndicators.SQL },
-    ];
+    const funnel = [];
+    if (actualIndicators.MCL !== -2){
+      funnel.push({ name: 'MCL', value: actualIndicators.MCL });
+    }
+    if (actualIndicators.MQL !== -2) {
+      funnel.push({ name: 'MQL', value: actualIndicators.MQL });
+    }
+    if (actualIndicators.SQL !== -2) {
+      funnel.push({ name: 'SQL', value: actualIndicators.SQL });
+    }
+    if (actualIndicators.opps !== -2) {
+      funnel.push({ name: 'Opps', value: actualIndicators.opps });
+    }
 
     const RADIAN = Math.PI / 180;
 
@@ -127,68 +135,68 @@ export default class Profile extends Component {
             </div>
           </div>
         </div>
-          <div className={ this.classes.cols } style={{ width: '825px' }}>
-            <div className={ this.classes.colLeft }>
-              <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '397px', width: '540'}}>
-                <div className={ dashboardStyle.locals.text }>
-                  Marketing Mix Summary
-                </div>
-                <div className={ dashboardStyle.locals.chart }>
-                  <div className={ this.classes.footerLeft }>
-                    <div className={ dashboardStyle.locals.index }>
-                      {
-                        fatherChannelsWithBudgets.map((element, i) => (
-                          <div key={i} style={{ display: 'flex' }}>
-                            <div style={{background: COLORS[i % COLORS.length], borderRadius: '50%', height: '10px', width: '10px', display: 'inline-flex', marginTop: '11px'}}/>
-                            <div style={{fontWeight: this.state.activeIndex === i ? "bold" : null, display: 'inline', paddingLeft: '4px'}}>
-                              {element.name} : ${element.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            </div>
-                          </div>
-                        ))
-                      }
-                    </div>
-                  </div>
-                  <div className={ this.classes.footerRight }>
-                    <PieChart width={429} height={350} onMouseEnter={this.onPieEnter}>
-                      <Pie
-                        data={fatherChannelsWithBudgets}
-                        cx={250}
-                        cy={150}
-                        labelLine={true}
-                        label={renderCustomizedLabel}
-                        outerRadius={120}
-                        isAnimationActive={false}
-                      >
-                        {
-                          fatherChannelsWithBudgets .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={index}/>)
-                        }
-                      </Pie>
-                    </PieChart>
-                  </div>
-                </div>
+        <div className={ this.classes.cols } style={{ width: '825px' }}>
+          <div className={ this.classes.colLeft }>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '397px', width: '540'}}>
+              <div className={ dashboardStyle.locals.text }>
+                Marketing Mix Summary
               </div>
-            </div>
-            <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-              <div className={ dashboardStyle.locals.item } style={{ height: '397px'}}>
-                <div className={ dashboardStyle.locals.text }>
-                  Leads Funnel
+              <div className={ dashboardStyle.locals.chart }>
+                <div className={ this.classes.footerLeft }>
+                  <div className={ dashboardStyle.locals.index }>
+                    {
+                      fatherChannelsWithBudgets.map((element, i) => (
+                        <div key={i} style={{ display: 'flex' }}>
+                          <div style={{background: COLORS[i % COLORS.length], borderRadius: '50%', height: '10px', width: '10px', display: 'inline-flex', marginTop: '11px'}}/>
+                          <div style={{fontWeight: this.state.activeIndex === i ? "bold" : null, display: 'inline', paddingLeft: '4px'}}>
+                            {element.name} : ${element.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
                 </div>
-                <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px' }}>
-                  <BarChart width={231} height={270} data={funnel}>
-                    <XAxis dataKey='name' tickLine={false}/>
-                    <Tooltip/>
-                    <Bar dataKey='value' label isAnimationActive={false}>
+                <div className={ this.classes.footerRight }>
+                  <PieChart width={429} height={350} onMouseEnter={this.onPieEnter}>
+                    <Pie
+                      data={fatherChannelsWithBudgets}
+                      cx={250}
+                      cy={150}
+                      labelLine={true}
+                      label={renderCustomizedLabel}
+                      outerRadius={120}
+                      isAnimationActive={false}
+                    >
                       {
-                        funnel.map((entry, index) => (
-                          <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`}/>
-                        ))
+                        fatherChannelsWithBudgets .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={index}/>)
                       }
-                    </Bar>
-                  </BarChart>
+                    </Pie>
+                  </PieChart>
                 </div>
               </div>
             </div>
           </div>
+          <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
+            <div className={ dashboardStyle.locals.item } style={{ height: '397px'}}>
+              <div className={ dashboardStyle.locals.text }>
+                Leads Funnel
+              </div>
+              <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px' }}>
+                <BarChart width={231} height={270} data={funnel}>
+                  <XAxis dataKey='name' tickLine={false}/>
+                  <Tooltip/>
+                  <Bar dataKey='value' label isAnimationActive={false}>
+                    {
+                      funnel.map((entry, index) => (
+                        <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`}/>
+                      ))
+                    }
+                  </Bar>
+                </BarChart>
+              </div>
+            </div>
+          </div>
+        </div>
       </Page>
     </div>
   }
