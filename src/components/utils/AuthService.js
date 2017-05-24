@@ -1,6 +1,6 @@
 import Auth0Lock from 'auth0-lock'
 import history from 'history';
-import config from 'components/utils/configuration';
+import config from 'components/utils/Configuration';
 
 export default class AuthService {
 

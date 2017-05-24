@@ -1,4 +1,4 @@
-import config from 'components/utils/configuration';
+import config from 'components/utils/Configuration';
 import q from 'q';
 //SAFARI BUG FIX - no default fetch, need to use external library
 import 'whatwg-fetch';
