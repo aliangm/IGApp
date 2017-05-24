@@ -3,8 +3,8 @@ import { findDOMNode } from 'react-dom';
 import { DragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import Card from './ChannelCard';
-
+import ChannelCard from './ChannelCard';
+import CampaignCard from './CampaignCard';
 
 function getStyles(isDragging) {
   return {
@@ -15,26 +15,26 @@ function getStyles(isDragging) {
 const cardSource = {
   beginDrag(props, monitor, component) {
     const { item, x, y } = props;
-    const { id, title } = item;
+    const { id, title, status } = item;
     const { clientWidth, clientHeight } = findDOMNode(component);
 
-    return { id, title, item, x, y, clientWidth, clientHeight, type: 'channel'  };
+    return { id, title, status, item, x, y, clientWidth, clientHeight, type: item.campaigns ? 'channel' : 'campaign' };
   },
   endDrag(props, monitor) {
-    // document.getElementById(monitor.getItem().id).style.display = 'block';
     props.stopScrolling();
   },
   isDragging(props, monitor) {
-    return props.item && props.item.id === monitor.getItem().id;
+    return props.item && props.item.id === monitor.getItem().id && props.item.status === monitor.getItem().status;
   }
 };
 
-// options: 4rd param to DragSource https://gaearon.github.io/react-dnd/docs-drag-source.html
 const OPTIONS = {
   arePropsEqual(props, otherProps) {
     return props.item.id === otherProps.item.id &&
 			props.x === otherProps.x &&
-			props.y === otherProps.y;
+			props.y === otherProps.y &&
+      props.item.status === otherProps.item.status &&
+      props.item.campaigns === otherProps.item.campaigns;
   }
 };
 
@@ -46,32 +46,42 @@ function collectDragSource(connectDragSource, monitor) {
   };
 }
 
-class CardComponent extends Component {
-  static propTypes = {
-    item: PropTypes.object,
-    connectDragSource: PropTypes.func.isRequired,
-    connectDragPreview: PropTypes.func.isRequired,
-    isDragging: PropTypes.bool.isRequired,
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number,
-    stopScrolling: PropTypes.func
-  }
+const cardComponents = {
+	card: ChannelCard,
+	campaignCard: CampaignCard,
+};
 
-  componentDidMount() {
-    this.props.connectDragPreview(getEmptyImage(), {
-      captureDraggingState: true
-    });
-  }
+function createDraggableCard(type) {
+  const CardComponent = cardComponents[type];
 
-  render() {
-    const { isDragging, connectDragSource, item } = this.props;
+	return DragSource(type, cardSource, collectDragSource, OPTIONS)(class extends Component {
+		static propTypes = {
+			item: PropTypes.object,
+			connectDragSource: PropTypes.func.isRequired,
+			connectDragPreview: PropTypes.func.isRequired,
+			isDragging: PropTypes.bool.isRequired,
+			x: PropTypes.number.isRequired,
+			y: PropTypes.number,
+			stopScrolling: PropTypes.func
+		};
 
-    return connectDragSource(
-      <div>
-        <Card style={getStyles(isDragging)} item={item} />
-      </div>
-    );
-  }
+		componentDidMount() {
+			this.props.connectDragPreview(getEmptyImage(), {
+				captureDraggingState: true
+			});
+		}
+
+		render() {
+			const {isDragging, connectDragSource, connectDragPreview, ...otherProps} = this.props;
+
+			return connectDragSource(
+        <div>
+          <CardComponent style={getStyles(isDragging)} {...otherProps} />
+        </div>
+			);
+		}
+	})
 }
 
-export default DragSource('card', cardSource, collectDragSource, OPTIONS)(CardComponent)
+export const DraggableChannelCard = createDraggableCard('card');
+export const DraggableCampaignCard = createDraggableCard('campaignCard');

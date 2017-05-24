@@ -4,7 +4,7 @@ import { findDOMNode } from 'react-dom';
 import Component from 'components/Component';
 import classnames from 'classnames'
 
-import Card from './DraggableCard';
+import { DraggableChannelCard } from './DraggableCard';
 
 import style from 'styles/campaigns/cards.css';
 import cardStyle from 'styles/campaigns/card.css';
@@ -45,7 +45,8 @@ const specs = {
       return;
     }
 
-    props.moveCard(lastX, lastY, nextX, nextY);
+    console.error('DROP');
+    props.moveCard(lastX, lastY, nextX, nextY, { type: item.type, item: item.item });
   },
   hover(props, monitor, component) {
 		const item = monitor.getItem();
@@ -118,6 +119,7 @@ class Cards extends Component {
   render() {
     const { connectDropTarget, x, cards, isOver, canDrop } = this.props;
     const { placeholderIndex } = this.state;
+    console.log('NEW CARDS', cards);
 
     let isPlaceHold = false;
     let cardList = [];
@@ -134,7 +136,7 @@ class Cards extends Component {
       }
       if (item !== undefined) {
         cardList.push(
-          <Card x={x} y={i}
+          <DraggableChannelCard x={x} y={i}
             item={item}
             key={item.id}
             stopScrolling={this.props.stopScrolling}

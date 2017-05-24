@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import Component from 'components/Component';
 
-import CampaignCard from './DraggableCampaignCard'
+import { DraggableCampaignCard } from './DraggableCard'
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 
 import style from 'styles/campaigns/card.css';
@@ -16,7 +16,13 @@ class Card extends Component {
 
 	static propTypes = {
 		item: PropTypes.object.isRequired,
-		style: PropTypes.object
+		style: PropTypes.object,
+		x: PropTypes.number,
+		y: PropTypes.number,
+	};
+
+	static contextTypes = {
+		onCampaignUpdate: PropTypes.func
 	};
 
 	state = {
@@ -33,24 +39,31 @@ class Card extends Component {
 	};
 
 	renderCampaigns() {
-		const { campaigns } = this.props.item;
+		const { x, y, stopScrolling, item } = this.props;
 
-		return campaigns.map(campaign => (
-			<CampaignCard key={campaign.id} item={campaign} onClick={() => this.openPopup(campaign)} />
+		return item.campaigns.map((campaign, index) => (
+			<DraggableCampaignCard
+				key={campaign.id}
+				item={campaign}
+				onClick={() => this.openPopup(index)}
+				x={x}
+				y={y}
+				stopScrolling={stopScrolling}
+			/>
 		))
 	}
 
-	openPopup = (campaign) => {
+	openPopup = (index) => {
 		this.setState({
 			showPopup: true,
-			selectedCampaign: campaign,
+			selectedCampaignIndex: index,
 		})
 	};
 
 	closePopup = () => {
 		this.setState({
 			showPopup: false,
-			selectedCampaign: null,
+			selectedCampaignIndex: -1,
 		})
 	};
 
@@ -70,19 +83,21 @@ class Card extends Component {
 				{this.state.expanded && this.renderCampaigns()}
 				{
 					this.state.expanded && [
-						<button className={ this.classes.addButton } onClick={ () => {
+						<button key="button" className={ this.classes.addButton } onClick={ () => {
 							this.openPopup({ status: 'New' }); // TODO - get actual status
 						}}>
-							Add Compaign
+							Add Campaign
 						</button>,
 						this.state.showPopup &&
 							<CampaignPopup
+								key="popup"
 								channelTitle={item.title}
 								channel={item.name}
-								updateCampaign={this.props.onCampaignUpdate}
+								updateCampaign={this.context.onCampaignUpdate}
 								close={this.closePopup}
 								teamMembers={this.props.teamMembers}
-								campaign={this.state.selectedCampaign}
+								campaign={item.campaigns[this.state.selectedCampaignIndex] || { status: item.status }}
+								index={this.state.selectedCampaignIndex}
 							/>
 					]
 				}

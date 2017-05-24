@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import isEqual from 'lodash/isEqual'
-import merge from 'lodash/merge'
+import cloneDeep from 'lodash/cloneDeep'
 
 import styles from 'styles/campaigns/by-status-tab.css';
 import channelsSchema from 'data/channelsSchema';
@@ -17,27 +17,44 @@ export default class ByChannelTab extends Component {
 	};
 
 	componentDidMount() {
-		this.setLists()
+		this.setState({
+			lists: this.getLists()
+		});
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (
-			!isEqual(nextProps.processedChannels, this.props.processedChannels) ||
-			!isEqual(nextProps.campaigns, this.props.campaigns)
-		) {
-			this.setLists()
+		const isChannelsEqual = isEqual(nextProps.processedChannels, this.props.processedChannels);
+		const isCampaignsEqual = isEqual(nextProps.campaigns, this.props.campaigns);
+
+		if (!isChannelsEqual || !isCampaignsEqual) {
+			const newState = { };
+
+			if (isCampaignsEqual) {
+				this.setState({
+					lists: this.getLists(nextProps)
+				});
+			} else {
+				this.setState({
+					campaigns: nextProps.campaigns,
+					lists: this.getLists(nextProps, nextProps.campaigns)
+				});
+			}
 		}
 	}
 
-	setLists() {
-		const { processedChannels, /*campaigns*/ } = this.props;
-		const campaigns = this.state.campaigns || this.props.campaigns; // TODO - for testing - remove it
+	get campaigns() {
+		return this.state.campaigns || this.props.campaigns; // TODO - for testing - remove it
+	}
+
+	getLists(props = this.props, campaigns = this.campaigns) {
+		const { processedChannels } = props;
 		const lists = [
 			{
 				id: 'new',
 				name: 'New',
 				cards: processedChannels.names.map(name => ({
 					id: name,
+					status: 'New',
 					name,
 					budget: processedChannels.budgets[name],
 					title: processedChannels.titles[name],
@@ -97,6 +114,7 @@ export default class ByChannelTab extends Component {
 					} else {
 						list.cards.push({
 							id: channelName,
+							status: campaign.status,
 							name: channelName,
 							title: processedChannels.titles[channelName],
 							icon: processedChannels.icons[channelName],
@@ -108,11 +126,19 @@ export default class ByChannelTab extends Component {
 			})
 		});
 
-		this.setState({ lists })
+		return lists
+	}
+
+	updateCampaigns(campaigns) {
+		this.setState({
+			campaigns: campaigns,
+			lists: this.getLists(this.props, campaigns)
+		});
+		return this.props.updateCampaigns(campaigns);
 	}
 
 	handleCampaignsStatusChange = (updates) => {
-		const newCampaigns = merge({ }, this.props.campaigns);
+		const newCampaigns = cloneDeep(this.campaigns);
 
 		updates.forEach(({ id, status }) => {
 			const [channel, campaignName] = id.split('::');
@@ -123,21 +149,37 @@ export default class ByChannelTab extends Component {
 			}
 		});
 
-		// TODO - using state for testing - remove it
-		this.setState({
-			campaigns: newCampaigns,
-		});
-		// this.props.updateCampaigns(newCampaigns);
+		return this.updateCampaigns(newCampaigns);
 	};
 
-	handleCampaignUpdate = (campaign, index) => {
-		// TODO
-		return this.props.updateCampaigns(/***/);
+	handleCampaignUpdate = (campaign, index = -1, channel) => {
+		if (!campaign || !channel) {
+			return;
+		}
+
+		const { id, ...campaignFields } = campaign;
+
+		const newCampaigns = cloneDeep(this.campaigns);
+		const channelCampaigns = newCampaigns[channel];
+
+		if (!channelCampaigns) {
+			newCampaigns[channel] = [campaignFields];
+		} else if (index > -1) {
+			channelCampaigns.splice(index, 1, campaignFields);
+		} else {
+			const existedCompaignIndex = channelCampaigns.findIndex(cmpgn => cmpgn.name === campaignFields.name);
+
+			if (existedCompaignIndex > -1) {
+				channelCampaigns.splice(existedCompaignIndex, 1, campaignFields);
+			} else {
+				channelCampaigns.push(campaignFields);
+			}
+		}
+
+		return this.updateCampaigns(newCampaigns);
 	};
 
 	render() {
-		console.log('PROPS', this.props.processedChannels, this.props.campaigns, this.state.campaigns);
-
 		return (
 			<div className={styles.wrap}>
 				<Board

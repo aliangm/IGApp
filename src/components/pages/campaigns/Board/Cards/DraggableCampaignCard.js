@@ -15,17 +15,17 @@ function getStyles(isDragging) {
 const cardSource = {
 	beginDrag(props, monitor, component) {
 		const { item, x, y } = props;
-		const { id, title } = item;
+		const { id, title, status } = item;
 		const { clientWidth, clientHeight } = findDOMNode(component);
 
-		return { id, title, item, x, y, clientWidth, clientHeight, type: 'campaign' };
+		return { id, title, status, item, x, y, clientWidth, clientHeight, type: 'campaign' };
 	},
 	endDrag(props, monitor) {
 		// document.getElementById(monitor.getItem().id).style.display = 'block';
 		props.stopScrolling();
 	},
 	isDragging(props, monitor) {
-		return props.item && props.item.id === monitor.getItem().id;
+		return props.item && props.item.id === monitor.getItem().id && props.item.status === monitor.getItem().status;
 	}
 };
 
@@ -64,8 +64,9 @@ class CardComponent extends Component {
 	}
 
 	render() {
-		const { isDragging, connectDragSource, item, onClick } = this.props;
+		const { isDragging, connectDragSource, item, onClick, x, y } = this.props;
 
+		console.log('CAMPAIGN CARD', x, y);
 		return connectDragSource(
 			<div>
 				<Card style={getStyles(isDragging)} item={item} onClick={onClick}/>

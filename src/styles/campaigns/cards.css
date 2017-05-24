@@ -1,5 +1,6 @@
 .cards {
     overflow-y: auto;
+    min-height: 100px;
     height: 100%;
     padding-bottom: 20px;
 }

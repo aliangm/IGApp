@@ -16,8 +16,11 @@ class CampaignCard extends Component {
 
 		return (
 			<div className={this.classes.campaign} id={item.id} onClick={onClick}>
-				<span className={this.classes.campaignName}>{item.name}</span>
-				<span className={this.classes.campaignBudget}>{item.budget}</span>
+				<div className={this.classes.campaignName}>{item.name}</div>
+				<div className={this.classes.campaignFooter}>
+					<span className={this.classes.campaignBudget}>${item.budget}</span>
+					{item.icon && <img src={item.icon} className={ this.classes.campaignIcon } />}
+				</div>
 			</div>
 		);
 	}

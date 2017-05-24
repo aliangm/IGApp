@@ -11,7 +11,8 @@
 
 .desk, .desk-placeholder, .desk-placeholder:hover {
     width: 330px;
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
     height: 100%;
     overflow: hidden;
     min-height: 200px;
@@ -36,7 +37,7 @@
 
 .add-button {
     width: 100%;
-    margin: 0 auto;
+    margin: auto auto 0;
     text-align: center;
     background: transparent;
     border: 0;
@@ -44,4 +45,8 @@
     box-shadow: none;
     font-size: 20px;
     cursor: pointer;
+}
+
+.add-button:hover {
+    opacity: 0.8;
 }

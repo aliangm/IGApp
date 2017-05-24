@@ -56,7 +56,6 @@ export default class Campaigns extends Component {
 	}
 
 	pagingUpdateState = (data) => {
-  	console.log('PAGING UPDATE STATE', data);
 		this.setState({
 			planDate: data.planDate,
 			region: data.region,

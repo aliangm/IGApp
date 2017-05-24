@@ -25,7 +25,7 @@ export const CampaignCardDragPreview = (props) => {
 
 	return (
     <div style={styles}>
-      <CampaignCard campaign={props.card.item} />
+      <CampaignCard item={props.card.item} />
     </div>
 	);
 };
