@@ -25,7 +25,7 @@ const auth = new AuthService();
 
 // validate authentication for private routes
 const requireAdminAuth = (nextState, replace) => {
-  if (!auth.loggedIn() || !auth.getProfile().app_metadata.isAdmin) {
+  if (!auth.loggedIn() || !auth.getProfile().app_metadata || !auth.getProfile().app_metadata.isAdmin) {
     auth.logout();
     replace({ pathname: '/' })
   }
