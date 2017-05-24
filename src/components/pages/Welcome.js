@@ -215,7 +215,7 @@ export default class Welcome extends Component {
               <div role="button" className={ welcomeStyle.locals.addButton } onClick={ this.addMember }/>
             </div>
             <div className={ this.classes.row }>
-              <Label>Enter your main competitor’s website (up to 3)</Label>
+              <Label>Enter your main competitors' website (up to 3)</Label>
               <Textfield value={ this.props.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
                          onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
               <Textfield value={ this.props.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
