@@ -1,5 +1,6 @@
 import Auth0Lock from 'auth0-lock'
 import history from 'history';
+import config from 'components/utils/Configuration';
 
 export default class AuthService {
 
@@ -29,10 +30,7 @@ export default class AuthService {
   };
   constructor() {
     // Configure Auth0
-    // this.lock = new Auth0Lock('ZPLaIfv_lyA2N5PghXNjWSjah6aE1y9e', 'infinigrow.auth0.com', this.options);
-
-    // Test configuration
-    this.lock = new Auth0Lock('En6sYxyCeCWBwHSORHGxVfBoNjWWp41c', 'infinigrow-test.auth0.com', this.options);
+    this.lock = new Auth0Lock(config.authClientId, config.authDomain, this.options);
 
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this));
@@ -50,7 +48,7 @@ export default class AuthService {
     // navigate to the home route
     history.push('/');
     // Async loads the user profile data
-    /**
+
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
         console.log('Error loading the Profile', error)
@@ -58,7 +56,7 @@ export default class AuthService {
         this.setProfile(profile)
       }
     })
-     **/
+
   }
 
   authenticationError(error) {
@@ -90,12 +88,16 @@ export default class AuthService {
     // Retrieves the user token from local storage
     return localStorage.getItem('id_token')
   }
-/**
+
   setProfile(profile) {
     // Saves profile data to local storage
     localStorage.setItem('profile', JSON.stringify(profile))
     // Triggers profile_updated event to update the UI
     // this.emit('profile_updated', profile)
+    FS.identify(profile.user_id, {
+      displayName: profile.email,
+      email: profile.email
+    });
   }
 
   getProfile() {
@@ -103,10 +105,11 @@ export default class AuthService {
     const profile = localStorage.getItem('profile')
     return profile ? JSON.parse(localStorage.profile) : {}
   }
-**/
+
   logout() {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
-    //localStorage.removeItem('profile');
+    localStorage.removeItem('profile');
+    FS.clearUserCookie(true);
   }
 }

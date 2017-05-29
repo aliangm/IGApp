@@ -19,6 +19,7 @@ import PlannedVsActualstyle from 'styles/plan/planned-actual-tab.css';
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
+import serverCommunication from 'data/serverCommunication';
 
 export default class Welcome extends Component {
   style = style;
@@ -36,7 +37,7 @@ export default class Welcome extends Component {
       createNewVisible: false
     }
   };
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -91,8 +92,23 @@ export default class Welcome extends Component {
 
   removeMember(index) {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers.splice(index, 1);
+    const member = update.teamMembers.splice(index, 1);
     this.props.updateState({userAccount: update});
+    serverCommunication.serverRequest('DELETE', 'members', JSON.stringify(member[0]))
+      .then((data) => {
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  inviteMember(index) {
+    serverCommunication.serverRequest('PUT', 'members', JSON.stringify({newMember: this.props.userAccount.teamMembers[index], admin: { name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName, company: this.props.userAccount.companyName }}))
+      .then((data) => {
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   render() {
@@ -100,6 +116,7 @@ export default class Welcome extends Component {
       'Name',
       'Email',
       'Role',
+      '',
       ''
     ], {
       className: PlannedVsActualstyle.locals.headRow
@@ -121,10 +138,8 @@ export default class Welcome extends Component {
             minWidth: '117px'
           }} value={ item.role } onChange={ this.changeMembers.bind(this, i, 'role') }/>
         </div>,
-        <div
-          className={ welcomeStyle.locals.removeButton }
-          onClick={ this.removeMember.bind(this, i) }
-        />
+        <Button type="primary2" style={{ height: '53px', width: '75px' }} onClick={ this.inviteMember.bind(this, i) }>Invite</Button>,
+        <Button type="primary2" style={{ background: '#e50000', height: '53px', width: '75px' }} onClick={ this.removeMember.bind(this, i) }>Remove</Button>
       ], {
         key: i
       });
@@ -157,7 +172,7 @@ export default class Welcome extends Component {
         <Title title={ title } subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
         <div className={ this.classes.cols }>
-          <div className={ this.classes.colCenter }>
+          <div className={ this.classes.colCenter } style={{ maxWidth: '707px' }}>
             <div className={ this.classes.row }>
               <Label>Enter your brand/company name</Label>
               <Textfield value={ this.props.userAccount.companyName } onChange={ this.handleChange.bind(this, 'companyName')}/>
@@ -200,7 +215,7 @@ export default class Welcome extends Component {
               <div role="button" className={ welcomeStyle.locals.addButton } onClick={ this.addMember }/>
             </div>
             <div className={ this.classes.row }>
-              <Label>Enter your main competitor’s website (up to 3)</Label>
+              <Label>Enter your main competitors' website (up to 3)</Label>
               <Textfield value={ this.props.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
                          onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
               <Textfield value={ this.props.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}

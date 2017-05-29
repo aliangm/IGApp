@@ -271,7 +271,7 @@ export default class AppComponent extends Component {
       (child) => React.cloneElement(child, this.state));
     return <div>
       <Header auth={ this.props.route.auth } {... this.state}/>
-      <Sidebar/>
+      <Sidebar auth={ this.props.route.auth }/>
       { childrenWithProps }
     </div>
   }

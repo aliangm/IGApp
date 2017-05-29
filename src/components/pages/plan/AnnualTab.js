@@ -222,12 +222,11 @@ export default class AnnualTab extends Component {
         const data = planJson[budget];
         budget = Math.ceil(budget/1000)*1000;
         let rows = [];
-        let hoverRows;
 
         const handleRows = (data, parent, level) => {
           level = level | 0;
 
-          Object.keys(data).forEach((item, i) => {
+          Object.keys(data).sort().forEach((item, i) => {
             if (item === '__TOTAL__') return null;
 
             let key = parent + ':' + item + '-' + i;
@@ -340,11 +339,11 @@ export default class AnnualTab extends Component {
               <div className={ planStyles.locals.titleButtons }>
                 <Button type="accent2" style={{
                   marginLeft: '15px',
-                  width: '102px'
+                  width: '114px'
                 }} onClick={() => {
                   this.props.approveAll();
                 }}>
-                  Accept All
+                  Approve All
                 </Button>
                 <Button type="normalAccent" style={{
                   marginLeft: '15px',
@@ -517,7 +516,7 @@ export default class AnnualTab extends Component {
             </div>
 
             <div className={ this.classes.popupText }>
-              Please wait while the system creates your plan
+              Please wait while the system optimizes your plan
             </div>
           </Popup>
         </div>

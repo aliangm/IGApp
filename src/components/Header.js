@@ -26,7 +26,8 @@ export default class Header extends Component {
 
   static defaultProps = {
     user: true,
-    regions: []
+    regions: [],
+    teamMembers: []
   };
 
   openSidebar = () => {
@@ -95,7 +96,16 @@ export default class Header extends Component {
         <div className={ this.classes.userBox }>
           <div className={ this.classes.logged }>
             {this.props.userCompany}
-            <div className={ this.classes.user }>{this.props.userFirstName} {this.props.userLastName}</div>
+            <div className={ this.classes.user }>
+              { this.props.auth.getProfile().app_metadata.isAdmin ?
+                this.props.userFirstName + ' ' + this.props.userLastName
+                : this.props.teamMembers
+                  .filter(member => member.email == this.props.auth.getProfile().email)
+                  .map((member) => {
+                    return member.name
+                  })
+              }
+            </div>
           </div>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
         </div>
@@ -155,7 +165,16 @@ export default class Header extends Component {
                 <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
                 <div className={ this.classes.logged }>
                   {this.props.userCompany}
-                  <div className={ this.classes.user }>{this.props.userFirstName} {this.props.userLastName}</div>
+                  <div className={ this.classes.user }>
+                    { this.props.auth.getProfile().app_metadata.isAdmin ?
+                      this.props.userFirstName + ' ' + this.props.userLastName
+                      : this.props.teamMembers
+                        .filter(member => member.email == this.props.auth.getProfile().email)
+                        .map((member) => {
+                          return member.name
+                        })
+                    }
+                  </div>
                 </div>
               </div>
               : null }
@@ -187,7 +206,16 @@ export default class Header extends Component {
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
           <div className={ this.classes.logged }>
             {this.props.userCompany}
-            <div className={ this.classes.user }>{this.props.userFirstName} {this.props.userLastName}</div>
+            <div className={ this.classes.user }>
+              { this.props.auth.getProfile().app_metadata.isAdmin ?
+                this.props.userFirstName + ' ' + this.props.userLastName
+                : this.props.teamMembers
+                  .filter(member => member.email == this.props.auth.getProfile().email)
+                  .map((member) => {
+                    return member.name
+                  })
+              }
+            </div>
           </div>
         </div>
         :null}

@@ -378,7 +378,7 @@ export default class Preferences extends Component {
               ]
               },
               {
-                label: 'Social Ads', options: [
+                label: 'Social Paid', options: [
                 {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
                 {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
                 {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
@@ -599,6 +599,7 @@ export default class Preferences extends Component {
       { label: 'MCL', value: 'MCL' },
       { label: 'MQL', value: 'MQL' },
       { label: 'SQL', value: 'SQL' },
+      { label: 'Opps', value: 'opps' },
       { label: 'Google Mentions', value: 'googleMentions' },
       { label: 'Sessions', value: 'sessions' },
       { label: 'Average Session Duration',
@@ -681,7 +682,7 @@ export default class Preferences extends Component {
             <div className={ this.classes.row } style={{
               // maxWidth: '440px',
               // minWidth: '200px',
-              width: '100px'
+              width: '70px'
             }}>
               <Select { ... selects.planDay } selected={ this.props.planDay } onChange={ this.handleChangePlanDay.bind(this) }/>
             </div>
@@ -728,7 +729,7 @@ export default class Preferences extends Component {
                     <div style={{
                     }} className={ preferencesStyle.locals.channelsRow }>
                       <div className={ preferencesStyle.locals.objectiveText }>I want</div>
-                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '60px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
+                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
                       <Select
                         className={ preferencesStyle.locals.objectiveSelect }
                         selected={ this.props.objectives[index] ? this.props.objectives[index].isPercentage : -1 }
@@ -740,6 +741,7 @@ export default class Preferences extends Component {
                               selected: selected
                             });
                           },
+                          placeholder: '%/num',
                           options: [{ label: '%', value: true}, {label: '(num)', value: false}]
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'isPercentage') }
@@ -755,6 +757,7 @@ export default class Preferences extends Component {
                               selected: selected
                             });
                           },
+                          placeholder: 'Direction',
                           options: [{ label: 'increase', value: 'increase'}, {label: 'decrease', value: 'decrease'}, {label: '(target)', value: 'equals'}]
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'direction') }
@@ -771,6 +774,7 @@ export default class Preferences extends Component {
                               selected: selected
                             });
                           },
+                          placeholder: 'KPI',
                           options: indicatorsOptions
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
@@ -788,8 +792,8 @@ export default class Preferences extends Component {
                 }}
               </MultiRow>
             </div>
-            <div className={ this.classes.row }>
-              <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Channel Constrains (Optional)</Label>
+            <div className={ this.classes.row } style={{ marginTop: '96px' }}>
+              <Label style={{ fontSize: '20px', fontWeight: 'bold' }}>Channel Constraints (Optional)</Label>
               <Notice warning style={{
                 margin: '12px 0'
               }}>

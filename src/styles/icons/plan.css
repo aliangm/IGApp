@@ -10,7 +10,7 @@
 @mixin icon-nodpi plan:Search Marketing, ../../assets/plan_icons/SearchMarketing;
 @mixin icon-nodpi plan:SEO, ../../assets/plan_icons/SEO;
 @mixin icon-nodpi plan:SEM (PPC), ../../assets/plan_icons/SEM;
-@mixin icon-nodpi plan:Social Ads, ../../assets/plan_icons/soci;
+@mixin icon-nodpi plan:Social Paid, ../../assets/plan_icons/soci;
 @mixin icon-nodpi plan:Facebook Advertising, ../../assets/plan_icons/FacebookAdvertising;
 @mixin icon-nodpi plan:Twitter Advertising, ../../assets/plan_icons/TwitterAdvertising;
 @mixin icon-nodpi plan:LinkedIn Advertising, ../../assets/plan_icons/LinkedInAdvertising;

@@ -60,6 +60,7 @@ export default class Indicators extends Component {
       this.props.actualIndicators.MCL &&
       this.props.actualIndicators.MQL &&
       this.props.actualIndicators.SQL &&
+      this.props.actualIndicators.opps &&
       this.props.actualIndicators.googleMentions &&
       this.props.actualIndicators.sessions &&
       this.props.actualIndicators.averageSessionDuration &&
@@ -106,8 +107,8 @@ export default class Indicators extends Component {
                 <Item icon="indicator:youtubeEngagement" link='utu' title="Youtube Engagement" name="youtubeEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.youtubeEngagement } maxValue={100} isPercentage = {true} description="Your Youtube engagement rate, measures your brand’s effectiveness at engaging your audience through Youtube."/>
               </div>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.LTV } maxValue={400000} isDollar={true} description="Measures the profit your business makes from any given customer. Formula – ARPA / Churn Rate (10% is equal to 0.1)."/>
-                <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.CAC } maxValue={20000} isDirectionDown= { true } isDollar={true} description="Refers to the resources that a business must allocate (financial or otherwise) in order to acquire an additional customer. It includes every single effort necessary to introduce your products and services to potential customers, and then convince them to buy and become active customers. Formula - Total Sales & Marketing expenses / # of New Account (Paying Customers)."/>
+                <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.LTV } maxValue={400000} isDollar={true} description="Measures the profit your business makes from any given customer." formula="Formula – ARPA / Churn Rate (10% is equal to 0.1)."/>
+                <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.CAC } maxValue={20000} isDirectionDown= { true } isDollar={true} description="Refers to the resources that a business must allocate (financial or otherwise) in order to acquire an additional customer. It includes every single effort necessary to introduce your products and services to potential customers, and then convince them to buy and become active customers." formula="Formula - Total Sales & Marketing expenses / # of New Account (Paying Customers)."/>
                 {/** <Item icon="indicator:numberOfSales" title="Number Of Sales" name="numberOfSales" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.numberOfSales } />
                  <Item icon="indicator:sales" title="Sales Revenue" name="salesRevenue" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.salesRevenue } /> **/}
                 <Item icon="indicator:users" title="Accounts" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.users } maxValue={7000} description="The numbers of paying customers the company currently has (an account can have multiple users)."/>
@@ -116,9 +117,10 @@ export default class Indicators extends Component {
                 {/**<Item icon="indicator:customerRetentionRate" title="Customer Retention Rate" name="customerRetentionRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.customerRetentionRate } isPercentage = 'true' />**/}
               </div>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:mcl" title="MCL" name="MCL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MCL } maxValue={10000} description="Marketing Captured Leads."/>
-                <Item icon="indicator:mql" title="MQL" name="MQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MQL } maxValue={5000} description="Marketing Qualified Leads."/>
-                <Item icon="indicator:sql" title="SQL" name="SQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.SQL } maxValue={2000} description="Sales Qualified Leads."/>
+                <Item icon="indicator:mcl" title="MCL" name="MCL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MCL } maxValue={10000} isFunnel={true} description="Marketing Captured Leads."/>
+                <Item icon="indicator:mql" title="MQL" name="MQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MQL } maxValue={5000} isFunnel={true} description="Marketing Qualified Leads."/>
+                <Item icon="indicator:sql" title="SQL" name="SQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.SQL } maxValue={2000} isFunnel={true} description="Sales Qualified Leads."/>
+                <Item icon="indicator:opps" title="Opps" name="opps" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.opps } maxValue={1000} isFunnel={true} description="Opportunities."/>
               </div>
               <div className={ indiStyle.locals.row }>
                 <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.googleMentions } maxValue={200000} description="# of mentions when typing your company name in quotes (“Company name”)."/>
@@ -131,9 +133,9 @@ export default class Indicators extends Component {
                 <Item icon="indicator:blogSubscribers" title="Blog Subscribers" name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogSubscribers } maxValue={ 7000 } description="The number of blog subscriber the company currently has."/>
               </div>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MRR } maxValue={1000000} isDollar={true} description="Monthly Recurrent Revenue. Formula - SUM(Paying customers monthly fee)."/>
-                <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } description="The number or percentage of subscribers to a service that discontinue their subscription to that service in a given time period. Formula - # of accounts who churned / Last month total # of accounts."/>
-                <Item icon="indicator:arpa" title="ARPA (monthly)" name="ARPA" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.ARPA } maxValue={17000} isDollar={true} description="Average Revenue Per Account. a measure of the revenue generated per account, per month (sometimes known as ARPU – average revenue per user). Formula – ARPA = MRR / # of accounts (paying customers)."/>
+                <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MRR } maxValue={1000000} isDollar={true} description="Monthly Recurrent Revenue." formula="Formula - SUM(Paying customers monthly fee)."/>
+                <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } description="The number or percentage of subscribers to a service that discontinue their subscription to that service in a given time period." formula="Formula - # of accounts who churned / Last month total # of accounts."/>
+                <Item icon="indicator:arpa" title="ARPA (monthly)" name="ARPA" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.ARPA } maxValue={17000} isDollar={true} description="Average Revenue Per Account. a measure of the revenue generated per account, per month (sometimes known as ARPU – average revenue per user)." formula="Formula – ARPA = MRR / # of accounts (paying customers)."/>
               </div>
             </div>
 

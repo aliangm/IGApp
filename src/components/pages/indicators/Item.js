@@ -17,8 +17,8 @@ export default class Item extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      state: props.defaultStatus ? (props.defaultStatus == -1 ? 'inactive' : 'manual') : undefined,
-      status: props.defaultStatus == -1 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus  || '' : props.defaultStatus || '')),
+      state: props.defaultStatus ? (props.defaultStatus == -2 ? 'irrelevant' : 'manual') :  (props.defaultStatus == 0 ? 'inactive' : undefined),
+      status: props.defaultStatus <= 0 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus  || '' : props.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
       name: props.name,
@@ -29,8 +29,8 @@ export default class Item extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      state: nextProps.defaultStatus ? (nextProps.defaultStatus == -1 ? 'inactive' : 'manual') : undefined,
-      status: nextProps.defaultStatus == -1 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus  || '' : nextProps.defaultStatus || '')),
+      state: nextProps.defaultStatus ? (nextProps.defaultStatus == -2 ? 'irrelevant' : 'manual') :  (nextProps.defaultStatus == 0 ? 'inactive' : undefined),
+      status: nextProps.defaultStatus <= 0 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus  || '' : nextProps.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
       name: nextProps.name,
@@ -44,6 +44,7 @@ export default class Item extends Component {
       case 'auto': return 'Automatic';
       case 'manual': return 'Active';
       case 'inactive': return 'Inactive';
+      case 'irrelevant': return 'Irrelevant';
 
       default: return 'Undefined';
     }
@@ -106,7 +107,7 @@ export default class Item extends Component {
       menuShown: false,
       //status: this.props.status || ''
     });
-    if (state === 'inactive') {
+    if (state === 'inactive' || state === 'irrelevant') {
       this.setState({status: ''});
     }
   }
@@ -168,6 +169,9 @@ export default class Item extends Component {
             <div className={ tooltipStyle.locals.ttSubText }>
               { this.props.description }
             </div>
+            <div className={ tooltipStyle.locals.ttSubText } style={{ fontWeight: 'bold' }}>
+              { this.props.formula }
+            </div>
           </div>
         </div>
       </div>
@@ -221,7 +225,7 @@ export default class Item extends Component {
            Automatic
            </div>
            **/}
-          <div className={ this.classes.menuItem } onClick={() => {
+          <div className={ this.classes.menuItem } style={{ fontWeight: this.props.defaultStatus && this.props.defaultStatus > 0 ? 'bold' : '600' }} onClick={() => {
             this.selectState('manual');
             this.setState({
               statusPopupHidden: false
@@ -231,11 +235,20 @@ export default class Item extends Component {
               this.refs.statusText.focus();
             }, 1);
           }}>
-            Active
+            {this.props.defaultStatus && this.props.defaultStatus > 0 ? 'Edit' : 'Active'}
           </div>
+          {this.props.isFunnel?
+          <div className={ this.classes.menuItem } onClick={() => {
+            this.selectState('irrelevant');
+            this.props.updateIndicator(this.props.name, -2);
+
+          }}>
+            Irrelevant
+          </div>
+            : null }
           <div className={ this.classes.menuItem } onClick={() => {
             this.selectState('inactive');
-            this.props.updateIndicator(this.props.name, -1);
+            this.props.updateIndicator(this.props.name, 0);
 
           }}>
             Inactive
@@ -256,7 +269,7 @@ export default class Item extends Component {
           </div>
         </div>
         <div className={ this.classes.statusPopupRow }>
-          <Textfield onChange={() => {}} ref="statusText" />
+          <Textfield defaultValue={ this.props.defaultStatus && this.props.defaultStatus > 0 ? this.props.defaultStatus : '' } onChange={() => { }} ref="statusText" />
         </div>
         <div className={ this.classes.statusPopupRow }>
           <div className={ this.classes.statusButtons }>

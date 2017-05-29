@@ -53,6 +53,7 @@
     "style-loader": "git+https://github.com/NekR/style-loader.git",
     "webpack": "^1.13.1",
     "whatwg-fetch": "^2.0.2",
-    "auth0-lock": "^10.14.0"
+    "auth0-lock": "^10.14.0",
+    "recharts": "^0.22.4"
   }
 }
