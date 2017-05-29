@@ -62,19 +62,25 @@ const specs = {
       monitor.getClientOffset().y,
 			-containerRect.top
     );
-
-    const SCROLL_THRESHOLD = 150;
+    const SCROLL_H_THRESHOLD = 150;
+    const SCROLL_V_THRESHOLD = 200;
     // horizontal scroll
     if (!props.isScrolling) {
-      if (containerRect.right - monitor.getClientOffset().x < SCROLL_THRESHOLD) {
+      if (containerRect.right - monitor.getClientOffset().x < SCROLL_H_THRESHOLD) {
         props.startScrolling('toRight');
-      } else if (monitor.getClientOffset().x - containerRect.left < SCROLL_THRESHOLD) {
+      } else if (monitor.getClientOffset().x - containerRect.left < SCROLL_H_THRESHOLD) {
         props.startScrolling('toLeft');
+      } else if (monitor.getClientOffset().y < SCROLL_V_THRESHOLD) {
+				props.startScrolling('toTop');
+      } else if (window.innerHeight - monitor.getClientOffset().y < SCROLL_V_THRESHOLD) {
+				props.startScrolling('toBottom');
       }
     } else {
       if (
-        containerRect.right - monitor.getClientOffset().x > SCROLL_THRESHOLD &&
-				monitor.getClientOffset().x - containerRect.left > SCROLL_THRESHOLD
+        containerRect.right - monitor.getClientOffset().x > SCROLL_H_THRESHOLD &&
+				monitor.getClientOffset().x - containerRect.left > SCROLL_H_THRESHOLD &&
+				monitor.getClientOffset().y > SCROLL_V_THRESHOLD &&
+				window.innerHeight - monitor.getClientOffset().y > SCROLL_V_THRESHOLD
       ) {
         props.stopScrolling();
       }
