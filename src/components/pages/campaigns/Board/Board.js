@@ -147,7 +147,7 @@ class Board extends Component {
 		return (
 			<div className={this.classes.desk} key={item.name}>
 				<div className={this.classes.deskHead}>
-					<div className={this.classes.deskName}>{item.name}</div>
+					<div className={this.classes.deskName}><div className={this.classes.oSign} />{item.name}</div>
 				</div>
 				<Cards
 					moveCard={this.moveCard}
