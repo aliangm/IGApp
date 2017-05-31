@@ -115,7 +115,7 @@ class Cards extends Component {
   };
 
 	static contextTypes = {
-		container: PropTypes.element,
+		container: PropTypes.any,
 	};
 
   constructor(props) {

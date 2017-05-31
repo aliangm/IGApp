@@ -12,7 +12,7 @@ class Board extends Component {
 
 	static childContextTypes = {
 		onCampaignUpdate: PropTypes.func,
-		container: PropTypes.element,
+		container: PropTypes.any,
 	};
 
 	getChildContext() {
