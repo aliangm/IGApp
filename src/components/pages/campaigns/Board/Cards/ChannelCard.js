@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import classnames from 'classnames'
 import Component from 'components/Component';
 import { formatBudget } from 'components/utils/budget';
 
@@ -70,7 +71,9 @@ class Card extends Component {
 		const {style, item} = this.props;
 
 		return (
-      <div style={style} className={this.classes.cardContainer} id={style ? item.id : null}>
+      <div style={style} className={classnames(this.classes.cardContainer, {
+      	[this.classes.noCampaigns]: !item.campaigns || item.campaigns.length === 0
+			})} id={style ? item.id : null}>
 				<div className={this.classes.card} onClick={this.handleClick}>
 					<div className={this.classes.cardName}>{item.title}</div>
 					<div className={this.classes.cardFooter}>
