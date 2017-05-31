@@ -43,7 +43,7 @@ export default class ByChannelTab extends Component {
 	}
 
 	get campaigns() {
-		return this.state.campaigns || this.props.campaigns; // TODO - for testing - remove it
+		return this.state.campaigns || this.props.campaigns;
 	}
 
 	getLists(props = this.props, campaigns = this.campaigns) {

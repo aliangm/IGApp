@@ -31,11 +31,9 @@ class Card extends Component {
 	};
 
 	handleClick = () => {
-		if (this.props.item.campaigns.length > 0) {
-			this.setState({
-				expanded: !this.state.expanded,
-			});
-		}
+		this.setState({
+			expanded: !this.state.expanded,
+		});
 	};
 
 	renderCampaigns() {
@@ -84,7 +82,7 @@ class Card extends Component {
 				{
 					this.state.expanded && [
 						<button key="button" className={ this.classes.addButton } onClick={ () => {
-							this.openPopup({ status: 'New' }); // TODO - get actual status
+							this.openPopup();
 						}}>
 							Add Campaign
 						</button>,
