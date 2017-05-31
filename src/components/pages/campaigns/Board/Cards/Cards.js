@@ -9,7 +9,7 @@ import { DraggableChannelCard } from './DraggableCard';
 import style from 'styles/campaigns/cards.css';
 import cardStyle from 'styles/campaigns/card.css';
 
-const CARD_HEIGHT = 161;  // height of a single card(excluding marginBottom/paddingBottom)
+const CARD_HEIGHT = 100;  // height of a single card(excluding marginBottom/paddingBottom)
 const CARD_MARGIN = 15;  // height of a marginBottom+paddingBottom
 const OFFSET_HEIGHT = 260; // height offset from the top of the page
 

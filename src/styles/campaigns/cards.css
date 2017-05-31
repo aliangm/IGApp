@@ -6,6 +6,6 @@
 }
 
 .cards-placeholder, .cards-placeholder:hover {
-    height: 161px;
+    height: 100px;
     background-color: rgba(208, 208, 208, 1);
 }
