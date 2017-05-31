@@ -81,12 +81,12 @@ class Board extends Component {
 			case 'toRight':
 				this.setState({ isScrolling: true }, this.scrollRight());
 				break;
-			case 'toTop':
-				this.setState({ isScrolling: true }, this.scrollTop());
-				break;
-			case 'toBottom':
-				this.setState({ isScrolling: true }, this.scrollBottom());
-				break;
+			// case 'toTop':
+			// 	this.setState({ isScrolling: true }, this.scrollTop());
+			// 	break;
+			// case 'toBottom':
+			// 	this.setState({ isScrolling: true }, this.scrollBottom());
+			// 	break;
 			default:
 				break;
 		}

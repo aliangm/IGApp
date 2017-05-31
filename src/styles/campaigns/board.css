@@ -15,7 +15,7 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    min-height: 200px;
+    min-height: 135px;
     background-color: #fff;
     box-shadow: -0.7px 3px 1px 1px rgba(0,0,0,0.05);
     border-radius: 3px;
