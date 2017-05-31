@@ -22,7 +22,7 @@ export default class CampaignPopup extends Component {
     super(props);
     this.state = {
       visible: this.props.visible || false,
-      channel: this.props.channel || 'web_landingPages',
+      channel: this.props.channel,
       campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''] }, tracking: {UTM: '', URL: ''}}, this.props.campaign)
     }
     this.validate = this.validate.bind(this);
