@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
+
 import Component from 'components/Component';
 import { formatBudget } from 'components/utils/budget';
 
@@ -10,13 +12,16 @@ class CampaignCard extends Component {
 	static propTypes = {
 		item: PropTypes.object.isRequired,
 		channel: PropTypes.string,
+		draggingPreview: PropTypes.bool,
 	};
 
 	render() {
-		const { item, onClick } = this.props;
+		const { item, onClick, draggingPreview } = this.props;
 
 		return (
-			<div className={this.classes.campaign} id={item.id} onClick={onClick}>
+			<div className={classnames(this.classes.campaign,{
+				[this.classes.draggingPreview]: draggingPreview
+			})} id={item.id} onClick={onClick}>
 				<div className={this.classes.campaignName}>{item.name}</div>
 				<div className={this.classes.campaignFooter}>
 					<span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget)}</span>

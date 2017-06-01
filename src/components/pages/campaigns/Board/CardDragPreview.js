@@ -11,7 +11,7 @@ export const ChannelCardDragPreview = (props) => {
 
   return (
     <div style={styles}>
-      <Card item={props.card.item} />
+      <Card item={props.card.item} draggingPreview />
     </div>
   );
 };
@@ -25,7 +25,7 @@ export const CampaignCardDragPreview = (props) => {
 
 	return (
     <div style={styles}>
-      <CampaignCard item={props.card.item} />
+      <CampaignCard item={props.card.item} draggingPreview />
     </div>
 	);
 };

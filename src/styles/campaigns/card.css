@@ -122,3 +122,7 @@
 .add-button:hover {
     opacity: 0.8;
 }
+
+.dragging-preview {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}

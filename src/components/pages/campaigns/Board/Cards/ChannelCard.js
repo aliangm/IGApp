@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import classnames from 'classnames'
+import classnames from 'classnames';
 import Component from 'components/Component';
 import { formatBudget } from 'components/utils/budget';
 
@@ -21,6 +21,7 @@ class Card extends Component {
 		style: PropTypes.object,
 		x: PropTypes.number,
 		y: PropTypes.number,
+		draggingPreview: PropTypes.bool,
 	};
 
 	static contextTypes = {
@@ -68,11 +69,12 @@ class Card extends Component {
 	};
 
   render() {
-		const {style, item} = this.props;
+		const {style, item, draggingPreview} = this.props;
 
 		return (
       <div style={style} className={classnames(this.classes.cardContainer, {
-      	[this.classes.noCampaigns]: !item.campaigns || item.campaigns.length === 0
+      	[this.classes.noCampaigns]: !item.campaigns || item.campaigns.length === 0,
+      	[this.classes.draggingPreview]: draggingPreview,
 			})} id={style ? item.id : null}>
 				<div className={this.classes.card} onClick={this.handleClick}>
 					<div className={this.classes.cardName}>{item.title}</div>
