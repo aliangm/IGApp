@@ -13,14 +13,17 @@ class CampaignCard extends Component {
 		item: PropTypes.object.isRequired,
 		channel: PropTypes.string,
 		draggingPreview: PropTypes.bool,
+		first: PropTypes.bool,
+		last: PropTypes.bool,
 	};
 
 	render() {
-		const { item, onClick, draggingPreview } = this.props;
+		const { item, onClick, draggingPreview, first, last } = this.props;
 
 		return (
 			<div className={classnames(this.classes.campaign,{
-				[this.classes.draggingPreview]: draggingPreview
+				[this.classes.draggingPreview]: draggingPreview,
+				[this.classes.firstCampaign]: first,
 			})} id={item.id} onClick={onClick}>
 				<div className={this.classes.campaignName}>{item.name}</div>
 				<div className={this.classes.campaignFooter}>

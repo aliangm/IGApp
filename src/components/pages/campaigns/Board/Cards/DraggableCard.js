@@ -62,7 +62,9 @@ function createDraggableCard(type) {
 			isDragging: PropTypes.bool.isRequired,
 			x: PropTypes.number.isRequired,
 			y: PropTypes.number,
-			stopScrolling: PropTypes.func
+			stopScrolling: PropTypes.func,
+			first: PropTypes.bool,
+			last: PropTypes.bool,
 		};
 
 		componentDidMount() {

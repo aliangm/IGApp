@@ -50,6 +50,8 @@ class Card extends Component {
 				x={x}
 				y={y}
 				stopScrolling={stopScrolling}
+				first={index === 0}
+				last={index === item.campaigns.length - 1}
 			/>
 		))
 	}
@@ -73,7 +75,8 @@ class Card extends Component {
 
 		return (
       <div style={style} className={classnames(this.classes.cardContainer, {
-      	[this.classes.noCampaigns]: !item.campaigns || item.campaigns.length === 0,
+      	[this.classes.expanded]: this.state.expanded,
+				[this.classes.noCampaigns]: !item.campaigns || item.campaigns.length === 0,
       	[this.classes.draggingPreview]: draggingPreview,
 			})} id={style ? item.id : null}>
 				<div className={this.classes.card} onClick={this.handleClick}>
