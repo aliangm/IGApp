@@ -63,7 +63,8 @@ const specs = {
 			-containerRect.top
     );
     const SCROLL_H_THRESHOLD = 150;
-    const SCROLL_V_THRESHOLD = 200;
+    const SCROLL_V_THRESHOLD = 150;
+    console.log('SCROLL', monitor.getClientOffset().y, containerRect)
     // horizontal scroll
     if (!props.isScrolling) {
       if (containerRect.right - monitor.getClientOffset().x < SCROLL_H_THRESHOLD) {

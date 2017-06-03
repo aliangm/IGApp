@@ -75,7 +75,10 @@ class Board extends Component {
 	};
 
 	startScrolling = (direction) => {
-		// if (!this.state.isScrolling) {
+		if (this.state.isScrolling) {
+			clearInterval(this.scrollInterval);
+		}
+
 		switch (direction) {
 			case 'toLeft':
 				this.setState({ isScrolling: true }, this.scrollLeft());
@@ -83,16 +86,15 @@ class Board extends Component {
 			case 'toRight':
 				this.setState({ isScrolling: true }, this.scrollRight());
 				break;
-			// case 'toTop':
-			// 	this.setState({ isScrolling: true }, this.scrollTop());
-			// 	break;
-			// case 'toBottom':
-			// 	this.setState({ isScrolling: true }, this.scrollBottom());
-			// 	break;
+			case 'toTop':
+				this.setState({ isScrolling: true }, this.scrollTop());
+				break;
+			case 'toBottom':
+				this.setState({ isScrolling: true }, this.scrollBottom());
+				break;
 			default:
 				break;
 		}
-		// }
 	};
 
 	scrollRight = () => {
