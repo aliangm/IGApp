@@ -12,14 +12,20 @@ if (!window.Promise) {
 export default {
 
 	serverRequest(httpFunc, route, body, region, planDate) {
-
 		if (route === 'usermonthplan') {
 			return Promise.resolve({
 				ok: true,
 				json: () => Promise.resolve(require('data/userMonthPlan.json'))
 			})
 		}
-		
+
+		if (route === 'useraccount') {
+			return Promise.resolve({
+				ok: true,
+				json: () => Promise.resolve(require('data/userAccount.json'))
+			})
+		}
+
 		const deferred = q.defer();
 		const lock = new AuthService();
 		let URL = window.location.protocol + '//' + window.location.hostname + ':8443/' + route;

@@ -187,6 +187,7 @@ export default class ByChannelTab extends Component {
 					onCampaignsStatusChange={this.handleCampaignsStatusChange}
 					onCampaignUpdate={this.handleCampaignUpdate}
 					teamMembers={ this.props.teamMembers }
+					userAccount={this.props.userAccount}
 				/>
 			</div>
 		);

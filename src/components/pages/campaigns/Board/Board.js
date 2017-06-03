@@ -13,12 +13,14 @@ class Board extends Component {
 	static childContextTypes = {
 		onCampaignUpdate: PropTypes.func,
 		container: PropTypes.any,
+		userAccount: PropTypes.object,
 	};
 
 	getChildContext() {
 		return {
 			onCampaignUpdate: this.props.onCampaignUpdate,
 			container: this.board,
+			userAccount: this.props.userAccount,
 		};
 	}
 

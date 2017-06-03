@@ -17,8 +17,40 @@ class CampaignCard extends Component {
 		last: PropTypes.bool,
 	};
 
+	static contextTypes = {
+		userAccount: PropTypes.object,
+	};
+
+	getInitials() {
+		const { item } = this.props;
+		console.log('OWNER', item.owner);
+
+		if (!item.owner) {
+			return null;
+		}
+
+		let firstName;
+		let lastName;
+
+		if (item.owner.toLowerCase() === 'me') {
+			const { userAccount: user = {} } = this.context;
+
+			firstName = user.firstName;
+			lastName = user.lastName;
+
+			if (!firstName || !lastName) {
+				return null;
+			}
+		} else {
+			[firstName = '', lastName = ''] = item.owner.split(' ');
+		}
+
+		return (firstName[0] || '') + (lastName[0] || '');
+	}
+
 	render() {
 		const { item, onClick, draggingPreview, first, last } = this.props;
+		const initials = this.getInitials();
 
 		return (
 			<div className={classnames(this.classes.campaign,{
@@ -28,7 +60,7 @@ class CampaignCard extends Component {
 				<div className={this.classes.campaignName}>{item.name}</div>
 				<div className={this.classes.campaignFooter}>
 					<span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget)}</span>
-					{item.icon && <img src={item.icon} className={ this.classes.campaignIcon } />}
+					{initials && <div className={this.classes.initials}>{initials}</div>}
 				</div>
 			</div>
 		);
