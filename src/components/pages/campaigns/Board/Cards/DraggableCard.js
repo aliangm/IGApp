@@ -34,7 +34,9 @@ const OPTIONS = {
 			props.x === otherProps.x &&
 			props.y === otherProps.y &&
       props.item.status === otherProps.item.status &&
-      props.item.campaigns === otherProps.item.campaigns;
+      props.item.campaigns === otherProps.item.campaigns &&
+      props.first === otherProps.first &&
+      props.last === otherProps.last;
   }
 };
 
