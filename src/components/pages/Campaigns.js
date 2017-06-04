@@ -78,7 +78,6 @@ export default class Campaigns extends Component {
   };
 
   render() {
-  	console.log('CAMPAIGNS RENDER', this.props, this.state);
     const { selectedIndex, planDate, region, monthBudget } = this.state;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];

@@ -10,7 +10,7 @@
 }
 
 .desk, .desk-placeholder, .desk-placeholder:hover {
-    width: 330px;
+    width: 280px;
     display: inline-flex;
     flex-direction: column;
     height: 100%;
@@ -25,7 +25,7 @@
 }
 
 .desk-head {
-    font-size: 26px;
+    font-size: 20px;
     padding: 20px 9% 12px;
 }
 
@@ -46,7 +46,7 @@
     border: 0;
     outline: 0;
     box-shadow: none;
-    font-size: 20px;
+    font-size: 16px;
     cursor: pointer;
 }
 
