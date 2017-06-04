@@ -23,7 +23,6 @@ class CampaignCard extends Component {
 
 	getInitials() {
 		const { item } = this.props;
-		console.log('OWNER', item.owner);
 
 		if (!item.owner) {
 			return null;

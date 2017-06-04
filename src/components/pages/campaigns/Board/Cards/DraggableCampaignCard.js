@@ -66,7 +66,6 @@ class CardComponent extends Component {
 	render() {
 		const { isDragging, connectDragSource, item, onClick, x, y } = this.props;
 
-		console.log('CAMPAIGN CARD', x, y);
 		return connectDragSource(
 			<div>
 				<Card style={getStyles(isDragging)} item={item} onClick={onClick}/>
