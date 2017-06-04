@@ -14,6 +14,7 @@ class Board extends Component {
 		onCampaignUpdate: PropTypes.func,
 		container: PropTypes.any,
 		userAccount: PropTypes.object,
+		teamMembers: PropTypes.array,
 	};
 
 	getChildContext() {
@@ -21,6 +22,7 @@ class Board extends Component {
 			onCampaignUpdate: this.props.onCampaignUpdate,
 			container: this.board,
 			userAccount: this.props.userAccount,
+			teamMembers: this.props.teamMembers,
 		};
 	}
 
