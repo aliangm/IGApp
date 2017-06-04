@@ -22,6 +22,7 @@ export default class CampaignPopup extends Component {
     super(props);
     this.state = {
       visible: this.props.visible || false,
+      channel: this.props.channel,
       campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''] }, tracking: {UTM: '', URL: ''}}, this.props.campaign)
     }
     this.validate = this.validate.bind(this);
@@ -33,6 +34,12 @@ export default class CampaignPopup extends Component {
 
   static defaultProps = {
     teamMembers: []
+  };
+
+	handleChangeSource = (event) => {
+	  this.setState({
+			channel: event.value
+    });
   };
 
   handleChangeBudget(parameter, event){
@@ -85,7 +92,7 @@ export default class CampaignPopup extends Component {
   save() {
     let self = this;
     if (this.validate()) {
-      this.props.updateCampaign(this.state.campaign, this.props.index)
+      this.props.updateCampaign(this.state.campaign, this.props.index, this.state.channel)
         .then(() => {
           self.props.close();
         })
@@ -389,7 +396,7 @@ export default class CampaignPopup extends Component {
         <div className={ this.classes.row }>
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
-              <Select { ... selects.source } style={{ width: '428px' }} selected={ this.props.channel }/>
+              <Select { ... selects.source } style={{ width: '428px' }} selected={ this.state.channel } onChange= { this.handleChangeSource }/>
             </div>
             <div className={ this.classes.colRight }>
               <Select { ... selects.status } style={{ width: '166px' }} selected={ this.state.campaign.status } onChange= { this.handleChangeSelect.bind(this, 'status') }/>
