@@ -8,11 +8,6 @@ import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 
 import style from 'styles/campaigns/card.css';
 
-const propTypes = {
-  item: PropTypes.object.isRequired,
-  style: PropTypes.object
-};
-
 class Card extends Component {
 	style = style;
 
@@ -25,7 +20,8 @@ class Card extends Component {
 	};
 
 	static contextTypes = {
-		onCampaignUpdate: PropTypes.func
+		onCampaignUpdate: PropTypes.func,
+		teamMembers: PropTypes.array,
 	};
 
 	state = {
@@ -102,7 +98,7 @@ class Card extends Component {
 								channel={item.name}
 								updateCampaign={this.context.onCampaignUpdate}
 								close={this.closePopup}
-								teamMembers={this.props.teamMembers}
+								teamMembers={this.context.teamMembers}
 								campaign={item.campaigns[this.state.selectedCampaignIndex] || { status: item.status }}
 								index={this.state.selectedCampaignIndex}
 							/>
