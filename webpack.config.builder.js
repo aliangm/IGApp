@@ -88,17 +88,17 @@ module.exports = function(args) {
         // { test: /\.u.css$/, loader: 'style/useable!' + cssLoader },
         // { test: /\.css$/, loader: "style?-singleton!raw" },
 
-        { test: /\.svg$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
-        { test: /\.png$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
+        { test: /\.(jpg|jpeg|gif|png|svg)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
 
         { test: /\.tpl$/, loader: 'raw' },
+				{ test: /\.json$/, loader: 'json' },
         {
           test: /\.js$/,
           exclude: /(node_modules|bower_components)/,
           loader: 'babel',
           query: {
             cacheDirectory: true,
-            presets: ['es2015', 'react'],
+            presets: ['es2015', 'stage-2', 'react'],
             plugins: ['transform-class-properties']
           }
         },

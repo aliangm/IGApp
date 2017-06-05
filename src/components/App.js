@@ -1,4 +1,6 @@
 import React from 'react';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import Component from 'components/Component';
 import Header from 'components/Header';
 import Sidebar from 'components/Sidebar';
@@ -7,7 +9,7 @@ import serverCommunication from 'data/serverCommunication';
 import q from 'q';
 import history from 'history';
 
-export default class AppComponent extends Component {
+class AppComponent extends Component {
 
   constructor(props) {
     super(props);
@@ -276,3 +278,5 @@ export default class AppComponent extends Component {
     </div>
   }
 }
+
+export default DragDropContext(HTML5Backend)(AppComponent)

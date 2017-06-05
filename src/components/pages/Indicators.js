@@ -38,38 +38,38 @@ export default class Indicators extends Component {
   }
 
   validate() {
-    return this.props.actualIndicators.facebookLikes &&
-      this.props.actualIndicators.facebookEngagement &&
-      this.props.actualIndicators.twitterFollowers &&
-      this.props.actualIndicators.twitterEngagement &&
-      this.props.actualIndicators.linkedinFollowers &&
-      this.props.actualIndicators.linkedinEngagement &&
-      this.props.actualIndicators.instagramFollowers &&
-      this.props.actualIndicators.instagramEngagement &&
-      this.props.actualIndicators.googlePlusFollowers &&
-      this.props.actualIndicators.googlePlusEngagement &&
-      this.props.actualIndicators.pinterestFollowers &&
-      this.props.actualIndicators.pinterestEngagement &&
-      this.props.actualIndicators.youtubeSubscribers &&
-      this.props.actualIndicators.youtubeEngagement &&
-      this.props.actualIndicators.LTV &&
-      this.props.actualIndicators.CAC &&
-      this.props.actualIndicators.users &&
-      this.props.actualIndicators.activeUsersRate &&
-      this.props.actualIndicators.trialUsers &&
-      this.props.actualIndicators.MCL &&
-      this.props.actualIndicators.MQL &&
-      this.props.actualIndicators.SQL &&
-      this.props.actualIndicators.opps &&
-      this.props.actualIndicators.googleMentions &&
-      this.props.actualIndicators.sessions &&
-      this.props.actualIndicators.averageSessionDuration &&
-      this.props.actualIndicators.bounceRate &&
-      this.props.actualIndicators.blogVisits &&
-      this.props.actualIndicators.blogSubscribers &&
-      this.props.actualIndicators.MRR &&
-      this.props.actualIndicators.churnRate &&
-      this.props.actualIndicators.ARPA;
+    return this.props.actualIndicators.facebookLikes != undefined &&
+      this.props.actualIndicators.facebookEngagement != undefined &&
+      this.props.actualIndicators.twitterFollowers != undefined &&
+      this.props.actualIndicators.twitterEngagement != undefined &&
+      this.props.actualIndicators.linkedinFollowers != undefined &&
+      this.props.actualIndicators.linkedinEngagement != undefined &&
+      this.props.actualIndicators.instagramFollowers != undefined &&
+      this.props.actualIndicators.instagramEngagement != undefined &&
+      this.props.actualIndicators.googlePlusFollowers != undefined &&
+      this.props.actualIndicators.googlePlusEngagement != undefined &&
+      this.props.actualIndicators.pinterestFollowers != undefined &&
+      this.props.actualIndicators.pinterestEngagement != undefined &&
+      this.props.actualIndicators.youtubeSubscribers != undefined &&
+      this.props.actualIndicators.youtubeEngagement != undefined &&
+      this.props.actualIndicators.LTV != undefined &&
+      this.props.actualIndicators.CAC != undefined &&
+      this.props.actualIndicators.users != undefined &&
+      this.props.actualIndicators.activeUsersRate != undefined &&
+      this.props.actualIndicators.trialUsers != undefined &&
+      this.props.actualIndicators.MCL != undefined &&
+      this.props.actualIndicators.MQL != undefined &&
+      this.props.actualIndicators.SQL != undefined &&
+      this.props.actualIndicators.opps != undefined &&
+      this.props.actualIndicators.googleMentions != undefined &&
+      this.props.actualIndicators.sessions != undefined &&
+      this.props.actualIndicators.averageSessionDuration != undefined &&
+      this.props.actualIndicators.bounceRate != undefined &&
+      this.props.actualIndicators.blogVisits != undefined &&
+      this.props.actualIndicators.blogSubscribers != undefined &&
+      this.props.actualIndicators.MRR != undefined &&
+      this.props.actualIndicators.churnRate != undefined &&
+      this.props.actualIndicators.ARPA != undefined;
   }
 
   handleChange(name, value){
