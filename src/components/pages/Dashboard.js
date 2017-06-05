@@ -60,7 +60,7 @@ export default class Profile extends Component {
     {
       return campaigns[channel].filter(campaign=>  campaign.status !== 'Completed' ).length;
     }).reduce((a, b) => a + b, 0);
-    const ratio = actualIndicators.LTV/actualIndicators.CAC || 0;
+    const ratio = (actualIndicators.LTV/actualIndicators.CAC).toFixed(2) || 0;
     const COLORS = [
       '#1165A3',
       '#25B10E',
