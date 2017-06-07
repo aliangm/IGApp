@@ -6,6 +6,7 @@ import {parseAnnualPlan} from "data/parseAnnualPlan";
 import {isPopupMode} from "modules/popup-mode";
 import {PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
+import Objective from 'components/pages/campaigns/Objective';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -29,7 +30,8 @@ export default class Profile extends Component {
       MQL: 0,
       SQL: 0
     },
-    campaigns: {}
+    campaigns: {},
+    objectives: []
   };
 
   constructor() {
@@ -48,7 +50,7 @@ export default class Profile extends Component {
   }
 
   render() {
-    const { planDate, projectedPlan, actualIndicators, campaigns } = this.props;
+    const { planDate, projectedPlan, actualIndicators, campaigns, objectives } = this.props;
     const planJson = parseAnnualPlan(projectedPlan);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
@@ -94,6 +96,54 @@ export default class Profile extends Component {
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
       return `${(percent * 100).toFixed(0)}%`
     };
+    const indicatorsOptions = [
+      { label: 'Facebook Likes', value: 'facebookLikes' },
+      { label: 'Facebook Engagement', value: 'facebookEngagement' },
+      { label: 'Twitter Followers', value: 'twitterFollowers' },
+      { label: 'Twitter Engagement', value: 'twitterEngagement' },
+      { label: 'LinkedIn Followers', value: 'linkedinFollowers' },
+      { label: 'LinkedIn Engagement', value: 'linkedinEngagement' },
+      { label: 'Instagram Followers', value: 'instagramFollowers' },
+      { label: 'Instagram Engagement', value: 'instagramEngagement' },
+      { label: 'Google+ Followers', value: 'googlePlusFollowers' },
+      { label: 'Google+ Engagement', value: 'googlePlusEngagement' },
+      { label: 'Pinterest Followers', value: 'pinterestFollowers' },
+      { label: 'Pinterest Engagement', value: 'pinterestEngagement' },
+      { label: 'Youtube Subscribers', value: 'youtubeSubscribers' },
+      { label: 'Youtube Engagement', value: 'youtubeEngagement' },
+      { label: 'LTV', value: 'LTV' },
+      { label: 'CAC', value: 'CAC' },
+      { label: 'Users', value: 'users' },
+      { label: 'Active Users Rate', value: 'activeUsersRate' },
+      { label: 'Trial Users', value: 'trialUsers' },
+      { label: 'MCL', value: 'MCL' },
+      { label: 'MQL', value: 'MQL' },
+      { label: 'SQL', value: 'SQL' },
+      { label: 'Opps', value: 'opps' },
+      { label: 'Google Mentions', value: 'googleMentions' },
+      { label: 'Sessions', value: 'sessions' },
+      { label: 'Average Session Duration',
+        value: 'averageSessionDuration' },
+      { label: 'Bounce Rate', value: 'bounceRate' },
+      { label: 'Blog Visits', value: 'blogVisits' },
+      { label: 'Blog Subscribers', value: 'blogSubscribers' },
+      { label: 'MRR', value: 'MRR' },
+      { label: 'Churn Rate', value: 'churnRate' },
+      { label: 'ARPA (monthly)', value: 'ARPA' }
+    ];
+    const objectivesGauges = objectives.map(objective => {
+      console.log('objective', objective);
+      let title;
+      const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;
+      const maxRange = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + actualIndicators[objective.indicator] : actualIndicators[objective.indicator] - delta);
+      indicatorsOptions.forEach((indicator) => {
+        console.log('indicator', indicator);
+        if (indicator.value === objective.indicator) {
+          title = indicator.label;
+        }
+      });
+      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title }/>
+    });
 
     return <div>
       <Page contentClassName={ dashboardStyle.locals.content } innerClassName={ dashboardStyle.locals.pageInner }>
@@ -197,6 +247,20 @@ export default class Profile extends Component {
             </div>
           </div>
         </div>
+        { objectivesGauges.length > 0 ?
+        <div className={ this.classes.cols } style={{ width: '825px' }}>
+          <div className={ this.classes.colLeft }>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '350px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
+              <div className={ dashboardStyle.locals.text }>
+                Objectives
+              </div>
+              <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px', justifyContent: 'center' }}>
+                {objectivesGauges}
+              </div>
+            </div>
+          </div>
+        </div>
+          : null }
       </Page>
     </div>
   }
