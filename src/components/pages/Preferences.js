@@ -378,7 +378,7 @@ export default class Preferences extends Component {
               ]
               },
               {
-                label: 'Social Paid', options: [
+                label: 'Paid Social', options: [
                 {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
                 {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
                 {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
@@ -458,7 +458,6 @@ export default class Preferences extends Component {
                 {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
               ]
               },
-              {label: 'EBooks'},
             ]
             },
             {
@@ -497,11 +496,11 @@ export default class Preferences extends Component {
               {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
               {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
               {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
-              {label: 'Running', value: 'events_offlineEvents_running'}
+              {label: 'Organising', value: 'events_offlineEvents_running'}
             ]
             },
             {
-              label: 'Online Events (Running)', options: [
+              label: 'Online Events', options: [
               {label: 'Webinar', value: 'events_onlineEvents_webinar'},
               {label: 'Podcast', value: 'events_onlineEvents_podcast'},
               {label: 'Workshop', value: 'events_onlineEvents_workshop'}

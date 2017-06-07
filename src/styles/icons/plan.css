@@ -10,7 +10,7 @@
 @mixin icon-nodpi plan:Search Marketing, ../../assets/plan_icons/SearchMarketing;
 @mixin icon-nodpi plan:SEO, ../../assets/plan_icons/SEO;
 @mixin icon-nodpi plan:SEM (PPC), ../../assets/plan_icons/SEM;
-@mixin icon-nodpi plan:Social Paid, ../../assets/plan_icons/soci;
+@mixin icon-nodpi plan:Paid Social, ../../assets/plan_icons/soci;
 @mixin icon-nodpi plan:Facebook Advertising, ../../assets/plan_icons/FacebookAdvertising;
 @mixin icon-nodpi plan:Twitter Advertising, ../../assets/plan_icons/TwitterAdvertising;
 @mixin icon-nodpi plan:LinkedIn Advertising, ../../assets/plan_icons/LinkedInAdvertising;
@@ -68,8 +68,8 @@
 @mixin icon-nodpi plan:Sponsorship, ../../assets/plan_icons/Sponsorship;
 @mixin icon-nodpi plan:Speaking Engagements, ../../assets/plan_icons/SpeakingEngagements;
 @mixin icon-nodpi plan:Showcase, ../../assets/plan_icons/Showcase;
-@mixin icon-nodpi plan:Running, ../../assets/plan_icons/Running;
-@mixin icon-nodpi plan:Online Events (Running), ../../assets/plan_icons/OnlineEvents;
+@mixin icon-nodpi plan:Organising, ../../assets/plan_icons/Running;
+@mixin icon-nodpi plan:Online Events, ../../assets/plan_icons/OnlineEvents;
 @mixin icon-nodpi plan:Webinar, ../../assets/plan_icons/Webinar;
 @mixin icon-nodpi plan:Podcast, ../../assets/plan_icons/Podcast;
 @mixin icon-nodpi plan:Workshop, ../../assets/plan_icons/Workshop;
