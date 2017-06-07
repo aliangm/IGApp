@@ -215,6 +215,10 @@ export default class AnnualTab extends Component {
     this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
+  handleFocus(event) {
+    event.target.select();
+  }
+
   render() {
       if (!this.props.isPlannerLoading) {
         const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan);
@@ -535,7 +539,7 @@ export default class AnnualTab extends Component {
           }
           else if (channel && this.state.editMode) {
             return <td className={ this.classes.valueCell } key={ i }>{
-              <input type="text" value={ item } className={ this.classes.edit } onChange={ this.props.editChannel.bind(this, i, channel) }/>
+              <input type="text" value={ item } className={ this.classes.edit } onChange={ this.props.editChannel.bind(this, i, channel) } onFocus={ this.handleFocus.bind(this) }/>
             }</td>
           }
           else return <td className={ this.classes.valueCell } key={ i }>{
