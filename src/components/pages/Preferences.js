@@ -39,21 +39,58 @@ export default class Preferences extends Component {
     objectives: [],
     isCheckAnnual: true,
     maxChannels: -1,
-    userMinMonthBudgets: {},
+    userMinMonthBudgets: [],
     blockedChannels: [],
     inHouseChannels: [],
-    planDay: 1
+    planDay: 1,
+    planDate: null
   };
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      userMinMonthBudgetsLines: []
+    };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
     this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
+  }
+
+  componentDidMount() {
+    this.getUserMinMonthBudgetsLines(this.props.userMinMonthBudgets, this.props.planDate);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
+  }
+
+  getUserMinMonthBudgetsLines(userMinMonthBudgets, planDate) {
+    if (planDate) {
+      let planDateArray = planDate.split("/");
+      let firstMonth = parseInt(planDateArray[0]) - 1;
+      let userMinMonthBudgetsLines = [];
+      userMinMonthBudgets.forEach((month, index) => {
+        if (month) {
+          const normalizedMonth = (index + firstMonth) % 12;
+          Object.keys(month).forEach((channel) => {
+            let isExist = false;
+            userMinMonthBudgetsLines.forEach((line) => {
+              if (line.channel == channel) {
+                line.months.push(normalizedMonth);
+                isExist = true;
+              }
+            });
+            if (!isExist) {
+              userMinMonthBudgetsLines.push({channel: channel, budget: month[channel], months: [normalizedMonth]})
+            }
+          });
+        }
+      });
+      this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
+    }
   }
 
   validate() {
@@ -138,30 +175,35 @@ export default class Preferences extends Component {
   }
 
   minimumBudgetRemove(index) {
-    let update = this.props.userMinMonthBudgets || {};
-    let channel = Object.keys(update)[index];
-    delete update[channel];
-    this.props.updateState({userMinMonthBudgets: update});
+    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
+    userMinMonthBudgetsLines.splice(index, 1);
+    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
   }
 
   handleChangeMinChannel(index, event) {
-    let update = this.props.userMinMonthBudgets || {};
-    let channel = Object.keys(update)[index];
-    if (channel) {
-      update[event.value] = update[channel];
-      delete update[channel];
+    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
+    if (!userMinMonthBudgetsLines[index]) {
+      userMinMonthBudgetsLines[index] = {
+        budget: 0
+      };
     }
-    else {
-      update[event.value] = null;
-    }
-    this.props.updateState({userMinMonthBudgets: update});
+    userMinMonthBudgetsLines[index].channel = event.value;
+    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
   }
 
   handleChangeMinBudget(index, event) {
-    let update = this.props.userMinMonthBudgets || {};
-    let channel = Object.keys(update)[index];
-    update[channel] = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    this.props.updateState({userMinMonthBudgets: update});
+    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
+    if (!userMinMonthBudgetsLines[index]) {
+      userMinMonthBudgetsLines[index] = {};
+    }
+    userMinMonthBudgetsLines[index].budget = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
+  }
+
+  handleChangeMinMonths(index, event) {
+    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
+    userMinMonthBudgetsLines[index].months = event.map((month) => { return month.value });
+    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
   }
 
   handleChangeObjectivesSelect(index, parameter, event) {
@@ -195,6 +237,22 @@ export default class Preferences extends Component {
     let update = this.props.objectives || [];
     update.splice(index,1);
     this.props.updateState({objectives: update});
+  }
+
+  createUserMinMonthBudgetJson(){
+    let userMinMonthBudgets = new Array(12).fill(null);
+    const planDate = this.props.planDate.split("/");
+    const firstMonth = parseInt(planDate[0]) - 1;
+    this.state.userMinMonthBudgetsLines.forEach((line) => {
+      line.months.forEach((month) => {
+        const index = (month + 12 - firstMonth) % 12;
+        if (!userMinMonthBudgets[index]) {
+          userMinMonthBudgets[index] = {};
+        }
+        userMinMonthBudgets[index][line.channel] = line.budget;
+      });
+    });
+    return userMinMonthBudgets;
   }
 
   getDates = () => {
@@ -266,6 +324,28 @@ export default class Preferences extends Component {
           ]
         }
       }, **/
+      months: {
+        label: '',
+        select: {
+          name: 'months',
+          onChange: () => {
+          },
+          options: [
+            {label: 'January', value: 0},
+            {label: 'February', value: 1},
+            {label: 'March', value: 2},
+            {label: 'April', value: 3},
+            {label: 'May', value: 4},
+            {label: 'June', value: 5},
+            {label: 'July', value: 6},
+            {label: 'August', value: 7},
+            {label: 'September', value: 8},
+            {label: 'October', value: 9},
+            {label: 'November', value: 10},
+            {label: 'December', value: 11},
+          ]
+        }
+      },
       primary_goal: {
         label: 'Primary Focus',
         labelQuestion: [''],
@@ -615,7 +695,7 @@ export default class Preferences extends Component {
       if (value.options) {
         value.options.map(preventDuplicates);
       }
-      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || Object.keys(this.props.userMinMonthBudgets).includes(value.value);
+      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || this.state.userMinMonthBudgetsLines.map(line => line.channel).includes(value.value);
       return value;
     };
 
@@ -637,8 +717,6 @@ export default class Preferences extends Component {
       // Disable all options
       blockedChannels.select.options.map(maxChannels);
     }
-
-    const userMinMonthBudgetsArray = Object.keys(this.props.userMinMonthBudgets);
 
     return <div>
       <Page popup={ isPopupMode() }>
@@ -819,14 +897,14 @@ export default class Preferences extends Component {
                 fontWeight: '600'
               }} question={['']}
                      description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum Budgets</Label>
-              <MultiRow numOfRows={ userMinMonthBudgetsArray.length } rowRemoved={this.minimumBudgetRemove}>
+              <MultiRow numOfRows={ this.state.userMinMonthBudgetsLines.length } rowRemoved={this.minimumBudgetRemove}>
                 {({index, data, update, removeButton}) => {
                   return <div style={{
-                    width: '460px'
+                    width: '700px'
                   }} className={ preferencesStyle.locals.channelsRow }>
                     <Select
                       className={ preferencesStyle.locals.channelsSelect }
-                      selected={ (this.props.userMinMonthBudgets && userMinMonthBudgetsArray[index]) || -1 }
+                      selected={ this.state.userMinMonthBudgetsLines[index] != undefined && this.state.userMinMonthBudgetsLines[index].channel }
                       select={{
                         menuTop: true,
                         name: 'channels',
@@ -840,10 +918,13 @@ export default class Preferences extends Component {
                       onChange={ this.handleChangeMinChannel.bind(this, index) }
                       label={ `#${ index + 1 } (optional)` }
                     />
-                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.props.userMinMonthBudgets[userMinMonthBudgetsArray[index]] ? this.props.userMinMonthBudgets[userMinMonthBudgetsArray[index]].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].budget ? this.state.userMinMonthBudgetsLines[index].budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
                                onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
                       width: '82px'
-                    }} disabled={ !userMinMonthBudgetsArray[index] }/>
+                    }} disabled={ !this.state.userMinMonthBudgetsLines[index] || this.state.userMinMonthBudgetsLines[index].budget == undefined }/>
+                    <div style={{ marginTop: '32px'}}>
+                      <MultiSelect { ... selects.months  } selected={ this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].months } onChange={ this.handleChangeMinMonths.bind(this, index) } style={{ width: '240px' }}/>
+                    </div>
                     <div className={ preferencesStyle.locals.channelsRemove }>
                       { removeButton }
                     </div>
@@ -893,7 +974,7 @@ export default class Preferences extends Component {
                 objectives: this.props.objectives,
                 blockedChannels: this.props.blockedChannels,
                 inHouseChannels: this.props.inHouseChannels,
-                userMinMonthBudgets: this.props.userMinMonthBudgets,
+                userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                 maxChannels: this.props.maxChannels,
                 planDay: this.props.planDay
               }, this.props.region, this.props.planDate)
@@ -911,7 +992,7 @@ export default class Preferences extends Component {
                   objectives: this.props.objectives,
                   blockedChannels: this.props.blockedChannels,
                   inHouseChannels: this.props.inHouseChannels,
-                  userMinMonthBudgets: this.props.userMinMonthBudgets,
+                  userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
                   planDay: this.props.planDay
                 }, this.props.region, this.props.planDate)
@@ -938,7 +1019,7 @@ export default class Preferences extends Component {
                   objectives: this.props.objectives,
                   blockedChannels: this.props.blockedChannels,
                   inHouseChannels: this.props.inHouseChannels,
-                  userMinMonthBudgets: this.props.userMinMonthBudgets,
+                  userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
                   planDay: this.props.planDay
                 }, this.props.region, this.props.planDate)

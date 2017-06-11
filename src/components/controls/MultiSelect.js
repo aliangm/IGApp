@@ -11,7 +11,10 @@ export default class MultiSelect extends Component {
   style = style;
 
   static defaultProps = {
-    labelQuestion: false
+    labelQuestion: false,
+    style: {
+      width: '460px'
+    }
   };
 
   render() {
@@ -23,7 +26,7 @@ export default class MultiSelect extends Component {
 
     const select = this.props.select;
 
-    return <div style={{ width: '460px' }}>
+    return <div style={ this.props.style }>
       {label}
       <ReactSelect { ... select } value={ this.props.selected } multi={ true } openOnFocus={ true } onChange={ this.props.onChange } style={{
         background: 'linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%)',
