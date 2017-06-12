@@ -36,9 +36,9 @@ export default class CampaignPopup extends Component {
     teamMembers: []
   };
 
-	handleChangeSource = (event) => {
-	  this.setState({
-			channel: event.value
+  handleChangeSource = (event) => {
+    this.setState({
+      channel: event.value
     });
   };
 
@@ -357,6 +357,19 @@ export default class CampaignPopup extends Component {
             {value: 'Rejected', label: 'Rejected'},
           ]
         }
+      },
+      focus: {
+        label: 'Focus',
+        select: {
+          name: 'focus',
+          options: [
+            {value: 'Acquisition', label: 'Acquisition'},
+            {value: 'Activation', label: 'Activation'},
+            {value: 'Retention', label: 'Retention'},
+            {value: 'Revenue', label: 'Revenue'},
+            {value: 'Referral', label: 'Referral'},
+          ]
+        }
       }
     };
     if (this.props.teamMembers) {
@@ -432,61 +445,40 @@ export default class CampaignPopup extends Component {
         </div>
         <div className={ this.classes.row }>
           <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Campaign Objectives</Label>
+            <Select { ... selects.focus } selected={ this.state.campaign.focus } onChange= { this.handleChangeSelect.bind(this, 'focus') } style={{ width: '166px', marginBottom: '14px' }}/>
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
               <Label style={{
                 width: '166px'
               }}>KPI</Label>
+              <Textfield value={ this.state.campaign.objectives.kpi[0] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 0)} style={{
+                width: '166px',
+                marginTop: '8px'
+              }} />
+              <Textfield value={ this.state.campaign.objectives.kpi[1] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 1)} style={{
+                width: '166px',
+                marginTop: '8px'
+              }} />
+              <Textfield value={ this.state.campaign.objectives.kpi[2] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 2)} style={{
+                width: '166px',
+                marginTop: '8px'
+              }} />
             </div>
             <div className={ this.classes.colCenter }>
               <Label style={{
                 width: '166px'
               }}>Expected Growth</Label>
-            </div>
-            <div className={ this.classes.colRight }>
-            </div>
-          </div>
-          <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
-              <Textfield value={ this.state.campaign.objectives.kpi[0] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 0)} style={{
-                width: '166px'
-              }} />
-            </div>
-            <div className={ this.classes.colCenter }>
               <Textfield value={ this.state.campaign.objectives.growth[0] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 0)} style={{
-                width: '166px'
+                width: '166px',
+                marginTop: '8px'
               }} />
-            </div>
-            <div className={ this.classes.colRight }>
-            </div>
-          </div>
-        </div>
-        <div className={ this.classes.row }>
-          <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
-              <Textfield value={ this.state.campaign.objectives.kpi[1] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 1)} style={{
-                width: '166px'
-              }} />
-            </div>
-            <div className={ this.classes.colCenter }>
               <Textfield value={ this.state.campaign.objectives.growth[1] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 1)} style={{
-                width: '166px'
+                width: '166px',
+                marginTop: '8px'
               }} />
-            </div>
-            <div className={ this.classes.colRight }>
-            </div>
-          </div>
-        </div>
-        <div className={ this.classes.row }>
-          <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
-              <Textfield value={ this.state.campaign.objectives.kpi[2] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 2)} style={{
-                width: '166px'
-              }} />
-            </div>
-            <div className={ this.classes.colCenter }>
               <Textfield value={ this.state.campaign.objectives.growth[2] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 2)} style={{
-                width: '166px'
+                width: '166px',
+                marginTop: '8px'
               }} />
             </div>
             <div className={ this.classes.colRight }>
@@ -531,7 +523,7 @@ export default class CampaignPopup extends Component {
             <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
           </div>
           <div className={ this.classes.footerRight }>
-            <Button type="primary2" style={{ width: '100px', marginRight: '30px' }}>
+            <Button type="primary2" style={{ width: '100px', marginRight: '30px' }} onClick={ this.save }>
               <a className={ campaignPopupStyle.locals.export } href={ encodeURI("mailto:" + this.getEmailTo() + "?&subject=" + this.getEmailHeader() + "&body=" + this.getEmailBody()) } target="_blank">Export</a>
             </Button>
             <SaveButton onClick={ this.save } />
