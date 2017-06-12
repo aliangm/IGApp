@@ -12,66 +12,66 @@ import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
 
 const tabs = {
-	'By Status': ByStatusTab,
-  'By Channel': ByChannelTab
+  'By Channel': ByChannelTab,
+  'By Status': ByStatusTab
 };
 
 const tabNames = Object.keys(tabs);
 
 function getDateString(stringDate) {
-	if (stringDate) {
-		const monthNames = [
-			"Jan", "Feb", "Mar",
-			"Apr", "May", "Jun", "Jul",
-			"Aug", "Sep", "Oct",
-			"Nov", "Dec"
-		];
-		const planDate = stringDate.split("/");
-		const date = new Date(planDate[1], planDate[0] - 1);
+  if (stringDate) {
+    const monthNames = [
+      "Jan", "Feb", "Mar",
+      "Apr", "May", "Jun", "Jul",
+      "Aug", "Sep", "Oct",
+      "Nov", "Dec"
+    ];
+    const planDate = stringDate.split("/");
+    const date = new Date(planDate[1], planDate[0] - 1);
 
-		return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-	}
+    return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
+  }
 
-	return null;
+  return null;
 }
 
 export default class Campaigns extends Component {
-	styles = [planStyle, icons];
+  styles = [planStyle, icons];
   style = campaignsStyle;
 
   constructor(props) {
     super(props);
 
     this.state = {
-			campaigns: {},
-			monthBudget: 0,
-			teamMembers: [],
-			...props,
-			selectedIndex: 0
+      campaigns: {},
+      monthBudget: 0,
+      teamMembers: [],
+      ...props,
+      selectedIndex: 0
     };
   }
 
-	componentWillReceiveProps(nextProps) {
-		this.setState(nextProps);
-	}
+  componentWillReceiveProps(nextProps) {
+    this.setState(nextProps);
+  }
 
-	pagingUpdateState = (data) => {
-		this.setState({
-			planDate: data.planDate,
-			region: data.region,
-			plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
-			knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-			unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-			monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
-			campaigns: data.campaigns || {}
-		});
-	};
+  pagingUpdateState = (data) => {
+    this.setState({
+      planDate: data.planDate,
+      region: data.region,
+      plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
+      knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
+      unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+      monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
+      campaigns: data.campaigns || {}
+    });
+  };
 
-	updateCampaigns = (campaigns) => {
-		return this.state.updateUserMonthPlan({ campaigns }, this.state.region, this.state.planDate);
-	};
+  updateCampaigns = (campaigns) => {
+    return this.state.updateUserMonthPlan({ campaigns }, this.state.region, this.state.planDate);
+  };
 
-	handleTabSelect = (e) => {
+  handleTabSelect = (e) => {
     this.setState({
       selectedIndex: +e.target.dataset.id
     })
@@ -82,27 +82,27 @@ export default class Campaigns extends Component {
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-		let channels = _.merge(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
-		const processedChannels = {
-			titles: { },
-			icons: { },
-			budgets: channels,
-			names: Object.keys(channels).sort()
-		};
-		let budgetLeftToSpend = Object.keys(this.state.campaigns).reduce((res, channel) => {
-			this.state.campaigns[channel].forEach((campaign) => {
-				res -= campaign.actualSpent || campaign.budget;
-			});
+    let channels = _.merge(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
+    const processedChannels = {
+      titles: { },
+      icons: { },
+      budgets: channels,
+      names: Object.keys(channels).sort()
+    };
+    let budgetLeftToSpend = Object.keys(this.state.campaigns).reduce((res, channel) => {
+      this.state.campaigns[channel].forEach((campaign) => {
+        res -= campaign.actualSpent || campaign.budget;
+      });
 
-			return res;
-		}, monthBudget);
+      return res;
+    }, monthBudget);
 
-		processedChannels.names.forEach((channel) => {
-			const title = channelsSchema.properties[channel] ? channelsSchema.properties[channel].title : channel;
-			processedChannels.titles[channel] = title;
-			let channelHierarchy = title.split('/').map(item => item.trim());
-			processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
-		});
+    processedChannels.names.forEach((channel) => {
+      const title = channelsSchema.properties[channel] ? channelsSchema.properties[channel].title : channel;
+      processedChannels.titles[channel] = title;
+      let channelHierarchy = title.split('/').map(item => item.trim());
+      processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
+    });
 
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
@@ -131,7 +131,7 @@ export default class Campaigns extends Component {
           <Paging month={planDate} region={region} pagingUpdateState={this.pagingUpdateState}/>
           <div className={ this.classes.campaignsTitle }>
             <div className={ this.classes.campaignsTitleDate }>
-							{ getDateString(this.state.planDate) } - Campaigns
+              { getDateString(this.state.planDate) } - Campaigns
             </div>
             <div className={ this.classes.campaignsTitleBudget }>
               Budget left to spend
@@ -141,10 +141,10 @@ export default class Campaigns extends Component {
             </div>
           </div>
           {
-          	selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, this.state, {
-          		processedChannels,
-							updateCampaigns: this.updateCampaigns
-          	}))
+            selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, this.state, {
+              processedChannels,
+              updateCampaigns: this.updateCampaigns
+            }))
           }
         </div>
       </Page>

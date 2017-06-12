@@ -48,6 +48,9 @@ export default class Plan extends Component {
     let projectedPlan = this.props.projectedPlan;
     let approvedPlan = this.props.approvedPlan;
     projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
+    if (!approvedPlan[i]) {
+      approvedPlan[i] = {};
+    }
     approvedPlan[i][channel] = value;
     this.setState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
   }
