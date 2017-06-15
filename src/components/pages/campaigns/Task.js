@@ -36,7 +36,7 @@ export default class Task extends Component {
   }
 
   render() {
-    return <div>
+    return <div className={ this.classes.taskItem}>
       <div className={ this.classes.task } data-state={ this.props.completed }>
         <div className={ this.classes.start }>
           <div className={ this.classes.circle } onClick={ this.props.toggleCompletion.bind(this, this.props.index) }/>

@@ -1,10 +1,13 @@
+.task-item {
+    margin-bottom: 20px;
+}
+
 .task {
     display: inline-flex;
     width: 100%;
     color: #646973;
     font-weight: 600;
     font-size: 18px;
-    margin-bottom: 20px;
 }
 
 .task[data-state=true] {
