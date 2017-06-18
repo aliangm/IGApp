@@ -57,7 +57,7 @@ ReactDOM.render(
   // <Profile />,
   document.querySelector('#main')
 );
-
+/**
 const runtime = require('offline-plugin/runtime');
 
 runtime.install({
@@ -76,4 +76,4 @@ runtime.install({
   onUpdateFailed: () => {
     console.log('SW Event:', 'onUpdateFailed');
   }
-});
+});**/

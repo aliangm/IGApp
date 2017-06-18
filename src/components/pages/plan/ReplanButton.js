@@ -13,10 +13,10 @@ export default class NextButton extends Component {
               className={ this.classes.planButton }
               icon="buttons:replan"
               style={{
-        width: '220px'
+        width: '180px'
               }}
       >
-      Plan next month ( { this.props.numberOfPlanUpdates} )
+      Update Plan ( { this.props.numberOfPlanUpdates} )
       </Button>
   }
 }

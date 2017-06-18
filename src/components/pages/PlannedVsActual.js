@@ -167,7 +167,7 @@ export default class PlannedVsActual extends Component {
           ]
           },
           {
-            label: 'Social Paid', options: [
+            label: 'Paid Social', options: [
             {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
             {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
             {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
@@ -247,7 +247,6 @@ export default class PlannedVsActual extends Component {
             {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
           ]
           },
-          {label: 'EBooks'},
         ]
         },
         {
@@ -286,7 +285,7 @@ export default class PlannedVsActual extends Component {
           {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
           {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
           {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
-          {label: 'Running', value: 'events_offlineEvents_running'}
+          {label: 'Organising', value: 'events_offlineEvents_running'}
         ]
         },
         {

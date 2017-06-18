@@ -3,6 +3,7 @@ import React from 'react';
 import Component from 'components/Component';
 import byChannelTabStyle from 'styles/campaigns/by-channel-tab.css';
 import ChannelCampaigns from 'components/pages/campaigns/ChannelCampaigns';
+import ReactDOM from 'react-dom';
 
 export default class ByChannelTab extends Component {
 
@@ -17,6 +18,15 @@ export default class ByChannelTab extends Component {
   constructor(props) {
     super(props);
     this.state  = props;
+  }
+
+  componentDidMount() {
+    if (this.props.location.query.hash) {
+      const domElement = ReactDOM.findDOMNode(this.refs[this.props.location.query.hash]);
+      if (domElement) {
+        domElement.scrollIntoView();
+      }
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,6 +53,7 @@ export default class ByChannelTab extends Component {
         channelIcon={ channels.icons[channel] }
         updateChannelCampaigns={ this.updateChannelCampaigns }
         teamMembers={ teamMembers }
+        ref={ channel }
       />
     ));
 

@@ -15,9 +15,11 @@ import Label from 'components/ControlsLabel';
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
-//import annualData from 'data/annual';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
+import history from 'history';
+import MultiRow from 'components/MultiRow';
+import Select from 'components/controls/Select';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons];
@@ -215,312 +217,636 @@ export default class AnnualTab extends Component {
     this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
+  handleFocus(event) {
+    event.target.select();
+  }
+
+  addChannel(event) {
+    const channel = event.value;
+
+    if (channel === "OTHER") {
+      this.setState({showText: true});
+    }
+    else {
+      let projectedPlan = this.props.projectedPlan;
+      let approvedPlan = this.props.approvedPlan;
+      for (let i = 0; i < 12; i++) {
+        if (!approvedPlan[i]) {
+          approvedPlan[i] = {};
+        }
+        projectedPlan[i].plannedChannelBudgets[channel] = 0;
+        approvedPlan[i][channel] = 0;
+      }
+      this.props.updateUserMonthPlan({
+        projectedPlan: projectedPlan,
+        approvedPlan: approvedPlan
+      }, this.props.region, this.props.planDate);
+    }
+  }
+
   render() {
-      if (!this.props.isPlannerLoading) {
-        const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan);
-        let budget = Object.keys(planJson)[0];
-        const data = planJson[budget];
-        budget = Math.ceil(budget/1000)*1000;
-        let rows = [];
+    if (!this.props.isPlannerLoading) {
+      const channelOptions = [
+        {
+          label: 'Advertising',
+          options: [
+            {
+              label: 'Display Ads', options: [
+              {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
+              {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
+            ]
+            },
+            {
+              label: 'Search Marketing', options: [
+              {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
+              {
+                label: 'SEM (PPC)', options: [
+                {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
+                {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
+              ]
+              },
+            ]
+            },
+            {
+              label: 'Paid Social', options: [
+              {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
+              {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
+              {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
+              {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
+              {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
+              {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
+              {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
+            ]
+            },
+            {
+              label: 'Offline Ads', options: [
+              {
+                label: 'TV', options: [
+                {label: 'Local', value: 'advertising_offlineAds_TV_local'},
+                {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
+                {label: 'International', value: 'advertising_offlineAds_TV_international'}
+              ]
+              },
+              {label: 'Radio', value: 'advertising_offlineAds_radio'},
+              {
+                label: 'Newspaper', options: [
+                {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
+                {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
+                {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
+              ]
+              },
+              {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
+              {label: 'SMS', value: 'advertising_offlineAds_SMS'},
+            ]
+            },
+            {
+              label: 'Mobile', options: [
+              {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
+              {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
+              {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
+              {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
+            ]
+            },
+            {
+              label: 'Magazines', options: [
+              {
+                label: 'Consumers', options: [
+                {label: 'Local', value: 'advertising_magazines_consumers_local'},
+                {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
+                {label: 'International', value: 'advertising_magazines_consumers_international'},
+              ]
+              },
+              {
+                label: 'Professional', options: [
+                {label: 'Local', value: 'advertising_magazines_professional_local'},
+                {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
+                {label: 'International', value: 'advertising_magazines_professional_international'},
+              ]
+              },
+            ]
+            },
+            {label: 'Paid Reviews', value: 'advertising_paidReviews'},
+            {label: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
+          ]
+        },
+        {
+          label: 'Content', options: [
+          {
+            label: 'Content Promotion', options: [
+            {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
+            {
+              label: 'Content Discovery', options: [
+              {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
+              {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
+              {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
+            ]
+            },
+            {
+              label: 'Forums', options: [
+              {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
+              {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
+              {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
+            ]
+            },
+          ]
+          },
+          {
+            label: 'Content Creation', options: [
+            {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
+            {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
+            {label: 'Presentations', value: 'content_contentCreation_presentations'},
+            {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
+            {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
+            {label: 'E-book', value: 'content_contentCreation_eBook'},
+            {label: 'Videos', value: 'content_contentCreation_videos'},
+            {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
+          ]
+          }
+        ]
+        },
+        {
+          label: 'Email', options: [
+          {label: 'Marketing Email', value: 'email_marketingEmail'},
+          {label: 'Transactional Email', value: 'email_transactionalEmail'},
+        ]
+        },
+        {
+          label: 'Engineering as Marketing', options: [
+          {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
+          {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
+          {label: 'Widget', value: 'engineeringAsMarketing_widget'},
+          {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
+          {label: 'Any', value: 'engineeringAsMarketing_other'}
+        ]
+        },
+        {
+          label: 'Events', options: [
+          {
+            label: 'Offline Events', options: [
+            {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
+            {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
+            {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
+            {label: 'Organising', value: 'events_offlineEvents_running'}
+          ]
+          },
+          {
+            label: 'Online Events (Running)', options: [
+            {label: 'Webinar', value: 'events_onlineEvents_webinar'},
+            {label: 'Podcast', value: 'events_onlineEvents_podcast'},
+            {label: 'Workshop', value: 'events_onlineEvents_workshop'}
+          ]
+          },
+        ]
+        },
+        {
+          label: 'Mobile', options: [
+          {label: 'Mobile App', value: 'mobile_mobileApp'},
+          {label: 'Mobile Site', value: 'mobile_mobileSite'}
+        ]
+        },
+        {
+          label: 'Partners', options: [
+          {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
+        ]
+        },
+        {
+          label: 'PR', options: [
+          {
+            label: 'Unconventional PR', options: [
+            {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
+            {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
+          ]
+          },
+          {
+            label: 'Publicity', options: [
+            {
+              label: 'Press Releases', options: [
+              {label: 'Local', value: 'PR_publicity_pressReleases_local'},
+              {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
+              {label: 'International', value: 'PR_publicity_pressReleases_international'},
+            ]
+            }
+          ]
+          }
+        ]
+        },
+        {
+          label: 'Social', options: [
+          {label: 'Facebook Page', value: 'social_facebookPage'},
+          {label: 'Twitter Account', value: 'social_twitterAccount'},
+          {label: 'Youtube Channel', value: 'social_youtubeChannel'},
+          {label: 'Instagram Account', value: 'social_instagramAccount'},
+          {label: 'Google+ Page', value: 'social_googlePlusPage'},
+          {label: 'Pinterest Page', value: 'social_pinterestPage'},
+          {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
+          {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
+          {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
+          {label: 'Community Building', value: 'social_communityBuilding'},
+          {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
+        ]
+        },
+        {label: 'Telemarketing', value: 'telemarketing'},
+        {
+          label: 'Viral', options: [
+          {
+            label: 'Recommend a Friend', options: [
+            {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
+          ]
+          }
+        ]
+        },
+        {
+          label: 'Web', options: [
+          {label: 'Company’s Website', value: 'web_companyWebsite'},
+          {label: 'Landing Pages', value: 'web_landingPages'}
+        ]
+        },
+        {
+          label: 'Other?', value: 'OTHER'
+        }
+      ];
+      const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan);
+      let budget = Object.keys(planJson)[0];
+      const data = planJson[budget];
+      budget = Math.ceil(budget/1000)*1000;
+      let rows = [];
 
-        const handleRows = (data, parent, level) => {
-          level = level | 0;
+      const handleRows = (data, parent, level) => {
+        level = level | 0;
 
-          Object.keys(data).sort().forEach((item, i) => {
-            if (item === '__TOTAL__') return null;
+        Object.keys(data).sort().forEach((item, i) => {
+          if (item === '__TOTAL__') return null;
 
-            let key = parent + ':' + item + '-' + i;
-            let collapsed = !!this.state.collapsed[key];
-            const params = data[item];
-            const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-            const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
-            const  titleElem = <div
-              style={{
-                marginLeft: (level | 0) * 17 + 'px'
-              }}
-              className={ this.classes.rowTitle }
-            >
-              { params.children ?
-                <div
-                  className={ this.classes.rowArrow }
-                  data-collapsed={ collapsed || null }
-                  onClick={() => {
-                    this.state.collapsed[key] = !collapsed;
-                    this.forceUpdate();
-                  }}
-                />
-                : null }
+          let key = parent + ':' + item + '-' + i;
+          let collapsed = !!this.state.collapsed[key];
+          const params = data[item];
+          const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+          const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
+          const  titleElem = <div
+            style={{
+              marginLeft: (level | 0) * 17 + 'px',
+              cursor: params.channel ? 'pointer' : 'initial'
+            }}
+            className={ this.classes.rowTitle }
+            onClick={ () => {
+              if (params.channel) {
+                history.push({
+                  pathname: `campaigns` ,
+                  query: { hash: params.channel }
+                })
+              } }}>
+            { params.children ?
+              <div
+                className={ this.classes.rowArrow }
+                data-collapsed={ collapsed || null }
+                onClick={() => {
+                  this.state.collapsed[key] = !collapsed;
+                  this.forceUpdate();
+                }}
+              />
+              : null }
 
-              { params.icon ?
-                <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-                : null }
+            { params.icon ?
+              <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
+              : null }
 
-              { params.icon_mask ?
-                <div className={ this.classes.rowMaskIcon }>
-                  <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
-                </div>
-                : null }
-              {/**   { item.length > 13 ?
+            { params.icon_mask ?
+              <div className={ this.classes.rowMaskIcon }>
+                <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+              </div>
+              : null }
+            {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
                 </div>
                 : item }**/}
-              {item}
-            </div>
+            {item}
+          </div>
 
-            const rowProps = {
-              key: key,
-              onMouseEnter: () => {
-                this.setState({
-                  hoverRow: key
-                });
-              },
-              onMouseLeave: () => {
-                this.setState({
-                  hoverRow: void 0
-                });
-              }
-            };
-
-            if (params.disabled) {
-              rowProps['data-disabled'] = true;
+          const rowProps = {
+            key: key,
+            onMouseEnter: () => {
+              this.setState({
+                hoverRow: key
+              });
+            },
+            onMouseLeave: () => {
+              this.setState({
+                hoverRow: void 0
+              });
             }
+          };
 
-            if (this.state.hoverRow === key) {
-              rowProps['data-hovered'] = true;
-            }
+          if (params.disabled) {
+            rowProps['data-disabled'] = true;
+          }
 
-            const row = this.getTableRow(titleElem, values, rowProps, params.channel, approvedValues);
-            rows.push(row);
+          if (this.state.hoverRow === key) {
+            rowProps['data-hovered'] = true;
+          }
 
-            if (!collapsed && params.children) {
-              handleRows(params.children, key, level + 1);
-            }
-          });
-        }
+          const row = this.getTableRow(titleElem, values, rowProps, params.channel, approvedValues);
+          rows.push(row);
 
-        if (data && !this.state.tableCollapsed) {
-          handleRows(data);
-        }
+          if (!collapsed && params.children) {
+            handleRows(params.children, key, level + 1);
+          }
+        });
+      }
 
-        const budgetLeftToPlan = budget - data['__TOTAL__'].values.reduce((a, b) => a + b, 0);
+      if (data && !this.state.tableCollapsed) {
+        handleRows(data);
+      }
 
-        const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
-          <div
-            className={ this.classes.rowArrow }
-            data-collapsed={ this.state.tableCollapsed || null }
-            onClick={() => {
-              this.state.tableCollapsed = !this.state.tableCollapsed;
-              this.forceUpdate();
-            }}
-          />
-          { 'Marketing Channel' }
-        </div>, this.getDates(), {
-          className: this.classes.headRow
+      const budgetLeftToPlan = budget - data['__TOTAL__'].values.reduce((a, b) => a + b, 0);
+
+      const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
+        <div
+          className={ this.classes.rowArrow }
+          data-collapsed={ this.state.tableCollapsed || null }
+          onClick={() => {
+            this.state.tableCollapsed = !this.state.tableCollapsed;
+            this.forceUpdate();
+          }}
+        />
+        { 'Marketing Channel' }
+      </div>, this.getDates(), {
+        className: this.classes.headRow
+      });
+
+      const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
+          { 'TOTAL' }
+        </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
+          className: this.classes.footRow
         });
 
-        const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-            { 'TOTAL' }
-          </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
-            className: this.classes.footRow
-          });
+      const isExist = (value) => {
+        let exist = false;
+        this.props.projectedPlan.forEach((month)=>{
+          if (Object.keys(month.plannedChannelBudgets).includes(value)) {
+            exist = true;
+          }
+        });
+        this.props.approvedPlan.forEach((month)=>{
+          if (month && Object.keys(month).includes(value)) {
+            exist = true;
+          }
+        });
+        return exist;
+      };
 
-        return <div>
-          <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
-            <div className={ planStyles.locals.title }>
-              <div className={ planStyles.locals.titleMain }>
-                <div className={ planStyles.locals.titleText }>
-                  Annual Budget
-                </div>
-                <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
-                  ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
-                </div>
+      let preventDuplicates = (value) => {
+        if (value.options) {
+          value.options.map(preventDuplicates);
+        }
+        else {
+          value.disabled = isExist(value.value);
+          return value;
+        }
+      };
+
+      channelOptions.map(preventDuplicates);
+
+      return <div>
+        <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
+          <div className={ planStyles.locals.title }>
+            <div className={ planStyles.locals.titleMain }>
+              <div className={ planStyles.locals.titleText }>
+                Annual Budget
               </div>
-              <div className={ planStyles.locals.titleButtons }>
-                <Button type="accent2" style={{
-                  marginLeft: '15px',
-                  width: '114px'
-                }} onClick={() => {
-                  this.props.approveAll();
-                }}>
-                  Approve All
-                </Button>
-                <Button type="normalAccent" style={{
-                  marginLeft: '15px',
-                  width: '102px'
-                }} selected={ this.state.editMode ? true : null } onClick={() => {
-                  if (this.state.editMode) {
-                    this.props.editUpdate();
-                  }
-                  this.setState({
-                    editMode: !this.state.editMode
-                  });
-                }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
-                  { this.state.editMode ? "Done" : "Edit" }
-                </Button>
-                <Button type="primary2" style={{
-                  marginLeft: '15px',
-                  width: '102px'
-                }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                  this.setState({
-                    whatIfSelected: true
-                  });
+              <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
+                ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
+              </div>
+            </div>
+            <div className={ planStyles.locals.titleButtons }>
+              <Button type="accent2" style={{
+                marginLeft: '15px',
+                width: '114px'
+              }} onClick={() => {
+                this.props.approveAll();
+              }}>
+                Approve All
+              </Button>
+              <Button type="normalAccent" style={{
+                marginLeft: '15px',
+                width: '102px'
+              }} selected={ this.state.editMode ? true : null } onClick={() => {
+                if (this.state.editMode) {
+                  this.props.editUpdate();
+                }
+                this.setState({
+                  editMode: !this.state.editMode
+                });
+              }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
+                { this.state.editMode ? "Done" : "Edit" }
+              </Button>
+              <Button type="primary2" style={{
+                marginLeft: '15px',
+                width: '102px'
+              }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
+                this.setState({
+                  whatIfSelected: true
+                });
 
-                  this.refs.whatIfPopup.open();
-                }}>What if</Button>
-                <div style={{ position: 'relative' }}>
-                  <PlanPopup ref="whatIfPopup" style={{
-                    width: '367px',
-                    right: '110px',
-                    left: 'auto',
-                    top: '-37px'
-                  }} hideClose={ true } title="What If - Scenarios Management">
-                    <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
+                this.refs.whatIfPopup.open();
+              }}>What if</Button>
+              <div style={{ position: 'relative' }}>
+                <PlanPopup ref="whatIfPopup" style={{
+                  width: '367px',
+                  right: '110px',
+                  left: 'auto',
+                  top: '-37px'
+                }} hideClose={ true } title="What If - Scenarios Management">
+                  <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
+                    <div className={ this.classes.left }>
+                      <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                    </div>
+                    <div className={ this.classes.right }>
+                      <Textfield style={{ maxWidth: '110px' }}
+                                 value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
+                                 className={ this.classes.budgetChangeField }
+                                 onChange={ this.handleChangeBudget.bind(this) }
+                                 onKeyDown={(e) => {
+                                   if (e.keyCode === 13) {
+                                     this.whatIf();
+                                   }
+                                 }}
+                                 disabled={ !this.state.isCheckAnnual }
+                      />
+                    </div>
+                  </div>
+                  <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
+                    <div className={ this.classes.left }>
                       <div className={ this.classes.left }>
-                        <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                      </div>
-                      <div className={ this.classes.right }>
-                        <Textfield style={{ maxWidth: '110px' }}
-                                   value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                   className={ this.classes.budgetChangeField }
-                                   onChange={ this.handleChangeBudget.bind(this) }
-                                   onKeyDown={(e) => {
-                                     if (e.keyCode === 13) {
-                                       this.whatIf();
-                                     }
-                                   }}
-                                   disabled={ !this.state.isCheckAnnual }
-                        />
+                        <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
                       </div>
                     </div>
-                    <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                      <div className={ this.classes.left }>
-                        <div className={ this.classes.left }>
-                          <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
-                        </div>
-                      </div>
-                      { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                    { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                  </div>
+                  <div className={ this.classes.budgetChangeBox }>
+                    <div className={ this.classes.left }>
+                      <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
                     </div>
-                    <div className={ this.classes.budgetChangeBox }>
-                      <div className={ this.classes.left }>
-                        <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
-                      </div>
-                      <div className={ this.classes.right }>
-                        <Textfield style={{
-                          maxWidth: '110px' }}
-                                   value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                   className={ this.classes.budgetChangeField }
-                                   onChange={(e) => {
-                                     this.setState({
-                                       maxChannelsField: e.target.value
-                                     });
-                                   }}
-                                   onKeyDown={(e) => {
-                                     if (e.keyCode === 13) {
-                                       this.whatIf();
-                                     }
-                                   }}
-                        />
-                      </div>
+                    <div className={ this.classes.right }>
+                      <Textfield style={{
+                        maxWidth: '110px' }}
+                                 value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
+                                 className={ this.classes.budgetChangeField }
+                                 onChange={(e) => {
+                                   this.setState({
+                                     maxChannelsField: e.target.value
+                                   });
+                                 }}
+                                 onKeyDown={(e) => {
+                                   if (e.keyCode === 13) {
+                                     this.whatIf();
+                                   }
+                                 }}
+                      />
                     </div>
-                    <div className={ this.classes.budgetChangeBox }>
-                      <Button type="primary2" style={{
+                  </div>
+                  <div className={ this.classes.budgetChangeBox }>
+                    <Button type="primary2" style={{
+                      width: '110px'
+                    }} onClick={ this.whatIfTry }>Try</Button>
+                  </div>
+                  <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
+                    <div className={ this.classes.left }>
+                      <Button type="normal" style={{
                         width: '110px'
-                      }} onClick={ this.whatIfTry }>Try</Button>
+                      }} onClick={ this.whatIfCancel }>Cancel</Button>
                     </div>
-                    <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                      <div className={ this.classes.left }>
-                        <Button type="normal" style={{
-                          width: '110px'
-                        }} onClick={ this.whatIfCancel }>Cancel</Button>
-                      </div>
-                      <div className={ this.classes.right }>
-                        <Button type="accent2" style={{
-                          width: '110px'
-                        }} onClick={ this.whatIfCommit }>Commit</Button>
-                      </div>
+                    <div className={ this.classes.right }>
+                      <Button type="accent2" style={{
+                        width: '110px'
+                      }} onClick={ this.whatIfCommit }>Commit</Button>
                     </div>
-                  </PlanPopup>
-                </div>
-              </div>
-            </div>
-            <div className={ planStyles.locals.title } style={{ height: '40px' }}>
-              <div className={ planStyles.locals.titleMain }>
-                <div className={ this.classes.titleBudget }>
-                  Budget left to plan
-                </div>
-                <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
-                  ${ budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
-                </div>
-              </div>
-            </div>
-            <div className={ this.classes.innerBox }>
-              <div className={ this.classes.wrap } ref="wrap">
-                <div className={ this.classes.box }>
-                  <table className={ this.classes.table }>
-                    <thead>
-                    { headRow }
-                    </thead>
-                    <tbody className={ this.classes.tableBody }>
-                    { rows }
-                    </tbody>
-                    <tfoot>
-                    { footRow }
-                    </tfoot>
-                  </table>
-                </div>
-
-                <div className={ this.classes.hoverBox }>
-                  <table className={ this.classes.hoverTable }>
-                    <thead>{ headRow }</thead>
-                    <tbody>{ rows }</tbody>
-                    <tfoot>{ footRow }</tfoot>
-                  </table>
-                </div>
-
-                <PlanPopup ref="headPopup" style={{
-                  width: '350px',
-                  left: this.state.popupLeft + 'px',
-                  top: this.state.popupTop + 'px',
-                  marginTop: '5px'
-                }} title="Events: Mar/16"
-                           onClose={() => {
-                             this.setState({
-                               popupShown: false,
-                               popupLeft: 0,
-                               popupTop: 0
-                             });
-                           }}
-                >
-                  <PopupTextContent>
-                    <strong>User Events</strong>
-                    <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
-                      Louis
-                      Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-                    <strong>Global Events</strong>
-                    <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                      correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
-                      do
-                      not</p>
-                  </PopupTextContent>
+                  </div>
                 </PlanPopup>
               </div>
             </div>
           </div>
-        </div>
-      } else {
-        return <div className={ this.classes.loading }>
-          <Popup className={ this.classes.popup }>
-            <div>
-              <Loading />
+          <div className={ planStyles.locals.title } style={{ height: '40px' }}>
+            <div className={ planStyles.locals.titleMain }>
+              <div className={ this.classes.titleBudget }>
+                Budget left to plan
+              </div>
+              <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
+                ${ budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
+              </div>
             </div>
+          </div>
+          <div className={ this.classes.innerBox }>
+            <div className={ this.classes.wrap } ref="wrap">
+              <div className={ this.classes.box }>
+                <table className={ this.classes.table }>
+                  <thead>
+                  { headRow }
+                  </thead>
+                  <tbody className={ this.classes.tableBody }>
+                  { rows }
+                  </tbody>
+                  <tfoot>
+                  { footRow }
+                  </tfoot>
+                </table>
+              </div>
 
-            <div className={ this.classes.popupText }>
-              Please wait while the system optimizes your plan
+              <div className={ this.classes.hoverBox }>
+                <table className={ this.classes.hoverTable }>
+                  <thead>{ headRow }</thead>
+                  <tbody>{ rows }</tbody>
+                  <tfoot>{ footRow }</tfoot>
+                </table>
+              </div>
+
+              <PlanPopup ref="headPopup" style={{
+                width: '350px',
+                left: this.state.popupLeft + 'px',
+                top: this.state.popupTop + 'px',
+                marginTop: '5px'
+              }} title="Events: Mar/16"
+                         onClose={() => {
+                           this.setState({
+                             popupShown: false,
+                             popupLeft: 0,
+                             popupTop: 0
+                           });
+                         }}
+              >
+                <PopupTextContent>
+                  <strong>User Events</strong>
+                  <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
+                    Louis
+                    Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
+                  <strong>Global Events</strong>
+                  <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
+                    correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
+                    do
+                    not</p>
+                </PopupTextContent>
+              </PlanPopup>
             </div>
-          </Popup>
+            <MultiRow numOfRows={1} maxNumOfRows={1} >
+              {({index, data, update, removeButton}) => {
+                return <div style={{
+                  paddingBottom: '200px',
+                  paddingTop: '50px',
+                  width: '460px'
+                }} className={ this.classes.channelsRow }>
+                  <Select
+                    className={ this.classes.channelsSelect }
+                    selected={ -1 }
+                    select={{
+                      menuTop: true,
+                      name: 'channels',
+                      onChange: (selected) => {
+                        update({
+                          selected: selected
+                        });
+                      },
+                      options: channelOptions
+                    }}
+                    onChange={ this.addChannel.bind(this) }
+                    label={ `Add a channel` }
+                    labelQuestion={ [''] }
+                    description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
+                  />
+                </div>
+              }}
+            </MultiRow>
+            { this.state.showText ?
+              <div className={ this.classes.channelsRow }>
+                <Textfield style={{
+                  width: '292px'
+                }}  onChange={() => {
+
+                }}/>
+                <Button type="primary2" style={{
+                  width: '72px',
+                  margin: '0 20px'
+                }} onClick={() => {
+                  this.addChannel();
+                }}> Enter
+                </Button>
+              </div>
+              : null }
+          </div>
         </div>
-      }
+      </div>
+    } else {
+      return <div className={ this.classes.loading }>
+        <Popup className={ this.classes.popup }>
+          <div>
+            <Loading />
+          </div>
+
+          <div className={ this.classes.popupText }>
+            Please wait while the system optimizes your plan
+          </div>
+        </Popup>
+      </div>
+    }
   }
 
   getTableRow(title, items, props, channel, approvedValues)
@@ -529,14 +855,14 @@ export default class AnnualTab extends Component {
       <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
       {
         items.map((item, i) => {
-          if (channel && item != approvedValues[i]) {
+          if (channel && this.state.editMode) {
+            return <td className={ this.classes.valueCell } key={ i }>{
+              <input title={ item != approvedValues[i] ? "previous: " + approvedValues[i] : null } type="text" value={ item } className={ this.classes.edit } onChange={ this.props.editChannel.bind(this, i, channel) } onFocus={ this.handleFocus.bind(this) }/>
+            }</td>
+          }
+          else if (channel && item != approvedValues[i]) {
             return <PlanCell item={ item } approved={ approvedValues[i] } key={ i }
                              approveChannel={ this.approveChannel.bind(this, i, channel, item) } declineChannel={ this.declineChannel.bind(this, i, channel, approvedValues[i]) }/>
-          }
-          else if (channel && this.state.editMode) {
-            return <td className={ this.classes.valueCell } key={ i }>{
-              <input type="text" value={ item } className={ this.classes.edit } onChange={ this.props.editChannel.bind(this, i, channel) }/>
-            }</td>
           }
           else return <td className={ this.classes.valueCell } key={ i }>{
               this.getCellItem(item)

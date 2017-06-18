@@ -17,7 +17,7 @@
   bottom: 0;
   overflow: auto;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.75);
 }
 
 .box {

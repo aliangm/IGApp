@@ -180,7 +180,7 @@ module.exports = {
         "events_onlineEvents_webinar", "events_onlineEvents_workshop", "social_influencerOutreach"
       ],
       "maxMatchValue": 5000,
-      "minMonthBudget": 1500,
+      "minMonthBudget": 15000,
       "title": "PR \/ Unconventional PR \/ Publicity Stunts",
       "type": "integer"
     },
@@ -217,7 +217,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 400,
-      "title": "Events \/ Online Events (Running) \/ Workshop",
+      "title": "Events \/ Online Events \/ Workshop",
       "type": "integer"
     },
     "events_onlineEvents_podcast":{
@@ -226,7 +226,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 400,
-      "title": "Events \/ Online Events (Running) \/ Podcast",
+      "title": "Events \/ Online Events \/ Podcast",
       "type": "integer"
     },
     "events_onlineEvents_webinar":{
@@ -235,7 +235,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
-      "title": "Events \/ Online Events (Running) \/ Webinar",
+      "title": "Events \/ Online Events \/ Webinar",
       "type": "integer"
     },
     "events_offlineEvents_running":{
@@ -244,7 +244,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 500,
-      "title": "Events \/ Offline Events \/ Running",
+      "title": "Events \/ Offline Events \/ Organising",
       "type": "integer"
     },
     "events_offlineEvents_showcase":{
@@ -477,7 +477,7 @@ module.exports = {
         "advertising_paidReviews", "advertising_offlineAds_TV_international", "advertising_magazines_professional_international"
       ],
       "maxMatchValue": 5000,
-      "minMonthBudget": 5000,
+      "minMonthBudget": 20000,
       "title": "Advertising \/ Celebrity Endorsements",
       "type": "integer"
     },
@@ -667,7 +667,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
-      "title": "Advertising \/ Social Paid \/ YouTube Advertising",
+      "title": "Advertising \/ Paid Social \/ YouTube Advertising",
       "type": "integer"
     },
     "advertising_socialAds_GooglePlusAdvertising":{
@@ -676,7 +676,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
-      "title": "Advertising \/ Social Paid \/ Google+ Advertising",
+      "title": "Advertising \/ Paid Social \/ Google+ Advertising",
       "type": "integer"
     },
     "advertising_socialAds_pinterestAdvertising":{
@@ -685,7 +685,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 900,
-      "title": "Advertising \/ Social Paid \/ Pinterest Advertising",
+      "title": "Advertising \/ Paid Social \/ Pinterest Advertising",
       "type": "integer"
     },
     "advertising_socialAds_instagramAdvertising":{
@@ -694,7 +694,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 800,
-      "title": "Advertising \/ Social Paid \/ Instagram Advertising",
+      "title": "Advertising \/ Paid Social \/ Instagram Advertising",
       "type": "integer"
     },
     "advertising_socialAds_linkedinAdvertising":{
@@ -703,7 +703,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
-      "title": "Advertising \/ Social Paid \/ LinkedIn Advertising",
+      "title": "Advertising \/ Paid Social \/ LinkedIn Advertising",
       "type": "integer"
     },
     "advertising_socialAds_twitterAdvertising":{
@@ -712,7 +712,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
-      "title": "Advertising \/ Social Paid \/ Twitter Advertising",
+      "title": "Advertising \/ Paid Social \/ Twitter Advertising",
       "type": "integer"
     },
     "advertising_socialAds_facebookAdvertising":{
@@ -721,7 +721,7 @@ module.exports = {
       ],
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
-      "title": "Advertising \/ Social Paid \/ Facebook Advertising",
+      "title": "Advertising \/ Paid Social \/ Facebook Advertising",
       "type": "integer"
     },
     "advertising_searchMarketing_SEM_other":{
