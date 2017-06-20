@@ -753,7 +753,7 @@ export default class Preferences extends Component {
             </div>
             <div className={ this.classes.row }>
               <Label checkbox={!this.props.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
-                     description={['What is your marketing budget for the next 12 months?']}>Plan Monthly Budget
+                     description={['What is your marketing budget for the next 12 months?']}>Plan Monthly Budgets
                 ($)</Label>
               { this.props.isCheckAnnual ? null : this.monthBudgets() }
             </div>
