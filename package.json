@@ -37,7 +37,6 @@
     "lodash": "latest",
     "minimist": "^1.2.0",
     "object-assign": "^4.1.0",
-    "offline-plugin": "^3.4.2",
     "postcss-import": "^8.1.2",
     "postcss-loader": "^0.9.1",
     "postcss-mixins": "^4.0.2",

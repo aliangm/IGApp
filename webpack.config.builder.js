@@ -5,7 +5,6 @@ const fs = require('fs');
 const webpack = require('webpack');
 
 const AsyncModulePlugin = require('async-module-loader/plugin');
-//const OfflinePlugin = require('offline-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -38,15 +37,6 @@ module.exports = function(args) {
       inject: false,
       minify: false
     }),
-    /**new OfflinePlugin({
-      version: '[hash]' + Date.now(),
-
-      AppCache: false,
-      ServiceWorker: {
-        entry: 'sw.js',
-        events: true
-      }
-    }),**/
     new CopyWebpackPlugin([
       { from: 'src/icons', to: 'icons' },
       { from: 'src/engagement-calculator', to: 'engagement-calculator' },
