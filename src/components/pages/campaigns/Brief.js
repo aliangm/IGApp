@@ -103,6 +103,7 @@ export default class CampaignPopup extends Component {
     if (this.validate()) {
       this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
         .then(() => {
+          this.props.updateState({unsaved: false});
           this.props.close();
         })
         .catch((err) => {

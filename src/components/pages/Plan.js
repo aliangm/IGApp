@@ -53,6 +53,9 @@ export default class Plan extends Component {
     }
     approvedPlan[i][channel] = value;
     this.setState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+
+    // Switch unsaved to true
+    this.props.updateState({});
   }
 
   editUpdate() {
@@ -115,7 +118,8 @@ export default class Plan extends Component {
                     approvedPlan: data.approvedPlan || [],
                     budget: data.annualBudget,
                     budgetArray: data.annualBudgetArray,
-                    events: data.events || []
+                    events: data.events || [],
+                    unsaved: false
                   });
                   this.setState({
                     isPlannerLoading: false,

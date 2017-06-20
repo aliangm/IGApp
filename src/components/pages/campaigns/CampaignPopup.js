@@ -9,6 +9,7 @@ import Checklist from 'components/pages/campaigns/Checklist';
 import planStyle from 'styles/plan/plan.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
+import UnsavedPopup from 'components/UnsavedPopup';
 
 export default class CampaignPopup extends Component {
 
@@ -17,12 +18,14 @@ export default class CampaignPopup extends Component {
 
   constructor(props) {
     super(props);
+    this.close = this.close.bind(this);
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
       channel: this.props.channel,
       campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''] }, tracking: {UTM: '', URL: ''}, tasks: []}, this.props.campaign),
       updateState: this.updateState.bind(this),
+      close: this.close
     };
   }
 
@@ -38,6 +41,22 @@ export default class CampaignPopup extends Component {
 
   updateState(newState) {
     this.setState(newState);
+    this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
+  }
+
+  close() {
+    if (this.state.unsaved) {
+      const callback = (userAnswer) => {
+        if (userAnswer) {
+          this.props.close();
+        }
+        this.setState({showUnsavedPopup: false});
+      };
+      this.setState({showUnsavedPopup: true, callback: callback});
+    }
+    else {
+      this.props.close();
+    }
   }
 
   render() {
@@ -53,7 +72,7 @@ export default class CampaignPopup extends Component {
     return <div>
       <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
         <div className={ campaignPopupStyle.locals.topRight }>
-          <div className={ campaignPopupStyle.locals.close } onClick={ this.props.close }/>
+          <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
         <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>
         <div className={ planStyle.locals.headTabs }>
@@ -77,6 +96,7 @@ export default class CampaignPopup extends Component {
           { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
         </div>
       </Page>
+      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
     </div>
   }
 }

@@ -8,21 +8,81 @@ import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode'
 import serverCommunication from 'data/serverCommunication';
 import q from 'q';
 import history from 'history';
+import { withRouter } from 'react-router';
+import UnsavedPopup from 'components/UnsavedPopup';
 
 class AppComponent extends Component {
 
   constructor(props) {
     super(props);
+    this.routerWillLeave = this.routerWillLeave.bind(this);
+    this.handleCallback = this.handleCallback.bind(this);
     this.state = {
       getUserMonthPlan: this.getUserMonthPlan.bind(this),
       updateUserMonthPlan: this.updateUserMonthPlan.bind(this),
       updateUserAccount: this.updateUserAccount.bind(this),
       createUserMonthPlan: this.createUserMonthPlan.bind(this),
-      updateState: this.updateState.bind(this)
+      updateState: this.updateState.bind(this),
+      unsaved: false
     };
   }
 
+  // Asynchronous version of `setRouteLeaveHook`.
+// Instead of synchronously returning a result, the hook is expected to
+// return a promise.
+  setAsyncRouteLeaveHook(router, hook) {
+    let withinHook = false;
+    let finalResult = undefined;
+    let finalResultSet = false;
+    router.listenBefore(nextLocation => {
+      withinHook = true;
+      if (!finalResultSet) {
+        hook(nextLocation).then(result => {
+          this.handleCallback(result);
+          finalResult = result;
+          finalResultSet = true;
+          if (!withinHook && nextLocation) {
+            // Re-schedule the navigation
+            router.push(nextLocation)
+          }
+        })
+      }
+      let result = finalResultSet ? finalResult : false;
+      withinHook = false;
+      finalResult = undefined;
+      finalResultSet = false;
+      return result
+    })
+  }
+
+  routerWillLeave() {
+    return new Promise((resolve, reject) => {
+      if (!this.state.unsaved) {
+        // No unsaved changes -- leave
+        resolve(true)
+      } else {
+        // Unsaved changes -- ask for confirmation
+        /**
+        vex.dialog.confirm({
+          message: 'There are unsaved changes. Leave anyway?' + nextLocation,
+          callback: result => resolve(result)
+        })
+         **/
+        this.setState({showUnsavedPopup: true, callback: resolve});
+      }
+    })
+  }
+
+  handleCallback(userAnswer) {
+    if (userAnswer && this.state.unsaved) {
+      this.getUserMonthPlan(localStorage.getItem('region'), null);
+    }
+    this.setState({showUnsavedPopup: false});
+  }
+
   componentDidMount() {
+    this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave)
+
     serverCommunication.serverRequest('GET', 'useraccount')
       .then((response) => {
         if (response.ok) {
@@ -73,6 +133,7 @@ class AppComponent extends Component {
 
   updateState(newState){
     this.setState(newState);
+    this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
   }
 
   updateUserMonthPlan(body, region, planDate, dontSetState) {
@@ -112,7 +173,8 @@ class AppComponent extends Component {
                   approvedPlan: data.approvedPlan || [],
                   budget: data.annualBudget,
                   budgetArray: data.annualBudgetArray,
-                  events: data.events || []
+                  events: data.events || [],
+                  unsaved: false
                 });
               }
               deferred.resolve(data);
@@ -168,7 +230,8 @@ class AppComponent extends Component {
                   approvedPlan: data.approvedPlan || [],
                   budget: data.annualBudget,
                   budgetArray: data.annualBudgetArray,
-                  events: data.events || []
+                  events: data.events || [],
+                  unsaved: false
                 });
               }
             })
@@ -249,7 +312,8 @@ class AppComponent extends Component {
                   approvedPlan: data.approvedPlan || [],
                   budget: data.annualBudget,
                   budgetArray: data.annualBudgetArray,
-                  events: data.events || []
+                  events: data.events || [],
+                  unsaved: false
                 });
                 deferred.resolve();
               }
@@ -274,9 +338,10 @@ class AppComponent extends Component {
     return <div>
       <Header auth={ this.props.route.auth } {... this.state}/>
       <Sidebar auth={ this.props.route.auth }/>
+      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
       { childrenWithProps }
     </div>
   }
 }
 
-export default DragDropContext(HTML5Backend)(AppComponent)
+export default withRouter(DragDropContext(HTML5Backend)(AppComponent))
