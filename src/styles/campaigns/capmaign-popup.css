@@ -1,11 +1,14 @@
 .content {
     margin: 15px 0;
-    cursor: initial;
 }
 
 .top-right {
     display: flex;
     justify-content: flex-end;
+}
+
+.load-button {
+    font-size: 15px;
 }
 
 .close {
@@ -15,6 +18,7 @@
     cursor: pointer;
     min-width: 25px;
     min-height: 25px;
+    margin-left: 20px;
 }
 
 .title {

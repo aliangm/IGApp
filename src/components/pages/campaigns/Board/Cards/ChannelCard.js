@@ -22,6 +22,8 @@ class Card extends Component {
 	static contextTypes = {
 		onCampaignUpdate: PropTypes.func,
 		teamMembers: PropTypes.array,
+    campaignsTemplates : PropTypes.object,
+    updateCampaignsTemplates: PropTypes.func,
 	};
 
 	state = {
@@ -96,10 +98,12 @@ class Card extends Component {
 								channelTitle={item.title}
 								channel={item.name}
 								updateCampaign={this.context.onCampaignUpdate}
-								close={this.closePopup}
+								closePopup={this.closePopup}
 								teamMembers={this.context.teamMembers}
 								campaign={item.campaigns[this.state.selectedCampaignIndex] || { status: item.status }}
 								index={this.state.selectedCampaignIndex}
+								campaignsTemplates={ this.context.campaignsTemplates }
+								updateCampaignsTemplates={ this.context.updateCampaignsTemplates }
 							/>
 					]
 				}

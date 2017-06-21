@@ -101,14 +101,14 @@ export default class CampaignPopup extends Component {
 
   save() {
     if (this.validate()) {
+      this.props.updateState({unsaved: false});
       this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
         .then(() => {
-          this.props.updateState({unsaved: false});
-          this.props.close();
         })
         .catch((err) => {
           console.log(err);
         });
+      this.props.closePopup();
     }
     else {
       if (!this.props.campaign.name){
@@ -528,7 +528,7 @@ export default class CampaignPopup extends Component {
       </div>
       <div className={ this.classes.footer }>
         <div className={ this.classes.footerLeft }>
-          <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+          <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
         </div>
         <div className={ this.classes.footerRight }>
           <Button type="primary2" style={{ width: '100px', marginRight: '30px' }} onClick={ this.save }>

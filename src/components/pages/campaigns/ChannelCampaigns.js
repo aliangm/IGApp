@@ -36,7 +36,7 @@ export default class ChannelCampaigns extends Component {
     const campaigns = this.props.campaigns;
     const runningCampaigns = campaigns ?
       campaigns.map((campaign, index) => {
-        return <CampaignSummary key={this.props.channel + index} index={index} campaign={ campaign } channelTitle={ this.props.channelTitle } channelIcon={ this.props.channelIcon } channel={ this.props.channel } updateCampaign={ this.updateCampaign } teamMembers={ this.props.teamMembers }/>
+        return <CampaignSummary key={this.props.channel + index} index={index} campaign={ campaign } channelTitle={ this.props.channelTitle } channelIcon={ this.props.channelIcon } channel={ this.props.channel } updateCampaign={ this.updateCampaign } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates }/>
       })
       : null ;
     return <div>
@@ -50,7 +50,7 @@ export default class ChannelCampaigns extends Component {
         </div>
       </div>
       <div hidden={!this.state.showPopup}>
-        <CampaignPopup updateCampaign={ this.updateCampaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } close={ () => { this.setState({showPopup: false}) } } teamMembers={ this.props.teamMembers } />
+        <CampaignPopup updateCampaign={ this.updateCampaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } closePopup={ () => { this.setState({showPopup: false}) } } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates }/>
       </div>
     </div>
   }

@@ -113,6 +113,7 @@ export default class Plan extends Component {
                     unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
                     monthBudget: data.projectedPlan ? data.projectedPlan[0].monthBudget : null,
                     campaigns: data.campaigns || {},
+                    campaignsTemplates: data.campaignsTemplates || {},
                     numberOfPlanUpdates: data.numberOfPlanUpdates,
                     projectedPlan: data.projectedPlan,
                     approvedPlan: data.approvedPlan || [],
