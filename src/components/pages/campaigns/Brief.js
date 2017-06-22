@@ -490,6 +490,21 @@ export default class CampaignPopup extends Component {
             }} />
           </div>
           <div className={ this.classes.colRight }>
+            <Label style={{
+              width: '166px'
+            }}>Expected Growth</Label>
+            <Textfield value={ this.props.campaign.objectives.actualGrowth[0] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 0)} style={{
+              width: '166px',
+              marginTop: '8px'
+            }} />
+            <Textfield value={ this.props.campaign.objectives.actualGrowth[1] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 1)} style={{
+              width: '166px',
+              marginTop: '8px'
+            }} />
+            <Textfield value={ this.props.campaign.objectives.actualGrowth[2] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 2)} style={{
+              width: '166px',
+              marginTop: '8px'
+            }} />
           </div>
         </div>
       </div>
