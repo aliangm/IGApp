@@ -24,6 +24,8 @@ class Card extends Component {
 		teamMembers: PropTypes.array,
     campaignsTemplates : PropTypes.object,
     updateCampaignsTemplates: PropTypes.func,
+		firstName: PropTypes.string,
+		lastName: PropTypes.string
 	};
 
 	state = {
@@ -104,6 +106,8 @@ class Card extends Component {
 								index={this.state.selectedCampaignIndex}
 								campaignsTemplates={ this.context.campaignsTemplates }
 								updateCampaignsTemplates={ this.context.updateCampaignsTemplates }
+								firstName={ this.context.firstName }
+								lastName={ this.context.lastName }
 							/>
 					]
 				}

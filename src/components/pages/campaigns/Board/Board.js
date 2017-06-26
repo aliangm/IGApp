@@ -17,6 +17,8 @@ class Board extends Component {
 		teamMembers: PropTypes.array,
     campaignsTemplates : PropTypes.object,
     updateCampaignsTemplates: PropTypes.func,
+		firstName: PropTypes.string,
+		lastName: PropTypes.string
 	};
 
 	getChildContext() {
@@ -27,6 +29,8 @@ class Board extends Component {
 			teamMembers: this.props.teamMembers,
       campaignsTemplates : this.props.campaignsTemplates,
       updateCampaignsTemplates: this.props.updateCampaignsTemplates,
+			firstName: this.props.firstName,
+			lastName: this.props.lastName
 		};
 	}
 
@@ -190,6 +194,8 @@ class Board extends Component {
 						campaign={{status: lists[selectedColumn].name}}
 						campaignsTemplates={ this.props.campaignsTemplates }
 						updateCampaignsTemplates={ this.props.updateCampaignsTemplates }
+						firstName={ this.props.firstName }
+						lastName={ this.props.lastName }
 					/>
 				}
       </div>

@@ -39,6 +39,7 @@
     color: #354052;
     border-radius: 4px;
     box-sizing: border-box;
+    font-family: inherit;
 }
 
 .sub-head {

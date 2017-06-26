@@ -196,6 +196,8 @@ export default class ByChannelTab extends Component {
 					userAccount={this.props.userAccount}
 					campaignsTemplates={ this.props.campaignsTemplates }
 					updateCampaignsTemplates={ this.updateCampaignsTemplates }
+					firstName={ this.props.userFirstName }
+					lastName={ this.props.userLastName }
 				/>
 			</div>
 		);

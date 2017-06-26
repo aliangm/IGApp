@@ -13,7 +13,7 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 
-export default class CampaignPopup extends Component {
+export default class Brief extends Component {
 
   style = style
   styles = [campaignPopupStyle]
