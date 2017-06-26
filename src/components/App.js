@@ -23,6 +23,7 @@ class AppComponent extends Component {
       updateUserAccount: this.updateUserAccount.bind(this),
       createUserMonthPlan: this.createUserMonthPlan.bind(this),
       updateState: this.updateState.bind(this),
+      setDataAsState: this.setDataAsState.bind(this),
       unsaved: false
     };
   }
@@ -144,39 +145,7 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (!dontSetState) {
-                this.setState({
-                  userProfile: data.userProfile,
-                  targetAudience: data.targetAudience,
-                  annualBudget: data.annualBudget,
-                  annualBudgetArray: data.annualBudgetArray || [],
-                  planDate: data.planDate,
-                  planDay: data.planDay,
-                  region: data.region,
-                  goals: {
-                    primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                    secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                  },
-                  objectives: data.objectives || [],
-                  blockedChannels: data.blockedChannels || [],
-                  inHouseChannels: data.inHouseChannels || [],
-                  userMinMonthBudgets: data.userMinMonthBudgets || [],
-                  maxChannels: data.maxChannels || -1,
-                  isCheckAnnual: data.annualBudget !== null,
-                  actualIndicators: data.actualIndicators,
-                  plannedChannelBudgets: data.projectedPlan ? data.projectedPlan[0].plannedChannelBudgets : {},
-                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                  monthBudget: data.projectedPlan ? data.projectedPlan[0].monthBudget : null,
-                  campaigns: data.campaigns || {},
-                  campaignsTemplates: data.campaignsTemplates || {},
-                  numberOfPlanUpdates: data.numberOfPlanUpdates,
-                  projectedPlan: data.projectedPlan,
-                  approvedPlan: data.approvedPlan || [],
-                  budget: data.annualBudget,
-                  budgetArray: data.annualBudgetArray,
-                  events: data.events || [],
-                  unsaved: false
-                });
+                this.setDataAsState(data);
               }
               deferred.resolve(data);
             })
@@ -202,39 +171,7 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
-                this.setState({
-                  userProfile: data.userProfile,
-                  targetAudience: data.targetAudience,
-                  annualBudget: data.annualBudget,
-                  annualBudgetArray: data.annualBudgetArray || [],
-                  planDate: data.planDate,
-                  region: data.region,
-                  planDay: data.planDay,
-                  goals: {
-                    primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                    secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                  },
-                  objectives: data.objectives || [],
-                  blockedChannels: data.blockedChannels || [],
-                  inHouseChannels: data.inHouseChannels || [],
-                  userMinMonthBudgets: data.userMinMonthBudgets || [],
-                  maxChannels: data.maxChannels || -1,
-                  isCheckAnnual: data.annualBudget !== null,
-                  actualIndicators: data.actualIndicators,
-                  plannedChannelBudgets: data.projectedPlan ? data.projectedPlan[0].plannedChannelBudgets : {},
-                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                  monthBudget: data.projectedPlan ? data.projectedPlan[0].monthBudget : null,
-                  campaigns: data.campaigns || {},
-                  campaignsTemplates: data.campaignsTemplates || {},
-                  numberOfPlanUpdates: data.numberOfPlanUpdates,
-                  projectedPlan: data.projectedPlan,
-                  approvedPlan: data.approvedPlan || [],
-                  budget: data.annualBudget,
-                  budgetArray: data.annualBudgetArray,
-                  events: data.events || [],
-                  unsaved: false
-                });
+                this.setDataAsState(data);
               }
             })
         }
@@ -285,39 +222,7 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               if (data) {
-                this.setState({
-                  userProfile: data.userProfile,
-                  targetAudience: data.targetAudience,
-                  annualBudget: data.annualBudget,
-                  annualBudgetArray: data.annualBudgetArray || [],
-                  planDate: data.planDate,
-                  planDay: data.planDay,
-                  region: data.region,
-                  goals: {
-                    primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                    secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                  },
-                  objectives: data.objectives || [],
-                  blockedChannels: data.blockedChannels || [],
-                  inHouseChannels: data.inHouseChannels || [],
-                  userMinMonthBudgets: data.userMinMonthBudgets || [],
-                  maxChannels: data.maxChannels || -1,
-                  isCheckAnnual: data.annualBudget !== null,
-                  actualIndicators: data.actualIndicators,
-                  plannedChannelBudgets: data.projectedPlan ? data.projectedPlan[0].plannedChannelBudgets : {},
-                  knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                  unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                  monthBudget: data.projectedPlan ? data.projectedPlan[0].monthBudget : null,
-                  campaigns: data.campaigns || {},
-                  campaignsTemplates: data.campaignsTemplates || {},
-                  numberOfPlanUpdates: data.numberOfPlanUpdates,
-                  projectedPlan: data.projectedPlan,
-                  approvedPlan: data.approvedPlan || [],
-                  budget: data.annualBudget,
-                  budgetArray: data.annualBudgetArray,
-                  events: data.events || [],
-                  unsaved: false
-                });
+                this.setDataAsState(data);
                 deferred.resolve();
               }
             })
@@ -333,6 +238,42 @@ class AppComponent extends Component {
       });
 
     return deferred.promise;
+  }
+
+  setDataAsState(data) {
+    this.setState({
+      userProfile: data.userProfile,
+      targetAudience: data.targetAudience,
+      annualBudget: data.annualBudget,
+      annualBudgetArray: data.annualBudgetArray || [],
+      planDate: data.planDate,
+      planDay: data.planDay,
+      region: data.region,
+      goals: {
+        primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
+        secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
+      },
+      objectives: data.objectives || [],
+      blockedChannels: data.blockedChannels || [],
+      inHouseChannels: data.inHouseChannels || [],
+      userMinMonthBudgets: data.userMinMonthBudgets || [],
+      maxChannels: data.maxChannels || -1,
+      isCheckAnnual: data.annualBudget !== null,
+      actualIndicators: data.actualIndicators,
+      plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].plannedChannelBudgets : {},
+      knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
+      unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+      monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
+      campaigns: data.campaigns || {},
+      campaignsTemplates: data.campaignsTemplates || {},
+      numberOfPlanUpdates: data.numberOfPlanUpdates,
+      projectedPlan: data.projectedPlan,
+      approvedPlan: data.approvedPlan || [],
+      budget: data.annualBudget,
+      budgetArray: data.annualBudgetArray,
+      events: data.events || [],
+      unsaved: false
+    });
   }
 
   render() {

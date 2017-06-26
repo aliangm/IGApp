@@ -89,39 +89,7 @@ export default class Plan extends Component {
                   this.setState({isPlannerLoading: false, isError: true});
                 }
                 else {
-                  this.props.updateState({
-                    userProfile: data.userProfile,
-                    targetAudience: data.targetAudience,
-                    annualBudget: data.annualBudget,
-                    annualBudgetArray: data.annualBudgetArray || [],
-                    planDate: data.planDate,
-                    planDay: data.planDay,
-                    region: data.region,
-                    goals: {
-                      primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                      secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                    },
-                    objectives: data.objectives || [],
-                    blockedChannels: data.blockedChannels || [],
-                    inHouseChannels: data.inHouseChannels || [],
-                    userMinMonthBudgets: data.userMinMonthBudgets || [],
-                    maxChannels: data.maxChannels || -1,
-                    isCheckAnnual: data.annualBudget !== null,
-                    actualIndicators: data.actualIndicators,
-                    plannedChannelBudgets: data.projectedPlan ? data.projectedPlan[0].plannedChannelBudgets : {},
-                    knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                    unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                    monthBudget: data.projectedPlan ? data.projectedPlan[0].monthBudget : null,
-                    campaigns: data.campaigns || {},
-                    campaignsTemplates: data.campaignsTemplates || {},
-                    numberOfPlanUpdates: data.numberOfPlanUpdates,
-                    projectedPlan: data.projectedPlan,
-                    approvedPlan: data.approvedPlan || [],
-                    budget: data.annualBudget,
-                    budgetArray: data.annualBudgetArray,
-                    events: data.events || [],
-                    unsaved: false
-                  });
+                  this.props.setDataAsState(data);
                   this.setState({
                     isPlannerLoading: false,
                     isError: false
