@@ -541,7 +541,7 @@ export default class AnnualTab extends Component {
             rowProps['data-disabled'] = true;
           }
 
-          if (this.state.hoverRow === key) {
+          if (!this.state.editMode && this.state.hoverRow === key) {
             rowProps['data-hovered'] = true;
           }
 
