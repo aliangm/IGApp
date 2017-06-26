@@ -64,7 +64,9 @@ export default class Preferences extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
+    if (this.props.userMinMonthBudgets.length == 0 && nextProps.userMinMonthBudgets.length > 0) {
+      this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
+    }
   }
 
   getUserMinMonthBudgetsLines(userMinMonthBudgets, planDate) {
