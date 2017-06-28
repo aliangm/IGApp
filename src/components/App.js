@@ -132,8 +132,8 @@ class AppComponent extends Component {
     this.getUserMonthPlan(localStorage.getItem('region'), null);
   }
 
-  updateState(newState){
-    this.setState(newState);
+  updateState(newState, callback){
+    this.setState(newState, callback);
     this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
   }
 
@@ -258,7 +258,6 @@ class AppComponent extends Component {
       inHouseChannels: data.inHouseChannels || [],
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
-      isCheckAnnual: data.annualBudget !== null,
       actualIndicators: data.actualIndicators,
       plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].plannedChannelBudgets : {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},

@@ -27,10 +27,7 @@ export default class Plan extends Component {
     this.state = {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
-      whatIf: this.plan.bind(this),
-      editChannel: this.editChannel.bind(this),
-      editUpdate: this.editUpdate.bind(this),
-      approveAll: this.approveAll.bind(this)
+      whatIf: this.plan.bind(this)
     };
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
@@ -41,30 +38,6 @@ export default class Plan extends Component {
       disablePopupMode();
       this.plan(true, null, null, localStorage.getItem('region'));
     }
-  }
-
-  editChannel(i, channel, event) {
-    let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    let projectedPlan = this.props.projectedPlan;
-    let approvedPlan = this.props.approvedPlan;
-    projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
-    if (!approvedPlan[i]) {
-      approvedPlan[i] = {};
-    }
-    approvedPlan[i][channel] = value;
-    this.setState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
-
-    // Switch unsaved to true
-    this.props.updateState({});
-  }
-
-  editUpdate() {
-    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan}, this.props.region, this.props.planDate);
-  }
-
-  approveAll() {
-    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   popup() {

@@ -17,9 +17,11 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
+import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import history from 'history';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
+import EditableCell from 'components/pages/plan/EditableCell';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons];
@@ -217,10 +219,6 @@ export default class AnnualTab extends Component {
     this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
-  handleFocus(event) {
-    event.target.select();
-  }
-
   addChannel(event) {
     const channel = event.value;
 
@@ -242,6 +240,65 @@ export default class AnnualTab extends Component {
         approvedPlan: approvedPlan
       }, this.props.region, this.props.planDate);
     }
+  }
+
+  editChannel(i, channel, event) {
+    let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    let projectedPlan = this.props.projectedPlan;
+    let approvedPlan = this.props.approvedPlan;
+    projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
+    if (!approvedPlan[i]) {
+      approvedPlan[i] = {};
+    }
+    approvedPlan[i][channel] = value;
+    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+  }
+
+  editUpdate() {
+    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan}, this.props.region, this.props.planDate);
+  }
+
+  approveAll() {
+    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
+    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
+  }
+
+  dragStart(value) {
+    this.setState({draggableValue: value, isDragging: true});
+  }
+
+  commitDrag() {
+    let value = parseInt(this.state.draggableValue.replace(/[-$,]/g, ''));
+    let projectedPlan = this.props.projectedPlan;
+    let approvedPlan = this.props.approvedPlan;
+    this.state.draggableValues.forEach(cell => {
+      projectedPlan[cell.i].plannedChannelBudgets[cell.channel] = value || 0;
+      if (!approvedPlan[cell.i]) {
+        approvedPlan[cell.i] = {};
+      }
+      approvedPlan[cell.i][cell.channel] = value;
+    });
+    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+    this.setState({isDragging: false, draggableValues: []});
+  }
+
+  dragEnter(i, channel) {
+    const update = this.state.draggableValues || [];
+    update.push({channel: channel, i: i});
+    this.setState({draggableValues: update});
+  }
+
+  deleteRow(channel, event) {
+    event.preventDefault();
+    let projectedPlan = this.props.projectedPlan;
+    let approvedPlan = this.props.approvedPlan;
+    for (let i=0; i<12; i++) {
+      delete projectedPlan[i].plannedChannelBudgets[channel];
+      if (approvedPlan[i]) {
+        delete approvedPlan[i][channel];
+      }
+    }
+    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
   }
 
   render() {
@@ -489,7 +546,7 @@ export default class AnnualTab extends Component {
             }}
             className={ this.classes.rowTitle }
             onClick={ () => {
-              if (params.channel) {
+              if (!this.state.editMode && params.channel) {
                 history.push({
                   pathname: `campaigns` ,
                   query: { hash: params.channel }
@@ -504,7 +561,21 @@ export default class AnnualTab extends Component {
                   this.forceUpdate();
                 }}
               />
-              : null }
+              :
+              this.state.editMode ?
+                <div>
+                  <div
+                    className={ this.classes.rowDelete }
+                    onClick={ () => this.setState({deletePopup: params.channel}) }
+                  />
+                  <Popup hidden={ params.channel != this.state.deletePopup }>
+                    <DeleteChannelPopup
+                      onNext={ this.deleteRow.bind(this, params.channel) }
+                      onBack={ () => this.setState({deletePopup: ''}) }
+                    />
+                  </Popup>
+                </div>
+                : null }
 
             { params.icon ?
               <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
@@ -623,7 +694,7 @@ export default class AnnualTab extends Component {
                 marginLeft: '15px',
                 width: '114px'
               }} onClick={() => {
-                this.props.approveAll();
+                this.approveAll();
               }}>
                 Approve All
               </Button>
@@ -632,7 +703,7 @@ export default class AnnualTab extends Component {
                 width: '102px'
               }} selected={ this.state.editMode ? true : null } onClick={() => {
                 if (this.state.editMode) {
-                  this.props.editUpdate();
+                  this.editUpdate();
                 }
                 this.setState({
                   editMode: !this.state.editMode
@@ -857,7 +928,7 @@ export default class AnnualTab extends Component {
         items.map((item, i) => {
           if (channel && this.state.editMode) {
             return <td className={ this.classes.valueCell } key={ i }>{
-              <input title={ item != approvedValues[i] ? "previous: " + approvedValues[i] : null } type="text" value={ item } className={ this.classes.edit } onChange={ this.props.editChannel.bind(this, i, channel) } onFocus={ this.handleFocus.bind(this) }/>
+              <EditableCell title={ item != approvedValues[i] ? "previous: " + approvedValues[i] : null } value={ item } onChange={ this.editChannel.bind(this, i, channel) } i={ i } channel={ channel } draggableValue={ this.state.draggableValue } dragStart={ this.dragStart.bind(this) } dragEnter={ this.dragEnter.bind(this, i, channel) } drop={ this.commitDrag.bind(this) } isDragging={ this.state.isDragging }/>
             }</td>
           }
           else if (channel && item != approvedValues[i]) {
