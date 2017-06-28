@@ -43,20 +43,24 @@ export default class Preferences extends Component {
     blockedChannels: [],
     inHouseChannels: [],
     planDay: 1,
-    planDate: null
+    planDate: null,
+    annualBudgetArray: []
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      userMinMonthBudgetsLines: []
+      userMinMonthBudgetsLines: [],
+      isCheckAnnual: props.annualBudget !== null,
+      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]})
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
     this.objectiveRemove = this.objectiveRemove.bind(this);
-    this.toggleCheck = this.toggleCheck.bind(this);
+    this.toggleBudgetsCheck = this.toggleBudgetsCheck.bind(this);
+    this.calculateBudgets = this.calculateBudgets.bind(this);
   }
 
   componentDidMount() {
@@ -66,6 +70,10 @@ export default class Preferences extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.userMinMonthBudgets.length == 0 && nextProps.userMinMonthBudgets.length > 0) {
       this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
+    }
+    if (nextProps.annualBudget != this.props.annualBudget) {
+      this.setState({isCheckAnnual: nextProps.annualBudget !== null,
+        isDivideEqually: nextProps.annualBudget !== null && nextProps.annualBudgetArray.every((budget)=> {return budget === nextProps.annualBudgetArray[0]})});
     }
   }
 
@@ -117,23 +125,13 @@ export default class Preferences extends Component {
   handleChangeBudget(parameter, event) {
     let update = {};
     update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
-
-    let planDate = this.props.planDate.split("/");
-    let firstMonth = parseInt(planDate[0]) - 1;
-
-    let budget = [];
-    this.budgetWeights.forEach((element, index) => {
-      budget[(index + 12 - firstMonth) % 12] = Math.round(element * update[parameter]);
-    });
-    update['annualBudgetArray'] = budget;
-
-    this.props.updateState(update);
+    this.props.updateState(update, this.calculateBudgets);
   }
 
   handleChangeBudgetArray(index, event) {
     let update = this.props.annualBudgetArray || [];
     update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
-    this.props.updateState({annualBudgetArray: update});
+    this.props.updateState({annualBudgetArray: update}, this.calculateBudgets);
   }
 
   handleChangePlanDay(event) {
@@ -290,25 +288,39 @@ export default class Preferences extends Component {
     });
   }
 
-  toggleCheck() {
+  toggleBudgetsCheck() {
     if (this.props.planDate) {
-      if (this.props.isCheckAnnual) {
-        let prevBudget = this.props.annualBudget;
-        let planDate = this.props.planDate.split("/");
-        let firstMonth = parseInt(planDate[0]) - 1;
+      this.setState({isCheckAnnual: !this.state.isCheckAnnual}, this.calculateBudgets);
+    }
+  }
 
-        let budget = [];
+  handleBudgetDivideChange(){
+    this.setState({isDivideEqually: !this.state.isDivideEqually}, this.calculateBudgets);
+  }
+
+  calculateBudgets() {
+    if (this.state.isCheckAnnual) {
+      let prevBudget = this.props.annualBudget || this.props.annualBudgetArray.reduce((a, b) => a + b, 0);
+      let planDate = this.props.planDate.split("/");
+      let firstMonth = parseInt(planDate[0]) - 1;
+
+      let budget = [];
+      if (this.state.isDivideEqually) {
+        let numOfMonth = 12;
+        const value = Math.round(prevBudget / numOfMonth);
+        while(numOfMonth--) {
+          budget.push(value);
+        }
+      }
+      else {
         this.budgetWeights.forEach((element, index) => {
           budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
         });
-
-        this.props.updateState({annualBudget: null, annualBudgetArray: budget});
       }
-      else {
-        let sum = this.props.annualBudgetArray.reduce((a, b) => a + b, 0);
-        this.props.updateState({annualBudget: sum});
-      }
-      this.props.updateState({isCheckAnnual: !this.props.isCheckAnnual});
+      this.props.updateState({annualBudget: prevBudget, annualBudgetArray: budget});
+    }
+    else {
+      this.props.updateState({annualBudget: null});
     }
   }
 
@@ -739,25 +751,26 @@ export default class Preferences extends Component {
              <Calendar />
              </div> **/}
             <div className={ this.classes.row }>
-              <Label checkbox={this.props.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
+              <Label checkbox={this.state.isCheckAnnual} onChange={ this.toggleBudgetsCheck.bind(this) } question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget
                 ($)</Label>
               <div className={ this.classes.cell }>
-                <Textfield disabled={!this.props.isCheckAnnual}
+                <Textfield disabled={!this.state.isCheckAnnual}
                            value={"$" + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
                            onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }}/>
+                <Label className={ preferencesStyle.locals.divideEqually } checkbox={this.state.isDivideEqually} onChange={ this.handleBudgetDivideChange.bind(this) }>Divide Equally</Label>
                 {/** <NotSure style={{
                   marginLeft: '10px'
                 }} /> **/}
               </div>
             </div>
             <div className={ this.classes.row }>
-              <Label checkbox={!this.props.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } question={['']}
+              <Label checkbox={!this.state.isCheckAnnual} onChange={ this.toggleBudgetsCheck.bind(this) } question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Monthly Budgets
                 ($)</Label>
-              { this.props.isCheckAnnual ? null : this.monthBudgets() }
+              { this.state.isCheckAnnual ? null : this.monthBudgets() }
             </div>
             <div className={ this.classes.row } style={{
               // maxWidth: '440px',
