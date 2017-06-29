@@ -99,6 +99,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .table-button-selected {
@@ -387,4 +388,13 @@
 
 .inner-box {
     margin: 15px 0;
+}
+
+.event-popup {
+    width: 367px;
+    right: -145px;
+    left: auto;
+    top: 20px;
+    text-align: left;
+    white-space: pre-line;
 }

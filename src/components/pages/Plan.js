@@ -14,11 +14,14 @@ import serverCommunication from 'data/serverCommunication';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
+import events from 'data/events';
 
 export default class Plan extends Component {
   style = style;
 
   static defaultProps = {
+    userProfile: {},
+    targetAudience: {},
     projectedPlan: []
   };
 
@@ -34,10 +37,19 @@ export default class Plan extends Component {
   }
 
   componentDidMount() {
+    this.getRelevantEvents(this.props);
     if (isPopupMode()) {
       disablePopupMode();
       this.plan(true, null, null, localStorage.getItem('region'));
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.getRelevantEvents(nextProps);
+  }
+
+  getRelevantEvents(props) {
+    this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
   }
 
   popup() {

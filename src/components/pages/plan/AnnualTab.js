@@ -15,6 +15,7 @@ import Label from 'components/ControlsLabel';
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
+import popupStyle from 'styles/plan/popup.css';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
@@ -24,7 +25,7 @@ import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
 
 export default class AnnualTab extends Component {
-  styles = [planStyles, icons];
+  styles = [planStyles, icons, popupStyle];
   style = style;
 
   budgetWeights= [0.07,	0.11,	0.13,	0.13,	0.11,	0.05,	0.04,	0.04,	0.09,	0.09,	0.12,	0.02];
@@ -96,6 +97,45 @@ export default class AnnualTab extends Component {
     }
     return dates;
   }
+
+  getMonthHeaders = () => {
+    const dates = this.getDates();
+    const headers = dates.map((month, index) => {
+      const events = this.props.events ?
+        this.props.events
+          .filter(event => {
+            const currentMonth = parseInt(this.props.planDate.split('/')[0]);
+            const eventMonth = parseInt(event.startDate.split('/')[1]);
+            return currentMonth + index === eventMonth;
+          })
+          .map((event, index) => {
+            return <p key={ index }>
+              {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
+            </p>
+          })
+        : null;
+      return events.length > 0 ? <div style={{ position: 'relative' }}>
+        <div className={ this.classes.tableButton } onClick={ () => { this.setState({monthPopup: month}) }}>{ month }</div>
+        <Popup hidden={ month != this.state.monthPopup } className={ this.classes.eventPopup }>
+          <div className={ popupStyle.locals.header }>
+            <div className={ popupStyle.locals.title }>
+              {"Events - " + month}
+            </div>
+            <div className={ popupStyle.locals.close }
+                 role="button"
+                 onClick={ () => { this.setState({monthPopup: ''}) }}
+            ></div>
+          </div>
+          <PopupTextContent>
+            {events}
+          </PopupTextContent>
+        </Popup>
+      </div>
+        :
+        <div className={ this.classes.cellItem }>{ month }</div>
+    });
+    return headers;
+  };
 
   whatIf = (isCommitted, callback) => {
     this.setState({whatIfSelected: false});
@@ -641,7 +681,7 @@ export default class AnnualTab extends Component {
           }}
         />
         { 'Marketing Channel' }
-      </div>, this.getDates(), {
+      </div>, this.getMonthHeaders(), {
         className: this.classes.headRow
       });
 
