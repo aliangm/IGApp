@@ -102,3 +102,4 @@
 @mixin icon-nodpi plan:Web, ../../assets/plan_icons/Web;
 @mixin icon-nodpi plan:Company’s Website, ../../assets/plan_icons/Company’sWebsite;
 @mixin icon-nodpi plan:Landing Pages, ../../assets/plan_icons/LandingPages;
+@mixin icon-nodpi plan:other, ../../assets/plan_icons/OtherChannels;

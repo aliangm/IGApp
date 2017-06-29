@@ -16,10 +16,6 @@ export default class DeleteChannelPopup extends Component {
     }
 
     return <div className={ $.box } style={ style }>
-      <div className={ $.title }>
-        Are you sure?
-      </div>
-
       <div className={ $.choose }>
         Are you sure you want to delete this channel?
       </div>

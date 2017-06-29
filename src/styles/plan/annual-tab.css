@@ -398,3 +398,8 @@
     text-align: left;
     white-space: pre-line;
 }
+
+.add-channel {
+    margin: 50px 31px 200px;
+    width: 460px;
+}

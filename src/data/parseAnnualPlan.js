@@ -1,7 +1,7 @@
 import schema from './channelsSchema';
 import _ from 'lodash';
 
-export function parseAnnualPlan(projectedPlan, approvedPlan) {
+export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
   var sum = {};
   var returnObj = {};
   sum["__TOTAL__"] = { values : [0,0,0,0,0,0,0,0,0,0,0,0] };
@@ -33,6 +33,9 @@ export function parseAnnualPlan(projectedPlan, approvedPlan) {
     });
   }
   fillZeros(returnObj, approvedPlan ? approvedPlan : new Array(12).fill(null));
+  if (unknownChannels && unknownChannels.length > 0) {
+    parseUnknownChannels(returnObj, unknownChannels);
+  }
   _.merge(returnObj, sum);
   var retJson = {};
   retJson[budget] = returnObj;
@@ -143,4 +146,30 @@ function parseActuals(title, current, actualBudget, channel, month) {
     }
   }
   return current;
+}
+
+function parseUnknownChannels(returnObj, unknownChannels) {
+  const otherChannels = "~Other";
+  unknownChannels.forEach((channels, index) => {
+    if (channels && Object.keys(channels).length > 0) {
+      if (!returnObj[otherChannels]) {
+        returnObj[otherChannels] = {};
+        returnObj[otherChannels].children = {};
+        returnObj[otherChannels].values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        returnObj[otherChannels].icon = "plan:other";
+      }
+      Object.keys(channels).forEach(channel => {
+        if (channel) {
+          if (!returnObj[otherChannels].children[channel]) {
+            returnObj[otherChannels].children[channel] = {};
+            returnObj[otherChannels].children[channel].values = new Array(12).fill(0);
+            returnObj[otherChannels].children[channel].channel = channel;
+            returnObj[otherChannels].children[channel].icon = "plan:other";
+          }
+          returnObj[otherChannels].children[channel].values[index] = channels[channel];
+          returnObj[otherChannels].values[index] += channels[channel];
+        }
+      });
+    }
+  });
 }

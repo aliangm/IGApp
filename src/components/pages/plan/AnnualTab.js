@@ -115,22 +115,22 @@ export default class AnnualTab extends Component {
           })
         : null;
       return events.length > 0 ? <div style={{ position: 'relative' }}>
-        <div className={ this.classes.tableButton } onClick={ () => { this.setState({monthPopup: month}) }}>{ month }</div>
-        <Popup hidden={ month != this.state.monthPopup } className={ this.classes.eventPopup }>
-          <div className={ popupStyle.locals.header }>
-            <div className={ popupStyle.locals.title }>
-              {"Events - " + month}
+          <div className={ this.classes.tableButton } onClick={ () => { this.setState({monthPopup: month}) }}>{ month }</div>
+          <Popup hidden={ month != this.state.monthPopup } className={ this.classes.eventPopup }>
+            <div className={ popupStyle.locals.header }>
+              <div className={ popupStyle.locals.title }>
+                {"Events - " + month}
+              </div>
+              <div className={ popupStyle.locals.close }
+                   role="button"
+                   onClick={ () => { this.setState({monthPopup: ''}) }}
+              ></div>
             </div>
-            <div className={ popupStyle.locals.close }
-                 role="button"
-                 onClick={ () => { this.setState({monthPopup: ''}) }}
-            ></div>
-          </div>
-          <PopupTextContent>
-            {events}
-          </PopupTextContent>
-        </Popup>
-      </div>
+            <PopupTextContent>
+              {events}
+            </PopupTextContent>
+          </Popup>
+        </div>
         :
         <div className={ this.classes.cellItem }>{ month }</div>
     });
@@ -259,43 +259,66 @@ export default class AnnualTab extends Component {
     this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
-  addChannel(event) {
-    const channel = event.value;
+  handleChangeSelect(event) {
+    this.setState({newChannel: event.value, channelAddedSuccessfully: false})
+  }
 
-    if (channel === "OTHER") {
-      this.setState({showText: true});
-    }
-    else {
-      let projectedPlan = this.props.projectedPlan;
-      let approvedPlan = this.props.approvedPlan;
-      for (let i = 0; i < 12; i++) {
-        if (!approvedPlan[i]) {
-          approvedPlan[i] = {};
-        }
-        projectedPlan[i].plannedChannelBudgets[channel] = 0;
-        approvedPlan[i][channel] = 0;
+  addChannel() {
+    let projectedPlan = this.props.projectedPlan;
+    let approvedPlan = this.props.approvedPlan;
+    for (let i = 0; i < 12; i++) {
+      if (!approvedPlan[i]) {
+        approvedPlan[i] = {};
       }
-      this.props.updateUserMonthPlan({
-        projectedPlan: projectedPlan,
-        approvedPlan: approvedPlan
-      }, this.props.region, this.props.planDate);
+      projectedPlan[i].plannedChannelBudgets[this.state.newChannel] = 0;
+      approvedPlan[i][this.state.newChannel] = 0;
     }
+    this.props.updateUserMonthPlan({
+      projectedPlan: projectedPlan,
+      approvedPlan: approvedPlan
+    }, this.props.region, this.props.planDate);
+    this.setState({channelAddedSuccessfully: true});
+  }
+
+  handleChangeText(event) {
+    this.setState({otherChannel: event.target.value, channelAddedSuccessfully: false});
+  }
+
+  addUnknownChannel() {
+    let planUnknownChannels = this.props.planUnknownChannels;
+    for (let i = 0; i < 12; i++) {
+      if (!planUnknownChannels[i]) {
+        planUnknownChannels[i] = {};
+      }
+      planUnknownChannels[i][this.state.otherChannel] = 0;
+    }
+    this.props.updateUserMonthPlan({
+      unknownChannels: planUnknownChannels
+    }, this.props.region, this.props.planDate);
+    this.setState({channelAddedSuccessfully: true});
   }
 
   editChannel(i, channel, event) {
     let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    let projectedPlan = this.props.projectedPlan;
-    let approvedPlan = this.props.approvedPlan;
-    projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
-    if (!approvedPlan[i]) {
-      approvedPlan[i] = {};
+    let planUnknownChannels = this.props.planUnknownChannels;
+    if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
+      planUnknownChannels[i][channel] = value || 0;
+      this.props.updateState({planUnknownChannels: planUnknownChannels});
     }
-    approvedPlan[i][channel] = value;
-    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+    else {
+      let projectedPlan = this.props.projectedPlan;
+      let approvedPlan = this.props.approvedPlan;
+      projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
+      if (!approvedPlan[i]) {
+        approvedPlan[i] = {};
+      }
+      approvedPlan[i][channel] = value;
+      this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+    }
   }
 
   editUpdate() {
-    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan}, this.props.region, this.props.planDate);
+    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
   }
 
   approveAll() {
@@ -309,16 +332,22 @@ export default class AnnualTab extends Component {
 
   commitDrag() {
     let value = parseInt(this.state.draggableValue.replace(/[-$,]/g, ''));
+    let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
     let approvedPlan = this.props.approvedPlan;
     this.state.draggableValues.forEach(cell => {
-      projectedPlan[cell.i].plannedChannelBudgets[cell.channel] = value || 0;
-      if (!approvedPlan[cell.i]) {
-        approvedPlan[cell.i] = {};
+      if (planUnknownChannels.length > 0 && planUnknownChannels[cell.i][cell.channel] !== undefined) {
+        planUnknownChannels[cell.i][cell.channel] = value || 0;
       }
-      approvedPlan[cell.i][cell.channel] = value;
+      else {
+        projectedPlan[cell.i].plannedChannelBudgets[cell.channel] = value || 0;
+        if (!approvedPlan[cell.i]) {
+          approvedPlan[cell.i] = {};
+        }
+        approvedPlan[cell.i][cell.channel] = value;
+      }
     });
-    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan, planUnknownChannels: planUnknownChannels});
     this.setState({isDragging: false, draggableValues: []});
   }
 
@@ -330,15 +359,21 @@ export default class AnnualTab extends Component {
 
   deleteRow(channel, event) {
     event.preventDefault();
+    let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
     let approvedPlan = this.props.approvedPlan;
     for (let i=0; i<12; i++) {
-      delete projectedPlan[i].plannedChannelBudgets[channel];
-      if (approvedPlan[i]) {
-        delete approvedPlan[i][channel];
+      if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
+        delete planUnknownChannels[i][channel];
+      }
+      else {
+        delete projectedPlan[i].plannedChannelBudgets[channel];
+        if (approvedPlan[i]) {
+          delete approvedPlan[i][channel];
+        }
       }
     }
-    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan, planUnknownChannels: planUnknownChannels});
   }
 
   render() {
@@ -562,7 +597,7 @@ export default class AnnualTab extends Component {
           label: 'Other?', value: 'OTHER'
         }
       ];
-      const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan);
+      const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
       budget = Math.ceil(budget/1000)*1000;
@@ -608,7 +643,7 @@ export default class AnnualTab extends Component {
                     className={ this.classes.rowDelete }
                     onClick={ () => this.setState({deletePopup: params.channel}) }
                   />
-                  <Popup hidden={ params.channel != this.state.deletePopup }>
+                  <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '164px' }}>
                     <DeleteChannelPopup
                       onNext={ this.deleteRow.bind(this, params.channel) }
                       onBack={ () => this.setState({deletePopup: ''}) }
@@ -898,16 +933,12 @@ export default class AnnualTab extends Component {
                 </PopupTextContent>
               </PlanPopup>
             </div>
-            <MultiRow numOfRows={1} maxNumOfRows={1} >
-              {({index, data, update, removeButton}) => {
-                return <div style={{
-                  paddingBottom: '200px',
-                  paddingTop: '50px',
-                  width: '460px'
-                }} className={ this.classes.channelsRow }>
+            { this.state.editMode ?
+              <div className={ this.classes.addChannel }>
+                <div className={ this.classes.channelsRow }>
                   <Select
                     className={ this.classes.channelsSelect }
-                    selected={ -1 }
+                    selected={ this.state.newChannel }
                     select={{
                       menuTop: true,
                       name: 'channels',
@@ -918,30 +949,42 @@ export default class AnnualTab extends Component {
                       },
                       options: channelOptions
                     }}
-                    onChange={ this.addChannel.bind(this) }
+                    onChange={ this.handleChangeSelect.bind(this) }
                     label={ `Add a channel` }
-                    labelQuestion={ [''] }
-                    description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
                   />
+                  <div hidden={ !this.state.newChannel || this.state.newChannel == "OTHER"  }>
+                    <Button type="primary2" style={{
+                      width: '72px',
+                      marginTop: '5px'
+                    }} onClick={
+                      this.addChannel.bind(this)
+                    }> Enter
+                    </Button>
+                  </div>
                 </div>
-              }}
-            </MultiRow>
-            { this.state.showText ?
-              <div className={ this.classes.channelsRow }>
-                <Textfield style={{
-                  width: '292px'
-                }}  onChange={() => {
-
-                }}/>
-                <Button type="primary2" style={{
-                  width: '72px',
-                  margin: '0 20px'
-                }} onClick={() => {
-                  this.addChannel();
-                }}> Enter
-                </Button>
+                { this.state.newChannel == "OTHER" ?
+                  <div className={ this.classes.channelsRow } style={{ display: 'flex', marginTop: '20px' }}>
+                    <Textfield style={{
+                      width: '292px'
+                    }}  onChange={
+                      this.handleChangeText.bind(this)
+                    }/>
+                    <Button type="primary2" style={{
+                      width: '72px',
+                      margin: '0 20px'
+                    }} onClick={
+                      this.addUnknownChannel.bind(this)
+                    }> Enter
+                    </Button>
+                  </div>
+                  : null }
+                { this.state.channelAddedSuccessfully ?
+                  <label style={{ color: '#26B10F', marginTop: '10px' }}>
+                    Channel Added Successfully!
+                  </label>
+                  : null }
               </div>
-              : null }
+              :null }
           </div>
         </div>
       </div>
@@ -968,10 +1011,10 @@ export default class AnnualTab extends Component {
         items.map((item, i) => {
           if (channel && this.state.editMode) {
             return <td className={ this.classes.valueCell } key={ i }>{
-              <EditableCell title={ item != approvedValues[i] ? "previous: " + approvedValues[i] : null } value={ item } onChange={ this.editChannel.bind(this, i, channel) } i={ i } channel={ channel } draggableValue={ this.state.draggableValue } dragStart={ this.dragStart.bind(this) } dragEnter={ this.dragEnter.bind(this, i, channel) } drop={ this.commitDrag.bind(this) } isDragging={ this.state.isDragging }/>
+              <EditableCell title={ (approvedValues && item != approvedValues[i]) ? "previous: " + approvedValues[i] : null } value={ item } onChange={ this.editChannel.bind(this, i, channel) } i={ i } channel={ channel } draggableValue={ this.state.draggableValue } dragStart={ this.dragStart.bind(this) } dragEnter={ this.dragEnter.bind(this, i, channel) } drop={ this.commitDrag.bind(this) } isDragging={ this.state.isDragging }/>
             }</td>
           }
-          else if (channel && item != approvedValues[i]) {
+          else if (channel && approvedValues && item != approvedValues[i]) {
             return <PlanCell item={ item } approved={ approvedValues[i] } key={ i }
                              approveChannel={ this.approveChannel.bind(this, i, channel, item) } declineChannel={ this.declineChannel.bind(this, i, channel, approvedValues[i]) }/>
           }
