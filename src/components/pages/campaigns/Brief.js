@@ -492,7 +492,7 @@ export default class Brief extends Component {
           <div className={ this.classes.colRight }>
             <Label style={{
               width: '166px'
-            }}>Expected Growth</Label>
+            }}>Actual Growth</Label>
             <Textfield value={ this.props.campaign.objectives.actualGrowth[0] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 0)} style={{
               width: '166px',
               marginTop: '8px'
