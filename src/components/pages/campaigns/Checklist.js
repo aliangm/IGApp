@@ -29,7 +29,7 @@ export default class Checklist extends Component {
     else {
       update.tasks.push({name: name, budget: budget, description: description, completed: false});
     }
-    this.props.updateState({campaign: update});
+    this.props.updateState({campaign: update, unsaved: false});
     this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
       .then(() => {
       })
@@ -38,7 +38,7 @@ export default class Checklist extends Component {
   toggleCompletion(index) {
     let update = Object.assign({}, this.props.campaign);
     update.tasks[index].completed = !update.tasks[index].completed;
-    this.props.updateState({campaign: update});
+    this.props.updateState({campaign: update, unsaved: false});
     this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
       .then(() => {
       })
@@ -47,7 +47,7 @@ export default class Checklist extends Component {
   deleteTask(index) {
     let update = Object.assign({}, this.props.campaign);
     update.tasks.splice(index,1);
-    this.props.updateState({campaign: update});
+    this.props.updateState({campaign: update, unsaved: false});
     this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
       .then(() => {
       })

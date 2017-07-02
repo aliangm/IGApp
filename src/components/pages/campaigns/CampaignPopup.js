@@ -5,10 +5,15 @@ import Page from 'components/Page';
 import Title from 'components/onboarding/Title';
 import Brief from 'components/pages/campaigns/Brief';
 import Checklist from 'components/pages/campaigns/Checklist';
+import Updates from 'components/pages/campaigns/Updates';
 
 import planStyle from 'styles/plan/plan.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
+import UnsavedPopup from 'components/UnsavedPopup';
+import Button from 'components/controls/Button';
+import AddTemplatePopup from 'components/pages/campaigns/AddTemplatePopup';
+import LoadTemplatePopup from 'components/pages/campaigns/LoadTemplatePopup';
 
 export default class CampaignPopup extends Component {
 
@@ -17,12 +22,15 @@ export default class CampaignPopup extends Component {
 
   constructor(props) {
     super(props);
+    this.close = this.close.bind(this);
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
       channel: this.props.channel,
-      campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''] }, tracking: {UTM: '', URL: ''}, tasks: []}, this.props.campaign),
+      campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''], actualGrowth: ['', '', ''] }, tracking: {UTM: '', URL: ''}, tasks: [], comments: []}, this.props.campaign),
       updateState: this.updateState.bind(this),
+      close: this.close,
+      openAddTemplatePopup: this.openAddTemplatePopup.bind(this)
     };
   }
 
@@ -38,12 +46,50 @@ export default class CampaignPopup extends Component {
 
   updateState(newState) {
     this.setState(newState);
+    this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
+  }
+
+  close() {
+    const callback = (userAnswer) => {
+      if (userAnswer) {
+        this.props.closePopup();
+      }
+      this.setState({showUnsavedPopup: false});
+    };
+    if (this.state.unsaved) {
+      this.setState({showUnsavedPopup: true, callback: callback});
+    }
+    else {
+      this.props.closePopup();
+    }
+  }
+
+  openAddTemplatePopup() {
+    this.setState({showAddTemplatePopup: true});
+  }
+
+  closeAddTemplatePopup() {
+    this.setState({showAddTemplatePopup: false});
+  }
+
+  createTemplate(templateName) {
+    this.props.updateCampaignsTemplates(templateName, this.state.campaign);
+    this.closeAddTemplatePopup();
+  }
+
+  openLoadTemplatePopup() {
+    this.setState({showLoadTemplatePopup: true});
+  }
+
+  closeLoadTemplatePopup() {
+    this.setState({showLoadTemplatePopup: false});
   }
 
   render() {
     const tabs = {
       'Brief': Brief,
-      'Checklist': Checklist
+      'Checklist': Checklist,
+      'Updates': Updates
     };
 
     const tabNames = Object.keys(tabs);
@@ -53,7 +99,8 @@ export default class CampaignPopup extends Component {
     return <div>
       <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
         <div className={ campaignPopupStyle.locals.topRight }>
-          <div className={ campaignPopupStyle.locals.close } onClick={ this.props.close }/>
+          <Button contClassName={ campaignPopupStyle.locals.loadButton } type="normal" style={{ width: '53px', height: '25px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
+          <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
         <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>
         <div className={ planStyle.locals.headTabs }>
@@ -77,6 +124,9 @@ export default class CampaignPopup extends Component {
           { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
         </div>
       </Page>
+      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
+      <AddTemplatePopup hidden={ !this.state.showAddTemplatePopup } closeAddTemplatePopup={ this.closeAddTemplatePopup.bind(this) } createTemplate={ this.createTemplate.bind(this) } campaignName={ this.state.campaign.name }/>
+      <LoadTemplatePopup hidden={ !this.state.showLoadTemplatePopup } closeLoadTemplatePopup={ this.closeLoadTemplatePopup.bind(this) } updateState={ this.updateState.bind(this) } campaignsTemplates={ this.props.campaignsTemplates }/>
     </div>
   }
 }

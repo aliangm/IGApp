@@ -17,10 +17,10 @@ export default class CampaignSummary extends Component {
     this.state = {
       showPopup: false
     }
-    this.close = this.close.bind(this);
+    this.closePopup = this.closePopup.bind(this);
   }
 
-  close() {
+  closePopup() {
     this.setState({showPopup: false});
   }
 
@@ -91,7 +91,7 @@ export default class CampaignSummary extends Component {
         </div>
       </div>
       <div hidden={ !this.state.showPopup }>
-        <CampaignPopup campaign={ this.props.campaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } close={ this.close } updateCampaign={ this.props.updateCampaign } index={ this.props.index } teamMembers={ this.props.teamMembers }/>
+        <CampaignPopup campaign={ this.props.campaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } closePopup={ this.closePopup } updateCampaign={ this.props.updateCampaign } index={ this.props.index } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates } firstName={ this.props.firstName } lastName={ this.props.lastName }/>
       </div>
     </div>
   }

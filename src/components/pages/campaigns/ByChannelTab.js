@@ -39,9 +39,15 @@ export default class ByChannelTab extends Component {
 		return this.props.updateCampaigns(campaigns);
 	};
 
+  updateCampaignsTemplates = (templateName, template) => {
+    let campaignsTemplates = { ...this.state.campaignsTemplates, [templateName]: template };
+
+    return this.props.updateCampaignsTemplates(campaignsTemplates);
+  };
+
   render() {
     const { processedChannels: channels } = this.props;
-    const { campaigns, teamMembers } = this.state;
+    const { campaigns, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.state;
 
     const page = channels.names.map((channel) => (
       <ChannelCampaigns
@@ -54,6 +60,10 @@ export default class ByChannelTab extends Component {
         updateChannelCampaigns={ this.updateChannelCampaigns }
         teamMembers={ teamMembers }
         ref={ channel }
+        campaignsTemplates={ campaignsTemplates }
+        updateCampaignsTemplates={ this.updateCampaignsTemplates }
+        firstName={ userFirstName }
+        lastName={ userLastName }
       />
     ));
 

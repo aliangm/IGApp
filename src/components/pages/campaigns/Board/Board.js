@@ -15,6 +15,10 @@ class Board extends Component {
 		container: PropTypes.any,
 		userAccount: PropTypes.object,
 		teamMembers: PropTypes.array,
+    campaignsTemplates : PropTypes.object,
+    updateCampaignsTemplates: PropTypes.func,
+		firstName: PropTypes.string,
+		lastName: PropTypes.string
 	};
 
 	getChildContext() {
@@ -23,6 +27,10 @@ class Board extends Component {
 			container: this.board,
 			userAccount: this.props.userAccount,
 			teamMembers: this.props.teamMembers,
+      campaignsTemplates : this.props.campaignsTemplates,
+      updateCampaignsTemplates: this.props.updateCampaignsTemplates,
+			firstName: this.props.firstName,
+			lastName: this.props.lastName
 		};
 	}
 
@@ -181,9 +189,13 @@ class Board extends Component {
 					this.state.showPopup &&
 					<CampaignPopup
 						updateCampaign={ this.props.onCampaignUpdate }
-						close={this.closePopup}
+            closePopup={this.closePopup}
 						teamMembers={ this.props.teamMembers }
 						campaign={{status: lists[selectedColumn].name}}
+						campaignsTemplates={ this.props.campaignsTemplates }
+						updateCampaignsTemplates={ this.props.updateCampaignsTemplates }
+						firstName={ this.props.firstName }
+						lastName={ this.props.lastName }
 					/>
 				}
       </div>

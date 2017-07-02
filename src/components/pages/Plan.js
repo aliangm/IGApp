@@ -14,11 +14,14 @@ import serverCommunication from 'data/serverCommunication';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
+import events from 'data/events';
 
 export default class Plan extends Component {
   style = style;
 
   static defaultProps = {
+    userProfile: {},
+    targetAudience: {},
     projectedPlan: []
   };
 
@@ -27,41 +30,26 @@ export default class Plan extends Component {
     this.state = {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
-      whatIf: this.plan.bind(this),
-      editChannel: this.editChannel.bind(this),
-      editUpdate: this.editUpdate.bind(this),
-      approveAll: this.approveAll.bind(this)
+      whatIf: this.plan.bind(this)
     };
     this.plan = this.plan.bind(this);
     this.popup = this.popup.bind(this);
   }
 
   componentDidMount() {
+    this.getRelevantEvents(this.props);
     if (isPopupMode()) {
       disablePopupMode();
       this.plan(true, null, null, localStorage.getItem('region'));
     }
   }
 
-  editChannel(i, channel, event) {
-    let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    let projectedPlan = this.props.projectedPlan;
-    let approvedPlan = this.props.approvedPlan;
-    projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
-    if (!approvedPlan[i]) {
-      approvedPlan[i] = {};
-    }
-    approvedPlan[i][channel] = value;
-    this.setState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+  componentWillReceiveProps(nextProps) {
+    this.getRelevantEvents(nextProps);
   }
 
-  editUpdate() {
-    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan}, this.props.region, this.props.planDate);
-  }
-
-  approveAll() {
-    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
+  getRelevantEvents(props) {
+    this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
   }
 
   popup() {
@@ -86,37 +74,7 @@ export default class Plan extends Component {
                   this.setState({isPlannerLoading: false, isError: true});
                 }
                 else {
-                  this.props.updateState({
-                    userProfile: data.userProfile,
-                    targetAudience: data.targetAudience,
-                    annualBudget: data.annualBudget,
-                    annualBudgetArray: data.annualBudgetArray || [],
-                    planDate: data.planDate,
-                    planDay: data.planDay,
-                    region: data.region,
-                    goals: {
-                      primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-                      secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-                    },
-                    objectives: data.objectives || [],
-                    blockedChannels: data.blockedChannels || [],
-                    inHouseChannels: data.inHouseChannels || [],
-                    userMinMonthBudgets: data.userMinMonthBudgets || [],
-                    maxChannels: data.maxChannels || -1,
-                    isCheckAnnual: data.annualBudget !== null,
-                    actualIndicators: data.actualIndicators,
-                    plannedChannelBudgets: data.projectedPlan ? data.projectedPlan[0].plannedChannelBudgets : {},
-                    knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-                    unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-                    monthBudget: data.projectedPlan ? data.projectedPlan[0].monthBudget : null,
-                    campaigns: data.campaigns || {},
-                    numberOfPlanUpdates: data.numberOfPlanUpdates,
-                    projectedPlan: data.projectedPlan,
-                    approvedPlan: data.approvedPlan || [],
-                    budget: data.annualBudget,
-                    budgetArray: data.annualBudgetArray,
-                    events: data.events || []
-                  });
+                  this.props.setDataAsState(data);
                   this.setState({
                     isPlannerLoading: false,
                     isError: false

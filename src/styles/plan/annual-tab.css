@@ -99,6 +99,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .table-button-selected {
@@ -177,6 +178,18 @@
 
 .row-arrow[data-collapsed] {
     transform: rotate(-90deg);
+}
+
+.row-delete {
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    background: url(../../assets/cancel-button.svg) center center no-repeat;
+    background-size: contain;
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    margin-top: -10px;
 }
 
 .row-icon {
@@ -375,4 +388,18 @@
 
 .inner-box {
     margin: 15px 0;
+}
+
+.event-popup {
+    width: 367px;
+    right: -145px;
+    left: auto;
+    top: 20px;
+    text-align: left;
+    white-space: pre-line;
+}
+
+.add-channel {
+    margin: 50px 31px 200px;
+    width: 460px;
 }

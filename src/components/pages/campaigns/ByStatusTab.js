@@ -137,6 +137,12 @@ export default class ByChannelTab extends Component {
 		return this.props.updateCampaigns(campaigns);
 	}
 
+  updateCampaignsTemplates = (templateName, template) => {
+    let campaignsTemplates = { ...this.props.campaignsTemplates, [templateName]: template };
+
+    return this.props.updateCampaignsTemplates(campaignsTemplates);
+  };
+
 	handleCampaignsStatusChange = (updates) => {
 		const newCampaigns = cloneDeep(this.campaigns);
 
@@ -188,6 +194,10 @@ export default class ByChannelTab extends Component {
 					onCampaignUpdate={this.handleCampaignUpdate}
 					teamMembers={ this.props.teamMembers }
 					userAccount={this.props.userAccount}
+					campaignsTemplates={ this.props.campaignsTemplates }
+					updateCampaignsTemplates={ this.updateCampaignsTemplates }
+					firstName={ this.props.userFirstName }
+					lastName={ this.props.userLastName }
 				/>
 			</div>
 		);

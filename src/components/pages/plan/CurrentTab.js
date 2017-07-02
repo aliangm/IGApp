@@ -84,7 +84,13 @@ export default class CurrentTab extends Component {
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
 
     const events = this.state.events ?
-      this.state.events.map((event, index) => {
+      this.state.events
+        .filter(event => {
+          const currentMonth = parseInt(planDate.split('/')[0]);
+          const eventMonth = parseInt(event.startDate.split('/')[1]);
+          return currentMonth === eventMonth;
+        })
+        .map((event, index) => {
         return <p key={ index }>
           {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
         </p>

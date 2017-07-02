@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/campaigns/progress-bar.css';
 
-export default class CampaignPopup extends Component {
+export default class ProgressBar extends Component {
 
   style=style
 

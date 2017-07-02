@@ -71,6 +71,10 @@ export default class Campaigns extends Component {
     return this.state.updateUserMonthPlan({ campaigns }, this.state.region, this.state.planDate);
   };
 
+  updateCampaignsTemplates = (campaignsTemplates) => {
+    return this.state.updateUserMonthPlan({ campaignsTemplates }, this.state.region, this.state.planDate);
+  };
+
   handleTabSelect = (e) => {
     this.setState({
       selectedIndex: +e.target.dataset.id
@@ -143,7 +147,8 @@ export default class Campaigns extends Component {
           {
             selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, this.state, {
               processedChannels,
-              updateCampaigns: this.updateCampaigns
+              updateCampaigns: this.updateCampaigns,
+              updateCampaignsTemplates: this.updateCampaignsTemplates
             }))
           }
         </div>
