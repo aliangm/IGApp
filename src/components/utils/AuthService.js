@@ -4,6 +4,8 @@ import config from 'components/utils/Configuration';
 
 export default class AuthService {
 
+  terms = 'Terms'.link('http://infinigrow.com/terms/');
+  privacy = 'Privacy Policy'.link('http://infinigrow.com/privacy-policy/');
   options= {
       auth: {
         redirectUrl: window.location.href,
@@ -11,7 +13,8 @@ export default class AuthService {
         //autoParseHash: true
       },
       languageDictionary: {
-        title: ''
+        title: '',
+        signUpTerms: 'By clicking Sign Up, you agree to our ' + this.terms + ' and ' + this.privacy + '.'
       },
       //autoclose: true,
       closable: false,
