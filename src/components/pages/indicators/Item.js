@@ -17,7 +17,7 @@ export default class Item extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      state: props.defaultStatus ? (props.defaultStatus == -2 ? 'irrelevant' : 'manual') :  (props.defaultStatus == 0 ? 'inactive' : undefined),
+      state: props.defaultStatus ? (props.defaultStatus == -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) :  (props.defaultStatus == 0 ? 'inactive' : undefined),
       status: props.defaultStatus <= 0 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus  || '' : props.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
@@ -29,7 +29,7 @@ export default class Item extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      state: nextProps.defaultStatus ? (nextProps.defaultStatus == -2 ? 'irrelevant' : 'manual') :  (nextProps.defaultStatus == 0 ? 'inactive' : undefined),
+      state: nextProps.defaultStatus ? (nextProps.defaultStatus == -2 ? 'irrelevant' : (nextProps.automaticIndicators ? 'auto' : 'manual')) :  (nextProps.defaultStatus == 0 ? 'inactive' : undefined),
       status: nextProps.defaultStatus <= 0 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus  || '' : nextProps.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
@@ -217,14 +217,14 @@ export default class Item extends Component {
               </div>
             </a>
             : null }
-          {/**
-           <div className={ this.classes.menuItem } onClick={() => {
-            this.selectState('auto');
-            this.showSocialPopup();
-          }}>
-           Automatic
-           </div>
-           **/}
+          { this.props.showAutomaticPopup ?
+            <div className={ this.classes.menuItem } onClick={() => {
+              this.selectState('auto');
+              this.props.showAutomaticPopup();
+            }}>
+              Automatic
+            </div>
+            : null }
           <div className={ this.classes.menuItem } style={{ fontWeight: this.props.defaultStatus && this.props.defaultStatus > 0 ? 'bold' : '600' }} onClick={() => {
             this.selectState('manual');
             this.setState({
@@ -238,13 +238,13 @@ export default class Item extends Component {
             {this.props.defaultStatus && this.props.defaultStatus > 0 ? 'Edit' : 'Active'}
           </div>
           {this.props.isFunnel?
-          <div className={ this.classes.menuItem } onClick={() => {
-            this.selectState('irrelevant');
-            this.props.updateIndicator(this.props.name, -2);
+            <div className={ this.classes.menuItem } onClick={() => {
+              this.selectState('irrelevant');
+              this.props.updateIndicator(this.props.name, -2);
 
-          }}>
-            Irrelevant
-          </div>
+            }}>
+              Irrelevant
+            </div>
             : null }
           <div className={ this.classes.menuItem } onClick={() => {
             this.selectState('inactive');
