@@ -5,7 +5,7 @@ import icons from 'styles/icons/indicators.css';
 
 export default class Objective extends Component {
 
-  styles=[icons]
+  styles=[icons];
 
   render() {
     let options = {
@@ -20,7 +20,6 @@ export default class Objective extends Component {
       ranges: [{ start: 0, end: 1.5/6, color: "#ff0000" }, { start: 1.5/6, end: 3/6, color: "#ffa500" }, { start: 3/6, end: 4.5/6, color: "#1165A3" }, { start: 4.5/6, end: 1, color: "#25B10E" }]
 
     };
-    console.log(this.props);
     return <div style={{ fontWeight: 'bold' }}>
       <div style={{ justifyContent: 'center', display: 'flex', fontWeight: 'bold' }}>
         {this.props.title}

@@ -131,7 +131,7 @@ export default class Profile extends Component {
       { label: 'Churn Rate', value: 'churnRate' },
       { label: 'ARPA (monthly)', value: 'ARPA' }
     ];
-    const objectivesGauges = objectives.map(objective => {
+    const objectivesGauges = objectives.map((objective, index) => {
       let title;
       const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;
       const maxRange = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + actualIndicators[objective.indicator] : actualIndicators[objective.indicator] - delta);
@@ -140,7 +140,7 @@ export default class Profile extends Component {
           title = indicator.label;
         }
       });
-      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title }/>
+      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } key={ index }/>
     });
 
     return <div>
