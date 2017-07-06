@@ -79,7 +79,7 @@ export default class Profile extends Component {
     ];
     const funnel = [];
     if (actualIndicators.MCL !== -2){
-      funnel.push({ name: 'MCL', value: actualIndicators.MCL });
+      funnel.push({ name: 'Leads', value: actualIndicators.MCL });
     }
     if (actualIndicators.MQL !== -2) {
       funnel.push({ name: 'MQL', value: actualIndicators.MQL });
@@ -116,7 +116,7 @@ export default class Profile extends Component {
       { label: 'Users', value: 'users' },
       { label: 'Active Users Rate', value: 'activeUsersRate' },
       { label: 'Trial Users', value: 'trialUsers' },
-      { label: 'MCL', value: 'MCL' },
+      { label: 'Leads', value: 'MCL' },
       { label: 'MQL', value: 'MQL' },
       { label: 'SQL', value: 'SQL' },
       { label: 'Opps', value: 'opps' },
@@ -132,12 +132,10 @@ export default class Profile extends Component {
       { label: 'ARPA (monthly)', value: 'ARPA' }
     ];
     const objectivesGauges = objectives.map(objective => {
-      console.log('objective', objective);
       let title;
       const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;
       const maxRange = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + actualIndicators[objective.indicator] : actualIndicators[objective.indicator] - delta);
       indicatorsOptions.forEach((indicator) => {
-        console.log('indicator', indicator);
         if (indicator.value === objective.indicator) {
           title = indicator.label;
         }

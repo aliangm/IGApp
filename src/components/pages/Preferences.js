@@ -690,7 +690,7 @@ export default class Preferences extends Component {
       { label: 'Users', value: 'users' },
       { label: 'Active Users Rate', value: 'activeUsersRate' },
       { label: 'Trial Users', value: 'trialUsers' },
-      { label: 'MCL', value: 'MCL' },
+      { label: 'Leads', value: 'MCL' },
       { label: 'MQL', value: 'MQL' },
       { label: 'SQL', value: 'SQL' },
       { label: 'Opps', value: 'opps' },
