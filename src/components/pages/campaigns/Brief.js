@@ -412,7 +412,7 @@ export default class Brief extends Component {
       </div>
       <div className={ this.classes.row }>
         <Label>Campaign Name*</Label>
-        <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref="name"/>
+        <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref="name" style={{ width: '665px' }}/>
       </div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>

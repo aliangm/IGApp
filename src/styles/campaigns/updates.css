@@ -43,3 +43,13 @@
     box-sizing: border-box;
     text-align: center;
 }
+
+.post {
+    margin-top: 5px;
+    display: flex;
+}
+
+.shortcut {
+    margin-left: 10px;
+    margin-top: 8px;
+}

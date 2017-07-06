@@ -83,8 +83,13 @@ export default class Updates extends Component {
     return <div>
       <textarea className={ this.classes.addComment } placeholder="Write a comment..." value={ this.state.comment } onChange={ this.handleChange.bind(this) }
                 onKeyPress={ this.handleKeyPress.bind(this) } required/>
-      <Button type="accent2" style={{width: '72px', marginTop: '5px'}}
-              onClick={ this.addComment.bind(this) }>POST</Button>
+      <div className={ this.classes.post }>
+        <Button type="accent2" style={{width: '72px'}}
+                onClick={ this.addComment.bind(this) }>POST</Button>
+        <div className={ this.classes.shortcut }>
+          (shift + enter)
+        </div>
+      </div>
       { comments.length > 0 ?
         <div>
           <div className={ this.classes.line }/>
