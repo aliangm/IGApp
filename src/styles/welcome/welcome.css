@@ -42,13 +42,26 @@
   /*min-height: 300px;*/
 }
 
+.table-bottom {
+    display: flex;
+}
+
 .add-button {
-  padding-left: 6px;
+  margin-left: 6px;
   height: 28px;
-  width: 28px;
+  width: 50%;
   cursor: pointer;
-  background: url(../../assets/plus.svg) center center no-repeat;
+  background: url(../../assets/plus.svg) left center no-repeat;
   background-size: 24px auto;
+  margin-top: 6px;
+  justify-content: flex-start;
+  display: flex;
+}
+
+.invite-message {
+  justify-content: flex-end;
+  display: flex;
+  width: 50%;
   margin-top: 6px;
 }
 
