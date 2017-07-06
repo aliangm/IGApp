@@ -91,6 +91,16 @@
   width: 28px;
   height: 26px;
   background: none left center no-repeat;
+  background-size: contain;
+  flex-shrink: 0;
+}
+
+.sub-menu-item-icon {
+  margin-left: 60px;
+  width: 20px;
+  height: 18px;
+  background: none left center no-repeat;
+  background-size: contain;
   flex-shrink: 0;
 }
 
@@ -114,16 +124,15 @@
   background: #2975ac;
 }*/
 
-@mixin icon-nodpi sidebar:dashboard, ../assets/sidebar-icons/dashboard-icon, png;
-@mixin icon-nodpi sidebar:goals, ../assets/sidebar-icons/goals-icon, png;
-@mixin icon-nodpi sidebar:indicators, ../assets/sidebar-icons/indicators-icon, png;
-@mixin icon-nodpi sidebar:manual, ../assets/sidebar-icons/manual-campains-icon, png;
-@mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/plan-icon, png;
-@mixin icon-nodpi sidebar:profile, ../assets/sidebar-icons/profile-icon, png;
-@mixin icon-nodpi sidebar:targeting, ../assets/sidebar-icons/targeting-icon, png;
-@mixin icon-nodpi sidebar:user-events, ../assets/sidebar-icons/user-events-icon, png;
-@mixin icon-nodpi sidebar:planned-vs-actual, ../assets/sidebar-icons/balance, png;
-@mixin icon-nodpi sidebar:campaigns, ../assets/sidebar-icons/elections-day, png;
+@mixin icon-nodpi sidebar:dashboard, ../assets/sidebar-icons/dashboard;
+@mixin icon-nodpi sidebar:preferences, ../assets/sidebar-icons/preferences;
+@mixin icon-nodpi sidebar:indicators, ../assets/sidebar-icons/indicators;
+@mixin icon-nodpi sidebar:company, ../assets/sidebar-icons/company;
+@mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/plan;
+@mixin icon-nodpi sidebar:profile, ../assets/sidebar-icons/profile;
+@mixin icon-nodpi sidebar:target-audience, ../assets/sidebar-icons/target-audience;
+@mixin icon-nodpi sidebar:planned-vs-actual, ../assets/sidebar-icons/planned-vs-actual;
+@mixin icon-nodpi sidebar:campaigns, ../assets/sidebar-icons/campaigns;
 
 .backface {
   position: fixed;
@@ -193,4 +202,72 @@
     opacity: 0.5;
     pointer-events: auto;
   }
+}
+
+.row-arrow {
+  content: '';
+
+  position: absolute;
+  left: 208px;
+  top: 50%;
+  margin-top: -3px;
+
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 7px 0 7px;
+  border-color: white transparent transparent transparent;
+  transform: rotate(-90deg);
+}
+
+.row-arrow[data-collapsed] {
+  transform: none;
+}
+
+.menu-item[data-selected] {
+  background: #0e568b;
+}
+
+.sub-menu-item {
+  height: 54px;
+  background: #0e568b;
+  border-bottom: 1px solid #2975ac;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.sub-menu-item-selected {
+  composes: sub-menu-item;
+
+  border-color: #5994bf;
+  background: #0e568b;
+}
+
+.sub-menu-item-selected::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #5994bf;
+}
+
+.sub-menu-item-selected::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  margin-top: -12px;
+
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 12px 12px 0;
+  border-color: transparent #f6f8fa transparent transparent;
 }
