@@ -3,14 +3,16 @@
 }
 
 .popup {
-    left: 83px;
+    left: 76px;
     border: none;
+    top: 10px;
+    cursor: pointer;
 }
 
 .tooltip {
     position: absolute;
     width: 76px;
-    background: white;
+    background: linear-gradient(to top, #24b00d 0%, #27b210 100%);
     border: 1px solid #dbdce3;
     border-radius: 4px;
     box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2);
@@ -19,6 +21,15 @@
     text-transform: none;
     white-space: pre-wrap;
     line-height: 140%;
+    height: 36px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    color: white;
 }
 
 .tooltip::before {
@@ -50,7 +61,7 @@
     height: 0;
     border-style: solid;
     border-width: 6px 6px 6px 0;
-    border-color: transparent #fff transparent transparent;
+    border-color: transparent #24b00d transparent transparent;
 }
 
 .button {

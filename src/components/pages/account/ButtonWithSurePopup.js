@@ -23,8 +23,8 @@ export default class ButtonWithSurePopup extends Component {
   render() {
     return <div className={ this.classes.container }>
       <Popup hidden={ !this.state.showPopup } onClose={ this.onClose.bind(this) } className={ this.classes.popup }>
-        <div className={ this.classes.tooltip }>
-          <Button type="accent2" onClick={ this.onClick.bind(this) }>Sure?</Button>
+        <div className={ this.classes.tooltip } onClick={ this.onClick.bind(this) }>
+          Sure?
         </div>
       </Popup>
       <Button type="primary2" className={ this.classes.button } style={ this.props.style } onClick={ ()=>{ this.setState({showPopup: true}) }}>{this.props.buttonText}</Button>
