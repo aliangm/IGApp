@@ -144,6 +144,41 @@ export default class ProjectionsTab extends Component {
 
       [
         {
+          defaultState: ["normal", "grow", "grow", "grow"],
+          defaultValue: ["2500", "2700", "4700", "6000"],
+          grow: ["", "8", "88", "140"],
+          icon: "indicator:mcl",
+          title: "Leads",
+          key: "MCL"
+        },
+        {
+          defaultState: ["normal", "grow", "grow", "grow"],
+          defaultValue: ["2500", "2700", "4700", "6000"],
+          grow: ["", "8", "88", "140"],
+          icon: "indicator:mql",
+          title: "Marketing Qualified Leads",
+          key:"MQL"
+        },
+        {
+          defaultState: ["normal", "grow", "grow", "grow"],
+          defaultValue: ["2500", "2700", "4700", "6000"],
+          grow: ["", "8", "88", "140"],
+          icon: "indicator:sql",
+          title: "Sales Qualified Leads",
+          key: "SQL"
+        },
+        {
+          defaultState: ["normal", "grow", "grow", "grow"],
+          defaultValue: ["2500", "2700", "4700", "6000"],
+          grow: ["", "8", "88", "140"],
+          icon: "indicator:opps",
+          title: "Opportunities",
+          key: "opps"
+        },
+      ],
+
+      [
+        {
           defaultState: ["normal", "normal", "normal", "normal"],
           defaultValue: ["500$", "500$", "500$", "500$"],
           icon: "indicator:ltv",
@@ -163,8 +198,16 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "grow", "grow"],
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
+          icon: "indicator:trialUsers",
+          title: "Trial Users",
+          key: "trialUsers"
+        },
+        {
+          defaultState: ["normal", "normal", "grow", "grow"],
+          defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
+          grow: ["", "", "9", "17"],
           icon: "indicator:users",
-          title: "Accounts",
+          title: "Paying Accounts",
           key: "users"
         },
         {
@@ -175,50 +218,7 @@ export default class ProjectionsTab extends Component {
           title: "Active Users Rate",
           key: "activeUsersRate"
         },
-        {
-          defaultState: ["normal", "normal", "grow", "grow"],
-          defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
-          grow: ["", "", "9", "17"],
-          icon: "indicator:trialUsers",
-          title: "Trial Users",
-          key: "trialUsers"
-        },
 
-      ],
-
-      [
-        {
-          defaultState: ["normal", "grow", "grow", "grow"],
-          defaultValue: ["2500", "2700", "4700", "6000"],
-          grow: ["", "8", "88", "140"],
-          icon: "indicator:mcl",
-          title: "MCL",
-          key: "MCL"
-        },
-        {
-          defaultState: ["normal", "grow", "grow", "grow"],
-          defaultValue: ["2500", "2700", "4700", "6000"],
-          grow: ["", "8", "88", "140"],
-          icon: "indicator:mql",
-          title: "MQL",
-          key:"MQL"
-        },
-        {
-          defaultState: ["normal", "grow", "grow", "grow"],
-          defaultValue: ["2500", "2700", "4700", "6000"],
-          grow: ["", "8", "88", "140"],
-          icon: "indicator:sql",
-          title: "SQL",
-          key: "SQL"
-        },
-        {
-          defaultState: ["normal", "grow", "grow", "grow"],
-          defaultValue: ["2500", "2700", "4700", "6000"],
-          grow: ["", "8", "88", "140"],
-          icon: "indicator:opps",
-          title: "Opps",
-          key: "opps"
-        },
       ],
 
       [

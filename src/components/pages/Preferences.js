@@ -687,7 +687,7 @@ export default class Preferences extends Component {
       { label: 'Youtube Engagement', value: 'youtubeEngagement' },
       { label: 'LTV', value: 'LTV' },
       { label: 'CAC', value: 'CAC' },
-      { label: 'Users', value: 'users' },
+      { label: 'Paying Accounts', value: 'users' },
       { label: 'Active Users Rate', value: 'activeUsersRate' },
       { label: 'Trial Users', value: 'trialUsers' },
       { label: 'Leads', value: 'MCL' },
