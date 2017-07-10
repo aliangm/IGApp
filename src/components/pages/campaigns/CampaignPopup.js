@@ -88,7 +88,7 @@ export default class CampaignPopup extends Component {
   render() {
     const tabs = {
       'Brief': Brief,
-      'Checklist': Checklist,
+      'Items': Checklist,
       'Updates': Updates
     };
 
