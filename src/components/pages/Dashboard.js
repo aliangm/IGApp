@@ -7,6 +7,7 @@ import {isPopupMode} from "modules/popup-mode";
 import {PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/campaigns/Objective';
+import Funnel from 'components/pages/dashboard/Funnel';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -28,7 +29,9 @@ export default class Profile extends Component {
     actualIndicators: {
       MCL: 0,
       MQL: 0,
-      SQL: 0
+      SQL: 0,
+      opps: 0,
+      users: 0
     },
     campaigns: {},
     objectives: []
@@ -224,7 +227,8 @@ export default class Profile extends Component {
               </div>
             </div>
           </div>
-          <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
+          {/** OLD LEAD FUNNEL
+           <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
             <div className={ dashboardStyle.locals.item } style={{ height: '397px'}}>
               <div className={ dashboardStyle.locals.text }>
                 Leads Funnel
@@ -243,7 +247,7 @@ export default class Profile extends Component {
                 </BarChart>
               </div>
             </div>
-          </div>
+          </div> **/}
         </div>
         { objectivesGauges.length > 0 ?
         <div className={ this.classes.cols } style={{ width: '825px' }}>
@@ -259,6 +263,18 @@ export default class Profile extends Component {
           </div>
         </div>
           : null }
+        <div className={ this.classes.cols } style={{ width: '825px' }}>
+          <div className={ this.classes.colLeft }>
+            <div className={ dashboardStyle.locals.item } style={{ height: '412px', width: '825px' }}>
+              <div className={ dashboardStyle.locals.text }>
+                Lead Funnel
+              </div>
+              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
+                <Funnel actualIndicators={ actualIndicators }/>
+              </div>
+            </div>
+          </div>
+        </div>
       </Page>
     </div>
   }
