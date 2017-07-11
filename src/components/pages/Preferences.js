@@ -24,6 +24,7 @@ import preferencesStyle from 'styles/preferences/preferences.css';
 
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
+import PlanFromExcel from 'components/PlanFromExcel';
 
 export default class Preferences extends Component {
   style = style
@@ -951,8 +952,11 @@ export default class Preferences extends Component {
             <div className={ this.classes.row }>
               <MultiSelect { ... channels } selected={ this.props.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
             </div>
-            <div className={ this.classes.row } style={{ marginBottom: '200px' }}>
+            <div className={ this.classes.row }>
               <MultiSelect { ... blockedChannels  } selected={ this.props.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
+            </div>
+            <div className={ this.classes.row } style={{ marginTop: '96px' }}>
+              <PlanFromExcel {... this.props}/>
             </div>
           </div>
 
