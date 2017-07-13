@@ -170,7 +170,7 @@ export default class Plan extends Component {
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
         <div>
-          { selectedTab ? React.createElement(selectedTab, _.merge(this.props, this.state)) : null }
+          { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
         </div>
       </Page>
     </div>

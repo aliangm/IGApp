@@ -54,7 +54,7 @@ export default class Sidebar extends Component {
       <div className={ this.classes.box } data-open={ this.state.open ? true : null }>
         <div className={ this.classes.logo } />
         <div className={ this.classes.menu }>
-          {this.props.auth.getProfile().app_metadata.isAdmin ?
+          {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
             <div>
               <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard"/>
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ subMenu }/>

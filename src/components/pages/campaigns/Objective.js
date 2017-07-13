@@ -15,7 +15,7 @@ export default class Objective extends Component {
       contentWidth: 260,
       svgContainerWidth: 260,
       svgContainerHeight: 155,
-      arrowValue: this.props.maxRange < this.props.current ? this.props.maxRange * 2 - this.props.current / this.props.maxRange : (this.props.current - this.props.maxRange/2) / (this.props.maxRange - this.props.maxRange /2),
+      arrowValue: this.props.maxRange < this.props.current ? (this.props.current * 1.5 - this.props.current) / (this.props.current * 1.5 - this.props.maxRange) : (this.props.current - this.props.current/2) / (this.props.maxRange - this.props.current/2),
       gaugeCenterLineHeight: 20,
       ranges: [{ start: 0, end: 1.5/6, color: "#ff0000" }, { start: 1.5/6, end: 3/6, color: "#ffa500" }, { start: 3/6, end: 4.5/6, color: "#1165A3" }, { start: 4.5/6, end: 1, color: "#25B10E" }]
 
