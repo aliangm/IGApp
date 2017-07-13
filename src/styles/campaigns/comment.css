@@ -1,8 +1,15 @@
+.comment {
+    margin-top: 20px;
+}
+
+.comment:last-child {
+    margin-bottom: 30px;
+}
+
 .frame {
     min-height: 110px;
     border-radius: 5px;
     border: solid 1px #c3c5d2;
-    margin-top: 20px;
 }
 
 .content {
@@ -50,4 +57,57 @@
 .time {
     font-size: 12px;
     margin: 0 18px 3px;
+}
+
+.edit {
+    font-size: 12px;
+    cursor: pointer;
+    margin-bottom: 3px;
+}
+
+.delete-container {
+    position: relative;
+}
+
+.delete {
+    font-size: 12px;
+    margin: 0 18px 3px 11px;
+    cursor: pointer;
+}
+
+.popup {
+    width: 200px;
+    left: -124px;
+    border: 3px solid #dbdce3;
+}
+
+.popup-title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.010em;
+    color: #273142;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dddee5;
+}
+
+.popup-text {
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: pre-wrap;
+    text-transform: none;
+    text-align: left;
+    font-size: 13px;
+}
+
+.popup-close {
+    height: 20px;
+    width: 20px;
+    background: url(../../assets/x.svg) center center no-repeat;
+    cursor: pointer;
+    min-width: 20px;
+    min-height: 20px;
+    margin-left: 178px;
 }

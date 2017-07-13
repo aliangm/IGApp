@@ -541,7 +541,7 @@ export default class Brief extends Component {
           </div>
         </div>
       </div>
-      <div className={ this.classes.footer }>
+      <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
           <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
         </div>
