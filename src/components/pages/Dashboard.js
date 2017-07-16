@@ -34,7 +34,8 @@ export default class Profile extends Component {
       users: 0
     },
     campaigns: {},
-    objectives: []
+    objectives: [],
+    annualBudgetArray: []
   };
 
   constructor() {
@@ -53,7 +54,7 @@ export default class Profile extends Component {
   }
 
   render() {
-    const { planDate, projectedPlan, actualIndicators, campaigns, objectives, annualBudget } = this.props;
+    const { planDate, projectedPlan, actualIndicators, campaigns, objectives, annualBudgetArray } = this.props;
     const planJson = parseAnnualPlan(projectedPlan);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
@@ -61,7 +62,7 @@ export default class Profile extends Component {
     const fatherChannelsWithBudgets = Object.keys(planData)
       .filter(channelName => channelName !== '__TOTAL__' && planData[channelName].values[0] !== 0)
       .map((fatherChannel)=> { return { name: fatherChannel, value: planData[fatherChannel].values[0] } });
-    const budgetLeftToPlan = annualBudget - planData['__TOTAL__'].values.reduce((a, b) => a + b, 0);
+    const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - planData['__TOTAL__'].values.reduce((a, b) => a + b, 0);
     const numberOfActiveCampaigns = Object.keys(campaigns).map((channel) =>
     {
       return campaigns[channel].filter(campaign=>  campaign.status !== 'Completed' ).length;
