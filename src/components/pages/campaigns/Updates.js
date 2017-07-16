@@ -1,9 +1,9 @@
 import React from 'react';
 import Component from 'components/Component';
-import Button from 'components/controls/Button';
 import Comment from 'components/pages/campaigns/Comment';
 import style from 'styles/campaigns/updates.css';
 import AuthService from 'components/utils/AuthService';
+import CommentTextArea from 'components/pages/campaigns/CommentTextArea';
 
 export default class Updates extends Component {
 
@@ -20,10 +20,6 @@ export default class Updates extends Component {
   componentDidMount() {
     const lock = new AuthService();
     this.setState({UID: lock.getProfile().user_id});
-  }
-
-  handleChange(event) {
-    this.setState({comment: event.target.value})
   }
 
   getInitials(UID) {
@@ -53,21 +49,30 @@ export default class Updates extends Component {
     else return this.props.firstName + ' ' + this.props.lastName;
   }
 
-  handleKeyPress(e) {
-    if (e.key == 'Enter' && e.shiftKey) {
-      e.preventDefault();
-      this.addComment();
+  addComment(comment) {
+    if (comment) {
+      let update = Object.assign({}, this.props.campaign);
+      update.comments.push({user: this.state.UID, comment: comment, time: new Date()});
+      this.props.updateState({campaign: update, unsaved: false});
+      this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
     }
   }
 
-  addComment() {
-    if (this.state.comment) {
+  editComment(comment, index) {
+    if (comment) {
       let update = Object.assign({}, this.props.campaign);
-      update.comments.push({user: this.state.UID, comment: this.state.comment, time: new Date()});
+      update.comments[index].comment = comment;
+      update.comments[index].time = new Date();
       this.props.updateState({campaign: update, unsaved: false});
       this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
-      this.setState({comment: ''});
     }
+  }
+
+  deleteComment(index) {
+    let update = Object.assign({}, this.props.campaign);
+    update.comments.splice(index, 1);
+    this.props.updateState({campaign: update, unsaved: false});
+    this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
   }
 
   render() {
@@ -78,13 +83,10 @@ export default class Updates extends Component {
       .map((comment, index) => {
         const initials = this.getInitials(comment.user);
         const name = this.getName(comment.user);
-        return <Comment key={ index } name={ name } comment={ comment.comment } time={ comment.time } initials={ initials }/>
+        return <Comment key={ index } name={ name } comment={ comment.comment } time={ comment.time } initials={ initials } index={ index } editComment={ this.editComment.bind(this) } deleteComment={ this.deleteComment.bind(this,index) }/>
       });
     return <div>
-      <textarea className={ this.classes.addComment } placeholder="Write a comment..." value={ this.state.comment } onChange={ this.handleChange.bind(this) }
-                onKeyPress={ this.handleKeyPress.bind(this) } required/>
-      <Button type="accent2" style={{width: '72px', marginTop: '5px'}}
-              onClick={ this.addComment.bind(this) }>POST</Button>
+      <CommentTextArea addOrEditComment={ this.addComment.bind(this) }/>
       { comments.length > 0 ?
         <div>
           <div className={ this.classes.line }/>

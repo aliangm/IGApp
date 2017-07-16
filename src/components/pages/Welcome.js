@@ -20,6 +20,7 @@ import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
 import serverCommunication from 'data/serverCommunication';
+import ButtonWithSurePopup from 'components/pages/account/ButtonWithSurePopup';
 
 export default class Welcome extends Component {
   style = style;
@@ -41,6 +42,7 @@ export default class Welcome extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      inviteMessage: null
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
@@ -95,7 +97,13 @@ export default class Welcome extends Component {
     const member = update.teamMembers.splice(index, 1);
     this.props.updateState({userAccount: update});
     serverCommunication.serverRequest('DELETE', 'members', JSON.stringify(member[0]))
-      .then((data) => {
+      .then((response) => {
+        if (response.ok) {
+          this.setState({inviteMessage: 'user has been removed successfully!'});
+        }
+        else {
+          this.setState({inviteMessage: 'failed to remove user'});
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -104,7 +112,13 @@ export default class Welcome extends Component {
 
   inviteMember(index) {
     serverCommunication.serverRequest('PUT', 'members', JSON.stringify({newMember: this.props.userAccount.teamMembers[index], admin: { name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName, company: this.props.userAccount.companyName }}))
-      .then((data) => {
+      .then((response) => {
+        if (response.ok) {
+          this.setState({inviteMessage: 'user has been invited successfully!'});
+        }
+        else {
+          this.setState({inviteMessage: 'failed to invite user'});
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -138,8 +152,8 @@ export default class Welcome extends Component {
             minWidth: '117px'
           }} value={ item.role } onChange={ this.changeMembers.bind(this, i, 'role') }/>
         </div>,
-        <Button type="primary2" style={{ height: '53px', width: '75px' }} onClick={ this.inviteMember.bind(this, i) }>Invite</Button>,
-        <Button type="primary2" style={{ background: '#e50000', height: '53px', width: '75px' }} onClick={ this.removeMember.bind(this, i) }>Remove</Button>
+        <ButtonWithSurePopup onClick={ this.inviteMember.bind(this, i) } buttonText="Invite"/>,
+        <ButtonWithSurePopup style={{ background: '#e50000' }} onClick={ this.removeMember.bind(this, i) } buttonText="Remove"/>
       ], {
         key: i
       });
@@ -199,8 +213,8 @@ export default class Welcome extends Component {
             <div className={ this.classes.row }>
               <Label>Team Members</Label>
               <div className={ welcomeStyle.locals.innerBox }>
-                <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial' }}>
-                  <div className={ PlannedVsActualstyle.locals.box }>
+                <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial', overflow: 'visible' }}>
+                  <div className={ PlannedVsActualstyle.locals.box } style={{ overflow: 'visible' }}>
                     <table className={ PlannedVsActualstyle.locals.table }>
                       <thead>
                       { headRow }
@@ -212,7 +226,12 @@ export default class Welcome extends Component {
                   </div>
                 </div>
               </div>
-              <div role="button" className={ welcomeStyle.locals.addButton } onClick={ this.addMember }/>
+              <div className={ welcomeStyle.locals.tableBottom }>
+                <div role="button" className={ welcomeStyle.locals.addButton } onClick={ this.addMember }/>
+                <div className={ welcomeStyle.locals.inviteMessage }>
+                  { this.state.inviteMessage }
+                </div>
+              </div>
             </div>
             <div className={ this.classes.row }>
               <Label>Enter your main competitors' website (up to 3)</Label>

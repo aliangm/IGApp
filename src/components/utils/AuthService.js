@@ -4,17 +4,20 @@ import config from 'components/utils/Configuration';
 
 export default class AuthService {
 
+  terms = 'Terms'.link('http://infinigrow.com/terms/');
+  privacy = 'Privacy Policy'.link('http://infinigrow.com/privacy-policy/');
   options= {
-      auth: {
-        redirectUrl: window.location.href,
-        responseType: 'token'
-        //autoParseHash: true
-      },
-      languageDictionary: {
-        title: ''
-      },
-      //autoclose: true,
-      closable: false,
+    auth: {
+      redirectUrl: window.location.href,
+      responseType: 'token'
+      //autoParseHash: true
+    },
+    languageDictionary: {
+      title: '',
+      signUpTerms: 'By clicking Sign Up, you agree to our ' + this.terms + ' and ' + this.privacy + '.'
+    },
+    //autoclose: true,
+    closable: false,
 //      popupOptions: { width: '450px', height: '600px' },
     theme: {
       primaryColor: '#1165a3',
@@ -91,18 +94,20 @@ export default class AuthService {
 
   setProfile(profile) {
     // Saves profile data to local storage
-    localStorage.setItem('profile', JSON.stringify(profile))
+    localStorage.setItem('profile', JSON.stringify(profile));
     // Triggers profile_updated event to update the UI
     // this.emit('profile_updated', profile)
-    FS.identify(profile.user_id, {
-      displayName: profile.email,
-      email: profile.email
-    });
+    if (config.isProd) {
+      FS.identify(profile.user_id, {
+        displayName: profile.email,
+        email: profile.email
+      });
+    }
   }
 
   getProfile() {
     // Retrieves the profile data from local storage
-    const profile = localStorage.getItem('profile')
+    const profile = localStorage.getItem('profile');
     return profile ? JSON.parse(localStorage.profile) : {}
   }
 
@@ -110,6 +115,8 @@ export default class AuthService {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
     localStorage.removeItem('profile');
-    FS.clearUserCookie(true);
+    if (config.isProd) {
+      FS.clearUserCookie(true);
+    }
   }
 }

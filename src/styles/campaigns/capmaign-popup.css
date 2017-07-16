@@ -1,10 +1,14 @@
 .content {
     margin: 15px 0;
+    padding: 0 15px;
+    overflow: auto;
+    min-height: 500px;
 }
 
 .top-right {
     display: flex;
     justify-content: flex-end;
+    margin-top: 1px;
 }
 
 .load-button {
@@ -27,7 +31,7 @@
 }
 
 .text-area {
-    width: 100%;
+    width: 665px;
     height: 72px;
     resize: none;
     border: none;

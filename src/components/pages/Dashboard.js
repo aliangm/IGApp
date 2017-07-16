@@ -7,6 +7,7 @@ import {isPopupMode} from "modules/popup-mode";
 import {PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/campaigns/Objective';
+import Funnel from 'components/pages/dashboard/Funnel';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -28,10 +29,13 @@ export default class Profile extends Component {
     actualIndicators: {
       MCL: 0,
       MQL: 0,
-      SQL: 0
+      SQL: 0,
+      opps: 0,
+      users: 0
     },
     campaigns: {},
-    objectives: []
+    objectives: [],
+    annualBudgetArray: []
   };
 
   constructor() {
@@ -50,7 +54,7 @@ export default class Profile extends Component {
   }
 
   render() {
-    const { planDate, projectedPlan, actualIndicators, campaigns, objectives } = this.props;
+    const { planDate, projectedPlan, actualIndicators, campaigns, objectives, annualBudgetArray } = this.props;
     const planJson = parseAnnualPlan(projectedPlan);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
@@ -58,6 +62,7 @@ export default class Profile extends Component {
     const fatherChannelsWithBudgets = Object.keys(planData)
       .filter(channelName => channelName !== '__TOTAL__' && planData[channelName].values[0] !== 0)
       .map((fatherChannel)=> { return { name: fatherChannel, value: planData[fatherChannel].values[0] } });
+    const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - planData['__TOTAL__'].values.reduce((a, b) => a + b, 0);
     const numberOfActiveCampaigns = Object.keys(campaigns).map((channel) =>
     {
       return campaigns[channel].filter(campaign=>  campaign.status !== 'Completed' ).length;
@@ -79,7 +84,7 @@ export default class Profile extends Component {
     ];
     const funnel = [];
     if (actualIndicators.MCL !== -2){
-      funnel.push({ name: 'MCL', value: actualIndicators.MCL });
+      funnel.push({ name: 'Leads', value: actualIndicators.MCL });
     }
     if (actualIndicators.MQL !== -2) {
       funnel.push({ name: 'MQL', value: actualIndicators.MQL });
@@ -90,6 +95,15 @@ export default class Profile extends Component {
     if (actualIndicators.opps !== -2) {
       funnel.push({ name: 'Opps', value: actualIndicators.opps });
     }
+
+    const funnelRatios = [];
+    for (let i=0; i< funnel.length - 1; i++) {
+      funnelRatios.push({ name: funnel[i].name + ':' + funnel[i+1].name, value: funnel[i+1].value / funnel[i].value });
+    }
+    const minRatio = Math.min(... funnelRatios.map(item => item.value));
+    const minRatioTitle = funnelRatios
+      .filter(item => item.value == minRatio)
+      .map(item => item.name);
 
     const RADIAN = Math.PI / 180;
 
@@ -116,7 +130,7 @@ export default class Profile extends Component {
       { label: 'Users', value: 'users' },
       { label: 'Active Users Rate', value: 'activeUsersRate' },
       { label: 'Trial Users', value: 'trialUsers' },
-      { label: 'MCL', value: 'MCL' },
+      { label: 'Leads', value: 'MCL' },
       { label: 'MQL', value: 'MQL' },
       { label: 'SQL', value: 'SQL' },
       { label: 'Opps', value: 'opps' },
@@ -131,18 +145,16 @@ export default class Profile extends Component {
       { label: 'Churn Rate', value: 'churnRate' },
       { label: 'ARPA (monthly)', value: 'ARPA' }
     ];
-    const objectivesGauges = objectives.map(objective => {
-      console.log('objective', objective);
+    const objectivesGauges = objectives.map((objective, index) => {
       let title;
       const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;
       const maxRange = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + actualIndicators[objective.indicator] : actualIndicators[objective.indicator] - delta);
       indicatorsOptions.forEach((indicator) => {
-        console.log('indicator', indicator);
         if (indicator.value === objective.indicator) {
           title = indicator.label;
         }
       });
-      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title }/>
+      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } key={ index }/>
     });
 
     return <div>
@@ -157,7 +169,7 @@ export default class Profile extends Component {
           <div className={ this.classes.colLeft }>
             <div className={ dashboardStyle.locals.item }>
               <div className={ dashboardStyle.locals.text }>
-                Budget
+                Monthly Budget
               </div>
               <div className={ dashboardStyle.locals.number }>
                 ${monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -187,7 +199,7 @@ export default class Profile extends Component {
         </div>
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '397px', width: '540'}}>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
               <div className={ dashboardStyle.locals.text }>
                 Marketing Mix Summary
               </div>
@@ -227,40 +239,71 @@ export default class Profile extends Component {
             </div>
           </div>
           <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-            <div className={ dashboardStyle.locals.item } style={{ height: '397px'}}>
+            <div className={ dashboardStyle.locals.item }>
               <div className={ dashboardStyle.locals.text }>
-                Leads Funnel
+                Annual Budget Left To Plan
               </div>
-              <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px' }}>
-                <BarChart width={231} height={270} data={funnel}>
-                  <XAxis dataKey='name' tickLine={false}/>
-                  <Tooltip/>
-                  <Bar dataKey='value' label isAnimationActive={false}>
-                    {
-                      funnel.map((entry, index) => (
-                        <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`}/>
-                      ))
-                    }
-                  </Bar>
-                </BarChart>
+              <div className={ dashboardStyle.locals.number }>
+                ${budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              </div>
+            </div>
+            <div className={ dashboardStyle.locals.item }>
+              <div className={ dashboardStyle.locals.text }>
+                {minRatioTitle + ' Ratio'}
+              </div>
+              <div className={ dashboardStyle.locals.number }>
+                {Math.round(minRatio * 10000) /100}%
               </div>
             </div>
           </div>
+          {/** OLD LEAD FUNNEL
+           <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
+           <div className={ dashboardStyle.locals.item } style={{ height: '397px'}}>
+           <div className={ dashboardStyle.locals.text }>
+           Leads Funnel
+           </div>
+           <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px' }}>
+           <BarChart width={231} height={270} data={funnel}>
+           <XAxis dataKey='name' tickLine={false}/>
+           <Tooltip/>
+           <Bar dataKey='value' label isAnimationActive={false}>
+           {
+             funnel.map((entry, index) => (
+               <Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`}/>
+             ))
+           }
+           </Bar>
+           </BarChart>
+           </div>
+           </div>
+           </div> **/}
         </div>
         { objectivesGauges.length > 0 ?
+          <div className={ this.classes.cols } style={{ width: '825px' }}>
+            <div className={ this.classes.colLeft }>
+              <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '350px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
+                <div className={ dashboardStyle.locals.text }>
+                  Objectives
+                </div>
+                <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px', justifyContent: 'center' }}>
+                  {objectivesGauges}
+                </div>
+              </div>
+            </div>
+          </div>
+          : null }
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '350px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
+            <div className={ dashboardStyle.locals.item } style={{ height: '412px', width: '825px' }}>
               <div className={ dashboardStyle.locals.text }>
-                Objectives
+                Lead Funnel
               </div>
-              <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px', justifyContent: 'center' }}>
-                {objectivesGauges}
+              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
+                <Funnel actualIndicators={ actualIndicators }/>
               </div>
             </div>
           </div>
         </div>
-          : null }
       </Page>
     </div>
   }

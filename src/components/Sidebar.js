@@ -1,14 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
 
-import history from 'history';
 import { Link } from 'react-router';
 import global from 'global';
 
 import style from 'styles/sidebar.css';
 
 export default class Sidebar extends Component {
-  style = style
+  style = style;
 
   constructor(props) {
     super(props);
@@ -24,13 +23,13 @@ export default class Sidebar extends Component {
     this.setState({
       open: true
     });
-  }
+  };
 
   close = () => {
     this.setState({
       open: false
     });
-  }
+  };
 
   componentWillUpdate(props, state) {
     // global.setState('sidebar', state);
@@ -41,6 +40,12 @@ export default class Sidebar extends Component {
   }
 
   render() {
+    const subMenu = [
+      { icon: "sidebar:company", link: "/profile", text: "Company" },
+      { icon: "sidebar:target-audience", link: "/target-audience", text: "Target Audience" },
+      { icon: "sidebar:preferences", link: "/preferences", text: "Preferences" },
+      { icon: "sidebar:indicators", link: "/indicators", text: "Metrics" },
+    ];
     return <div>
       <div className={ this.classes.backface }
            onClick={ this.close }
@@ -49,14 +54,11 @@ export default class Sidebar extends Component {
       <div className={ this.classes.box } data-open={ this.state.open ? true : null }>
         <div className={ this.classes.logo } />
         <div className={ this.classes.menu }>
-          {this.props.auth.getProfile().app_metadata.isAdmin ?
+          {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
             <div>
               <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard"/>
-              < MenuItem icon="sidebar:profile" link="/profile" text="Profile" />
-              <MenuItem icon="sidebar:targeting" link="/target-audience" text="Target Audience" />
-              <MenuItem icon="sidebar:goals" link="/preferences" text="Preferences" />
+              <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ subMenu }/>
               {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
-              <MenuItem icon="sidebar:indicators" link="/indicators" text="Metrics" />
               <MenuItem icon="sidebar:plan" link="/plan" text="Plan" />
               <MenuItem icon="sidebar:planned-vs-actual" link="/planned-vs-actual" text="Planned VS Actual" />
             </div>
@@ -88,5 +90,48 @@ export class MenuItem extends Component {
         { this.props.text }
       </div>
     </Link>
+  }
+}
+
+export class SubMenuItem extends Component {
+  style = style;
+
+  render() {
+    let className = this.classes.subMenuItem;
+
+    return <Link to={ this.props.link || '/' }
+                 activeClassName={ this.classes.subMenuItemSelected }
+                 className={ className }
+    >
+      <div className={ this.classes.subMenuItemIcon } data-icon={ this.props.icon } />
+      <div className={ this.classes.menuItemText }>
+        { this.props.text }
+      </div>
+    </Link>
+  }
+}
+
+export class CollapsedMenuItem extends Component {
+  style = style;
+  state = {
+    showSubMenu: false
+  };
+  render() {
+    let className = this.classes.menuItem;
+
+    const submenu = this.props.subMenu.map((item, index) =>
+      <SubMenuItem { ... item } key={ index }/>
+    );
+
+    return <div>
+      <div className={ className } data-selected={ this.state.showSubMenu || null } onClick={() => { this.setState({showSubMenu: !this.state.showSubMenu}) }}>
+        <div className={ this.classes.menuItemIcon } data-icon={ this.props.icon } />
+        <div className={ this.classes.menuItemText }>
+          { this.props.text }
+        </div>
+        <div className={ this.classes.rowArrow } data-collapsed={ this.state.showSubMenu || null }/>
+      </div>
+      { this.state.showSubMenu ? submenu : null }
+    </div>
   }
 }

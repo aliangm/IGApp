@@ -97,7 +97,7 @@ export default class Header extends Component {
           <div className={ this.classes.logged }>
             {this.props.userCompany}
             <div className={ this.classes.user }>
-              { this.props.auth.getProfile().app_metadata.isAdmin ?
+              { this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
                 this.props.userFirstName + ' ' + this.props.userLastName
                 : this.props.teamMembers
                   .filter(member => member.email == this.props.auth.getProfile().email)
@@ -166,7 +166,7 @@ export default class Header extends Component {
                 <div className={ this.classes.logged }>
                   {this.props.userCompany}
                   <div className={ this.classes.user }>
-                    { this.props.auth.getProfile().app_metadata.isAdmin ?
+                    { this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
                       this.props.userFirstName + ' ' + this.props.userLastName
                       : this.props.teamMembers
                         .filter(member => member.email == this.props.auth.getProfile().email)
@@ -207,7 +207,7 @@ export default class Header extends Component {
           <div className={ this.classes.logged }>
             {this.props.userCompany}
             <div className={ this.classes.user }>
-              { this.props.auth.getProfile().app_metadata.isAdmin ?
+              { this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
                 this.props.userFirstName + ' ' + this.props.userLastName
                 : this.props.teamMembers
                   .filter(member => member.email == this.props.auth.getProfile().email)

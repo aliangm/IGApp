@@ -40,8 +40,10 @@ module.exports = function(args) {
     new CopyWebpackPlugin([
       { from: 'src/icons', to: 'icons' },
       { from: 'src/engagement-calculator', to: 'engagement-calculator' },
+      { from: 'src/googleapi', to: 'googleapi' },
       { from: 'src/icons/favicon.ico', to: 'favicon.ico' },
       { from: 'src/icons/apple-touch-icon.png', to: 'apple-touch-icon.png' },
+      { from: 'src/excel-templates', to: 'excel-templates' },
     ])
   ];
 

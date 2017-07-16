@@ -272,7 +272,8 @@ class AppComponent extends Component {
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray,
       events: data.events || [],
-      unsaved: false
+      unsaved: false,
+      automaticIndicators: !!data.googleapi
     });
   }
 
