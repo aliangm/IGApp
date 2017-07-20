@@ -274,7 +274,8 @@ class AppComponent extends Component {
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
-      isHubspotAuto: !!data.hubspotapi
+      isHubspotAuto: !!data.hubspotapi,
+      isFacebookAuto: !!data.facebookapi
     });
   }
 

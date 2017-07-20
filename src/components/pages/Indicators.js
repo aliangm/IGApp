@@ -24,6 +24,7 @@ import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import history from 'history';
 import AutomaticIndicatorPopup from 'components/pages/indicators/AutomaticIndicatorPopup';
 import HubspotAutomaticPopup from 'components/pages/indicators/HubspotAutomaticPopup';
+import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
 
 export default class Indicators extends Component {
   style = style;
@@ -91,6 +92,10 @@ export default class Indicators extends Component {
     this.setState({showHubspotPopup: true});
   }
 
+  showFacebookPopup() {
+    this.setState({showFacebookPopup: true});
+  }
+
   render() {
     return <div>
       <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
@@ -100,11 +105,12 @@ export default class Indicators extends Component {
         </div>
         <AutomaticIndicatorPopup hidden={ !this.state.showAutomaticPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showAutomaticPopup: false}) }}/>
         <HubspotAutomaticPopup hidden={ !this.state.showHubspotPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showHubspotPopup: false}) }}/>
+        <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:facebook" title="Facebook Likes" name="facebookLikes" updateIndicator={ this.handleChange } defaultStatus = { this.props.actualIndicators.facebookLikes } maxValue={50000} description="The number of likes in your Facebook page."/>
-                <Item icon="indicator:facebookEngagement" link='fb' title="Facebook Engagement" name="facebookEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.facebookEngagement } maxValue={100} isPercentage = {true} description="Your Facebook engagement rate, measures your brand’s effectiveness at engaging your audience through Facebook."/>
+                <Item icon="indicator:facebook" title="Facebook Likes" name="facebookLikes" updateIndicator={ this.handleChange } defaultStatus = { this.props.actualIndicators.facebookLikes } maxValue={50000} description="The number of likes in your Facebook page." showAutomaticPopup={ this.showFacebookPopup.bind(this) } automaticIndicators={ this.props.isFacebookAuto }/>
+                <Item icon="indicator:facebookEngagement" link='fb' title="Facebook Engagement" name="facebookEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.facebookEngagement } maxValue={100} isPercentage = {true} description="Your Facebook engagement rate, measures your brand’s effectiveness at engaging your audience through Facebook." showAutomaticPopup={ this.showFacebookPopup.bind(this) } automaticIndicators={ this.props.isFacebookAuto }/>
                 <Item icon="indicator:twitter" title="Twitter Followers" name="twitterFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.twitterFollowers }  maxValue={30000} description="The number of followers on your Twitter page."/>
                 <Item icon="indicator:twitterEngagement" link='twtr' title="Twitter Engagement" name="twitterEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.twitterEngagement } maxValue={100} isPercentage = {true} description="Your Twitter engagement rate, measures your brand’s effectiveness at engaging your audience through Twitter."/>
                 <Item icon="indicator:linkedin" title="LinkedIn Followers" name="linkedinFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.linkedinFollowers } maxValue={12000} description="The number of followers on your LinkedIn page."/>
