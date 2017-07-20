@@ -273,7 +273,8 @@ class AppComponent extends Component {
       budgetArray: data.annualBudgetArray,
       events: data.events || [],
       unsaved: false,
-      automaticIndicators: !!data.googleapi
+      isGoogleAuto: !!data.googleapi,
+      isHubspotAuto: !!data.hubspotapi
     });
   }
 
