@@ -275,7 +275,8 @@ class AppComponent extends Component {
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
       isHubspotAuto: !!data.hubspotapi,
-      isFacebookAuto: !!data.facebookapi
+      isFacebookAuto: !!data.facebookapi,
+      isSalesforceAuto: !!data.salesforceapi
     });
   }
 
