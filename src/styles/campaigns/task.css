@@ -56,6 +56,11 @@
     margin-top: 8px;
 }
 
+.due-date {
+    margin-left: 20px;
+    margin-top: 8px;
+}
+
 .delete {
     display: flex;
     justify-content: flex-end;

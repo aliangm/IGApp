@@ -6,7 +6,7 @@ import CampaignTask from 'components/pages/campaigns/CampaignTask';
 
 export default class Task extends Component {
 
-  style=style
+  style=style;
 
   constructor(props) {
     super(props);
@@ -18,12 +18,8 @@ export default class Task extends Component {
     this.toggleDescription = this.toggleDescription.bind(this);
   }
 
-  static defaultProps = {
-
-  };
-
-  addOrEditTask(name, budget, description, index) {
-    this.props.addOrEditTask(name, budget, description, index);
+  addOrEditTask(name, budget, description, dueDate, index) {
+    this.props.addOrEditTask(name, budget, description, dueDate, index);
     this.toggleMode();
   }
 
@@ -48,6 +44,9 @@ export default class Task extends Component {
             : null }
           <div className={ this.classes.budget }>
             {this.props.budget ? '$' + formatBudget(this.props.budget)  : '' }
+          </div>
+          <div className={ this.classes.dueDate }>
+            { this.props.dueDate ? '(' + this.props.dueDate + ')' : '' }
           </div>
         </div>
         <div className={ this.classes.delete } onClick={ this.toggleMode }>
