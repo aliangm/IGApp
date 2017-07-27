@@ -9,7 +9,7 @@
     border: 1px solid #ced0da;
     border-radius: 4px;
     border-bottom: 1px solid #accab1;
-    overflow: hidden;
+    /* overflow: hidden; */
     display: table;
 }
 
@@ -18,15 +18,15 @@
     border-collapse: collapse;
     /*border: 1px solid #ced0da;
     border-radius: 4px;*/
-
+    table-layout: fixed;
     color: #273142;
     font-size: 14px;
     font-weight: 600;
 }
 
 .table :global(tr) {
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
+    /**border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;**/
     color: #1165a3;
     font-weight: bold;
 }
@@ -76,13 +76,15 @@
 .foot-row {
     background: #d3efcf;
     font-weight: bold;
+    border-top: 1px solid #b0e3a8;
+    height: 49px;
 }
-
+/**
 .foot-row :global(td) {
     border-top: 1px solid #b0e3a8;
     height: 49px;
 }
-
+**/
 .cell-item {
     padding: 0 12px;
     box-sizing: border-box;
@@ -286,14 +288,33 @@
 .hover-table .foot-row :global(td) {
     border-top: 1px solid #273142;
 }
-
+/**
 .hover-table tr[data-hovered] {
     visibility: visible;
     pointer-events: auto;
 }
-
+**/
 .hover-table .cell-item {
     /**margin-top: 3px;**/
+}
+
+.table-row {
+    height: 50px;
+}
+
+.table-row:hover {
+    border: 1px solid #273142 !important;
+    background: #cfe0ed !important;
+    pointer-events: auto !important;
+    border-top: 1px solid #273142 !important;
+}
+
+.table-row:hover td:first-child {
+    /**padding-left: 7px !important;**/
+}
+
+.table-row:hover td:last-child {
+    /**padding-right: 7px !important;**/
 }
 
 @media (max-width: 700px) {
@@ -402,4 +423,8 @@
 .add-channel {
     margin: 50px 31px 200px;
     width: 460px;
+}
+
+.value-cell {
+    height: 50px;
 }
