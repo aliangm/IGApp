@@ -59,9 +59,8 @@ export default class Campaigns extends Component {
     this.setState({
       planDate: data.planDate,
       region: data.region,
-      plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
-      knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-      unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
+      approvedPlan: data.approvedPlan || [],
+      planUnknownChannels: data.unknownChannels || [],
       monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || {}
     });
@@ -86,7 +85,10 @@ export default class Campaigns extends Component {
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    let channels = _.merge(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
+    const approvedChannels = this.state.approvedPlan && this.state.approvedPlan.length > 0 ? this.state.approvedPlan[0] : {};
+    const unknownChannels = this.state.planUnknownChannels && this.state.planUnknownChannels.length > 0 ? this.state.planUnknownChannels[0] : {};
+
+    let channels = _.merge(approvedChannels, unknownChannels);
     const processedChannels = {
       titles: { },
       icons: { },
@@ -102,10 +104,15 @@ export default class Campaigns extends Component {
     }, monthBudget);
 
     processedChannels.names.forEach((channel) => {
-      const title = channelsSchema.properties[channel] ? channelsSchema.properties[channel].title : channel;
-      processedChannels.titles[channel] = title;
-      let channelHierarchy = title.split('/').map(item => item.trim());
-      processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
+      if (channelsSchema.properties[channel]) {
+        processedChannels.titles[channel] = channelsSchema.properties[channel].title;
+        let channelHierarchy = channelsSchema.properties[channel].title.split('/').map(item => item.trim());
+        processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
+      }
+      else {
+        processedChannels.titles[channel] = channel;
+        processedChannels.icons[channel] = "plan:other";
+      }
     });
 
     return <div>
