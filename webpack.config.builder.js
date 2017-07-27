@@ -35,7 +35,8 @@ module.exports = function(args) {
       filename: 'index.html',
       template: 'src/index.html',
       inject: false,
-      minify: false
+      minify: false,
+      hash: true
     }),
     new CopyWebpackPlugin([
       { from: 'src/icons', to: 'icons' },
