@@ -19,15 +19,16 @@ export default class Checklist extends Component {
     this.deleteTask = this.deleteTask.bind(this);
   };
 
-  addOrEditTask(name, budget, description, index) {
+  addOrEditTask(name, budget, description, dueDate, index) {
     let update = Object.assign({}, this.props.campaign);
     if (index) {
       update.tasks[index].name = name;
       update.tasks[index].budget = budget;
       update.tasks[index].description = description;
+      update.tasks[index].dueDate = dueDate;
     }
     else {
-      update.tasks.push({name: name, budget: budget, description: description, completed: false});
+      update.tasks.push({name: name, budget: budget, description: description, dueDate: dueDate, completed: false});
     }
     this.props.updateState({campaign: update, unsaved: false});
     this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)

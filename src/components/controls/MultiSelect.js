@@ -28,7 +28,7 @@ export default class MultiSelect extends Component {
 
     return <div style={ this.props.style }>
       {label}
-      <ReactSelect { ... select } value={ this.props.selected } multi={ true } openOnFocus={ true } onChange={ this.props.onChange } style={{
+      <ReactSelect { ... select } value={ this.props.selected } multi={ true } openOnFocus={ true } onChange={ this.props.onChange } placeholder={ this.props.placeholder } disabled={ this.props.disabled } style={{
         background: 'linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%)',
         border: '1px solid #ced0da',
         color: '#535b69'

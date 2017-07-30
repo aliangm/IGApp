@@ -23,6 +23,10 @@ import indiStyle from 'styles/indicators/indicators.css';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import history from 'history';
 import AutomaticIndicatorPopup from 'components/pages/indicators/AutomaticIndicatorPopup';
+import HubspotAutomaticPopup from 'components/pages/indicators/HubspotAutomaticPopup';
+import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
+import SalesforceAutomaticPopup from 'components/pages/indicators/SalesforceAutomaticPopup';
+import CRMPopup from 'components/pages/indicators/CRMPopup';
 
 export default class Indicators extends Component {
   style = style;
@@ -86,6 +90,22 @@ export default class Indicators extends Component {
     this.setState({showAutomaticPopup: true});
   }
 
+  showHubspotPopup() {
+    this.setState({showHubspotPopup: true});
+  }
+
+  showFacebookPopup() {
+    this.setState({showFacebookPopup: true});
+  }
+
+  showSalesforcePopup() {
+    this.setState({showSalesforcePopup: true});
+  }
+
+  showCRMPopup() {
+    this.setState({showCRMPopup: true});
+  }
+
   render() {
     return <div>
       <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
@@ -94,11 +114,15 @@ export default class Indicators extends Component {
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
         <AutomaticIndicatorPopup hidden={ !this.state.showAutomaticPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showAutomaticPopup: false}) }}/>
+        <HubspotAutomaticPopup hidden={ !this.state.showHubspotPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showHubspotPopup: false}) }}/>
+        <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
+        <SalesforceAutomaticPopup hidden={ !this.state.showSalesforcePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showSalesforcePopup: false}) }}/>
+        <CRMPopup hidden={ !this.state.showCRMPopup } showSalesforcePopup={ this.showSalesforcePopup.bind(this) } showHubspotPopup={ this.showHubspotPopup.bind(this) } close={ ()=>{ this.setState({showCRMPopup: false}) } }/>
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:facebook" title="Facebook Likes" name="facebookLikes" updateIndicator={ this.handleChange } defaultStatus = { this.props.actualIndicators.facebookLikes } maxValue={50000} description="The number of likes in your Facebook page."/>
-                <Item icon="indicator:facebookEngagement" link='fb' title="Facebook Engagement" name="facebookEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.facebookEngagement } maxValue={100} isPercentage = {true} description="Your Facebook engagement rate, measures your brand’s effectiveness at engaging your audience through Facebook."/>
+                <Item icon="indicator:facebook" title="Facebook Likes" name="facebookLikes" updateIndicator={ this.handleChange } defaultStatus = { this.props.actualIndicators.facebookLikes } maxValue={50000} description="The number of likes in your Facebook page." showAutomaticPopup={ this.showFacebookPopup.bind(this) } automaticIndicators={ this.props.isFacebookAuto }/>
+                <Item icon="indicator:facebookEngagement" link='fb' title="Facebook Engagement" name="facebookEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.facebookEngagement } maxValue={100} isPercentage = {true} description="Your Facebook engagement rate, measures your brand’s effectiveness at engaging your audience through Facebook." showAutomaticPopup={ this.showFacebookPopup.bind(this) } automaticIndicators={ this.props.isFacebookAuto }/>
                 <Item icon="indicator:twitter" title="Twitter Followers" name="twitterFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.twitterFollowers }  maxValue={30000} description="The number of followers on your Twitter page."/>
                 <Item icon="indicator:twitterEngagement" link='twtr' title="Twitter Engagement" name="twitterEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.twitterEngagement } maxValue={100} isPercentage = {true} description="Your Twitter engagement rate, measures your brand’s effectiveness at engaging your audience through Twitter."/>
                 <Item icon="indicator:linkedin" title="LinkedIn Followers" name="linkedinFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.linkedinFollowers } maxValue={12000} description="The number of followers on your LinkedIn page."/>
@@ -113,10 +137,10 @@ export default class Indicators extends Component {
                 <Item icon="indicator:youtubeEngagement" link='utu' title="Youtube Engagement" name="youtubeEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.youtubeEngagement } maxValue={100} isPercentage = {true} description="Your Youtube engagement rate, measures your brand’s effectiveness at engaging your audience through Youtube."/>
               </div>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:mcl" title="Leads" name="MCL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MCL } maxValue={10000} isFunnel={true} description="Think of leads as those folks who know about you and have opted in to hear from you periodically, or those which have shown some interest in what you offer. Typically a lead has filled out a form with more than just an email address. We see companies use the lead lifecycle stage for what we think of as general, broadly appealing, or top of the funnel offers. As each lead demonstrates a higher degree of sales readiness and qualification, they will move to further stages."/>
-                <Item icon="indicator:mql" title="Marketing Qualified Leads" name="MQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MQL } maxValue={5000} isFunnel={true} description="Marketing Qualified Leads, commonly known as MQLs, are those people who have raised their hands (metaphorically speaking) and identified themselves as more deeply engaged, sales-ready contacts than your usual leads, but who have not yet become fully fledged opportunities. Ideally, you should only allow certain, designated forms to trigger the promotion of a lead to the MQL stage, specifically those that gate bottom of the funnel offers like demo requests, buying guides, and other sales-ready calls to action."/>
-                <Item icon="indicator:sql" title="Sales Qualified Leads" name="SQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.SQL } maxValue={2000} isFunnel={true} description="Sales Qualified Leads, commonly known as SQLs, are those that your sales team has accepted as worthy of a direct sales follow up. Using this stage will help your sales and marketing teams stay firmly on the same page in terms of the quality and volume of leads that you are handing over to your sales team."/>
-                <Item icon="indicator:opps" title="Opportunities" name="opps" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.opps } maxValue={1000} isFunnel={true} description="Opportunities are contacts who have become real sales opportunities in your CRM."/>
+                <Item icon="indicator:mcl" title="Leads" name="MCL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MCL } maxValue={10000} isFunnel={true} description="Think of leads as those folks who know about you and have opted in to hear from you periodically, or those which have shown some interest in what you offer. Typically a lead has filled out a form with more than just an email address. We see companies use the lead lifecycle stage for what we think of as general, broadly appealing, or top of the funnel offers. As each lead demonstrates a higher degree of sales readiness and qualification, they will move to further stages." showAutomaticPopup={ this.showCRMPopup.bind(this) } automaticIndicators={ this.props.isHubspotAuto || this.props.isSalesforceAuto }/>
+                <Item icon="indicator:mql" title="Marketing Qualified Leads" name="MQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MQL } maxValue={5000} isFunnel={true} description="Marketing Qualified Leads, commonly known as MQLs, are those people who have raised their hands (metaphorically speaking) and identified themselves as more deeply engaged, sales-ready contacts than your usual leads, but who have not yet become fully fledged opportunities. Ideally, you should only allow certain, designated forms to trigger the promotion of a lead to the MQL stage, specifically those that gate bottom of the funnel offers like demo requests, buying guides, and other sales-ready calls to action." showAutomaticPopup={ this.showCRMPopup.bind(this) } automaticIndicators={ this.props.isHubspotAuto || this.props.isSalesforceAuto }/>
+                <Item icon="indicator:sql" title="Sales Qualified Leads" name="SQL" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.SQL } maxValue={2000} isFunnel={true} description="Sales Qualified Leads, commonly known as SQLs, are those that your sales team has accepted as worthy of a direct sales follow up. Using this stage will help your sales and marketing teams stay firmly on the same page in terms of the quality and volume of leads that you are handing over to your sales team." showAutomaticPopup={ this.showCRMPopup.bind(this) } automaticIndicators={ this.props.isHubspotAuto || this.props.isSalesforceAuto }/>
+                <Item icon="indicator:opps" title="Opportunities" name="opps" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.opps } maxValue={1000} isFunnel={true} description="Opportunities are contacts who have become real sales opportunities in your CRM." showAutomaticPopup={ this.showCRMPopup.bind(this) } automaticIndicators={ this.props.isHubspotAuto || this.props.isSalesforceAuto }/>
               </div>
               <div className={ indiStyle.locals.row }>
                 <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.LTV } maxValue={400000} isDollar={true} description="Measures the profit your business makes from any given customer." formula="Formula – ARPA / Churn Rate (10% is equal to 0.1)."/>
@@ -124,7 +148,7 @@ export default class Indicators extends Component {
                 {/** <Item icon="indicator:numberOfSales" title="Number Of Sales" name="numberOfSales" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.numberOfSales } />
                  <Item icon="indicator:sales" title="Sales Revenue" name="salesRevenue" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.salesRevenue } /> **/}
                 <Item icon="indicator:trialUsers" title="Trial Users" name="trialUsers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.trialUsers } maxValue={2500} description="The number of trial users the company currently has."/>
-                 <Item icon="indicator:users" title="Paying Accounts" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.users } maxValue={7000} description="The numbers of paying customers the company currently has (an account can have multiple users)."/>
+                 <Item icon="indicator:users" title="Paying Accounts" name="users" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.users } maxValue={7000} description="The numbers of paying customers the company currently has (an account can have multiple users)." showAutomaticPopup={ this.showCRMPopup.bind(this) } automaticIndicators={ this.props.isHubspotAuto || this.props.isSalesforceAuto }/>
                 <Item icon="indicator:activeUsers" title="Active Users Rate" name="activeUsersRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.activeUsersRate } maxValue={100} isPercentage = {true} description="How many of your current users/accounts are active (actively using your product / service)?"/>
                 {/**<Item icon="indicator:customerRetentionRate" title="Customer Retention Rate" name="customerRetentionRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.customerRetentionRate } isPercentage = 'true' />**/}
               </div>
@@ -132,9 +156,9 @@ export default class Indicators extends Component {
                 <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.googleMentions } maxValue={200000} description="# of mentions when typing your company name in quotes (“Company name”)."/>
               </div>
               <div className={ indiStyle.locals.row }>
-                <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.automaticIndicators }/>
-                <Item icon="indicator:averageSessionDuration" title="Average Session Duration" name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.automaticIndicators }/>
-                <Item icon="indicator:bounceRate" title="Bounce Rate" name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.automaticIndicators }/>
+                <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+                <Item icon="indicator:averageSessionDuration" title="Average Session Duration" name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+                <Item icon="indicator:bounceRate" title="Bounce Rate" name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
                 <Item icon="indicator:blogVisits" title="Blog Visits" name="blogVisits" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogVisits } maxValue={25000} description="Blog total visits during the last 30 days."/>
                 <Item icon="indicator:blogSubscribers" title="Blog Subscribers" name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogSubscribers } maxValue={ 7000 } description="The number of blog subscriber the company currently has."/>
               </div>

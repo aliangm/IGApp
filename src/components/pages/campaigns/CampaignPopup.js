@@ -120,7 +120,7 @@ export default class CampaignPopup extends Component {
             })
           }
         </div>
-        <div style={{ marginTop: '45px' }}>
+        <div className={ campaignPopupStyle.locals.inner }>
           { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
         </div>
       </Page>

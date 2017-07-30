@@ -77,6 +77,7 @@ export default class Calendar extends Component {
             onFocus={ this.openCalendar }
             readOnly
             value={ this.props.value }
+            placeHolder={ this.props.placeholder }
           />
         }}
       </DatePicker>

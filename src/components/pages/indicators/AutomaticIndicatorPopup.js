@@ -77,7 +77,7 @@ export default class AutomaticIndicatorPopup extends Component {
   }
 
   getUserData() {
-    serverCommunication.serverRequest('put', 'googleapi', JSON.stringify({profileId: this.state.selectedProfile}, localStorage.getItem('region')))
+    serverCommunication.serverRequest('put', 'googleapi', JSON.stringify({profileId: this.state.selectedProfile}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()

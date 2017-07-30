@@ -1,0 +1,24 @@
+.salesforce {
+    background: url(../../assets/salesforce.png) center center no-repeat;
+    background-size: contain;
+    height: 70px;
+    cursor: pointer;
+}
+
+.hubspot {
+    background: url(../../assets/hubspot.png) center center no-repeat;
+    background-size: contain;
+    height: 83px;
+    cursor: pointer;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.row {
+    margin-bottom: 15px;
+}

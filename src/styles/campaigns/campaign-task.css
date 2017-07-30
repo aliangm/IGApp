@@ -22,6 +22,12 @@
     color: #646973 ;
     font-family: inherit;
     display: block;
+    margin-bottom: 10px;
+}
+
+.calendar {
+    margin-bottom: 10px;
+    width: 200px;
 }
 
 .add-item {

@@ -14,7 +14,6 @@
 .tower {
     width: 90px;
     border-radius: 5px 5px 0 0;
-    min-height: 30px;
 }
 
 .title {

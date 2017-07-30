@@ -65,3 +65,8 @@
     text-decoration: inherit;
     cursor: inherit;
 }
+
+.inner {
+    margin-top: 45px;
+    padding: 0 38px;
+}

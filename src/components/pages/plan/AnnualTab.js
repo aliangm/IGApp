@@ -670,6 +670,7 @@ export default class AnnualTab extends Component {
           </div>
 
           const rowProps = {
+            className: this.state.editMode ? null :this.classes.tableRow,
             key: key,
             onMouseEnter: () => {
               this.setState({
@@ -685,10 +686,6 @@ export default class AnnualTab extends Component {
 
           if (params.disabled) {
             rowProps['data-disabled'] = true;
-          }
-
-          if (!this.state.editMode && this.state.hoverRow === key) {
-            rowProps['data-hovered'] = true;
           }
 
           const row = this.getTableRow(titleElem, values, rowProps, params.channel, approvedValues);
