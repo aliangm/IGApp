@@ -88,9 +88,9 @@ export default class Brief extends Component {
     this.props.updateState({campaign: update});
   }
 
-  handleChangeDate(value) {
+  handleChangeDate(parameter, value) {
     let update = Object.assign({}, this.props.campaign);
-    update.dueDate = value;
+    update[parameter] = value;
     this.props.updateState({campaign: update});
   }
 
@@ -152,6 +152,7 @@ export default class Brief extends Component {
       (this.props.campaign.time.design ? ("- Expected design time: " + this.props.campaign.time.design + " hours" + newLine) : '') +
       newLine +
       (this.props.campaign.dueDate ? ("Due date: " + this.props.campaign.dueDate + newLine + newLine) : '') +
+      (this.props.campaign.startDate ? ("Start date: " + this.props.campaign.startDate + newLine + newLine) : '') +
       "Campaign objectives:" + newLine +
       (this.props.campaign.objectives.kpi[0] ? ("- KPI: " + this.props.campaign.objectives.kpi[0] + ", Growth: " + this.props.campaign.objectives.growth[0] + newLine) : '') +
       (this.props.campaign.objectives.kpi[1] ? ("- KPI: " + this.props.campaign.objectives.kpi[1] + ", Growth: " + this.props.campaign.objectives.growth[1] + newLine) : '') +
@@ -447,9 +448,23 @@ export default class Brief extends Component {
           </div>
         </div>
       </div>
-      <div className={ this.classes.row } style={{ width: '200px' }}>
-        <Label>Due Date</Label>
-        <Calendar value={ this.props.campaign.dueDate } onChange={ this.handleChangeDate.bind(this) }/>
+      <div className={ this.classes.row }>
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
+            <div style={{ width: '166px' }}>
+              <Label>Start Date</Label>
+              <Calendar value={ this.props.campaign.startDate } onChange={ this.handleChangeDate.bind(this, 'startDate') }/>
+            </div>
+          </div>
+          <div className={ this.classes.colCenter }>
+            <div style={{ width: '166px' }}>
+              <Label>Due Date</Label>
+              <Calendar value={ this.props.campaign.dueDate } onChange={ this.handleChangeDate.bind(this, 'dueDate') }/>
+            </div>
+          </div>
+          <div className={ this.classes.colRight }>
+          </div>
+        </div>
       </div>
       <div className={ this.classes.row }>
         <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Campaign Objectives</Label>
