@@ -276,7 +276,8 @@ class AppComponent extends Component {
       isGoogleAuto: !!data.googleapi,
       isHubspotAuto: !!data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
-      isSalesforceAuto: !!data.salesforceapi
+      isSalesforceAuto: !!data.salesforceapi,
+      isLinkedinAuto: !!data.linkedinapi
     });
   }
 
