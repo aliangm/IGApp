@@ -64,7 +64,7 @@ class AppComponent extends Component {
       } else {
         // Unsaved changes -- ask for confirmation
         /**
-        vex.dialog.confirm({
+         vex.dialog.confirm({
           message: 'There are unsaved changes. Leave anyway?' + nextLocation,
           callback: result => resolve(result)
         })
@@ -274,9 +274,9 @@ class AppComponent extends Component {
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
-      isHubspotAuto: !!data.hubspotapi,
+      hubspotAuto: data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
-      isSalesforceAuto: !!data.salesforceapi,
+      salesforceAuto: data.salesforceapi,
       isLinkedinAuto: !!data.linkedinapi,
       isTwitterAuto: !!data.twitterapi
     });
