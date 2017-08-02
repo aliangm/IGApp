@@ -28,7 +28,7 @@ export default class AutomaticIndicatorPopup extends Component {
           if (response.ok) {
             response.json()
               .then((data) => {
-                const win = window.open(data, 'social_popup', 'width=500,height=600,top=100,left=500');
+                const win = window.open(data);
 
                 const timer = setInterval(() => {
                   if (win.closed) {
