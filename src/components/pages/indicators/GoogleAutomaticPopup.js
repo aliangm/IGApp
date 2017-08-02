@@ -123,24 +123,24 @@ export default class AutomaticIndicatorPopup extends Component {
     };
     return <div hidden={ this.props.hidden }>
       {this.state.code ? <Page popup={ true } width={'340px'}>
-        <div className={ this.classes.row }>
-          <Select { ... selects.account } selected={ this.state.selectedAccount}
-                  onChange={ this.handleChangeAccount.bind(this) }/>
-        </div>
-        <div className={ this.classes.row }>
-          <Select { ... selects.profile } selected={ this.state.selectedProfile}
-                  onChange={ this.handleChangeProfile.bind(this) }/>
-        </div>
-        <div className={ this.classes.footer }>
-          <div className={ this.classes.footerLeft }>
-            <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+          <div className={ this.classes.row }>
+            <Select { ... selects.account } selected={ this.state.selectedAccount}
+                    onChange={ this.handleChangeAccount.bind(this) }/>
           </div>
-          <div className={ this.classes.footerRight }>
-            <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
+          <div className={ this.classes.row }>
+            <Select { ... selects.profile } selected={ this.state.selectedProfile}
+                    onChange={ this.handleChangeProfile.bind(this) }/>
           </div>
-        </div>
-      </Page>
-          : null }
+          <div className={ this.classes.footer }>
+            <div className={ this.classes.footerLeft }>
+              <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+            </div>
+            <div className={ this.classes.footerRight }>
+              <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
+            </div>
+          </div>
+        </Page>
+        : null }
     </div>
   }
 

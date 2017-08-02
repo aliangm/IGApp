@@ -1,17 +1,10 @@
 import React from 'react';
 
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
-
-import Select from 'components/controls/Select';
-import Textfield from 'components/controls/Textfield';
-import Label from 'components/ControlsLabel';
 
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
-import ProfileInsights from 'components/pages/profile/Insights';
 import BackButton from 'components/pages/profile/BackButton';
 import PlanButton from 'components/pages/indicators/PlanButton';
 import SaveButton from 'components/pages/profile/SaveButton';
@@ -22,7 +15,7 @@ import indiStyle from 'styles/indicators/indicators.css';
 
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import history from 'history';
-import AutomaticIndicatorPopup from 'components/pages/indicators/AutomaticIndicatorPopup';
+import GoogleAutomaticPopup from 'components/pages/indicators/GoogleAutomaticPopup';
 import HubspotAutomaticPopup from 'components/pages/indicators/HubspotAutomaticPopup';
 import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
 import SalesforceAutomaticPopup from 'components/pages/indicators/SalesforceAutomaticPopup';
@@ -88,8 +81,8 @@ export default class Indicators extends Component {
     }
   }
 
-  showAutomaticPopup() {
-    this.setState({showAutomaticPopup: true});
+  showGooglePopup() {
+    this.setState({showGooglePopup: true});
   }
 
   showHubspotPopup() {
@@ -127,7 +120,7 @@ export default class Indicators extends Component {
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
-        <AutomaticIndicatorPopup hidden={ !this.state.showAutomaticPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showAutomaticPopup: false}) }}/>
+        <GoogleAutomaticPopup hidden={ !this.state.showGooglePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showGooglePopup: false}) }}/>
         <HubspotAutomaticPopup hidden={ !this.state.showHubspotPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showHubspotPopup: false}) }}/>
         <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
         <SalesforceAutomaticPopup hidden={ !this.state.showSalesforcePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showSalesforcePopup: false}) }}/>
@@ -172,9 +165,9 @@ export default class Indicators extends Component {
               <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.googleMentions } maxValue={200000} description="# of mentions when typing your company name in quotes (“Company name”)."/>
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:averageSessionDuration" title="Average Session Duration" name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:bounceRate" title="Bounce Rate" name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showAutomaticPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+              <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showGooglePopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+              <Item icon="indicator:averageSessionDuration" title="Average Session Duration" name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showGooglePopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+              <Item icon="indicator:bounceRate" title="Bounce Rate" name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showGooglePopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
               <Item icon="indicator:blogVisits" title="Blog Visits" name="blogVisits" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogVisits } maxValue={25000} description="Blog total visits during the last 30 days."/>
               <Item icon="indicator:blogSubscribers" title="Blog Subscribers" name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogSubscribers } maxValue={ 7000 } description="The number of blog subscriber the company currently has."/>
             </div>
