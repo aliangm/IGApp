@@ -23,7 +23,7 @@ export default class AutomaticIndicatorPopup extends Component {
   }
 
   getUserData() {
-    serverCommunication.serverRequest('post', 'facebookapi', JSON.stringify({identifier: this.state.identifier}, localStorage.getItem('region')))
+    serverCommunication.serverRequest('post', 'facebookapi', JSON.stringify({identifier: this.state.identifier}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
