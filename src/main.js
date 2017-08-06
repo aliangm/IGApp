@@ -14,7 +14,6 @@ import SignIn from './components/pages/SignIn';
 import Campaigns from './components/pages/Campaigns';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
-import PlannedVsActual from './components/pages/PlannedVsActual';
 import AuthService from './components/utils/AuthService'
 import App from './components/App';
 
@@ -50,7 +49,6 @@ ReactDOM.render(
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
       <Route path="/welcome" component={ Welcome } onEnter={ requireAdminAuth }/>
       <Route path="/plan" component={ Plan } onEnter={ requireAdminAuth }/>
-      <Route path="/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAdminAuth }/>
       <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
     </Route>
   </Router>,

@@ -9,6 +9,7 @@ import style from 'styles/plan/plan.css';
 import CurrentTab from 'components/pages/plan/CurrentTab';
 import ProjectionsTab from 'components/pages/plan/ProjectionsTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
+import PlannedVsActual from 'components/pages/plan/PlannedVsActual';
 import ReplanButton from 'components/pages/plan/ReplanButton';
 import serverCommunication from 'data/serverCommunication';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
@@ -118,7 +119,8 @@ export default class Plan extends Component {
     const tabs = {
       "Current": CurrentTab,
       "Annual": AnnualTab,
-      "Forecasting": ProjectionsTab
+      "Forecasting": ProjectionsTab,
+      "Planned VS Actual": PlannedVsActual
     };
 
     const tabNames = Object.keys(tabs);
