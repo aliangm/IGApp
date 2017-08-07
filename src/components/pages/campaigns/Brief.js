@@ -543,19 +543,6 @@ export default class Brief extends Component {
         <Label>Additional Information</Label>
         <textarea value={ this.props.campaign.additionalInformation } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'additionalInformation') }/>
       </div>
-      <div className={ this.classes.row }>
-        <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Tracking (Coming Soon)</Label>
-        <div className={ this.classes.cols }>
-          <div className={ this.classes.colLeft }>
-            <Label>By utm_campaign field</Label>
-            <Textfield value={ this.props.campaign.tracking.UTM }  onChange={ this.handleChangeTracking.bind(this, 'UTM') } style={{ width: '300px' }} placeHolder="campaign_utm"/>
-          </div>
-          <div className={ this.classes.colCenter }>
-            <Label>By referrer url</Label>
-            <Textfield value={ this.props.campaign.tracking.URL }  onChange={ this.handleChangeTracking.bind(this, 'URL') } style={{ width: '300px' }} placeHolder="referrer.com"/>
-          </div>
-        </div>
-      </div>
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
           <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
