@@ -1,25 +1,23 @@
 import React from 'react';
-import _ from 'lodash';
 import Component from 'components/Component';
-import Page from 'components/Page';
-import Title from 'components/onboarding/Title';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import Select from 'components/controls/Select';
 import Calendar from 'components/controls/Calendar';
 import Button from 'components/controls/Button';
 import SaveButton from 'components/pages/profile/SaveButton';
-
+import AssetsPopup from 'components/pages/campaigns/AssetsPopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 
 export default class Brief extends Component {
 
-  style = style
-  styles = [campaignPopupStyle]
+  style = style;
+  styles = [campaignPopupStyle];
 
   constructor(props) {
     super(props);
+    this.state = {};
     this.validate = this.validate.bind(this);
     this.save = this.save.bind(this);
     this.getEmailBody = this.getEmailBody.bind(this);
@@ -404,6 +402,21 @@ export default class Brief extends Component {
       });
     }
     selects.owner.select.options.push({value: "me", label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
+    const assetsCategories = this.props.campaign.assets ?
+      [...new Set(this.props.campaign.assets.map(item => item.category))]
+    : [];
+    const assets = assetsCategories.map((category, index) => {
+      return <div key={index} className={ campaignPopupStyle.locals.categoryAssets }>
+        <div className={ campaignPopupStyle.locals.assetsCategory }>
+          {category}
+        </div>
+        <div className={ campaignPopupStyle.locals.assetsLinks }>
+          { this.props.campaign.assets.filter(asset => asset.category === category)
+            .map((asset, index) => <a className={ campaignPopupStyle.locals.assetsLink } key={index} href={asset.link} target="_blank">{asset.name}</a>)
+          }
+        </div>
+      </div>
+    });
     return <div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
@@ -556,6 +569,14 @@ export default class Brief extends Component {
         <Label>Additional Information</Label>
         <textarea value={ this.props.campaign.additionalInformation } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'additionalInformation') }/>
       </div>
+      <div className={ this.classes.row }>
+        <Label>Assets
+          <div className={ campaignPopupStyle.locals.assetsIcon } onClick={()=>{ this.setState({assetsPopup: true}) }}/>
+        </Label>
+        <div className={ campaignPopupStyle.locals.assetsBox }>
+          { assets }
+        </div>
+      </div>
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
           <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
@@ -568,6 +589,7 @@ export default class Brief extends Component {
           <SaveButton onClick={ this.save } />
         </div>
       </div>
+      <AssetsPopup hidden={ !this.state.assetsPopup } updateCampaign={ () => {this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)} } updateState={ this.props.updateState } campaign={ this.props.campaign } close={ ()=> { this.setState({assetsPopup: false}) }}/>
     </div>
   }
 }
