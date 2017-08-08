@@ -65,7 +65,7 @@ export default class Profile extends Component {
     const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - planData['__TOTAL__'].values.reduce((a, b) => a + b, 0);
     const numberOfActiveCampaigns = Object.keys(campaigns).map((channel) =>
     {
-      return campaigns[channel].filter(campaign=>  campaign.status !== 'Completed' ).length;
+      return campaigns[channel].filter(campaign=>  campaign.status !== 'Completed' && campaign.isArchived !== true ).length;
     }).reduce((a, b) => a + b, 0);
     const ratio = (actualIndicators.LTV/actualIndicators.CAC).toFixed(2) || 0;
     const COLORS = [

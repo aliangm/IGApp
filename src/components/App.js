@@ -263,7 +263,7 @@ class AppComponent extends Component {
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
       monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
-      campaigns: data.campaigns || {},
+      unfilteredCampaigns: data.campaigns || {},
       campaignsTemplates: data.campaignsTemplates || {},
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan,

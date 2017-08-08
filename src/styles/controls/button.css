@@ -84,6 +84,12 @@
   background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
 }
 
+.warning {
+  composes: box;
+  color: white;
+  background: #e50000;
+}
+
 .primary2[data-selected] {
   background: #0e568b;
 }

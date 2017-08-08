@@ -2,7 +2,6 @@ import React from 'react';
 import _ from 'lodash';
 import Component from 'components/Component';
 import Page from 'components/Page';
-import Paging from 'components/Paging';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import channelsSchema from 'data/channelsSchema';
@@ -43,35 +42,20 @@ export default class Campaigns extends Component {
     super(props);
 
     this.state = {
-      campaigns: {},
-      monthBudget: 0,
-      teamMembers: [],
-      ...props,
       selectedIndex: 0
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState(nextProps);
-  }
-
-  pagingUpdateState = (data) => {
-    this.setState({
-      planDate: data.planDate,
-      region: data.region,
-      approvedPlan: data.approvedPlan || [],
-      planUnknownChannels: data.unknownChannels || [],
-      monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
-      campaigns: data.campaigns || {}
-    });
+  static defaultProps = {
+    unfilteredCampaigns: {}
   };
 
   updateCampaigns = (campaigns) => {
-    return this.state.updateUserMonthPlan({ campaigns }, this.state.region, this.state.planDate);
+    return this.props.updateUserMonthPlan({ campaigns }, this.props.region, this.props.planDate);
   };
 
   updateCampaignsTemplates = (campaignsTemplates) => {
-    return this.state.updateUserMonthPlan({ campaignsTemplates }, this.state.region, this.state.planDate);
+    return this.props.updateUserMonthPlan({ campaignsTemplates }, this.props.region, this.props.planDate);
   };
 
   handleTabSelect = (e) => {
@@ -81,12 +65,13 @@ export default class Campaigns extends Component {
   };
 
   render() {
-    const { selectedIndex, planDate, region, monthBudget } = this.state;
+    const { selectedIndex } = this.state;
+    const { monthBudget, unfilteredCampaigns } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    const approvedChannels = this.state.approvedPlan && this.state.approvedPlan.length > 0 ? this.state.approvedPlan[0] : {};
-    const unknownChannels = this.state.planUnknownChannels && this.state.planUnknownChannels.length > 0 ? this.state.planUnknownChannels[0] : {};
+    const approvedChannels = this.props.approvedPlan && this.props.approvedPlan.length > 0 ? this.props.approvedPlan[0] : {};
+    const unknownChannels = this.props.planUnknownChannels && this.props.planUnknownChannels.length > 0 ? this.props.planUnknownChannels[0] : {};
 
     let channels = _.merge(approvedChannels, unknownChannels);
     const processedChannels = {
@@ -95,13 +80,6 @@ export default class Campaigns extends Component {
       budgets: channels,
       names: Object.keys(channels).sort()
     };
-    let budgetLeftToSpend = Object.keys(this.state.campaigns).reduce((res, channel) => {
-      this.state.campaigns[channel].forEach((campaign) => {
-        res -= campaign.actualSpent || campaign.budget;
-      });
-
-      return res;
-    }, monthBudget);
 
     processedChannels.names.forEach((channel) => {
       if (channelsSchema.properties[channel]) {
@@ -114,6 +92,21 @@ export default class Campaigns extends Component {
         processedChannels.icons[channel] = "plan:other";
       }
     });
+    const activeCampaigns = {};
+    Object.keys(unfilteredCampaigns).forEach(channel => {
+      const channelActiveCampaigns = unfilteredCampaigns[channel].filter(campaign => campaign.isArchived !== true);
+      if (channelActiveCampaigns.length > 0) {
+        return activeCampaigns[channel] = channelActiveCampaigns
+      }
+    });
+
+    let budgetLeftToSpend = Object.keys(activeCampaigns).reduce((res, channel) => {
+      activeCampaigns[channel].forEach((campaign) => {
+        res -= campaign.actualSpent || campaign.budget;
+      });
+
+      return res;
+    }, monthBudget);
 
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
@@ -135,14 +128,10 @@ export default class Campaigns extends Component {
             }
           </div>
         </div>
-        <div className={ planStyle.locals.serverDown } style={{ padding: '30px 30px' }}>
-          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
-        </div>
         <div>
-          <Paging month={planDate} region={region} pagingUpdateState={this.pagingUpdateState}/>
           <div className={ this.classes.campaignsTitle }>
             <div className={ this.classes.campaignsTitleDate }>
-              { getDateString(this.state.planDate) } - Campaigns
+              { getDateString(this.props.planDate) } - Campaigns
             </div>
             <div className={ this.classes.campaignsTitleBudget }>
               Budget left to spend
@@ -152,8 +141,9 @@ export default class Campaigns extends Component {
             </div>
           </div>
           {
-            selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, this.state, {
+            selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
               processedChannels,
+              campaigns: activeCampaigns,
               updateCampaigns: this.updateCampaigns,
               updateCampaignsTemplates: this.updateCampaignsTemplates
             }))

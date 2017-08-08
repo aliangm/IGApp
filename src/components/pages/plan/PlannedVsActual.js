@@ -41,8 +41,7 @@ export default class PlannedVsActual extends Component {
       plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
-      campaigns: data.campaigns || {}
+      monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null
     });
   }
 

@@ -120,6 +120,19 @@ export default class Brief extends Component {
     }
   }
 
+  archive() {
+    let update = Object.assign({}, this.props.campaign);
+    update.isArchived = true;
+    this.props.updateState({campaign: update, unsaved: false});
+    this.props.updateCampaign(update, this.props.index, this.props.channel)
+      .then(() => {
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    this.props.closePopup();
+  }
+
   getEmailTo() {
     return (this.props.campaign.owner ?
       this.props.campaign.owner.value == "me" ?
@@ -546,6 +559,7 @@ export default class Brief extends Component {
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
           <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
+          <Button type="warning" style={{ width: '100px', marginLeft: '30px' }} onClick={ this.archive.bind(this) }>Archive</Button>
         </div>
         <div className={ this.classes.footerRight }>
           <Button type="primary2" style={{ width: '100px', marginRight: '30px' }} onClick={ this.save }>
