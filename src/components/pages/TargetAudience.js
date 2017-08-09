@@ -49,7 +49,7 @@ export default class TargetAudience extends Component {
   validate() {
     return this.props.targetAudience.reduce((isValue, target) => {
       return isValue &&
-        target.info.name &&
+        //target.info.name &&
         target.info.weight &&
         target.fields.role &&
         target.fields.managementLevel &&
