@@ -13,12 +13,12 @@ if (!window.Promise) {
 export default {
 
 	serverRequest(httpFunc, route, body, region, planDate) {
-		
+    const lock = new AuthService();
+		const profile = lock.getProfile();
 		const deferred = q.defer();
-		const lock = new AuthService();
 		let URL = window.location.protocol + '//' + window.location.hostname + ':' + config.port + '/' + route;
-    if (lock.getProfile().isAdmin === false){
-    	URL += '/' + lock.getProfile().app_metadata.UID+ '/';
+    if (profile){
+    	URL += '/' + profile.app_metadata.UID+ '/';
 		}
 		if (region || planDate) {
       URL += '?';
