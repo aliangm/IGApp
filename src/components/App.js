@@ -172,6 +172,25 @@ class AppComponent extends Component {
             .then((data) => {
               if (data) {
                 this.setDataAsState(data);
+                serverCommunication.serverRequest('GET', 'previousdata', null, this.state.region)
+                  .then((response) => {
+                    if (response.ok) {
+                      response.json()
+                        .then((data) => {
+                          if (data) {
+                            this.setState({
+                              previousData: data
+                            });
+                          }
+                        })
+                    }
+                    else if (response.status == 401){
+                      history.push('/');
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }
             })
         }

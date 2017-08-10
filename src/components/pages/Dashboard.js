@@ -4,10 +4,11 @@ import Page from "components/Page";
 import style from "styles/onboarding/onboarding.css";
 import {parseAnnualPlan} from "data/parseAnnualPlan";
 import {isPopupMode} from "modules/popup-mode";
-import {PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip } from "recharts";
+import {PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/campaigns/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
+import Select from 'components/controls/Select';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -19,7 +20,7 @@ function formatDate(dateStr) {
   else return null;
 }
 
-export default class Profile extends Component {
+export default class Dashboard extends Component {
 
   style = style;
   styles = [dashboardStyle];
@@ -35,7 +36,8 @@ export default class Profile extends Component {
     },
     campaigns: {},
     objectives: [],
-    annualBudgetArray: []
+    annualBudgetArray: [],
+    previousData: []
   };
 
   constructor() {
@@ -53,8 +55,25 @@ export default class Profile extends Component {
     });
   }
 
+  getDateString(stringDate) {
+    if (stringDate) {
+      const monthNames = [
+        "Jan", "Feb", "Mar",
+        "Apr", "May", "Jun", "Jul",
+        "Aug", "Sep", "Oct",
+        "Nov", "Dec"
+      ];
+      const planDate = stringDate.split("/");
+      const date = new Date(planDate[1], planDate[0] - 1);
+
+      return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
+    }
+
+    return null;
+  }
+
   render() {
-    const { planDate, projectedPlan, actualIndicators, campaigns, objectives, annualBudgetArray } = this.props;
+    const { planDate, projectedPlan, actualIndicators, campaigns, objectives, annualBudgetArray, previousData } = this.props;
     const planJson = parseAnnualPlan(projectedPlan);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
@@ -156,6 +175,35 @@ export default class Profile extends Component {
       });
       return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } key={ index }/>
     });
+
+    const months = previousData.map((item,index) => {return {value: index, label: index} });
+    let indicatorsData = {};
+    const sortedPreviousData = previousData.sort((a, b) => {
+      const planDate1 = a.planDate.split("/");
+      const planDate2 = b.planDate.split("/");
+      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
+      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
+      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    });
+    sortedPreviousData.forEach(item => {
+      const displayDate = this.getDateString(item.planDate);
+      Object.keys(item.actualIndicators).forEach(indicator => {
+        if (!indicatorsData[indicator]) {
+          indicatorsData[indicator] = [];
+        }
+        const value = item.actualIndicators[indicator];
+        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
+      })
+    });
+
+    let grow = 0;
+    if (indicatorsData[this.state.indicator]) {
+      const current  = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - 1].value;
+      const previous = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - (this.state.months ? this.state.months : 1)].value;
+      if (previous) {
+        grow = Math.round((current-previous) / previous * 100)
+      }
+    }
 
     return <div>
       <Page contentClassName={ dashboardStyle.locals.content } innerClassName={ dashboardStyle.locals.pageInner }>
@@ -300,6 +348,61 @@ export default class Profile extends Component {
               </div>
               <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
                 <Funnel actualIndicators={ actualIndicators }/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={ this.classes.cols } style={{ width: '825px' }}>
+          <div className={ this.classes.colLeft }>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
+              <div className={ dashboardStyle.locals.text }>
+                History Performance
+              </div>
+              <div style={{ display: 'flex' }}>
+                <div className={ this.classes.footerLeft }>
+                  <div className={ dashboardStyle.locals.historyConfig }>
+                    <div className={ dashboardStyle.locals.historyConfigText }>
+                      Show
+                    </div>
+                    <Select selected={ this.state.indicator }
+                            select={{
+                              options: indicatorsOptions
+                            }}
+                            onChange={ (e) => { this.setState({indicator: e.value}) } }
+                            style={{ width: '172px' }}
+                    />
+                    <div className={ dashboardStyle.locals.historyConfigText }>
+                      in last
+                    </div>
+                    <Select selected={ this.state.months ? this.state.months : (indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].length-1 : 0)}
+                            select={{
+                              options: months
+                            }}
+                            onChange={ (e) => { this.setState({months: e.value}) } }
+                            style={{ width: '44px' }}
+                    />
+                    <div className={ dashboardStyle.locals.historyConfigText }>
+                      months
+                    </div>
+                  </div>
+                </div>
+                { grow ?
+                  <div className={ this.classes.footerRight }>
+                    <div className={ dashboardStyle.locals.historyArrow }/>
+                    <div className={ dashboardStyle.locals.historyGrow }>
+                      { grow }%
+                    </div>
+                  </div>
+                  : null }
+              </div>
+              <div className={ dashboardStyle.locals.chart }>
+                <AreaChart width={550} height={280} data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months, indicatorsData[this.state.indicator].length) : []} style={{ marginLeft: '-21px' }}>
+                  <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
+                  <YAxis style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
+                  <CartesianGrid vertical={ false }/>
+                  <Tooltip/>
+                  <Area type='monotone' dataKey='value' stroke='#6BCCFF' fill='#DFECF7' strokeWidth={3}/>
+                </AreaChart>
               </div>
             </div>
           </div>
