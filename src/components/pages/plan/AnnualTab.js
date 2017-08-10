@@ -28,7 +28,7 @@ export default class AnnualTab extends Component {
   styles = [planStyles, icons, popupStyle];
   style = style;
 
-  budgetWeights= [0.07,	0.11,	0.13,	0.13,	0.11,	0.05,	0.04,	0.04,	0.09,	0.09,	0.12,	0.02];
+  budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
 
   static defaultProps = {
     projectedPlan: [],
