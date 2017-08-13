@@ -43,23 +43,29 @@ export default class SignIn extends Component {
 
   componentDidMount() {
     if (this.lock.loggedIn()) {
-      checkIfPopup()
-        .then((popup) => {
-          if (this.lock.getProfile().app_metadata && !this.lock.getProfile().app_metadata.isAdmin) {
-            history.push('/campaigns');
-          }
-          else {
-            if (popup == null || popup) {
-              history.push('/welcome');
-            }
-            else {
-              history.push('/plan')
-            }
-          }
-        })
-        .catch((err) => {
-          this.lock.login();
-        });
+      const timer = setInterval(() => {
+        const profile = this.lock.getProfile();
+        if (profile && profile.app_metadata) {
+          clearInterval(timer);
+          checkIfPopup()
+            .then((popup) => {
+                if (profile.app_metadata && !profile.app_metadata.isAdmin) {
+                  history.push('/campaigns');
+                }
+                else {
+                  if (popup == null || popup) {
+                    history.push('/welcome');
+                  }
+                  else {
+                    history.push('/plan')
+                  }
+                }
+            })
+            .catch((err) => {
+              this.lock.login();
+            });
+        }
+      }, 100);
     }
     else {
       if (!localStorage.getItem('login_error')){

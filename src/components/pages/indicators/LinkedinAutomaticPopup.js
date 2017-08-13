@@ -14,21 +14,19 @@ export default class AutomaticIndicatorPopup extends Component {
     super(props);
     this.state = {
       accounts: [],
-      profiles: [],
       selectedAccount: null,
-      selectedProfile: null,
       code: null
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.hidden && this.props.hidden != nextProps.hidden) {
-      serverCommunication.serverRequest('get', 'googleapi')
+      serverCommunication.serverRequest('get', 'linkedinapi')
         .then((response) => {
           if (response.ok) {
             response.json()
               .then((data) => {
-                const win = window.open(data, 'social_popup', 'width=500,height=600,top=100,left=500');
+                const win = window.open(data);
 
                 const timer = setInterval(() => {
                   if (win.closed) {
@@ -37,12 +35,18 @@ export default class AutomaticIndicatorPopup extends Component {
                     if (code) {
                       localStorage.removeItem('code');
                       this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}))
+                      serverCommunication.serverRequest('post', 'linkedinapi', JSON.stringify({code: code}))
                         .then((response) => {
                           if (response.ok) {
                             response.json()
                               .then((data) => {
-                                this.setState({accounts: data.accounts, profiles: data.profiles});
+                              console.log(data);
+                              if (data.values.length > 1) {
+                                this.setState({accounts: data.values});
+                              }
+                              else {
+                                this.setState({selectedAccount: data.values[0].id}, this.getUserData);
+                              }
                               });
                           }
                           else if (response.status == 401) {
@@ -72,12 +76,8 @@ export default class AutomaticIndicatorPopup extends Component {
     this.setState({selectedAccount: event.value});
   }
 
-  handleChangeProfile(event) {
-    this.setState({selectedProfile: event.value});
-  }
-
   getUserData() {
-    serverCommunication.serverRequest('put', 'googleapi', JSON.stringify({profileId: this.state.selectedProfile}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('put', 'linkedinapi', JSON.stringify({accountId: this.state.selectedAccount}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -106,30 +106,13 @@ export default class AutomaticIndicatorPopup extends Component {
               return {value: account.id, label: account.name}
             })
         }
-      },
-      profile: {
-        label: 'Profile',
-        select: {
-          name: 'profile',
-          options: this.state.profiles
-            .filter(profile => {
-              return profile.accountId == this.state.selectedAccount
-            })
-            .map(profile => {
-              return {value: profile.id, label: profile.name}
-            })
-        }
       }
     };
     return <div hidden={ this.props.hidden }>
-      {this.state.code ? <Page popup={ true } width={'340px'}>
+      {this.state.accounts.length > 0 ? <Page popup={ true } width={'340px'}>
         <div className={ this.classes.row }>
           <Select { ... selects.account } selected={ this.state.selectedAccount}
                   onChange={ this.handleChangeAccount.bind(this) }/>
-        </div>
-        <div className={ this.classes.row }>
-          <Select { ... selects.profile } selected={ this.state.selectedProfile}
-                  onChange={ this.handleChangeProfile.bind(this) }/>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>

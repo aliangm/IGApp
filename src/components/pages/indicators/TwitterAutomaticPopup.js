@@ -7,7 +7,7 @@ import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import Label from 'components/ControlsLabel';
 
-export default class AutomaticIndicatorPopup extends Component {
+export default class TwitterAutomaticPopup extends Component {
 
   style = style;
 
@@ -23,7 +23,7 @@ export default class AutomaticIndicatorPopup extends Component {
   }
 
   getUserData() {
-    serverCommunication.serverRequest('post', 'facebookapi', JSON.stringify({identifier: this.state.identifier}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('post', 'twitterapi', JSON.stringify({identifier: this.state.identifier}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -45,10 +45,10 @@ export default class AutomaticIndicatorPopup extends Component {
     return <div hidden={ this.props.hidden }>
       <Page popup={ true } width={'400px'}>
         <div className={ this.classes.row }>
-          <Label>Please enter your Facebook page name/URL</Label>
+          <Label>Please enter your Twitter page name</Label>
         </div>
         <div className={ this.classes.row }>
-          <Textfield value={this.state.identifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="https://www.facebook.com/ExamplePage"/>
+          <Textfield value={this.state.identifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="ExamplePage"/>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>

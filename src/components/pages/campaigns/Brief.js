@@ -1,25 +1,23 @@
 import React from 'react';
-import _ from 'lodash';
 import Component from 'components/Component';
-import Page from 'components/Page';
-import Title from 'components/onboarding/Title';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import Select from 'components/controls/Select';
 import Calendar from 'components/controls/Calendar';
 import Button from 'components/controls/Button';
 import SaveButton from 'components/pages/profile/SaveButton';
-
+import AssetsPopup from 'components/pages/campaigns/AssetsPopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 
 export default class Brief extends Component {
 
-  style = style
-  styles = [campaignPopupStyle]
+  style = style;
+  styles = [campaignPopupStyle];
 
   constructor(props) {
     super(props);
+    this.state = {};
     this.validate = this.validate.bind(this);
     this.save = this.save.bind(this);
     this.getEmailBody = this.getEmailBody.bind(this);
@@ -88,9 +86,9 @@ export default class Brief extends Component {
     this.props.updateState({campaign: update});
   }
 
-  handleChangeDate(value) {
+  handleChangeDate(parameter, value) {
     let update = Object.assign({}, this.props.campaign);
-    update.dueDate = value;
+    update[parameter] = value;
     this.props.updateState({campaign: update});
   }
 
@@ -118,6 +116,19 @@ export default class Brief extends Component {
         this.refs.budget.focus();
       }
     }
+  }
+
+  archive() {
+    let update = Object.assign({}, this.props.campaign);
+    update.isArchived = true;
+    this.props.updateState({campaign: update, unsaved: false});
+    this.props.updateCampaign(update, this.props.index, this.props.channel)
+      .then(() => {
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    this.props.closePopup();
   }
 
   getEmailTo() {
@@ -152,6 +163,7 @@ export default class Brief extends Component {
       (this.props.campaign.time.design ? ("- Expected design time: " + this.props.campaign.time.design + " hours" + newLine) : '') +
       newLine +
       (this.props.campaign.dueDate ? ("Due date: " + this.props.campaign.dueDate + newLine + newLine) : '') +
+      (this.props.campaign.startDate ? ("Start date: " + this.props.campaign.startDate + newLine + newLine) : '') +
       "Campaign objectives:" + newLine +
       (this.props.campaign.objectives.kpi[0] ? ("- KPI: " + this.props.campaign.objectives.kpi[0] + ", Growth: " + this.props.campaign.objectives.growth[0] + newLine) : '') +
       (this.props.campaign.objectives.kpi[1] ? ("- KPI: " + this.props.campaign.objectives.kpi[1] + ", Growth: " + this.props.campaign.objectives.growth[1] + newLine) : '') +
@@ -390,6 +402,21 @@ export default class Brief extends Component {
       });
     }
     selects.owner.select.options.push({value: "me", label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
+    const assetsCategories = this.props.campaign.assets ?
+      [...new Set(this.props.campaign.assets.map(item => item.category))]
+    : [];
+    const assets = assetsCategories.map((category, index) => {
+      return <div key={index} className={ campaignPopupStyle.locals.categoryAssets }>
+        <div className={ campaignPopupStyle.locals.assetsCategory }>
+          {category}
+        </div>
+        <div className={ campaignPopupStyle.locals.assetsLinks }>
+          { this.props.campaign.assets.filter(asset => asset.category === category)
+            .map((asset, index) => <a className={ campaignPopupStyle.locals.assetsLink } key={index} href={asset.link} target="_blank">{asset.name}</a>)
+          }
+        </div>
+      </div>
+    });
     return <div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
@@ -447,9 +474,23 @@ export default class Brief extends Component {
           </div>
         </div>
       </div>
-      <div className={ this.classes.row } style={{ width: '200px' }}>
-        <Label>Due Date</Label>
-        <Calendar value={ this.props.campaign.dueDate } onChange={ this.handleChangeDate.bind(this) }/>
+      <div className={ this.classes.row }>
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
+            <div style={{ width: '166px' }}>
+              <Label>Start Date</Label>
+              <Calendar value={ this.props.campaign.startDate } onChange={ this.handleChangeDate.bind(this, 'startDate') }/>
+            </div>
+          </div>
+          <div className={ this.classes.colCenter }>
+            <div style={{ width: '166px' }}>
+              <Label>Due Date</Label>
+              <Calendar value={ this.props.campaign.dueDate } onChange={ this.handleChangeDate.bind(this, 'dueDate') }/>
+            </div>
+          </div>
+          <div className={ this.classes.colRight }>
+          </div>
+        </div>
       </div>
       <div className={ this.classes.row }>
         <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Campaign Objectives</Label>
@@ -529,21 +570,17 @@ export default class Brief extends Component {
         <textarea value={ this.props.campaign.additionalInformation } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'additionalInformation') }/>
       </div>
       <div className={ this.classes.row }>
-        <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Tracking (Coming Soon)</Label>
-        <div className={ this.classes.cols }>
-          <div className={ this.classes.colLeft }>
-            <Label>By utm_campaign field</Label>
-            <Textfield value={ this.props.campaign.tracking.UTM }  onChange={ this.handleChangeTracking.bind(this, 'UTM') } style={{ width: '300px' }} placeHolder="campaign_utm"/>
-          </div>
-          <div className={ this.classes.colCenter }>
-            <Label>By referrer url</Label>
-            <Textfield value={ this.props.campaign.tracking.URL }  onChange={ this.handleChangeTracking.bind(this, 'URL') } style={{ width: '300px' }} placeHolder="referrer.com"/>
-          </div>
+        <Label>Assets
+          <div className={ campaignPopupStyle.locals.assetsIcon } onClick={()=>{ this.setState({assetsPopup: true}) }}/>
+        </Label>
+        <div className={ campaignPopupStyle.locals.assetsBox }>
+          { assets }
         </div>
       </div>
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
           <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
+          <Button type="warning" style={{ width: '100px', marginLeft: '30px' }} onClick={ this.archive.bind(this) }>Archive</Button>
         </div>
         <div className={ this.classes.footerRight }>
           <Button type="primary2" style={{ width: '100px', marginRight: '30px' }} onClick={ this.save }>
@@ -552,6 +589,7 @@ export default class Brief extends Component {
           <SaveButton onClick={ this.save } />
         </div>
       </div>
+      <AssetsPopup hidden={ !this.state.assetsPopup } updateCampaign={ () => {this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)} } updateState={ this.props.updateState } campaign={ this.props.campaign } close={ ()=> { this.setState({assetsPopup: false}) }}/>
     </div>
   }
 }

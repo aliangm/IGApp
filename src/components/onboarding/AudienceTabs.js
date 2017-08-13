@@ -32,7 +32,19 @@ export default class AudienceTabs extends Component {
     this._selectTab(this.props.defaultSelected);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.defaultTabs && nextProps.defaultTabs.length > 0 && nextProps.defaultTabs.length !== this.props.defaultTabs.length) {
+      this.setState({tabs: []}, ()=> {
+        nextProps.defaultTabs.forEach((name) => {
+          this.generateTab({ name });
+        });
+        this.selectTab(this.state.selectedIndex);
+      });
+    }
+  }
+
   addTab = () => {
+    this.props.addTab();
     this.generateTab();
     this.selectTab(this.state.tabs.length - 1);
     // Forced in selectTab()
@@ -70,12 +82,11 @@ export default class AudienceTabs extends Component {
 
     tab.selected = true;
     this.state.selectedTab = tab;
+    this.state.selectedIndex = index;
   }
 
   setTabName = (index, name) => {
     const tab = this.state.tabs[index];
-
-    console.log(tab.name, name);
 
     if (tab && tab.name !== name) {
       tab.name = name + '';

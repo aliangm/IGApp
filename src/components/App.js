@@ -64,7 +64,7 @@ class AppComponent extends Component {
       } else {
         // Unsaved changes -- ask for confirmation
         /**
-        vex.dialog.confirm({
+         vex.dialog.confirm({
           message: 'There are unsaved changes. Leave anyway?' + nextLocation,
           callback: result => resolve(result)
         })
@@ -172,6 +172,25 @@ class AppComponent extends Component {
             .then((data) => {
               if (data) {
                 this.setDataAsState(data);
+                serverCommunication.serverRequest('GET', 'previousdata', null, this.state.region)
+                  .then((response) => {
+                    if (response.ok) {
+                      response.json()
+                        .then((data) => {
+                          if (data) {
+                            this.setState({
+                              previousData: data
+                            });
+                          }
+                        })
+                    }
+                    else if (response.status == 401){
+                      history.push('/');
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }
             })
         }
@@ -243,7 +262,7 @@ class AppComponent extends Component {
   setDataAsState(data) {
     this.setState({
       userProfile: data.userProfile,
-      targetAudience: data.targetAudience,
+      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: {}}],
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
@@ -263,7 +282,7 @@ class AppComponent extends Component {
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
       monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
-      campaigns: data.campaigns || {},
+      unfilteredCampaigns: data.campaigns || {},
       campaignsTemplates: data.campaignsTemplates || {},
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan,
@@ -274,9 +293,11 @@ class AppComponent extends Component {
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
-      isHubspotAuto: !!data.hubspotapi,
+      hubspotAuto: data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
-      isSalesforceAuto: !!data.salesforceapi
+      salesforceAuto: data.salesforceapi,
+      isLinkedinAuto: !!data.linkedinapi,
+      isTwitterAuto: !!data.twitterapi
     });
   }
 

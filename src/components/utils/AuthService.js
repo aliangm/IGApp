@@ -118,5 +118,6 @@ export default class AuthService {
     if (config.isProd) {
       FS.clearUserCookie(true);
     }
+    localStorage.removeItem('region');
   }
 }

@@ -70,3 +70,45 @@
     margin-top: 45px;
     padding: 0 38px;
 }
+
+.assets-box {
+    width: 665px;
+    height: 72px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px #ced0da;
+    margin-bottom: 32px;
+    box-sizing: border-box;
+    padding: 5px 14px;
+    overflow: auto;
+}
+
+.assets-category {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 0.75;
+    color: #979797;
+    margin-bottom: 2px;
+}
+
+.category-assets {
+    margin-bottom: 12px;
+}
+
+.assets-link {
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.assets-link:first-child {
+    margin-left: 0;
+}
+
+.assets-icon {
+    background: url(../../assets/link.svg) center center no-repeat;
+    background-size: contain;
+    height: 25px;
+    width: 25px;
+    transform: rotate(35deg);
+    margin-left: 15px;
+    cursor: pointer;
+}
