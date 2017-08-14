@@ -72,6 +72,10 @@ export default class Tracking extends Component {
 
   }
 
+  handleFocus(event) {
+    event.target.select();
+  }
+
   render() {
     const selects = {
       source: {
@@ -291,11 +295,11 @@ export default class Tracking extends Component {
       <div className={trackingStyle.locals.urls }>
         <div className={ trackingStyle.locals.urlLine }>
           <Label className={ trackingStyle.locals.urlTitle }>Full Tracking URL</Label>
-          <Textfield className={ trackingStyle.locals.urlTextbox } value={ this.props.campaign.tracking.trackingUrl } readOnly={true}/>
+          <Textfield className={ trackingStyle.locals.urlTextbox } value={ this.props.campaign.tracking.trackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
         </div>
         <div className={ trackingStyle.locals.urlLine }>
           <Label className={ trackingStyle.locals.urlTitle }>Shortened Tracking URL</Label>
-          <Textfield className={ trackingStyle.locals.urlTextbox } value={ this.props.campaign.tracking.shortenedTrackingUrl } readOnly={true}/>
+          <Textfield className={ trackingStyle.locals.urlTextbox } value={ this.props.campaign.tracking.shortenedTrackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
         </div>
       </div>
     </div>
