@@ -24,7 +24,10 @@ export default class Brief extends Component {
     this.getEmailHeader = this.getEmailHeader.bind(this);
     this.getEmailTo = this.getEmailTo.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
-    document.addEventListener('keydown', this.handleKeyPress, false);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
   }
 
   static defaultProps = {
@@ -32,14 +35,16 @@ export default class Brief extends Component {
   };
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress, false);
+    document.removeEventListener('keydown', this.handleKeyPress);
   }
 
   handleKeyPress(e) {
-    if (e.key == 'Enter') {
+    /**
+    if (e.key === 'Enter') {
       this.save();
     }
-    if (e.key == 'Escape') {
+    **/
+    if (e.key === 'Escape') {
       this.props.close();
     }
   }
