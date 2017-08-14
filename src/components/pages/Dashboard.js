@@ -44,7 +44,8 @@ export default class Dashboard extends Component {
     super();
 
     this.state = {
-      activeIndex: void 0
+      activeIndex: void 0,
+      indicator: 'SQL'
     };
     this.onPieEnter = this.onPieEnter.bind(this);
   }
