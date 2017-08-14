@@ -292,7 +292,11 @@ export default class Dashboard extends Component {
                 Annual Budget Left To Plan
               </div>
               <div className={ dashboardStyle.locals.number }>
-                ${budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                {
+                  Math.abs(budgetLeftToPlan) >= 100 ?
+                    '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    : <div className={ dashboardStyle.locals.budgetLeftToPlanOk }/>
+                }
               </div>
             </div>
             <div className={ dashboardStyle.locals.item }>

@@ -718,10 +718,10 @@ export default class AnnualTab extends Component {
       });
 
       const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-          { 'TOTAL' }
-        </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
-          className: this.classes.footRow
-        });
+        { 'TOTAL' }
+      </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
+        className: this.classes.footRow
+      });
 
       const isExist = (value) => {
         let exist = false;
@@ -875,7 +875,11 @@ export default class AnnualTab extends Component {
                 Budget left to plan
               </div>
               <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
-                ${ budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
+                {
+                  Math.abs(budgetLeftToPlan) >= 100 ?
+                    '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    : <div className={ planStyles.locals.budgetLeftToPlanOk }/>
+                }
               </div>
             </div>
           </div>

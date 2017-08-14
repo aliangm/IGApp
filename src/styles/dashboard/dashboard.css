@@ -131,3 +131,10 @@
     transform: rotate(180deg);
     border-color: transparent transparent red transparent;
 }
+
+.budget-left-to-plan-ok {
+    background: url(../../assets/success_bltp.svg) center center no-repeat;
+    background-size: contain;
+    height: 64px;
+    width:64px;
+}
