@@ -178,7 +178,7 @@ export default class Brief extends Component {
       (this.props.campaign.description ? ("Campaign description:" + newLine + this.props.campaign.description + newLine + newLine) : '') +
       (this.props.campaign.referenceProjects ? ("Reference projects:" + newLine + this.props.campaign.referenceProjects + newLine + newLine) : '') +
       (this.props.campaign.keywords ? ("Keywords:" + newLine + this.props.campaign.keywords + newLine + newLine) : '') +
-      (this.props.campaign.additionalInformation ? ("Additional information:" + newLine + this.props.campaign.additionalInformation + newLine + newLine) : '') +
+      (this.props.campaign.additionalInformation ? ("Notes:" + newLine + this.props.campaign.additionalInformation + newLine + newLine) : '') +
       "Tracking (Coming Soon): " + newLine +
       (this.props.campaign.tracking.UTM ? ("- UTM: " + this.props.campaign.tracking.UTM + newLine) : '') +
       (this.props.campaign.tracking.URL ? ("- URL: " + this.props.campaign.tracking.URL + newLine) : '') +
@@ -571,7 +571,7 @@ export default class Brief extends Component {
         <textarea value={ this.props.campaign.keywords } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'keywords') }/>
       </div>
       <div className={ this.classes.row }>
-        <Label>Additional Information</Label>
+        <Label>Notes</Label>
         <textarea value={ this.props.campaign.additionalInformation } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'additionalInformation') }/>
       </div>
       <div className={ this.classes.row }>
