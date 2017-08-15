@@ -1,5 +1,6 @@
 import schema from './channelsSchema';
 import _ from 'lodash';
+import channelDescriptions from 'data/channelDescriptions';
 
 export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
   var sum = {};
@@ -65,6 +66,7 @@ function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
       obj[title[0]].values.push(budget);
       obj[title[0]].icon = "plan:" + title[0];
       obj[title[0]].channel = channel;
+      obj[title[0]].info = channelDescriptions[channel];
       obj[title[0]].approvedValues[month] = approvedPlan[month] && approvedPlan[month][channel];
       return obj;
     }
