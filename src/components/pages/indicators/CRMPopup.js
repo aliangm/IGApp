@@ -27,13 +27,15 @@ export default class AutomaticIndicatorPopup extends Component {
         <div className={ this.classes.title }>
           Choose your main CRM platform
         </div>
+        <div className={ this.classes.inner }>
           <div className={ this.classes.row }>
             <div className={ this.classes.hubspot } onClick={ this.showHubspotPopup.bind(this) }/>
           </div>
           <div  className={ this.classes.row }>
             <div className={ this.classes.salesforce } onClick={ this.showSalesforcePopup.bind(this) }/>
           </div>
-        </Page>
+        </div>
+      </Page>
     </div>
   }
 
