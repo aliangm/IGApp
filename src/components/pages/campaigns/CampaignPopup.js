@@ -7,6 +7,7 @@ import Brief from 'components/pages/campaigns/Brief';
 import Checklist from 'components/pages/campaigns/Checklist';
 import Updates from 'components/pages/campaigns/Updates';
 import Tracking from 'components/pages/campaigns/Tracking';
+import Assets from 'components/pages/campaigns/Assets';
 import planStyle from 'styles/plan/plan.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
@@ -17,8 +18,8 @@ import LoadTemplatePopup from 'components/pages/campaigns/LoadTemplatePopup';
 
 export default class CampaignPopup extends Component {
 
-  style = style
-  styles = [campaignPopupStyle, planStyle]
+  style = style;
+  styles = [campaignPopupStyle, planStyle];
 
   constructor(props) {
     super(props);
@@ -90,7 +91,8 @@ export default class CampaignPopup extends Component {
       'Brief': Brief,
       'Items': Checklist,
       'Updates': Updates,
-      'Tracking': Tracking
+      'Tracking': Tracking,
+      'Assets': Assets
     };
 
     const tabNames = Object.keys(tabs);
