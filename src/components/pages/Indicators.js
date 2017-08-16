@@ -37,41 +37,6 @@ export default class Indicators extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  validate() {
-    return this.props.actualIndicators.facebookLikes != undefined &&
-      this.props.actualIndicators.facebookEngagement != undefined &&
-      this.props.actualIndicators.twitterFollowers != undefined &&
-      this.props.actualIndicators.twitterEngagement != undefined &&
-      this.props.actualIndicators.linkedinFollowers != undefined &&
-      this.props.actualIndicators.linkedinEngagement != undefined &&
-      this.props.actualIndicators.instagramFollowers != undefined &&
-      this.props.actualIndicators.instagramEngagement != undefined &&
-      this.props.actualIndicators.googlePlusFollowers != undefined &&
-      this.props.actualIndicators.googlePlusEngagement != undefined &&
-      this.props.actualIndicators.pinterestFollowers != undefined &&
-      this.props.actualIndicators.pinterestEngagement != undefined &&
-      this.props.actualIndicators.youtubeSubscribers != undefined &&
-      this.props.actualIndicators.youtubeEngagement != undefined &&
-      this.props.actualIndicators.LTV != undefined &&
-      this.props.actualIndicators.CAC != undefined &&
-      this.props.actualIndicators.users != undefined &&
-      this.props.actualIndicators.activeUsersRate != undefined &&
-      this.props.actualIndicators.trialUsers != undefined &&
-      this.props.actualIndicators.MCL != undefined &&
-      this.props.actualIndicators.MQL != undefined &&
-      this.props.actualIndicators.SQL != undefined &&
-      this.props.actualIndicators.opps != undefined &&
-      this.props.actualIndicators.googleMentions != undefined &&
-      this.props.actualIndicators.sessions != undefined &&
-      this.props.actualIndicators.averageSessionDuration != undefined &&
-      this.props.actualIndicators.bounceRate != undefined &&
-      this.props.actualIndicators.blogVisits != undefined &&
-      this.props.actualIndicators.blogSubscribers != undefined &&
-      this.props.actualIndicators.MRR != undefined &&
-      this.props.actualIndicators.churnRate != undefined &&
-      this.props.actualIndicators.ARPA != undefined;
-  }
-
   handleChange(name, value){
     let update = Object.assign({}, this.props.actualIndicators);
     value = parseInt(value);
@@ -200,9 +165,6 @@ export default class Indicators extends Component {
         { isPopupMode() ?
 
           <div className={ this.classes.footer }>
-            <div className={ this.classes.almostFooter }>
-              <label hidden={ !this.state.validationError} style={{ color: 'red' }}>Please fill all the required fields</label>
-            </div>
             <BackButton onClick={() => {
               this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
                 .then(() => {
@@ -211,15 +173,10 @@ export default class Indicators extends Component {
             }} />
             <div style={{ width: '30px' }} />
             <PlanButton onClick={() => {
-              if (this.validate()){
-                this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                  .then(() => {
-                    history.push('/plan');
-                  });
-              }
-              else {
-                this.setState({validationError: true});
-              }
+              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
+                .then(() => {
+                  history.push('/plan');
+                });
             }} />
           </div>
 

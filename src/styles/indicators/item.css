@@ -19,11 +19,13 @@
   height: 191px;
   border-radius: 4px;
   position: relative;
-  border: 1px solid #e7e9ed;
+  border: 1px solid #bcbec0;
+  background: #e7e9ed;
 }
 
 .item[data-state="manual"] .inner {
   border: 1px solid #0e568b;
+  background: white;
 }
 
 .item[data-state="manual"] .footer {
@@ -34,6 +36,9 @@
 .item[data-state="manual"] .icon {
   width: 76px;
   height: 76px;
+  -webkit-filter: none;
+  filter: none;
+  opacity: initial;
 }
 
 .item[data-state="inactive"] .inner {
@@ -80,9 +85,36 @@
   user-select: none;
 }
 
+.item[data-state="start"]:hover .inner {
+  border: 1px solid #83858a;
+  background: #a5a7aa;
+}
+
+.item[data-state="start"]:hover .footer {
+  background: #83858a;
+}
+
+.item .footer {
+  background: #bcbec0;
+  color: white;
+}
+
+.item .icon {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  opacity: 0.3;
+  width: 76px;
+  height: 76px;
+}
+
+.item .status {
+  user-select: none;
+}
+
 .item[data-state="auto"] .inner {
   border: 1px solid #FFA400 ;
   box-shadow: inset 0 0 0 1px #FFA400 ;
+  background: white;
 }
 
 .item[data-state="auto"] .footer {
@@ -93,6 +125,9 @@
 .item[data-state="auto"] .icon {
   width: 76px;
   height: 76px;
+  -webkit-filter: none;
+  filter: none;
+  opacity: initial;
 }
 
 .head {
@@ -288,4 +323,13 @@
 
 a:link {
   text-decoration: none;
+}
+
+.add-new-plus {
+  width: 98px;
+  height: 98px;
+  background: url(../../assets/add-square-button.svg) center center no-repeat;
+  background-size: contain;
+  position: absolute;
+  cursor: pointer;
 }
