@@ -28,6 +28,7 @@
 .title {
     display: inline-block !important;
     margin-bottom: 0 !important;
+    white-space: initial !important;
 }
 
 .text-area {
