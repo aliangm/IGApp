@@ -61,6 +61,12 @@ export default class Calendar extends Component {
       disabledDate={ disabledDate }
     />;
 
+    let inputClassName = this.classes.input;
+
+    if (this.props.inputClassName) {
+      inputClassName += ' ' + this.props.inputClassName;
+    }
+
     return <div className={ this.classes.box }>
       <DatePicker
         ref="picker"
@@ -73,7 +79,7 @@ export default class Calendar extends Component {
       >
         {({ value }) => {
           return <Textfield
-            className={ this.classes.input }
+            className={ inputClassName }
             onFocus={ this.openCalendar }
             readOnly
             value={ this.props.value }

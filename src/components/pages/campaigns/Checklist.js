@@ -8,32 +8,34 @@ import style from 'styles/campaigns/check-list.css';
 
 export default class Checklist extends Component {
 
-  style=style
+  style = style;
 
   constructor(props) {
     super(props);
     this.state = {
       ... props
-    }
+    };
     this.toggleCompletion = this.toggleCompletion.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
   };
 
-  addOrEditTask(name, budget, description, dueDate, index) {
+  addOrEditTask(name, budget, description, dueDate, owner, priority, index) {
     let update = Object.assign({}, this.props.campaign);
-    if (index) {
+    if (index !== undefined) {
       update.tasks[index].name = name;
       update.tasks[index].budget = budget;
       update.tasks[index].description = description;
       update.tasks[index].dueDate = dueDate;
+      update.tasks[index].owner = owner;
+      update.tasks[index].priority = priority;
     }
     else {
-      update.tasks.push({name: name, budget: budget, description: description, dueDate: dueDate, completed: false});
+      update.tasks.push({name: name, budget: budget, description: description, dueDate: dueDate, owner: owner, priority: priority, completed: false});
     }
     this.props.updateState({campaign: update, unsaved: false});
     this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
       .then(() => {
-      })
+      });
   }
 
   toggleCompletion(index) {

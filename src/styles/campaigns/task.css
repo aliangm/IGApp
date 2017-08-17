@@ -61,6 +61,12 @@
     margin-top: 8px;
 }
 
+.owner {
+    margin-left: 20px;
+    margin-top: 8px;
+    text-decoration: underline;
+}
+
 .delete {
     display: flex;
     justify-content: flex-end;
@@ -72,4 +78,30 @@
 .description {
     margin-left: 60px;
     margin-bottom: 25px;
+}
+
+.edit-icon {
+    background: url(../../assets/edit_task.svg) center center no-repeat;
+    background-size: contain;
+    width: 20px;
+    height: 20px;
+}
+
+.delete-icon {
+    background: url(../../assets/delete-task.svg) center center no-repeat;
+    background-size: contain;
+    width: 20px;
+    height: 20px;
+}
+
+.priority {
+    background: url(../../assets/star.svg) center center no-repeat;
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+    margin-left: 20px;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 15px;
+    margin-top: -4px;
 }
