@@ -98,8 +98,7 @@ export default class Brief extends Component {
   }
 
   validate() {
-    return this.props.campaign.name &&
-      this.props.campaign.budget;
+    return this.props.campaign.name;
   }
 
   save() {
@@ -116,9 +115,6 @@ export default class Brief extends Component {
     else {
       if (!this.props.campaign.name){
         this.refs.name.focus();
-      }
-      if (!this.props.campaign.budget){
-        this.refs.budget.focus();
       }
     }
   }
@@ -426,7 +422,7 @@ export default class Brief extends Component {
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <Label>Budget*</Label>
+            <Label>Budget</Label>
             <Textfield value={"$" + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'budget')} ref="budget" style={{
               width: '166px'
             }} />

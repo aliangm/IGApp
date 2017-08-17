@@ -28,7 +28,7 @@ export default class CampaignPopup extends Component {
       selectedTab: 0,
       visible: this.props.visible || false,
       channel: this.props.channel,
-      campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''], actualGrowth: ['', '', ''] }, tracking: {}, tasks: [], comments: []}, this.props.campaign),
+      campaign: _.merge({ name: '', budget: 0, actualSpent: 0, status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''], actualGrowth: ['', '', ''] }, tracking: {}, tasks: [], comments: []}, this.props.campaign),
       updateState: this.updateState.bind(this),
       close: this.close,
       openAddTemplatePopup: this.openAddTemplatePopup.bind(this)
