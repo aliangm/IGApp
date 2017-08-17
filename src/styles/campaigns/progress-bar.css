@@ -1,5 +1,5 @@
 .bar {
-    width: 660px;
+    width: 630px;
     height: 25px;
     background-color: #D6D6D6;
     border-radius: 6px;
@@ -21,4 +21,8 @@
     vertical-align: super;
     font-size: 18px;
     margin-left: 6px;
+}
+
+.layout {
+    display: inline-flex;
 }

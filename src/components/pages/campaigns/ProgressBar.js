@@ -16,7 +16,7 @@ export default class ProgressBar extends Component {
 
 
   render() {
-    return <div>
+    return <div className={ this.classes.layout }>
       <div className={ this.classes.percent }>
         { Math.round(this.props.progress * 100) }%
       </div>
