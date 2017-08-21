@@ -9,6 +9,7 @@ import Page from 'components/Page';
 import Title from 'components/onboarding/Title';
 import Button from 'components/controls/Button';
 import Label from 'components/ControlsLabel';
+import MultiSelect from 'components/controls/MultiSelect';
 
 export default class HubspotAutomaticPopup extends Component {
 
@@ -21,7 +22,8 @@ export default class HubspotAutomaticPopup extends Component {
       code: null,
       loading: false,
       mapping: {
-      }
+      },
+      owners: []
     };
   }
 
@@ -40,6 +42,21 @@ export default class HubspotAutomaticPopup extends Component {
                     if (code) {
                       localStorage.removeItem('code');
                       this.setState({code: code});
+                      serverCommunication.serverRequest('post', 'hubspotapi', JSON.stringify({code: code}))
+                        .then((response) => {
+                          if (response.ok) {
+                            response.json()
+                              .then((data) => {
+                                this.setState({owners: data});
+                              });
+                          }
+                          else if (response.status == 401) {
+                            history.push('/');
+                          }
+                        })
+                        .catch(function (err) {
+                          console.log(err);
+                        });
                     }
                     else {
                       this.props.close();
@@ -61,7 +78,7 @@ export default class HubspotAutomaticPopup extends Component {
 
   getUserData() {
     this.setState({loading: true});
-    serverCommunication.serverRequest('post', 'hubspotapi', JSON.stringify({code: this.state.code, mapping: this.state.mapping}))
+    serverCommunication.serverRequest('put', 'hubspotapi', JSON.stringify({mapping: this.state.mapping}))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -92,9 +109,28 @@ export default class HubspotAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
+  toggleCheckboxMulti(key) {
+    let mapping = this.state.mapping;
+    if (mapping[key]) {
+      delete mapping[key];
+    }
+    else {
+      mapping[key] = [];
+    }
+    this.setState({mapping: mapping});
+  }
+
   handleChange(indicator, event) {
     let mapping = this.state.mapping;
     mapping[indicator] = event.value;
+    this.setState({mapping: mapping});
+  }
+
+  handleChangeMulti(key, event) {
+    let mapping = this.state.mapping;
+    mapping[key] = event.map((obj) => {
+      return obj.value;
+    });
     this.setState({mapping: mapping});
   }
 
@@ -107,6 +143,15 @@ export default class HubspotAutomaticPopup extends Component {
             {value: 'contacts', label: 'contacts'},
             {value: 'companies', label: 'companies'}
           ]
+        }
+      },
+      owners: {
+        select: {
+          name: 'owners',
+          options: this.state.owners
+            .map(owner => {
+              return {value: owner.ownerId, label: owner.firstName + ' ' + owner.lastName + ' (' + owner.email + ')'}
+            })
         }
       }
     };
@@ -180,6 +225,10 @@ export default class HubspotAutomaticPopup extends Component {
                   <Select { ... selects.tables} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ !this.state.mapping.users } style={{ width: 'initial'}}  placeholder="Group By"/>
                 </div>
               </div>
+            </div>
+            <div className={ this.classes.row }>
+              <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckboxMulti.bind(this, 'owners') }>Group by hubspot owners / regions (optional)</Label>
+              <MultiSelect { ... selects.owners} selected={ this.state.mapping.owners } onChange={ this.handleChangeMulti.bind(this, 'owners') } disabled={ !this.state.mapping.owners } style={{ width: 'initial'}}  placeholder="Select your region owners"/>
             </div>
             <div className={ this.classes.footer }>
               <div className={ this.classes.footerLeft }>
