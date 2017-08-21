@@ -75,7 +75,7 @@ export default class Indicators extends Component {
   }
 
   isFunnelAuto(indicator) {
-    return (this.props.hubspotAuto && this.props.hubspotAuto.mapping[indicator]) || (this.props.salesforceAuto && this.props.salesforceAuto.mapping[indicator]);
+    return (this.props.hubspotAuto && this.props.hubspotAuto.mapping && this.props.hubspotAuto.mapping[indicator]) || (this.props.salesforceAuto && this.props.salesforceAuto.mapping && this.props.salesforceAuto.mapping[indicator]);
   }
 
   render() {
