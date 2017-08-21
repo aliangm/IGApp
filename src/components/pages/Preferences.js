@@ -27,8 +27,8 @@ import history from 'history';
 import PlanFromExcel from 'components/PlanFromExcel';
 
 export default class Preferences extends Component {
-  style = style
-  styles = [preferencesStyle]
+  style = style;
+  styles = [preferencesStyle];
 
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
 
@@ -43,7 +43,7 @@ export default class Preferences extends Component {
     userMinMonthBudgets: [],
     blockedChannels: [],
     inHouseChannels: [],
-    planDay: 1,
+    planDay: 28,
     planDate: null,
     annualBudgetArray: []
   };
