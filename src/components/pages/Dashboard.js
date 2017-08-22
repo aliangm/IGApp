@@ -6,7 +6,7 @@ import {parseAnnualPlan} from "data/parseAnnualPlan";
 import {isPopupMode} from "modules/popup-mode";
 import {PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
-import Objective from 'components/pages/campaigns/Objective';
+import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import Select from 'components/controls/Select';
 
@@ -169,12 +169,14 @@ export default class Dashboard extends Component {
       let title;
       const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;
       const maxRange = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + actualIndicators[objective.indicator] : actualIndicators[objective.indicator] - delta);
+      const month = new Date(objective.timeFrame).getMonth();
+      const project = projectedPlan[month].projectedIndicatorValues[objective.indicator];
       indicatorsOptions.forEach((indicator) => {
         if (indicator.value === objective.indicator) {
           title = indicator.label;
         }
       });
-      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } key={ index }/>
+      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } project={ project } key={ index }/>
     });
 
     const months = previousData.map((item,index) => {return {value: index, label: index} });
@@ -338,7 +340,7 @@ export default class Dashboard extends Component {
                 <div className={ dashboardStyle.locals.text }>
                   Objectives
                 </div>
-                <div className={ dashboardStyle.locals.chart } style={{ paddingTop: '10px', justifyContent: 'center' }}>
+                <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
                   {objectivesGauges}
                 </div>
               </div>
