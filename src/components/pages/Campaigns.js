@@ -5,6 +5,7 @@ import Page from 'components/Page';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import channelsSchema from 'data/channelsSchema';
+import { Search, UnorderedSearchIndex } from 'js-search';
 
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
@@ -42,7 +43,8 @@ export default class Campaigns extends Component {
     super(props);
 
     this.state = {
-      selectedIndex: 0
+      selectedIndex: 0,
+      search: ''
     };
   }
 
@@ -108,6 +110,31 @@ export default class Campaigns extends Component {
       return res;
     }, monthBudget);
 
+    let filteredCampaigns = activeCampaigns;
+
+    if (this.state.search) {
+      filteredCampaigns = {};
+      const search = new Search('id');
+      search.searchIndex = new UnorderedSearchIndex();
+      search.addIndex('name');
+      search.addIndex('owner');
+      search.addIndex('channel');
+
+      let searchArray = [];
+      Object.keys(activeCampaigns).forEach(channel => {
+        const channelCampaigns = activeCampaigns[channel].map((item, index) => _.merge(item, {channel: channel, id: channel + index}));
+        searchArray.push(...channelCampaigns);
+      });
+
+      search.addDocuments(searchArray);
+      const searchedCampaigns = search.search(this.state.search);
+      searchedCampaigns.forEach(item => {
+        if (!filteredCampaigns[item.channel]) {
+          filteredCampaigns[item.channel] = [];
+        }
+        filteredCampaigns[item.channel].push(item);
+      });
+    }
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
         <div className={ planStyle.locals.head }>
@@ -132,6 +159,11 @@ export default class Campaigns extends Component {
           <div className={ this.classes.campaignsTitle }>
             <div className={ this.classes.campaignsTitleDate }>
               { getDateString(this.props.planDate) } - Campaigns
+              <div className={ this.classes.search }>
+                <div className={ this.classes.searchIcon }/>
+                <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
+                <div className={ this.classes.searchClear } onClick={ ()=>{ this.setState({search: ''}) } }/>
+              </div>
             </div>
             <div className={ this.classes.campaignsTitleBudget }>
               Budget left to spend
@@ -143,7 +175,7 @@ export default class Campaigns extends Component {
           {
             selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
               processedChannels,
-              campaigns: activeCampaigns,
+              campaigns: filteredCampaigns,
               updateCampaigns: this.updateCampaigns,
               updateCampaignsTemplates: this.updateCampaignsTemplates
             }))
