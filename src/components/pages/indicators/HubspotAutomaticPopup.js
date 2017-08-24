@@ -170,7 +170,7 @@ export default class HubspotAutomaticPopup extends Component {
                   <div className={ salesForceStyle.locals.arrow }/>
                 </div>
                 <div className={ this.classes.colRight }>
-                  <Select { ... selects.tables} selected={ this.state.mapping.MCL } onChange={ this.handleChange.bind(this, 'MCL') } disabled={ !this.state.mapping.MCL } style={{ width: 'initial'}} placeholder="Group By"/>
+                  <Select { ... selects.tables} selected={ this.state.mapping.MCL } onChange={ this.handleChange.bind(this, 'MCL') } disabled={ this.state.mapping.MCL === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
                 </div>
               </div>
             </div>
@@ -183,7 +183,7 @@ export default class HubspotAutomaticPopup extends Component {
                   <div className={ salesForceStyle.locals.arrow }/>
                 </div>
                 <div className={ this.classes.colRight }>
-                  <Select { ... selects.tables} selected={ this.state.mapping.MQL } onChange={ this.handleChange.bind(this, 'MQL') } disabled={ !this.state.mapping.MQL } style={{ width: 'initial'}} placeholder="Group By"/>
+                  <Select { ... selects.tables} selected={ this.state.mapping.MQL } onChange={ this.handleChange.bind(this, 'MQL') } disabled={ this.state.mapping.MQL === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
                 </div>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default class HubspotAutomaticPopup extends Component {
                   <div className={ salesForceStyle.locals.arrow }/>
                 </div>
                 <div className={ this.classes.colRight }>
-                  <Select { ... selects.tables} selected={ this.state.mapping.SQL } onChange={ this.handleChange.bind(this, 'SQL') } disabled={ !this.state.mapping.SQL } style={{ width: 'initial'}} placeholder="Group By"/>
+                  <Select { ... selects.tables} selected={ this.state.mapping.SQL } onChange={ this.handleChange.bind(this, 'SQL') } disabled={ this.state.mapping.SQL === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
                 </div>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default class HubspotAutomaticPopup extends Component {
                   <div className={ salesForceStyle.locals.arrow }/>
                 </div>
                 <div className={ this.classes.colRight }>
-                  <Select { ... selects.tables} selected={ this.state.mapping.opps } onChange={ this.handleChange.bind(this, 'opps') } disabled={ !this.state.mapping.opps } style={{ width: 'initial'}} placeholder="Group By"/>
+                  <Select { ... selects.tables} selected={ this.state.mapping.opps } onChange={ this.handleChange.bind(this, 'opps') } disabled={ this.state.mapping.opps === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
                 </div>
               </div>
             </div>
@@ -222,7 +222,7 @@ export default class HubspotAutomaticPopup extends Component {
                   <div className={ salesForceStyle.locals.arrow }/>
                 </div>
                 <div className={ this.classes.colRight }>
-                  <Select { ... selects.tables} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ !this.state.mapping.users } style={{ width: 'initial'}}  placeholder="Group By"/>
+                  <Select { ... selects.tables} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ this.state.mapping.users === undefined } style={{ width: 'initial'}}  placeholder="Group By"/>
                 </div>
               </div>
             </div>
