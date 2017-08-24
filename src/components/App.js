@@ -298,7 +298,8 @@ class AppComponent extends Component {
       isFacebookAuto: !!data.facebookapi,
       salesforceAuto: data.salesforceapi,
       isLinkedinAuto: !!data.linkedinapi,
-      isTwitterAuto: !!data.twitterapi
+      isTwitterAuto: !!data.twitterapi,
+      googleSheetsAuto: data.googlesheetsapi,
     });
   }
 
