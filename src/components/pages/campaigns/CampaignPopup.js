@@ -7,6 +7,7 @@ import Brief from 'components/pages/campaigns/Brief';
 import Checklist from 'components/pages/campaigns/Checklist';
 import Updates from 'components/pages/campaigns/Updates';
 import Tracking from 'components/pages/campaigns/Tracking';
+import Assets from 'components/pages/campaigns/Assets';
 import planStyle from 'styles/plan/plan.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
@@ -17,8 +18,8 @@ import LoadTemplatePopup from 'components/pages/campaigns/LoadTemplatePopup';
 
 export default class CampaignPopup extends Component {
 
-  style = style
-  styles = [campaignPopupStyle, planStyle]
+  style = style;
+  styles = [campaignPopupStyle, planStyle];
 
   constructor(props) {
     super(props);
@@ -27,7 +28,7 @@ export default class CampaignPopup extends Component {
       selectedTab: 0,
       visible: this.props.visible || false,
       channel: this.props.channel,
-      campaign: _.merge({ name: '', status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''], actualGrowth: ['', '', ''] }, tracking: {}, tasks: [], comments: []}, this.props.campaign),
+      campaign: _.merge({ name: '', budget: 0, actualSpent: 0, status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''], actualGrowth: ['', '', ''] }, tracking: {}, tasks: [], comments: []}, this.props.campaign),
       updateState: this.updateState.bind(this),
       close: this.close,
       openAddTemplatePopup: this.openAddTemplatePopup.bind(this)
@@ -90,7 +91,8 @@ export default class CampaignPopup extends Component {
       'Brief': Brief,
       'Items': Checklist,
       'Updates': Updates,
-      'Tracking': Tracking
+      'Tracking': Tracking,
+      'Assets': Assets
     };
 
     const tabNames = Object.keys(tabs);

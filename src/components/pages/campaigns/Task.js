@@ -6,7 +6,7 @@ import CampaignTask from 'components/pages/campaigns/CampaignTask';
 
 export default class Task extends Component {
 
-  style=style;
+  style = style;
 
   constructor(props) {
     super(props);
@@ -18,8 +18,8 @@ export default class Task extends Component {
     this.toggleDescription = this.toggleDescription.bind(this);
   }
 
-  addOrEditTask(name, budget, description, dueDate, index) {
-    this.props.addOrEditTask(name, budget, description, dueDate, index);
+  addOrEditTask(name, budget, description, dueDate, owner, priority, index) {
+    this.props.addOrEditTask(name, budget, description, dueDate, owner, priority, index);
     this.toggleMode();
   }
 
@@ -29,6 +29,13 @@ export default class Task extends Component {
 
   toggleDescription(){
     this.setState({descriptionVisible: !this.state.descriptionVisible});
+  }
+
+  getNumberOfDaysLeft() {
+    const today = new Date();
+    const dueDate = new Date(this.props.dueDate);
+    const oneDay=1000*60*60*24;
+    return Math.ceil((dueDate.getTime()-today.getTime())/(oneDay))+ " Days";
   }
 
   render() {
@@ -46,14 +53,20 @@ export default class Task extends Component {
             {this.props.budget ? '$' + formatBudget(this.props.budget)  : '' }
           </div>
           <div className={ this.classes.dueDate }>
-            { this.props.dueDate ? '(' + this.props.dueDate + ')' : '' }
+            { this.props.dueDate ? '(' + this.getNumberOfDaysLeft() + ')' : '' }
           </div>
+          <div className={ this.classes.owner }>
+            { this.props.owner }
+          </div>
+          { this.props.priority ?
+            <div className={ this.classes.priority }>{this.props.priority}</div>
+            : null }
         </div>
         <div className={ this.classes.delete } onClick={ this.toggleMode }>
-          Edit
+          <div className={ this.classes.editIcon }/>
         </div>
         <div className={ this.classes.delete } onClick={ this.props.deleteTask.bind(this, this.props.index) }>
-          Delete
+          <div className={ this.classes.deleteIcon }/>
         </div>
       </div>
       <div className={ this.classes.description } hidden={ !this.state.descriptionVisible }>

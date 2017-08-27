@@ -12,12 +12,12 @@ import Button from 'components/controls/Button';
 
 export default class Item extends Component {
   style = style;
-  styles = [icons, tooltipStyle]
+  styles = [icons, tooltipStyle];
 
   constructor(props) {
     super(props);
     this.state = {
-      state: props.defaultStatus ? (props.defaultStatus == -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) :  (props.defaultStatus == 0 ? 'inactive' : undefined),
+      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) :  (props.defaultStatus === 0 ? 'inactive' : undefined),
       status: props.defaultStatus <= 0 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus  || '' : props.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
@@ -29,7 +29,7 @@ export default class Item extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      state: nextProps.defaultStatus ? (nextProps.defaultStatus == -2 ? 'irrelevant' : (nextProps.automaticIndicators ? 'auto' : 'manual')) :  (nextProps.defaultStatus == 0 ? 'inactive' : undefined),
+      state: nextProps.defaultStatus ? (nextProps.defaultStatus === -2 ? 'irrelevant' : (nextProps.automaticIndicators ? 'auto' : 'manual')) :  (nextProps.defaultStatus === 0 ? 'inactive' : undefined),
       status: nextProps.defaultStatus <= 0 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus  || '' : nextProps.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
@@ -42,11 +42,11 @@ export default class Item extends Component {
   getStateText() {
     switch (this.state.state) {
       case 'auto': return 'Automatic';
-      case 'manual': return 'Active';
+      case 'manual': return 'Manual';
       case 'inactive': return 'Inactive';
       case 'irrelevant': return 'Irrelevant';
 
-      default: return 'Undefined';
+      default: return 'Inactive';
     }
   }
 
@@ -176,7 +176,17 @@ export default class Item extends Component {
         </div>
       </div>
     }
-    return <div className={ this.classes.item } data-state={ this.state.state }>
+    return <div className={ this.classes.item } data-state={ this.state.state ? this.state.state : 'start'}
+                onMouseOver={() => {
+                  this.setState({
+                    hover: true
+                  })
+                }}
+                onMouseOut={() => {
+                  this.setState({
+                    hover: false
+                  })
+                }}>
       <div className={ this.classes.inner }>
         <div className={ this.classes.head }>{ this.props.title }</div>
         <div className={ this.classes.content }>
@@ -195,6 +205,7 @@ export default class Item extends Component {
               <ProgressCircle progress={ this.getStatusProgress() } />
               : null }
             <div className={ this.classes.icon } data-icon={ this.props.icon } />
+            <div hidden={ !this.state.hover || this.state.state } className={ this.classes.addNewPlus } onClick={ ()=>{ this.setState({menuShown: true}) } }/>
           </div>
           { this.state.state ?
             <div className={ this.classes.status }>{ this.getStatusText() }</div>
@@ -235,7 +246,7 @@ export default class Item extends Component {
               this.refs.statusText.focus();
             }, 1);
           }}>
-            {this.props.defaultStatus && this.props.defaultStatus > 0 ? 'Edit' : 'Active'}
+            {this.props.defaultStatus && this.props.defaultStatus > 0 ? 'Edit' : 'Manual'}
           </div>
           {this.props.isFunnel?
             <div className={ this.classes.menuItem } onClick={() => {

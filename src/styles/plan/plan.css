@@ -201,3 +201,10 @@
   color: red;
   font-size: 20px;
 }
+
+.budget-left-to-plan-ok {
+  background: url(../../assets/success_bltp.svg) center center no-repeat;
+  background-size: contain;
+  height: 24px;
+  width:24px;
+}

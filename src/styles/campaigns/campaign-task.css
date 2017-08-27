@@ -26,8 +26,12 @@
 }
 
 .calendar {
-    margin-bottom: 10px;
     width: 166px;
+}
+
+.calendar-input {
+    border: 3px solid #979797 ;
+    border-radius: 5px;
 }
 
 .add-item {
@@ -47,4 +51,36 @@
 .add-or-edit {
     margin-top: 10px;
     margin-bottom: 30px;
+}
+
+.one-line {
+    margin-bottom: 10px;
+    display: inline-flex;
+    width: 100%;
+ }
+
+.left {
+    display: flex;
+    justify-content: flex-start;
+    width: 33.3%;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    width: 33.3%;
+}
+
+.right {
+    display: flex;
+    justify-content: flex-end;
+    width: 33.3%;
+}
+
+.priority {
+    width: 166px;
+    box-sizing: border-box;
+    border: 3px solid #979797 !important;
+    border-radius: 5px;
+    background: white !important;
 }

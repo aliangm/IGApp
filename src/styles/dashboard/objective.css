@@ -1,0 +1,27 @@
+.inner {
+    font-weight: bold;
+}
+
+.center {
+    justify-content: center;
+    display: flex;
+}
+
+.text-bottom {
+    justify-content: center;
+    display: flex;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.thumbs {
+    background: url(../../assets/thumbs-up.svg) center center no-repeat;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    margin-top: 6px;
+}
+
+.thumbs[data-down] {
+    background: url(../../assets/thumbs-down.svg) center center no-repeat;
+}

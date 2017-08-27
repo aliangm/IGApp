@@ -10,13 +10,14 @@ import style from 'styles/campaigns/channel-campaigns.css';
 
 export default class ChannelCampaigns extends Component {
 
-  style = style
+  style = style;
 
   constructor(props) {
     super(props);
     this.state = {
+      showPopup: false,
       showPopup: false
-    }
+    };
     this.updateCampaign = this.updateCampaign.bind(this);
   }
 
@@ -39,18 +40,21 @@ export default class ChannelCampaigns extends Component {
         return <CampaignSummary key={this.props.channel + index} index={index} campaign={ campaign } channelTitle={ this.props.channelTitle } channelIcon={ this.props.channelIcon } channel={ this.props.channel } updateCampaign={ this.updateCampaign } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates } firstName={ this.props.firstName } lastName={ this.props.lastName }/>
       })
       : null ;
+    const numberOfCampaigns = runningCampaigns ? runningCampaigns.length : 0;
     return <div>
-      <ChannelRectangle channelTitle = { this.props.channelTitle } channelBudget = { this.props.channelBudget } channelIcon={ this.props.channelIcon }/>
-      <div>
-        { runningCampaigns }
-        <div className={ this.classes.plusBox }>
-          <div className={ this.classes.plus } onClick={ () => { this.setState({showPopup: true}) }}>
-            +
+      <ChannelRectangle channelTitle = { this.props.channelTitle } channelBudget = { this.props.channelBudget } channelIcon={ this.props.channelIcon } onClick={ ()=> { this.setState({showCampaigns: !this.state.showCampaigns}) } } numberOfCampaigns={ numberOfCampaigns }/>
+      <div hidden={ !this.state.showCampaigns }>
+        <div>
+          { runningCampaigns }
+          <div className={ this.classes.plusBox }>
+            <div className={ this.classes.plus } onClick={ () => { this.setState({showPopup: true}) }}>
+              +
+            </div>
           </div>
         </div>
-      </div>
-      <div hidden={!this.state.showPopup}>
-        <CampaignPopup updateCampaign={ this.updateCampaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } closePopup={ () => { this.setState({showPopup: false}) } } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates } firstName={ this.props.firstName } lastName={ this.props.lastName }/>
+        <div hidden={!this.state.showPopup}>
+          <CampaignPopup updateCampaign={ this.updateCampaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } closePopup={ () => { this.setState({showPopup: false}) } } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates } firstName={ this.props.firstName } lastName={ this.props.lastName }/>
+        </div>
       </div>
     </div>
   }

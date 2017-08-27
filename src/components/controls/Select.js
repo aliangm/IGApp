@@ -25,7 +25,7 @@ export default class Select extends Component {
 
     return <div style={ this.props.style } className={ this.props.className }>
       { label }
-      <ReactSelect { ... select } openOnFocus={ true } value={ this.props.selected } onChange= { this.props.onChange } placeholder={ this.props.placeholder } clearable={ false } style={{
+      <ReactSelect { ... select } openOnFocus={ true } value={ this.props.selected } onChange= { this.props.onChange } className={ this.props.innerClassName } placeholder={ this.props.placeholder } disabled={ this.props.disabled } clearable={ false } style={{
         background: 'linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%)',
         border: '1px solid #ced0da',
         color: '#535b69'

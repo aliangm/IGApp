@@ -19,6 +19,7 @@ export default class SalesforceAutomaticPopup extends Component {
     this.state = {
       statuses: [],
       stages: [],
+      owners: [],
       code: null,
       mapping: {
         MCL: [],
@@ -62,7 +63,7 @@ export default class SalesforceAutomaticPopup extends Component {
                           if (response.ok) {
                             response.json()
                               .then((data) => {
-                                this.setState({statuses: data.statuses, stages: data.stages});
+                                this.setState({statuses: data.statuses, stages: data.stages, owners: data.owners});
                               });
                           }
                           else if (response.status == 401) {
@@ -145,6 +146,15 @@ export default class SalesforceAutomaticPopup extends Component {
               return {value: stage.StageName, label: stage.StageName}
             })
         }
+      },
+      owners: {
+        select: {
+          name: 'owners',
+          options: this.state.owners
+            .map(owner => {
+              return {value: owner.Id, label: owner.Name}
+            })
+        }
       }
     };
     return <div hidden={ this.props.hidden }>
@@ -216,6 +226,10 @@ export default class SalesforceAutomaticPopup extends Component {
                 <MultiSelect { ... selects.stages} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ !this.state.mapping.users } style={{ width: 'initial'}}  placeholder="Select Opportunity Stage"/>
               </div>
             </div>
+          </div>
+          <div className={ this.classes.row }>
+            <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckbox.bind(this, 'owners') } className={ salesForceStyle.locals.ownersLabel }>Group by salesforce owners / regions (optional)</Label>
+            <MultiSelect { ... selects.owners} selected={ this.state.mapping.owners } onChange={ this.handleChange.bind(this, 'owners') } disabled={ !this.state.mapping.owners } style={{ width: 'initial'}}  placeholder="Select your region owners"/>
           </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>

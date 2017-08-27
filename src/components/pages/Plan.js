@@ -127,7 +127,7 @@ export default class Plan extends Component {
     const selectedName = tabNames[this.state.selectedTab];
     const selectedTab = tabs[selectedName];
     return <div>
-      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="1180px">
+      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
           <div className={this.classes.headPlan } >
@@ -168,7 +168,7 @@ export default class Plan extends Component {
             }
           </div>
         </div>
-        <div className={ this.classes.serverDown } style={{ padding: '30px 30px' }}>
+        <div className={ this.classes.serverDown }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
         <div>
