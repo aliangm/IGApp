@@ -1,0 +1,47 @@
+.inner {
+    background: white;
+    border: 1px solid #ced0da;
+    border-radius: 4px;
+    margin: 0 62px;
+    padding: 0 6px;
+    width: 1152px;
+    display: flex;
+}
+
+.menu-position {
+    display: flex;
+    justify-content: flex-start;
+    width: 146px;
+}
+
+.menu {
+
+}
+
+.menu-title {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin-bottom: 9px;
+    margin-top: 6px;
+    margin-left: 3px;
+}
+
+.colored-circle {
+    border-radius: 50%;
+    height: 10px;
+    width: 10px;
+    margin-top: 6px;
+    margin-left: 10px;
+}
+
+.menu-item {
+    display: -webkit-box;
+}
+
+.chart {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: -33px;
+}
