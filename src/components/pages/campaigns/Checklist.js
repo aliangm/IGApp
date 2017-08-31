@@ -1,9 +1,11 @@
 import React from 'react';
 import Component from 'components/Component';
+
 import ProgressBar from 'components/pages/campaigns/ProgressBar';
 import Task from 'components/pages/campaigns/Task';
 import CampaignTask from 'components/pages/campaigns/CampaignTask';
 import { formatBudget } from 'components/utils/budget';
+
 import style from 'styles/campaigns/check-list.css';
 
 export default class Checklist extends Component {
@@ -33,27 +35,21 @@ export default class Checklist extends Component {
       update.tasks.push({name: name, budget: budget, description: description, dueDate: dueDate, owner: owner, priority: priority, completed: false});
     }
     this.props.updateState({campaign: update, unsaved: false});
-    this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
-      .then(() => {
-      });
+    this.props.updateCampaign(update);
   }
 
   toggleCompletion(index) {
     let update = Object.assign({}, this.props.campaign);
     update.tasks[index].completed = !update.tasks[index].completed;
     this.props.updateState({campaign: update, unsaved: false});
-    this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
-      .then(() => {
-      })
+    this.props.updateCampaign(update);
   }
 
   deleteTask(index) {
     let update = Object.assign({}, this.props.campaign);
     update.tasks.splice(index,1);
     this.props.updateState({campaign: update, unsaved: false});
-    this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
-      .then(() => {
-      })
+    this.props.updateCampaign(update);
   }
 
   render() {

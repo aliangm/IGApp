@@ -1,9 +1,11 @@
 import React from 'react';
 import Component from 'components/Component';
+
 import Comment from 'components/pages/campaigns/Comment';
-import style from 'styles/campaigns/updates.css';
 import AuthService from 'components/utils/AuthService';
 import CommentTextArea from 'components/pages/campaigns/CommentTextArea';
+
+import style from 'styles/campaigns/updates.css';
 
 export default class Updates extends Component {
 
@@ -54,7 +56,7 @@ export default class Updates extends Component {
       let update = Object.assign({}, this.props.campaign);
       update.comments.push({user: this.state.UID, comment: comment, time: new Date()});
       this.props.updateState({campaign: update, unsaved: false});
-      this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
+      this.props.updateCampaign(update);
     }
   }
 
@@ -64,7 +66,7 @@ export default class Updates extends Component {
       update.comments[index].comment = comment;
       update.comments[index].time = new Date();
       this.props.updateState({campaign: update, unsaved: false});
-      this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
+      this.props.updateCampaign(update);
     }
   }
 
@@ -72,7 +74,7 @@ export default class Updates extends Component {
     let update = Object.assign({}, this.props.campaign);
     update.comments.splice(index, 1);
     this.props.updateState({campaign: update, unsaved: false});
-    this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
+    this.props.updateCampaign(update);
   }
 
   render() {

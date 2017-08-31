@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import isEqual from 'lodash/isEqual'
 import cloneDeep from 'lodash/cloneDeep'
 
-import styles from 'styles/campaigns/by-status-tab.css';
-import channelsSchema from 'data/channelsSchema';
-import Paging from 'components/Paging';
 import Board from './Board/Board'
 
+import styles from 'styles/campaigns/by-status-tab.css';
+
 export default class ByChannelTab extends Component {
+
 	static defaultProps = {
-		campaigns: {},
+    filteredCampaigns: [],
 	};
 
 	state = {
@@ -24,7 +24,7 @@ export default class ByChannelTab extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		const isChannelsEqual = isEqual(nextProps.processedChannels, this.props.processedChannels);
-		const isCampaignsEqual = isEqual(nextProps.campaigns, this.props.campaigns);
+		const isCampaignsEqual = isEqual(nextProps.filteredCampaigns, this.props.filteredCampaigns);
 
 		if (!isChannelsEqual || !isCampaignsEqual) {
 			const newState = { };
@@ -35,15 +35,15 @@ export default class ByChannelTab extends Component {
 				});
 			} else {
 				this.setState({
-					campaigns: nextProps.campaigns,
-					lists: this.getLists(nextProps, nextProps.campaigns)
+					campaigns: nextProps.filteredCampaigns,
+					lists: this.getLists(nextProps, nextProps.filteredCampaigns)
 				});
 			}
 		}
 	}
 
 	get campaigns() {
-		return this.state.campaigns || this.props.campaigns;
+		return this.state.campaigns || this.props.filteredCampaigns;
 	}
 
 	getLists(props = this.props, campaigns = this.campaigns) {
@@ -99,32 +99,28 @@ export default class ByChannelTab extends Component {
 			},
 		];
 
-		Object.keys(campaigns).forEach(channelName => {
-			const channelCampaigns = campaigns[channelName];
-
-			channelCampaigns.forEach(campaign => {
-				const extendedCampaign = { ...campaign, id: `${channelName}::${campaign.name}`};
+      campaigns.forEach(campaign => {
+				const extendedCampaign = { ...campaign, id: `${campaign.index}`};
 				const list = lists.find(l => l.name === campaign.status);
 
 				if (list) {
-					const channelInList = list.cards.find(chnl => chnl.name === channelName);
+					const channelInList = list.cards.find(chnl => chnl.name === campaign.source);
 
 					if (channelInList) {
 						channelInList.campaigns.push(extendedCampaign);
 					} else {
 						list.cards.push({
-							id: channelName,
+							id: campaign.source,
 							status: campaign.status,
-							name: channelName,
-							title: processedChannels.titles[channelName],
-							icon: processedChannels.icons[channelName],
-							budget: processedChannels.budgets[channelName],
+							name: campaign.source,
+							title: processedChannels.titles[campaign.source],
+							icon: processedChannels.icons[campaign.source],
+							budget: processedChannels.budgets[campaign.source],
 							campaigns: [extendedCampaign]
 						});
 					}
 				}
-			})
-		});
+			});
 
 		return lists
 	}
@@ -147,8 +143,7 @@ export default class ByChannelTab extends Component {
 		const newCampaigns = cloneDeep(this.campaigns);
 
 		updates.forEach(({ id, status }) => {
-			const [channel, campaignName] = id.split('::');
-			const campaign = newCampaigns[channel].find(cmgn => cmgn.name === campaignName);
+			const campaign = newCampaigns.find(cmgn => cmgn.index === parseInt(id));
 
 			if (campaign) {
 				campaign.status = status;
@@ -191,13 +186,7 @@ export default class ByChannelTab extends Component {
 				<Board
 					lists={this.state.lists}
 					onCampaignsStatusChange={this.handleCampaignsStatusChange}
-					onCampaignUpdate={this.handleCampaignUpdate}
-					teamMembers={ this.props.teamMembers }
-					userAccount={this.props.userAccount}
-					campaignsTemplates={ this.props.campaignsTemplates }
-					updateCampaignsTemplates={ this.updateCampaignsTemplates }
-					firstName={ this.props.userFirstName }
-					lastName={ this.props.userLastName }
+					showCampaign={ this.props.showCampaign }
 				/>
 			</div>
 		);

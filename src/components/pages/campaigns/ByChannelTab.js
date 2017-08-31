@@ -1,23 +1,22 @@
 import React from 'react';
-
 import Component from 'components/Component';
-import byChannelTabStyle from 'styles/campaigns/by-channel-tab.css';
+
 import ChannelCampaigns from 'components/pages/campaigns/ChannelCampaigns';
 import ReactDOM from 'react-dom';
 
+import style from 'styles/campaigns/by-channel-tab.css';
+
 export default class ByChannelTab extends Component {
 
-  style = byChannelTabStyle
+  style = style;
 
   static defaultProps = {
-    campaigns: {},
+    filteredCampaigns: [],
     monthBudget: 0,
-    teamMembers: []
   };
 
   constructor(props) {
     super(props);
-    this.state  = props;
   }
 
   componentDidMount() {
@@ -29,25 +28,8 @@ export default class ByChannelTab extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState(nextProps);
-  }
-
-	updateChannelCampaigns = (channel, channelCampaigns) => {
-		let campaigns = { ...this.state.campaigns, [channel]: channelCampaigns };
-
-		return this.props.updateCampaigns(campaigns);
-	};
-
-  updateCampaignsTemplates = (templateName, template) => {
-    let campaignsTemplates = { ...this.state.campaignsTemplates, [templateName]: template };
-
-    return this.props.updateCampaignsTemplates(campaignsTemplates);
-  };
-
   render() {
-    const { processedChannels: channels } = this.props;
-    const { campaigns, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.state;
+    const { processedChannels: channels, showCampaign, filteredCampaigns } = this.props;
 
     const page = channels.names.map((channel) => (
       <ChannelCampaigns
@@ -55,15 +37,9 @@ export default class ByChannelTab extends Component {
         channelBudget = { channels.budgets[channel] }
         key = { channel }
         channel={ channel }
-        campaigns={ campaigns[channel] }
+        campaigns={ filteredCampaigns.filter(item => item.source === channel) }
         channelIcon={ channels.icons[channel] }
-        updateChannelCampaigns={ this.updateChannelCampaigns }
-        teamMembers={ teamMembers }
-        ref={ channel }
-        campaignsTemplates={ campaignsTemplates }
-        updateCampaignsTemplates={ this.updateCampaignsTemplates }
-        firstName={ userFirstName }
-        lastName={ userLastName }
+        showCampaign={ showCampaign }
       />
     ));
 

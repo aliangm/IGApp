@@ -6,7 +6,7 @@ import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import channelsSchema from 'data/channelsSchema';
 import { Search, UnorderedSearchIndex } from 'js-search';
-
+import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
@@ -44,20 +44,39 @@ export default class Campaigns extends Component {
 
     this.state = {
       selectedIndex: 0,
-      search: ''
+      search: '',
+      showPopup: false,
+      index: undefined,
+      campaign: {}
     };
   }
 
   static defaultProps = {
-    unfilteredCampaigns: {}
+    campaigns: []
   };
 
   updateCampaigns = (campaigns) => {
     return this.props.updateUserMonthPlan({ campaigns }, this.props.region, this.props.planDate);
   };
 
-  updateCampaignsTemplates = (campaignsTemplates) => {
+  updateCampaignsTemplates = (templateName, template) => {
+    delete template.index;
+    const campaignsTemplates = { ...this.props.campaignsTemplates, [templateName]: template };
     return this.props.updateUserMonthPlan({ campaignsTemplates }, this.props.region, this.props.planDate);
+  };
+
+  updateCampaign = (campaign) => {
+    let campaigns = this.props.campaigns;
+    const index = campaign.index;
+    delete campaign.index;
+    if (index !== undefined)
+    {
+      campaigns[index] = campaign;
+    }
+    else {
+      campaigns.push(campaign);
+    }
+    return this.updateCampaigns(campaigns);
   };
 
   handleTabSelect = (e) => {
@@ -66,9 +85,17 @@ export default class Campaigns extends Component {
     })
   };
 
+  closePopup = () => {
+    this.setState({showPopup: false, index: undefined, campaign: {}});
+  };
+
+  showCampaign = (campaign) => {
+    this.setState({showPopup: true, index: campaign.index, campaign: campaign || {}});
+  };
+
   render() {
     const { selectedIndex } = this.state;
-    const { monthBudget, unfilteredCampaigns } = this.props;
+    const { monthBudget, campaigns } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
@@ -94,46 +121,27 @@ export default class Campaigns extends Component {
         processedChannels.icons[channel] = "plan:other";
       }
     });
-    const activeCampaigns = {};
-    Object.keys(unfilteredCampaigns).forEach(channel => {
-      const channelActiveCampaigns = unfilteredCampaigns[channel].filter(campaign => campaign.isArchived !== true);
-      if (channelActiveCampaigns.length > 0) {
-        return activeCampaigns[channel] = channelActiveCampaigns
-      }
-    });
 
-    let budgetLeftToSpend = Object.keys(activeCampaigns).reduce((res, channel) => {
-      activeCampaigns[channel].forEach((campaign) => {
-        res -= campaign.actualSpent || campaign.budget;
-      });
+    const campaignsWithIndex = campaigns.map((campaign, index) => { return { ... campaign, index: index} });
 
+    const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
+
+    let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
+      res -= campaign.actualSpent || campaign.budget;
       return res;
     }, monthBudget);
 
     let filteredCampaigns = activeCampaigns;
 
     if (this.state.search) {
-      filteredCampaigns = {};
-      const search = new Search('id');
+      const search = new Search('index');
       search.searchIndex = new UnorderedSearchIndex();
       search.addIndex('name');
       search.addIndex('owner');
-      search.addIndex('channel');
+      search.addIndex('source');
 
-      let searchArray = [];
-      Object.keys(activeCampaigns).forEach(channel => {
-        const channelCampaigns = activeCampaigns[channel].map((item, index) => _.merge(item, {channel: channel, id: channel + index}));
-        searchArray.push(...channelCampaigns);
-      });
-
-      search.addDocuments(searchArray);
-      const searchedCampaigns = search.search(this.state.search);
-      searchedCampaigns.forEach(item => {
-        if (!filteredCampaigns[item.channel]) {
-          filteredCampaigns[item.channel] = [];
-        }
-        filteredCampaigns[item.channel].push(item);
-      });
+      search.addDocuments(activeCampaigns);
+      filteredCampaigns = search.search(this.state.search);
     }
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
@@ -175,11 +183,24 @@ export default class Campaigns extends Component {
           {
             selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
               processedChannels,
-              campaigns: filteredCampaigns,
+              filteredCampaigns: filteredCampaigns,
               updateCampaigns: this.updateCampaigns,
-              updateCampaignsTemplates: this.updateCampaignsTemplates
+              showCampaign: this.showCampaign
             }))
           }
+          <div hidden={ !this.state.showPopup }>
+            <CampaignPopup
+              campaign={ this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign  }
+              channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
+              closePopup={ this.closePopup.bind(this) }
+              updateCampaign={ this.updateCampaign }
+              teamMembers={ this.props.teamMembers }
+              campaignsTemplates={ this.props.campaignsTemplates }
+              updateCampaignsTemplates={ this.updateCampaignsTemplates }
+              firstName={ this.props.userFirstName }
+              lastName={ this.props.userLastName }
+            />
+          </div>
         </div>
       </Page>
     </div>

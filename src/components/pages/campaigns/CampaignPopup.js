@@ -27,16 +27,56 @@ export default class CampaignPopup extends Component {
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
-      channel: this.props.channel,
-      campaign: _.merge({ name: '', budget: 0, actualSpent: 0, status: "New", time: { development: 0, design: 0, marketing: 0 }, objectives: { kpi: ['', '', ''], growth: ['', '', ''], actualGrowth: ['', '', ''] }, tracking: {}, tasks: [], comments: []}, this.props.campaign),
+      campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign),
       updateState: this.updateState.bind(this),
       close: this.close,
       openAddTemplatePopup: this.openAddTemplatePopup.bind(this)
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      visible: nextProps.visible || false,
+      campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,nextProps.campaign),
+    });
+  }
+
   static defaultProps = {
-    teamMembers: []
+    teamMembers: [],
+    campaign: {
+      index: undefined,
+      name: '',
+      budget: 0,
+      actualSpent: 0,
+      status: "New",
+      time: {
+        development: 0,
+        design: 0,
+        marketing: 0
+      },
+      objectives:
+        {
+          kpi: [
+            '',
+            '',
+            ''
+          ],
+          growth: [
+            '',
+            '',
+            ''
+          ],
+          actualGrowth: [
+            '',
+            '',
+            ''
+          ]
+        },
+      tracking: {},
+      tasks: [],
+      comments: [],
+      assets: []
+    }
   };
 
   selectTab(selectedIndex) {

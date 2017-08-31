@@ -1,15 +1,14 @@
 import React from 'react';
 import Component from 'components/Component';
-import ProgressBar from 'components/pages/campaigns/ProgressBar';
-import Task from 'components/pages/campaigns/Task';
-import CampaignTask from 'components/pages/campaigns/CampaignTask';
+
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import { formatBudget } from 'components/utils/budget';
+import Button from 'components/controls/Button';
+
 import style from 'styles/onboarding/onboarding.css';
 import trackingStyle from 'styles/campaigns/tracking.css';
-import Select from 'components/controls/Select';
-import Button from 'components/controls/Button';
+
 
 export default class Tracking extends Component {
 
@@ -21,12 +20,6 @@ export default class Tracking extends Component {
     this.state = {
       isHttp: true
     }
-  };
-
-  handleChangeSource = (event) => {
-    this.props.updateState({
-      channel: event.value
-    });
   };
 
   toggleProtocol() {
@@ -62,7 +55,7 @@ export default class Tracking extends Component {
               update.tracking.trackingUrl = data.longUrl;
               update.tracking.shortenedTrackingUrl = data.id;
               this.props.updateState({campaign: update, unsaved: false});
-              this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel);
+              this.props.updateCampaign(update);
             }
           })
       })
@@ -251,10 +244,10 @@ export default class Tracking extends Component {
         }
       },
     };
-    let source = this.props.channel;
+    let source = this.props.campaign.source;
     let medium = 'Other';
     const value = selects.source.select.options
-      .find(item => item.value === this.props.channel);
+      .find(item => item.value === this.props.campaign.source);
     if (value) {
       const title = value.label;
       const titleArray = title.split('/');

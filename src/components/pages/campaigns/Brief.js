@@ -50,9 +50,9 @@ export default class Brief extends Component {
   }
 
   handleChangeSource = (event) => {
-    this.props.updateState({
-      channel: event.value
-    });
+    let update = Object.assign({}, this.props.campaign);
+    update.source = event.value;
+    this.props.updateState({campaign: update});
   };
 
   handleChangeBudget(parameter, event){
@@ -98,13 +98,13 @@ export default class Brief extends Component {
   }
 
   validate() {
-    return this.props.campaign.name;
+    return this.props.campaign.name && this.props.campaign.source;
   }
 
   save() {
     if (this.validate()) {
       this.props.updateState({unsaved: false});
-      this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)
+      this.props.updateCampaign(this.props.campaign)
         .then(() => {
         })
         .catch((err) => {
@@ -116,6 +116,9 @@ export default class Brief extends Component {
       if (!this.props.campaign.name){
         this.refs.name.focus();
       }
+      else if (!this.props.campaign.source){
+        this.refs.source.focus();
+      }
     }
   }
 
@@ -123,7 +126,7 @@ export default class Brief extends Component {
     let update = Object.assign({}, this.props.campaign);
     update.isArchived = true;
     this.props.updateState({campaign: update, unsaved: false});
-    this.props.updateCampaign(update, this.props.index, this.props.channel)
+    this.props.updateCampaign(update)
       .then(() => {
       })
       .catch((err) => {
@@ -159,25 +162,22 @@ export default class Brief extends Component {
       "- Campaign Budget: " + (this.props.campaign.actualSpent || this.props.campaign.budget) + newLine +
       "- Status: " + this.props.campaign.status + newLine +
       newLine +
-      (this.props.campaign.time.marketing ? ("- Expected marketing time: " + this.props.campaign.time.marketing + " hours" + newLine) : '') +
-      (this.props.campaign.time.development ? ("- Expected development time: " + this.props.campaign.time.development + " hours" + newLine) : '') +
-      (this.props.campaign.time.design ? ("- Expected design time: " + this.props.campaign.time.design + " hours" + newLine) : '') +
+      (this.props.campaign.time && this.props.campaign.time.marketing ? ("- Expected marketing time: " + this.props.campaign.time.marketing + " hours" + newLine) : '') +
+      (this.props.campaign.time && this.props.campaign.time.development ? ("- Expected development time: " + this.props.campaign.time.development + " hours" + newLine) : '') +
+      (this.props.campaign.time && this.props.campaign.time.design ? ("- Expected design time: " + this.props.campaign.time.design + " hours" + newLine) : '') +
       newLine +
       (this.props.campaign.dueDate ? ("Due date: " + this.props.campaign.dueDate + newLine + newLine) : '') +
       (this.props.campaign.startDate ? ("Start date: " + this.props.campaign.startDate + newLine + newLine) : '') +
       "Campaign objectives:" + newLine +
-      (this.props.campaign.objectives.kpi[0] ? ("- KPI: " + this.props.campaign.objectives.kpi[0] + ", Growth: " + this.props.campaign.objectives.growth[0] + newLine) : '') +
-      (this.props.campaign.objectives.kpi[1] ? ("- KPI: " + this.props.campaign.objectives.kpi[1] + ", Growth: " + this.props.campaign.objectives.growth[1] + newLine) : '') +
-      (this.props.campaign.objectives.kpi[2] ? ("- KPI: " + this.props.campaign.objectives.kpi[2] + ", Growth: " + this.props.campaign.objectives.growth[2] + newLine) : '') +
+      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[0] ? ("- KPI: " + this.props.campaign.objectives.kpi[0] + ", Growth: " + this.props.campaign.objectives.growth[0] + newLine) : '') +
+      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[1] ? ("- KPI: " + this.props.campaign.objectives.kpi[1] + ", Growth: " + this.props.campaign.objectives.growth[1] + newLine) : '') +
+      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[2] ? ("- KPI: " + this.props.campaign.objectives.kpi[2] + ", Growth: " + this.props.campaign.objectives.growth[2] + newLine) : '') +
       newLine +
       (this.props.campaign.targetAudience ? ("Target audience:" + newLine + this.props.campaign.targetAudience + newLine + newLine) : '') +
       (this.props.campaign.description ? ("Campaign description:" + newLine + this.props.campaign.description + newLine + newLine) : '') +
       (this.props.campaign.referenceProjects ? ("Reference projects:" + newLine + this.props.campaign.referenceProjects + newLine + newLine) : '') +
       (this.props.campaign.keywords ? ("Keywords:" + newLine + this.props.campaign.keywords + newLine + newLine) : '') +
       (this.props.campaign.additionalInformation ? ("Notes:" + newLine + this.props.campaign.additionalInformation + newLine + newLine) : '') +
-      "Tracking (Coming Soon): " + newLine +
-      (this.props.campaign.tracking.UTM ? ("- UTM: " + this.props.campaign.tracking.UTM + newLine) : '') +
-      (this.props.campaign.tracking.URL ? ("- URL: " + this.props.campaign.tracking.URL + newLine) : '') +
       newLine +
       "Thanks!";
   }
@@ -194,7 +194,7 @@ export default class Brief extends Component {
         }
       },
       source: {
-        label: 'Source',
+        label: 'Source*',
         select: {
           name: 'source',
           options: [ { value: 'web_landingPages', label: 'Web / Landing Pages' },
@@ -395,6 +395,10 @@ export default class Brief extends Component {
         }
       }
     };
+    // Handle manual channels
+    if (!selects.source.select.options.find(item => item.value === this.props.campaign.source)) {
+      selects.source.select.options.push({value: this.props.campaign.source, label: this.props.campaign.source});
+    }
     if (this.props.teamMembers) {
       this.props.teamMembers.forEach((member) => {
         if (member.name != '') {
@@ -423,7 +427,7 @@ export default class Brief extends Component {
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
             <Label>Budget</Label>
-            <Textfield value={"$" + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'budget')} ref="budget" style={{
+            <Textfield value={"$" + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'budget')} style={{
               width: '166px'
             }} />
           </div>
@@ -445,7 +449,7 @@ export default class Brief extends Component {
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <Select { ... selects.source } style={{ width: '428px' }} selected={ this.props.channel } onChange= { this.handleChangeSource }/>
+            <Select { ... selects.source } style={{ width: '428px' }} selected={ this.props.campaign.source } onChange= { this.handleChangeSource } ref="source"/>
           </div>
           <div className={ this.classes.colRight }>
             <Select { ... selects.status } style={{ width: '166px' }} selected={ this.props.campaign.status } onChange= { this.handleChangeSelect.bind(this, 'status') }/>
@@ -457,19 +461,19 @@ export default class Brief extends Component {
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
             <Label>Marketing</Label>
-            <Textfield value={ (isNaN(this.props.campaign.time.marketing) ? '' : this.props.campaign.time.marketing) + 'h' } onChange={ this.handleChangeTime.bind(this, 'marketing')} style={{
+            <Textfield value={ this.props.campaign.time && this.props.campaign.time.marketing ? this.props.campaign.time.marketing + 'h' : '' } onChange={ this.handleChangeTime.bind(this, 'marketing')} style={{
               width: '166px'
             }} />
           </div>
           <div className={ this.classes.colCenter }>
             <Label>Design</Label>
-            <Textfield value={ (isNaN(this.props.campaign.time.design) ? '' : this.props.campaign.time.design) + 'h' } onChange={ this.handleChangeTime.bind(this, 'design')} style={{
+            <Textfield value={ this.props.campaign.time && this.props.campaign.time.design ? this.props.campaign.time.design + 'h' : ''  } onChange={ this.handleChangeTime.bind(this, 'design')} style={{
               width: '166px'
             }} />
           </div>
           <div className={ this.classes.colRight }>
             <Label>Development</Label>
-            <Textfield value={ (isNaN(this.props.campaign.time.development) ? '' : this.props.campaign.time.development) + 'h' } onChange={ this.handleChangeTime.bind(this, 'development')} style={{
+            <Textfield value={ this.props.campaign.time && this.props.campaign.time.development ? this.props.campaign.time.development + 'h' : '' } onChange={ this.handleChangeTime.bind(this, 'development')} style={{
               width: '166px'
             }} />
           </div>
@@ -501,15 +505,15 @@ export default class Brief extends Component {
             <Label style={{
               width: '166px'
             }}>KPI</Label>
-            <Textfield value={ this.props.campaign.objectives.kpi[0] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 0)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.kpi[0] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 0)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
-            <Textfield value={ this.props.campaign.objectives.kpi[1] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 1)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.kpi[1] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 1)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
-            <Textfield value={ this.props.campaign.objectives.kpi[2] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 2)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.kpi[2] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 2)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
@@ -518,15 +522,15 @@ export default class Brief extends Component {
             <Label style={{
               width: '166px'
             }}>Expected Growth</Label>
-            <Textfield value={ this.props.campaign.objectives.growth[0] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 0)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.growth[0] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 0)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
-            <Textfield value={ this.props.campaign.objectives.growth[1] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 1)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.growth[1] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 1)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
-            <Textfield value={ this.props.campaign.objectives.growth[2] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 2)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.growth[2] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 2)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
@@ -535,15 +539,15 @@ export default class Brief extends Component {
             <Label style={{
               width: '166px'
             }}>Actual Growth</Label>
-            <Textfield value={ this.props.campaign.objectives.actualGrowth[0] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 0)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.actualGrowth[0] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 0)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
-            <Textfield value={ this.props.campaign.objectives.actualGrowth[1] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 1)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.actualGrowth[1] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 1)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
-            <Textfield value={ this.props.campaign.objectives.actualGrowth[2] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 2)} style={{
+            <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.actualGrowth[2] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 2)} style={{
               width: '166px',
               marginTop: '8px'
             }} />
@@ -571,7 +575,7 @@ export default class Brief extends Component {
         <textarea value={ this.props.campaign.additionalInformation } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'additionalInformation') }/>
       </div>
       <div className={ this.classes.row }>
-        <Label>Assets
+        <Label>Links
           <div className={ campaignPopupStyle.locals.assetsIcon } onClick={()=>{ this.setState({assetsPopup: true}) }}/>
         </Label>
         <div className={ campaignPopupStyle.locals.assetsBox }>
@@ -590,7 +594,7 @@ export default class Brief extends Component {
           <SaveButton onClick={ this.save } />
         </div>
       </div>
-      <AssetsPopup hidden={ !this.state.assetsPopup } updateCampaign={ () => {this.props.updateCampaign(this.props.campaign, this.props.index, this.props.channel)} } updateState={ this.props.updateState } campaign={ this.props.campaign } close={ ()=> { this.setState({assetsPopup: false}) }}/>
+      <AssetsPopup hidden={ !this.state.assetsPopup } updateCampaign={ () => {this.props.updateCampaign(this.props.campaign)} } updateState={ this.props.updateState } campaign={ this.props.campaign } close={ ()=> { this.setState({assetsPopup: false}) }}/>
     </div>
   }
 }

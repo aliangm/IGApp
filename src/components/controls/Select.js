@@ -2,7 +2,6 @@ import React from 'react';
 import Component from 'components/Component';
 
 import ReactSelect from 'react-select-plus';
-
 import Label from 'components/ControlsLabel';
 
 import style from 'react-select-plus/dist/react-select-plus.css';
@@ -13,6 +12,10 @@ export default class Select extends Component {
   static defaultProps = {
     labelQuestion: false
   };
+
+  focus() {
+    this.refs.input.focus();
+  }
 
   render() {
     let label;
@@ -25,7 +28,7 @@ export default class Select extends Component {
 
     return <div style={ this.props.style } className={ this.props.className }>
       { label }
-      <ReactSelect { ... select } openOnFocus={ true } value={ this.props.selected } onChange= { this.props.onChange } className={ this.props.innerClassName } placeholder={ this.props.placeholder } disabled={ this.props.disabled } clearable={ false } style={{
+      <ReactSelect { ... select } ref="input" openOnFocus={ true } value={ this.props.selected } onChange= { this.props.onChange } className={ this.props.innerClassName } placeholder={ this.props.placeholder } disabled={ this.props.disabled } clearable={ false } style={{
         background: 'linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%)',
         border: '1px solid #ced0da',
         color: '#535b69'
