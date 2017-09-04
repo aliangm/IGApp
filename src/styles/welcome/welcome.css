@@ -46,22 +46,14 @@
     display: flex;
 }
 
-.add-button {
-  margin-left: 6px;
-  height: 28px;
-  width: 50%;
-  cursor: pointer;
-  background: url(../../assets/plus.svg) left center no-repeat;
-  background-size: 24px auto;
-  margin-top: 6px;
-  justify-content: flex-start;
+.center {
   display: flex;
+  justify-content: center;
 }
 
 .invite-message {
-  justify-content: flex-end;
+  justify-content: center;
   display: flex;
-  width: 50%;
   margin-top: 6px;
 }
 

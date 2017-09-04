@@ -1,11 +1,13 @@
 .container {
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 .popup {
-    left: 76px;
+    left: 103px;
     border: none;
-    top: 10px;
+    top: -1px;
     cursor: pointer;
 }
 
@@ -21,7 +23,7 @@
     text-transform: none;
     white-space: pre-wrap;
     line-height: 140%;
-    height: 36px;
+    height: 34px;
     box-sizing: border-box;
     font-size: 16px;
     font-weight: 600;
@@ -65,7 +67,7 @@
 }
 
 .button {
-    height: 53px;
-    width: 75px;
+    height: 32px;
+    width: 90%;
     overflow: hidden;
 }

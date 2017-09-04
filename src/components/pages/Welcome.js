@@ -21,6 +21,7 @@ import history from 'history';
 import RegionPopup from 'components/RegionPopup';
 import serverCommunication from 'data/serverCommunication';
 import ButtonWithSurePopup from 'components/pages/account/ButtonWithSurePopup';
+import AddMemberPopup from 'components/pages/account/AddMemberPopup';
 
 export default class Welcome extends Component {
   style = style;
@@ -42,13 +43,13 @@ export default class Welcome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inviteMessage: null
+      inviteMessage: null,
+      showAddMemberPopup: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
     this.handleChangeArray = this.handleChangeArray.bind(this);
     this.addMember = this.addMember.bind(this);
-    this.changeMembers = this.changeMembers.bind(this);
     this.removeMember = this.removeMember.bind(this);
   }
 
@@ -86,12 +87,6 @@ export default class Welcome extends Component {
     this.props.updateState({userAccount: update});
   }
 
-  changeMembers(index, property, e) {
-    let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers[index][property] = e.target.value;
-    this.props.updateState({userAccount: update});
-  }
-
   removeMember(index) {
     let update = Object.assign({}, this.props.userAccount);
     const member = update.teamMembers.splice(index, 1);
@@ -110,11 +105,16 @@ export default class Welcome extends Component {
       });
   }
 
-  inviteMember(index) {
-    serverCommunication.serverRequest('PUT', 'members', JSON.stringify({newMember: this.props.userAccount.teamMembers[index], admin: { name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName, company: this.props.userAccount.companyName }}))
+  inviteMember(newMember) {
+    console.log(newMember);
+    serverCommunication.serverRequest('PUT', 'members', JSON.stringify({newMember, admin: { name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName, company: this.props.userAccount.companyName }}))
       .then((response) => {
         if (response.ok) {
-          this.setState({inviteMessage: 'user has been invited successfully!'});
+          this.setState({inviteMessage: 'user has been invited successfully!', showAddMemberPopup: false});
+          response.json()
+            .then((data) => {
+              this.props.updateState({unsaved:false, teamMembers: data.teamMembers, userAccount: data});
+            })
         }
         else {
           this.setState({inviteMessage: 'failed to invite user'});
@@ -130,7 +130,7 @@ export default class Welcome extends Component {
       'Name',
       'Email',
       'Role',
-      '',
+      'Admin',
       ''
     ], {
       className: PlannedVsActualstyle.locals.headRow
@@ -138,21 +138,17 @@ export default class Welcome extends Component {
     const rows = this.props.userAccount.teamMembers.map((item, i) => {
       return this.getTableRow(null, [
         <div className={ PlannedVsActualstyle.locals.cellItem }>
-          <Textfield style={{
-            minWidth: '136px'
-          }} value={ item.name } onChange={ this.changeMembers.bind(this, i, 'name') }/>
+          { item.name }
         </div>,
         <div className={ PlannedVsActualstyle.locals.cellItem }>
-          <Textfield style={{
-            minWidth: '210px'
-          }} value={ item.email } onChange={ this.changeMembers.bind(this, i, 'email') }/>
+          { item.email }
         </div>,
         <div className={ PlannedVsActualstyle.locals.cellItem }>
-          <Textfield style={{
-            minWidth: '117px'
-          }} value={ item.role } onChange={ this.changeMembers.bind(this, i, 'role') }/>
+          { item.role }
         </div>,
-        <ButtonWithSurePopup onClick={ this.inviteMember.bind(this, i) } buttonText="Invite"/>,
+        <div className={ welcomeStyle.locals.center }>
+          <input type="checkbox" checked={ !!item.isAdmin }/>
+        </div>,
         <ButtonWithSurePopup style={{ background: '#e50000' }} onClick={ this.removeMember.bind(this, i) } buttonText="Remove"/>
       ], {
         key: i
@@ -226,8 +222,14 @@ export default class Welcome extends Component {
                   </div>
                 </div>
               </div>
-              <div className={ welcomeStyle.locals.tableBottom }>
-                <div role="button" className={ welcomeStyle.locals.addButton } onClick={ this.addMember }/>
+              <div>
+                <div className={ welcomeStyle.locals.center }>
+                  <Button
+                    type="reverse"
+                    style={{ width: '75px', marginTop: '20px' }}
+                    onClick={ () => { this.setState({showAddMemberPopup: true}) } }>+Add
+                  </Button>
+                </div>
                 <div className={ welcomeStyle.locals.inviteMessage }>
                   { this.state.inviteMessage }
                 </div>
@@ -297,6 +299,7 @@ export default class Welcome extends Component {
         }
       </Page>
       <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }} createUserMonthPlan={ this.props.createUserMonthPlan }/>
+      <AddMemberPopup hidden={ !this.state.showAddMemberPopup } close={ ()=>{ this.setState({showAddMemberPopup: false}) } } inviteMember={ this.inviteMember.bind(this) }/>
     </div>
   }
 
