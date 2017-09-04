@@ -5,10 +5,10 @@ import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import { formatBudget } from 'components/utils/budget';
 import Button from 'components/controls/Button';
+import copy from 'copy-to-clipboard';
 
 import style from 'styles/onboarding/onboarding.css';
 import trackingStyle from 'styles/campaigns/tracking.css';
-
 
 export default class Tracking extends Component {
 
@@ -18,9 +18,16 @@ export default class Tracking extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isHttp: true
+      isHttp: true,
+      copied: ''
     }
   };
+
+  componentWillReceiveProps() {
+    this.setState({
+      copied: ''
+    });
+  }
 
   toggleProtocol() {
     let update = Object.assign({}, this.props.campaign);
@@ -67,6 +74,12 @@ export default class Tracking extends Component {
 
   handleFocus(event) {
     event.target.select();
+  }
+
+  copy(param) {
+    this.setState({copied: ''});
+    copy(this.props.campaign.tracking[param]);
+    this.setState({copied: param});
   }
 
   render() {
@@ -288,11 +301,19 @@ export default class Tracking extends Component {
       <div className={trackingStyle.locals.urls }>
         <div className={ trackingStyle.locals.urlLine }>
           <Label className={ trackingStyle.locals.urlTitle }>Full Tracking URL</Label>
-          <Textfield className={ trackingStyle.locals.urlTextbox } value={ this.props.campaign.tracking.trackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
+          <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ this.props.campaign.tracking.trackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
+          <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, 'trackingUrl') }/>
+          <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== 'trackingUrl' }>
+            Copied!
+          </div>
         </div>
         <div className={ trackingStyle.locals.urlLine }>
           <Label className={ trackingStyle.locals.urlTitle }>Shortened Tracking URL</Label>
-          <Textfield className={ trackingStyle.locals.urlTextbox } value={ this.props.campaign.tracking.shortenedTrackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
+          <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ this.props.campaign.tracking.shortenedTrackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
+          <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, 'shortenedTrackingUrl') }/>
+          <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== 'shortenedTrackingUrl' }>
+            Copied!
+          </div>
         </div>
       </div>
     </div>
