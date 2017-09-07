@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-
+import { isPopupMode } from 'modules/popup-mode';
 import style from 'styles/onboarding/title.css';
 
 export default class Title extends Component {
@@ -28,7 +28,7 @@ export default class Title extends Component {
 
     let subText;
 
-    if (this.props.subTitle) {
+    if (this.props.subTitle && isPopupMode()) {
       subText = <div className={ this.classes.text }>{ this.props.subTitle }</div>
     }
 
