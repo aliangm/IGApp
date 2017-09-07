@@ -5,9 +5,9 @@ import channelDescriptions from 'data/channelDescriptions';
 export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
   var sum = {};
   var returnObj = {};
-  sum["__TOTAL__"] = { values : [0,0,0,0,0,0,0,0,0,0,0,0] };
+  sum["__TOTAL__"] = { values : new Array(projectedPlan.length).fill(0) };
   var budget = 0;
-  projectedPlan.forEach((month)=> {
+  projectedPlan.forEach((month, index)=> {
     //var month = projectedPlan[key];
     budget+= month.monthBudget;
     var channels = month.plannedChannelBudgets;
@@ -16,7 +16,7 @@ export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
         .split('/')
         .map(item => item.trim());
       var obj = {};
-      _.merge(returnObj, parseMonth(title, channels[channel], month.monthNumber, returnObj, sum["__TOTAL__"], channel, approvedPlan ? approvedPlan : new Array(12).fill(null)));
+      _.merge(returnObj, parseMonth(title, channels[channel], index, returnObj, sum["__TOTAL__"], channel, approvedPlan ? approvedPlan : new Array(projectedPlan.length).fill(null)));
     });
   });
   if (approvedPlan) {
@@ -27,15 +27,15 @@ export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
             var title = schema.properties[channel].title
               .split('/')
               .map(item => item.trim());
-            parseActuals(title, returnObj, channels[channel], channel, month);
+            parseActuals(title, returnObj, channels[channel], channel, month, projectedPlan.length);
           }
         });
       }
     });
   }
-  fillZeros(returnObj, approvedPlan ? approvedPlan : new Array(12).fill(null));
+  fillZeros(returnObj, approvedPlan ? approvedPlan : new Array(projectedPlan.length).fill(null), projectedPlan.length);
   if (unknownChannels && unknownChannels.length > 0) {
-    parseUnknownChannels(returnObj, unknownChannels);
+    parseUnknownChannels(returnObj, unknownChannels, projectedPlan.length);
   }
   _.merge(returnObj, sum);
   var retJson = {};
@@ -58,7 +58,7 @@ function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
     else {
       var obj = {};
       obj[title[0]] = { values : [] };
-      obj[title[0]].approvedValues = new Array(12).fill(null);
+      obj[title[0]].approvedValues = new Array(approvedPlan.length).fill(null);
       for (var i = 0; i < month; i++) {
         obj[title[0]].values.push(0);
         obj[title[0]].approvedValues[i] = approvedPlan[i] && approvedPlan[i][channel];
@@ -101,11 +101,11 @@ function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
   }
 }
 
-function fillZeros(json, approvedPlan){
+function fillZeros(json, approvedPlan, length){
   Object.keys(json).forEach((key) => {
     if (json[key].values) {
-      if (json[key].values.length < 12) {
-        for (var i = 0; i < 12; i++) {
+      if (json[key].values.length < length) {
+        for (var i = 0; i < length; i++) {
           if (json[key].values[i] === undefined) {
             json[key].values.push(0);
             if (json[key].channel) {
@@ -116,19 +116,19 @@ function fillZeros(json, approvedPlan){
       }
     }
     if (json[key].children) {
-      fillZeros(json[key].children, approvedPlan);
+      fillZeros(json[key].children, approvedPlan, length);
     }
   })
 }
 
-function parseActuals(title, current, actualBudget, channel, month) {
+function parseActuals(title, current, actualBudget, channel, month, length) {
   if (title.length == 1) {
     if (!current[title[0]]) {
       current[title[0]] = {};
-      current[title[0]].values = new Array(12).fill(0);
+      current[title[0]].values = new Array(length).fill(0);
       current[title[0]].icon = "plan:" + title[0];
       current[title[0]].channel = channel;
-      current[title[0]].approvedValues = new Array(12).fill(0);
+      current[title[0]].approvedValues = new Array(length).fill(0);
       current[title[0]].approvedValues[month] = actualBudget;
     }
     else {
@@ -137,12 +137,12 @@ function parseActuals(title, current, actualBudget, channel, month) {
   }
   else {
     if (current && current[title[0]]) {
-      return parseActuals(title.splice(1, title.length - 1), current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, actualBudget, channel, month);
+      return parseActuals(title.splice(1, title.length - 1), current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, actualBudget, channel, month, length);
     }
     else {
       current[title[0]] = {};
-      current[title[0]] = {children: parseActuals(title.splice(1, title.length - 1), current[title[0]], actualBudget, channel, month)};
-      current[title[0]].values = new Array(12).fill(0);
+      current[title[0]] = {children: parseActuals(title.splice(1, title.length - 1), current[title[0]], actualBudget, channel, month, length)};
+      current[title[0]].values = new Array(length).fill(0);
       current[title[0]].icon = "plan:" + title[0];
       current[title[0]].disabled= true;
     }
@@ -150,21 +150,21 @@ function parseActuals(title, current, actualBudget, channel, month) {
   return current;
 }
 
-function parseUnknownChannels(returnObj, unknownChannels) {
+function parseUnknownChannels(returnObj, unknownChannels, length) {
   const otherChannels = "~Other";
   unknownChannels.forEach((channels, index) => {
     if (channels && Object.keys(channels).length > 0) {
       if (!returnObj[otherChannels]) {
         returnObj[otherChannels] = {};
         returnObj[otherChannels].children = {};
-        returnObj[otherChannels].values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        returnObj[otherChannels].values = new Array(length).fill(0);
         returnObj[otherChannels].icon = "plan:other";
       }
       Object.keys(channels).forEach(channel => {
         if (channel) {
           if (!returnObj[otherChannels].children[channel]) {
             returnObj[otherChannels].children[channel] = {};
-            returnObj[otherChannels].children[channel].values = new Array(12).fill(0);
+            returnObj[otherChannels].children[channel].values = new Array(length).fill(0);
             returnObj[otherChannels].children[channel].channel = channel;
             returnObj[otherChannels].children[channel].icon = "plan:other";
           }

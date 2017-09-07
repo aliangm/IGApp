@@ -997,7 +997,7 @@ export default class AnnualTab extends Component {
               :null }
           </div>
         </div>
-        <div style={{ marginTop: '20px' }}>
+        <div className={ this.classes.indicatorsGraph }>
           <IndicatorsGraph data={ projections }/>
         </div>
       </div>

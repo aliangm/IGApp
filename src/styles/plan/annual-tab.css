@@ -428,3 +428,8 @@
 .value-cell {
     height: 50px;
 }
+
+.indicators-graph {
+    margin: 20px 62px 0;
+    width: 1166px;
+}

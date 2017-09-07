@@ -17,6 +17,10 @@ export default class Dashboard extends Component {
     };
   }
 
+  static defaultProps = {
+    width: 1050
+  };
+
   toggleCheckbox(indicator) {
     let checkedIndicators = this.state.checkedIndicators;
     const index = checkedIndicators.indexOf(indicator);
@@ -92,7 +96,7 @@ export default class Dashboard extends Component {
         </div>
       </div>
       <div className={ this.classes.chart }>
-        <LineChart width={1050} height={300} data={ this.props.data }>
+        <LineChart width={this.props.width} height={300} data={ this.props.data }>
           <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <YAxis width={82} style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <CartesianGrid vertical={ false }/>
