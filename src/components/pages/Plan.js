@@ -28,21 +28,28 @@ export default class Plan extends Component {
 
   constructor(props) {
     super(props);
+    this.plan = this.plan.bind(this);
+    this.popup = this.popup.bind(this);
+    this.approveAll = this.approveAll(this);
     this.state = {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
-      whatIf: this.plan.bind(this)
+      whatIf: this.plan.bind(this),
+      approveAll: this.approveAll
     };
-    this.plan = this.plan.bind(this);
-    this.popup = this.popup.bind(this);
   }
 
   componentDidMount() {
     this.getRelevantEvents(this.props);
     if (isPopupMode()) {
       disablePopupMode();
-      this.plan(true, null, null, localStorage.getItem('region'));
+      this.plan(true, null, this.approveAll, localStorage.getItem('region'));
     }
+  }
+
+  approveAll() {
+    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
+    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   componentWillReceiveProps(nextProps) {

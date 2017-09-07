@@ -323,11 +323,6 @@ export default class AnnualTab extends Component {
     this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
   }
 
-  approveAll() {
-    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
-  }
-
   dragStart(value) {
     this.setState({draggableValue: value, isDragging: true});
   }
@@ -775,7 +770,7 @@ export default class AnnualTab extends Component {
                 marginLeft: '15px',
                 width: '114px'
               }} onClick={() => {
-                this.approveAll();
+                this.props.approveAll();
               }}>
                 Approve All
               </Button>
