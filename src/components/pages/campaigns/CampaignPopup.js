@@ -47,6 +47,10 @@ export default class CampaignPopup extends Component {
       index: undefined,
       name: '',
       budget: 0,
+      owner: '',
+      source: '',
+      dueDate: '',
+      startDate: '',
       actualSpent: 0,
       status: "New",
       time: {
@@ -54,8 +58,7 @@ export default class CampaignPopup extends Component {
         design: 0,
         marketing: 0
       },
-      objectives:
-        {
+      objectives: {
           kpi: [
             '',
             '',
@@ -75,7 +78,12 @@ export default class CampaignPopup extends Component {
       tracking: {},
       tasks: [],
       comments: [],
-      assets: []
+      assets: [],
+      targetAudience: '',
+      description: '',
+      referenceProjects: '',
+      keywords: '',
+      additionalInformation: ''
     }
   };
 

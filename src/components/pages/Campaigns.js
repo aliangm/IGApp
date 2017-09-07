@@ -52,7 +52,9 @@ export default class Campaigns extends Component {
   }
 
   static defaultProps = {
-    campaigns: []
+    campaigns: [],
+    approvedPlan: [],
+    planUnknownChannels: []
   };
 
   updateCampaigns = (campaigns) => {
@@ -95,14 +97,14 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex } = this.state;
-    const { monthBudget, campaigns } = this.props;
+    const { monthBudget, campaigns, approvedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    const approvedChannels = this.props.approvedPlan && this.props.approvedPlan.length > 0 ? this.props.approvedPlan[0] : {};
-    const unknownChannels = this.props.planUnknownChannels && this.props.planUnknownChannels.length > 0 ? this.props.planUnknownChannels[0] : {};
+    const approvedChannels = approvedPlan && approvedPlan.length > 0 && approvedPlan[0] ? approvedPlan[0] : {};
+    const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
 
-    let channels = _.merge(approvedChannels, unknownChannels);
+    let channels = _.merge({}, approvedChannels, unknownChannels);
     const processedChannels = {
       titles: { },
       icons: { },
@@ -166,7 +168,7 @@ export default class Campaigns extends Component {
         <div>
           <div className={ this.classes.campaignsTitle }>
             <div className={ this.classes.campaignsTitleDate }>
-              { getDateString(this.props.planDate) } - Campaigns
+              { getDateString(planDate) } - Campaigns
               <div className={ this.classes.search }>
                 <div className={ this.classes.searchIcon }/>
                 <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
@@ -194,11 +196,11 @@ export default class Campaigns extends Component {
               channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
               closePopup={ this.closePopup.bind(this) }
               updateCampaign={ this.updateCampaign }
-              teamMembers={ this.props.teamMembers }
-              campaignsTemplates={ this.props.campaignsTemplates }
+              teamMembers={ teamMembers }
+              campaignsTemplates={ campaignsTemplates }
               updateCampaignsTemplates={ this.updateCampaignsTemplates }
-              firstName={ this.props.userFirstName }
-              lastName={ this.props.userLastName }
+              firstName={ userFirstName }
+              lastName={ userLastName }
             />
           </div>
         </div>
