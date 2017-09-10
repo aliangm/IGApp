@@ -140,7 +140,7 @@ export default class Plan extends Component {
           <div className={this.classes.headPlan } >
             <ReplanButton numberOfPlanUpdates={ this.props.numberOfPlanUpdates } onClick={ this.popup }/>
             <Popup style={{
-              width: '400px',
+              width: '265px',
               top: '180%',
               transform: 'translate(0, -50%)'
             }} hidden={ !this.state.popup } onClose={() => {
