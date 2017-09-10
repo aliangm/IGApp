@@ -6,7 +6,7 @@ import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import channelsSchema from 'data/channelsSchema';
 import { Search, UnorderedSearchIndex } from 'js-search';
-
+import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
@@ -44,20 +44,41 @@ export default class Campaigns extends Component {
 
     this.state = {
       selectedIndex: 0,
-      search: ''
+      search: '',
+      showPopup: false,
+      index: undefined,
+      campaign: {}
     };
   }
 
   static defaultProps = {
-    unfilteredCampaigns: {}
+    campaigns: [],
+    approvedPlan: [],
+    planUnknownChannels: []
   };
 
   updateCampaigns = (campaigns) => {
     return this.props.updateUserMonthPlan({ campaigns }, this.props.region, this.props.planDate);
   };
 
-  updateCampaignsTemplates = (campaignsTemplates) => {
+  updateCampaignsTemplates = (templateName, template) => {
+    delete template.index;
+    const campaignsTemplates = { ...this.props.campaignsTemplates, [templateName]: template };
     return this.props.updateUserMonthPlan({ campaignsTemplates }, this.props.region, this.props.planDate);
+  };
+
+  updateCampaign = (campaign) => {
+    let campaigns = this.props.campaigns;
+    const index = campaign.index;
+    delete campaign.index;
+    if (index !== undefined)
+    {
+      campaigns[index] = campaign;
+    }
+    else {
+      campaigns.push(campaign);
+    }
+    return this.updateCampaigns(campaigns);
   };
 
   handleTabSelect = (e) => {
@@ -66,16 +87,24 @@ export default class Campaigns extends Component {
     })
   };
 
+  closePopup = () => {
+    this.setState({showPopup: false, index: undefined, campaign: {}});
+  };
+
+  showCampaign = (campaign) => {
+    this.setState({showPopup: true, index: campaign.index, campaign: campaign || {}});
+  };
+
   render() {
     const { selectedIndex } = this.state;
-    const { monthBudget, unfilteredCampaigns } = this.props;
+    const { monthBudget, campaigns, approvedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    const approvedChannels = this.props.approvedPlan && this.props.approvedPlan.length > 0 ? this.props.approvedPlan[0] : {};
-    const unknownChannels = this.props.planUnknownChannels && this.props.planUnknownChannels.length > 0 ? this.props.planUnknownChannels[0] : {};
+    const approvedChannels = approvedPlan && approvedPlan.length > 0 && approvedPlan[0] ? approvedPlan[0] : {};
+    const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
 
-    let channels = _.merge(approvedChannels, unknownChannels);
+    let channels = _.merge({}, approvedChannels, unknownChannels);
     const processedChannels = {
       titles: { },
       icons: { },
@@ -94,46 +123,27 @@ export default class Campaigns extends Component {
         processedChannels.icons[channel] = "plan:other";
       }
     });
-    const activeCampaigns = {};
-    Object.keys(unfilteredCampaigns).forEach(channel => {
-      const channelActiveCampaigns = unfilteredCampaigns[channel].filter(campaign => campaign.isArchived !== true);
-      if (channelActiveCampaigns.length > 0) {
-        return activeCampaigns[channel] = channelActiveCampaigns
-      }
-    });
 
-    let budgetLeftToSpend = Object.keys(activeCampaigns).reduce((res, channel) => {
-      activeCampaigns[channel].forEach((campaign) => {
-        res -= campaign.actualSpent || campaign.budget;
-      });
+    const campaignsWithIndex = campaigns.map((campaign, index) => { return { ... campaign, index: index} });
 
+    const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
+
+    let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
+      res -= campaign.actualSpent || campaign.budget;
       return res;
     }, monthBudget);
 
     let filteredCampaigns = activeCampaigns;
 
     if (this.state.search) {
-      filteredCampaigns = {};
-      const search = new Search('id');
+      const search = new Search('index');
       search.searchIndex = new UnorderedSearchIndex();
       search.addIndex('name');
       search.addIndex('owner');
-      search.addIndex('channel');
+      search.addIndex('source');
 
-      let searchArray = [];
-      Object.keys(activeCampaigns).forEach(channel => {
-        const channelCampaigns = activeCampaigns[channel].map((item, index) => _.merge(item, {channel: channel, id: channel + index}));
-        searchArray.push(...channelCampaigns);
-      });
-
-      search.addDocuments(searchArray);
-      const searchedCampaigns = search.search(this.state.search);
-      searchedCampaigns.forEach(item => {
-        if (!filteredCampaigns[item.channel]) {
-          filteredCampaigns[item.channel] = [];
-        }
-        filteredCampaigns[item.channel].push(item);
-      });
+      search.addDocuments(activeCampaigns);
+      filteredCampaigns = search.search(this.state.search);
     }
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
@@ -158,7 +168,7 @@ export default class Campaigns extends Component {
         <div>
           <div className={ this.classes.campaignsTitle }>
             <div className={ this.classes.campaignsTitleDate }>
-              { getDateString(this.props.planDate) } - Campaigns
+              { getDateString(planDate) } - Campaigns
               <div className={ this.classes.search }>
                 <div className={ this.classes.searchIcon }/>
                 <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
@@ -166,7 +176,7 @@ export default class Campaigns extends Component {
               </div>
             </div>
             <div className={ this.classes.campaignsTitleBudget }>
-              Budget left to spend
+              Budget left to invest
               <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
                 ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' }
               </div>
@@ -175,11 +185,24 @@ export default class Campaigns extends Component {
           {
             selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
               processedChannels,
-              campaigns: filteredCampaigns,
+              filteredCampaigns: filteredCampaigns,
               updateCampaigns: this.updateCampaigns,
-              updateCampaignsTemplates: this.updateCampaignsTemplates
+              showCampaign: this.showCampaign
             }))
           }
+          <div hidden={ !this.state.showPopup }>
+            <CampaignPopup
+              campaign={ this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign  }
+              channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
+              closePopup={ this.closePopup.bind(this) }
+              updateCampaign={ this.updateCampaign }
+              teamMembers={ teamMembers }
+              campaignsTemplates={ campaignsTemplates }
+              updateCampaignsTemplates={ this.updateCampaignsTemplates }
+              firstName={ userFirstName }
+              lastName={ userLastName }
+            />
+          </div>
         </div>
       </Page>
     </div>

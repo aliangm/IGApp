@@ -31,7 +31,7 @@ export default class Objective extends Component {
         Current - { this.props.current }
       </div>
       <div className={ this.classes.textBottom }>
-        { Math.abs(this.props.maxRange - this.props.current) } left to reach your goal
+        { Math.round(Math.abs(this.props.maxRange - this.props.current)) } left to reach your goal
       </div>
       <div className={ this.classes.center }>
         <div className={ this.classes.thumbs } data-down={ this.props.project < this.props.maxRange ? true : null }/>

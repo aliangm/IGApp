@@ -23,6 +23,7 @@ import history from 'history';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
+import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons, popupStyle];
@@ -32,7 +33,8 @@ export default class AnnualTab extends Component {
 
   static defaultProps = {
     projectedPlan: [],
-    approvedPlan: []
+    approvedPlan: [],
+    actualIndicators: {}
   };
 
   constructor(props) {
@@ -319,11 +321,6 @@ export default class AnnualTab extends Component {
 
   editUpdate() {
     this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
-  }
-
-  approveAll() {
-    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   dragStart(value) {
@@ -750,6 +747,13 @@ export default class AnnualTab extends Component {
 
       channelOptions.map(preventDuplicates);
 
+      const dates = this.getDates();
+      const projections = this.props.projectedPlan.map((item, index) => {
+        return {... item.projectedIndicatorValues, name: dates[index]}
+      });
+      // Current indicators values to first cell
+      projections.splice(0,0,{... this.props.actualIndicators, name: 'today'});
+
       return <div>
         <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
           <div className={ planStyles.locals.title }>
@@ -766,7 +770,7 @@ export default class AnnualTab extends Component {
                 marginLeft: '15px',
                 width: '114px'
               }} onClick={() => {
-                this.approveAll();
+                this.props.approveAll();
               }}>
                 Approve All
               </Button>
@@ -987,6 +991,9 @@ export default class AnnualTab extends Component {
               </div>
               :null }
           </div>
+        </div>
+        <div className={ this.classes.indicatorsGraph }>
+          <IndicatorsGraph data={ projections }/>
         </div>
       </div>
     } else {

@@ -84,6 +84,13 @@
   background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
 }
 
+.reverse {
+  composes: box;
+  box-shadow: inset 0 0 0 2px #2ea1f8;
+  color: #2ea1f8;
+  background: white;
+}
+
 .warning {
   composes: box;
   color: white;

@@ -28,20 +28,22 @@ export default class Plan extends Component {
 
   constructor(props) {
     super(props);
+    this.plan = this.plan.bind(this);
+    this.approveAllBudgets = this.approveAllBudgets.bind(this);
+    this.popup = this.popup.bind(this);
     this.state = {
       selectedTab: 0,
       numberOfPlanUpdates: 0,
-      whatIf: this.plan.bind(this)
+      whatIf: this.plan.bind(this),
+      approveAll: this.approveAllBudgets.bind(this)
     };
-    this.plan = this.plan.bind(this);
-    this.popup = this.popup.bind(this);
   }
 
   componentDidMount() {
     this.getRelevantEvents(this.props);
     if (isPopupMode()) {
       disablePopupMode();
-      this.plan(true, null, null, localStorage.getItem('region'));
+      this.plan(true, null, this.approveAllBudgets, localStorage.getItem('region'));
     }
   }
 
@@ -51,6 +53,11 @@ export default class Plan extends Component {
 
   getRelevantEvents(props) {
     this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
+  }
+
+  approveAllBudgets() {
+    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
+    return this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   popup() {

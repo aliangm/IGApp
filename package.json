@@ -62,6 +62,7 @@
     "style-loader": "git+https://github.com/NekR/style-loader.git",
     "webpack": "^1.13.1",
     "whatwg-fetch": "^2.0.2",
-    "js-search": "latest"
+    "js-search": "latest",
+    "copy-to-clipboard": "^3.0.8"
   }
 }

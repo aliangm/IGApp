@@ -1,27 +1,18 @@
 import React from 'react';
-
 import Component from 'components/Component';
+
 import Label from 'components/ControlsLabel';
-import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 
 import style from 'styles/campaigns/campaign-summary.css';
 import icons from 'styles/icons/plan.css';
 
 export default class CampaignSummary extends Component {
 
-  style = style
-  styles = [icons]
+  style = style;
+  styles = [icons];
 
   constructor(props) {
     super(props);
-    this.state = {
-      showPopup: false
-    }
-    this.closePopup = this.closePopup.bind(this);
-  }
-
-  closePopup() {
-    this.setState({showPopup: false});
   }
 
   render(){
@@ -34,14 +25,14 @@ export default class CampaignSummary extends Component {
               { this.props.campaign.name }
             </div>
             <div className={ this.classes.colRight }>
-              <div className={ this.classes.menu } data-icon="campaign:menu" onClick={() => { this.setState({showPopup: true}) }}/>
+              <div className={ this.classes.menu } data-icon="campaign:menu" onClick={ () => { this.props.showCampaign(this.props.campaign) } }/>
             </div>
           </div>
         </div>
         <div className={ this.classes.row } style={{ color: '#2CF212' }}>
           <div className={ this.classes.cols }>
             <div className={ this.classes.colLeft }>
-              ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
+              { budget ? '$' + budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '$0' }
             </div>
             <div className={ this.classes.colRight }>
               <div className={ this.classes.circle }>
@@ -67,7 +58,7 @@ export default class CampaignSummary extends Component {
                   Marketing
                 </Label>
                 <Label className={ this.classes.time }>
-                  {this.props.campaign.time.marketing}h
+                  {this.props.campaign.time && this.props.campaign.time.marketing}h
                 </Label>
               </div>
               <div className={ this.classes.colCenter } style={{ justifyContent: 'center' }}>
@@ -75,7 +66,7 @@ export default class CampaignSummary extends Component {
                   Design
                 </Label>
                 <Label className={ this.classes.time }>
-                  {this.props.campaign.time.design}h
+                  {this.props.campaign.time && this.props.campaign.time.design}h
                 </Label>
               </div>
               <div className={ this.classes.colRight }>
@@ -83,15 +74,12 @@ export default class CampaignSummary extends Component {
                   Development
                 </Label>
                 <Label className={ this.classes.time }>
-                  {this.props.campaign.time.development}h
+                  {this.props.campaign.time && this.props.campaign.time.development}h
                 </Label>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div hidden={ !this.state.showPopup }>
-        <CampaignPopup campaign={ this.props.campaign } channelTitle={ this.props.channelTitle } channel={ this.props.channel } closePopup={ this.closePopup } updateCampaign={ this.props.updateCampaign } index={ this.props.index } teamMembers={ this.props.teamMembers } campaignsTemplates={ this.props.campaignsTemplates } updateCampaignsTemplates={ this.props.updateCampaignsTemplates } firstName={ this.props.firstName } lastName={ this.props.lastName }/>
       </div>
     </div>
   }

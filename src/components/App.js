@@ -146,6 +146,7 @@ class AppComponent extends Component {
             .then((data) => {
               if (!dontSetState) {
                 this.setDataAsState(data);
+                this.getPreviousData();
               }
               deferred.resolve(data);
             })
@@ -172,25 +173,29 @@ class AppComponent extends Component {
             .then((data) => {
               if (data) {
                 this.setDataAsState(data);
-                serverCommunication.serverRequest('GET', 'previousdata', null, this.state.region)
-                  .then((response) => {
-                    if (response.ok) {
-                      response.json()
-                        .then((data) => {
-                          if (data) {
-                            this.setState({
-                              previousData: data
-                            });
-                          }
-                        })
-                    }
-                    else if (response.status == 401){
-                      history.push('/');
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
+                this.getPreviousData();
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  getPreviousData() {
+    serverCommunication.serverRequest('GET', 'previousdata', null, this.state.region)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  previousData: data
+                });
               }
             })
         }
@@ -283,7 +288,7 @@ class AppComponent extends Component {
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
       monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
-      unfilteredCampaigns: data.campaigns || {},
+      campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan,

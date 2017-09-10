@@ -26,10 +26,18 @@ export default class Textfield extends Component {
       className = this.classes.box;
     }
 
+    let inputClassName;
+
+    if (this.props.inputClassName) {
+      inputClassName = this.classes.input + ' ' + this.props.inputClassName;
+    } else {
+      inputClassName = this.classes.input;
+    }
+
     return <div className={ className } style={ this.props.style }>
       <input type= {this.props.type }
         ref="input"
-        className={ this.classes.input }
+        className={ inputClassName }
         defaultValue={ this.props.defaultValue }
         value={ this.props.value }
         readOnly={ this.props.readOnly }
