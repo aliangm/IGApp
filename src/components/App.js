@@ -268,7 +268,7 @@ class AppComponent extends Component {
   setDataAsState(data) {
     this.setState({
       userProfile: data.userProfile,
-      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: {}}],
+      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,

@@ -35,7 +35,9 @@ export default class TargetAudience extends Component {
   static defaultProps = {
     targetAudience: [{
       fields: {},
-      info: {}
+      info: {
+        weight: 100
+      }
     }]
   };
 
@@ -86,7 +88,7 @@ export default class TargetAudience extends Component {
 
   addTab() {
     let update = this.props.targetAudience.slice();
-    update.push({fields: {}, info: {}});
+    update.push({fields: {}, info: { weight: 100 }});
     this.props.updateState({targetAudience: update});
   }
 
