@@ -32,7 +32,6 @@ export default class Welcome extends Component {
       companyName: '',
       firstName: '',
       lastName: '',
-      teamSize: -1,
       companyWebsite: 'http://',
       competitorsWebsites: ['http://', 'http://', 'http://'],
       teamMembers: [],
@@ -201,10 +200,6 @@ export default class Welcome extends Component {
             </div>
             <div className={ this.classes.row }>
               <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>Marketing Team Size</Label>
-              <Textfield type="number" value={ this.props.userAccount.teamSize == -1 ? '' : this.props.userAccount.teamSize } onChange={ this.handleChangeNumber.bind(this, 'teamSize')} style={{width: '80px'}}/>
             </div>
             <div className={ this.classes.row }>
               <Label>Team Members</Label>
