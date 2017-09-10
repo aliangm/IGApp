@@ -24,7 +24,8 @@ export default class RegionPopup extends Component {
   }
 
   createNewRegion() {
-    this.props.createUserMonthPlan({ region: this.state.regionName})
+    const regionName = this.state.regionName || 'default';
+    this.props.createUserMonthPlan({ region: regionName})
       .then(() => {
         localStorage.setItem('region', this.state.regionName);
         temporaryEnablePopupMode();
@@ -41,7 +42,7 @@ export default class RegionPopup extends Component {
       <Page popup={ true } width={'300px'}>
         <Title title="New Region"/>
         <div className={ this.classes.row }>
-          <Textfield value={ this.state.regionName } required={ true } onChange={ this.handleChange.bind(this)} ref="name"/>
+          <Textfield value={ this.state.regionName } required={ true } onChange={ this.handleChange.bind(this)} ref="name" placeHolder="default"/>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>
