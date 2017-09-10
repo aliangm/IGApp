@@ -13,7 +13,7 @@ export default class Objective extends Component {
     let options = {
       aperture: 180,
       radius : 85,
-      marks: [null, this.props.maxRange],
+      marks: [null, Math.round(this.props.maxRange)],
       contentWidth: 260,
       svgContainerWidth: 260,
       svgContainerHeight: 155,
@@ -28,7 +28,7 @@ export default class Objective extends Component {
       </div>
       <ReactGauge {... options}/>
       <div className={ this.classes.center }>
-        Current - { this.props.current }
+        Current - { Math.round(this.props.current) }
       </div>
       <div className={ this.classes.textBottom }>
         { Math.round(Math.abs(this.props.maxRange - this.props.current)) } left to reach your goal
