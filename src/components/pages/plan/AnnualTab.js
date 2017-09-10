@@ -34,7 +34,9 @@ export default class AnnualTab extends Component {
   static defaultProps = {
     projectedPlan: [],
     approvedPlan: [],
-    actualIndicators: {}
+    actualIndicators: {},
+    planDate: '',
+    events: []
   };
 
   constructor(props) {

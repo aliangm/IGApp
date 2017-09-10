@@ -32,7 +32,7 @@ export default class Plan extends Component {
     this.approveAllBudgets = this.approveAllBudgets.bind(this);
     this.popup = this.popup.bind(this);
     this.state = {
-      selectedTab: 0,
+      selectedTab: 1,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
       approveAll: this.approveAllBudgets.bind(this)
