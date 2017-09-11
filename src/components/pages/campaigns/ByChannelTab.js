@@ -37,7 +37,7 @@ export default class ByChannelTab extends Component {
         channelBudget = { channels.budgets[channel] }
         key = { channel }
         channel={ channel }
-        campaigns={ filteredCampaigns.filter(item => item.source === channel) }
+        campaigns={ filteredCampaigns.filter(item => item.source.includes(channel)) }
         channelIcon={ channels.icons[channel] }
         showCampaign={ showCampaign }
       />

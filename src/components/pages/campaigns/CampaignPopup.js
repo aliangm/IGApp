@@ -27,10 +27,7 @@ export default class CampaignPopup extends Component {
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
-      campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign),
-      updateState: this.updateState.bind(this),
-      close: this.close,
-      openAddTemplatePopup: this.openAddTemplatePopup.bind(this)
+      campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign)
     };
   }
 
@@ -48,7 +45,7 @@ export default class CampaignPopup extends Component {
       name: '',
       budget: 0,
       owner: '',
-      source: '',
+      source: [],
       dueDate: '',
       startDate: '',
       actualSpent: 0,
@@ -59,22 +56,22 @@ export default class CampaignPopup extends Component {
         marketing: 0
       },
       objectives: {
-          kpi: [
-            '',
-            '',
-            ''
-          ],
-          growth: [
-            '',
-            '',
-            ''
-          ],
-          actualGrowth: [
-            '',
-            '',
-            ''
-          ]
-        },
+        kpi: [
+          '',
+          '',
+          ''
+        ],
+        growth: [
+          '',
+          '',
+          ''
+        ],
+        actualGrowth: [
+          '',
+          '',
+          ''
+        ]
+      },
       tracking: {},
       tasks: [],
       comments: [],
@@ -172,7 +169,13 @@ export default class CampaignPopup extends Component {
           }
         </div>
         <div className={ campaignPopupStyle.locals.inner }>
-          { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
+          { selectedTab ? React.createElement(selectedTab, _.merge({ }, this.state, {
+            updateState: this.updateState.bind(this),
+            close: this.close,
+            openAddTemplatePopup: this.openAddTemplatePopup.bind(this),
+            updateCampaign: this.props.updateCampaign,
+            closePopup: this.props.closePopup
+          })) : null }
         </div>
       </Page>
       <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>

@@ -102,24 +102,25 @@ export default class ByChannelTab extends Component {
       campaigns.forEach(campaign => {
 				const extendedCampaign = { ...campaign, id: `${campaign.index}`};
 				const list = lists.find(l => l.name === campaign.status);
-
+				campaign.source.forEach(source => {
 				if (list) {
-					const channelInList = list.cards.find(chnl => chnl.name === campaign.source);
+					const channelInList = list.cards.find(chnl => chnl.name === source);
 
 					if (channelInList) {
 						channelInList.campaigns.push(extendedCampaign);
 					} else {
 						list.cards.push({
-							id: campaign.source,
+							id: source,
 							status: campaign.status,
-							name: campaign.source,
-							title: processedChannels.titles[campaign.source],
-							icon: processedChannels.icons[campaign.source],
-							budget: processedChannels.budgets[campaign.source],
+							name: source,
+							title: processedChannels.titles[source],
+							icon: processedChannels.icons[source],
+							budget: processedChannels.budgets[source],
 							campaigns: [extendedCampaign]
 						});
 					}
 				}
+        });
 			});
 
 		return lists

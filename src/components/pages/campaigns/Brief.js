@@ -9,6 +9,7 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import AssetsPopup from 'components/pages/campaigns/AssetsPopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
+import MultiSelect from 'components/controls/MultiSelect';
 
 export default class Brief extends Component {
 
@@ -40,10 +41,10 @@ export default class Brief extends Component {
 
   handleKeyPress(e) {
     /**
-    if (e.key === 'Enter') {
+     if (e.key === 'Enter') {
       this.save();
     }
-    **/
+     **/
     if (e.key === 'Escape') {
       this.props.close();
     }
@@ -51,7 +52,9 @@ export default class Brief extends Component {
 
   handleChangeSource = (event) => {
     let update = Object.assign({}, this.props.campaign);
-    update.source = event.value;
+    update.source = event.map((obj) => {
+      return obj.value;
+    });
     this.props.updateState({campaign: update});
   };
 
@@ -98,7 +101,7 @@ export default class Brief extends Component {
   }
 
   validate() {
-    return this.props.campaign.name && this.props.campaign.source;
+    return this.props.campaign.name && this.props.campaign.source && this.props.campaign.source.length > 0;
   }
 
   save() {
@@ -116,7 +119,7 @@ export default class Brief extends Component {
       if (!this.props.campaign.name){
         this.refs.name.focus();
       }
-      else if (!this.props.campaign.source){
+      else {
         this.refs.source.focus();
       }
     }
@@ -396,9 +399,11 @@ export default class Brief extends Component {
       }
     };
     // Handle manual channels
-    if (!selects.source.select.options.find(item => item.value === this.props.campaign.source)) {
-      selects.source.select.options.push({value: this.props.campaign.source, label: this.props.campaign.source});
-    }
+    this.props.campaign.source.forEach(source => {
+      if (!selects.source.select.options.find(item => item.value === source)) {
+        selects.source.select.options.push({value: source, label: source});
+      }
+    });
     if (this.props.teamMembers) {
       this.props.teamMembers.forEach((member) => {
         if (member.name != '') {
@@ -409,7 +414,7 @@ export default class Brief extends Component {
     selects.owner.select.options.push({value: "me", label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
     const assetsCategories = this.props.campaign.assets ?
       [...new Set(this.props.campaign.assets.map(item => item.category))]
-    : [];
+      : [];
     const assets = assetsCategories.map((category, index) => {
       return <div key={index} className={ campaignPopupStyle.locals.categoryAssets }>
         <div className={ campaignPopupStyle.locals.assetsCategory }>
@@ -449,7 +454,7 @@ export default class Brief extends Component {
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <Select { ... selects.source } style={{ width: '428px' }} selected={ this.props.campaign.source } onChange= { this.handleChangeSource } ref="source"/>
+            <MultiSelect { ... selects.source } style={{ width: '428px' }} selected={ this.props.campaign.source } onChange= { this.handleChangeSource } ref="source"/>
           </div>
           <div className={ this.classes.colRight }>
             <Select { ... selects.status } style={{ width: '166px' }} selected={ this.props.campaign.status } onChange= { this.handleChangeSelect.bind(this, 'status') }/>

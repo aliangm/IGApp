@@ -40,7 +40,7 @@ export default class ChannelCampaigns extends Component {
           index={index}
           campaign={ campaign }
           channelIcon={ this.props.channelIcon }
-          channel={ this.props.channel }
+          channel={ [this.props.channel] }
           showCampaign={ this.props.showCampaign }
         />
       })
@@ -58,7 +58,7 @@ export default class ChannelCampaigns extends Component {
         <div>
           { runningCampaigns }
           <div className={ this.classes.plusBox }>
-            <div className={ this.classes.plus } onClick={ () => { this.props.showCampaign({source: this.props.channel}) } }>
+            <div className={ this.classes.plus } onClick={ () => { this.props.showCampaign({source: [this.props.channel]}) } }>
               +
             </div>
           </div>
