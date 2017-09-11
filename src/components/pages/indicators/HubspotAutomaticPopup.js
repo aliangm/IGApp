@@ -78,7 +78,7 @@ export default class HubspotAutomaticPopup extends Component {
 
   getUserData() {
     this.setState({loading: true});
-    serverCommunication.serverRequest('put', 'hubspotapi', JSON.stringify({mapping: this.state.mapping}))
+    serverCommunication.serverRequest('put', 'hubspotapi', JSON.stringify({mapping: this.state.mapping}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -161,6 +161,19 @@ export default class HubspotAutomaticPopup extends Component {
         { this.state.code ?
           <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
             <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>
+            <div className={ this.classes.row }>
+              <div className={ this.classes.cols }>
+                <div className={ this.classes.colLeft }>
+                  <Label checkbox={this.state.mapping.blogSubscribers !== undefined} onChange={ this.toggleCheckbox.bind(this, 'blogSubscribers') } className={ salesForceStyle.locals.label }>Blog Subscribers</Label>
+                </div>
+                <div className={ this.classes.colCenter }>
+                  <div className={ salesForceStyle.locals.arrow }/>
+                </div>
+                <div className={ this.classes.colRight }>
+                  <Select { ... selects.tables} selected={ this.state.mapping.blogSubscribers } onChange={ this.handleChange.bind(this, 'blogSubscribers') } disabled={ this.state.mapping.blogSubscribers === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
+                </div>
+              </div>
+            </div>
             <div className={ this.classes.row }>
               <div className={ this.classes.cols }>
                 <div className={ this.classes.colLeft }>
