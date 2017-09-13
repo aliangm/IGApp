@@ -174,7 +174,10 @@ export default class CampaignPopup extends Component {
             close: this.close,
             openAddTemplatePopup: this.openAddTemplatePopup.bind(this),
             updateCampaign: this.props.updateCampaign,
-            closePopup: this.props.closePopup
+            closePopup: this.props.closePopup,
+            teamMembers: this.props.teamMembers,
+            firstName: this.props.firstName,
+            lastName: this.props.lastName
           })) : null }
         </div>
       </Page>
