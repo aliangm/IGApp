@@ -295,7 +295,7 @@ class AppComponent extends Component {
       approvedBudgets: data.approvedBudgets || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
-      budgetArray: data.annualBudgetArray,
+      budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,

@@ -220,7 +220,7 @@ export default class AnnualTab extends Component {
         </div>
         <div className={ this.classes.right }>
           <Textfield
-            value={"$" + (this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+            value={"$" + (this.state.budgetArrayField && this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
             onChange={ this.handleChangeBudgetArray.bind(this, index) } style={{
             width: '110px'
           }}/>
