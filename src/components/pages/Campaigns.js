@@ -53,7 +53,7 @@ export default class Campaigns extends Component {
 
   static defaultProps = {
     campaigns: [],
-    approvedPlan: [],
+    projectedPlan: [],
     planUnknownChannels: []
   };
 
@@ -97,14 +97,14 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex } = this.state;
-    const { monthBudget, campaigns, approvedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.props;
+    const { monthBudget, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    const approvedChannels = approvedPlan && approvedPlan.length > 0 && approvedPlan[0] ? approvedPlan[0] : {};
+    const projectedChannels = projectedPlan && projectedPlan.length > 0 && projectedPlan[0] ? projectedPlan[0].plannedChannelBudgets : {};
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
 
-    let channels = _.merge({}, approvedChannels, unknownChannels);
+    let channels = _.merge({}, projectedChannels, unknownChannels);
     const processedChannels = {
       titles: { },
       icons: { },

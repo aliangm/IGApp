@@ -28,7 +28,7 @@ export default class PlanFromExcel extends Component {
     let firstTime = new Array(12).fill(true);
     Papa.parse(files[0], {complete: (result, file) => {
       try {
-        let approvedPlan = this.props.approvedPlan;
+        let approvedBudgets = this.props.approvedBudgets;
         result.data.forEach((row, index) => {
           if (index > 0) {
             const channel = row[0];
@@ -36,17 +36,17 @@ export default class PlanFromExcel extends Component {
               if (cell != '' && cellIndex > 1) {
                 const budget = parseInt(cell.replace(/[-$h,]/g, ''));
                 if (budget && firstTime[cellIndex - 2]) {
-                  approvedPlan[cellIndex - 2] = {};
+                  approvedBudgets[cellIndex - 2] = {};
                   firstTime[cellIndex - 2] = false;
                 }
-                approvedPlan[cellIndex - 2][channel] = budget;
+                approvedBudgets[cellIndex - 2][channel] = budget;
               }
             })
           }
         });
         // Validate
         let isValid = true;
-        approvedPlan.forEach(month => {
+        approvedBudgets.forEach(month => {
           Object.keys(month).forEach((channel) => {
             if (!channelsSchema.properties[channel] || isNaN(month[channel])) {
               isValid = false;
@@ -54,7 +54,7 @@ export default class PlanFromExcel extends Component {
           })
         });
         if (isValid) {
-          this.props.updateUserMonthPlan({approvedPlan: approvedPlan}, this.props.region, this.props.planDate);
+          this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate);
           this.setState({successUpload: true})
         }
         else {

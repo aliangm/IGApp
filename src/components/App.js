@@ -292,7 +292,7 @@ class AppComponent extends Component {
       campaignsTemplates: data.campaignsTemplates || {},
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan,
-      approvedPlan: data.approvedPlan || [],
+      approvedBudgets: data.approvedBudgets || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray,

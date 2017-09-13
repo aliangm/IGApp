@@ -57,7 +57,7 @@ export default class Plan extends Component {
 
   approveAllBudgets() {
     const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    return this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
+    return this.props.updateUserMonthPlan({approvedBudgets: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   popup() {
@@ -82,13 +82,12 @@ export default class Plan extends Component {
                   this.setState({isPlannerLoading: false, isError: true});
                 }
                 else {
-                  this.props.setDataAsState(data);
                   this.setState({
                     isPlannerLoading: false,
                     isError: false
                   });
                   if (callback) {
-                    callback();
+                    callback(data);
                   }
                 }
               }
@@ -148,7 +147,7 @@ export default class Plan extends Component {
                 popup: false
               });
             }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false, this.props.region) } onBack={() => {
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, (data) => {this.props.setDataAsState(data)}, this.props.region) } onBack={() => {
                 this.setState({
                   popup: false
                 })}} />
