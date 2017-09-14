@@ -6,7 +6,7 @@ import style from 'styles/onboarding/onboarding.css';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 
-export default class AutomaticIndicatorPopup extends Component {
+export default class LinkedinAutomaticPopup extends Component {
 
   style = style;
 
@@ -35,12 +35,11 @@ export default class AutomaticIndicatorPopup extends Component {
                     if (code) {
                       localStorage.removeItem('code');
                       this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'linkedinapi', JSON.stringify({code: code}))
+                      serverCommunication.serverRequest('post', 'linkedinapi', JSON.stringify({code: code}), localStorage.getItem('region'))
                         .then((response) => {
                           if (response.ok) {
                             response.json()
                               .then((data) => {
-                              console.log(data);
                               if (data.values.length > 1) {
                                 this.setState({accounts: data.values});
                               }

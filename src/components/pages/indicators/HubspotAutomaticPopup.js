@@ -42,7 +42,7 @@ export default class HubspotAutomaticPopup extends Component {
                     if (code) {
                       localStorage.removeItem('code');
                       this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'hubspotapi', JSON.stringify({code: code}))
+                      serverCommunication.serverRequest('post', 'hubspotapi', JSON.stringify({code: code}), localStorage.getItem('region'))
                         .then((response) => {
                           if (response.ok) {
                             response.json()

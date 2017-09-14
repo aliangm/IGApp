@@ -6,7 +6,7 @@ import style from 'styles/onboarding/onboarding.css';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 
-export default class AutomaticIndicatorPopup extends Component {
+export default class GoogleAutomaticPopup extends Component {
 
   style = style;
 
@@ -37,7 +37,7 @@ export default class AutomaticIndicatorPopup extends Component {
                     if (code) {
                       localStorage.removeItem('code');
                       this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}))
+                      serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}), localStorage.getItem('region'))
                         .then((response) => {
                           if (response.ok) {
                             response.json()

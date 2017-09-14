@@ -58,7 +58,7 @@ export default class SalesforceAutomaticPopup extends Component {
                     if (code) {
                       localStorage.removeItem('code');
                       this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'salesforceapi', JSON.stringify({code: code}))
+                      serverCommunication.serverRequest('post', 'salesforceapi', JSON.stringify({code: code}), localStorage.getItem('region'))
                         .then((response) => {
                           if (response.ok) {
                             response.json()
