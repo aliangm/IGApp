@@ -97,14 +97,18 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex } = this.state;
-    const { monthBudget, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName } = this.props;
+    const { monthBudget, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
     const projectedChannels = projectedPlan && projectedPlan.length > 0 && projectedPlan[0] ? projectedPlan[0].plannedChannelBudgets : {};
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
+    const inHouse = {};
+    inHouseChannels.forEach(channel => {
+      inHouse[channel] = 0;
+    });
 
-    let channels = _.merge({}, projectedChannels, unknownChannels);
+    let channels = _.merge({}, projectedChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: { },
       icons: { },
