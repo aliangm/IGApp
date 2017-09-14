@@ -20,9 +20,11 @@ import HubspotAutomaticPopup from 'components/pages/indicators/HubspotAutomaticP
 import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
 import SalesforceAutomaticPopup from 'components/pages/indicators/SalesforceAutomaticPopup';
 import CRMPopup from 'components/pages/indicators/CRMPopup';
+import FinancePopup from 'components/pages/indicators/FinancePopup';
 import LinkedinAutomaticPopup from 'components/pages/indicators/LinkedinAutomaticPopup';
 import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticPopup';
 import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheetsAutomaticPopup';
+import StripeAutomaticPopup from 'components/pages/indicators/StripeAutomaticPopup';
 
 export default class Indicators extends Component {
   style = style;
@@ -67,6 +69,10 @@ export default class Indicators extends Component {
     this.setState({showCRMPopup: true});
   }
 
+  showFinancePopup() {
+    this.setState({showFinancePopup: true});
+  }
+
   showLinkedinPopup() {
     this.setState({showLinkedinPopup: true});
   }
@@ -79,12 +85,20 @@ export default class Indicators extends Component {
     this.setState({showGoogleSheetsPopup: true});
   }
 
+  showStripePopup() {
+    this.setState({showStripePopup: true});
+  }
+
   isFunnelAuto(indicator) {
     return (this.props.hubspotAuto && this.props.hubspotAuto.mapping && this.props.hubspotAuto.mapping[indicator]) || (this.props.salesforceAuto && this.props.salesforceAuto.mapping && this.props.salesforceAuto.mapping[indicator]);
   }
 
   isSheetAuto(indicator) {
     return this.props.googleSheetsAuto && this.props.googleSheetsAuto.mapping && this.props.googleSheetsAuto.mapping[indicator]
+  }
+
+  isFinanceAuto(indicator) {
+    return this.props.isStripeAuto || this.isSheetAuto(indicator);
   }
 
   render() {
@@ -101,7 +115,9 @@ export default class Indicators extends Component {
         <LinkedinAutomaticPopup hidden={ !this.state.showLinkedinPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showLinkedinPopup: false}) }}/>
         <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
         <GoogleSheetsAutomaticPopup hidden={ !this.state.showGoogleSheetsPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showGoogleSheetsPopup: false}) }}/>
+        <StripeAutomaticPopup hidden={ !this.state.showStripePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showStripePopup: false}) }}/>
         <CRMPopup hidden={ !this.state.showCRMPopup } showSalesforcePopup={ this.showSalesforcePopup.bind(this) } showHubspotPopup={ this.showHubspotPopup.bind(this) } close={ ()=>{ this.setState({showCRMPopup: false}) } }/>
+        <FinancePopup hidden={ !this.state.showFinancePopup } showGoogleSheetsPopup={ this.showGoogleSheetsPopup.bind(this) } showStripePopup={ this.showStripePopup.bind(this) } close={ ()=>{ this.setState({showFinancePopup: false}) } }/>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
             <div className={ indiStyle.locals.row }>
@@ -127,7 +143,7 @@ export default class Indicators extends Component {
               <Item icon="indicator:opps" title="Opportunities" name="opps" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.opps } maxValue={1000} isFunnel={true} description="Opportunities are contacts who have become real sales opportunities in your CRM." showAutomaticPopup={ this.showCRMPopup.bind(this) } automaticIndicators={ this.isFunnelAuto('opps') }/>
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.LTV } maxValue={400000} isDollar={true} description="Measures the profit your business makes from any given customer." formula="Formula – ARPA / Churn Rate (10% is equal to 0.1)."  showAutomaticPopup={ this.showGoogleSheetsPopup.bind(this) } automaticIndicators={ this.isSheetAuto('LTV') }/>
+              <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.LTV } maxValue={400000} isDollar={true} description="Measures the profit your business makes from any given customer." formula="Formula – ARPA / Churn Rate (10% is equal to 0.1)."  showAutomaticPopup={ this.showFinancePopup.bind(this) } automaticIndicators={ this.isFinanceAuto('LTV') }/>
               <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.CAC } maxValue={20000} isDirectionDown= { true } isDollar={true} description="Refers to the resources that a business must allocate (financial or otherwise) in order to acquire an additional customer. It includes every single effort necessary to introduce your products and services to potential customers, and then convince them to buy and become active customers." formula="Formula - Total Sales & Marketing expenses / # of New Account (Paying Customers)."  showAutomaticPopup={ this.showGoogleSheetsPopup.bind(this) } automaticIndicators={ this.isSheetAuto('CAC') }/>
               {/** <Item icon="indicator:numberOfSales" title="Number Of Sales" name="numberOfSales" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.numberOfSales } />
                <Item icon="indicator:sales" title="Sales Revenue" name="salesRevenue" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.salesRevenue } /> **/}
@@ -147,8 +163,8 @@ export default class Indicators extends Component {
               <Item icon="indicator:blogSubscribers" title="Blog Subscribers" name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogSubscribers } maxValue={ 7000 } description="The number of blog subscriber the company currently has." automaticIndicators={ this.isFunnelAuto('blogSubscribers') }/>
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MRR } maxValue={1000000} isDollar={true} description="Monthly Recurrent Revenue." formula="Formula - SUM(Paying customers monthly fee)." showAutomaticPopup={ this.showGoogleSheetsPopup.bind(this) } automaticIndicators={ this.isSheetAuto('MRR') }/>
-              <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } description="The number or percentage of subscribers to a service that discontinue their subscription to that service in a given time period." formula="Formula - # of accounts who churned / Last month total # of accounts." showAutomaticPopup={ this.showGoogleSheetsPopup.bind(this) } automaticIndicators={ this.isSheetAuto('churnRate') }/>
+              <Item icon="indicator:mrr" title="MRR" name="MRR" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.MRR } maxValue={1000000} isDollar={true} description="Monthly Recurrent Revenue." formula="Formula - SUM(Paying customers monthly fee)." showAutomaticPopup={ this.showFinancePopup.bind(this) } automaticIndicators={ this.isFinanceAuto('MRR') }/>
+              <Item icon="indicator:churnRate" title="Churn Rate" name="churnRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.churnRate } isPercentage = { true } maxValue={ 18 } isDirectionDown= { true } description="The number or percentage of subscribers to a service that discontinue their subscription to that service in a given time period." formula="Formula - # of accounts who churned / Last month total # of accounts." showAutomaticPopup={ this.showFinancePopup.bind(this) } automaticIndicators={ this.isFinanceAuto('churnRate') }/>
               <Item icon="indicator:arpa" title="ARPA (monthly)" name="ARPA" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.ARPA } maxValue={17000} isDollar={true} description="Average Revenue Per Account. a measure of the revenue generated per account, per month (sometimes known as ARPU – average revenue per user)." formula="Formula – ARPA = MRR / # of accounts (paying customers)."/>
             </div>
           </div>

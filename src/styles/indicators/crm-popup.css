@@ -22,6 +22,18 @@
     background-size: contain;
 }
 
+.stripe {
+    composes: box;
+    background: url(../../assets/stripe.png) center center no-repeat;
+    background-size: contain;
+}
+
+.google-sheets {
+    composes: box;
+    background: url(../../assets/google-sheets.png) center center no-repeat;
+    background-size: contain;
+}
+
 .title {
     font-weight: bold;
     font-size: 18px;

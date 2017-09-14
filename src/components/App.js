@@ -305,6 +305,7 @@ class AppComponent extends Component {
       isLinkedinAuto: !!data.linkedinapi,
       isTwitterAuto: !!data.twitterapi,
       googleSheetsAuto: data.googlesheetsapi,
+      isStripeAuto: !!data.stripeapi
     });
   }
 
