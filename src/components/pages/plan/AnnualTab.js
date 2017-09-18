@@ -774,7 +774,7 @@ export default class AnnualTab extends Component {
 
       return <div>
         <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
-          <div className={ planStyles.locals.title }>
+          <div className={ planStyles.locals.title } style={{ padding: '0' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ planStyles.locals.titleText }>
                 Annual Budget
@@ -895,7 +895,7 @@ export default class AnnualTab extends Component {
               </div>
             </div>
           </div>
-          <div className={ planStyles.locals.title } style={{ height: '40px' }}>
+          <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ this.classes.titleBudget }>
                 Budget left to plan
