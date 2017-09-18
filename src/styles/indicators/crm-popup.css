@@ -22,6 +22,12 @@
     background-size: contain;
 }
 
+.google-analytics {
+    composes: box;
+    background: url(../../assets/google-analytics-logo.jpg) center center no-repeat;
+    background-size: contain;
+}
+
 .stripe {
     composes: box;
     background: url(../../assets/stripe.png) center center no-repeat;
@@ -31,6 +37,12 @@
 .google-sheets {
     composes: box;
     background: url(../../assets/google-sheets.png) center center no-repeat;
+    background-size: contain;
+}
+
+.linkedin {
+    composes: box;
+    background: url(../../assets/linkedin-logo.png) center center no-repeat;
     background-size: contain;
 }
 

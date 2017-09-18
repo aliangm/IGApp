@@ -9,66 +9,39 @@ import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import Title from 'components/onboarding/Title';
 import loadTemplateStyle from 'styles/campaigns/load-template-popup.css';
+import CRMStyle from 'styles/indicators/crm-popup.css';
 
 export default class GoogleSheetsAutomaticPopup extends Component {
 
   style = style;
-  styles = [loadTemplateStyle];
+  styles = [loadTemplateStyle, CRMStyle];
 
   constructor(props) {
     super(props);
     this.state = {
       sheets: [],
       mapping: {},
-      code: null
+      code: null,
+      hidden: true
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hidden && this.props.hidden != nextProps.hidden) {
-      serverCommunication.serverRequest('get', 'googlesheetsapi')
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                const win = window.open(data);
-
-                const timer = setInterval(() => {
-                  if (win.closed) {
-                    clearInterval(timer);
-                    const code = localStorage.getItem('code');
-                    if (code) {
-                      localStorage.removeItem('code');
-                      this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'googlesheetsapi', JSON.stringify({code: code}), localStorage.getItem('region'))
-                        .then((response) => {
-                          if (response.ok) {
-                            response.json()
-                              .then((data) => {
-                                this.setState({sheets: data});
-                              });
-                          }
-                          else if (response.status == 401) {
-                            history.push('/');
-                          }
-                        })
-                        .catch(function (err) {
-                          console.log(err);
-                        });
-                    }
-                  }
-                }, 1000);
-
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-    }
+  componentDidMount() {
+    serverCommunication.serverRequest('get', 'googlesheetsapi')
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setState({url: data});
+            });
+        }
+        else if (response.status == 401) {
+          history.push('/');
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
   }
 
   handleChangeSelect(indicator, event) {
@@ -83,6 +56,36 @@ export default class GoogleSheetsAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
+  getAuthorization() {
+    const win = window.open(this.state.url);
+    const timer = setInterval(() => {
+      if (win.closed) {
+        clearInterval(timer);
+        const code = localStorage.getItem('code');
+        if (code) {
+          localStorage.removeItem('code');
+          this.setState({code: code, hidden: false});
+          serverCommunication.serverRequest('post', 'googlesheetsapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+            .then((response) => {
+              if (response.ok) {
+                response.json()
+                  .then((data) => {
+                    this.setState({sheets: data});
+                  });
+              }
+              else if (response.status == 401) {
+                history.push('/');
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+        }
+      }
+    }, 1000);
+
+  }
+
   getUserData() {
     serverCommunication.serverRequest('put', 'googlesheetsapi', JSON.stringify({mapping: this.state.mapping}), localStorage.getItem('region'))
       .then((response) => {
@@ -90,7 +93,7 @@ export default class GoogleSheetsAutomaticPopup extends Component {
           response.json()
             .then((data) => {
               this.props.setDataAsState(data);
-              this.props.close();
+              this.close();
             });
         }
         else if (response.status == 401) {
@@ -113,6 +116,11 @@ export default class GoogleSheetsAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
+  close() {
+    this.setState({hidden: true});
+    this.props.close();
+  }
+
   render(){
     const selects = {
       sheets: {
@@ -125,8 +133,12 @@ export default class GoogleSheetsAutomaticPopup extends Component {
         }
       }
     };
-    return <div hidden={ this.props.hidden }>
-      {this.state.code ? <Page popup={ true } width={'600px'} contentClassName={ loadTemplateStyle.locals.content } innerClassName={ loadTemplateStyle.locals.inner }>
+    return <div style={{ width: '100%' }}>
+      { this.state.url ?
+        <div className={ CRMStyle.locals.googleSheets } onClick={ this.getAuthorization.bind(this) }/>
+        : null }
+      <div hidden={this.state.hidden}>
+        <Page popup={ true } width={'600px'} contentClassName={ loadTemplateStyle.locals.content } innerClassName={ loadTemplateStyle.locals.inner }>
           <Title title="Google Sheets" subTitle="Define which metrics should be taken from Google Sheets"/>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
@@ -182,14 +194,14 @@ export default class GoogleSheetsAutomaticPopup extends Component {
           </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>
-              <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+              <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
             </div>
             <div className={ this.classes.footerRight }>
               <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
             </div>
           </div>
         </Page>
-        : null }
+      </div>
     </div>
   }
 

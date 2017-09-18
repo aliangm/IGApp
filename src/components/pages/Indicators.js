@@ -15,16 +15,13 @@ import indiStyle from 'styles/indicators/indicators.css';
 
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import history from 'history';
-import GoogleAutomaticPopup from 'components/pages/indicators/GoogleAutomaticPopup';
-import HubspotAutomaticPopup from 'components/pages/indicators/HubspotAutomaticPopup';
 import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
-import SalesforceAutomaticPopup from 'components/pages/indicators/SalesforceAutomaticPopup';
 import CRMPopup from 'components/pages/indicators/CRMPopup';
+import AnalyticsPopup from 'components/pages/indicators/AnalyticsPopup';
 import FinancePopup from 'components/pages/indicators/FinancePopup';
-import LinkedinAutomaticPopup from 'components/pages/indicators/LinkedinAutomaticPopup';
+import SocialPopup from 'components/pages/indicators/SocialPopup';
 import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticPopup';
-import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheetsAutomaticPopup';
-import StripeAutomaticPopup from 'components/pages/indicators/StripeAutomaticPopup';
+import Loading from 'components/pages/indicators/Loading';
 
 export default class Indicators extends Component {
   style = style;
@@ -36,7 +33,9 @@ export default class Indicators extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      loading: false
+    };
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -49,44 +48,28 @@ export default class Indicators extends Component {
     }
   }
 
-  showGooglePopup() {
-    this.setState({showGooglePopup: true});
-  }
-
-  showHubspotPopup() {
-    this.setState({showHubspotPopup: true});
-  }
-
   showFacebookPopup() {
     this.setState({showFacebookPopup: true});
-  }
-
-  showSalesforcePopup() {
-    this.setState({showSalesforcePopup: true});
   }
 
   showCRMPopup() {
     this.setState({showCRMPopup: true});
   }
 
+  showAnalyticsPopup() {
+    this.setState({showAnalyticsPopup: true});
+  }
+
   showFinancePopup() {
     this.setState({showFinancePopup: true});
   }
 
-  showLinkedinPopup() {
-    this.setState({showLinkedinPopup: true});
+  showSocialPopup() {
+    this.setState({showSocialPopup: true});
   }
 
   showTwitterPopup() {
     this.setState({showTwitterPopup: true});
-  }
-
-  showGoogleSheetsPopup() {
-    this.setState({showGoogleSheetsPopup: true});
-  }
-
-  showStripePopup() {
-    this.setState({showStripePopup: true});
   }
 
   isFunnelAuto(indicator) {
@@ -101,6 +84,10 @@ export default class Indicators extends Component {
     return this.props.isStripeAuto || this.isSheetAuto(indicator);
   }
 
+  updateState = (newState) => {
+    this.setState(newState);
+  };
+
   render() {
     return <div>
       <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
@@ -108,16 +95,13 @@ export default class Indicators extends Component {
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
-        <GoogleAutomaticPopup hidden={ !this.state.showGooglePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showGooglePopup: false}) }}/>
-        <HubspotAutomaticPopup hidden={ !this.state.showHubspotPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showHubspotPopup: false}) }}/>
         <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
-        <SalesforceAutomaticPopup hidden={ !this.state.showSalesforcePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showSalesforcePopup: false}) }}/>
-        <LinkedinAutomaticPopup hidden={ !this.state.showLinkedinPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showLinkedinPopup: false}) }}/>
         <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
-        <GoogleSheetsAutomaticPopup hidden={ !this.state.showGoogleSheetsPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showGoogleSheetsPopup: false}) }}/>
-        <StripeAutomaticPopup hidden={ !this.state.showStripePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showStripePopup: false}) }}/>
-        <CRMPopup hidden={ !this.state.showCRMPopup } showSalesforcePopup={ this.showSalesforcePopup.bind(this) } showHubspotPopup={ this.showHubspotPopup.bind(this) } close={ ()=>{ this.setState({showCRMPopup: false}) } }/>
-        <FinancePopup hidden={ !this.state.showFinancePopup } showGoogleSheetsPopup={ this.showGoogleSheetsPopup.bind(this) } showStripePopup={ this.showStripePopup.bind(this) } close={ ()=>{ this.setState({showFinancePopup: false}) } }/>
+        <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState }/>
+        <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
+        <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
+        <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
+        <Loading hidden={ !this.state.loading }/>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
             <div className={ indiStyle.locals.row }>
@@ -125,8 +109,8 @@ export default class Indicators extends Component {
               <Item icon="indicator:facebookEngagement" link='fb' title="Facebook Engagement" name="facebookEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.facebookEngagement } maxValue={100} isPercentage = {true} description="Your Facebook engagement rate, measures your brand’s effectiveness at engaging your audience through Facebook." showAutomaticPopup={ this.showFacebookPopup.bind(this) } automaticIndicators={ this.props.isFacebookAuto }/>
               <Item icon="indicator:twitter" title="Twitter Followers" name="twitterFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.twitterFollowers }  maxValue={30000} description="The number of followers on your Twitter page." showAutomaticPopup={ this.showTwitterPopup.bind(this) } automaticIndicators={ this.props.isTwitterAuto }/>
               <Item icon="indicator:twitterEngagement" link='twtr' title="Twitter Engagement" name="twitterEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.twitterEngagement } maxValue={100} isPercentage = {true} description="Your Twitter engagement rate, measures your brand’s effectiveness at engaging your audience through Twitter." showAutomaticPopup={ this.showTwitterPopup.bind(this) } automaticIndicators={ this.props.isTwitterAuto }/>
-              <Item icon="indicator:linkedin" title="LinkedIn Followers" name="linkedinFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.linkedinFollowers } maxValue={12000} description="The number of followers on your LinkedIn page." showAutomaticPopup={ this.showLinkedinPopup.bind(this) } automaticIndicators={ this.props.isLinkedinAuto }/>
-              <Item icon="indicator:linkedinEngagement" link='in' title="LinkedIn Engagement" name="linkedinEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.linkedinEngagement } maxValue={100} isPercentage = {true} description="Your LinkedIn engagement rate, measures your brand’s effectiveness at engaging your audience through LinkedIn." showAutomaticPopup={ this.showLinkedinPopup.bind(this) } automaticIndicators={ this.props.isLinkedinAuto }/>
+              <Item icon="indicator:linkedin" title="LinkedIn Followers" name="linkedinFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.linkedinFollowers } maxValue={12000} description="The number of followers on your LinkedIn page." showAutomaticPopup={ this.showSocialPopup.bind(this) } automaticIndicators={ this.props.isLinkedinAuto }/>
+              <Item icon="indicator:linkedinEngagement" link='in' title="LinkedIn Engagement" name="linkedinEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.linkedinEngagement } maxValue={100} isPercentage = {true} description="Your LinkedIn engagement rate, measures your brand’s effectiveness at engaging your audience through LinkedIn." showAutomaticPopup={ this.showSocialPopup.bind(this) } automaticIndicators={ this.props.isLinkedinAuto }/>
               <Item icon="indicator:instagram" title="Instagram Followers" name="instagramFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.instagramFollowers } maxValue={20000} description="The number of followers on your Instagram page."/>
               <Item icon="indicator:instagramEngagement" link='inst' title="Instagram Engagement" name="instagramEngagement" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.instagramEngagement } maxValue={100} isPercentage = {true} description="Your Instagram engagement rate, measures your brand’s effectiveness at engaging your audience through Instagram."/>
               <Item icon="indicator:google" title="Google+ Followers" name="googlePlusFollowers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.googlePlusFollowers } maxValue={16000} description="The number of followers on your Google+ page."/>
@@ -144,7 +128,7 @@ export default class Indicators extends Component {
             </div>
             <div className={ indiStyle.locals.row }>
               <Item icon="indicator:ltv" title="Life Time Value" name="LTV" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.LTV } maxValue={400000} isDollar={true} description="Measures the profit your business makes from any given customer." formula="Formula – ARPA / Churn Rate (10% is equal to 0.1)."  showAutomaticPopup={ this.showFinancePopup.bind(this) } automaticIndicators={ this.isFinanceAuto('LTV') }/>
-              <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.CAC } maxValue={20000} isDirectionDown= { true } isDollar={true} description="Refers to the resources that a business must allocate (financial or otherwise) in order to acquire an additional customer. It includes every single effort necessary to introduce your products and services to potential customers, and then convince them to buy and become active customers." formula="Formula - Total Sales & Marketing expenses / # of New Account (Paying Customers)."  showAutomaticPopup={ this.showGoogleSheetsPopup.bind(this) } automaticIndicators={ this.isSheetAuto('CAC') }/>
+              <Item icon="indicator:cac" title="Customer Acquisition Cost" name="CAC" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.CAC } maxValue={20000} isDirectionDown= { true } isDollar={true} description="Refers to the resources that a business must allocate (financial or otherwise) in order to acquire an additional customer. It includes every single effort necessary to introduce your products and services to potential customers, and then convince them to buy and become active customers." formula="Formula - Total Sales & Marketing expenses / # of New Account (Paying Customers)."  showAutomaticPopup={ this.showFinancePopup.bind(this) } automaticIndicators={ this.isSheetAuto('CAC') }/>
               {/** <Item icon="indicator:numberOfSales" title="Number Of Sales" name="numberOfSales" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.numberOfSales } />
                <Item icon="indicator:sales" title="Sales Revenue" name="salesRevenue" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.salesRevenue } /> **/}
               <Item icon="indicator:trialUsers" title="Trial Users" name="trialUsers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.trialUsers } maxValue={2500} description="The number of trial users the company currently has."/>
@@ -156,9 +140,9 @@ export default class Indicators extends Component {
               <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.googleMentions } maxValue={200000} description="# of mentions when typing your company name in quotes (“Company name”)."/>
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showGooglePopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:averageSessionDuration" title="Average Session Duration" name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showGooglePopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:bounceRate" title="Bounce Rate" name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showGooglePopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+              <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+              <Item icon="indicator:averageSessionDuration" title="Average Session Duration" name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
+              <Item icon="indicator:bounceRate" title="Bounce Rate" name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
               <Item icon="indicator:blogVisits" title="Blog Visits" name="blogVisits" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogVisits } maxValue={25000} description="Blog total visits during the last 30 days."/>
               <Item icon="indicator:blogSubscribers" title="Blog Subscribers" name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogSubscribers } maxValue={ 7000 } description="The number of blog subscriber the company currently has." automaticIndicators={ this.isFunnelAuto('blogSubscribers') }/>
             </div>

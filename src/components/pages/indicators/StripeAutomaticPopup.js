@@ -2,10 +2,12 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import serverCommunication from 'data/serverCommunication';
+import CRMStyle from 'styles/indicators/crm-popup.css';
 
 export default class StripeAutomaticPopup extends Component {
 
   style = style;
+  styles = [CRMStyle];
 
   constructor(props) {
     super(props);
@@ -14,55 +16,59 @@ export default class StripeAutomaticPopup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hidden && this.props.hidden != nextProps.hidden) {
-      serverCommunication.serverRequest('get', 'stripeapi')
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                const win = window.open(data);
+  componentDidMount() {
+    serverCommunication.serverRequest('get', 'stripeapi')
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setState({url: data});
+            });
+        }
+        else if (response.status == 401) {
+          history.push('/');
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }
 
-                const timer = setInterval(() => {
-                  if (win.closed) {
-                    clearInterval(timer);
-                    const code = localStorage.getItem('code');
-                    if (code) {
-                      localStorage.removeItem('code');
-                      this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'stripeapi', JSON.stringify({code: code}), localStorage.getItem('region'))
-                        .then((response) => {
-                          if (response.ok) {
-                            response.json()
-                              .then((data) => {
-                                this.props.setDataAsState(data);
-                              });
-                          }
-                          else if (response.status == 401) {
-                            history.push('/');
-                          }
-                        })
-                        .catch(function (err) {
-                          console.log(err);
-                        });
-                    }
-                  }
-                }, 1000);
-
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-    }
+  getAuthorization() {
+    const win = window.open(this.state.url);
+    const timer = setInterval(() => {
+      if (win.closed) {
+        clearInterval(timer);
+        const code = localStorage.getItem('code');
+        if (code) {
+          localStorage.removeItem('code');
+          this.setState({code: code});
+          serverCommunication.serverRequest('post', 'stripeapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+            .then((response) => {
+              if (response.ok) {
+                response.json()
+                  .then((data) => {
+                    this.props.setDataAsState(data);
+                    this.props.close();
+                  });
+              }
+              else if (response.status == 401) {
+                history.push('/');
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+        }
+      }
+    }, 1000);
   }
 
   render(){
-    return <div hidden={ this.props.hidden }>
+    return <div style={{ width: '100%' }}>
+      { this.state.url ?
+        <div className={ CRMStyle.locals.stripe } onClick={ this.getAuthorization.bind(this) }/>
+        : null }
     </div>
   }
 
