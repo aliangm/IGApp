@@ -273,23 +273,23 @@ export default class Tracking extends Component {
         source = titleArray[titleArray.length -1].trim();
         medium = titleArray[titleArray.length -2].trim();
       }
-      return <div>
+      return <div key={index}>
         <div className={ this.classes.row }>
-          <Label>Source</Label>
+          <Label>{"Source " + (index+1)}</Label>
           <Textfield value={ source } readOnly={true} ref={"source" + index}/>
         </div>
         <div className={ this.classes.row }>
-          <Label>Medium</Label>
+          <Label>{"Medium " + (index+1)}</Label>
           <Textfield value={ medium } readOnly={true} ref={"medium" + index}/>
         </div>
       </div>
     });
 
     const tracking = this.props.campaign.tracking.urls ?
-      this.props.campaign.tracking.urls.map(url => {
-        return <div className={trackingStyle.locals.urls }>
+      this.props.campaign.tracking.urls.map((url, index) => {
+        return <div className={trackingStyle.locals.urls } key={index}>
           <div className={ trackingStyle.locals.urlLine }>
-            <Label className={ trackingStyle.locals.urlTitle }>Full Tracking URL</Label>
+            <Label className={ trackingStyle.locals.urlTitle }>{"Full Tracking URL" + (index+1)}</Label>
             <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ url.long } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
             <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.long) }/>
             <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== url.long }>
@@ -297,7 +297,7 @@ export default class Tracking extends Component {
             </div>
           </div>
           <div className={ trackingStyle.locals.urlLine }>
-            <Label className={ trackingStyle.locals.urlTitle }>Shortened Tracking URL</Label>
+            <Label className={ trackingStyle.locals.urlTitle }>{"Shortened Tracking URL" + (index+1)}</Label>
             <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ url.short } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
             <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.short) }/>
             <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== url.short }>
