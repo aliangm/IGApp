@@ -54,7 +54,8 @@ export default class Campaigns extends Component {
   static defaultProps = {
     campaigns: [],
     projectedPlan: [],
-    planUnknownChannels: []
+    planUnknownChannels: [],
+    inHouseChannels: []
   };
 
   updateCampaigns = (campaigns) => {
@@ -107,8 +108,13 @@ export default class Campaigns extends Component {
     inHouseChannels.forEach(channel => {
       inHouse[channel] = 0;
     });
-
-    let channels = _.merge({}, projectedChannels, unknownChannels, inHouse);
+    const campaignsChannels = {};
+    campaigns.forEach(campaign => {
+      campaign.source.forEach(source => {
+        campaignsChannels[source] = 0;
+      })
+    });
+    let channels = _.merge({}, campaignsChannels, projectedChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: { },
       icons: { },
