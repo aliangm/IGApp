@@ -64,6 +64,7 @@ export default class Sidebar extends Component {
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" />
+          <MenuItem icon="sidebar:attribution" link="/attribution" text="Attribution" />
         </div>
 
       </div>
