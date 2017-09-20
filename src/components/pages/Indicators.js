@@ -138,6 +138,7 @@ export default class Indicators extends Component {
             </div>
             <div className={ indiStyle.locals.row }>
               <Item icon="indicator:googleMentions" title="Google Mentions" name="googleMentions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.googleMentions } maxValue={200000} description="# of mentions when typing your company name in quotes (“Company name”)."/>
+              <Item icon="indicator:domainAuthority" title="Domain Authority" name="domainAuthority" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.domainAuthority } maxValue={95} description="Domain Authority (DA) is a search engine ranking score developed by Moz that predicts how well a website will rank on search engine result pages (SERPs). A Domain Authority score ranges from one to 100, with higher scores corresponding to a greater ability to rank. It’s calculated by evaluating linking root domains, number of total links, MozRank, MozTrust, etc."/>
             </div>
             <div className={ indiStyle.locals.row }>
               <Item icon="indicator:sessions" title="Sessions" name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>

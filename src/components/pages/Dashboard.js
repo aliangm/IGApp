@@ -155,6 +155,7 @@ export default class Dashboard extends Component {
       { label: 'SQL', value: 'SQL' },
       { label: 'Opps', value: 'opps' },
       { label: 'Google Mentions', value: 'googleMentions' },
+      { label: 'Domain Authority', value: 'domainAuthority' },
       { label: 'Sessions', value: 'sessions' },
       { label: 'Average Session Duration',
         value: 'averageSessionDuration' },
