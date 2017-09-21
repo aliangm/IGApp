@@ -306,7 +306,7 @@ class AppComponent extends Component {
       isTwitterAuto: !!data.twitterapi,
       googleSheetsAuto: data.googlesheetsapi,
       isStripeAuto: !!data.stripeapi,
-      attribution: data.attribution || {}
+      attribution: data.attribution || { events: [] }
     });
   }
 
