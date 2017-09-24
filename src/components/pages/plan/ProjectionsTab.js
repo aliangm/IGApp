@@ -229,6 +229,14 @@ export default class ProjectionsTab extends Component {
           icon: "indicator:googleMentions",
           title: "Google Mentions",
           key: "googleMentions"
+        },
+        {
+          defaultState: ["normal", "normal", "normal", "grow"],
+          defaultValue: ["1650", "1650", "1650", "1900"],
+          grow: ["", "", "", "15"],
+          icon: "indicator:domainAuthority",
+          title: "Domain Authority",
+          key: "domainAuthority"
         }
       ],
 

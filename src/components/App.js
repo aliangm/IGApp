@@ -268,7 +268,7 @@ class AppComponent extends Component {
   setDataAsState(data) {
     this.setState({
       userProfile: data.userProfile,
-      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: {}}],
+      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
@@ -292,10 +292,10 @@ class AppComponent extends Component {
       campaignsTemplates: data.campaignsTemplates || {},
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan,
-      approvedPlan: data.approvedPlan || [],
+      approvedBudgets: data.approvedBudgets || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
-      budgetArray: data.annualBudgetArray,
+      budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
@@ -305,6 +305,8 @@ class AppComponent extends Component {
       isLinkedinAuto: !!data.linkedinapi,
       isTwitterAuto: !!data.twitterapi,
       googleSheetsAuto: data.googlesheetsapi,
+      isStripeAuto: !!data.stripeapi,
+      attribution: data.attribution || { events: [] }
     });
   }
 

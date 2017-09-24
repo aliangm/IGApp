@@ -5,10 +5,12 @@ import Select from 'components/controls/Select';
 import style from 'styles/onboarding/onboarding.css';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
+import CRMStyle from 'styles/indicators/crm-popup.css';
 
-export default class AutomaticIndicatorPopup extends Component {
+export default class GoogleAutomaticPopup extends Component {
 
   style = style;
+  styles = [CRMStyle];
 
   constructor(props) {
     super(props);
@@ -21,41 +23,13 @@ export default class AutomaticIndicatorPopup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hidden && this.props.hidden != nextProps.hidden) {
+  componentDidMount() {
       serverCommunication.serverRequest('get', 'googleapi')
         .then((response) => {
           if (response.ok) {
             response.json()
               .then((data) => {
-                const win = window.open(data);
-
-                const timer = setInterval(() => {
-                  if (win.closed) {
-                    clearInterval(timer);
-                    const code = localStorage.getItem('code');
-                    if (code) {
-                      localStorage.removeItem('code');
-                      this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}))
-                        .then((response) => {
-                          if (response.ok) {
-                            response.json()
-                              .then((data) => {
-                                this.setState({accounts: data.accounts, profiles: data.profiles});
-                              });
-                          }
-                          else if (response.status == 401) {
-                            history.push('/');
-                          }
-                        })
-                        .catch(function (err) {
-                          console.log(err);
-                        });
-                    }
-                  }
-                }, 1000);
-
+              this.setState({url: data});
               });
           }
           else if (response.status == 401) {
@@ -65,7 +39,6 @@ export default class AutomaticIndicatorPopup extends Component {
         .catch(function (err) {
           console.log(err);
         });
-    }
   }
 
   handleChangeAccount(event) {
@@ -74,6 +47,36 @@ export default class AutomaticIndicatorPopup extends Component {
 
   handleChangeProfile(event) {
     this.setState({selectedProfile: event.value});
+  }
+
+  getAuthorization() {
+    const win = window.open(this.state.url);
+
+    const timer = setInterval(() => {
+      if (win.closed) {
+        clearInterval(timer);
+        const code = localStorage.getItem('code');
+        if (code) {
+          localStorage.removeItem('code');
+          this.setState({code: code});
+          serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+            .then((response) => {
+              if (response.ok) {
+                response.json()
+                  .then((data) => {
+                    this.setState({accounts: data.accounts, profiles: data.profiles});
+                  });
+              }
+              else if (response.status == 401) {
+                history.push('/');
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+        }
+      }
+    }, 1000);
   }
 
   getUserData() {
@@ -121,7 +124,10 @@ export default class AutomaticIndicatorPopup extends Component {
         }
       }
     };
-    return <div hidden={ this.props.hidden }>
+    return <div style={{ width: '100%' }}>
+      { this.state.url ?
+        <div className={ CRMStyle.locals.googleAnalytics } onClick={ this.getAuthorization.bind(this) }/>
+        : null }
       {this.state.code ? <Page popup={ true } width={'340px'}>
           <div className={ this.classes.row }>
             <Select { ... selects.account } selected={ this.state.selectedAccount}

@@ -134,6 +134,7 @@
 @mixin icon-nodpi sidebar:planned-vs-actual, ../assets/sidebar-icons/planned-vs-actual;
 @mixin icon-nodpi sidebar:campaigns, ../assets/sidebar-icons/campaigns;
 @mixin icon-nodpi sidebar:analyze, ../assets/sidebar-icons/stock-data-analysis;
+@mixin icon-nodpi sidebar:attribution, ../assets/sidebar-icons/filter;
 
 .backface {
   position: fixed;

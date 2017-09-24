@@ -19,20 +19,22 @@ import PlannedVsActualstyle from 'styles/plan/planned-actual-tab.css';
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
+import ReasonPopup from 'components/ReasonPopup';
 import serverCommunication from 'data/serverCommunication';
 import ButtonWithSurePopup from 'components/pages/account/ButtonWithSurePopup';
 import AddMemberPopup from 'components/pages/account/AddMemberPopup';
+import Tabs from 'components/onboarding/Tabs';
+
 
 export default class Welcome extends Component {
   style = style;
-  styles = [welcomeStyle, PlannedVsActualstyle]
+  styles = [welcomeStyle, PlannedVsActualstyle];
 
   static defaultProps = {
     userAccount: {
       companyName: '',
       firstName: '',
       lastName: '',
-      teamSize: -1,
       companyWebsite: 'http://',
       competitorsWebsites: ['http://', 'http://', 'http://'],
       teamMembers: [],
@@ -106,7 +108,6 @@ export default class Welcome extends Component {
   }
 
   inviteMember(newMember) {
-    console.log(newMember);
     serverCommunication.serverRequest('PUT', 'members', JSON.stringify({newMember, admin: { name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName, company: this.props.userAccount.companyName }}))
       .then((response) => {
         if (response.ok) {
@@ -177,75 +178,98 @@ export default class Welcome extends Component {
       }
     };
     const title = isPopupMode() ? "Welcome! Let's get you started" : "Account";
+    const userAccount = <div>
+      <div className={ this.classes.row }>
+        <Label>First Name</Label>
+        <Textfield value={ this.props.userAccount.firstName } onChange={ this.handleChange.bind(this, 'firstName')}/>
+      </div>
+      <div className={ this.classes.row }>
+        <Label>Last Name</Label>
+        <Textfield value={ this.props.userAccount.lastName } onChange={ this.handleChange.bind(this, 'lastName')}/>
+      </div>
+      <div className={ this.classes.row }>
+        <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
+      </div>
+    </div>;
+    const companyAccount = <div>
+      <div className={ this.classes.row }>
+        <Label>Enter your brand/company name</Label>
+        <Textfield value={ this.props.userAccount.companyName } onChange={ this.handleChange.bind(this, 'companyName')}/>
+      </div>
+      <div className={ this.classes.row }>
+        <Label>Company Website</Label>
+        <Textfield value={ this.props.userAccount.companyWebsite } onChange={ this.handleChange.bind(this, 'companyWebsite')}/>
+      </div>
+      <div className={ this.classes.row }>
+        <Label>Team Members</Label>
+        <div className={ welcomeStyle.locals.innerBox }>
+          <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial', overflow: 'visible' }}>
+            <div className={ PlannedVsActualstyle.locals.box } style={{ overflow: 'visible' }}>
+              <table className={ PlannedVsActualstyle.locals.table }>
+                <thead>
+                { headRow }
+                </thead>
+                <tbody className={ PlannedVsActualstyle.locals.tableBody }>
+                { rows }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className={ welcomeStyle.locals.center }>
+            <Button
+              type="reverse"
+              style={{ width: '75px', marginTop: '20px' }}
+              onClick={ () => { this.setState({showAddMemberPopup: true}) } }>+Add
+            </Button>
+          </div>
+          <div className={ welcomeStyle.locals.inviteMessage }>
+            { this.state.inviteMessage }
+          </div>
+        </div>
+      </div>
+      <div className={ this.classes.row }>
+        <Label>Enter your main competitors' website (up to 3)</Label>
+        <Textfield value={ this.props.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
+                   onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
+        <Textfield value={ this.props.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
+                   onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 1)}/>
+        <Textfield value={ this.props.userAccount.competitorsWebsites[2] } style={{marginBottom: '16px'}}
+                   onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
+      </div>
+    </div>;
+
     return <div>
       <Page popup={ isPopupMode() }>
         <Title title={ title } subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
-        <div className={ this.classes.cols }>
-          <div className={ this.classes.colCenter } style={{ maxWidth: '707px' }}>
-            <div className={ this.classes.row }>
-              <Label>Enter your brand/company name</Label>
-              <Textfield value={ this.props.userAccount.companyName } onChange={ this.handleChange.bind(this, 'companyName')}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>Company Website</Label>
-              <Textfield value={ this.props.userAccount.companyWebsite } onChange={ this.handleChange.bind(this, 'companyWebsite')}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>First Name</Label>
-              <Textfield value={ this.props.userAccount.firstName } onChange={ this.handleChange.bind(this, 'firstName')}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>Last Name</Label>
-              <Textfield value={ this.props.userAccount.lastName } onChange={ this.handleChange.bind(this, 'lastName')}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>Marketing Team Size</Label>
-              <Textfield type="number" value={ this.props.userAccount.teamSize == -1 ? '' : this.props.userAccount.teamSize } onChange={ this.handleChangeNumber.bind(this, 'teamSize')} style={{width: '80px'}}/>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>Team Members</Label>
-              <div className={ welcomeStyle.locals.innerBox }>
-                <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial', overflow: 'visible' }}>
-                  <div className={ PlannedVsActualstyle.locals.box } style={{ overflow: 'visible' }}>
-                    <table className={ PlannedVsActualstyle.locals.table }>
-                      <thead>
-                      { headRow }
-                      </thead>
-                      <tbody className={ PlannedVsActualstyle.locals.tableBody }>
-                      { rows }
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className={ welcomeStyle.locals.center }>
-                  <Button
-                    type="reverse"
-                    style={{ width: '75px', marginTop: '20px' }}
-                    onClick={ () => { this.setState({showAddMemberPopup: true}) } }>+Add
-                  </Button>
-                </div>
-                <div className={ welcomeStyle.locals.inviteMessage }>
-                  { this.state.inviteMessage }
-                </div>
-              </div>
-            </div>
-            <div className={ this.classes.row }>
-              <Label>Enter your main competitors' website (up to 3)</Label>
-              <Textfield value={ this.props.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
-                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
-              <Textfield value={ this.props.userAccount.competitorsWebsites[1] } style={{marginBottom: '16px'}}
-                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 1)}/>
-              <Textfield value={ this.props.userAccount.competitorsWebsites[2] } style={{marginBottom: '16px'}}
-                         onChange={ this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
+        {isPopupMode() ?
+          <div className={ this.classes.cols }>
+            <div className={ this.classes.colCenter } style={{ maxWidth: '707px' }}>
+              {userAccount}
+              {companyAccount}
             </div>
           </div>
-        </div>
+          :
+          <Tabs
+            ref="tabs"
+            defaultSelected={ 0 }
+            defaultTabs={["Company Account", "User Account"]}
+          >
+            {({ name, index }) => {
+              return <div className={ this.classes.cols }>
+                <div className={ this.classes.colCenter } style={{ maxWidth: '707px' }}>
+                  { index ?
+                    userAccount
+                    :
+                    companyAccount
+                  }
+                </div>
+              </div>
+            }}
+          </Tabs>
+        }
 
         <div style={{
           height: '30px'
@@ -263,7 +287,12 @@ export default class Welcome extends Component {
                   history.push('/profile')
                 }
                 else {
-                  this.setState({createNewVisible: true});
+                  if (!this.props.userAccount.reasonForUse) {
+                    this.setState({showReasonPopup: true});
+                  }
+                  else {
+                    this.setState({createNewVisible: true});
+                  }
                 }
               }}>Skip this step</Button>
             </div>
@@ -276,7 +305,12 @@ export default class Welcome extends Component {
                       history.push('/profile')
                     }
                     else {
-                      this.setState({createNewVisible: true});
+                      if (!this.props.userAccount.reasonForUse) {
+                        this.setState({showReasonPopup: true});
+                      }
+                      else {
+                        this.setState({createNewVisible: true});
+                      }
                     }
                   });
               }}/>
@@ -299,6 +333,7 @@ export default class Welcome extends Component {
         }
       </Page>
       <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }} createUserMonthPlan={ this.props.createUserMonthPlan }/>
+      <ReasonPopup hidden={ !this.state.showReasonPopup } updateUserAccount={ this.props.updateUserAccount } userAccount={ this.props.userAccount } close={ ()=>{ this.setState({showReasonPopup: false, createNewVisible: true}) } }/>
       <AddMemberPopup hidden={ !this.state.showAddMemberPopup } close={ ()=>{ this.setState({showAddMemberPopup: false}) } } inviteMember={ this.inviteMember.bind(this) }/>
     </div>
   }

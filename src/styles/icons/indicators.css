@@ -28,6 +28,7 @@
 @mixin icon-nodpi indicator:sql, ../../assets/indicator-icons/SQL_indicator;
 @mixin icon-nodpi indicator:opps, ../../assets/indicator-icons/opps_indicator;
 @mixin icon-nodpi indicator:googleMentions, ../../assets/indicator-icons/google_mentions_indicator;
+@mixin icon-nodpi indicator:domainAuthority, ../../assets/indicator-icons/domain_authority_indicator;
 @mixin icon-nodpi indicator:sessions, ../../assets/indicator-icons/sessions_indicator;
 @mixin icon-nodpi indicator:averageSessionDuration, ../../assets/indicator-icons/average_sessions_duration_indicator;
 @mixin icon-nodpi indicator:bounceRate, ../../assets/indicator-icons/bounce_rate_indicator;

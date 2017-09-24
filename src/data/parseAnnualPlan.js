@@ -2,7 +2,7 @@ import schema from './channelsSchema';
 import _ from 'lodash';
 import channelDescriptions from 'data/channelDescriptions';
 
-export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
+export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels) {
   var sum = {};
   var returnObj = {};
   sum["__TOTAL__"] = { values : new Array(projectedPlan.length).fill(0) };
@@ -16,11 +16,11 @@ export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
         .split('/')
         .map(item => item.trim());
       var obj = {};
-      _.merge(returnObj, parseMonth(title, channels[channel], index, returnObj, sum["__TOTAL__"], channel, approvedPlan ? approvedPlan : new Array(projectedPlan.length).fill(null)));
+      _.merge(returnObj, parseMonth(title, channels[channel], index, returnObj, sum["__TOTAL__"], channel, approvedBudgets ? approvedBudgets : new Array(projectedPlan.length).fill(null)));
     });
   });
-  if (approvedPlan) {
-    approvedPlan.forEach((channels, month) => {
+  if (approvedBudgets) {
+    approvedBudgets.forEach((channels, month) => {
       if (channels) {
         Object.keys(channels).forEach((channel) => {
           if (channel != '_id') {
@@ -33,7 +33,7 @@ export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
       }
     });
   }
-  fillZeros(returnObj, approvedPlan ? approvedPlan : new Array(projectedPlan.length).fill(null), projectedPlan.length);
+  fillZeros(returnObj, approvedBudgets ? approvedBudgets : new Array(projectedPlan.length).fill(null), projectedPlan.length);
   if (unknownChannels && unknownChannels.length > 0) {
     parseUnknownChannels(returnObj, unknownChannels, projectedPlan.length);
   }
@@ -43,31 +43,31 @@ export function parseAnnualPlan(projectedPlan, approvedPlan, unknownChannels) {
   return retJson;
 }
 
-function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
+function parseMonth(title, budget, month, current, sum, channel, approvedBudgets){
   if (title.length == 1) {
     sum.values[month] += budget;
     if (current && current[title[0]]){
       for(var i=current[title[0]].values.length; i< month ; i++){
         current[title[0]].values.push(0);
-        current[title[0]].approvedValues[i] = approvedPlan[i] && approvedPlan[i][channel];
+        current[title[0]].approvedValues[i] = approvedBudgets[i] && approvedBudgets[i][channel];
       }
       current[title[0]].values.push(budget);
-      current[title[0]].approvedValues[month] = approvedPlan[month] && approvedPlan[month][channel];
+      current[title[0]].approvedValues[month] = approvedBudgets[month] && approvedBudgets[month][channel];
       return {};
     }
     else {
       var obj = {};
       obj[title[0]] = { values : [] };
-      obj[title[0]].approvedValues = new Array(approvedPlan.length).fill(null);
+      obj[title[0]].approvedValues = new Array(approvedBudgets.length).fill(null);
       for (var i = 0; i < month; i++) {
         obj[title[0]].values.push(0);
-        obj[title[0]].approvedValues[i] = approvedPlan[i] && approvedPlan[i][channel];
+        obj[title[0]].approvedValues[i] = approvedBudgets[i] && approvedBudgets[i][channel];
       }
       obj[title[0]].values.push(budget);
       obj[title[0]].icon = "plan:" + title[0];
       obj[title[0]].channel = channel;
       obj[title[0]].info = channelDescriptions[channel];
-      obj[title[0]].approvedValues[month] = approvedPlan[month] && approvedPlan[month][channel];
+      obj[title[0]].approvedValues[month] = approvedBudgets[month] && approvedBudgets[month][channel];
       return obj;
     }
   }
@@ -83,12 +83,12 @@ function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
         current[title[0]].values.push(budget);
       }
       var obj = {};
-      obj[title[0]] = {children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, sum, channel, approvedPlan)};
+      obj[title[0]] = {children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, sum, channel, approvedBudgets)};
       return obj;
     }
     else {
       var obj = {};
-      obj[title[0]] = {values: [], children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, sum, channel, approvedPlan)};
+      obj[title[0]] = {values: [], children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, sum, channel, approvedBudgets)};
       for (var i = 0; i < month; i++) {
         obj[title[0]].values.push(0);
       }
@@ -101,7 +101,7 @@ function parseMonth(title, budget, month, current, sum, channel, approvedPlan){
   }
 }
 
-function fillZeros(json, approvedPlan, length){
+function fillZeros(json, approvedBudgets, length){
   Object.keys(json).forEach((key) => {
     if (json[key].values) {
       if (json[key].values.length < length) {
@@ -109,14 +109,14 @@ function fillZeros(json, approvedPlan, length){
           if (json[key].values[i] === undefined) {
             json[key].values.push(0);
             if (json[key].channel) {
-              json[key].approvedValues[i] = approvedPlan[i] && approvedPlan[i][json[key].channel];
+              json[key].approvedValues[i] = approvedBudgets[i] && approvedBudgets[i][json[key].channel];
             }
           }
         }
       }
     }
     if (json[key].children) {
-      fillZeros(json[key].children, approvedPlan, length);
+      fillZeros(json[key].children, approvedBudgets, length);
     }
   })
 }

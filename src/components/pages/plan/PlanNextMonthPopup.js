@@ -21,11 +21,7 @@ export default class PlanNextMonthPopup extends Component {
         Are you sure?
       </div>
 
-      <div className={ $.choose }>
-        Are you sure you want to optimize your plan for next month? Please do it only after the 20th of the current month (DON’T do it between the 1st and 19th of the current month). This action will overwrite your current plan and move you to the next month so that you can plan ahead.
-      </div>
-
-      <div className={ $.nav }>
+      <div className={ $.nav } style={{ marginTop: '25px' }}>
         <Button type="normal-accent" style={{
           width: '100px',
           marginRight: '20px'

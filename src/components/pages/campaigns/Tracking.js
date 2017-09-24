@@ -41,45 +41,51 @@ export default class Tracking extends Component {
     this.props.updateState({campaign: update});
   }
 
-  generateLink() {
+  generateLinks() {
     let update = Object.assign({}, this.props.campaign);
-    const url = this.props.campaign.tracking.isHttp ? 'http://' : 'https://' +
-      this.props.campaign.tracking.baseUrl +
-      '/?utm_source=' + this.refs.source.props.value +
-      '&utm_medium=' + this.refs.medium.props.value +
-      '&utm_campaign=' + this.props.campaign.name;
-    fetch('https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDEoi0JNfWmDlnN8swZz_tZc3Vu14yV0rw', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({longUrl: encodeURI(url)})
-    })
-      .then((response) => {
-        response.json()
-          .then((data) => {
-            if (data) {
-              update.tracking.trackingUrl = data.longUrl;
-              update.tracking.shortenedTrackingUrl = data.id;
-              this.props.updateState({campaign: update, unsaved: false});
-              this.props.updateCampaign(update);
-            }
-          })
+    update.tracking.urls = [];
+    update.source.forEach((source, index) => {
+      const url = (update.tracking.isHttp ? 'http://' : 'https://') +
+        update.tracking.baseUrl +
+        '/?utm_source=' + this.refs["source" + index].props.value +
+        '&utm_medium=' + this.refs["medium" + index].props.value +
+        '&utm_campaign=' + update.name;
+      fetch('https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDEoi0JNfWmDlnN8swZz_tZc3Vu14yV0rw', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({longUrl: encodeURI(url)})
       })
-      .catch((error) => {
-        console.log(error);
-      });
-
+        .then((response) => {
+          response.json()
+            .then((data) => {
+              if (data) {
+                update.tracking.urls.splice(index, 0, {
+                  long: data.longUrl,
+                  short: data.id
+                });
+                if (update.tracking.urls.length === update.source.length) {
+                  this.props.updateState({campaign: update, unsaved: false});
+                  this.props.updateCampaign(update);
+                }
+              }
+            })
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })
   }
 
   handleFocus(event) {
     event.target.select();
   }
 
-  copy(param) {
+  copy(value) {
     this.setState({copied: ''});
-    copy(this.props.campaign.tracking[param]);
-    this.setState({copied: param});
+    copy(value);
+    this.setState({copied: value});
   }
 
   render() {
@@ -257,16 +263,51 @@ export default class Tracking extends Component {
         }
       },
     };
-    let source = this.props.campaign.source;
-    let medium = 'Other';
-    const value = selects.source.select.options
-      .find(item => item.value === this.props.campaign.source);
-    if (value) {
-      const title = value.label;
-      const titleArray = title.split('/');
-      source = titleArray[titleArray.length -1].trim();
-      medium = titleArray[titleArray.length -2].trim();
-    }
+    const sources = this.props.campaign.source.map((source, index) => {
+      let medium = 'Other';
+      const value = selects.source.select.options
+        .find(item => item.value === source);
+      if (value) {
+        const title = value.label;
+        const titleArray = title.split('/');
+        source = titleArray[titleArray.length -1].trim();
+        medium = titleArray[titleArray.length -2].trim();
+      }
+      return <div key={index}>
+        <div className={ this.classes.row }>
+          <Label>{"Source " + (index+1)}</Label>
+          <Textfield value={ source } readOnly={true} ref={"source" + index}/>
+        </div>
+        <div className={ this.classes.row }>
+          <Label>{"Medium " + (index+1)}</Label>
+          <Textfield value={ medium } readOnly={true} ref={"medium" + index}/>
+        </div>
+      </div>
+    });
+
+    const tracking = this.props.campaign.tracking.urls ?
+      this.props.campaign.tracking.urls.map((url, index) => {
+        return <div className={trackingStyle.locals.urls } key={index}>
+          <div className={ trackingStyle.locals.urlLine }>
+            <Label className={ trackingStyle.locals.urlTitle }>{"Full Tracking URL" + (index+1)}</Label>
+            <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ url.long } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
+            <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.long) }/>
+            <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== url.long }>
+              Copied!
+            </div>
+          </div>
+          <div className={ trackingStyle.locals.urlLine }>
+            <Label className={ trackingStyle.locals.urlTitle }>{"Shortened Tracking URL" + (index+1)}</Label>
+            <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ url.short } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
+            <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.short) }/>
+            <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== url.short }>
+              Copied!
+            </div>
+          </div>
+        </div>
+      })
+      : null;
+
     return <div>
       <div className={ trackingStyle.locals.baseUrl }>
         <div className={ trackingStyle.locals.protocolBox } onClick={ this.toggleProtocol.bind(this) }>
@@ -282,40 +323,16 @@ export default class Tracking extends Component {
         <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>UTMs</Label>
       </div>
       <div className={ this.classes.row }>
-        <Label>Source</Label>
-        <Textfield value={ source } readOnly={true} ref="source"/>
-      </div>
-      <div className={ this.classes.row }>
-        <Label>Medium</Label>
-        <Textfield value={ medium } readOnly={true} ref="medium"/>
-      </div>
-      <div className={ this.classes.row }>
         <Label>Campaign</Label>
         <Textfield value={ this.props.campaign.name } readOnly={true}/>
       </div>
+      { sources }
       <div className={ trackingStyle.locals.rowCenter }>
-        <Button type="accent2" style={{ width: '170px' }} onClick={ this.generateLink.bind(this) }>
-          Generate link
+        <Button type="accent2" style={{ width: '170px' }} onClick={ this.generateLinks.bind(this) }>
+          Generate links
         </Button>
       </div>
-      <div className={trackingStyle.locals.urls }>
-        <div className={ trackingStyle.locals.urlLine }>
-          <Label className={ trackingStyle.locals.urlTitle }>Full Tracking URL</Label>
-          <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ this.props.campaign.tracking.trackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
-          <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, 'trackingUrl') }/>
-          <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== 'trackingUrl' }>
-            Copied!
-          </div>
-        </div>
-        <div className={ trackingStyle.locals.urlLine }>
-          <Label className={ trackingStyle.locals.urlTitle }>Shortened Tracking URL</Label>
-          <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '469px' }} value={ this.props.campaign.tracking.shortenedTrackingUrl } readOnly={true} onFocus={ this.handleFocus.bind(this) }/>
-          <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, 'shortenedTrackingUrl') }/>
-          <div className={ trackingStyle.locals.copyMessage } hidden={ this.state.copied !== 'shortenedTrackingUrl' }>
-            Copied!
-          </div>
-        </div>
-      </div>
+      {tracking}
     </div>
   }
 

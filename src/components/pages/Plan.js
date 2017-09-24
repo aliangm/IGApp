@@ -32,7 +32,7 @@ export default class Plan extends Component {
     this.approveAllBudgets = this.approveAllBudgets.bind(this);
     this.popup = this.popup.bind(this);
     this.state = {
-      selectedTab: 0,
+      selectedTab: 1,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
       approveAll: this.approveAllBudgets.bind(this)
@@ -57,7 +57,7 @@ export default class Plan extends Component {
 
   approveAllBudgets() {
     const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    return this.props.updateUserMonthPlan({approvedPlan: projectedBudgets}, this.props.region, this.props.planDate);
+    return this.props.updateUserMonthPlan({approvedBudgets: projectedBudgets}, this.props.region, this.props.planDate);
   }
 
   popup() {
@@ -82,13 +82,12 @@ export default class Plan extends Component {
                   this.setState({isPlannerLoading: false, isError: true});
                 }
                 else {
-                  this.props.setDataAsState(data);
                   this.setState({
                     isPlannerLoading: false,
                     isError: false
                   });
                   if (callback) {
-                    callback();
+                    callback(data);
                   }
                 }
               }
@@ -140,7 +139,7 @@ export default class Plan extends Component {
           <div className={this.classes.headPlan } >
             <ReplanButton numberOfPlanUpdates={ this.props.numberOfPlanUpdates } onClick={ this.popup }/>
             <Popup style={{
-              width: '400px',
+              width: '265px',
               top: '180%',
               transform: 'translate(0, -50%)'
             }} hidden={ !this.state.popup } onClose={() => {
@@ -148,7 +147,7 @@ export default class Plan extends Component {
                 popup: false
               });
             }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, false, this.props.region) } onBack={() => {
+              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, (data) => {this.props.setDataAsState(data)}, this.props.region) } onBack={() => {
                 this.setState({
                   popup: false
                 })}} />

@@ -1,8 +1,6 @@
 .wrap {
-    margin: 0 25px;
-    padding: 0 6px;
-    overflow-x: auto;
     position: relative;
+    max-width: 1096px;
 }
 
 .box {
@@ -430,6 +428,6 @@
 }
 
 .indicators-graph {
-    margin: 20px 62px 0;
+    margin-top: 20px;
     width: 1166px;
 }

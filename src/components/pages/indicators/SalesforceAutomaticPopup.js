@@ -8,11 +8,12 @@ import serverCommunication from 'data/serverCommunication';
 import Label from 'components/ControlsLabel';
 import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
+import CRMStyle from 'styles/indicators/crm-popup.css';
 
 export default class SalesforceAutomaticPopup extends Component {
 
   style = style;
-  styles = [salesForceStyle];
+  styles = [salesForceStyle, CRMStyle];
 
   constructor(props) {
     super(props);
@@ -21,6 +22,7 @@ export default class SalesforceAutomaticPopup extends Component {
       stages: [],
       owners: [],
       code: null,
+      hidden: true,
       mapping: {
         MCL: [],
         MQL: [],
@@ -42,51 +44,51 @@ export default class SalesforceAutomaticPopup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hidden && this.props.hidden != nextProps.hidden) {
-      serverCommunication.serverRequest('get', 'salesforceapi')
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                const win = window.open(data);
+  componentDidMount() {
+    serverCommunication.serverRequest('get', 'salesforceapi')
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setState({url: data});
+            });
+        }
+        else if (response.status == 401) {
+          history.push('/');
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }
 
-                const timer = setInterval(() => {
-                  if (win.closed) {
-                    clearInterval(timer);
-                    const code = localStorage.getItem('code');
-                    if (code) {
-                      localStorage.removeItem('code');
-                      this.setState({code: code});
-                      serverCommunication.serverRequest('post', 'salesforceapi', JSON.stringify({code: code}))
-                        .then((response) => {
-                          if (response.ok) {
-                            response.json()
-                              .then((data) => {
-                                this.setState({statuses: data.statuses, stages: data.stages, owners: data.owners});
-                              });
-                          }
-                          else if (response.status == 401) {
-                            history.push('/');
-                          }
-                        })
-                        .catch(function (err) {
-                          console.log(err);
-                        });
-                    }
-                  }
-                }, 1000);
-
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-    }
+  getAuthorization() {
+    const win = window.open(this.state.url);
+    const timer = setInterval(() => {
+      if (win.closed) {
+        clearInterval(timer);
+        const code = localStorage.getItem('code');
+        if (code) {
+          localStorage.removeItem('code');
+          this.setState({code: code, hidden: false});
+          serverCommunication.serverRequest('post', 'salesforceapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+            .then((response) => {
+              if (response.ok) {
+                response.json()
+                  .then((data) => {
+                    this.setState({statuses: data.statuses, stages: data.stages, owners: data.owners});
+                  });
+              }
+              else if (response.status == 401) {
+                history.push('/');
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+            });
+        }
+      }
+    }, 1000);
   }
 
   getUserData() {
@@ -96,7 +98,7 @@ export default class SalesforceAutomaticPopup extends Component {
           response.json()
             .then((data) => {
               this.props.setDataAsState(data);
-              this.props.close();
+              this.close();
             });
         }
         else if (response.status == 401) {
@@ -125,6 +127,11 @@ export default class SalesforceAutomaticPopup extends Component {
       return obj.value;
     });
     this.setState({mapping: mapping});
+  }
+
+  close() {
+    this.setState({hidden: true});
+    this.props.close();
   }
 
   render(){
@@ -157,8 +164,11 @@ export default class SalesforceAutomaticPopup extends Component {
         }
       }
     };
-    return <div hidden={ this.props.hidden }>
-      {this.state.code ?
+    return <div style={{ width: '100%' }}>
+      { this.state.url ?
+        <div className={ CRMStyle.locals.salesforce } onClick={ this.getAuthorization.bind(this) }/>
+        : null }
+      <div hidden={this.state.hidden}>
         <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
           <Title title="SalesForce"
                  subTitle="Define your pipeline stages"/>
@@ -233,14 +243,14 @@ export default class SalesforceAutomaticPopup extends Component {
           </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>
-              <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+              <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
             </div>
             <div className={ this.classes.footerRight }>
               <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
             </div>
           </div>
         </Page>
-        : null }
+      </div>
     </div>
   }
 

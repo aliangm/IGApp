@@ -33,8 +33,10 @@ export default class AnnualTab extends Component {
 
   static defaultProps = {
     projectedPlan: [],
-    approvedPlan: [],
-    actualIndicators: {}
+    approvedBudgets: [],
+    actualIndicators: {},
+    planDate: '',
+    events: []
   };
 
   constructor(props) {
@@ -164,7 +166,8 @@ export default class AnnualTab extends Component {
   }
 
   whatIfCommit = () => {
-    let callback = () => {
+    let callback = (data) => {
+      this.props.setDataAsState(data);
       this.refs.whatIfPopup.close();
       this.setState({whatIfSelected: false, isTemp: false});
     }
@@ -172,7 +175,8 @@ export default class AnnualTab extends Component {
   }
 
   whatIfTry = () => {
-    let callback = () => {
+    let callback = (data) => {
+      this.props.setDataAsState(data);
       this.refs.whatIfPopup.open();
       this.setState({whatIfSelected: true, isTemp: true});
     }
@@ -216,7 +220,7 @@ export default class AnnualTab extends Component {
         </div>
         <div className={ this.classes.right }>
           <Textfield
-            value={"$" + (this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+            value={"$" + (this.state.budgetArrayField && this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
             onChange={ this.handleChangeBudgetArray.bind(this, index) } style={{
             width: '110px'
           }}/>
@@ -246,11 +250,11 @@ export default class AnnualTab extends Component {
   }
 
   approveChannel(month, channel, budget){
-    let approvedPlan = this.props.approvedPlan;
-    let approvedMonth = this.props.approvedPlan[month] || {};
+    let approvedBudgets = this.props.approvedBudgets;
+    let approvedMonth = this.props.approvedBudgets[month] || {};
     approvedMonth[channel] = parseInt(budget.replace(/[-$,]/g, ''));
-    approvedPlan[month] = approvedMonth;
-    this.props.updateUserMonthPlan({approvedPlan: approvedPlan}, this.props.region, this.props.planDate);
+    approvedBudgets[month] = approvedMonth;
+    this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate);
   }
 
   declineChannel(month, channel, budget){
@@ -267,17 +271,17 @@ export default class AnnualTab extends Component {
 
   addChannel() {
     let projectedPlan = this.props.projectedPlan;
-    let approvedPlan = this.props.approvedPlan;
+    let approvedBudgets = this.props.approvedBudgets;
     for (let i = 0; i < 12; i++) {
-      if (!approvedPlan[i]) {
-        approvedPlan[i] = {};
+      if (!approvedBudgets[i]) {
+        approvedBudgets[i] = {};
       }
       projectedPlan[i].plannedChannelBudgets[this.state.newChannel] = 0;
-      approvedPlan[i][this.state.newChannel] = 0;
+      approvedBudgets[i][this.state.newChannel] = 0;
     }
     this.props.updateUserMonthPlan({
       projectedPlan: projectedPlan,
-      approvedPlan: approvedPlan
+      approvedBudgets: approvedBudgets
     }, this.props.region, this.props.planDate);
     this.setState({channelAddedSuccessfully: true});
   }
@@ -309,18 +313,19 @@ export default class AnnualTab extends Component {
     }
     else {
       let projectedPlan = this.props.projectedPlan;
-      let approvedPlan = this.props.approvedPlan;
+      let approvedBudgets = this.props.approvedBudgets;
       projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
-      if (!approvedPlan[i]) {
-        approvedPlan[i] = {};
+      if (!approvedBudgets[i]) {
+        approvedBudgets[i] = {};
       }
-      approvedPlan[i][channel] = value;
-      this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan});
+      approvedBudgets[i][channel] = value;
+      this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets});
     }
   }
 
   editUpdate() {
-    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedPlan: this.props.approvedPlan, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
+    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
+    this.forecast();
   }
 
   dragStart(value) {
@@ -331,20 +336,20 @@ export default class AnnualTab extends Component {
     let value = parseInt(this.state.draggableValue.replace(/[-$,]/g, ''));
     let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
-    let approvedPlan = this.props.approvedPlan;
+    let approvedBudgets = this.props.approvedBudgets;
     this.state.draggableValues.forEach(cell => {
       if (planUnknownChannels.length > 0 && planUnknownChannels[cell.i][cell.channel] !== undefined) {
         planUnknownChannels[cell.i][cell.channel] = value || 0;
       }
       else {
         projectedPlan[cell.i].plannedChannelBudgets[cell.channel] = value || 0;
-        if (!approvedPlan[cell.i]) {
-          approvedPlan[cell.i] = {};
+        if (!approvedBudgets[cell.i]) {
+          approvedBudgets[cell.i] = {};
         }
-        approvedPlan[cell.i][cell.channel] = value;
+        approvedBudgets[cell.i][cell.channel] = value;
       }
     });
-    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan, planUnknownChannels: planUnknownChannels});
+    this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
     this.setState({isDragging: false, draggableValues: []});
   }
 
@@ -358,19 +363,32 @@ export default class AnnualTab extends Component {
     event.preventDefault();
     let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
-    let approvedPlan = this.props.approvedPlan;
+    let approvedBudgets = this.props.approvedBudgets;
     for (let i=0; i<12; i++) {
       if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
         delete planUnknownChannels[i][channel];
       }
       else {
         delete projectedPlan[i].plannedChannelBudgets[channel];
-        if (approvedPlan[i]) {
-          delete approvedPlan[i][channel];
+        if (approvedBudgets[i]) {
+          delete approvedBudgets[i][channel];
         }
       }
     }
-    this.props.updateState({projectedPlan: projectedPlan, approvedPlan: approvedPlan, planUnknownChannels: planUnknownChannels});
+    this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
+  }
+
+  forecast() {
+    const callback = (data) => {
+      // PATCH
+      // Update user month plan projected indicators using another request
+      const projectedPlan = this.props.projectedPlan;
+      projectedPlan.forEach((month, index) => {
+        month.projectedIndicatorValues = data.projectedPlan[index].projectedIndicatorValues;
+      });
+      this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
+    };
+    this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region);
   }
 
   render() {
@@ -594,7 +612,7 @@ export default class AnnualTab extends Component {
           label: 'Other?', value: 'OTHER'
         }
       ];
-      const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedPlan, this.props.planUnknownChannels);
+      const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
       budget = Math.ceil(budget/1000)*1000;
@@ -727,7 +745,7 @@ export default class AnnualTab extends Component {
             exist = true;
           }
         });
-        this.props.approvedPlan.forEach((month)=>{
+        this.props.approvedBudgets.forEach((month)=>{
           if (month && Object.keys(month).includes(value)) {
             exist = true;
           }
@@ -756,7 +774,7 @@ export default class AnnualTab extends Component {
 
       return <div>
         <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
-          <div className={ planStyles.locals.title }>
+          <div className={ planStyles.locals.title } style={{ padding: '0' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ planStyles.locals.titleText }>
                 Annual Budget
@@ -774,6 +792,10 @@ export default class AnnualTab extends Component {
               }}>
                 Approve All
               </Button>
+              <Button type="reverse" style={{
+                marginLeft: '15px',
+                width: '102px'
+              }} onClick={ this.forecast.bind(this) }>Forecast</Button>
               <Button type="normalAccent" style={{
                 marginLeft: '15px',
                 width: '102px'
@@ -873,7 +895,7 @@ export default class AnnualTab extends Component {
               </div>
             </div>
           </div>
-          <div className={ planStyles.locals.title } style={{ height: '40px' }}>
+          <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ this.classes.titleBudget }>
                 Budget left to plan

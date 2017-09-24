@@ -12,6 +12,7 @@ import Indicators from './components/pages/Indicators';
 import Manual from './components/pages/Manual';
 import SignIn from './components/pages/SignIn';
 import Campaigns from './components/pages/Campaigns';
+import Attribution from './components/pages/Attribution';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
 import Analyze from './components/pages/Analyze';
@@ -52,6 +53,7 @@ ReactDOM.render(
       <Route path="/plan" component={ Plan } onEnter={ requireAdminAuth }/>
       <Route path="/analyze" component={ Analyze } onEnter={ requireAdminAuth }/>
       <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
+      <Route path="/attribution" component={ Attribution } onEnter={ requireAuth }/>
     </Route>
   </Router>,
   // <Profile />,
