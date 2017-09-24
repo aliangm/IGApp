@@ -298,7 +298,7 @@ module.exports = [
   {
     "eventName": "National Church IT Network",
     "link": "http://www.churchitnetwork.com/events/127",
-    "startDate": "9/10/2018",
+    "startDate": "9/10/2017",
     "location": "Dallas, USA",
     "vertical": "IT",
     "companyType": ""
