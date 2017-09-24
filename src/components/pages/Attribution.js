@@ -34,7 +34,7 @@ export default class Attribution extends Component {
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
-          <div className={ this.classes.headTitle }>Attribution</div>
+          <div className={ this.classes.headTitle }>Attribution - Coming soon</div>
           <div className={ this.classes.headTabs }>
             {
               tabNames.map((name, i) => {
