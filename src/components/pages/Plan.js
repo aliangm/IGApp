@@ -17,13 +17,24 @@ import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
 import events from 'data/events';
 
+function formatDate(dateStr) {
+  if (dateStr) {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [monthNum, yearNum] = dateStr.split("/");
+
+    return `${monthNames[monthNum - 1]}/${yearNum.substr(2,2)}`;
+  }
+  else return null;
+}
+
 export default class Plan extends Component {
   style = style;
 
   static defaultProps = {
     userProfile: {},
     targetAudience: {},
-    projectedPlan: []
+    projectedPlan: [],
+    planDate: ''
   };
 
   constructor(props) {
@@ -122,12 +133,12 @@ export default class Plan extends Component {
   }
 
   render() {
-    const tabs = {
-      "Current": CurrentTab,
-      "Annual": AnnualTab,
-      "Forecasting": ProjectionsTab,
-      "Planned VS Actual": PlannedVsActual
-    };
+    let tabs = {};
+    let planDate = formatDate(this.props.planDate);
+    tabs[planDate] = CurrentTab;
+    tabs["Annual"] = AnnualTab;
+    tabs["Forecasting"] = ProjectionsTab;
+    tabs["Planned VS Actual"] = PlannedVsActual;
 
     const tabNames = Object.keys(tabs);
     const selectedName = tabNames[this.state.selectedTab];
