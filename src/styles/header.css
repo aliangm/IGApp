@@ -212,7 +212,7 @@
   display: none;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1280px) {
   .logo {
     background-size: 62px auto;
     /*width: 100px;*/
