@@ -124,7 +124,7 @@ export default class Campaigns extends Component {
 
     processedChannels.names.forEach((channel) => {
       if (channelsSchema.properties[channel]) {
-        processedChannels.titles[channel] = channelsSchema.properties[channel].title;
+        processedChannels.titles[channel] = channelsSchema.properties[channel].nickname;
         let channelHierarchy = channelsSchema.properties[channel].title.split('/').map(item => item.trim());
         processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
       }
