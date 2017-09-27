@@ -52,9 +52,13 @@ export default class Plan extends Component {
 
   componentDidMount() {
     this.getRelevantEvents(this.props);
+    let callback = (data) => {
+      this.props.setDataAsState(data);
+      this.approveAllBudgets();
+    };
     if (isPopupMode()) {
       disablePopupMode();
-      this.plan(true, null, this.approveAllBudgets, localStorage.getItem('region'));
+      this.plan(true, null, callback, localStorage.getItem('region'));
     }
   }
 
