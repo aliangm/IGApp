@@ -114,7 +114,9 @@ export default class Welcome extends Component {
           this.setState({inviteMessage: 'user has been invited successfully!', showAddMemberPopup: false});
           response.json()
             .then((data) => {
-              this.props.updateState({unsaved:false, teamMembers: data.teamMembers, userAccount: data});
+              const userAccount = this.props.userAccount;
+              userAccount.teamMembers = data.teamMembers;
+              this.props.updateState({unsaved:false, teamMembers: data.teamMembers, userAccount: userAccount});
             })
         }
         else {
