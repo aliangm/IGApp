@@ -2,7 +2,7 @@ module.exports = [
   {
     "eventName": "Internet of things world",
     "link": "https://tmt.knect365.com/iot-world/",
-    "startDate": "14/5/2018",
+    "startDate": "14/05/2018",
     "location": "CA, USA",
     "vertical": "Security",
     "companyType": ""
@@ -26,7 +26,7 @@ module.exports = [
   {
     "eventName": "IOT TECHEXPO Global ",
     "link": "https://www.iottechexpo.com/global/",
-    "startDate": "18/4/2018",
+    "startDate": "18/04/2018",
     "location": "London, UK",
     "vertical": "Security",
     "companyType": ""
@@ -34,7 +34,7 @@ module.exports = [
   {
     "eventName": "Security of things world",
     "link": "http://securityofthingsworld.com/en/",
-    "startDate": "2/7/2018",
+    "startDate": "2/07/2018",
     "location": "Berlin, Germany",
     "vertical": "Security",
     "companyType": ""
@@ -82,7 +82,7 @@ module.exports = [
   {
     "eventName": "IET - Cybersecurity of the IOT",
     "link": "http://events.theiet.org/petras/about.cfm",
-    "startDate": "28/3/2018",
+    "startDate": "28/03/2018",
     "location": "London, UK",
     "vertical": "Security",
     "companyType": ""
@@ -90,7 +90,7 @@ module.exports = [
   {
     "eventName": "Gartner - Data and analytics summit",
     "link": "http://www.gartner.com/events/apac/data-analytics#",
-    "startDate": "26/2/2018",
+    "startDate": "26/02/2018",
     "location": "Sydney, Ausralia",
     "vertical": "Security",
     "companyType": ""
@@ -106,7 +106,7 @@ module.exports = [
   {
     "eventName": "Cyber security for critical assets",
     "link": "https://www.cs4ca.com/usa/",
-    "startDate": "6/3/2018",
+    "startDate": "6/03/2018",
     "location": "Houston, USA",
     "vertical": "Security",
     "companyType": ""
@@ -114,7 +114,7 @@ module.exports = [
   {
     "eventName": "e - Crime & Cyber security ",
     "link": "http://www.e-crimecongress.org/event/congress",
-    "startDate": "6/3/2018",
+    "startDate": "6/03/2018",
     "location": "London, UK",
     "vertical": "Security",
     "companyType": ""
@@ -138,7 +138,7 @@ module.exports = [
   {
     "eventName": "RSA Conference 2018",
     "link": "https://www.rsaconference.com/events/us18",
-    "startDate": "16/4/2018",
+    "startDate": "16/04/2018",
     "location": "CA, USA",
     "vertical": "Security",
     "companyType": ""
@@ -146,7 +146,7 @@ module.exports = [
   {
     "eventName": "Interop ITX",
     "link": "http://reg.interop.com/prereg_2018/?_mc=we_x_x_le_tsnr_intplv_x_x-homepage&amp;kcode=homepage",
-    "startDate": "30/4/2018",
+    "startDate": "30/04/2018",
     "location": "Las vegas, USA",
     "vertical": "Security",
     "companyType": ""
@@ -154,7 +154,7 @@ module.exports = [
   {
     "eventName": "InfoSecurity",
     "link": "http://www.infosecurityeurope.com/",
-    "startDate": "5/6/2018",
+    "startDate": "5/06/2018",
     "location": "London, UK",
     "vertical": "Security",
     "companyType": ""
@@ -162,7 +162,7 @@ module.exports = [
   {
     "eventName": "FloCon - Use data to defend",
     "link": "https://resources.sei.cmu.edu/news-events/events/flocon/index.cfm",
-    "startDate": "8/1/2018",
+    "startDate": "8/01/2018",
     "location": "Tucson, AZ",
     "vertical": "Security",
     "companyType": ""
@@ -170,7 +170,7 @@ module.exports = [
   {
     "eventName": "Internet of things world",
     "link": "https://tmt.knect365.com/iot-world/",
-    "startDate": "14/5/2018",
+    "startDate": "14/05/2018",
     "location": "CA, USA",
     "vertical": "IT",
     "companyType": ""
@@ -194,7 +194,7 @@ module.exports = [
   {
     "eventName": "IOT TECHEXPO Global ",
     "link": "https://www.iottechexpo.com/global/",
-    "startDate": "18/4/2018",
+    "startDate": "18/04/2018",
     "location": "London, UK",
     "vertical": "IT",
     "companyType": ""
@@ -202,7 +202,7 @@ module.exports = [
   {
     "eventName": "Security of things world",
     "link": "http://securityofthingsworld.com/en/",
-    "startDate": "2/7/2018",
+    "startDate": "2/07/2018",
     "location": "Berlin, Germany",
     "vertical": "IT",
     "companyType": ""
@@ -250,7 +250,7 @@ module.exports = [
   {
     "eventName": "IET - Cybersecurity of the IOT",
     "link": "http://events.theiet.org/petras/about.cfm",
-    "startDate": "28/3/2018",
+    "startDate": "28/03/2018",
     "location": "London, UK",
     "vertical": "IT",
     "companyType": ""
@@ -258,7 +258,7 @@ module.exports = [
   {
     "eventName": "Gartner - Data and analytics summit",
     "link": "http://www.gartner.com/events/apac/data-analytics#",
-    "startDate": "26/2/2018",
+    "startDate": "26/02/2018",
     "location": "Sydney, Ausralia",
     "vertical": "IT",
     "companyType": ""
@@ -274,7 +274,7 @@ module.exports = [
   {
     "eventName": "Cyber security for critical assets",
     "link": "https://www.cs4ca.com/usa/",
-    "startDate": "6/3/2018",
+    "startDate": "6/03/2018",
     "location": "Houston, USA",
     "vertical": "IT",
     "companyType": ""
@@ -282,7 +282,7 @@ module.exports = [
   {
     "eventName": "e - Crime & Cyber security ",
     "link": "http://www.e-crimecongress.org/event/congress",
-    "startDate": "6/3/2018",
+    "startDate": "6/03/2018",
     "location": "London, UK",
     "vertical": "IT",
     "companyType": ""
@@ -306,7 +306,7 @@ module.exports = [
   {
     "eventName": "RSA Conference 2018",
     "link": "https://www.rsaconference.com/events/us18",
-    "startDate": "16/4/2018",
+    "startDate": "16/04/2018",
     "location": "CA, USA",
     "vertical": "IT",
     "companyType": ""
@@ -314,7 +314,7 @@ module.exports = [
   {
     "eventName": "Interop ITX",
     "link": "http://reg.interop.com/prereg_2018/?_mc=we_x_x_le_tsnr_intplv_x_x-homepage&amp;kcode=homepage",
-    "startDate": "30/4/2018",
+    "startDate": "30/04/2018",
     "location": "Las vegas, USA",
     "vertical": "IT",
     "companyType": ""
@@ -322,7 +322,7 @@ module.exports = [
   {
     "eventName": "InfoSecurity",
     "link": "http://www.infosecurityeurope.com/",
-    "startDate": "5/6/2018",
+    "startDate": "5/06/2018",
     "location": "London, UK",
     "vertical": "IT",
     "companyType": ""
@@ -330,7 +330,7 @@ module.exports = [
   {
     "eventName": "FloCon - Use data to defend",
     "link": "https://resources.sei.cmu.edu/news-events/events/flocon/index.cfm",
-    "startDate": "8/1/2018",
+    "startDate": "8/01/2018",
     "location": "Tucson, AZ",
     "vertical": "IT",
     "companyType": ""
