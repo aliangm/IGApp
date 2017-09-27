@@ -32,10 +32,12 @@ export default class CampaignPopup extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      visible: nextProps.visible || false,
-      campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,nextProps.campaign),
-    });
+    if (this.props !== nextProps) {
+      this.setState({
+        visible: nextProps.visible || false,
+        campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign),
+      });
+    }
   }
 
   static defaultProps = {
