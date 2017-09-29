@@ -25,19 +25,27 @@ import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import { formatChannels } from 'components/utils/channels';
+import buttonsStyle from 'styles/onboarding/buttons.css';
 
 export default class AnnualTab extends Component {
-  styles = [planStyles, icons, popupStyle];
+  styles = [planStyles, icons, popupStyle, buttonsStyle];
   style = style;
 
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
+  monthNames = [
+    "Jan", "Feb", "Mar",
+    "Apr", "May", "Jun", "Jul",
+    "Aug", "Sep", "Oct",
+    "Nov", "Dec"
+  ];
 
   static defaultProps = {
     projectedPlan: [],
     approvedBudgets: [],
     actualIndicators: {},
     planDate: '',
-    events: []
+    events: [],
+    objectives: []
   };
 
   constructor(props) {
@@ -87,18 +95,12 @@ export default class AnnualTab extends Component {
    **/
 
   getDates = () => {
-    var monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", "Jul",
-      "Aug", "Sep", "Oct",
-      "Nov", "Dec"
-    ];
     var dates = [];
     for (var i = 0; i < 12; i++) {
       var planDate = this.props.planDate.split("/");
       var date = new Date(planDate[1], planDate[0]-1);
       date.setMonth(date.getMonth() + i);
-      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
+      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
     }
     return dates;
   }
@@ -276,6 +278,9 @@ export default class AnnualTab extends Component {
     for (let i = 0; i < 12; i++) {
       if (!approvedBudgets[i]) {
         approvedBudgets[i] = {};
+      }
+      if (!projectedPlan[i]) {
+        projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
       }
       projectedPlan[i].plannedChannelBudgets[this.state.newChannel] = 0;
       approvedBudgets[i][this.state.newChannel] = 0;
@@ -567,14 +572,16 @@ export default class AnnualTab extends Component {
               </div>
             </div>
             <div className={ planStyles.locals.titleButtons }>
-              <Button type="accent2" style={{
-                marginLeft: '15px',
-                width: '114px'
-              }} onClick={() => {
-                this.props.approveAll();
-              }}>
-                Approve All
-              </Button>
+              { this.props.userAccount.freePlan ? null :
+                <Button type="accent2" style={{
+                  marginLeft: '15px',
+                  width: '114px'
+                }} onClick={() => {
+                  this.props.approveAll();
+                }}>
+                  Approve All
+                </Button>
+              }
               <Button type="reverse" style={{
                 marginLeft: '15px',
                 width: '102px'
@@ -592,90 +599,94 @@ export default class AnnualTab extends Component {
               }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
                 { this.state.editMode ? "Done" : "Edit" }
               </Button>
-              <Button type="primary2" style={{
-                marginLeft: '15px',
-                width: '102px'
-              }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                this.setState({
-                  whatIfSelected: true
-                });
+              { this.props.userAccount.freePlan ? null :
+                <div>
+                  <Button type="primary2" style={{
+                    marginLeft: '15px',
+                    width: '102px'
+                  }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
+                    this.setState({
+                      whatIfSelected: true
+                    });
 
-                this.refs.whatIfPopup.open();
-              }}>What if</Button>
-              <div style={{ position: 'relative' }}>
-                <PlanPopup ref="whatIfPopup" style={{
-                  width: '367px',
-                  right: '110px',
-                  left: 'auto',
-                  top: '-37px'
-                }} hideClose={ true } title="What If - Scenarios Management">
-                  <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                    <div className={ this.classes.left }>
-                      <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                    </div>
-                    <div className={ this.classes.right }>
-                      <Textfield style={{ maxWidth: '110px' }}
-                                 value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                 className={ this.classes.budgetChangeField }
-                                 onChange={ this.handleChangeBudget.bind(this) }
-                                 onKeyDown={(e) => {
-                                   if (e.keyCode === 13) {
-                                     this.whatIf();
-                                   }
-                                 }}
-                                 disabled={ !this.state.isCheckAnnual }
-                      />
-                    </div>
-                  </div>
-                  <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                    <div className={ this.classes.left }>
-                      <div className={ this.classes.left }>
-                        <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                    this.refs.whatIfPopup.open();
+                  }}>What if</Button>
+                  <div style={{ position: 'relative' }}>
+                    <PlanPopup ref="whatIfPopup" style={{
+                      width: '367px',
+                      right: '110px',
+                      left: 'auto',
+                      top: '-37px'
+                    }} hideClose={ true } title="What If - Scenarios Management">
+                      <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
+                        <div className={ this.classes.left }>
+                          <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Textfield style={{ maxWidth: '110px' }}
+                                     value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
+                                     className={ this.classes.budgetChangeField }
+                                     onChange={ this.handleChangeBudget.bind(this) }
+                                     onKeyDown={(e) => {
+                                       if (e.keyCode === 13) {
+                                         this.whatIf();
+                                       }
+                                     }}
+                                     disabled={ !this.state.isCheckAnnual }
+                          />
+                        </div>
                       </div>
-                    </div>
-                    { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                      <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
+                        <div className={ this.classes.left }>
+                          <div className={ this.classes.left }>
+                            <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                          </div>
+                        </div>
+                        { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                      </div>
+                      <div className={ this.classes.budgetChangeBox }>
+                        <div className={ this.classes.left }>
+                          <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Textfield style={{
+                            maxWidth: '110px' }}
+                                     value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
+                                     className={ this.classes.budgetChangeField }
+                                     onChange={(e) => {
+                                       this.setState({
+                                         maxChannelsField: e.target.value
+                                       });
+                                     }}
+                                     onKeyDown={(e) => {
+                                       if (e.keyCode === 13) {
+                                         this.whatIf();
+                                       }
+                                     }}
+                          />
+                        </div>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox }>
+                        <Button type="primary2" style={{
+                          width: '110px'
+                        }} onClick={ this.whatIfTry }>Try</Button>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
+                        <div className={ this.classes.left }>
+                          <Button type="normal" style={{
+                            width: '110px'
+                          }} onClick={ this.whatIfCancel }>Cancel</Button>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Button type="accent2" style={{
+                            width: '110px'
+                          }} onClick={ this.whatIfCommit }>Commit</Button>
+                        </div>
+                      </div>
+                    </PlanPopup>
                   </div>
-                  <div className={ this.classes.budgetChangeBox }>
-                    <div className={ this.classes.left }>
-                      <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
-                    </div>
-                    <div className={ this.classes.right }>
-                      <Textfield style={{
-                        maxWidth: '110px' }}
-                                 value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                 className={ this.classes.budgetChangeField }
-                                 onChange={(e) => {
-                                   this.setState({
-                                     maxChannelsField: e.target.value
-                                   });
-                                 }}
-                                 onKeyDown={(e) => {
-                                   if (e.keyCode === 13) {
-                                     this.whatIf();
-                                   }
-                                 }}
-                      />
-                    </div>
-                  </div>
-                  <div className={ this.classes.budgetChangeBox }>
-                    <Button type="primary2" style={{
-                      width: '110px'
-                    }} onClick={ this.whatIfTry }>Try</Button>
-                  </div>
-                  <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                    <div className={ this.classes.left }>
-                      <Button type="normal" style={{
-                        width: '110px'
-                      }} onClick={ this.whatIfCancel }>Cancel</Button>
-                    </div>
-                    <div className={ this.classes.right }>
-                      <Button type="accent2" style={{
-                        width: '110px'
-                      }} onClick={ this.whatIfCommit }>Commit</Button>
-                    </div>
-                  </div>
-                </PlanPopup>
-              </div>
+                </div>
+              }
             </div>
           </div>
           <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>

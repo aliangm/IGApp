@@ -55,6 +55,17 @@ export default class Welcome extends Component {
     this.removeMember = this.removeMember.bind(this);
   }
 
+  componentDidMount() {
+    if(this.props.location.query.new) {
+      this.props.createUserAccount({freePlan: this.props.location.query.freePlan})
+        .then(() => {
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+
   handleChange(parameter, event) {
     let update = Object.assign({}, this.props.userAccount);
     update[parameter] = event.target.value;

@@ -46,7 +46,8 @@ export default class Preferences extends Component {
     inHouseChannels: [],
     planDay: 28,
     planDate: null,
-    annualBudgetArray: []
+    annualBudgetArray: [],
+    userAccount: {}
   };
 
   constructor(props) {
@@ -560,13 +561,6 @@ export default class Preferences extends Component {
                 ($)</Label>
               { this.state.isCheckAnnual ? null : this.monthBudgets() }
             </div>
-            <div className={ this.classes.row } style={{
-              // maxWidth: '440px',
-              // minWidth: '200px',
-              width: '70px'
-            }}>
-              <Select { ... selects.planDay } selected={ this.props.planDay } onChange={ this.handleChangePlanDay.bind(this) }/>
-            </div>
             {/**
              <div className={ this.classes.row } style={{
               // maxWidth: '440px',
@@ -673,75 +667,100 @@ export default class Preferences extends Component {
                 }}
               </MultiRow>
             </div>
-            <div className={ this.classes.row } style={{ marginTop: '96px' }}>
-              <Label style={{ fontSize: '20px', fontWeight: 'bold' }}>Channel Constraints (Optional)</Label>
-              <Notice warning style={{
-                margin: '12px 0'
-              }}>
-                * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
-              </Notice>
-            </div>
-            <div className={ this.classes.row }>
-              <Label question={['']}
-                     description={['Do you want to limit the number of monthly channels that will be included in your 12 months’ plan (in parallel)? \nTo set the number to max available channels, please leave it blank.']}>max
-                number of Channels</Label>
-              <div className={ this.classes.cell }>
-                <Textfield value={ this.props.maxChannels != -1 ? this.props.maxChannels : '' }
-                           onChange={ this.handleChangeMax.bind(this, '')} style={{
-                  width: '83px'
-                }}/>
-                {/** <NotSure style={{
+            { this.props.userAccount.freePlan ? null :
+              <div>
+                <div className={this.classes.row} style={{
+                  // maxWidth: '440px',
+                  // minWidth: '200px',
+                  width: '70px'
+                }}>
+                  <Select {...selects.planDay} selected={this.props.planDay}
+                          onChange={this.handleChangePlanDay.bind(this)}/>
+                </div>
+                <div className={this.classes.row} style={{marginTop: '96px'}}>
+                  <Label style={{fontSize: '20px', fontWeight: 'bold'}}>Channel Constraints (Optional)</Label>
+                  <Notice warning style={{
+                    margin: '12px 0'
+                  }}>
+                    * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+                  </Notice>
+                </div>
+                <div className={this.classes.row}>
+                  <Label question={['']}
+                         description={['Do you want to limit the number of monthly channels that will be included in your 12 months’ plan (in parallel)? \nTo set the number to max available channels, please leave it blank.']}>max
+                    number of Channels</Label>
+                  <div className={this.classes.cell}>
+                    <Textfield value={this.props.maxChannels != -1 ? this.props.maxChannels : ''}
+                               onChange={this.handleChangeMax.bind(this, '')} style={{
+                      width: '83px'
+                    }}/>
+                    {/** <NotSure style={{
                   marginLeft: '10px'
                 }} /> **/}
-              </div>
-            </div>
-            <div className={ this.classes.row } style={{}}>
-              <Label style={{
-                marginBottom: '12px',
-                fontWeight: '600'
-              }} question={['']}
-                     description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum Budgets</Label>
-              <MultiRow numOfRows={ this.state.userMinMonthBudgetsLines.length } rowRemoved={this.minimumBudgetRemove}>
-                {({index, data, update, removeButton}) => {
-                  return <div style={{
-                    width: '700px'
-                  }} className={ preferencesStyle.locals.channelsRow }>
-                    <Select
-                      className={ preferencesStyle.locals.channelsSelect }
-                      selected={ this.state.userMinMonthBudgetsLines[index] != undefined && this.state.userMinMonthBudgetsLines[index].channel }
-                      select={{
-                        menuTop: true,
-                        name: 'channels',
-                        onChange: (selected) => {
-                          update({
-                            selected: selected
-                          });
-                        },
-                        options: channels.select.options
-                      }}
-                      onChange={ this.handleChangeMinChannel.bind(this, index) }
-                      label={ `#${ index + 1 } (optional)` }
-                    />
-                    <Textfield className={ preferencesStyle.locals.channelsBudget } value={"$" + (this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].budget ? this.state.userMinMonthBudgetsLines[index].budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                               onChange={ this.handleChangeMinBudget.bind(this, index)} style={{
-                      width: '82px'
-                    }} disabled={ !this.state.userMinMonthBudgetsLines[index] || this.state.userMinMonthBudgetsLines[index].budget == undefined }/>
-                    <div style={{ marginTop: '32px'}}>
-                      <MultiSelect { ... selects.months  } selected={ this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].months } onChange={ this.handleChangeMinMonths.bind(this, index) } style={{ width: '240px' }}/>
-                    </div>
-                    <div className={ preferencesStyle.locals.channelsRemove }>
-                      { removeButton }
-                    </div>
                   </div>
-                }}
-              </MultiRow>
-            </div>
-            <div className={ this.classes.row }>
-              <MultiSelect { ... channels } selected={ this.props.inHouseChannels } onChange={ this.handleChangeInHouseChannels.bind(this) } label='In-house Channels' labelQuestion={['']} description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
-            </div>
-            <div className={ this.classes.row }>
-              <MultiSelect { ... blockedChannels  } selected={ this.props.blockedChannels } onChange={ this.handleChangeBlockedChannels.bind(this) } label='Blocked Channels' labelQuestion={['']} description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
-            </div>
+                </div>
+                <div className={this.classes.row} style={{}}>
+                  <Label style={{
+                    marginBottom: '12px',
+                    fontWeight: '600'
+                  }} question={['']}
+                         description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum
+                    Budgets</Label>
+                  <MultiRow numOfRows={this.state.userMinMonthBudgetsLines.length}
+                            rowRemoved={this.minimumBudgetRemove}>
+                    {({index, data, update, removeButton}) => {
+                      return <div style={{
+                        width: '700px'
+                      }} className={preferencesStyle.locals.channelsRow}>
+                        <Select
+                          className={preferencesStyle.locals.channelsSelect}
+                          selected={this.state.userMinMonthBudgetsLines[index] != undefined && this.state.userMinMonthBudgetsLines[index].channel}
+                          select={{
+                            menuTop: true,
+                            name: 'channels',
+                            onChange: (selected) => {
+                              update({
+                                selected: selected
+                              });
+                            },
+                            options: channels.select.options
+                          }}
+                          onChange={this.handleChangeMinChannel.bind(this, index)}
+                          label={`#${ index + 1 } (optional)`}
+                        />
+                        <Textfield className={preferencesStyle.locals.channelsBudget}
+                                   value={"$" + (this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].budget ? this.state.userMinMonthBudgetsLines[index].budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                                   onChange={this.handleChangeMinBudget.bind(this, index)} style={{
+                          width: '82px'
+                        }}
+                                   disabled={!this.state.userMinMonthBudgetsLines[index] || this.state.userMinMonthBudgetsLines[index].budget == undefined}/>
+                        <div style={{marginTop: '32px'}}>
+                          <MultiSelect {...selects.months}
+                                       selected={this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].months}
+                                       onChange={this.handleChangeMinMonths.bind(this, index)}
+                                       style={{width: '240px'}}/>
+                        </div>
+                        <div className={preferencesStyle.locals.channelsRemove}>
+                          {removeButton}
+                        </div>
+                      </div>
+                    }}
+                  </MultiRow>
+                </div>
+                <div className={this.classes.row}>
+                  <MultiSelect {...channels} selected={this.props.inHouseChannels}
+                               onChange={this.handleChangeInHouseChannels.bind(this)} label='In-house Channels'
+                               labelQuestion={['']}
+                               description={['Are there any channels that you don’t want InfiniGrow to allocate budgets to because you’re doing them in-house?']}/>
+                </div>
+                <div className={this.classes.row}>
+                  <MultiSelect {...blockedChannels} selected={this.props.blockedChannels}
+                               onChange={this.handleChangeBlockedChannels.bind(this)} label='Blocked Channels'
+                               labelQuestion={['']}
+                               description={['From your experience at the company, are there any channels that you want to block InfiniGrow from using in your marketing planning? \n * Maximum allowed # of blocked channels: 3']}/>
+                </div>
+              </div>
+            }
             <div className={ this.classes.row } style={{ marginTop: '96px' }}>
               <PlanFromExcel {... this.props}/>
             </div>

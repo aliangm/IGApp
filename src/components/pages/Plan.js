@@ -34,7 +34,8 @@ export default class Plan extends Component {
     userProfile: {},
     targetAudience: {},
     projectedPlan: [],
-    planDate: ''
+    planDate: '',
+    userAccount: {}
   };
 
   constructor(props) {
@@ -57,8 +58,10 @@ export default class Plan extends Component {
       this.approveAllBudgets();
     };
     if (isPopupMode()) {
+      if (this.props.userAccount.freePlan === false) {
+        this.plan(true, null, callback, localStorage.getItem('region'));
+      }
       disablePopupMode();
-      this.plan(true, null, callback, localStorage.getItem('region'));
     }
   }
 
@@ -151,26 +154,32 @@ export default class Plan extends Component {
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
-          <div className={this.classes.headPlan } >
-            <ReplanButton numberOfPlanUpdates={ this.props.numberOfPlanUpdates } onClick={ this.popup }/>
-            <Popup style={{
-              width: '265px',
-              top: '180%',
-              transform: 'translate(0, -50%)'
-            }} hidden={ !this.state.popup } onClose={() => {
-              this.setState({
-                popup: false
-              });
-            }}>
-              <PlanNextMonthPopup hidden={ !this.state.popup } onNext={ this.plan.bind(this, true, false, (data) => {this.props.setDataAsState(data)}, this.props.region) } onBack={() => {
+          { this.props.userAccount.freePlan ? null :
+            <div className={this.classes.headPlan}>
+              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}/>
+              <Popup style={{
+                width: '265px',
+                top: '180%',
+                transform: 'translate(0, -50%)'
+              }} hidden={!this.state.popup} onClose={() => {
                 this.setState({
                   popup: false
-                })}} />
-            </Popup>
-            <div className={ this.classes.error }>
-              <label hidden={ !this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
+                });
+              }}>
+                <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
+                  this.props.setDataAsState(data)
+                }, this.props.region)} onBack={() => {
+                  this.setState({
+                    popup: false
+                  })
+                }}/>
+              </Popup>
+              <div className={this.classes.error}>
+                <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
+                  href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
+              </div>
             </div>
-          </div>
+          }
           <div className={ this.classes.headTabs }>
             {
               tabNames.map((name, i) => {
