@@ -560,6 +560,15 @@ export default class AnnualTab extends Component {
       // Current indicators values to first cell
       projections.splice(0,0,{... this.props.actualIndicators, name: 'today'});
 
+      const objectives = {};
+      this.props.objectives.forEach(objective => {
+        const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
+        const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
+        const date = new Date(objective.timeFrame);
+        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+        objectives[objective.indicator] = {x: monthStr, y: target};
+      });
+
       return <div>
         <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
           <div className={ planStyles.locals.title } style={{ padding: '0' }}>
@@ -809,7 +818,7 @@ export default class AnnualTab extends Component {
           </div>
         </div>
         <div className={ this.classes.indicatorsGraph }>
-          <IndicatorsGraph data={ projections }/>
+          <IndicatorsGraph data={ projections } objectives={ objectives }/>
         </div>
       </div>
     } else {
