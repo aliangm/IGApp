@@ -331,7 +331,6 @@ export default class AnnualTab extends Component {
 
   editUpdate() {
     this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
-    this.forecast();
   }
 
   dragStart(value) {
