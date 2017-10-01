@@ -341,9 +341,9 @@ export default class ProjectionsTab extends Component {
             //defaultState={ item.defaultState && item.defaultState[selectedTab] }
             defaultState={ this.calculateState(item) }
             //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
-            defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
+            defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
             //grow={ item.grow && item.grow[selectedTab] }
-            grow={ this.props.actualIndicators[item.key] ? Math.ceil(Math.abs(((this.props.projectedPlan[this.monthMap[selectedTab]] ? this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] : 0) - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) : this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] * 100 }
+            grow={ this.props.actualIndicators[item.key] ? Math.ceil(Math.abs(((this.props.projectedPlan[this.monthMap[selectedTab]] ? this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] : 0) - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) : this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] * 100 }
             icon={ item.icon }
             title={ item.title }
           />

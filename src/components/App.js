@@ -316,7 +316,7 @@ class AppComponent extends Component {
       inHouseChannels: data.inHouseChannels || [],
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
-      actualIndicators: data.actualIndicators,
+      actualIndicators: data.actualIndicators || {},
       plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].plannedChannelBudgets : {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
