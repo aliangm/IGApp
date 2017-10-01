@@ -15,9 +15,17 @@ export default class Analyze extends Component {
   style = style;
   styles = [icons, analyzeStyle];
 
+  monthNames = [
+    "Jan", "Feb", "Mar",
+    "Apr", "May", "Jun", "Jul",
+    "Aug", "Sep", "Oct",
+    "Nov", "Dec"
+  ];
+
   static defaultProps = {
     planDate: '',
-    previousData: []
+    previousData: [],
+    objectives: []
   };
 
   constructor(props) {
@@ -30,18 +38,12 @@ export default class Analyze extends Component {
   }
 
   getDates = () => {
-    const monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", "Jul",
-      "Aug", "Sep", "Oct",
-      "Nov", "Dec"
-    ];
     const dates = [];
     for (let i = 0; i < 12; i++) {
       const planDate = this.props.planDate.split("/");
       const date = new Date(planDate[1], planDate[0]-1);
       date.setMonth(date.getMonth() - i);
-      dates.unshift(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
+      dates.unshift(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
     }
     return dates;
   };
@@ -162,6 +164,15 @@ export default class Analyze extends Component {
       return {... item.actualIndicators, name: dates[index]}
     });
 
+    const objectives = {};
+    this.props.objectives.forEach(objective => {
+      const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
+      const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
+      const date = new Date(objective.timeFrame);
+      const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+      objectives[objective.indicator] = {x: monthStr, y: target};
+    });
+
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <Title title="Analyze"/>
@@ -192,7 +203,7 @@ export default class Analyze extends Component {
           </div>
         </div>
         <div className={ analyzeStyle.locals.wrap } style={{ width: 200 + 76 * (projections.length - 1) + 'px' }}>
-          <IndicatorsGraph data={ projections } width={88 + 76 * (projections.length - 1)}/>
+          <IndicatorsGraph data={ projections } width={88 + 76 * (projections.length - 1)} objectives={ objectives }/>
         </div>
       </Page>
     </div>
