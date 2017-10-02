@@ -220,6 +220,7 @@ export default class Campaigns extends Component {
               updateCampaignsTemplates={ this.updateCampaignsTemplates }
               firstName={ userFirstName }
               lastName={ userLastName }
+              auth={ this.props.auth }
             />
           </div>
         </div>

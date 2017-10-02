@@ -193,7 +193,7 @@ export default class Brief extends Component {
         select: {
           name: 'owner',
           options: [
-            {value: 'Other', label: 'Other'}
+            {value: 'other', label: 'Other'}
           ]
         }
       },
@@ -242,12 +242,19 @@ export default class Brief extends Component {
     });
     if (this.props.teamMembers) {
       this.props.teamMembers.forEach((member) => {
-        if (member.name != '') {
-          selects.owner.select.options.push({value: member.name, label: member.name});
+        if (member.name !== '') {
+          const label = this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().user_id === member.userId ? member.name + " (me)" : member.name;
+          selects.owner.select.options.push({value: member.userId, label: label});
         }
       });
     }
-    selects.owner.select.options.push({value: "me", label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
+    if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().user_id === this.props.auth.getProfile().app_metadata.UID) {
+      selects.owner.select.options.push({value: this.props.auth.getProfile().user_id, label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
+    }
+    else {
+      selects.owner.select.options.push({value: this.props.auth.getProfile().app_metadata.UID, label: this.props.firstName + " " + this.props.lastName});
+    }
+
     const assetsCategories = this.props.campaign.assets ?
       [...new Set(this.props.campaign.assets.map(item => item.category))]
       : [];
