@@ -14,15 +14,17 @@ class CampaignCard extends Component {
 		channel: PropTypes.string,
 		draggingPreview: PropTypes.bool,
 		first: PropTypes.bool,
-		last: PropTypes.bool,
+		last: PropTypes.bool
 	};
 
 	static contextTypes = {
 		userAccount: PropTypes.object,
+    auth: PropTypes.object
 	};
 
 	getInitials() {
 		const { item } = this.props;
+    const { userAccount: user = {}, auth } = this.context;
 
 		if (!item.owner) {
 			return null;
@@ -30,9 +32,7 @@ class CampaignCard extends Component {
 
 		let firstName;
 		let lastName;
-
-		if (item.owner.toLowerCase() === 'me') {
-			const { userAccount: user = {} } = this.context;
+		if (item.owner === auth.getProfile().UID) {
 
 			firstName = user.firstName;
 			lastName = user.lastName;
@@ -41,7 +41,13 @@ class CampaignCard extends Component {
 				return null;
 			}
 		} else {
-			[firstName = '', lastName = ''] = item.owner.split(' ');
+			if (item.owner === "other") {
+        [firstName = '', lastName = ''] = "Other".split(' ');
+			}
+			else {
+        const member = user.teamMembers.find(member => member.userId === item.owner);
+        [firstName = '', lastName = ''] = member.name.split(' ');
+      }
 		}
 
 		return (firstName[0] || '') + (lastName[0] || '');
