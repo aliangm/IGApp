@@ -248,11 +248,19 @@ export default class Brief extends Component {
         }
       });
     }
-    if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().user_id === this.props.auth.getProfile().app_metadata.UID) {
-      selects.owner.select.options.push({value: this.props.auth.getProfile().user_id, label: this.props.firstName ? this.props.firstName + " (me)" : "Me"});
-    }
-    else {
-      selects.owner.select.options.push({value: this.props.auth.getProfile().app_metadata.UID, label: this.props.firstName + " " + this.props.lastName});
+    if (this.props.auth.getProfile() && this.props.auth.getProfile().app_metadata) {
+      if (this.props.auth.getProfile().user_id === this.props.auth.getProfile().app_metadata.UID) {
+        selects.owner.select.options.push({
+          value: this.props.auth.getProfile().user_id,
+          label: this.props.firstName ? this.props.firstName + " (me)" : "Me"
+        });
+      }
+      else {
+        selects.owner.select.options.push({
+          value: this.props.auth.getProfile().app_metadata.UID,
+          label: this.props.firstName + " " + this.props.lastName
+        });
+      }
     }
 
     const assetsCategories = this.props.campaign.assets ?
