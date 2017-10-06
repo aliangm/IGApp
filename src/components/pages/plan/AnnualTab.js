@@ -402,6 +402,7 @@ export default class AnnualTab extends Component {
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
+      budget = this.props.annualBudget !== null ? this.props.annualBudget : this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
       budget = Math.ceil(budget/1000)*1000;
       let rows = [];
 
