@@ -687,7 +687,7 @@ export default class Preferences extends Component {
                 </div>
                 <div className={this.classes.row}>
                   <Label question={['']}
-                         description={['Do you want to limit the number of monthly channels that will be included in your 12 months’ plan (in parallel)? \nTo set the number to max available channels, please leave it blank.']}>max
+                         description={['Do you want to limit the number of channels in your plan (in parallel, for each month)? \nTo set the number to max available channels, please leave it blank.']}>max
                     number of Channels</Label>
                   <div className={this.classes.cell}>
                     <Textfield value={this.props.maxChannels != -1 ? this.props.maxChannels : ''}
