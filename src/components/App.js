@@ -332,6 +332,7 @@ class AppComponent extends Component {
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
+      isBlogAuto: data.googleapi && data.googleapi.blogProfileId,
       hubspotAuto: data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
       salesforceAuto: data.salesforceapi,
