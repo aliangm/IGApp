@@ -89,7 +89,7 @@ export default class IndicatorsGraph extends Component {
       <Line key={indicator} type='monotone' dataKey={indicator} stroke={indicatorsMapping[indicator].color} fill={indicatorsMapping[indicator].color} strokeWidth={3}/>
     );
     const dots = this.state.checkedIndicators.map((indicator, index) =>
-      this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="red" stroke="black" stroke-width={2} key={index} label="O" alwaysShow={true}/>
+      this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="#e60000" stroke="white" stroke-width={2} key={index} label="O" alwaysShow={true}/>
     );
     const tooltip = (data) => {
       const prevIndex = this.props.data.findIndex(month => month.name === data.label) - 1;
@@ -104,7 +104,7 @@ export default class IndicatorsGraph extends Component {
                 return <div key={index}>
                   {indicatorsMapping[item.dataKey].title}: {item.value}
                   {prevIndex >= 0 ?
-                    <div style={{ color: item.value > 0 ? '#30b024' : '#d50a2e', display: 'inline' }}>
+                    <div style={{ color: item.value > 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
                       {' (' +(item.value > 0 ? '+' : '-') + (item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
                     </div>
                     : null}
