@@ -12,6 +12,7 @@ export default class AnalyticsPopup extends Component {
     return <div>
       <div hidden={ this.props.hidden }>
         <Page popup={ true } width={'340px'}>
+          <div className={ this.classes.close } onClick={ this.props.close }/>
           <div className={ this.classes.inner }>
             <div className={ this.classes.row }>
               <GoogleAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close }/>

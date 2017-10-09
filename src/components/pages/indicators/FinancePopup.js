@@ -12,6 +12,7 @@ export default class FinancePopup extends Component {
   render(){
     return <div hidden={ this.props.hidden }>
       <Page popup={ true } width={'340px'}>
+        <div className={ this.classes.close } onClick={ this.props.close }/>
         <div className={ this.classes.title }>
           Choose source
         </div>
