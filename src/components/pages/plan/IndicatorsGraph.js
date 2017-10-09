@@ -95,15 +95,22 @@ export default class IndicatorsGraph extends Component {
       const prevIndex = this.props.data.findIndex(month => month.name === data.label) - 1;
       if (data.active && data.payload && data.payload.length > 0) {
         return <div className={this.classes.customTooltip}>
+          <div style={{ fontWeight: 'bold' }}>
+            {data.label}
+          </div>
           {
             data.payload.map((item, index) => {
               if (item.value) {
                 return <div key={index}>
                   {indicatorsMapping[item.dataKey].title}: {item.value}
-                  ({prevIndex >= 0 && item.value - this.props.data[prevIndex][item.dataKey]})
+                  {prevIndex >= 0 ?
+                    <div style={{ color: item.value > 0 ? '#30b024' : '#d50a2e', display: 'inline' }}>
+                      {' (' +(item.value > 0 ? '+' : '-') + (item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
+                    </div>
+                    : null}
                   {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
                     <div>
-                      {indicatorsMapping[item.dataKey].title}(objective): {this.props.objectives[item.dataKey].y}
+                      {indicatorsMapping[item.dataKey].title} (objective): {this.props.objectives[item.dataKey].y}
                     </div>
                     : null}
                 </div>
