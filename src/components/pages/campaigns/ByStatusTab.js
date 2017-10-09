@@ -187,7 +187,9 @@ export default class ByChannelTab extends Component {
 				<Board
 					lists={this.state.lists}
 					onCampaignsStatusChange={this.handleCampaignsStatusChange}
-					showCampaign={ this.props.showCampaign }
+					showCampaign={this.props.showCampaign}
+					userAccount={this.props.userAccount}
+					auth={this.props.auth}
 				/>
 			</div>
 		);

@@ -5,6 +5,8 @@ import Button from 'components/controls/Button';
 import Page from 'components/Page';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
+import MultiSelect from 'components/controls/MultiSelect';
+import { formatChannels } from 'components/utils/channels';
 
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
@@ -20,13 +22,27 @@ export default class AddMemberPopup extends Component {
       name: '',
       email: '',
       role: '',
-      isAdmin: false
+      isAdmin: false,
+      specificChannels: []
     };
   }
 
+  handleChangeChannels(event) {
+    let update = event.map((obj) => {
+      return obj.value;
+    });
+    this.setState({specificChannels: update});
+  }
+
   render() {
+    const channels = {
+      select: {
+        name: "channels",
+        options: formatChannels()
+      }
+    };
     return <div hidden={ this.props.hidden }>
-      <Page popup={ true } width={'400px'}>
+      <Page popup={ true } width={'400px'} contentClassName={ popupStyle.locals.content } innerClassName={ popupStyle.locals.inner }>
         <div className={ popupStyle.locals.title }>
           Invite Users
         </div>
@@ -66,6 +82,15 @@ export default class AddMemberPopup extends Component {
             </div>
           </div>
         </div>
+        { !this.state.isAdmin ?
+          <div className={this.classes.row}>
+            <Label checkbox={this.state.isSpecificChannels} onChange={ ()=>{ this.setState({isSpecificChannels: !isSpecificChannels}) } }>
+              choose specific channels to view/edit
+            </Label>
+            <MultiSelect { ... channels } selected={ this.state.specificChannels } onChange={ this.handleChangeChannels.bind(this) } style={{ width: 'initial' }}/>
+          </div>
+          : null
+        }
         <div className={ this.classes.footerCols }>
           <div className={ this.classes.footerLeft }>
             <Button

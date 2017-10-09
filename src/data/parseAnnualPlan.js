@@ -9,7 +9,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
   var budget = 0;
   projectedPlan.forEach((month, index)=> {
     //var month = projectedPlan[key];
-    budget+= month.monthBudget;
+    budget+= month.monthBudget || 0;
     var channels = month.plannedChannelBudgets;
     Object.keys(channels).forEach((channel) => {
       var title = schema.properties[channel].title

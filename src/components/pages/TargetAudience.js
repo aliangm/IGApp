@@ -294,6 +294,7 @@ export default class TargetAudience extends Component {
                       { key: 'Entertainment', text: 'Entertaiment', icon: 'buttons:entertaiment' },
                       { key: 'Professional Services', text: 'Pro Services', icon: 'buttons:professional' },
                       { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
+                      { key: 'Healthcare', text: 'Healthcare', icon: 'buttons:healthcare' },
                       { key: 'Any', text: 'Any', icon: 'buttons:any' },
                     ]} selectedKey={ this.props.targetAudience[index] && this.props.targetAudience[index].fields.companyType } onChange = {this.handleChangeButton.bind(this, 'companyType', index)} />
                   </div>

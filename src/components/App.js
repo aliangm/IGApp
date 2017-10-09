@@ -22,9 +22,11 @@ class AppComponent extends Component {
       updateUserMonthPlan: this.updateUserMonthPlan.bind(this),
       updateUserAccount: this.updateUserAccount.bind(this),
       createUserMonthPlan: this.createUserMonthPlan.bind(this),
+      createUserAccount: this.createUserAccount.bind(this),
       updateState: this.updateState.bind(this),
       setDataAsState: this.setDataAsState.bind(this),
-      unsaved: false
+      unsaved: false,
+      auth: props.route.auth
     };
   }
 
@@ -239,6 +241,37 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  createUserAccount(body) {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('POST', 'useraccount', JSON.stringify(body))
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setState({
+                userAccount: data,
+                userFirstName: data.firstName,
+                userLastName: data.lastName,
+                userCompany: data.companyName,
+                logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                teamMembers: data.teamMembers,
+                unsaved: false
+              });
+              deferred.resolve();
+            });
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+        deferred.reject();
+      });
+    return deferred.promise;
+  }
+
   createUserMonthPlan(body) {
     const deferred = q.defer();
     serverCommunication.serverRequest('POST', 'usermonthplan', JSON.stringify(body))
@@ -283,7 +316,7 @@ class AppComponent extends Component {
       inHouseChannels: data.inHouseChannels || [],
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
-      actualIndicators: data.actualIndicators,
+      actualIndicators: data.actualIndicators || {},
       plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].plannedChannelBudgets : {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
@@ -291,7 +324,7 @@ class AppComponent extends Component {
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
       numberOfPlanUpdates: data.numberOfPlanUpdates,
-      projectedPlan: data.projectedPlan,
+      projectedPlan: data.projectedPlan || [],
       approvedBudgets: data.approvedBudgets || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
@@ -299,6 +332,7 @@ class AppComponent extends Component {
       events: data.events || [],
       unsaved: false,
       isGoogleAuto: !!data.googleapi,
+      isBlogAuto: data.googleapi && data.googleapi.blogProfileId,
       hubspotAuto: data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
       salesforceAuto: data.salesforceapi,

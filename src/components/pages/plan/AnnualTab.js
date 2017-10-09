@@ -24,19 +24,29 @@ import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
+import { formatChannels } from 'components/utils/channels';
+import buttonsStyle from 'styles/onboarding/buttons.css';
 
 export default class AnnualTab extends Component {
-  styles = [planStyles, icons, popupStyle];
+  styles = [planStyles, icons, popupStyle, buttonsStyle];
   style = style;
 
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
+  monthNames = [
+    "Jan", "Feb", "Mar",
+    "Apr", "May", "Jun", "Jul",
+    "Aug", "Sep", "Oct",
+    "Nov", "Dec"
+  ];
 
   static defaultProps = {
     projectedPlan: [],
     approvedBudgets: [],
     actualIndicators: {},
     planDate: '',
-    events: []
+    events: [],
+    objectives: [],
+    annualBudget: 0
   };
 
   constructor(props) {
@@ -86,18 +96,12 @@ export default class AnnualTab extends Component {
    **/
 
   getDates = () => {
-    var monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", "Jul",
-      "Aug", "Sep", "Oct",
-      "Nov", "Dec"
-    ];
     var dates = [];
     for (var i = 0; i < 12; i++) {
       var planDate = this.props.planDate.split("/");
       var date = new Date(planDate[1], planDate[0]-1);
       date.setMonth(date.getMonth() + i);
-      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
+      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
     }
     return dates;
   }
@@ -276,6 +280,9 @@ export default class AnnualTab extends Component {
       if (!approvedBudgets[i]) {
         approvedBudgets[i] = {};
       }
+      if (!projectedPlan[i]) {
+        projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
+      }
       projectedPlan[i].plannedChannelBudgets[this.state.newChannel] = 0;
       approvedBudgets[i][this.state.newChannel] = 0;
     }
@@ -325,7 +332,6 @@ export default class AnnualTab extends Component {
 
   editUpdate() {
     this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
-    this.forecast();
   }
 
   dragStart(value) {
@@ -393,228 +399,11 @@ export default class AnnualTab extends Component {
 
   render() {
     if (!this.props.isPlannerLoading) {
-      const channelOptions = [
-        {
-          label: 'Advertising',
-          options: [
-            {
-              label: 'Display Ads', options: [
-              {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
-              {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
-            ]
-            },
-            {
-              label: 'Search Marketing', options: [
-              {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
-              {
-                label: 'SEM (PPC)', options: [
-                {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
-                {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
-              ]
-              },
-            ]
-            },
-            {
-              label: 'Paid Social', options: [
-              {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
-              {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
-              {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
-              {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
-              {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
-              {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
-              {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
-            ]
-            },
-            {
-              label: 'Offline Ads', options: [
-              {
-                label: 'TV', options: [
-                {label: 'Local', value: 'advertising_offlineAds_TV_local'},
-                {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
-                {label: 'International', value: 'advertising_offlineAds_TV_international'}
-              ]
-              },
-              {label: 'Radio', value: 'advertising_offlineAds_radio'},
-              {
-                label: 'Newspaper', options: [
-                {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
-                {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
-                {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
-              ]
-              },
-              {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
-              {label: 'SMS', value: 'advertising_offlineAds_SMS'},
-            ]
-            },
-            {
-              label: 'Mobile', options: [
-              {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
-              {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
-              {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
-              {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
-            ]
-            },
-            {
-              label: 'Magazines', options: [
-              {
-                label: 'Consumers', options: [
-                {label: 'Local', value: 'advertising_magazines_consumers_local'},
-                {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
-                {label: 'International', value: 'advertising_magazines_consumers_international'},
-              ]
-              },
-              {
-                label: 'Professional', options: [
-                {label: 'Local', value: 'advertising_magazines_professional_local'},
-                {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
-                {label: 'International', value: 'advertising_magazines_professional_international'},
-              ]
-              },
-            ]
-            },
-            {label: 'Paid Reviews', value: 'advertising_paidReviews'},
-            {label: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
-          ]
-        },
-        {
-          label: 'Content', options: [
-          {
-            label: 'Content Promotion', options: [
-            {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
-            {
-              label: 'Content Discovery', options: [
-              {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
-              {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
-              {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
-            ]
-            },
-            {
-              label: 'Forums', options: [
-              {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
-              {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
-              {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
-            ]
-            },
-          ]
-          },
-          {
-            label: 'Content Creation', options: [
-            {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
-            {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
-            {label: 'Presentations', value: 'content_contentCreation_presentations'},
-            {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
-            {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
-            {label: 'E-book', value: 'content_contentCreation_eBook'},
-            {label: 'Videos', value: 'content_contentCreation_videos'},
-            {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
-          ]
-          }
-        ]
-        },
-        {
-          label: 'Email', options: [
-          {label: 'Marketing Email', value: 'email_marketingEmail'},
-          {label: 'Transactional Email', value: 'email_transactionalEmail'},
-        ]
-        },
-        {
-          label: 'Engineering as Marketing', options: [
-          {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
-          {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
-          {label: 'Widget', value: 'engineeringAsMarketing_widget'},
-          {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
-          {label: 'Any', value: 'engineeringAsMarketing_other'}
-        ]
-        },
-        {
-          label: 'Events', options: [
-          {
-            label: 'Offline Events', options: [
-            {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
-            {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
-            {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
-            {label: 'Organising', value: 'events_offlineEvents_running'}
-          ]
-          },
-          {
-            label: 'Online Events (Running)', options: [
-            {label: 'Webinar', value: 'events_onlineEvents_webinar'},
-            {label: 'Podcast', value: 'events_onlineEvents_podcast'},
-            {label: 'Workshop', value: 'events_onlineEvents_workshop'}
-          ]
-          },
-        ]
-        },
-        {
-          label: 'Mobile', options: [
-          {label: 'Mobile App', value: 'mobile_mobileApp'},
-          {label: 'Mobile Site', value: 'mobile_mobileSite'}
-        ]
-        },
-        {
-          label: 'Partners', options: [
-          {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
-        ]
-        },
-        {
-          label: 'PR', options: [
-          {
-            label: 'Unconventional PR', options: [
-            {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
-            {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
-          ]
-          },
-          {
-            label: 'Publicity', options: [
-            {
-              label: 'Press Releases', options: [
-              {label: 'Local', value: 'PR_publicity_pressReleases_local'},
-              {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
-              {label: 'International', value: 'PR_publicity_pressReleases_international'},
-            ]
-            }
-          ]
-          }
-        ]
-        },
-        {
-          label: 'Social', options: [
-          {label: 'Facebook Page', value: 'social_facebookPage'},
-          {label: 'Twitter Account', value: 'social_twitterAccount'},
-          {label: 'Youtube Channel', value: 'social_youtubeChannel'},
-          {label: 'Instagram Account', value: 'social_instagramAccount'},
-          {label: 'Google+ Page', value: 'social_googlePlusPage'},
-          {label: 'Pinterest Page', value: 'social_pinterestPage'},
-          {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
-          {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
-          {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
-          {label: 'Community Building', value: 'social_communityBuilding'},
-          {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
-        ]
-        },
-        {label: 'Telemarketing', value: 'telemarketing'},
-        {
-          label: 'Viral', options: [
-          {
-            label: 'Recommend a Friend', options: [
-            {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
-          ]
-          }
-        ]
-        },
-        {
-          label: 'Web', options: [
-          {label: 'Company’s Website', value: 'web_companyWebsite'},
-          {label: 'Landing Pages', value: 'web_landingPages'}
-        ]
-        },
-        {
-          label: 'Other?', value: 'OTHER'
-        }
-      ];
+      const channelOptions = formatChannels();
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
+      budget = this.props.annualBudget !== null ? this.props.annualBudget : this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
       budget = Math.ceil(budget/1000)*1000;
       let rows = [];
 
@@ -772,6 +561,15 @@ export default class AnnualTab extends Component {
       // Current indicators values to first cell
       projections.splice(0,0,{... this.props.actualIndicators, name: 'today'});
 
+      const objectives = {};
+      this.props.objectives.forEach(objective => {
+        const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
+        const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
+        const date = new Date(objective.timeFrame);
+        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+        objectives[objective.indicator] = {x: monthStr, y: target};
+      });
+
       return <div>
         <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
           <div className={ planStyles.locals.title } style={{ padding: '0' }}>
@@ -784,14 +582,16 @@ export default class AnnualTab extends Component {
               </div>
             </div>
             <div className={ planStyles.locals.titleButtons }>
-              <Button type="accent2" style={{
-                marginLeft: '15px',
-                width: '114px'
-              }} onClick={() => {
-                this.props.approveAll();
-              }}>
-                Approve All
-              </Button>
+              { this.props.userAccount.freePlan ? null :
+                <Button type="accent2" style={{
+                  marginLeft: '15px',
+                  width: '114px'
+                }} onClick={() => {
+                  this.props.approveAll();
+                }}>
+                  Approve All
+                </Button>
+              }
               <Button type="reverse" style={{
                 marginLeft: '15px',
                 width: '102px'
@@ -809,90 +609,94 @@ export default class AnnualTab extends Component {
               }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
                 { this.state.editMode ? "Done" : "Edit" }
               </Button>
-              <Button type="primary2" style={{
-                marginLeft: '15px',
-                width: '102px'
-              }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                this.setState({
-                  whatIfSelected: true
-                });
+              { this.props.userAccount.freePlan ? null :
+                <div>
+                  <Button type="primary2" style={{
+                    marginLeft: '15px',
+                    width: '102px'
+                  }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
+                    this.setState({
+                      whatIfSelected: true
+                    });
 
-                this.refs.whatIfPopup.open();
-              }}>What if</Button>
-              <div style={{ position: 'relative' }}>
-                <PlanPopup ref="whatIfPopup" style={{
-                  width: '367px',
-                  right: '110px',
-                  left: 'auto',
-                  top: '-37px'
-                }} hideClose={ true } title="What If - Scenarios Management">
-                  <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                    <div className={ this.classes.left }>
-                      <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                    </div>
-                    <div className={ this.classes.right }>
-                      <Textfield style={{ maxWidth: '110px' }}
-                                 value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                 className={ this.classes.budgetChangeField }
-                                 onChange={ this.handleChangeBudget.bind(this) }
-                                 onKeyDown={(e) => {
-                                   if (e.keyCode === 13) {
-                                     this.whatIf();
-                                   }
-                                 }}
-                                 disabled={ !this.state.isCheckAnnual }
-                      />
-                    </div>
-                  </div>
-                  <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                    <div className={ this.classes.left }>
-                      <div className={ this.classes.left }>
-                        <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                    this.refs.whatIfPopup.open();
+                  }}>What if</Button>
+                  <div style={{ position: 'relative' }}>
+                    <PlanPopup ref="whatIfPopup" style={{
+                      width: '367px',
+                      right: '110px',
+                      left: 'auto',
+                      top: '-37px'
+                    }} hideClose={ true } title="What If - Scenarios Management">
+                      <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
+                        <div className={ this.classes.left }>
+                          <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Textfield style={{ maxWidth: '110px' }}
+                                     value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
+                                     className={ this.classes.budgetChangeField }
+                                     onChange={ this.handleChangeBudget.bind(this) }
+                                     onKeyDown={(e) => {
+                                       if (e.keyCode === 13) {
+                                         this.whatIf();
+                                       }
+                                     }}
+                                     disabled={ !this.state.isCheckAnnual }
+                          />
+                        </div>
                       </div>
-                    </div>
-                    { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                      <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
+                        <div className={ this.classes.left }>
+                          <div className={ this.classes.left }>
+                            <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                          </div>
+                        </div>
+                        { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                      </div>
+                      <div className={ this.classes.budgetChangeBox }>
+                        <div className={ this.classes.left }>
+                          <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Textfield style={{
+                            maxWidth: '110px' }}
+                                     value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
+                                     className={ this.classes.budgetChangeField }
+                                     onChange={(e) => {
+                                       this.setState({
+                                         maxChannelsField: e.target.value
+                                       });
+                                     }}
+                                     onKeyDown={(e) => {
+                                       if (e.keyCode === 13) {
+                                         this.whatIf();
+                                       }
+                                     }}
+                          />
+                        </div>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox }>
+                        <Button type="primary2" style={{
+                          width: '110px'
+                        }} onClick={ this.whatIfTry }>Try</Button>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
+                        <div className={ this.classes.left }>
+                          <Button type="normal" style={{
+                            width: '110px'
+                          }} onClick={ this.whatIfCancel }>Cancel</Button>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Button type="accent2" style={{
+                            width: '110px'
+                          }} onClick={ this.whatIfCommit }>Commit</Button>
+                        </div>
+                      </div>
+                    </PlanPopup>
                   </div>
-                  <div className={ this.classes.budgetChangeBox }>
-                    <div className={ this.classes.left }>
-                      <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
-                    </div>
-                    <div className={ this.classes.right }>
-                      <Textfield style={{
-                        maxWidth: '110px' }}
-                                 value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                 className={ this.classes.budgetChangeField }
-                                 onChange={(e) => {
-                                   this.setState({
-                                     maxChannelsField: e.target.value
-                                   });
-                                 }}
-                                 onKeyDown={(e) => {
-                                   if (e.keyCode === 13) {
-                                     this.whatIf();
-                                   }
-                                 }}
-                      />
-                    </div>
-                  </div>
-                  <div className={ this.classes.budgetChangeBox }>
-                    <Button type="primary2" style={{
-                      width: '110px'
-                    }} onClick={ this.whatIfTry }>Try</Button>
-                  </div>
-                  <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                    <div className={ this.classes.left }>
-                      <Button type="normal" style={{
-                        width: '110px'
-                      }} onClick={ this.whatIfCancel }>Cancel</Button>
-                    </div>
-                    <div className={ this.classes.right }>
-                      <Button type="accent2" style={{
-                        width: '110px'
-                      }} onClick={ this.whatIfCommit }>Commit</Button>
-                    </div>
-                  </div>
-                </PlanPopup>
-              </div>
+                </div>
+              }
             </div>
           </div>
           <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>
@@ -1015,7 +819,7 @@ export default class AnnualTab extends Component {
           </div>
         </div>
         <div className={ this.classes.indicatorsGraph }>
-          <IndicatorsGraph data={ projections }/>
+          <IndicatorsGraph data={ projections } objectives={ objectives }/>
         </div>
       </div>
     } else {

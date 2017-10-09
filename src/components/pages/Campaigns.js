@@ -55,7 +55,8 @@ export default class Campaigns extends Component {
     campaigns: [],
     projectedPlan: [],
     planUnknownChannels: [],
-    inHouseChannels: []
+    inHouseChannels: [],
+    teamMembers: []
   };
 
   updateCampaigns = (campaigns) => {
@@ -124,7 +125,7 @@ export default class Campaigns extends Component {
 
     processedChannels.names.forEach((channel) => {
       if (channelsSchema.properties[channel]) {
-        processedChannels.titles[channel] = channelsSchema.properties[channel].title;
+        processedChannels.titles[channel] = channelsSchema.properties[channel].nickname;
         let channelHierarchy = channelsSchema.properties[channel].title.split('/').map(item => item.trim());
         processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
       }
@@ -144,6 +145,14 @@ export default class Campaigns extends Component {
     }, monthBudget);
 
     let filteredCampaigns = activeCampaigns;
+
+    if (this.props.auth.getProfile().isAdmin === false) {
+      const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
+      if (member && member.specificChannels && member.specificChannels.length > 0) {
+        filteredCampaigns = activeCampaigns.filter(campaign => member.specificChannels.some(channel => campaign.source.includes(channel)));
+        processedChannels.names = processedChannels.names.filter(channel => member.specificChannels.includes(channel));
+      }
+    }
 
     if (this.state.search) {
       const search = new Search('index');
@@ -211,6 +220,7 @@ export default class Campaigns extends Component {
               updateCampaignsTemplates={ this.updateCampaignsTemplates }
               firstName={ userFirstName }
               lastName={ userLastName }
+              auth={ this.props.auth }
             />
           </div>
         </div>

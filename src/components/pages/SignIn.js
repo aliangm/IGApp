@@ -49,19 +49,27 @@ export default class SignIn extends Component {
           clearInterval(timer);
           checkIfPopup()
             .then((popup) => {
-                if (profile.app_metadata && !profile.app_metadata.isAdmin) {
-                  history.push('/campaigns');
+              // No user Account
+              if (popup === null) {
+                history.push({
+                  pathname: '/welcome',
+                  query: { new: true, freePlan: !!profile.app_metadata.freePlan }
+                });
+              }
+              else if (profile.app_metadata && !profile.app_metadata.isAdmin) {
+                history.push('/campaigns');
+              }
+              else {
+                if (popup) {
+                  history.push('/welcome');
                 }
                 else {
-                  if (popup == null || popup) {
-                    history.push('/welcome');
-                  }
-                  else {
-                    history.push('/plan')
-                  }
+                  history.push('/plan')
                 }
+              }
             })
             .catch((err) => {
+              console.log(err);
               this.lock.login();
             });
         }

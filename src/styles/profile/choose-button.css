@@ -88,3 +88,4 @@
 @mixin icon-nodpi buttons:b2cSoftware, ../../assets/button-icons/b2cSoftware;
 @mixin icon-nodpi buttons:b2bSoftware, ../../assets/button-icons/b2bSoftware;
 @mixin icon-nodpi buttons:finance, ../../assets/button-icons/dollar-symbol;
+@mixin icon-nodpi buttons:healthcare, ../../assets/button-icons/first-aid-kit;

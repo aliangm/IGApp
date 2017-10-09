@@ -20,9 +20,6 @@
 @mixin icon-nodpi plan:YouTube Advertising, ../../assets/plan_icons/YoutubeAdvertising;
 @mixin icon-nodpi plan:Offline Ads, ../../assets/plan_icons/OfflineAds;
 @mixin icon-nodpi plan:TV, ../../assets/plan_icons/TV;
-@mixin icon-nodpi plan:Local, ../../assets/plan_icons/Local;
-@mixin icon-nodpi plan:Nationwide, ../../assets/plan_icons/Nationwide;
-@mixin icon-nodpi plan:International, ../../assets/plan_icons/International;
 @mixin icon-nodpi plan:Radio, ../../assets/plan_icons/Radio;
 @mixin icon-nodpi plan:Newspaper, ../../assets/plan_icons/Newspaper;
 @mixin icon-nodpi plan:Billboard, ../../assets/plan_icons/Billboard;
@@ -91,7 +88,6 @@
 @mixin icon-nodpi plan:Google+ Page, ../../assets/plan_icons/Google+page;
 @mixin icon-nodpi plan:Pinterest Page, ../../assets/plan_icons/Pinterestpage;
 @mixin icon-nodpi plan:LinkedIn Company Profile, ../../assets/plan_icons/LinkedInCompanyProfile;
-@mixin icon-nodpi plan:LinkedIn Group, ../../assets/plan_icons/LinkedInGroup;
 @mixin icon-nodpi plan:Influencer Outreach, ../../assets/plan_icons/InfluencerOutreach;
 @mixin icon-nodpi plan:Community Building, ../../assets/plan_icons/CommunityBuilding;
 @mixin icon-nodpi plan:Product Hunt (Launch), ../../assets/plan_icons/ProductHunt;
@@ -103,3 +99,5 @@
 @mixin icon-nodpi plan:Company’s Website, ../../assets/plan_icons/Company’sWebsite;
 @mixin icon-nodpi plan:Landing Pages, ../../assets/plan_icons/LandingPages;
 @mixin icon-nodpi plan:other, ../../assets/plan_icons/OtherChannels;
+@mixin icon-nodpi plan:Online Directories, ../../assets/plan_icons/OnlineDirectories;
+@mixin icon-nodpi plan:Bing, ../../assets/plan_icons/Bing;

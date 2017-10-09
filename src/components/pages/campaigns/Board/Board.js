@@ -12,6 +12,8 @@ class Board extends Component {
   static childContextTypes = {
     onCampaignUpdate: PropTypes.func,
     container: PropTypes.any,
+    userAccount: PropTypes.object,
+    auth: PropTypes.object,
     showCampaign: PropTypes.func
   };
 
@@ -19,6 +21,8 @@ class Board extends Component {
     return {
       onCampaignUpdate: this.props.onCampaignUpdate,
       container: this.board,
+      userAccount: this.props.userAccount,
+      auth: this.props.auth,
       showCampaign: this.props.showCampaign
     };
   }

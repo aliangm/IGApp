@@ -1,773 +1,1002 @@
 module.exports = {
-  "schemaName":"channels",
-  "type":"object",
-  "title":"Channels",
-  "_id":"58808f9e734d1d5b7d47b063",
-  "properties":{
-    "web_landingPages":{
-      "alternatives":[
-        "telemarketing", "advertising_searchMarketing_SEM_googleAdwords", "email_marketingEmail"
-      ],
+  "schemaName": "channels",
+  "type": "object",
+  "title": "Channels",
+  "_id": "58808f9e734d1d5b7d47b063",
+  "properties": {
+    "web_landingPages": {
       "maxMatchValue": 5000,
       "minMonthBudget": 200,
       "title": "Web \/ Landing Pages",
-      "type": "integer"
+      "source": "landing page",
+      "medium": "content",
+      "nickname": "Landing page",
+      "type": "integer",
+      "alternatives": [
+        "telemarketing",
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "email"
+      ]
     },
-    "web_companyWebsite":{
-      "alternatives":[
-        "content_contentCreation_eBook", "content_contentCreation_imagesAndInfographics", "content_contentCreation_presentations"
-      ],
+    "web_companyWebsite": {
       "maxMatchValue": 5000,
       "minMonthBudget": 200,
-      "title": "Web \/ Company\u2019s Website",
-      "type": "integer"
+      "title": "Web \/ Company’s Website",
+      "source": "website",
+      "medium": "content",
+      "nickname": "Company’s Website",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_eBook",
+        "content_contentCreation_imagesAndInfographics",
+        "content_contentCreation_presentations"
+      ]
     },
-    "viral_recommendAFriend_referralProgram":{
-      "alternatives":[
-        "engineeringAsMarketing_professionalTool", "partners_affiliatePrograms", "engineeringAsMarketing_calculator"
-      ],
+    "viral_recommendAFriend_referralProgram": {
       "maxMatchValue": 5000,
       "minMonthBudget": 750,
       "title": "Viral \/ Recommend a Friend \/ Referral Program (P2P)",
-      "type": "integer"
+      "source": "friend \/ viral",
+      "medium": "referral",
+      "nickname": "Referral Program",
+      "type": "integer",
+      "alternatives": [
+        "engineeringAsMarketing",
+        "partners_affiliatePrograms",
+        "advertising_paidReviews"
+      ]
     },
-    "telemarketing":{
-      "alternatives":[
-        "web_landingPages", "email_marketingEmail", "email_transactionalEmail"
-      ],
+    "telemarketing": {
       "maxMatchValue": 5000,
       "minMonthBudget": 600,
       "title": "Telemarketing",
-      "type": "integer"
+      "source": "telemarketing",
+      "medium": "offline",
+      "nickname": "Telemarketing",
+      "type": "integer",
+      "alternatives": [
+        "web_landingPages",
+        "email",
+        "viral_recommendAFriend_referralProgram"
+      ]
     },
-    "social_productHunt":{
-      "alternatives":[
-        "content_contentPromotion_forums_other", "content_contentPromotion_forums_reddit", "engineeringAsMarketing_other"
-      ],
+    "social_quora": {
+      "maxMatchValue": 5000,
+      "minMonthBudget": 200,
+      "title": "Social \/ Quora",
+      "source": "quora",
+      "medium": "social",
+      "nickname": "Quora - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_reddit",
+        "content_contentPromotion_forums_other",
+        "content_contentPromotion_contentDiscovery_outbrain"
+      ]
+    },
+    "social_reddit": {
+      "maxMatchValue": 5000,
+      "minMonthBudget": 200,
+      "title": "Social \/ Reddit",
+      "source": "reddit",
+      "medium": "social",
+      "nickname": "Reddit - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_quora",
+        "content_contentPromotion_forums_other",
+        "content_contentPromotion_contentDiscovery_outbrain"
+      ]
+    },
+    "social_productHunt": {
       "maxMatchValue": 5000,
       "minMonthBudget": 5500,
       "title": "Social \/ Product Hunt (Launch)",
-      "type": "integer"
+      "source": "product hunt",
+      "medium": "social",
+      "nickname": "Product Hunt",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_forums_other",
+        "social_reddit",
+        "engineeringAsMarketing"
+      ]
     },
-    "social_communityBuilding":{
-      "alternatives":[
-        "social_linkedinCompanyProfile", "social_influencerOutreach", "social_twitterAccount"
-      ],
+    "social_communityBuilding": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Social \/ Community Building",
-      "type": "integer"
+      "source": "community (social channel?)",
+      "medium": "social",
+      "nickname": "Community Building",
+      "type": "integer",
+      "alternatives": [
+        "social_linkedinCompanyProfile",
+        "social_influencerOutreach",
+        "social_twitterAccount"
+      ]
     },
-    "social_influencerOutreach":{
-      "alternatives":[
-        "social_communityBuilding", "social_linkedinCompanyProfile", "social_twitterAccount"
-      ],
+    "social_influencerOutreach": {
       "maxMatchValue": 5000,
       "minMonthBudget": 450,
       "title": "Social \/ Influencer Outreach",
-      "type": "integer"
+      "source": "influencer",
+      "medium": "social",
+      "nickname": "Influencers Outreach",
+      "type": "integer",
+      "alternatives": [
+        "social_communityBuilding",
+        "social_linkedinCompanyProfile",
+        "social_twitterAccount"
+      ]
     },
-    "social_linkedinGroup":{
-      "alternatives":[
-        "social_linkedinCompanyProfile", "social_communityBuilding", "social_influencerOutreach"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 300,
-      "title": "Social \/ LinkedIn Group",
-      "type": "integer"
-    },
-    "social_linkedinCompanyProfile":{
-      "alternatives":[
-        "social_twitterAccount", "social_facebookPage", "social_twitterAccount"
-      ],
+    "social_linkedinCompanyProfile": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Social \/ LinkedIn Company Profile",
-      "type": "integer"
+      "source": "linkedin",
+      "medium": "social",
+      "nickname": "LinkedIn - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_twitterAccount",
+        "social_facebookPage",
+        "social_twitterAccount"
+      ]
     },
-    "social_pinterestPage":{
-      "alternatives":[
-        "social_googlePlusPage", "social_youtubeChannel", "social_instagramAccount"
-      ],
+    "social_pinterestPage": {
       "maxMatchValue": 5000,
       "minMonthBudget": 1000,
       "title": "Social \/ Pinterest Page",
-      "type": "integer"
+      "source": "pinterest",
+      "medium": "social",
+      "nickname": "Pinterest - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_googlePlusPage",
+        "social_youtubeChannel",
+        "social_instagramAccount"
+      ]
     },
-    "social_googlePlusPage":{
-      "alternatives":[
-        "social_instagramAccount", "social_youtubeChannel", "social_pinterestPage"
-      ],
+    "social_googlePlusPage": {
       "maxMatchValue": 5000,
       "minMonthBudget": 500,
       "title": "Social \/ Google+ Page",
-      "type": "integer"
+      "source": "google plus",
+      "medium": "social",
+      "nickname": "Google+ - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_instagramAccount",
+        "social_youtubeChannel",
+        "social_pinterestPage"
+      ]
     },
-    "social_instagramAccount":{
-      "alternatives":[
-        "social_googlePlusPage", "social_twitterAccount", "social_pinterestPage"
-      ],
+    "social_instagramAccount": {
       "maxMatchValue": 5000,
       "minMonthBudget": 900,
       "title": "Social \/ Instagram Account",
-      "type": "integer"
+      "source": "instagram",
+      "medium": "social",
+      "nickname": "Instagram - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_googlePlusPage",
+        "social_twitterAccount",
+        "social_pinterestPage"
+      ]
     },
-    "social_youtubeChannel":{
-      "alternatives":[
-        "social_instagramAccount", "social_googlePlusPage", "social_pinterestPage"
-      ],
+    "social_youtubeChannel": {
       "maxMatchValue": 5000,
       "minMonthBudget": 400,
       "title": "Social \/ Youtube Channel",
-      "type": "integer"
+      "source": "youtube",
+      "medium": "social",
+      "nickname": "Youtube - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_instagramAccount",
+        "social_googlePlusPage",
+        "social_pinterestPage"
+      ]
     },
-    "social_twitterAccount":{
-      "alternatives":[
-        "social_instagramAccount", "social_linkedinCompanyProfile", "social_youtubeChannel"
-      ],
+    "social_twitterAccount": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Social \/ Twitter Account",
-      "type": "integer"
+      "source": "twitter",
+      "medium": "social",
+      "nickname": "Twitter - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_instagramAccount",
+        "social_linkedinCompanyProfile",
+        "social_youtubeChannel"
+      ]
     },
-    "social_facebookPage":{
-      "alternatives":[
-        "social_linkedinGroup", "social_linkedinCompanyProfile", "social_twitterAccount"
-      ],
+    "social_facebookPage": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Social \/ Facebook Page",
-      "type": "integer"
+      "source": "facebook",
+      "medium": "social",
+      "nickname": "Facebook - organic",
+      "type": "integer",
+      "alternatives": [
+        "social_communityBuilding",
+        "social_linkedinCompanyProfile",
+        "social_twitterAccount"
+      ]
     },
-    "PR_publicity_pressReleases_international":{
-      "alternatives":[
-        "PR_publicity_pressReleases_nationwide", "events_offlineEvents_running", "events_offlineEvents_sponsorship"
-      ],
+    "PR_publicity_pressReleases": {
       "maxMatchValue": 5000,
-      "minMonthBudget": 4500,
-      "title": "PR \/ Publicity \/ Press Releases \/ International",
-      "type": "integer"
+      "minMonthBudget": 3000,
+      "title": "PR \/ Publicity \/ Press Releases",
+      "source": "(publish network)",
+      "medium": "press release",
+      "nickname": "Press Release",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_targetingBlogs",
+        "events_offlineEvents_running",
+        "events_offlineEvents_sponsorship"
+      ]
     },
-    "PR_publicity_pressReleases_nationwide":{
-      "alternatives":[
-        "PR_publicity_pressReleases_international", "events_offlineEvents_running", "events_offlineEvents_sponsorship"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 3500,
-      "title": "PR \/ Publicity \/ Press Releases \/ Nationwide",
-      "type": "integer"
-    },
-    "PR_publicity_pressReleases_local":{
-      "alternatives":[
-        "PR_publicity_pressReleases_nationwide", "events_offlineEvents_running", "events_offlineEvents_sponsorship"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 1000,
-      "title": "PR \/ Publicity \/ Press Releases \/ Local",
-      "type": "integer"
-    },
-    "PR_unconventionalPR_customerAppreciation":{
-      "alternatives":[
-        "PR_unconventionalPR_publicityStunts", "events_offlineEvents_showcase", "events_onlineEvents_workshop"
-      ],
+    "PR_unconventionalPR_customerAppreciation": {
       "maxMatchValue": 5000,
       "minMonthBudget": 500,
       "title": "PR \/ Unconventional PR \/ Customer Appreciation",
-      "type": "integer"
+      "source": "customer appreciation",
+      "medium": "offline",
+      "nickname": "Customer Appreciation",
+      "type": "integer",
+      "alternatives": [
+        "PR_unconventionalPR_publicityStunts",
+        "events_offlineEvents_showcase",
+        "events_onlineEvents_workshop"
+      ]
     },
-    "PR_unconventionalPR_publicityStunts":{
-      "alternatives":[
-        "events_onlineEvents_webinar", "events_onlineEvents_workshop", "social_influencerOutreach"
-      ],
+    "PR_unconventionalPR_publicityStunts": {
       "maxMatchValue": 5000,
       "minMonthBudget": 15000,
       "title": "PR \/ Unconventional PR \/ Publicity Stunts",
-      "type": "integer"
+      "source": "publicity stunt",
+      "medium": "offline",
+      "nickname": "Publicity Stunt",
+      "type": "integer",
+      "alternatives": [
+        "events_onlineEvents_webinar",
+        "events_onlineEvents_workshop",
+        "social_influencerOutreach"
+      ]
     },
-    "partners_affiliatePrograms":{
-      "alternatives":[
-        "viral_recommendAFriend_referralProgram", "email_transactionalEmail", "email_marketingEmail"
-      ],
+    "partners_affiliatePrograms": {
       "maxMatchValue": 5000,
       "minMonthBudget": 450,
       "title": "Partners \/ Affiliate Programs",
-      "type": "integer"
+      "source": "(affiliate id) \/ (source - affiliate, medium - referral)",
+      "medium": "affiliate",
+      "nickname": "Affiliate Program",
+      "type": "integer",
+      "alternatives": [
+        "viral_recommendAFriend_referralProgram",
+        "email",
+        "telemarketing"
+      ]
     },
-    "mobile_mobileSite":{
-      "alternatives":[
-        "mobile_mobileApp", "web_landingPages", "web_companyWebsite"
-      ],
+    "mobile_mobileSite": {
       "maxMatchValue": 5000,
       "minMonthBudget": 1200,
       "title": "Mobile \/ Mobile Site",
-      "type": "integer"
+      "source": "mobile site",
+      "medium": "content",
+      "nickname": "Mobile Site",
+      "type": "integer",
+      "alternatives": [
+        "mobile_mobileApp",
+        "web_landingPages",
+        "web_companyWebsite"
+      ]
     },
-    "mobile_mobileApp":{
-      "alternatives":[
-        "mobile_mobileSite", "web_landingPages", "web_companyWebsite"
-      ],
+    "mobile_mobileApp": {
       "maxMatchValue": 5000,
       "minMonthBudget": 1350,
       "title": "Mobile \/ Mobile App",
-      "type": "integer"
+      "source": "app",
+      "medium": "mobile ",
+      "nickname": "Mobile App",
+      "type": "integer",
+      "alternatives": [
+        "mobile_mobileSite",
+        "web_landingPages",
+        "web_companyWebsite"
+      ]
     },
-    "events_onlineEvents_workshop":{
-      "alternatives":[
-        "events_onlineEvents_webinar", "events_onlineEvents_podcast", "content_contentCreation_videos"
-      ],
+    "events_onlineEvents_workshop": {
       "maxMatchValue": 5000,
       "minMonthBudget": 400,
       "title": "Events \/ Online Events \/ Workshop",
-      "type": "integer"
+      "source": "workshop",
+      "medium": "online event",
+      "nickname": "Online Workshop",
+      "type": "integer",
+      "alternatives": [
+        "events_onlineEvents_webinar",
+        "events_onlineEvents_podcast",
+        "content_contentCreation_videos"
+      ]
     },
-    "events_onlineEvents_podcast":{
-      "alternatives":[
-        "events_onlineEvents_webinar", "events_onlineEvents_workshop", "social_linkedinGroup"
-      ],
+    "events_onlineEvents_podcast": {
       "maxMatchValue": 5000,
       "minMonthBudget": 400,
       "title": "Events \/ Online Events \/ Podcast",
-      "type": "integer"
+      "source": "podcast",
+      "medium": "online event",
+      "nickname": "Podcast",
+      "type": "integer",
+      "alternatives": [
+        "events_onlineEvents_webinar",
+        "events_onlineEvents_workshop",
+        "social_communityBuilding"
+      ]
     },
-    "events_onlineEvents_webinar":{
-      "alternatives":[
-        "events_onlineEvents_podcast", "events_onlineEvents_workshop", "social_influencerOutreach"
-      ],
+    "events_onlineEvents_webinar": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Events \/ Online Events \/ Webinar",
-      "type": "integer"
+      "source": "webinar",
+      "medium": "online event",
+      "nickname": "Webinar",
+      "type": "integer",
+      "alternatives": [
+        "events_onlineEvents_podcast",
+        "events_onlineEvents_workshop",
+        "social_influencerOutreach"
+      ]
     },
-    "events_offlineEvents_running":{
-      "alternatives":[
-        "PR_publicity_pressReleases_international", "PR_publicity_pressReleases_nationwide", "events_offlineEvents_sponsorship"
-      ],
+    "events_offlineEvents_running": {
       "maxMatchValue": 5000,
       "minMonthBudget": 500,
       "title": "Events \/ Offline Events \/ Organising",
-      "type": "integer"
+      "source": "create event",
+      "medium": "offline",
+      "nickname": "Organising (Event)",
+      "type": "integer",
+      "alternatives": [
+        "PR_publicity_pressReleases",
+        "events_offlineEvents_sponsorship",
+        "advertising_magazines_professional"
+      ]
     },
-    "events_offlineEvents_showcase":{
-      "alternatives":[
-        "events_offlineEvents_speakingEngagements", "mobile_mobileApp", "viral_recommendAFriend_referralProgram"
-      ],
+    "events_offlineEvents_showcase": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Events \/ Offline Events \/ Showcase",
-      "type": "integer"
+      "source": "showcase event",
+      "medium": "offline",
+      "nickname": "Showcase (Event)",
+      "type": "integer",
+      "alternatives": [
+        "events_offlineEvents_speakingEngagements",
+        "mobile_mobileApp",
+        "viral_recommendAFriend_referralProgram"
+      ]
     },
-    "events_offlineEvents_speakingEngagements":{
-      "alternatives":[
-        "events_offlineEvents_sponsorship", "events_onlineEvents_workshop", "events_onlineEvents_podcast"
-      ],
+    "events_offlineEvents_speakingEngagements": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Events \/ Offline Events \/ Speaking Engagements",
-      "type": "integer"
+      "source": "speaking event",
+      "medium": "offline",
+      "nickname": "Speaking Engagement (Event)",
+      "type": "integer",
+      "alternatives": [
+        "events_offlineEvents_sponsorship",
+        "events_onlineEvents_workshop",
+        "events_onlineEvents_podcast"
+      ]
     },
-    "events_offlineEvents_sponsorship":{
-      "alternatives":[
-        "events_offlineEvents_speakingEngagements", "events_onlineEvents_podcast", "social_linkedinGroup"
-      ],
+    "events_offlineEvents_sponsorship": {
       "maxMatchValue": 5000,
       "minMonthBudget": 450,
       "title": "Events \/ Offline Events \/ Sponsorship",
-      "type": "integer"
+      "source": "sponsorship event",
+      "medium": "offline",
+      "nickname": "Sponsorship (Event)",
+      "type": "integer",
+      "alternatives": [
+        "events_offlineEvents_speakingEngagements",
+        "events_onlineEvents_podcast",
+        "social_communityBuilding"
+      ]
     },
-    "engineeringAsMarketing_other":{
-      "alternatives":[
-        "engineeringAsMarketing_calculator", "engineeringAsMarketing_educationalMicrosites", "engineeringAsMarketing_widget"
-      ],
+    "engineeringAsMarketing": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
-      "title": "Engineering as Marketing \/ Any",
-      "type": "integer"
+      "title": "Engineering as Marketing",
+      "source": "tool",
+      "medium": "content",
+      "nickname": "Engineering as Marketing (tool)",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_targetingBlogs",
+        "partners_affiliatePrograms",
+        "advertising_paidReviews"
+      ]
     },
-    "engineeringAsMarketing_educationalMicrosites":{
-      "alternatives":[
-        "engineeringAsMarketing_calculator", "engineeringAsMarketing_widget", "engineeringAsMarketing_other"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 350,
-      "title": "Engineering as Marketing \/ Educational Microsites",
-      "type": "integer"
-    },
-    "engineeringAsMarketing_widget":{
-      "alternatives":[
-        "engineeringAsMarketing_calculator", "engineeringAsMarketing_educationalMicrosites", "engineeringAsMarketing_other"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 250,
-      "title": "Engineering as Marketing \/ Widget",
-      "type": "integer"
-    },
-    "engineeringAsMarketing_calculator":{
-      "alternatives":[
-        "engineeringAsMarketing_educationalMicrosites", "engineeringAsMarketing_widget", "engineeringAsMarketing_other"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 250,
-      "title": "Engineering as Marketing \/ Calculator",
-      "type": "integer"
-    },
-    "engineeringAsMarketing_professionalTool":{
-      "alternatives":[
-        "engineeringAsMarketing_calculator", "engineeringAsMarketing_educationalMicrosites", "engineeringAsMarketing_widget"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 250,
-      "title": "Engineering as Marketing \/ Professional Tool",
-      "type": "integer"
-    },
-    "email_transactionalEmail":{
-      "alternatives":[
-        "email_marketingEmail", "partners_affiliatePrograms", "telemarketing"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 350,
-      "title": "Email \/ Transactional Email",
-      "type": "integer"
-    },
-    "email_marketingEmail":{
-      "alternatives":[
-        "email_transactionalEmail", "web_landingPages", "viral_recommendAFriend_referralProgram"
-      ],
+    "email": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
-      "title": "Email \/ Marketing Email",
-      "type": "integer"
+      "title": "Email",
+      "source": "(email type - newsletter, etc \/ email software)",
+      "medium": "email",
+      "nickname": "Email",
+      "type": "integer",
+      "alternatives": [
+        "telemarketing",
+        "web_landingPages",
+        "partners_affiliatePrograms"
+      ]
     },
-    "content_contentCreation_caseStudies":{
-      "alternatives":[
-        "content_contentCreation_companyBlog", "content_contentCreation_researchPaper", "content_contentCreation_videos"
-      ],
+    "content_contentCreation_caseStudies": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Creation \/ Case Studies",
-      "type": "integer"
+      "source": "case study (should be in 'content'?)",
+      "medium": "content",
+      "nickname": "Case Study",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_companyBlog",
+        "content_contentCreation_researchPaper",
+        "content_contentCreation_videos"
+      ]
     },
-    "content_contentCreation_videos":{
-      "alternatives":[
-        "content_contentCreation_eBook", "content_contentCreation_imagesAndInfographics", "content_contentCreation_presentations"
-      ],
+    "content_contentCreation_videos": {
       "maxMatchValue": 5000,
       "minMonthBudget": 550,
       "title": "Content \/ Content Creation \/ Videos",
-      "type": "integer"
+      "source": "video",
+      "medium": "content",
+      "nickname": "Video",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_eBook",
+        "content_contentCreation_imagesAndInfographics",
+        "content_contentCreation_presentations"
+      ]
     },
-    "content_contentCreation_eBook":{
-      "alternatives":[
-        "content_contentCreation_imagesAndInfographics", "content_contentCreation_presentations", "content_contentCreation_researchPaper"
-      ],
+    "content_contentCreation_eBook": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Creation \/ E-book",
-      "type": "integer"
+      "source": "e-book",
+      "medium": "content",
+      "nickname": "E-book",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_imagesAndInfographics",
+        "content_contentCreation_presentations",
+        "content_contentCreation_researchPaper"
+      ]
     },
-    "content_contentCreation_researchPaper":{
-      "alternatives":[
-        "content_contentCreation_eBook", "content_contentCreation_imagesAndInfographics", "content_contentCreation_presentations"
-      ],
+    "content_contentCreation_researchPaper": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Creation \/ Whitepaper",
-      "type": "integer"
+      "source": "whitepaper",
+      "medium": "content",
+      "nickname": "Whitepaper",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_eBook",
+        "content_contentCreation_imagesAndInfographics",
+        "content_contentCreation_presentations"
+      ]
     },
-    "content_contentCreation_reportSponsorship":{
-      "alternatives":[
-        "content_contentCreation_presentations", "content_contentCreation_imagesAndInfographics", "content_contentCreation_eBook"
-      ],
+    "content_contentCreation_reportSponsorship": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Creation \/ Report Sponsorship",
-      "type": "integer"
+      "source": "report-sponsorship",
+      "medium": "content",
+      "nickname": "Report Sponsorship",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_presentations",
+        "content_contentCreation_imagesAndInfographics",
+        "content_contentCreation_eBook"
+      ]
     },
-    "content_contentCreation_presentations":{
-      "alternatives":[
-        "content_contentCreation_imagesAndInfographics", "content_contentCreation_eBook", "content_contentCreation_reportSponsorship"
-      ],
+    "content_contentCreation_presentations": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Content \/ Content Creation \/ Presentations",
-      "type": "integer"
+      "source": "presentation",
+      "medium": "content",
+      "nickname": "Presentation",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_imagesAndInfographics",
+        "content_contentCreation_eBook",
+        "content_contentCreation_reportSponsorship"
+      ]
     },
-    "content_contentCreation_imagesAndInfographics":{
-      "alternatives":[
-        "content_contentCreation_eBook", "content_contentCreation_presentations", "content_contentCreation_researchPaper"
-      ],
+    "content_contentCreation_imagesAndInfographics": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Content \/ Content Creation \/ Images & Infographics",
-      "type": "integer"
+      "source": "image or infographic",
+      "medium": "content",
+      "nickname": "Image \/ Infographic",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_eBook",
+        "content_contentCreation_presentations",
+        "content_contentCreation_researchPaper"
+      ]
     },
-    "content_contentCreation_companyBlog":{
-      "alternatives":[
-        "content_contentCreation_researchPaper", "content_contentCreation_caseStudies", "content_contentCreation_eBook"
-      ],
+    "content_contentCreation_companyBlog": {
       "maxMatchValue": 5000,
       "minMonthBudget": 200,
       "title": "Content \/ Content Creation \/ Blog Posts - Company Blog",
-      "type": "integer"
+      "source": "website",
+      "medium": "blog",
+      "nickname": "Company Blog",
+      "type": "integer",
+      "alternatives": [
+        "content_contentCreation_researchPaper",
+        "content_contentCreation_caseStudies",
+        "content_contentCreation_eBook"
+      ]
     },
-    "content_contentPromotion_forums_other":{
-      "alternatives":[
-        "content_contentPromotion_contentDiscovery_other", "content_contentPromotion_contentDiscovery_taboola", "content_contentPromotion_forums_quora"
-      ],
+    "content_contentPromotion_forums_other": {
       "maxMatchValue": 5000,
       "minMonthBudget": 200,
       "title": "Content \/ Content Promotion \/ Forums \/ Niche Specific",
-      "type": "integer"
+      "source": "(Forum name)",
+      "medium": "forum",
+      "nickname": "Forums - Niche Specific",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_contentDiscovery_other",
+        "content_contentPromotion_contentDiscovery_taboola",
+        "social_quora"
+      ]
     },
-    "content_contentPromotion_forums_quora":{
-      "alternatives":[
-        "content_contentPromotion_forums_reddit", "content_contentPromotion_forums_other", "content_contentPromotion_contentDiscovery_outbrain"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 200,
-      "title": "Content \/ Content Promotion \/ Forums \/ Quora",
-      "type": "integer"
-    },
-    "content_contentPromotion_forums_reddit":{
-      "alternatives":[
-        "content_contentPromotion_forums_quora", "content_contentPromotion_forums_other", "content_contentPromotion_contentDiscovery_outbrain"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 200,
-      "title": "Content \/ Content Promotion \/ Forums \/ Reddit",
-      "type": "integer"
-    },
-    "content_contentPromotion_contentDiscovery_other":{
-      "alternatives":[
-        "content_contentPromotion_contentDiscovery_taboola", "content_contentPromotion_contentDiscovery_outbrain", "content_contentPromotion_forums_other"
-      ],
+    "content_contentPromotion_contentDiscovery_other": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Promotion \/ Content Discovery \/ General",
-      "type": "integer"
+      "source": "(content discovery platform\/network)",
+      "medium": "content discovery",
+      "nickname": "Content Discovery - General",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_contentDiscovery_taboola",
+        "content_contentPromotion_contentDiscovery_outbrain",
+        "content_contentPromotion_forums_other"
+      ]
     },
-    "content_contentPromotion_contentDiscovery_taboola":{
-      "alternatives":[
-        "content_contentPromotion_contentDiscovery_outbrain", "content_contentPromotion_forums_quora", "content_contentPromotion_contentDiscovery_other"
-      ],
+    "content_contentPromotion_contentDiscovery_taboola": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Promotion \/ Content Discovery \/ Taboola",
-      "type": "integer"
+      "source": "taboola",
+      "medium": "content discovery",
+      "nickname": "Taboola",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_contentDiscovery_outbrain",
+        "social_quora",
+        "content_contentPromotion_contentDiscovery_other"
+      ]
     },
-    "content_contentPromotion_contentDiscovery_outbrain":{
-      "alternatives":[
-        "content_contentPromotion_contentDiscovery_taboola", "content_contentPromotion_forums_reddit", "content_contentPromotion_forums_quora"
-      ],
+    "content_contentPromotion_contentDiscovery_outbrain": {
       "maxMatchValue": 5000,
       "minMonthBudget": 300,
       "title": "Content \/ Content Promotion \/ Content Discovery \/ Outbrain",
-      "type": "integer"
+      "source": "outbrain",
+      "medium": "content discovery",
+      "nickname": "Outbrain",
+      "type": "integer",
+      "alternatives": [
+        "content_contentPromotion_contentDiscovery_taboola",
+        "social_reddit",
+        "social_quora"
+      ]
     },
-    "content_contentPromotion_targetingBlogs":{
-      "alternatives":[
-        "content_contentPromotion_forums_reddit", "content_contentPromotion_forums_quora", "content_contentPromotion_contentDiscovery_outbrain"
-      ],
+    "content_contentPromotion_targetingBlogs": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Content \/ Content Promotion \/ Targeting Blogs (Guest)",
-      "type": "integer"
+      "source": "guest",
+      "medium": "paid content",
+      "nickname": "Guest Post",
+      "type": "integer",
+      "alternatives": [
+        "social_reddit",
+        "social_quora",
+        "content_contentPromotion_contentDiscovery_outbrain"
+      ]
     },
-    "advertising_celebrityEndorsements":{
-      "alternatives":[
-        "advertising_paidReviews", "advertising_offlineAds_TV_international", "advertising_magazines_professional_international"
-      ],
+    "advertising_celebrityEndorsements": {
       "maxMatchValue": 5000,
       "minMonthBudget": 20000,
       "title": "Advertising \/ Celebrity Endorsements",
-      "type": "integer"
+      "source": "celebrity endorsement",
+      "medium": "offline",
+      "nickname": "Celebrity Endorsement",
+      "type": "integer",
+      "alternatives": [
+        "advertising_paidReviews",
+        "advertising_offlineAds_TV",
+        "advertising_magazines_professional"
+      ]
     },
-    "advertising_paidReviews":{
-      "alternatives":[
-        "advertising_celebrityEndorsements", "advertising_offlineAds_TV_international", "advertising_magazines_professional_international"
-      ],
+    "advertising_paidReviews": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Advertising \/ Paid Reviews",
-      "type": "integer"
+      "source": "(reviews website)",
+      "medium": "paid review",
+      "nickname": "Paid Reviews",
+      "type": "integer",
+      "alternatives": [
+        "advertising_celebrityEndorsements",
+        "advertising_offlineAds_TV",
+        "advertising_magazines_professional"
+      ]
     },
-    "advertising_magazines_professional_international":{
-      "alternatives":[
-        "advertising_offlineAds_TV_international", "advertising_offlineAds_billboard", "advertising_offlineAds_newspaper_international"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 1000,
-      "title": "Advertising \/ Magazines \/ Professional \/ International",
-      "type": "integer"
-    },
-    "advertising_magazines_professional_nationwide":{
-      "alternatives":[
-        "advertising_offlineAds_newspaper_international", "advertising_offlineAds_SMS", "advertising_offlineAds_billboard"
-      ],
+    "advertising_magazines_professional": {
       "maxMatchValue": 5000,
       "minMonthBudget": 750,
-      "title": "Advertising \/ Magazines \/ Professional \/ Nationwide",
-      "type": "integer"
+      "title": "Advertising \/ Magazines \/ Professional",
+      "source": "(magazine)",
+      "medium": "magazine",
+      "nickname": "Magazine (Professional) Ad",
+      "type": "integer",
+      "alternatives": [
+        "advertising_offlineAds_newspaper",
+        "advertising_offlineAds_billboard",
+        "advertising_offlineAds_TV"
+      ]
     },
-    "advertising_magazines_professional_local":{
-      "alternatives":[
-        "advertising_displayAds_googleAdwords", "advertising_offlineAds_newspaper_local", "advertising_offlineAds_radio"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 500,
-      "title": "Advertising \/ Magazines \/ Professional \/ Local",
-      "type": "integer"
-    },
-    "advertising_magazines_consumers_international":{
-      "alternatives":[
-        "advertising_magazines_consumers_nationwide", "advertising_magazines_professional_local", "advertising_displayAds_googleAdwords"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 2500,
-      "title": "Advertising \/ Magazines \/ Consumers \/ International",
-      "type": "integer"
-    },
-    "advertising_magazines_consumers_nationwide":{
-      "alternatives":[
-        "advertising_magazines_consumers_international", "advertising_magazines_professional_local", "advertising_displayAds_googleAdwords"
-      ],
+    "advertising_magazines_consumers": {
       "maxMatchValue": 5000,
       "minMonthBudget": 2000,
-      "title": "Advertising \/ Magazines \/ Consumers \/ Nationwide",
-      "type": "integer"
+      "title": "Advertising \/ Magazines \/ Consumers",
+      "source": "(magazine)",
+      "medium": "magazine",
+      "nickname": "Magazine (Consumers) Ad",
+      "type": "integer",
+      "alternatives": [
+        "advertising_magazines_professional",
+        "advertising_displayAds_googleAdwords",
+        "advertising_paidReviews"
+      ]
     },
-    "advertising_magazines_consumers_local":{
-      "alternatives":[
-        "advertising_displayAds_googleAdwords", "advertising_displayAds_other", "advertising_mobile_ASO"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 1200,
-      "title": "Advertising \/ Magazines \/ Consumers \/ Local",
-      "type": "integer"
-    },
-    "advertising_mobile_inAppAds":{
-      "alternatives":[
-        "advertising_displayAds_googleAdwords", "advertising_mobile_incentivizedCPI", "advertising_mobile_nonIncentivizedCPI"
-      ],
+    "advertising_mobile_inAppAds": {
       "maxMatchValue": 5000,
       "minMonthBudget": 1200,
       "title": "Advertising \/ Mobile \/ In-app ads",
-      "type": "integer"
+      "source": "in-app",
+      "medium": "paid",
+      "nickname": "In-app ads",
+      "type": "integer",
+      "alternatives": [
+        "advertising_displayAds_googleAdwords",
+        "advertising_mobile_incentivizedCPI",
+        "advertising_mobile_nonIncentivizedCPI"
+      ]
     },
-    "advertising_mobile_ASO":{
-      "alternatives":[
-        "advertising_mobile_inAppAds", "advertising_mobile_incentivizedCPI", "advertising_mobile_nonIncentivizedCPI"
-      ],
+    "advertising_mobile_ASO": {
       "maxMatchValue": 5000,
       "minMonthBudget": 2300,
       "title": "Advertising \/ Mobile \/ ASO (App Store Optimization)",
-      "type": "integer"
+      "source": "app store",
+      "medium": "organic",
+      "nickname": "ASO (App Store Optimization)",
+      "type": "integer",
+      "alternatives": [
+        "advertising_mobile_inAppAds",
+        "advertising_mobile_incentivizedCPI",
+        "advertising_mobile_nonIncentivizedCPI"
+      ]
     },
-    "advertising_mobile_nonIncentivizedCPI":{
-      "alternatives":[
-        "advertising_mobile_incentivizedCPI", "advertising_mobile_ASO", "advertising_mobile_inAppAds"
-      ],
+    "advertising_mobile_nonIncentivizedCPI": {
       "maxMatchValue": 5000,
       "minMonthBudget": 1300,
       "title": "Advertising \/ Mobile \/ Non-Incentivized CPI",
-      "type": "integer"
+      "source": "CPI",
+      "medium": "organic",
+      "nickname": "Non-Incentivized CPI",
+      "type": "integer",
+      "alternatives": [
+        "advertising_mobile_incentivizedCPI",
+        "advertising_mobile_ASO",
+        "advertising_mobile_inAppAds"
+      ]
     },
-    "advertising_mobile_incentivizedCPI":{
-      "alternatives":[
-        "advertising_mobile_nonIncentivizedCPI", "advertising_mobile_inAppAds", "advertising_displayAds_googleAdwords"
-      ],
+    "advertising_mobile_incentivizedCPI": {
       "maxMatchValue": 5000,
       "minMonthBudget": 1500,
       "title": "Advertising \/ Mobile \/ Incentivized CPI",
-      "type": "integer"
+      "source": "CPI",
+      "medium": "paid",
+      "nickname": "Incentivized CPI",
+      "type": "integer",
+      "alternatives": [
+        "advertising_mobile_nonIncentivizedCPI",
+        "advertising_mobile_inAppAds",
+        "advertising_displayAds_googleAdwords"
+      ]
     },
-    "advertising_offlineAds_SMS":{
-      "alternatives":[
-        "advertising_offlineAds_newspaper_international", "advertising_magazines_consumers_international", "email_marketingEmail"
-      ],
+    "advertising_offlineAds_SMS": {
       "maxMatchValue": 5000,
       "minMonthBudget": 750,
       "title": "Advertising \/ Offline Ads \/ SMS",
-      "type": "integer"
+      "source": "(sms type - newsletter, etc \/ sms software)",
+      "medium": "sms",
+      "nickname": "SMS",
+      "type": "integer",
+      "alternatives": [
+        "advertising_offlineAds_newspaper",
+        "advertising_magazines_consumers",
+        "email"
+      ]
     },
-    "advertising_offlineAds_billboard":{
-      "alternatives":[
-        "advertising_magazines_consumers_international", "advertising_magazines_professional_international", "advertising_magazines_professional_nationwide"
-      ],
+    "advertising_offlineAds_billboard": {
       "maxMatchValue": 5000,
       "minMonthBudget": 3500,
       "title": "Advertising \/ Offline Ads \/ Billboard",
-      "type": "integer"
+      "source": "billboard",
+      "medium": "offline",
+      "nickname": "Billboard Ad",
+      "type": "integer",
+      "alternatives": [
+        "advertising_magazines_consumers",
+        "advertising_magazines_professional",
+        "advertising_offlineAds_TV"
+      ]
     },
-    "advertising_offlineAds_newspaper_international":{
-      "alternatives":[
-        "advertising_magazines_consumers_international", "advertising_magazines_professional_nationwide", "advertising_offlineAds_SMS"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 5000,
-      "title": "Advertising \/ Offline Ads \/ Newspaper \/ International",
-      "type": "integer"
-    },
-    "advertising_offlineAds_newspaper_nationwide":{
-      "alternatives":[
-        "advertising_magazines_consumers_nationwide", "advertising_displayAds_other", "advertising_displayAds_googleAdwords"
-      ],
+    "advertising_offlineAds_newspaper": {
       "maxMatchValue": 5000,
       "minMonthBudget": 4000,
-      "title": "Advertising \/ Offline Ads \/ Newspaper \/ Nationwide",
-      "type": "integer"
+      "title": "Advertising \/ Offline Ads \/ Newspaper",
+      "source": "(newspaper)",
+      "medium": "newspaper",
+      "nickname": "Newspaper Ad",
+      "type": "integer",
+      "alternatives": [
+        "advertising_magazines_consumers",
+        "advertising_displayAds_googleAdwords",
+        "advertising_displayAds_other"
+      ]
     },
-    "advertising_offlineAds_newspaper_local":{
-      "alternatives":[
-        "advertising_displayAds_googleAdwords", "advertising_displayAds_other", "advertising_offlineAds_radio"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 3500,
-      "title": "Advertising \/ Offline Ads \/ Newspaper \/ Local",
-      "type": "integer"
-    },
-    "advertising_offlineAds_radio":{
-      "alternatives":[
-        "advertising_offlineAds_newspaper_nationwide", "advertising_displayAds_googleAdwords", "advertising_magazines_consumers_nationwide"
-      ],
+    "advertising_offlineAds_radio": {
       "maxMatchValue": 5000,
       "minMonthBudget": 3000,
       "title": "Advertising \/ Offline Ads \/ Radio",
-      "type": "integer"
+      "source": "radio (\/source - channel, medium - radio)",
+      "medium": "offline",
+      "nickname": "Radio Ad",
+      "type": "integer",
+      "alternatives": [
+        "advertising_offlineAds_newspaper",
+        "advertising_displayAds_googleAdwords",
+        "advertising_magazines_consumers"
+      ]
     },
-    "advertising_offlineAds_TV_international":{
-      "alternatives":[
-        "advertising_celebrityEndorsements", "advertising_paidReviews", "advertising_displayAds_googleAdwords"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 5500,
-      "title": "Advertising \/ Offline Ads \/ TV \/ International",
-      "type": "integer"
-    },
-    "advertising_offlineAds_TV_nationwide":{
-      "alternatives":[
-        "advertising_celebrityEndorsements", "advertising_paidReviews", "advertising_displayAds_googleAdwords"
-      ],
+    "advertising_offlineAds_TV": {
       "maxMatchValue": 5000,
       "minMonthBudget": 4500,
-      "title": "Advertising \/ Offline Ads \/ TV \/ Nationwide",
-      "type": "integer"
+      "title": "Advertising \/ Offline Ads \/ TV",
+      "source": "tv (\/source - channel, medium - tv)",
+      "medium": "offline",
+      "nickname": "TV Commercial",
+      "type": "integer",
+      "alternatives": [
+        "advertising_celebrityEndorsements",
+        "advertising_paidReviews",
+        "advertising_displayAds_googleAdwords"
+      ]
     },
-    "advertising_offlineAds_TV_local":{
-      "alternatives":[
-        "advertising_offlineAds_TV_nationwide", "advertising_paidReviews", "advertising_displayAds_googleAdwords"
-      ],
-      "maxMatchValue": 5000,
-      "minMonthBudget": 4000,
-      "title": "Advertising \/ Offline Ads \/ TV \/ Local",
-      "type": "integer"
-    },
-    "advertising_socialAds_youtubeAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_linkedinAdvertising", "advertising_socialAds_GooglePlusAdvertising", "advertising_socialAds_twitterAdvertising"
-      ],
+    "advertising_socialAds_youtubeAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Advertising \/ Paid Social \/ YouTube Advertising",
-      "type": "integer"
+      "source": "youtube",
+      "medium": "social paid",
+      "nickname": "YouTube - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_linkedinAdvertising",
+        "advertising_socialAds_GooglePlusAdvertising",
+        "advertising_socialAds_twitterAdvertising"
+      ]
     },
-    "advertising_socialAds_GooglePlusAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_linkedinAdvertising", "advertising_socialAds_twitterAdvertising", "advertising_socialAds_facebookAdvertising"
-      ],
+    "advertising_socialAds_GooglePlusAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Advertising \/ Paid Social \/ Google+ Advertising",
-      "type": "integer"
+      "source": "google plus",
+      "medium": "social paid",
+      "nickname": "Google+ - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_linkedinAdvertising",
+        "advertising_socialAds_twitterAdvertising",
+        "advertising_socialAds_facebookAdvertising"
+      ]
     },
-    "advertising_socialAds_pinterestAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_instagramAdvertising", "advertising_socialAds_facebookAdvertising", "advertising_socialAds_twitterAdvertising"
-      ],
+    "advertising_socialAds_pinterestAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 900,
       "title": "Advertising \/ Paid Social \/ Pinterest Advertising",
-      "type": "integer"
+      "source": "pinterest",
+      "medium": "social paid",
+      "nickname": "Pinterest - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_instagramAdvertising",
+        "advertising_socialAds_facebookAdvertising",
+        "advertising_socialAds_twitterAdvertising"
+      ]
     },
-    "advertising_socialAds_instagramAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_pinterestAdvertising", "advertising_socialAds_facebookAdvertising", "advertising_socialAds_youtubeAdvertising"
-      ],
+    "advertising_socialAds_instagramAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 800,
       "title": "Advertising \/ Paid Social \/ Instagram Advertising",
-      "type": "integer"
+      "source": "instagram",
+      "medium": "social paid",
+      "nickname": "Instagram - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_pinterestAdvertising",
+        "advertising_socialAds_facebookAdvertising",
+        "advertising_socialAds_youtubeAdvertising"
+      ]
     },
-    "advertising_socialAds_linkedinAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_twitterAdvertising", "advertising_socialAds_facebookAdvertising", "advertising_socialAds_GooglePlusAdvertising"
-      ],
+    "advertising_socialAds_linkedinAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Advertising \/ Paid Social \/ LinkedIn Advertising",
-      "type": "integer"
+      "source": "linkedin",
+      "medium": "social paid",
+      "nickname": "LinkedIn - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_twitterAdvertising",
+        "advertising_socialAds_facebookAdvertising",
+        "advertising_socialAds_GooglePlusAdvertising"
+      ]
     },
-    "advertising_socialAds_twitterAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_linkedinAdvertising", "advertising_socialAds_facebookAdvertising", "advertising_socialAds_GooglePlusAdvertising"
-      ],
+    "advertising_socialAds_twitterAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Advertising \/ Paid Social \/ Twitter Advertising",
-      "type": "integer"
+      "source": "twitter",
+      "medium": "social paid",
+      "nickname": "Twitter - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_linkedinAdvertising",
+        "advertising_socialAds_facebookAdvertising",
+        "advertising_socialAds_GooglePlusAdvertising"
+      ]
     },
-    "advertising_socialAds_facebookAdvertising":{
-      "alternatives":[
-        "advertising_socialAds_linkedinAdvertising", "advertising_socialAds_instagramAdvertising", "advertising_socialAds_twitterAdvertising"
-      ],
+    "advertising_socialAds_facebookAdvertising": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Advertising \/ Paid Social \/ Facebook Advertising",
-      "type": "integer"
+      "source": "facebook",
+      "medium": "social paid",
+      "nickname": "Facebook - Paid",
+      "type": "integer",
+      "alternatives": [
+        "advertising_socialAds_linkedinAdvertising",
+        "advertising_socialAds_instagramAdvertising",
+        "advertising_socialAds_twitterAdvertising"
+      ]
     },
-    "advertising_searchMarketing_SEM_other":{
-      "alternatives":[
-        "advertising_searchMarketing_SEM_googleAdwords", "advertising_displayAds_googleAdwords", "advertising_mobile_inAppAds"
-      ],
+    "advertising_searchMarketing_SEM_onlineDirectories": {
+      "maxMatchValue": 5000,
+      "minMonthBudget": 250,
+      "title": "Advertising \/ Search Marketing \/ SEM (PPC) \/ Online Directories",
+      "source": "(online directory)",
+      "medium": "cpc \/ paid",
+      "nickname": "PPC - Online Directories",
+      "type": "integer",
+      "alternatives": [
+        "advertising_paidReviews",
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "advertising_searchMarketing_SEM_bing"
+      ]
+    },
+    "advertising_searchMarketing_SEM_other": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Advertising \/ Search Marketing \/ SEM (PPC) \/ Other (not Google Ads)",
-      "type": "integer"
+      "source": "(cpc network)",
+      "medium": "cpc \/ paid",
+      "nickname": "PPC - Generic",
+      "type": "integer",
+      "alternatives": [
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "advertising_searchMarketing_SEM_bing",
+        "advertising_displayAds_googleAdwords"
+      ]
     },
-    "advertising_searchMarketing_SEM_googleAdwords":{
-      "alternatives":[
-        "advertising_searchMarketing_SEM_other", "advertising_displayAds_googleAdwords", "advertising_mobile_inAppAds"
-      ],
+    "advertising_searchMarketing_SEM_googleAdwords": {
       "maxMatchValue": 5000,
       "minMonthBudget": 200,
       "title": "Advertising \/ Search Marketing \/ SEM (PPC) \/ Google AdWords",
-      "type": "integer"
+      "source": "google \/ adwords",
+      "medium": "cpc \/ paid",
+      "nickname": "PPC - Google AdWords",
+      "type": "integer",
+      "alternatives": [
+        "advertising_searchMarketing_SEM_bing",
+        "advertising_searchMarketing_SEM_other",
+        "advertising_displayAds_googleAdwords"
+      ]
     },
-    "advertising_searchMarketing_SEO":{
-      "alternatives":[
-        "advertising_searchMarketing_SEM_googleAdwords", "advertising_searchMarketing_SEM_other", "advertising_displayAds_googleAdwords"
-      ],
+    "advertising_searchMarketing_SEM_bing": {
+      "maxMatchValue": 5000,
+      "minMonthBudget": 200,
+      "title": "Advertising \/ Search Marketing \/ SEM (PPC) \/ Bing",
+      "source": "bing",
+      "medium": "cpc \/ paid",
+      "nickname": "PPC - Bing",
+      "type": "integer",
+      "alternatives": [
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "advertising_searchMarketing_SEM_other",
+        "advertising_displayAds_googleAdwords"
+      ]
+    },
+    "advertising_searchMarketing_SEO": {
       "maxMatchValue": 5000,
       "minMonthBudget": 250,
       "title": "Advertising \/ Search Marketing \/ SEO",
-      "type": "integer"
+      "source": "search",
+      "medium": "organic",
+      "nickname": "SEO",
+      "type": "integer",
+      "alternatives": [
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "advertising_searchMarketing_SEM_other",
+        "advertising_displayAds_googleAdwords"
+      ]
     },
-    "advertising_displayAds_other":{
-      "alternatives":[
-        "advertising_displayAds_googleAdwords", "advertising_searchMarketing_SEM_googleAdwords", "advertising_searchMarketing_SEM_other"
-      ],
+    "advertising_displayAds_other": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Advertising \/ Display Ads \/ Other (not Google Ads)",
-      "type": "integer"
+      "source": "(display network",
+      "medium": "display",
+      "nickname": "Display Ads - Generic",
+      "type": "integer",
+      "alternatives": [
+        "advertising_displayAds_googleAdwords",
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "advertising_searchMarketing_SEM_other"
+      ]
     },
-    "advertising_displayAds_googleAdwords":{
-      "alternatives":[
-        "advertising_displayAds_other", "advertising_searchMarketing_SEM_googleAdwords", "advertising_searchMarketing_SEM_other"
-      ],
+    "advertising_displayAds_googleAdwords": {
       "maxMatchValue": 5000,
       "minMonthBudget": 350,
       "title": "Advertising \/ Display Ads \/ Google AdWords",
-      "type": "integer"
+      "source": "google \/ adwords",
+      "medium": "display",
+      "nickname": "Display Ads - Google AdWords",
+      "type": "integer",
+      "alternatives": [
+        "advertising_displayAds_other",
+        "advertising_searchMarketing_SEM_googleAdwords",
+        "advertising_searchMarketing_SEM_other"
+      ]
     }
   }
 };
