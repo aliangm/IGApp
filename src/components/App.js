@@ -10,6 +10,7 @@ import q from 'q';
 import history from 'history';
 import { withRouter } from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
+import { initialize } from 'components/utils/indicators';
 
 class AppComponent extends Component {
 
@@ -84,7 +85,7 @@ class AppComponent extends Component {
   }
 
   componentDidMount() {
-    this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave)
+    this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave);
 
     serverCommunication.serverRequest('GET', 'useraccount')
       .then((response) => {
@@ -120,6 +121,27 @@ class AppComponent extends Component {
                 this.setState({
                   regions: data
                 });
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    serverCommunication.serverRequest('GET', 'metadata/indicators', false, false, false, true)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  indicatorsSchema: data
+                });
+                initialize(data);
               }
             })
         }
@@ -176,6 +198,7 @@ class AppComponent extends Component {
               if (data) {
                 this.setDataAsState(data);
                 this.getPreviousData();
+                initialize(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
               }
             })
         }

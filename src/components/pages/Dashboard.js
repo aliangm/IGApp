@@ -9,6 +9,7 @@ import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import Select from 'components/controls/Select';
+import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -130,42 +131,7 @@ export default class Dashboard extends Component {
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
       return `${(percent * 100).toFixed(0)}%`
     };
-    const indicatorsOptions = [
-      { label: 'Facebook Likes', value: 'facebookLikes' },
-      { label: 'Facebook Engagement', value: 'facebookEngagement' },
-      { label: 'Twitter Followers', value: 'twitterFollowers' },
-      { label: 'Twitter Engagement', value: 'twitterEngagement' },
-      { label: 'LinkedIn Followers', value: 'linkedinFollowers' },
-      { label: 'LinkedIn Engagement', value: 'linkedinEngagement' },
-      { label: 'Instagram Followers', value: 'instagramFollowers' },
-      { label: 'Instagram Engagement', value: 'instagramEngagement' },
-      { label: 'Google+ Followers', value: 'googlePlusFollowers' },
-      { label: 'Google+ Engagement', value: 'googlePlusEngagement' },
-      { label: 'Pinterest Followers', value: 'pinterestFollowers' },
-      { label: 'Pinterest Engagement', value: 'pinterestEngagement' },
-      { label: 'Youtube Subscribers', value: 'youtubeSubscribers' },
-      { label: 'Youtube Engagement', value: 'youtubeEngagement' },
-      { label: 'LTV', value: 'LTV' },
-      { label: 'CAC', value: 'CAC' },
-      { label: 'Users', value: 'users' },
-      { label: 'Active Users Rate', value: 'activeUsersRate' },
-      { label: 'Trial Users', value: 'trialUsers' },
-      { label: 'Leads', value: 'MCL' },
-      { label: 'MQL', value: 'MQL' },
-      { label: 'SQL', value: 'SQL' },
-      { label: 'Opps', value: 'opps' },
-      { label: 'Google Mentions', value: 'googleMentions' },
-      { label: 'Domain Authority', value: 'domainAuthority' },
-      { label: 'Sessions', value: 'sessions' },
-      { label: 'Average Session Duration',
-        value: 'averageSessionDuration' },
-      { label: 'Bounce Rate', value: 'bounceRate' },
-      { label: 'Blog Visits', value: 'blogVisits' },
-      { label: 'Blog Subscribers', value: 'blogSubscribers' },
-      { label: 'MRR', value: 'MRR' },
-      { label: 'Churn Rate', value: 'churnRate' },
-      { label: 'ARPA (monthly)', value: 'ARPA' }
-    ];
+    const indicatorsOptions = getIndicatorsWithNicknames();
     const objectivesGauges = objectives.map((objective, index) => {
       let title;
       const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;

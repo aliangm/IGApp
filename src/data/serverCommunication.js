@@ -12,12 +12,12 @@ if (!window.Promise) {
 
 export default {
 
-	serverRequest(httpFunc, route, body, region, planDate) {
+	serverRequest(httpFunc, route, body, region, planDate, withoutUID) {
     const lock = new AuthService();
 		const profile = lock.getProfile();
 		const deferred = q.defer();
 		let URL = window.location.protocol + '//' + window.location.hostname + ':' + config.port + '/' + route;
-    if (profile){
+    if (profile && !withoutUID){
     	URL += '/' + profile.app_metadata.UID+ '/';
 		}
 		if (region || planDate) {

@@ -26,6 +26,7 @@ import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import PlanFromExcel from 'components/PlanFromExcel';
 import { formatChannels } from 'components/utils/channels';
+import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 
 export default class Preferences extends Component {
   style = style;
@@ -458,43 +459,6 @@ export default class Preferences extends Component {
       }
     };
 
-    const indicatorsOptions = [
-      { label: 'Facebook Likes', value: 'facebookLikes' },
-      { label: 'Facebook Engagement', value: 'facebookEngagement' },
-      { label: 'Twitter Followers', value: 'twitterFollowers' },
-      { label: 'Twitter Engagement', value: 'twitterEngagement' },
-      { label: 'LinkedIn Followers', value: 'linkedinFollowers' },
-      { label: 'LinkedIn Engagement', value: 'linkedinEngagement' },
-      { label: 'Instagram Followers', value: 'instagramFollowers' },
-      { label: 'Instagram Engagement', value: 'instagramEngagement' },
-      { label: 'Google+ Followers', value: 'googlePlusFollowers' },
-      { label: 'Google+ Engagement', value: 'googlePlusEngagement' },
-      { label: 'Pinterest Followers', value: 'pinterestFollowers' },
-      { label: 'Pinterest Engagement', value: 'pinterestEngagement' },
-      { label: 'Youtube Subscribers', value: 'youtubeSubscribers' },
-      { label: 'Youtube Engagement', value: 'youtubeEngagement' },
-      { label: 'LTV', value: 'LTV' },
-      { label: 'CAC', value: 'CAC' },
-      { label: 'Paying Accounts', value: 'users' },
-      { label: 'Active Users Rate', value: 'activeUsersRate' },
-      { label: 'Trial Users', value: 'trialUsers' },
-      { label: 'Leads', value: 'MCL' },
-      { label: 'MQL', value: 'MQL' },
-      { label: 'SQL', value: 'SQL' },
-      { label: 'Opps', value: 'opps' },
-      { label: 'Google Mentions', value: 'googleMentions' },
-      { label: 'Domain Authority', value: 'domainAuthority' },
-      { label: 'Sessions', value: 'sessions' },
-      { label: 'Average Session Duration',
-        value: 'averageSessionDuration' },
-      { label: 'Bounce Rate', value: 'bounceRate' },
-      { label: 'Blog Visits', value: 'blogVisits' },
-      { label: 'Blog Subscribers', value: 'blogSubscribers' },
-      { label: 'MRR', value: 'MRR' },
-      { label: 'Churn Rate', value: 'churnRate' },
-      { label: 'ARPA (monthly)', value: 'ARPA' }
-    ];
-
     let preventDuplicates = (value) => {
       if (value.options) {
         value.options.map(preventDuplicates);
@@ -650,7 +614,7 @@ export default class Preferences extends Component {
                             });
                           },
                           placeholder: 'KPI',
-                          options: indicatorsOptions
+                          options: getIndicatorsWithNicknames()
                         }}
                         onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
                         style={{ width: '200px' }}

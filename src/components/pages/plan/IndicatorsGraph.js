@@ -4,6 +4,7 @@ import { XAxis, Tooltip, LineChart , Line, YAxis, CartesianGrid, ReferenceDot  }
 import style from "styles/plan/indicators-graph.css";
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
+import { getNickname } from 'components/utils/indicators';
 
 export default class IndicatorsGraph extends Component {
 
@@ -39,43 +40,43 @@ export default class IndicatorsGraph extends Component {
   render () {
     const indicatorsMapping = {
       MCL: {
-        title: 'Leads',
+        title: getNickname('MCL'),
         color: '#1165A3'
       },
       MQL: {
-        title: 'MQL',
+        title: getNickname('MQL'),
         color: '#25B10E'
       },
       SQL: {
-        title: 'SQL',
+        title: getNickname('SQL'),
         color: '#D5E1A3'
       },
       opps: {
-        title: 'Opps',
+        title: getNickname('opps'),
         color: '#7CDEDC'
       },
       users: {
-        title: 'Paying Accounts',
+        title: getNickname('users'),
         color: '#7284A8'
       },
       sessions: {
-        title: 'Sessions',
+        title: getNickname('sessions'),
         color: '#D0101E'
       },
       MRR: {
-        title: 'MRR',
+        title: getNickname('MRR'),
         color: '#FD950B'
       },
       ARPA: {
-        title: 'ARPA (monthly)',
+        title: getNickname('ARPA'),
         color: '#BDC4A7'
       },
       LTV: {
-        title: 'LTV',
+        title: getNickname('LTV'),
         color: '#06BEE1'
       },
       CAC: {
-        title: 'CAC',
+        title: getNickname('CAC'),
         color: '#A70D6E'
       }
     };
