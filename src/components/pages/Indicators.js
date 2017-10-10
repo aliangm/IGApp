@@ -74,7 +74,13 @@ export default class Indicators extends Component {
   }
 
   isFunnelAuto(indicator) {
-    return (this.props.hubspotAuto && this.props.hubspotAuto.mapping && this.props.hubspotAuto.mapping[indicator]) || (this.props.salesforceAuto && this.props.salesforceAuto.mapping && this.props.salesforceAuto.mapping[indicator]);
+    if (this.props.hubspotAuto && this.props.hubspotAuto.mapping && this.props.hubspotAuto.mapping[indicator]) {
+      return "provider:hubspot";
+    }
+    if (this.props.salesforceAuto && this.props.salesforceAuto.mapping && this.props.salesforceAuto.mapping[indicator]) {
+      return "provider:salesforce";
+    }
+    return false;
   }
 
   isSheetAuto(indicator) {
@@ -82,7 +88,13 @@ export default class Indicators extends Component {
   }
 
   isFinanceAuto(indicator) {
-    return this.props.isStripeAuto || this.isSheetAuto(indicator);
+    if (this.isSheetAuto(indicator)) {
+      return "provider:sheets";
+    }
+    if (this.props.isStripeAuto) {
+      return "provider:stripe";
+    }
+    return false;
   }
 
   updateState = (newState) => {
