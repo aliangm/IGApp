@@ -21,7 +21,7 @@ export default class FinancePopup extends Component {
             <StripeAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close }/>
           </div>
           <div  className={ this.classes.row }>
-            <GoogleSheetsAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close }/>
+            <GoogleSheetsAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.googleSheetsAuto}/>
           </div>
         </div>
       </Page>

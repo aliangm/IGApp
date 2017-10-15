@@ -18,10 +18,10 @@ export default class CRMPopup extends Component {
           </div>
           <div className={ this.classes.inner }>
             <div className={ this.classes.row }>
-              <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } updateState={ this.props.updateState }/>
+              <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.hubspotAuto} updateState={ this.props.updateState }/>
             </div>
             <div  className={ this.classes.row }>
-              <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close }/>
+              <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.salesforceAuto}/>
             </div>
           </div>
         </Page>

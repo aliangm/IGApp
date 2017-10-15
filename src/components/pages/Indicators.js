@@ -97,6 +97,14 @@ export default class Indicators extends Component {
     return false;
   }
 
+  isGoogleAuto() {
+    return !!this.props.googleAuto;
+  }
+
+  isBlogAuto() {
+    return this.props.googleAuto && this.props.googleAuto.blogProfileId;
+  }
+
   updateState = (newState) => {
     this.setState(newState);
   };
@@ -110,9 +118,9 @@ export default class Indicators extends Component {
         </div>
         <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
         <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
-        <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState }/>
-        <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
-        <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
+        <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
+        <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
+        <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
         <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
         <Loading hidden={ !this.state.loading }/>
         <div className={ this.classes.cols }>
@@ -154,10 +162,10 @@ export default class Indicators extends Component {
               <Item icon="indicator:domainAuthority" title={ getTitle('domainAuthority') } name="domainAuthority" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.domainAuthority } maxValue={95} description="Domain Authority (DA) is a search engine ranking score developed by Moz that predicts how well a website will rank on search engine result pages (SERPs). A Domain Authority score ranges from one to 100, with higher scores corresponding to a greater ability to rank. It’s calculated by evaluating linking root domains, number of total links, MozRank, MozTrust, etc."/>
             </div>
             <div className={ indiStyle.locals.row }>
-              <Item icon="indicator:sessions" title={ getTitle('sessions') } name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:averageSessionDuration" title={ getTitle('averageSessionDuration') } name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:bounceRate" title={ getTitle('bounceRate') } name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isGoogleAuto }/>
-              <Item icon="indicator:blogVisits" title={ getTitle('blogVisits') } name="blogVisits" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogVisits } maxValue={25000} description="Blog total visits during the last 30 days." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.props.isBlogAuto }/>
+              <Item icon="indicator:sessions" title={ getTitle('sessions') } name="sessions" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.sessions } maxValue={300000} description="Website total visits during the last 30 days." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.isGoogleAuto() }/>
+              <Item icon="indicator:averageSessionDuration" title={ getTitle('averageSessionDuration') } name="averageSessionDuration" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.averageSessionDuration } maxValue={500} description="Measured in seconds (last 30 days)." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.isGoogleAuto() }/>
+              <Item icon="indicator:bounceRate" title={ getTitle('bounceRate') } name="bounceRate" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.bounceRate } isPercentage = {true} maxValue={100} isDirectionDown= { true } description="The percentage of visitors to a particular website who navigate away from the site after viewing only one page." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.isGoogleAuto() }/>
+              <Item icon="indicator:blogVisits" title={ getTitle('blogVisits') } name="blogVisits" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogVisits } maxValue={25000} description="Blog total visits during the last 30 days." showAutomaticPopup={ this.showAnalyticsPopup.bind(this) } automaticIndicators={ this.isBlogAuto() }/>
               <Item icon="indicator:blogSubscribers" title={ getTitle('blogSubscribers') } name="blogSubscribers" updateIndicator = { this.handleChange } defaultStatus = { this.props.actualIndicators.blogSubscribers } maxValue={ 7000 } description="The number of blog subscriber the company currently has." automaticIndicators={ this.isFunnelAuto('blogSubscribers') }/>
             </div>
             <div className={ indiStyle.locals.row }>

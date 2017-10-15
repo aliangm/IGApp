@@ -24,17 +24,69 @@ export default class GoogleAutomaticPopup extends Component {
       selectedBlogProfile: null,
       code: null,
       isWebsiteEnabled: true,
-      isBlogEnabled: false
+      isBlogEnabled: false,
+      hidden: true
     };
   }
 
   componentDidMount() {
-    serverCommunication.serverRequest('get', 'googleapi')
+    if (!this.props.data) {
+      serverCommunication.serverRequest('get', 'googleapi')
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.setState({url: data});
+              });
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data) {
+      if (nextProps.data.profileId) {
+        this.setState({selectedProfile: nextProps.data.profileId});
+      }
+      if (nextProps.data.blogProfileId) {
+        this.setState({selectedBlogProfile: nextProps.data.blogProfileId});
+      }
+    }
+  }
+  getAuthorization() {
+    if (!this.props.data) {
+      const win = window.open(this.state.url);
+
+      const timer = setInterval(() => {
+        if (win.closed) {
+          clearInterval(timer);
+          const code = localStorage.getItem('code');
+          if (code) {
+            localStorage.removeItem('code');
+            this.setState({code: code});
+            this.getAccounts(code);
+          }
+        }
+      }, 1000);
+    }
+    else {
+      this.getAccounts();
+    }
+  }
+
+  getAccounts(code) {
+    serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
-              this.setState({url: data});
+              this.setState({accounts: data.accounts, profiles: data.profiles, hidden: false});
             });
         }
         else if (response.status == 401) {
@@ -44,36 +96,6 @@ export default class GoogleAutomaticPopup extends Component {
       .catch(function (err) {
         console.log(err);
       });
-  }
-
-  getAuthorization() {
-    const win = window.open(this.state.url);
-
-    const timer = setInterval(() => {
-      if (win.closed) {
-        clearInterval(timer);
-        const code = localStorage.getItem('code');
-        if (code) {
-          localStorage.removeItem('code');
-          this.setState({code: code});
-          serverCommunication.serverRequest('post', 'googleapi', JSON.stringify({code: code}), localStorage.getItem('region'))
-            .then((response) => {
-              if (response.ok) {
-                response.json()
-                  .then((data) => {
-                    this.setState({accounts: data.accounts, profiles: data.profiles});
-                  });
-              }
-              else if (response.status == 401) {
-                history.push('/');
-              }
-            })
-            .catch(function (err) {
-              console.log(err);
-            });
-        }
-      }
-    }, 1000);
   }
 
   getUserData() {
@@ -83,7 +105,7 @@ export default class GoogleAutomaticPopup extends Component {
           response.json()
             .then((data) => {
               this.props.setDataAsState(data);
-              this.props.close();
+              this.close();
             });
         }
         else if (response.status == 401) {
@@ -93,6 +115,11 @@ export default class GoogleAutomaticPopup extends Component {
       .catch(function (err) {
         console.log(err);
       });
+  }
+
+  close() {
+    this.setState({hidden: true});
+    this.props.close();
   }
 
   render(){
@@ -135,10 +162,9 @@ export default class GoogleAutomaticPopup extends Component {
       }
     };
     return <div style={{ width: '100%' }}>
-      { this.state.url ?
-        <div className={ CRMStyle.locals.googleAnalytics } onClick={ this.getAuthorization.bind(this) }/>
-        : null }
-      {this.state.code ? <Page popup={ true } width={'340px'}>
+      <div className={ CRMStyle.locals.googleAnalytics } onClick={ this.getAuthorization.bind(this) }/>
+      <div hidden={this.state.hidden}>
+        <Page popup={ true } width={'340px'}>
           <div className={ this.classes.row }>
             <Label style={{ fontSize: '16px', color: '#24B10E'}} checkbox={ this.state.isWebsiteEnabled } onChange={ ()=>{ this.setState({isWebsiteEnabled: !this.state.isWebsiteEnabled}) } }>
               Website
@@ -174,7 +200,7 @@ export default class GoogleAutomaticPopup extends Component {
             </div>
           </div>
         </Page>
-        : null }
+      </div>
     </div>
   }
 
