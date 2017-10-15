@@ -89,7 +89,7 @@ export default class Setup extends Component {
       </div>
       <div className={ this.classes.codeWrap }>
         <Button type="reverse"
-                onClick={ this.copy.bind(this, this.code) }
+                onClick={ this.copy.bind(this, code) }
                 icon="buttons:copy"
                 style={{
                   width: '100px', marginBottom: '25px'
