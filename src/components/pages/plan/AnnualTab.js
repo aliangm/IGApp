@@ -400,6 +400,7 @@ export default class AnnualTab extends Component {
   render() {
     if (!this.props.isPlannerLoading) {
       const channelOptions = formatChannels();
+      channelOptions.push({ label: 'Other?', value: 'OTHER' });
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
