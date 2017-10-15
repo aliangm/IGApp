@@ -10,7 +10,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
   projectedPlan.forEach((month, index)=> {
     //var month = projectedPlan[key];
     budget+= month.monthBudget || 0;
-    var channels = month.plannedChannelBudgets;
+    var channels = month.plannedChannelBudgets || {};
     Object.keys(channels).forEach((channel) => {
       var title = schema.properties[channel].title
         .split('/')
