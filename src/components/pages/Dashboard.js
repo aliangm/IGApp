@@ -330,7 +330,7 @@ export default class Dashboard extends Component {
           <div className={ this.classes.colLeft }>
             <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
               <div className={ dashboardStyle.locals.text }>
-                History Performance
+                Historical Performance
               </div>
               <div style={{ display: 'flex' }}>
                 <div className={ this.classes.footerLeft }>
