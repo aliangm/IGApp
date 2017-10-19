@@ -28,7 +28,7 @@
 @mixin icon-nodpi plan:Incentivized CPI, ../../assets/plan_icons/IncentivizedCPI;
 @mixin icon-nodpi plan:Non-Incentivized CPI, ../../assets/plan_icons/Non-IncentivizedCPI;
 @mixin icon-nodpi plan:ASO (App Store Optimization), ../../assets/plan_icons/ASO;
-@mixin icon-nodpi plan:In-App Ads, ../../assets/plan_icons/In-AppAds;
+@mixin icon-nodpi plan:In-app ads, ../../assets/plan_icons/In-AppAds;
 @mixin icon-nodpi plan:Magazines, ../../assets/plan_icons/Magazines;
 @mixin icon-nodpi plan:Consumers, ../../assets/plan_icons/Consumers;
 @mixin icon-nodpi plan:Professional, ../../assets/plan_icons/Professional;
