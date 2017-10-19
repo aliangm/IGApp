@@ -106,7 +106,7 @@ export default class IndicatorsGraph extends Component {
                   {indicatorsMapping[item.dataKey].title}: {item.value}
                   {prevIndex >= 0 ?
                     <div style={{ color: item.value > 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                      {' (' +(item.value > 0 ? '+' : '-') + (item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
+                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] > 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
                     </div>
                     : null}
                   {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?

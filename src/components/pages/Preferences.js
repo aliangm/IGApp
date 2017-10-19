@@ -56,7 +56,7 @@ export default class Preferences extends Component {
     this.state = {
       userMinMonthBudgetsLines: [],
       isCheckAnnual: props.annualBudget !== null,
-      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]})
+      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]})
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
@@ -74,10 +74,12 @@ export default class Preferences extends Component {
     if (this.props.userMinMonthBudgets.length == 0 && nextProps.userMinMonthBudgets.length > 0) {
       this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
     }
+    /**
     if (nextProps.annualBudget != this.props.annualBudget) {
       this.setState({isCheckAnnual: nextProps.annualBudget !== null,
         isDivideEqually: nextProps.annualBudget !== null && nextProps.annualBudgetArray.every((budget)=> {return budget === nextProps.annualBudgetArray[0]})});
     }
+     **/
   }
 
   getUserMinMonthBudgetsLines(userMinMonthBudgets, planDate) {
@@ -255,9 +257,11 @@ export default class Preferences extends Component {
 
   objectiveRemove(objectives) {
     return (index => {
-      let update = this.props.objectives || [];
-      update.splice(objectives[index].index, 1);
-      this.props.updateState({objectives: update});
+      if (objectives[index]) {
+        let update = this.props.objectives || [];
+        update.splice(objectives[index].index, 1);
+        this.props.updateState({objectives: update});
+      }
     })
   }
 

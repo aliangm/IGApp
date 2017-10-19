@@ -197,7 +197,7 @@ export default class Campaigns extends Component {
             <div className={ this.classes.campaignsTitleBudget }>
               Budget left to invest
               <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
-                ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' }
+                ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0 }
               </div>
             </div>
           </div>
