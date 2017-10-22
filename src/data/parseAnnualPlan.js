@@ -10,7 +10,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
   projectedPlan.forEach((month, index)=> {
     //var month = projectedPlan[key];
     budget+= month.monthBudget || 0;
-    var channels = month.plannedChannelBudgets;
+    var channels = month.plannedChannelBudgets || {};
     Object.keys(channels).forEach((channel) => {
       var title = schema.properties[channel].title
         .split('/')
@@ -35,7 +35,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
   }
   fillZeros(returnObj, approvedBudgets ? approvedBudgets : new Array(projectedPlan.length).fill(null), projectedPlan.length);
   if (unknownChannels && unknownChannels.length > 0) {
-    parseUnknownChannels(returnObj, unknownChannels, projectedPlan.length);
+    parseUnknownChannels(returnObj, unknownChannels, projectedPlan.length, sum["__TOTAL__"]);
   }
   _.merge(returnObj, sum);
   var retJson = {};
@@ -150,7 +150,7 @@ function parseActuals(title, current, actualBudget, channel, month, length) {
   return current;
 }
 
-function parseUnknownChannels(returnObj, unknownChannels, length) {
+function parseUnknownChannels(returnObj, unknownChannels, length, sum) {
   const otherChannels = "~Other";
   unknownChannels.forEach((channels, index) => {
     if (channels && Object.keys(channels).length > 0) {
@@ -170,6 +170,7 @@ function parseUnknownChannels(returnObj, unknownChannels, length) {
           }
           returnObj[otherChannels].children[channel].values[index] = channels[channel];
           returnObj[otherChannels].values[index] += channels[channel];
+          sum.values[index] += channels[channel];
         }
       });
     }

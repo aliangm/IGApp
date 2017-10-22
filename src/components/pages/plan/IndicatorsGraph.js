@@ -4,6 +4,7 @@ import { XAxis, Tooltip, LineChart , Line, YAxis, CartesianGrid, ReferenceDot  }
 import style from "styles/plan/indicators-graph.css";
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
+import { getNickname } from 'components/utils/indicators';
 
 export default class IndicatorsGraph extends Component {
 
@@ -39,43 +40,43 @@ export default class IndicatorsGraph extends Component {
   render () {
     const indicatorsMapping = {
       MCL: {
-        title: 'Leads',
+        title: getNickname('MCL'),
         color: '#1165A3'
       },
       MQL: {
-        title: 'MQL',
+        title: getNickname('MQL'),
         color: '#25B10E'
       },
       SQL: {
-        title: 'SQL',
+        title: getNickname('SQL'),
         color: '#D5E1A3'
       },
       opps: {
-        title: 'Opps',
+        title: getNickname('opps'),
         color: '#7CDEDC'
       },
       users: {
-        title: 'Paying Accounts',
+        title: getNickname('users'),
         color: '#7284A8'
       },
       sessions: {
-        title: 'Sessions',
+        title: getNickname('sessions'),
         color: '#D0101E'
       },
       MRR: {
-        title: 'MRR',
+        title: getNickname('MRR'),
         color: '#FD950B'
       },
       ARPA: {
-        title: 'ARPA (monthly)',
+        title: getNickname('ARPA'),
         color: '#BDC4A7'
       },
       LTV: {
-        title: 'LTV',
+        title: getNickname('LTV'),
         color: '#06BEE1'
       },
       CAC: {
-        title: 'CAC',
+        title: getNickname('CAC'),
         color: '#A70D6E'
       }
     };
@@ -89,21 +90,28 @@ export default class IndicatorsGraph extends Component {
       <Line key={indicator} type='monotone' dataKey={indicator} stroke={indicatorsMapping[indicator].color} fill={indicatorsMapping[indicator].color} strokeWidth={3}/>
     );
     const dots = this.state.checkedIndicators.map((indicator, index) =>
-      this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="red" stroke="black" stroke-width={2} key={index} label="O" alwaysShow={true}/>
+      this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="#e60000" stroke="white" stroke-width={2} key={index} label="O" alwaysShow={true}/>
     );
     const tooltip = (data) => {
       const prevIndex = this.props.data.findIndex(month => month.name === data.label) - 1;
       if (data.active && data.payload && data.payload.length > 0) {
         return <div className={this.classes.customTooltip}>
+          <div style={{ fontWeight: 'bold' }}>
+            {data.label}
+          </div>
           {
             data.payload.map((item, index) => {
               if (item.value) {
                 return <div key={index}>
                   {indicatorsMapping[item.dataKey].title}: {item.value}
-                  ({prevIndex >= 0 && item.value - this.props.data[prevIndex][item.dataKey]})
+                  {prevIndex >= 0 ?
+                    <div style={{ color: item.value > 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
+                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] > 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
+                    </div>
+                    : null}
                   {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
                     <div>
-                      {indicatorsMapping[item.dataKey].title}(objective): {this.props.objectives[item.dataKey].y}
+                      {indicatorsMapping[item.dataKey].title} (objective): {this.props.objectives[item.dataKey].y}
                     </div>
                     : null}
                 </div>

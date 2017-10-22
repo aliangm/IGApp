@@ -28,12 +28,58 @@ export default class HubspotAutomaticPopup extends Component {
   }
 
   componentDidMount() {
-    serverCommunication.serverRequest('get', 'hubspotapi')
+    if (!this.props.data) {
+      serverCommunication.serverRequest('get', 'hubspotapi')
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.setState({url: data});
+              });
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data && nextProps.data.mapping) {
+      this.setState({mapping: nextProps.data.mapping});
+    }
+  }
+
+  getAuthorization() {
+    if (!this.props.data) {
+      const win = window.open(this.state.url);
+      const timer = setInterval(() => {
+        if (win.closed) {
+          clearInterval(timer);
+          const code = localStorage.getItem('code');
+          if (code) {
+            localStorage.removeItem('code');
+            this.setState({code: code});
+            this.getOwners(code);
+          }
+        }
+      }, 1000);
+    }
+    else {
+      this.getOwners();
+    }
+  }
+
+  getOwners(code) {
+    serverCommunication.serverRequest('post', 'hubspotapi', JSON.stringify({code: code}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
-              this.setState({url: data});
+              this.setState({owners: data, hidden: false});
             });
         }
         else if (response.status == 401) {
@@ -43,35 +89,6 @@ export default class HubspotAutomaticPopup extends Component {
       .catch(function (err) {
         console.log(err);
       });
-  }
-
-  getAuthorization() {
-    const win = window.open(this.state.url);
-    const timer = setInterval(() => {
-      if (win.closed) {
-        clearInterval(timer);
-        const code = localStorage.getItem('code');
-        if (code) {
-          localStorage.removeItem('code');
-          this.setState({code: code, hidden: false});
-          serverCommunication.serverRequest('post', 'hubspotapi', JSON.stringify({code: code}), localStorage.getItem('region'))
-            .then((response) => {
-              if (response.ok) {
-                response.json()
-                  .then((data) => {
-                    this.setState({owners: data});
-                  });
-              }
-              else if (response.status == 401) {
-                history.push('/');
-              }
-            })
-            .catch(function (err) {
-              console.log(err);
-            });
-        }
-      }
-    }, 1000);
   }
 
   getUserData() {
@@ -159,9 +176,7 @@ export default class HubspotAutomaticPopup extends Component {
       }
     };
     return <div style={{ width: '100%' }}>
-      { this.state.url ?
-          <div className={ CRMStyle.locals.hubspot } onClick={ this.getAuthorization.bind(this) }/>
-        : null }
+      <div className={ CRMStyle.locals.hubspot } onClick={ this.getAuthorization.bind(this) }/>
       <div hidden={ this.state.hidden } >
         <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
           <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>

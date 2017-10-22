@@ -26,6 +26,7 @@ import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import PlanFromExcel from 'components/PlanFromExcel';
 import { formatChannels } from 'components/utils/channels';
+import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 
 export default class Preferences extends Component {
   style = style;
@@ -55,13 +56,12 @@ export default class Preferences extends Component {
     this.state = {
       userMinMonthBudgetsLines: [],
       isCheckAnnual: props.annualBudget !== null,
-      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]})
+      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]})
     };
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
-    this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleBudgetsCheck = this.toggleBudgetsCheck.bind(this);
     this.calculateBudgets = this.calculateBudgets.bind(this);
   }
@@ -74,10 +74,12 @@ export default class Preferences extends Component {
     if (this.props.userMinMonthBudgets.length == 0 && nextProps.userMinMonthBudgets.length > 0) {
       this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
     }
+    /**
     if (nextProps.annualBudget != this.props.annualBudget) {
       this.setState({isCheckAnnual: nextProps.annualBudget !== null,
         isDivideEqually: nextProps.annualBudget !== null && nextProps.annualBudgetArray.every((budget)=> {return budget === nextProps.annualBudgetArray[0]})});
     }
+     **/
   }
 
   getUserMinMonthBudgetsLines(userMinMonthBudgets, planDate) {
@@ -211,35 +213,56 @@ export default class Preferences extends Component {
 
   handleChangeObjectivesSelect(index, parameter, event) {
     let update = this.props.objectives || [];
-    if (!update[index]) {
-      update[index] = {};
+    if (index === null) {
+      update.push({[parameter]: event.value});
     }
-    update[index][parameter] = event.value;
+    else {
+      update[index][parameter] = event.value;
+    }
     this.props.updateState({objectives: update});
   }
 
   handleChangeObjectivesNumber(index, parameter, event) {
     let update = this.props.objectives || [];
-    if (!update[index]) {
-      update[index] = {};
+    if (index === null) {
+      update.push({[parameter]: parseInt(event.target.value)});
     }
-    update[index][parameter] = parseInt(event.target.value);
+    else {
+      update[index][parameter] = parseInt(event.target.value);
+    }
     this.props.updateState({objectives: update});
   }
 
   handleChangeDate(index, value) {
     let update = this.props.objectives || [];
-    if (!update[index]) {
-      update[index] = {};
+    if (index === null) {
+      update.push({timeFrame: value})
     }
-    update[index].timeFrame = value;
+    else {
+      update[index].timeFrame = value;
+    }
     this.props.updateState({objectives: update});
   }
 
-  objectiveRemove(index) {
+  handleChangeObjectiveOrder(index, event) {
     let update = this.props.objectives || [];
-    update.splice(index,1);
+    if (index === null) {
+      update.splice(event.value, 0, {});
+    }
+    else {
+      update.splice(event.value, 0, update.splice(index, 1)[0]);
+    }
     this.props.updateState({objectives: update});
+  }
+
+  objectiveRemove(objectives) {
+    return (index => {
+      if (objectives[index]) {
+        let update = this.props.objectives || [];
+        update.splice(objectives[index].index, 1);
+        this.props.updateState({objectives: update});
+      }
+    })
   }
 
   createUserMinMonthBudgetJson(){
@@ -458,43 +481,6 @@ export default class Preferences extends Component {
       }
     };
 
-    const indicatorsOptions = [
-      { label: 'Facebook Likes', value: 'facebookLikes' },
-      { label: 'Facebook Engagement', value: 'facebookEngagement' },
-      { label: 'Twitter Followers', value: 'twitterFollowers' },
-      { label: 'Twitter Engagement', value: 'twitterEngagement' },
-      { label: 'LinkedIn Followers', value: 'linkedinFollowers' },
-      { label: 'LinkedIn Engagement', value: 'linkedinEngagement' },
-      { label: 'Instagram Followers', value: 'instagramFollowers' },
-      { label: 'Instagram Engagement', value: 'instagramEngagement' },
-      { label: 'Google+ Followers', value: 'googlePlusFollowers' },
-      { label: 'Google+ Engagement', value: 'googlePlusEngagement' },
-      { label: 'Pinterest Followers', value: 'pinterestFollowers' },
-      { label: 'Pinterest Engagement', value: 'pinterestEngagement' },
-      { label: 'Youtube Subscribers', value: 'youtubeSubscribers' },
-      { label: 'Youtube Engagement', value: 'youtubeEngagement' },
-      { label: 'LTV', value: 'LTV' },
-      { label: 'CAC', value: 'CAC' },
-      { label: 'Paying Accounts', value: 'users' },
-      { label: 'Active Users Rate', value: 'activeUsersRate' },
-      { label: 'Trial Users', value: 'trialUsers' },
-      { label: 'Leads', value: 'MCL' },
-      { label: 'MQL', value: 'MQL' },
-      { label: 'SQL', value: 'SQL' },
-      { label: 'Opps', value: 'opps' },
-      { label: 'Google Mentions', value: 'googleMentions' },
-      { label: 'Domain Authority', value: 'domainAuthority' },
-      { label: 'Sessions', value: 'sessions' },
-      { label: 'Average Session Duration',
-        value: 'averageSessionDuration' },
-      { label: 'Bounce Rate', value: 'bounceRate' },
-      { label: 'Blog Visits', value: 'blogVisits' },
-      { label: 'Blog Subscribers', value: 'blogSubscribers' },
-      { label: 'MRR', value: 'MRR' },
-      { label: 'Churn Rate', value: 'churnRate' },
-      { label: 'ARPA (monthly)', value: 'ARPA' }
-    ];
-
     let preventDuplicates = (value) => {
       if (value.options) {
         value.options.map(preventDuplicates);
@@ -521,6 +507,21 @@ export default class Preferences extends Component {
       // Disable all options
       blockedChannels.select.options.map(maxChannels);
     }
+
+    const activeObjectives = this.props.objectives
+      .map((objective, index) => {
+        return {objective: objective, index: index};
+      })
+      .filter((item) => {
+        const objective = item.objective;
+        const today = new Date();
+        const date = objective && objective.timeFrame ? new Date(objective.timeFrame) : today;
+        return date >= today;
+      });
+
+    const objectivesOrder = activeObjectives.map((item, index) => {
+      return {value: index, label: index + 1}
+    });
 
     return <div>
       <Page popup={ isPopupMode() }>
@@ -592,22 +593,24 @@ export default class Preferences extends Component {
                 fontWeight: '600'
               }} question={['']}
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
-              <MultiRow numOfRows={ this.props.objectives.length } rowRemoved={this.objectiveRemove}>
+              <MultiRow numOfRows={ activeObjectives.length } rowRemoved={this.objectiveRemove(activeObjectives)}>
                 {({index, data, update, removeButton}) => {
                   return <div>
-                    <div className={ preferencesStyle.locals.channelsRow }>
+                    <div className={preferencesStyle.locals.channelsRow}>
                       <Label style={{
                         marginBottom: '0',
                         fontWeight: '600'
-                      }}>{ `#${ index + 1 }` } </Label>
+                      }}>{`#${ index + 1 }`} </Label>
                     </div>
-                    <div style={{
-                    }} className={ preferencesStyle.locals.channelsRow }>
-                      <div className={ preferencesStyle.locals.objectiveText }>I want</div>
-                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
+                    <div style={{}} className={preferencesStyle.locals.channelsRow}>
+                      <div className={preferencesStyle.locals.objectiveText}>I want</div>
+                      <Textfield type="number"
+                                 value={activeObjectives[index] && activeObjectives[index].objective && activeObjectives[index].objective.amount ? activeObjectives[index].objective.amount : ''}
+                                 style={{width: '80px', marginLeft: '10px'}}
+                                 onChange={this.handleChangeObjectivesNumber.bind(this, activeObjectives[index] ? activeObjectives[index].index : null, 'amount')}/>
                       <Select
-                        className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.props.objectives[index] ? this.props.objectives[index].isPercentage : -1 }
+                        className={preferencesStyle.locals.objectiveSelect}
+                        selected={activeObjectives[index] ? activeObjectives[index].objective.isPercentage : -1}
                         select={{
                           menuTop: true,
                           name: 'type',
@@ -617,13 +620,13 @@ export default class Preferences extends Component {
                             });
                           },
                           placeholder: '%/num',
-                          options: [{ label: '%', value: true}, {label: '(num)', value: false}]
+                          options: [{label: '%', value: true}, {label: '(num)', value: false}]
                         }}
-                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'isPercentage') }
+                        onChange={this.handleChangeObjectivesSelect.bind(this, activeObjectives[index] ? activeObjectives[index].index : null, 'isPercentage')}
                       />
                       <Select
-                        className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.props.objectives[index] ? this.props.objectives[index].direction : -1 }
+                        className={preferencesStyle.locals.objectiveSelect}
+                        selected={activeObjectives[index] ? activeObjectives[index].objective.direction : -1}
                         select={{
                           menuTop: true,
                           name: 'channels',
@@ -633,14 +636,17 @@ export default class Preferences extends Component {
                             });
                           },
                           placeholder: 'Direction',
-                          options: [{ label: 'increase', value: 'increase'}, {label: 'decrease', value: 'decrease'}, {label: '(target)', value: 'equals'}]
+                          options: [{label: 'increase', value: 'increase'}, {
+                            label: 'decrease',
+                            value: 'decrease'
+                          }, {label: '(target)', value: 'equals'}]
                         }}
-                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'direction') }
+                        onChange={this.handleChangeObjectivesSelect.bind(this, activeObjectives[index] ? activeObjectives[index].index : null, 'direction')}
                       />
-                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>in</div>
+                      <div className={preferencesStyle.locals.objectiveText} style={{marginLeft: '10px'}}>in</div>
                       <Select
-                        className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.props.objectives[index] ? this.props.objectives[index].indicator : -1 }
+                        className={preferencesStyle.locals.objectiveSelect}
+                        selected={activeObjectives[index] ? activeObjectives[index].objective.indicator : -1}
                         select={{
                           menuTop: true,
                           name: 'channels',
@@ -650,17 +656,32 @@ export default class Preferences extends Component {
                             });
                           },
                           placeholder: 'KPI',
-                          options: indicatorsOptions
+                          options: getIndicatorsWithNicknames()
                         }}
-                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
-                        style={{ width: '200px' }}
+                        onChange={this.handleChangeObjectivesSelect.bind(this, activeObjectives[index] ? activeObjectives[index].index : null, 'indicator')}
+                        style={{width: '200px'}}
                       />
-                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>until</div>
-                      <div style={{ marginLeft: '10px', width: '205px' }}>
-                        <Calendar value={ this.props.objectives[index] ? this.props.objectives[index].timeFrame : '' } onChange={ this.handleChangeDate.bind(this, index) }/>
+                      <div className={preferencesStyle.locals.objectiveText} style={{marginLeft: '10px'}}>until</div>
+                      <div style={{marginLeft: '10px', width: '205px'}}>
+                        <Calendar value={activeObjectives[index] && activeObjectives[index].objective && activeObjectives[index].objective.timeFrame ? activeObjectives[index].objective.timeFrame : ''}
+                                  onChange={this.handleChangeDate.bind(this, activeObjectives[index] ? activeObjectives[index].index : null)}/>
                       </div>
-                      <div className={ preferencesStyle.locals.channelsRemove } style={{ marginTop: '5px' }}>
-                        { removeButton }
+                      <Select
+                        className={preferencesStyle.locals.objectiveSelect}
+                        selected={ index }
+                        select={{
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: objectivesOrder
+                        }}
+                        onChange={ this.handleChangeObjectiveOrder.bind(this, activeObjectives[index] ? activeObjectives[index].index : null) }
+                        style={{width: '50px'}}
+                      />
+                      <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '5px'}}>
+                        {removeButton}
                       </div>
                     </div>
                   </div>

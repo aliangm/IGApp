@@ -8,15 +8,18 @@ import Loading from 'components/pages/plan/Loading';
 
 import style from 'styles/plan/projections-tab.css';
 import planStyles from 'styles/plan/plan.css';
+import { getTitle } from "components/utils/indicators";
 
 export default class ProjectionsTab extends Component {
+
   styles = [planStyles];
   style = style;
+
   state = {
     selectedTab: 0
-  }
+  };
 
-  tabs = ['One', 'Three', 'Six', 'Twelve']
+  tabs = ['One', 'Three', 'Six', 'Twelve'];
 
   constructor(props) {
     super(props);
@@ -33,7 +36,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["3500", "3700", "4100", "4500"],
           grow: ["8", "14", "27", "39"],
           icon: "indicator:facebook",
-          title: "Facebook Likes",
+          title: getTitle('facebookLikes'),
           key: "facebookLikes"
         },
         {
@@ -41,7 +44,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["3500", "3700", "4100", "4500"],
           grow: ["8", "14", "27", "39"],
           icon: "indicator:facebookEngagement",
-          title: "Facebook Engagement",
+          title: getTitle('facebookEngagement'),
           key: "facebookEngagement"
         },
         {
@@ -49,7 +52,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["4000", "4500", "5100", "6000"],
           grow: ["12", "26", "43", "68"],
           icon: "indicator:twitter",
-          title: "Twitter Followers",
+          title: getTitle('twitterFollowers'),
           key: "twitterFollowers"
         },
         {
@@ -57,7 +60,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["4000", "4500", "5100", "6000"],
           grow: ["12", "26", "43", "68"],
           icon: "indicator:twitterEngagement",
-          title: "Twitter Engagement",
+          title: getTitle('twitterEngagement'),
           key: "twitterEngagement"
         },
         {
@@ -65,7 +68,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["1100", "1100", "1100", "1100"],
           grow: ["", "", "", ""],
           icon: "indicator:linkedin",
-          title: "LinkedIn Followers",
+          title: getTitle('linkedinFollowers'),
           key: "linkedinFollowers"
         },
         {
@@ -73,7 +76,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["1100", "1100", "1100", "1100"],
           grow: ["", "", "", ""],
           icon: "indicator:linkedinEngagement",
-          title: "LinkedIn Engagement",
+          title: getTitle('linkedinEngagement'),
           key: "linkedinEngagement"
         },
         {
@@ -81,7 +84,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
           icon: "indicator:instagram",
-          title: "Instagram Followers",
+          title: getTitle('instagramFollowers'),
           key: "instagramFollowers"
         },
         {
@@ -89,7 +92,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
           icon: "indicator:instagramEngagement",
-          title: "Instagram Engagement",
+          title: getTitle('instagramEngagement'),
           key: "instagramEngagement"
         },
         {
@@ -97,7 +100,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
           icon: "indicator:google",
-          title: "Google+ Followers",
+          title: getTitle('googlePlusFollowers'),
           key: "googlePlusFollowers"
         },
         {
@@ -105,7 +108,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2000", "2100", "2700", "4500"],
           grow: ["4", "9", "40", "134"],
           icon: "indicator:googleEngagement",
-          title: "Google+ Engagement",
+          title: getTitle('googlePlusEngagement'),
           key: "googlePlusEngagement"
         },
         {
@@ -113,7 +116,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["1500", "1500", "1500", "1500"],
           grow: ["", "", "", ""],
           icon: "indicator:pinterest",
-          title: "Pinterest Followers",
+          title: getTitle('pinterestFollowers'),
           key: "pinterestFollowers"
         },
         {
@@ -121,7 +124,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["1500", "1500", "1500", "1500"],
           grow: ["", "", "", ""],
           icon: "indicator:pinterestEngagement",
-          title: "Pinterest Engagement",
+          title: getTitle('pinterestEngagement'),
           key: "pinterestEngagement"
         },
         {
@@ -129,7 +132,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["700", "700", "700", "700"],
           grow: ["", "", "", ""],
           icon: "indicator:youtube",
-          title: "Youtube Subscribers",
+          title: getTitle('youtubeSubscribers'),
           key: "youtubeSubscribers"
         },
         {
@@ -137,7 +140,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["700", "700", "700", "700"],
           grow: ["", "", "", ""],
           icon: "indicator:youtubeEngagement",
-          title: "Youtube Engagement",
+          title: getTitle('youtubeEngagement'),
           key: "youtubeEngagement"
         }
       ],
@@ -148,7 +151,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
           icon: "indicator:mcl",
-          title: "Leads",
+          title: getTitle('MCL'),
           key: "MCL"
         },
         {
@@ -156,7 +159,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
           icon: "indicator:mql",
-          title: "Marketing Qualified Leads",
+          title: getTitle('MQL'),
           key:"MQL"
         },
         {
@@ -164,7 +167,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
           icon: "indicator:sql",
-          title: "Sales Qualified Leads",
+          title: getTitle('SQL'),
           key: "SQL"
         },
         {
@@ -172,7 +175,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["2500", "2700", "4700", "6000"],
           grow: ["", "8", "88", "140"],
           icon: "indicator:opps",
-          title: "Opportunities",
+          title: getTitle('opps'),
           key: "opps"
         },
       ],
@@ -182,7 +185,7 @@ export default class ProjectionsTab extends Component {
           defaultState: ["normal", "normal", "normal", "normal"],
           defaultValue: ["500$", "500$", "500$", "500$"],
           icon: "indicator:ltv",
-          title: "Life time value",
+          title: getTitle('LTV'),
           key: "LTV"
         },
         {
@@ -191,7 +194,7 @@ export default class ProjectionsTab extends Component {
           grow: ["", "", "9", "17"],
           icon: "indicator:cac",
           directionDown: true,
-          title: "Customer acquisition cost",
+          title: getTitle('CAC'),
           key: "CAC"
         },
         {
@@ -199,7 +202,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
           icon: "indicator:trialUsers",
-          title: "Trial Users",
+          title: getTitle('trialUsers'),
           key: "trialUsers"
         },
         {
@@ -207,7 +210,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
           icon: "indicator:users",
-          title: "Paying Accounts",
+          title: getTitle('users'),
           key: "users"
         },
         {
@@ -215,7 +218,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["17.00$", "17.00$", "15.50$", "14.50$"],
           grow: ["", "", "9", "17"],
           icon: "indicator:activeUsers",
-          title: "Active Users Rate",
+          title: getTitle('activeUsersRate'),
           key: "activeUsersRate"
         },
 
@@ -227,7 +230,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["1650", "1650", "1650", "1900"],
           grow: ["", "", "", "15"],
           icon: "indicator:googleMentions",
-          title: "Google Mentions",
+          title: getTitle('googleMentions'),
           key: "googleMentions"
         },
         {
@@ -235,7 +238,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["1650", "1650", "1650", "1900"],
           grow: ["", "", "", "15"],
           icon: "indicator:domainAuthority",
-          title: "Domain Authority",
+          title: getTitle('domainAuthority'),
           key: "domainAuthority"
         }
       ],
@@ -246,7 +249,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:sessions",
-          title: "Sessions",
+          title: getTitle('sessions'),
           key: "sessions"
         },
         {
@@ -254,7 +257,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:averageSessionDuration",
-          title: "Average Session Duration",
+          title: getTitle('averageSessionDuration'),
           key: "averageSessionDuration"
         },
         {
@@ -263,7 +266,7 @@ export default class ProjectionsTab extends Component {
           grow: ["", "", "42", "114"],
           icon: "indicator:bounceRate",
           directionDown: true,
-          title: "Bounce Rate",
+          title: getTitle('bounceRate'),
           key: "bounceRate"
         },
         {
@@ -271,7 +274,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:blogVisits",
-          title: "Blog Visits",
+          title: getTitle('blogVisits'),
           key: "blogVisits"
         },
         {
@@ -279,7 +282,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:blogSubscribers",
-          title: "Blog Subscribers",
+          title: getTitle('blogSubscribers'),
           key: "blogSubscribers"
         }
       ],
@@ -290,7 +293,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:mrr",
-          title: "MRR",
+          title: getTitle('MRR'),
           key: "MRR"
         },
         {
@@ -299,7 +302,7 @@ export default class ProjectionsTab extends Component {
           grow: ["", "", "42", "114"],
           icon: "indicator:churnRate",
           directionDown: true,
-          title: "Churn Rate",
+          title: getTitle('churnRate'),
           key: "churnRate"
         },
         {
@@ -307,7 +310,7 @@ export default class ProjectionsTab extends Component {
           defaultValue: ["7000", "7000", "10000", "15000"],
           grow: ["", "", "42", "114"],
           icon: "indicator:arpa",
-          title: "ARPA (monthly)",
+          title: getTitle('ARPA'),
           key: "ARPA"
         }
       ]
@@ -329,7 +332,7 @@ export default class ProjectionsTab extends Component {
     this.setState({
       selectedTab: index
     });
-  }
+  };
 
   render() {
     if (!this.props.isPlannerLoading) {
@@ -343,7 +346,7 @@ export default class ProjectionsTab extends Component {
             //defaultValue={ item.defaultValue && item.defaultValue[selectedTab] }
             defaultValue={ this.props.projectedPlan && this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key]}
             //grow={ item.grow && item.grow[selectedTab] }
-            grow={ this.props.actualIndicators[item.key] ? Math.ceil(Math.abs(((this.props.projectedPlan[this.monthMap[selectedTab]] ? this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] : 0) - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) : this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] * 100 }
+            grow={ this.props.actualIndicators[item.key] ? Math.ceil(Math.abs(((this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues ? this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] : 0) - this.props.actualIndicators[item.key]) / this.props.actualIndicators[item.key]) * 100) : this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item.key] * 100 }
             icon={ item.icon }
             title={ item.title }
           />

@@ -280,7 +280,7 @@ export default class AnnualTab extends Component {
       if (!approvedBudgets[i]) {
         approvedBudgets[i] = {};
       }
-      if (!projectedPlan[i]) {
+      if (!projectedPlan[i] || Object.keys(projectedPlan[i]).length === 0) {
         projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
       }
       projectedPlan[i].plannedChannelBudgets[this.state.newChannel] = 0;
@@ -400,6 +400,7 @@ export default class AnnualTab extends Component {
   render() {
     if (!this.props.isPlannerLoading) {
       const channelOptions = formatChannels();
+      channelOptions.push({ label: 'Other?', value: 'OTHER' });
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
@@ -530,7 +531,7 @@ export default class AnnualTab extends Component {
       const isExist = (value) => {
         let exist = false;
         this.props.projectedPlan.forEach((month)=>{
-          if (Object.keys(month.plannedChannelBudgets).includes(value)) {
+          if (month.plannedChannelBudgets && Object.keys(month.plannedChannelBudgets).includes(value)) {
             exist = true;
           }
         });

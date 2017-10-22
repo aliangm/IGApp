@@ -27,21 +27,29 @@ export default class GoogleSheetsAutomaticPopup extends Component {
   }
 
   componentDidMount() {
-    serverCommunication.serverRequest('get', 'googlesheetsapi')
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              this.setState({url: data});
-            });
-        }
-        else if (response.status == 401) {
-          history.push('/');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+    if (!this.props.data) {
+      serverCommunication.serverRequest('get', 'googlesheetsapi')
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.setState({url: data});
+              });
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data && nextProps.data.mapping) {
+      this.setState({mapping: nextProps.data.mapping});
+    }
   }
 
   handleChangeSelect(indicator, event) {
@@ -57,33 +65,41 @@ export default class GoogleSheetsAutomaticPopup extends Component {
   }
 
   getAuthorization() {
-    const win = window.open(this.state.url);
-    const timer = setInterval(() => {
-      if (win.closed) {
-        clearInterval(timer);
-        const code = localStorage.getItem('code');
-        if (code) {
-          localStorage.removeItem('code');
-          this.setState({code: code, hidden: false});
-          serverCommunication.serverRequest('post', 'googlesheetsapi', JSON.stringify({code: code}), localStorage.getItem('region'))
-            .then((response) => {
-              if (response.ok) {
-                response.json()
-                  .then((data) => {
-                    this.setState({sheets: data});
-                  });
-              }
-              else if (response.status == 401) {
-                history.push('/');
-              }
-            })
-            .catch(function (err) {
-              console.log(err);
+    if (!this.props.data) {
+      const win = window.open(this.state.url);
+      const timer = setInterval(() => {
+        if (win.closed) {
+          clearInterval(timer);
+          const code = localStorage.getItem('code');
+          if (code) {
+            localStorage.removeItem('code');
+            this.setState({code: code});
+            this.listFiles(code);
+          }
+        }
+      }, 1000);
+    }
+    else {
+      this.listFiles();
+    }
+  }
+
+  listFiles(code) {
+    serverCommunication.serverRequest('post', 'googlesheetsapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setState({sheets: data, hidden: false});
             });
         }
-      }
-    }, 1000);
-
+        else if (response.status == 401) {
+          history.push('/');
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
   }
 
   getUserData() {
@@ -134,9 +150,7 @@ export default class GoogleSheetsAutomaticPopup extends Component {
       }
     };
     return <div style={{ width: '100%' }}>
-      { this.state.url ?
-        <div className={ CRMStyle.locals.googleSheets } onClick={ this.getAuthorization.bind(this) }/>
-        : null }
+      <div className={ CRMStyle.locals.googleSheets } onClick={ this.getAuthorization.bind(this) }/>
       <div hidden={this.state.hidden}>
         <Page popup={ true } width={'600px'} contentClassName={ loadTemplateStyle.locals.content } innerClassName={ loadTemplateStyle.locals.inner }>
           <Title title="Google Sheets" subTitle="Define which metrics should be taken from Google Sheets"/>

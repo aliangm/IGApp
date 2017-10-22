@@ -144,10 +144,15 @@ export default class Tracking extends Component {
 
   render() {
     const sources = this.props.campaign.source.map((source, index) => {
+      const isBrackets = this.state.utms[index].source.includes("(");
       return <div key={index}>
         <div className={ this.classes.row }>
           <Label>{"Source " + (index+1)}</Label>
-          <Textfield value={ this.state.utms[index].source } onChange={ this.handleChangeUTM.bind(this, 'source', index) }/>
+          <Textfield
+            value={ isBrackets ? null : this.state.utms[index].source }
+            onChange={ this.handleChangeUTM.bind(this, 'source', index) }
+            placeHolder={ isBrackets ? this.state.utms[index].source.replace(/[()]/g, "") : null }
+          />
         </div>
         <div className={ this.classes.row }>
           <Label>{"Medium " + (index+1)}</Label>

@@ -333,3 +333,13 @@ a:link {
   position: absolute;
   cursor: pointer;
 }
+
+.provider-icon {
+  height: 20px;
+  width: 20px;
+  background: center center no-repeat;
+  background-size: 20px;
+  position: relative;
+  top: 33px;
+  left: 140px;
+}

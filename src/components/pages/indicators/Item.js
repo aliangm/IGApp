@@ -4,6 +4,7 @@ import names from 'classnames';
 
 import style from 'styles/indicators/item.css';
 import icons from 'styles/icons/indicators.css';
+import providerIcons from 'styles/icons/providers.css';
 import tooltipStyle from 'styles/controls-label.css';
 
 import Popup from 'components/Popup';
@@ -12,7 +13,7 @@ import Button from 'components/controls/Button';
 
 export default class Item extends Component {
   style = style;
-  styles = [icons, tooltipStyle];
+  styles = [icons, tooltipStyle, providerIcons];
 
   constructor(props) {
     super(props);
@@ -189,6 +190,9 @@ export default class Item extends Component {
                 }}>
       <div className={ this.classes.inner }>
         <div className={ this.classes.head }>{ this.props.title }</div>
+        { this.props.automaticIndicators && this.props.automaticIndicators !== true ?
+          <div className={ this.classes.providerIcon } data-icon={this.props.automaticIndicators}/>
+          : null }
         <div className={ this.classes.content }>
           <div className={ this.classes.iconWrap }
                onMouseOver={() => {

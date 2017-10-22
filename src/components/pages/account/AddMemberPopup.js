@@ -23,7 +23,8 @@ export default class AddMemberPopup extends Component {
       email: '',
       role: '',
       isAdmin: false,
-      specificChannels: []
+      specificChannels: [],
+      isSpecificChannels: false
     };
   }
 
@@ -84,10 +85,10 @@ export default class AddMemberPopup extends Component {
         </div>
         { !this.state.isAdmin ?
           <div className={this.classes.row}>
-            <Label checkbox={this.state.isSpecificChannels} onChange={ ()=>{ this.setState({isSpecificChannels: !isSpecificChannels}) } }>
+            <Label checkbox={this.state.isSpecificChannels} onChange={ ()=>{ this.setState({isSpecificChannels: !this.state.isSpecificChannels}) } }>
               choose specific channels to view/edit
             </Label>
-            <MultiSelect { ... channels } selected={ this.state.specificChannels } onChange={ this.handleChangeChannels.bind(this) } style={{ width: 'initial' }}/>
+            <MultiSelect { ... channels } selected={ this.state.specificChannels } onChange={ this.handleChangeChannels.bind(this) } style={{ width: 'initial' }} disabled={!this.state.isSpecificChannels}/>
           </div>
           : null
         }

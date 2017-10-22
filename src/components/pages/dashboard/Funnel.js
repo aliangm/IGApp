@@ -4,6 +4,7 @@ import Column from 'components/pages/dashboard/Column';
 import Arrow from 'components/pages/dashboard/Arrow';
 import Circle from 'components/pages/dashboard/Circle';
 import style from 'styles/dashboard/funnel.css';
+import { getNickname } from 'components/utils/indicators';
 
 export default class Funnel extends Component {
 
@@ -13,22 +14,22 @@ export default class Funnel extends Component {
     const funnel = {
       MCL: {
         value: this.props.actualIndicators.MCL,
-        title: "Leads",
+        title: getNickname('MCL'),
         color: '#1990E7'
       },
       MQL: {
         value: this.props.actualIndicators.MQL,
-        title: "MQL",
+        title: getNickname('MQL'),
         color: '#1165A3'
       },
       SQL: {
         value: this.props.actualIndicators.SQL,
-        title: "SQL",
+        title: getNickname('SQL'),
         color: '#0A3A5E'
       },
       opps: {
         value: this.props.actualIndicators.opps,
-        title: "Opps",
+        title: getNickname('opps'),
         color: '#29C910'
       }
     };
@@ -45,7 +46,7 @@ export default class Funnel extends Component {
 
     return <div className={ this.classes.inner }>
       {funnelObject}
-      <Circle value={ this.props.actualIndicators.users } title="Accounts"/>
+      <Circle value={ this.props.actualIndicators.users } title={ getNickname('users') }/>
       <div className={ this.classes.line }/>
     </div>
   }
