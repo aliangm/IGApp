@@ -520,7 +520,7 @@ export default class Preferences extends Component {
       });
 
     const objectivesOrder = activeObjectives.map((item, index) => {
-      return {value: index, label: index + 1}
+      return {value: index, label: '#' + (index + 1)}
     });
 
     return <div>
