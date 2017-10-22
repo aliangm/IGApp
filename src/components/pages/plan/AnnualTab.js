@@ -26,9 +26,11 @@ import EditableCell from 'components/pages/plan/EditableCell';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import { formatChannels } from 'components/utils/channels';
 import buttonsStyle from 'styles/onboarding/buttons.css';
+import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contextmenu';
+import contextStyle from 'react-contextmenu/public/styles.css';
 
 export default class AnnualTab extends Component {
-  styles = [planStyles, icons, popupStyle, buttonsStyle];
+  styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
   style = style;
 
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
@@ -68,8 +70,9 @@ export default class AnnualTab extends Component {
       tableCollapsed: false,
       annualData: {},
       editMode: false
-    }
+    };
     this.whatIf = this.whatIf.bind(this);
+    this.handleChangeContextMenu = this.handleChangeContextMenu.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -397,6 +400,28 @@ export default class AnnualTab extends Component {
     this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region);
   }
 
+  handleChangeContextMenu(event, data) {
+    const channel = data.channel;
+    const percent = data.percent;
+    let planUnknownChannels = this.props.planUnknownChannels;
+    let projectedPlan = this.props.projectedPlan;
+    let approvedBudgets = this.props.approvedBudgets;
+    for (let i=0; i< 12; i++) {
+      if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
+        planUnknownChannels[i][channel] = Math.round(planUnknownChannels[i][channel] * percent);
+      }
+      else {
+        const newBudget = Math.round((projectedPlan[i].plannedChannelBudgets[channel] || 0) * percent);
+        projectedPlan[i].plannedChannelBudgets[channel] = newBudget;
+        if (!approvedBudgets[i]) {
+          approvedBudgets[i] = {};
+        }
+        approvedBudgets[i][channel] = newBudget;
+      }
+      this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
+    }
+  }
+
   render() {
     if (!this.props.isPlannerLoading) {
       const channelOptions = formatChannels();
@@ -419,60 +444,62 @@ export default class AnnualTab extends Component {
           const params = data[item];
           const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
           const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
-          const  titleElem = <div
-            style={{
-              marginLeft: (level | 0) * 17 + 'px',
-              cursor: params.channel ? 'pointer' : 'initial'
-            }}
-            className={ this.classes.rowTitle }
-            onClick={ () => {
-              if (!this.state.editMode && params.channel) {
-                history.push({
-                  pathname: `campaigns` ,
-                  query: { hash: params.channel }
-                })
-              } }}>
-            { params.children ?
-              <div
-                className={ this.classes.rowArrow }
-                data-collapsed={ collapsed || null }
-                onClick={() => {
-                  this.state.collapsed[key] = !collapsed;
-                  this.forceUpdate();
-                }}
-              />
-              :
-              this.state.editMode ?
-                <div>
-                  <div
-                    className={ this.classes.rowDelete }
-                    onClick={ () => this.setState({deletePopup: params.channel}) }
-                  />
-                  <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                    <DeleteChannelPopup
-                      onNext={ this.deleteRow.bind(this, params.channel) }
-                      onBack={ () => this.setState({deletePopup: ''}) }
+          const  titleElem = <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.state.editMode}>
+            <div
+              style={{
+                marginLeft: (level | 0) * 17 + 'px',
+                cursor: params.channel ? 'pointer' : 'initial'
+              }}
+              className={ this.classes.rowTitle }
+              onClick={ () => {
+                if (!this.state.editMode && params.channel) {
+                  history.push({
+                    pathname: `campaigns` ,
+                    query: { hash: params.channel }
+                  })
+                } }}>
+              { params.children ?
+                <div
+                  className={ this.classes.rowArrow }
+                  data-collapsed={ collapsed || null }
+                  onClick={() => {
+                    this.state.collapsed[key] = !collapsed;
+                    this.forceUpdate();
+                  }}
+                />
+                :
+                this.state.editMode ?
+                  <div>
+                    <div
+                      className={ this.classes.rowDelete }
+                      onClick={ () => this.setState({deletePopup: params.channel}) }
                     />
-                  </Popup>
-                </div>
+                    <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <DeleteChannelPopup
+                        onNext={ this.deleteRow.bind(this, params.channel) }
+                        onBack={ () => this.setState({deletePopup: ''}) }
+                      />
+                    </Popup>
+                  </div>
+                  : null }
+
+              { params.icon ?
+                <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
                 : null }
 
-            { params.icon ?
-              <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-              : null }
-
-            { params.icon_mask ?
-              <div className={ this.classes.rowMaskIcon }>
-                <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
-              </div>
-              : null }
-            {/**   { item.length > 13 ?
+              { params.icon_mask ?
+                <div className={ this.classes.rowMaskIcon }>
+                  <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                </div>
+                : null }
+              {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
                 </div>
                 : item }**/}
-            {item}
-          </div>
+              {item}
+            </div>
+          </ContextMenuTrigger>
 
           const rowProps = {
             className: this.state.editMode ? null :this.classes.tableRow,
@@ -737,6 +764,43 @@ export default class AnnualTab extends Component {
                   <tfoot>{ footRow }</tfoot>
                 </table>
               </div>
+
+              <ContextMenu id="rightClick">
+                <SubMenu title="Increase by" hoverDelay={250}>
+                  <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
+                    10%
+                  </MenuItem>
+                  <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
+                    20%
+                  </MenuItem>
+                  <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
+                    30%
+                  </MenuItem>
+                  <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
+                    40%
+                  </MenuItem>
+                  <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
+                    50%
+                  </MenuItem>
+                </SubMenu>
+                <SubMenu title="Decrease by" hoverDelay={250}>
+                  <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
+                    10%
+                  </MenuItem>
+                  <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
+                    20%
+                  </MenuItem>
+                  <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
+                    30%
+                  </MenuItem>
+                  <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
+                    40%
+                  </MenuItem>
+                  <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
+                    50%
+                  </MenuItem>
+                </SubMenu>
+              </ContextMenu>
 
               <PlanPopup ref="headPopup" style={{
                 width: '350px',
