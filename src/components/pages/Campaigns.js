@@ -167,7 +167,7 @@ export default class Campaigns extends Component {
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
         <div className={ planStyle.locals.head }>
-          <div className={ planStyle.locals.headTitle }>Campaign Management</div>
+          <div className={ planStyle.locals.headTitle }>Campaigns & Activities</div>
           <div className={ planStyle.locals.headTabs }>
             {
               tabNames.map((name, i) => {
