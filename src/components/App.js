@@ -346,6 +346,7 @@ class AppComponent extends Component {
       monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
+      campaignIdeas: data.campaignIdeas || [],
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan || [],
       approvedBudgets: data.approvedBudgets || [],

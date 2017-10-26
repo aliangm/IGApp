@@ -4,6 +4,7 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
+import IdeasTab from 'components/pages/campaigns/Ideas';
 import channelsSchema from 'data/channelsSchema';
 import { Search, UnorderedSearchIndex } from 'js-search';
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
@@ -13,7 +14,8 @@ import campaignsStyle from 'styles/campaigns/campaigns.css';
 
 const tabs = {
   'By Channel': ByChannelTab,
-  'By Status': ByStatusTab
+  'By Status': ByStatusTab,
+  'Ideas': IdeasTab
 };
 
 const tabNames = Object.keys(tabs);
@@ -185,22 +187,24 @@ export default class Campaigns extends Component {
           </div>
         </div>
         <div>
-          <div className={ this.classes.campaignsTitle }>
-            <div className={ this.classes.campaignsTitleDate }>
-              { getDateString(planDate) } - Campaigns
-              <div className={ this.classes.search }>
-                <div className={ this.classes.searchIcon }/>
-                <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
-                <div className={ this.classes.searchClear } onClick={ ()=>{ this.setState({search: ''}) } }/>
+          {selectedIndex !== 2 ?
+            <div className={ this.classes.campaignsTitle }>
+              <div className={ this.classes.campaignsTitleDate }>
+                { getDateString(planDate) } - Campaigns
+                <div className={ this.classes.search }>
+                  <div className={ this.classes.searchIcon }/>
+                  <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
+                  <div className={ this.classes.searchClear } onClick={ ()=>{ this.setState({search: ''}) } }/>
+                </div>
+              </div>
+              <div className={ this.classes.campaignsTitleBudget }>
+                Budget left to invest
+                <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
+                  ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0 }
+                </div>
               </div>
             </div>
-            <div className={ this.classes.campaignsTitleBudget }>
-              Budget left to invest
-              <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
-                ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0 }
-              </div>
-            </div>
-          </div>
+            : null }
           {
             selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
               processedChannels,
