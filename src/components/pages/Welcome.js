@@ -57,7 +57,7 @@ export default class Welcome extends Component {
 
   componentDidMount() {
     if(this.props.location.query.new) {
-      this.props.createUserAccount({freePlan: this.props.location.query.freePlan})
+      this.props.createUserAccount({freePlan: this.props.location.query.freePlan, email: this.props.auth.getProfile().email})
         .then(() => {
         })
         .catch((err) => {
@@ -203,6 +203,12 @@ export default class Welcome extends Component {
       <div className={ this.classes.row }>
         <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
       </div>
+      { this.props.userAccount.pictureUrl ?
+      <div className={ this.classes.row }>
+        <Label>Picture</Label>
+        <div className={ welcomeStyle.locals.userPicture } style={{ backgroundImage: 'url(' + this.props.userAccount.pictureUrl + ')' }} />
+      </div>
+        : null }
     </div>;
     const companyAccount = <div>
       <div className={ this.classes.row }>
