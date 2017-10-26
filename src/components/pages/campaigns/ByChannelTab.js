@@ -45,6 +45,14 @@ export default class ByChannelTab extends Component {
 
     return (
       <div className={ this.classes.wrap }>
+        <ChannelCampaigns
+          channelTitle = "Multi Channel Campaigns"
+          channelBudget = {0}
+          channel={null}
+          campaigns={ filteredCampaigns.filter(item => item.source.length > 1) }
+          channelIcon="plan:multiChannel"
+          showCampaign={ showCampaign }
+        />
         { page }
       </div>
     )

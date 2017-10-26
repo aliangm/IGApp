@@ -16,19 +16,6 @@ export default class ChannelCampaigns extends Component {
     this.state = {
       showCampaigns: false
     };
-    this.updateCampaign = this.updateCampaign.bind(this);
-  }
-
-  updateCampaign(campaign, index) {
-    let channelCampaigns = this.props.campaigns ? this.props.campaigns.slice() : [];
-    if (index !== undefined)
-    {
-      channelCampaigns[index] = campaign;
-    }
-    else {
-      channelCampaigns.push(campaign);
-    }
-    return this.props.updateChannelCampaigns(this.props.channel, channelCampaigns);
   }
 
   render() {

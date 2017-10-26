@@ -101,3 +101,4 @@
 @mixin icon-nodpi plan:other, ../../assets/plan_icons/OtherChannels;
 @mixin icon-nodpi plan:Online Directories, ../../assets/plan_icons/OnlineDirectories;
 @mixin icon-nodpi plan:Bing, ../../assets/plan_icons/Bing;
+@mixin icon-nodpi plan:multiChannel, ../../assets/plan_icons/multichannel;
