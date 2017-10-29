@@ -1,6 +1,6 @@
-import schema from './channelsSchema';
 import _ from 'lodash';
 import channelDescriptions from 'data/channelDescriptions';
+import { getTitle } from 'components/utils/channels';
 
 export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels) {
   var sum = {};
@@ -12,7 +12,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
     budget+= month.monthBudget || 0;
     var channels = month.plannedChannelBudgets || {};
     Object.keys(channels).forEach((channel) => {
-      var title = schema.properties[channel].title
+      var title = getTitle(channel)
         .split('/')
         .map(item => item.trim());
       var obj = {};
@@ -24,7 +24,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
       if (channels) {
         Object.keys(channels).forEach((channel) => {
           if (channel != '_id') {
-            var title = schema.properties[channel].title
+            var title = getTitle(channel)
               .split('/')
               .map(item => item.trim());
             parseActuals(title, returnObj, channels[channel], channel, month, projectedPlan.length);

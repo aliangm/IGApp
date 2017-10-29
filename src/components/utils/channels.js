@@ -1,10 +1,28 @@
-import channelsSchema from 'data/channelsSchema';
+let schema = { properties: {} };
+let isInitialized = false;
+
+export function initialize(channelsSchema, userMapping) {
+  schema = channelsSchema;
+  if (userMapping) {
+    Object.keys(userMapping).forEach(channel => {
+      schema.properties[channel].title = userMapping[channel].title;
+      schema.properties[channel].nickname = userMapping[channel].nickname;
+    });
+  }
+  isInitialized = true;
+}
+
+export function getTitle(channel) {
+  if (isInitialized) {
+    return schema.properties[channel].title;
+  }
+}
 
 export function formatChannels() {
   let returnObject = [];
-  Object.keys(channelsSchema.properties).forEach(channel => {
-    const titles = channelsSchema.properties[channel].title.split('/').map(item => item.trim());
-    const nickname = channelsSchema.properties[channel].nickname;
+  Object.keys(schema.properties).forEach(channel => {
+    const titles = schema.properties[channel].title.split('/').map(item => item.trim());
+    const nickname = schema.properties[channel].nickname;
     breakTitles(titles, returnObject, nickname, channel);
   });
   return returnObject;
