@@ -6,11 +6,12 @@ import ideasStyle from 'styles/campaigns/ideas.css';
 import Button from 'components/controls/Button';
 import AddIdeaPopup from 'components/pages/campaigns/AddIdeaPopup';
 import setupStyle from 'styles/attribution/setup.css';
+import commentStyle from 'styles/campaigns/comment.css';
 
 export default class Ideas extends Component {
 
   style = style;
-  styles = [PlannedVsActualstyle, ideasStyle, setupStyle];
+  styles = [PlannedVsActualstyle, ideasStyle, setupStyle, commentStyle];
 
   static defaultProps = {
     campaignIdeas: []
@@ -75,14 +76,22 @@ export default class Ideas extends Component {
     });
     const userId = auth.getProfile().user_id;
     const rows = campaignIdeas.map((idea, i) => {
+      let firstName = this.props.userAccount.firstName;
+      let lastName = this.props.userAccount.lastName;
       let pictureUrl = this.props.userAccount.pictureUrl;
-      const member = this.props.teamMembers.find(member => member.userId === idea.owner)
+      const member = this.props.teamMembers.find(member => member.userId === idea.owner);
       if (member) {
         pictureUrl = member.pictureUrl;
+        [firstName = '', lastName = ''] = member.name.split(' ');
       }
+      const initials = (firstName[0] || '') + (lastName[0] || '');
       return this.getTableRow(null, [
         <div className={ PlannedVsActualstyle.locals.cellItem }>
-          <div className={ideasStyle.locals.userLogo} style={{ backgroundImage: 'url(' + pictureUrl + ')' } }/>
+          { pictureUrl ?
+            <div className={ideasStyle.locals.userLogo} style={{backgroundImage: 'url(' + pictureUrl + ')'}}/>
+            :
+            <div className={commentStyle.locals.initials}>{initials}</div>
+          }
         </div>,
         <div className={ PlannedVsActualstyle.locals.cellItem }>
           { this.formatDate(idea.date) }
