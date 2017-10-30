@@ -25,6 +25,15 @@ export default class AddIdeaPopup extends Component {
     };
   }
 
+  addIdea() {
+    this.props.addIdea(this.state);
+    this.setState({
+      name: '',
+      description: '',
+      goal: ''
+    });
+  }
+
   render() {
     const selects = {
       focus: {
@@ -79,7 +88,7 @@ export default class AddIdeaPopup extends Component {
             <Button
               type="primary2"
               style={{ width: '110px', marginLeft: '20px' }}
-              onClick={ () => {this.props.addIdea(this.state)} }>Add Idea
+              onClick={ this.addIdea.bind(this) }>Add Idea
             </Button>
           </div>
         </div>
