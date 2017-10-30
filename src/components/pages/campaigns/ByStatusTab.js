@@ -60,7 +60,7 @@ export default class ByChannelTab extends Component {
     cards.splice(0, 1, {
       id: "multi channel",
       status: 'New',
-      name: "multi channel",
+      name: null,
       budget: 0,
       title: "Multi Channel Campaigns",
       icon: "plan:multiChannel",
@@ -114,7 +114,7 @@ export default class ByChannelTab extends Component {
       const list = lists.find(l => l.name === campaign.status);
       if (campaign.source.length > 1) {
         if (list) {
-          const channelInList = list.cards.find(chnl => chnl.name === "multi channel");
+          const channelInList = list.cards.find(chnl => chnl.name === null);
 
           if (channelInList) {
             channelInList.campaigns.push(extendedCampaign);
@@ -122,7 +122,7 @@ export default class ByChannelTab extends Component {
             list.cards.push({
               id: "multi channel",
               status: campaign.status,
-              name: "multi channel",
+              name: null,
               title: "Multi Channel Campaigns",
               icon: "plan:multiChannel",
               budget: 0,

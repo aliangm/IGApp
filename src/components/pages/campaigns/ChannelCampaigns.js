@@ -45,7 +45,7 @@ export default class ChannelCampaigns extends Component {
         <div>
           { runningCampaigns }
           <div className={ this.classes.plusBox }>
-            <div className={ this.classes.plus } onClick={ () => { this.props.showCampaign({source: [this.props.channel]}) } }>
+            <div className={ this.classes.plus } onClick={ () => { this.props.showCampaign({source: this.props.channel ? [this.props.channel] : []}) } }>
               +
             </div>
           </div>
