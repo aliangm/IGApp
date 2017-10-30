@@ -19,6 +19,7 @@ import popupStyle from 'styles/plan/popup.css';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
+import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 import history from 'history';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
@@ -422,6 +423,19 @@ export default class AnnualTab extends Component {
     }
   }
 
+  editChannelName(longName, shortName, channel) {
+    let namesMapping = this.props.namesMapping || {};
+    if (!namesMapping.channels) {
+      namesMapping.channels = {};
+    }
+    namesMapping.channels[channel] = {
+      title: longName,
+      nickname: shortName
+    };
+    this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
+    this.setState({editChannelName: ''});
+  }
+
   render() {
     if (!this.props.isPlannerLoading) {
       const channelOptions = formatChannels();
@@ -478,6 +492,14 @@ export default class AnnualTab extends Component {
                       <DeleteChannelPopup
                         onNext={ this.deleteRow.bind(this, params.channel) }
                         onBack={ () => this.setState({deletePopup: ''}) }
+                      />
+                    </Popup>
+                    <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
+                    <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <EditChannelNamePopup
+                        channel={ this.state.editChannelName }
+                        onNext={ this.editChannelName.bind(this) }
+                        onBack={ () => this.setState({editChannelName: ''}) }
                       />
                     </Popup>
                   </div>

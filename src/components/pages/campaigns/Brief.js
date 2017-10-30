@@ -10,7 +10,7 @@ import AssetsPopup from 'components/pages/campaigns/AssetsPopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
-import channelsSchema from 'data/channelsSchema';
+import { getChannelsWithTitles } from 'components/utils/channels';
 
 export default class Brief extends Component {
 
@@ -201,7 +201,7 @@ export default class Brief extends Component {
         label: 'Source*',
         select: {
           name: 'source',
-          options: Object.keys(channelsSchema.properties).map(channel => { return { value: channel, label: channelsSchema.properties[channel].title } })
+          options: getChannelsWithTitles()
         }
       },
       status: {

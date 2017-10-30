@@ -193,6 +193,8 @@ class AppComponent extends Component {
               if (!dontSetState) {
                 this.setDataAsState(data);
                 this.getPreviousData();
+                initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
+                initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
               deferred.resolve(data);
             })

@@ -13,8 +13,34 @@ export function initialize(channelsSchema, userMapping) {
 }
 
 export function getTitle(channel) {
+  if (isInitialized && channel) {
+    return schema.properties[channel] && schema.properties[channel].title;
+  }
+  else {
+    console.log(channel);
+  }
+}
+
+export function getNickname(channel) {
+  if (isInitialized && channel) {
+    return schema.properties[channel].nickname;
+  }
+  else {
+    console.log(channel);
+  }
+}
+
+export function getChannelsWithTitles() {
   if (isInitialized) {
-    return schema.properties[channel].title;
+    return Object.keys(schema.properties).map(item => {
+      return {value: item, label: schema.properties[item].title}
+    });
+  }
+}
+
+export function getChannelsWithProps() {
+  if (isInitialized) {
+    return schema.properties;
   }
 }
 

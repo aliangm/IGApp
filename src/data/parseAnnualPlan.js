@@ -64,7 +64,7 @@ function parseMonth(title, budget, month, current, sum, channel, approvedBudgets
         obj[title[0]].approvedValues[i] = approvedBudgets[i] && approvedBudgets[i][channel];
       }
       obj[title[0]].values.push(budget);
-      obj[title[0]].icon = "plan:" + title[0];
+      obj[title[0]].icon = "plan:" + channel;
       obj[title[0]].channel = channel;
       obj[title[0]].info = channelDescriptions[channel];
       obj[title[0]].approvedValues[month] = approvedBudgets[month] && approvedBudgets[month][channel];
@@ -126,7 +126,7 @@ function parseActuals(title, current, actualBudget, channel, month, length) {
     if (!current[title[0]]) {
       current[title[0]] = {};
       current[title[0]].values = new Array(length).fill(0);
-      current[title[0]].icon = "plan:" + title[0];
+      current[title[0]].icon = "plan:" + channel;
       current[title[0]].channel = channel;
       current[title[0]].approvedValues = new Array(length).fill(0);
       current[title[0]].approvedValues[month] = actualBudget;

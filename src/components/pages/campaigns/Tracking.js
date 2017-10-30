@@ -1,15 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
-
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import { formatBudget } from 'components/utils/budget';
 import Button from 'components/controls/Button';
 import copy from 'copy-to-clipboard';
-import channelsSchema from 'data/channelsSchema';
-
 import style from 'styles/onboarding/onboarding.css';
 import trackingStyle from 'styles/campaigns/tracking.css';
+import { getChannelsWithProps } from 'components/utils/channels';
 
 export default class Tracking extends Component {
 
@@ -19,15 +17,16 @@ export default class Tracking extends Component {
   constructor(props) {
     super(props);
     let utms = props.campaign.tracking.utms || [];
+    const channels = getChannelsWithProps();
     props.campaign.source.forEach((source, index) => {
       if (!utms[index]){
         utms[index] = {};
       }
       if (!utms[index].source) {
-        utms[index].source = channelsSchema.properties[source] && channelsSchema.properties[source].source ? channelsSchema.properties[source].source : source;
+        utms[index].source = channels[source] && channels[source].source ? channels[source].source : source;
       }
       if (!utms[index].medium) {
-        utms[index].medium = channelsSchema.properties[source] && channelsSchema.properties[source].medium ? channelsSchema.properties[source].medium : 'other';
+        utms[index].medium = channels[source] && channels[source].medium ? channels[source].medium : 'other';
       }
     });
     this.state = {
@@ -49,15 +48,16 @@ export default class Tracking extends Component {
 
   componentWillReceiveProps(nextProps) {
     let utms = nextProps.campaign.tracking.utms || [];
+    const channels = getChannelsWithProps();
     nextProps.campaign.source.forEach((source, index) => {
       if (!utms[index]){
         utms[index] = {};
       }
       if (!utms[index].source) {
-        utms[index].source = channelsSchema.properties[source] && channelsSchema.properties[source].source ? channelsSchema.properties[source].source : source;
+        utms[index].source = channels[source] && channels[source].source ? channels[source].source : source;
       }
       if (!utms[index].medium) {
-        utms[index].medium = channelsSchema.properties[source] && channelsSchema.properties[source].medium ? channelsSchema.properties[source].medium : 'other';
+        utms[index].medium = channels[source] && channels[source].medium ? channels[source].medium : 'other';
       }
     });
     this.setState({
@@ -111,7 +111,8 @@ export default class Tracking extends Component {
               if (data) {
                 update.tracking.urls.splice(index, 0, {
                   long: data.longUrl,
-                  short: data.id
+                  short: data.id,
+                  createDate: new Date()
                 });
                 if (update.tracking.urls.length === update.source.length) {
                   this.props.updateState({campaign: update, unsaved: false});
@@ -149,9 +150,9 @@ export default class Tracking extends Component {
         <div className={ this.classes.row }>
           <Label>{"Source " + (index+1)}</Label>
           <Textfield
-            value={ isBrackets ? null : this.state.utms[index].source }
+            value={ isBrackets ? '' : this.state.utms[index].source }
             onChange={ this.handleChangeUTM.bind(this, 'source', index) }
-            placeHolder={ isBrackets ? this.state.utms[index].source.replace(/[()]/g, "") : null }
+            placeHolder={ isBrackets ? this.state.utms[index].source.replace(/[()]/g, "") : '' }
           />
         </div>
         <div className={ this.classes.row }>

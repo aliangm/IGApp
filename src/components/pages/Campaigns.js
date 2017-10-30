@@ -5,12 +5,12 @@ import Page from 'components/Page';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
-import channelsSchema from 'data/channelsSchema';
 import { Search, UnorderedSearchIndex } from 'js-search';
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
+import { getNickname, getTitle } from 'components/utils/channels';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -126,10 +126,11 @@ export default class Campaigns extends Component {
     };
 
     processedChannels.names.forEach((channel) => {
-      if (channelsSchema.properties[channel]) {
-        processedChannels.titles[channel] = channelsSchema.properties[channel].nickname;
-        let channelHierarchy = channelsSchema.properties[channel].title.split('/').map(item => item.trim());
-        processedChannels.icons[channel] = "plan:" + channelHierarchy[channelHierarchy.length - 1];
+      const title = getTitle(channel);
+      if (title) {
+        processedChannels.titles[channel] = getNickname(channel);
+        let channelHierarchy = title.split('/').map(item => item.trim());
+        processedChannels.icons[channel] = "plan:" + channel;
       }
       else {
         processedChannels.titles[channel] = channel;
