@@ -459,70 +459,76 @@ export default class AnnualTab extends Component {
           const params = data[item];
           const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
           const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
-          const  titleElem = <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.state.editMode}>
-            <div
-              style={{
-                marginLeft: (level | 0) * 17 + 'px',
-                cursor: params.channel ? 'pointer' : 'initial'
-              }}
-              className={ this.classes.rowTitle }
-              onClick={ () => {
-                if (!this.state.editMode && params.channel) {
-                  history.push({
-                    pathname: `campaigns` ,
-                    query: { hash: params.channel }
-                  })
-                } }}>
-              { params.children ?
-                <div
-                  className={ this.classes.rowArrow }
-                  data-collapsed={ collapsed || null }
-                  onClick={() => {
-                    this.state.collapsed[key] = !collapsed;
-                    this.forceUpdate();
-                  }}
-                />
-                :
-                this.state.editMode ?
-                  <div>
-                    <div
-                      className={ this.classes.rowDelete }
-                      onClick={ () => this.setState({deletePopup: params.channel}) }
-                    />
-                    <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                      <DeleteChannelPopup
-                        onNext={ this.deleteRow.bind(this, params.channel) }
-                        onBack={ () => this.setState({deletePopup: ''}) }
+          const  titleElem = <div>
+            { this.state.editMode && params.channel ?
+                <div className={ this.classes.editChannelNameWrapper }>
+                  <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
+                </div>
+              : null }
+            <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.state.editMode}>
+              <div
+                style={{
+                  marginLeft: (level | 0) * 17 + 'px',
+                  cursor: params.channel ? 'pointer' : 'initial'
+                }}
+                className={ this.classes.rowTitle }
+                onClick={ () => {
+                  if (!this.state.editMode && params.channel) {
+                    history.push({
+                      pathname: `campaigns` ,
+                      query: { hash: params.channel }
+                    })
+                  } }}>
+                { params.children ?
+                  <div
+                    className={ this.classes.rowArrow }
+                    data-collapsed={ collapsed || null }
+                    onClick={() => {
+                      this.state.collapsed[key] = !collapsed;
+                      this.forceUpdate();
+                    }}
+                  />
+                  :
+                  this.state.editMode ?
+                    <div>
+                      <div
+                        className={ this.classes.rowDelete }
+                        onClick={ () => this.setState({deletePopup: params.channel}) }
                       />
-                    </Popup>
-                    <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
-                    <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                      <EditChannelNamePopup
-                        channel={ this.state.editChannelName }
-                        onNext={ this.editChannelName.bind(this) }
-                        onBack={ () => this.setState({editChannelName: ''}) }
-                      />
-                    </Popup>
-                  </div>
+                      <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                        <DeleteChannelPopup
+                          onNext={ this.deleteRow.bind(this, params.channel) }
+                          onBack={ () => this.setState({deletePopup: ''}) }
+                        />
+                      </Popup>
+                      <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                        <EditChannelNamePopup
+                          channel={ this.state.editChannelName }
+                          onNext={ this.editChannelName.bind(this) }
+                          onBack={ () => this.setState({editChannelName: ''}) }
+                        />
+                      </Popup>
+                    </div>
+                    : null }
+
+                { params.icon ?
+                  <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
                   : null }
 
-              { params.icon ?
-                <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-                : null }
-
-              { params.icon_mask ?
-                <div className={ this.classes.rowMaskIcon }>
-                  <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
-                </div>
-                : null }
-              {/**   { item.length > 13 ?
+                { params.icon_mask ?
+                  <div className={ this.classes.rowMaskIcon }>
+                    <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                  </div>
+                  : null }
+                {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
                 </div>
                 : item }**/}
-              {item}
-            </div>
-          </ContextMenuTrigger>
+                {item}
+              </div>
+            </ContextMenuTrigger>
+          </div>
 
           const rowProps = {
             className: this.state.editMode ? null :this.classes.tableRow,
@@ -913,7 +919,7 @@ export default class AnnualTab extends Component {
                           options: formatFatherChannels()
                         }}
                         onChange={ (e)=> { this.setState({otherChannelHierarchy: e.value}) } }
-                        placeholder="channel hierarchy"
+                        placeholder="channel category"
                       />
                     </div>
                   </div>
