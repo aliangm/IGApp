@@ -5,6 +5,7 @@ import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import Setup from 'components/pages/attribution/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
+import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 
 export default class Attribution extends Component {
   style = style;
@@ -25,7 +26,8 @@ export default class Attribution extends Component {
   render() {
     const tabs = {
       "Setup": Setup,
-      "Tracking Plan": TrackingPlan
+      "Tracking Plan": TrackingPlan,
+      "Tracking URLs": TrackingUrls
     };
 
     const tabNames = Object.keys(tabs);
