@@ -25,7 +25,7 @@ import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-import { formatChannels } from 'components/utils/channels';
+import { formatChannels, formatFatherChannels } from 'components/utils/channels';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
@@ -302,12 +302,13 @@ export default class AnnualTab extends Component {
   }
 
   addUnknownChannel() {
+    const channel = this.state.otherChannelHierarchy ? this.state.otherChannelHierarchy + ' / ' + this.state.otherChannel : this.state.otherChannel
     let planUnknownChannels = this.props.planUnknownChannels;
     for (let i = 0; i < 12; i++) {
       if (!planUnknownChannels[i]) {
         planUnknownChannels[i] = {};
       }
-      planUnknownChannels[i][this.state.otherChannel] = 0;
+      planUnknownChannels[i][channel] = 0;
     }
     this.props.updateUserMonthPlan({
       unknownChannels: planUnknownChannels
@@ -881,19 +882,40 @@ export default class AnnualTab extends Component {
                   </div>
                 </div>
                 { this.state.newChannel == "OTHER" ?
-                  <div className={ this.classes.channelsRow } style={{ display: 'flex', marginTop: '20px' }}>
-                    <Textfield style={{
-                      width: '292px'
-                    }}  onChange={
-                      this.handleChangeText.bind(this)
-                    }/>
-                    <Button type="primary2" style={{
-                      width: '72px',
-                      margin: '0 20px'
-                    }} onClick={
-                      this.addUnknownChannel.bind(this)
-                    }> Enter
-                    </Button>
+                  <div>
+                    <div className={ this.classes.channelsRow } style={{ display: 'flex', marginTop: '20px' }}>
+                      <Textfield style={{
+                        width: '292px'
+                      }}  onChange={
+                        this.handleChangeText.bind(this)
+                      }/>
+                      <Button type="primary2" style={{
+                        width: '72px',
+                        margin: '0 20px'
+                      }} onClick={
+                        this.addUnknownChannel.bind(this)
+                      }> Enter
+                      </Button>
+                    </div>
+                    <div className={ this.classes.channelsRow } style={{ display: 'flex', marginTop: '20px' }}>
+                      <Select
+                        style={{ width: '292px' }}
+                        className={ this.classes.channelsSelect }
+                        selected={ this.state.otherChannelHierarchy }
+                        select={{
+                          menuTop: true,
+                          name: 'channels',
+                          onChange: (selected) => {
+                            update({
+                              selected: selected
+                            });
+                          },
+                          options: formatFatherChannels()
+                        }}
+                        onChange={ (e)=> { this.setState({otherChannelHierarchy: e.value}) } }
+                        placeholder="channel hierarchy"
+                      />
+                    </div>
                   </div>
                   : null }
                 { this.state.channelAddedSuccessfully ?

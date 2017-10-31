@@ -70,3 +70,30 @@ function breakTitles(titles, returnObject, nickname, channel) {
       return returnObject;
     }
 }
+
+export function formatFatherChannels() {
+  let returnObject = [];
+  Object.keys(schema.properties).forEach(channel => {
+    const titles = schema.properties[channel].title.split('/').map(item => item.trim());
+    breakFatherTitles(titles, returnObject);
+  });
+  return returnObject;
+}
+
+function breakFatherTitles(titles, returnObject, hierarchy) {
+  if (titles.length === 1) {
+    return returnObject;
+  }
+  const title = titles.splice(0, 1);
+  const titleHierarchy = hierarchy ? hierarchy +' / ' + title[0] : title[0];
+  const isExists = returnObject.find(item => item.label === titleHierarchy);
+  // Already exists
+  if (isExists) {
+    breakFatherTitles(titles, returnObject, titleHierarchy);
+  }
+  else {
+    returnObject.push({label: titleHierarchy, value: titleHierarchy});
+    breakFatherTitles(titles, [], titleHierarchy);
+    return returnObject;
+  }
+}
