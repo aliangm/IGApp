@@ -58,7 +58,8 @@ export default class Campaigns extends Component {
     projectedPlan: [],
     planUnknownChannels: [],
     inHouseChannels: [],
-    teamMembers: []
+    teamMembers: [],
+    annualBudgetArray: []
   };
 
   updateCampaigns = (campaigns) => {
@@ -101,7 +102,7 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex } = this.state;
-    const { monthBudget, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
+    const { annualBudgetArray, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
@@ -145,7 +146,7 @@ export default class Campaigns extends Component {
     let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
       res -= campaign.actualSpent || campaign.budget;
       return res;
-    }, monthBudget);
+    }, annualBudgetArray[0]);
 
     let filteredCampaigns = activeCampaigns;
 
