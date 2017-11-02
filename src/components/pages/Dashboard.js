@@ -143,7 +143,7 @@ export default class Dashboard extends Component {
           title = indicator.label;
         }
       });
-      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } project={ project } key={ index }/>
+      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } project={ project } key={ index } directionDown={ objective.direction === "decrease" }/>
     });
 
     const months = previousData.map((item,index) => {return {value: index, label: index} });
