@@ -34,7 +34,7 @@ export default class TrackingPlan extends Component {
     const { campaigns } = this.props;
     let rows = [];
     campaigns.forEach((campaign, campaignIndex) => {
-      campaign.tracking.urls.forEach((url, index) => {
+      campaign.tracking && campaign.tracking.urls && campaign.tracking.urls.forEach((url, index) => {
         const utm = campaign.tracking.utms[index];
         rows.push(
           this.getTableRow(null, [
