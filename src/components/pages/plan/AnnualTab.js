@@ -319,7 +319,7 @@ export default class AnnualTab extends Component {
   editChannel(i, channel, event) {
     let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
     let planUnknownChannels = this.props.planUnknownChannels || [];
-    if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
+    if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
       planUnknownChannels[i][channel] = value || 0;
       this.props.updateState({planUnknownChannels: planUnknownChannels});
     }
