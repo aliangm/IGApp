@@ -47,6 +47,7 @@
 
 .table :global(td):first-child {
     border-left: none;
+    min-width: 197px;
 }
 
 .table :global(td):last-child {
