@@ -171,16 +171,10 @@ export default class CampaignPopup extends Component {
           }
         </div>
         <div className={ campaignPopupStyle.locals.inner }>
-          { selectedTab ? React.createElement(selectedTab, _.merge({ }, this.state, {
+          { selectedTab ? React.createElement(selectedTab, _.merge({ }, this.state, this.props, {
             updateState: this.updateState.bind(this),
             close: this.close,
-            openAddTemplatePopup: this.openAddTemplatePopup.bind(this),
-            updateCampaign: this.props.updateCampaign,
-            closePopup: this.props.closePopup,
-            teamMembers: this.props.teamMembers,
-            firstName: this.props.firstName,
-            lastName: this.props.lastName,
-            auth: this.props.auth
+            openAddTemplatePopup: this.openAddTemplatePopup.bind(this)
           })) : null }
         </div>
       </Page>

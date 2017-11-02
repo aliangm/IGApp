@@ -33,7 +33,9 @@ export default class TrackingPlan extends Component {
   render() {
     const { campaigns } = this.props;
     let rows = [];
-    campaigns.forEach((campaign, campaignIndex) => {
+    campaigns
+      .filter(campaign => campaign.isArchived !== true)
+      .forEach((campaign, campaignIndex) => {
       campaign.tracking && campaign.tracking.urls && campaign.tracking.urls.forEach((url, index) => {
         const utm = campaign.tracking.utms[index];
         rows.push(

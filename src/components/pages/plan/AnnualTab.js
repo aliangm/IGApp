@@ -460,7 +460,7 @@ export default class AnnualTab extends Component {
           const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
           const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
           const  titleElem = <div>
-            { this.state.editMode && params.channel ?
+            { this.state.editMode && params.channel && !params.isOtherChannel ?
                 <div className={ this.classes.editChannelNameWrapper }>
                   <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
                 </div>

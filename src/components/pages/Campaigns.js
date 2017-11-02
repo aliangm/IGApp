@@ -227,6 +227,7 @@ export default class Campaigns extends Component {
               firstName={ userFirstName }
               lastName={ userLastName }
               auth={ this.props.auth }
+              processedChannels={ processedChannels }
             />
           </div>
         </div>

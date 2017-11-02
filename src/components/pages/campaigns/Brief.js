@@ -235,7 +235,7 @@ export default class Brief extends Component {
       }
     };
     // Handle manual channels
-    this.props.campaign.source.forEach(source => {
+    this.props.processedChannels.names.forEach(source => {
       if (!selects.source.select.options.find(item => item.value === source)) {
         selects.source.select.options.push({value: source, label: source});
       }

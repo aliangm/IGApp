@@ -168,6 +168,7 @@ function parseUnknownChannels(title, current, budget, month, length, sum, origin
       current[title[0]].values = new Array(length).fill(0);
       current[title[0]].icon = "plan:other";
       current[title[0]].channel = originalTitle;
+      current[title[0]].isOtherChannel = true;
     }
     current[title[0]].values[month] += budget;
     sum.values[month] += budget;
