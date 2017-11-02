@@ -28,10 +28,16 @@ export default class Objective extends Component {
       </div>
       <ReactGauge {... options}/>
       <div className={ this.classes.center }>
-        Current - { Math.round(this.props.current) }
+        Current - { Math.round(this.props.current) || 0 }
       </div>
       <div className={ this.classes.textBottom }>
-        { Math.round(Math.abs(this.props.maxRange - this.props.current)) } left to reach your goal
+        {
+          this.props.maxRange - this.props.current > 0
+            ?
+            Math.round(this.props.maxRange - this.props.current) +" left to reach your goal"
+            :
+            "you have reached your goal!"
+        }
       </div>
       <div className={ this.classes.center }>
         <div className={ this.classes.thumbs } data-down={ this.props.project < this.props.maxRange ? true : null }/>
