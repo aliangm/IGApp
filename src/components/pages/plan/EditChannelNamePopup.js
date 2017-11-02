@@ -33,7 +33,7 @@ export default class EditChannelNamePopup extends Component {
 
   handleChange(event) {
     const newName = event.target.value;
-    const hierarchy = this.state.longName.substring(0, this.state.longName.lastIndexOf('/'));
+    const hierarchy = this.state.longName.substring(0, this.state.longName.lastIndexOf('/') - 1);
     this.setState({
       longName: hierarchy + ' / ' + newName
     })

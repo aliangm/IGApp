@@ -174,7 +174,7 @@ function parseUnknownChannels(title, current, budget, month, length, sum, origin
   }
   else {
     if (current && current[title[0]]) {
-      return parseUnknownChannels(title.splice(1, title.length - 1), {}, budget, month, length, sum, originalTitle);
+      return parseUnknownChannels(title.splice(1, title.length - 1), current[title[0]].children , budget, month, length, sum, originalTitle);
     }
     else {
       current[title[0]] = {};
