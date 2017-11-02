@@ -273,7 +273,7 @@ export default class Brief extends Component {
         </div>
         <div className={ campaignPopupStyle.locals.assetsLinks }>
           { this.props.campaign.assets.filter(asset => asset.category === category)
-            .map((asset, index) => <a className={ campaignPopupStyle.locals.assetsLink } key={index} href={asset.link} target="_blank">{asset.name}</a>)
+            .map((asset, index) => <a className={ campaignPopupStyle.locals.assetsLink } key={index} href={asset.link} target="_blank">{asset.name || asset.link}</a>)
           }
         </div>
       </div>
