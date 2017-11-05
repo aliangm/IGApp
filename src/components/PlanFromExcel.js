@@ -6,7 +6,7 @@ import Papa from 'papaparse';
 import Label from 'components/ControlsLabel';
 import { isPopupMode } from 'modules/popup-mode';
 import Notice from 'components/Notice';
-import channelsSchema from 'data/channelsSchema';
+import { getTitle } from 'components/utils/channels';
 
 export default class PlanFromExcel extends Component {
 
@@ -48,7 +48,8 @@ export default class PlanFromExcel extends Component {
         let isValid = true;
         approvedBudgets.forEach(month => {
           Object.keys(month).forEach((channel) => {
-            if (!channelsSchema.properties[channel] || isNaN(month[channel])) {
+            const title = getTitle(channel);
+            if (!title || isNaN(month[channel])) {
               isValid = false;
             }
           })

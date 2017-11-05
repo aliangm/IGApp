@@ -10,7 +10,7 @@ import AssetsPopup from 'components/pages/campaigns/AssetsPopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
-import channelsSchema from 'data/channelsSchema';
+import { getChannelsWithTitles } from 'components/utils/channels';
 
 export default class Brief extends Component {
 
@@ -201,7 +201,7 @@ export default class Brief extends Component {
         label: 'Source*',
         select: {
           name: 'source',
-          options: Object.keys(channelsSchema.properties).map(channel => { return { value: channel, label: channelsSchema.properties[channel].title } })
+          options: getChannelsWithTitles()
         }
       },
       status: {
@@ -235,7 +235,7 @@ export default class Brief extends Component {
       }
     };
     // Handle manual channels
-    this.props.campaign.source.forEach(source => {
+    this.props.processedChannels.names.forEach(source => {
       if (!selects.source.select.options.find(item => item.value === source)) {
         selects.source.select.options.push({value: source, label: source});
       }
@@ -273,7 +273,7 @@ export default class Brief extends Component {
         </div>
         <div className={ campaignPopupStyle.locals.assetsLinks }>
           { this.props.campaign.assets.filter(asset => asset.category === category)
-            .map((asset, index) => <a className={ campaignPopupStyle.locals.assetsLink } key={index} href={asset.link} target="_blank">{asset.name}</a>)
+            .map((asset, index) => <a className={ campaignPopupStyle.locals.assetsLink } key={index} href={asset.link} target="_blank">{asset.name || asset.link}</a>)
           }
         </div>
       </div>

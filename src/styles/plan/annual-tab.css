@@ -42,10 +42,12 @@
     vertical-align: middle;
 
     white-space: nowrap;
+    position: relative;
 }
 
 .table :global(td):first-child {
     border-left: none;
+    min-width: 197px;
 }
 
 .table :global(td):last-child {
@@ -430,4 +432,20 @@
 .indicators-graph {
     margin-top: 20px;
     width: 1166px;
+}
+
+.edit-channel-name {
+    background: url(../../assets/edit.svg) center center no-repeat;
+    background-size: contain;
+    width: 12px;
+    height: 12px;
+    margin-top: 4px;
+    margin-left: 181px;
+    cursor: pointer;
+}
+
+.edit-channel-name-wrapper {
+    left: 0;
+    position: absolute;
+    top: 0;
 }

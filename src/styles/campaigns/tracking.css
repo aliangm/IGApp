@@ -51,7 +51,7 @@
 }
 
 .url-textbox {
-    padding: 0 28px 0 14px;
+    padding: 0 32px 0 14px;
 }
 
 .urls {
@@ -67,6 +67,11 @@
     cursor: pointer;
     position: relative;
     margin-top: 10px;
+}
+
+.copy-to-clipboard[data-checked] {
+    background: url(../../assets/copy-documents-option-checked.svg) center center no-repeat;
+    background-size: contain;
 }
 
 .copy-message {

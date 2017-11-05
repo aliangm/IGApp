@@ -134,8 +134,8 @@ export default class Dashboard extends Component {
     const indicatorsOptions = getIndicatorsWithNicknames();
     const objectivesGauges = objectives.map((objective, index) => {
       let title;
-      const delta = objective.isPercentage ? objective.amount * actualIndicators[objective.indicator] / 100 : objective.amount;
-      const maxRange = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + actualIndicators[objective.indicator] : actualIndicators[objective.indicator] - delta);
+      const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+      const maxRange = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
       const month = new Date(objective.timeFrame).getMonth();
       const project = projectedPlan[month].projectedIndicatorValues[objective.indicator];
       indicatorsOptions.forEach((indicator) => {
@@ -143,7 +143,7 @@ export default class Dashboard extends Component {
           title = indicator.label;
         }
       });
-      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } project={ project } key={ index }/>
+      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } project={ project } key={ index } directionDown={ objective.direction === "decrease" }/>
     });
 
     const months = previousData.map((item,index) => {return {value: index, label: index} });

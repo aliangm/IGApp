@@ -1,6 +1,6 @@
-import schema from './channelsSchema';
 import _ from 'lodash';
 import channelDescriptions from 'data/channelDescriptions';
+import { getTitle } from 'components/utils/channels';
 
 export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels) {
   var sum = {};
@@ -12,7 +12,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
     budget+= month.monthBudget || 0;
     var channels = month.plannedChannelBudgets || {};
     Object.keys(channels).forEach((channel) => {
-      var title = schema.properties[channel].title
+      var title = getTitle(channel)
         .split('/')
         .map(item => item.trim());
       var obj = {};
@@ -24,7 +24,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
       if (channels) {
         Object.keys(channels).forEach((channel) => {
           if (channel != '_id') {
-            var title = schema.properties[channel].title
+            var title = getTitle(channel)
               .split('/')
               .map(item => item.trim());
             parseActuals(title, returnObj, channels[channel], channel, month, projectedPlan.length);
@@ -35,7 +35,18 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
   }
   fillZeros(returnObj, approvedBudgets ? approvedBudgets : new Array(projectedPlan.length).fill(null), projectedPlan.length);
   if (unknownChannels && unknownChannels.length > 0) {
-    parseUnknownChannels(returnObj, unknownChannels, projectedPlan.length, sum["__TOTAL__"]);
+    unknownChannels.forEach((channels, month) => {
+      if (channels) {
+        Object.keys(channels).forEach((channel) => {
+          if (channel != '_id') {
+            var title = channel
+              .split('/')
+              .map(item => item.trim());
+            parseUnknownChannels(title, returnObj, channels[channel], month, projectedPlan.length, sum["__TOTAL__"], channel);
+          }
+        });
+      }
+    });
   }
   _.merge(returnObj, sum);
   var retJson = {};
@@ -64,7 +75,7 @@ function parseMonth(title, budget, month, current, sum, channel, approvedBudgets
         obj[title[0]].approvedValues[i] = approvedBudgets[i] && approvedBudgets[i][channel];
       }
       obj[title[0]].values.push(budget);
-      obj[title[0]].icon = "plan:" + title[0];
+      obj[title[0]].icon = "plan:" + channel;
       obj[title[0]].channel = channel;
       obj[title[0]].info = channelDescriptions[channel];
       obj[title[0]].approvedValues[month] = approvedBudgets[month] && approvedBudgets[month][channel];
@@ -126,7 +137,7 @@ function parseActuals(title, current, actualBudget, channel, month, length) {
     if (!current[title[0]]) {
       current[title[0]] = {};
       current[title[0]].values = new Array(length).fill(0);
-      current[title[0]].icon = "plan:" + title[0];
+      current[title[0]].icon = "plan:" + channel;
       current[title[0]].channel = channel;
       current[title[0]].approvedValues = new Array(length).fill(0);
       current[title[0]].approvedValues[month] = actualBudget;
@@ -150,29 +161,29 @@ function parseActuals(title, current, actualBudget, channel, month, length) {
   return current;
 }
 
-function parseUnknownChannels(returnObj, unknownChannels, length, sum) {
-  const otherChannels = "~Other";
-  unknownChannels.forEach((channels, index) => {
-    if (channels && Object.keys(channels).length > 0) {
-      if (!returnObj[otherChannels]) {
-        returnObj[otherChannels] = {};
-        returnObj[otherChannels].children = {};
-        returnObj[otherChannels].values = new Array(length).fill(0);
-        returnObj[otherChannels].icon = "plan:other";
-      }
-      Object.keys(channels).forEach(channel => {
-        if (channel) {
-          if (!returnObj[otherChannels].children[channel]) {
-            returnObj[otherChannels].children[channel] = {};
-            returnObj[otherChannels].children[channel].values = new Array(length).fill(0);
-            returnObj[otherChannels].children[channel].channel = channel;
-            returnObj[otherChannels].children[channel].icon = "plan:other";
-          }
-          returnObj[otherChannels].children[channel].values[index] = channels[channel];
-          returnObj[otherChannels].values[index] += channels[channel];
-          sum.values[index] += channels[channel];
-        }
-      });
+function parseUnknownChannels(title, current, budget, month, length, sum, originalTitle) {
+  if (title.length == 1) {
+    if (!current[title[0]]) {
+      current[title[0]] = {};
+      current[title[0]].values = new Array(length).fill(0);
+      current[title[0]].icon = "plan:other";
+      current[title[0]].channel = originalTitle;
+      current[title[0]].isOtherChannel = true;
     }
-  });
+    current[title[0]].values[month] += budget;
+    sum.values[month] += budget;
+  }
+  else {
+    if (current && current[title[0]]) {
+      return parseUnknownChannels(title.splice(1, title.length - 1), current[title[0]].children , budget, month, length, sum, originalTitle);
+    }
+    else {
+      current[title[0]] = {};
+      current[title[0]] = {children: parseUnknownChannels(title.splice(1, title.length - 1), current[title[0]], budget, month, length, sum, originalTitle)};
+      current[title[0]].values = new Array(length).fill(0);
+      current[title[0]].icon = "plan:" + title[0];
+      current[title[0]].disabled= true;
+    }
+  }
+  return current;
 }

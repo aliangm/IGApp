@@ -1,15 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
-
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import { formatBudget } from 'components/utils/budget';
 import Button from 'components/controls/Button';
 import copy from 'copy-to-clipboard';
-import channelsSchema from 'data/channelsSchema';
-
 import style from 'styles/onboarding/onboarding.css';
 import trackingStyle from 'styles/campaigns/tracking.css';
+import { getChannelsWithProps } from 'components/utils/channels';
 
 export default class Tracking extends Component {
 
@@ -19,15 +17,16 @@ export default class Tracking extends Component {
   constructor(props) {
     super(props);
     let utms = props.campaign.tracking.utms || [];
+    const channels = getChannelsWithProps();
     props.campaign.source.forEach((source, index) => {
       if (!utms[index]){
         utms[index] = {};
       }
       if (!utms[index].source) {
-        utms[index].source = channelsSchema.properties[source] && channelsSchema.properties[source].source ? channelsSchema.properties[source].source : source;
+        utms[index].source = channels[source] && channels[source].source ? channels[source].source : source;
       }
       if (!utms[index].medium) {
-        utms[index].medium = channelsSchema.properties[source] && channelsSchema.properties[source].medium ? channelsSchema.properties[source].medium : 'other';
+        utms[index].medium = channels[source] && channels[source].medium ? channels[source].medium : 'other';
       }
     });
     this.state = {
@@ -49,15 +48,16 @@ export default class Tracking extends Component {
 
   componentWillReceiveProps(nextProps) {
     let utms = nextProps.campaign.tracking.utms || [];
+    const channels = getChannelsWithProps();
     nextProps.campaign.source.forEach((source, index) => {
       if (!utms[index]){
         utms[index] = {};
       }
       if (!utms[index].source) {
-        utms[index].source = channelsSchema.properties[source] && channelsSchema.properties[source].source ? channelsSchema.properties[source].source : source;
+        utms[index].source = channels[source] && channels[source].source ? channels[source].source : source;
       }
       if (!utms[index].medium) {
-        utms[index].medium = channelsSchema.properties[source] && channelsSchema.properties[source].medium ? channelsSchema.properties[source].medium : 'other';
+        utms[index].medium = channels[source] && channels[source].medium ? channels[source].medium : 'other';
       }
     });
     this.setState({
@@ -91,38 +91,50 @@ export default class Tracking extends Component {
     update.tracking.utms = this.state.utms;
     update.tracking.campaignUTM = this.state.campaignUTM;
     update.source.forEach((source, index) => {
-      const url = (update.tracking.isHttp ? 'http://' : 'https://') +
-        update.tracking.baseUrl +
-        '/?utm_source=' + this.state.utms[index].source +
-        '&utm_medium=' + this.state.utms[index].medium +
-        '&utm_campaign=' + this.state.campaignUTM +
-        (this.state.utms[index].content ? '&utm_content=' + this.state.utms[index].content : '' )+
-        (this.state.utms[index].term ? '&utm_term=' + this.state.utms[index].term : '');
-      fetch('https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDEoi0JNfWmDlnN8swZz_tZc3Vu14yV0rw', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({longUrl: encodeURI(url)})
-      })
-        .then((response) => {
-          response.json()
-            .then((data) => {
-              if (data) {
-                update.tracking.urls.splice(index, 0, {
-                  long: data.longUrl,
-                  short: data.id
-                });
-                if (update.tracking.urls.length === update.source.length) {
-                  this.props.updateState({campaign: update, unsaved: false});
-                  this.props.updateCampaign(update);
-                }
-              }
-            })
+      if (!this.state.campaignUTM) {
+        this.refs.campaign.focus();
+      }
+      else if (!this.state.utms[index].source || this.state.utms[index].source.includes("(")) {
+        this.refs["source" + index].focus();
+      }
+      else if (!this.state.utms[index].medium) {
+        this.refs["medium" + index].focus();
+      }
+      else {
+        const url = (update.tracking.isHttp ? 'http://' : 'https://') +
+          update.tracking.baseUrl +
+          '/?utm_source=' + this.state.utms[index].source +
+          '&utm_medium=' + this.state.utms[index].medium +
+          '&utm_campaign=' + this.state.campaignUTM +
+          (this.state.utms[index].content ? '&utm_content=' + this.state.utms[index].content : '' ) +
+          (this.state.utms[index].term ? '&utm_term=' + this.state.utms[index].term : '');
+        fetch('https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDEoi0JNfWmDlnN8swZz_tZc3Vu14yV0rw', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({longUrl: encodeURI(url)})
         })
-        .catch((error) => {
-          console.log(error);
-        });
+          .then((response) => {
+            response.json()
+              .then((data) => {
+                if (data) {
+                  update.tracking.urls.splice(index, 0, {
+                    long: data.longUrl,
+                    short: data.id,
+                    createDate: new Date()
+                  });
+                  if (update.tracking.urls.length === update.source.length) {
+                    this.props.updateState({campaign: update, unsaved: false});
+                    this.props.updateCampaign(update);
+                  }
+                }
+              })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     })
   }
 
@@ -149,14 +161,15 @@ export default class Tracking extends Component {
         <div className={ this.classes.row }>
           <Label>{"Source " + (index+1)}</Label>
           <Textfield
-            value={ isBrackets ? null : this.state.utms[index].source }
+            value={ isBrackets ? '' : this.state.utms[index].source }
             onChange={ this.handleChangeUTM.bind(this, 'source', index) }
-            placeHolder={ isBrackets ? this.state.utms[index].source.replace(/[()]/g, "") : null }
+            placeHolder={ isBrackets ? this.state.utms[index].source.replace(/[()]/g, "") : '' }
+            ref={"source" + index}
           />
         </div>
         <div className={ this.classes.row }>
           <Label>{"Medium " + (index+1)}</Label>
-          <Textfield value={ this.state.utms[index].medium } onChange={ this.handleChangeUTM.bind(this, 'medium', index) }/>
+          <Textfield value={ this.state.utms[index].medium } onChange={ this.handleChangeUTM.bind(this, 'medium', index) } ref={"medium" + index}/>
         </div>
         <div className={ this.classes.row }>
           <div className={ trackingStyle.locals.advanced } onClick={ this.toggleAdvanced.bind(this, index) }>Advanced</div>
@@ -213,7 +226,7 @@ export default class Tracking extends Component {
       </div>
       <div className={ this.classes.row }>
         <Label>Campaign</Label>
-        <Textfield value={ this.state.campaignUTM } onChange={ (e)=>{ this.setState({campaignUTM: e.target.value}) } }/>
+        <Textfield value={ this.state.campaignUTM } onChange={ (e)=>{ this.setState({campaignUTM: e.target.value}) } } ref={"campaign"}/>
       </div>
       { sources }
       <div className={ trackingStyle.locals.rowCenter }>

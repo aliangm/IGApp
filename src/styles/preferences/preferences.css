@@ -51,3 +51,17 @@
   margin-left: 38px;
   margin-top: 12px;
 }
+
+.objective-icon {
+  background: url(../../assets/passed-objective.svg) center center no-repeat;
+  background-size: contain;
+  width: 27px;
+  height: 27px;
+  margin-left: 10px;
+  margin-top: 6px;
+}
+
+.objective-icon[data-active] {
+  background: url(../../assets/success_bltp.svg) center center no-repeat;
+  background-size: contain;
+}

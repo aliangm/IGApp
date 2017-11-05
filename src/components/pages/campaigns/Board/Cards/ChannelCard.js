@@ -50,7 +50,7 @@ class Card extends Component {
   }
 
   openPopup = (index) => {
-    this.context.showCampaign(index !== undefined ? this.props.item.campaigns[index] : { status: this.props.item.status, source: [this.props.item.name]});
+    this.context.showCampaign(index !== undefined ? this.props.item.campaigns[index] : { status: this.props.item.status, source: this.props.item.name ? [this.props.item.name] : []});
   };
 
   render() {

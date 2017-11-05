@@ -31,3 +31,9 @@ export function getIndicatorsWithNicknames() {
     });
   }
 }
+
+export function getIndicatorsWithProps() {
+  if (isInitialized) {
+    return schema.properties;
+  }
+}

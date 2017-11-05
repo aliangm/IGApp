@@ -17,7 +17,7 @@ export default class Objective extends Component {
       contentWidth: 260,
       svgContainerWidth: 260,
       svgContainerHeight: 155,
-      arrowValue: this.props.maxRange < this.props.current ? (this.props.current * 1.5 - this.props.current) / (this.props.current * 1.5 - this.props.maxRange) : (this.props.current - this.props.current/2) / (this.props.maxRange - this.props.current/2),
+      arrowValue: this.props.directionDown ? (this.props.current < this.props.maxRange ? 1 :(this.props.current * 1.5 - this.props.current) / (this.props.current * 1.5 - this.props.maxRange)) : (this.props.current > this.props.maxRange ? 1 :(this.props.current - this.props.current/2) / (this.props.maxRange - this.props.current/2)),
       gaugeCenterLineHeight: 20,
       ranges: [{ start: 0, end: 1.5/6, color: "#ff0000" }, { start: 1.5/6, end: 3/6, color: "#ffa500" }, { start: 3/6, end: 4.5/6, color: "#1165A3" }, { start: 4.5/6, end: 1, color: "#25B10E" }]
 
@@ -28,10 +28,16 @@ export default class Objective extends Component {
       </div>
       <ReactGauge {... options}/>
       <div className={ this.classes.center }>
-        Current - { Math.round(this.props.current) }
+        Current - { Math.round(this.props.current) || 0 }
       </div>
       <div className={ this.classes.textBottom }>
-        { Math.round(Math.abs(this.props.maxRange - this.props.current)) } left to reach your goal
+        {
+          this.props.maxRange > this.props.current && this.props.directionDown === false || this.props.maxRange < this.props.current  && this.props.directionDown === true
+            ?
+            Math.abs(Math.round(this.props.maxRange - this.props.current)) +" left to reach your goal"
+            :
+            "you have reached your goal!"
+        }
       </div>
       <div className={ this.classes.center }>
         <div className={ this.classes.thumbs } data-down={ this.props.project < this.props.maxRange ? true : null }/>

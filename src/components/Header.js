@@ -27,7 +27,8 @@ export default class Header extends Component {
   static defaultProps = {
     user: true,
     regions: [],
-    teamMembers: []
+    teamMembers: [],
+    userAccount: {}
   };
 
   openSidebar = () => {
@@ -55,6 +56,17 @@ export default class Header extends Component {
         return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.region ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
       })
       :null;
+    let user = { name: '', pictureUrl: null };
+    if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id) {
+        user.name = this.props.userFirstName + ' ' + this.props.userLastName;
+        user.pictureUrl = this.props.userAccount.pictureUrl || null;
+      }
+      else {
+        const member = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
+        if (member) {
+          user = member;
+        }
+      }
     return <div className={ this.classes.menuBig }>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
@@ -97,17 +109,11 @@ export default class Header extends Component {
           <div className={ this.classes.logged }>
             {this.props.userCompany}
             <div className={ this.classes.user }>
-              { this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id ?
-                this.props.userFirstName + ' ' + this.props.userLastName
-                : this.props.teamMembers
-                  .filter(member => member.email == this.props.auth.getProfile().email)
-                  .map((member) => {
-                    return member.name
-                  })
-              }
+              { user.name }
             </div>
           </div>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + user.pictureUrl + ')' }} />
         </div>
         : null }
     </div>
@@ -120,7 +126,17 @@ export default class Header extends Component {
         return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.region ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
       })
       : null;
-
+    let user = { name: '', pictureUrl: null };
+    if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id) {
+      user.name = this.props.userFirstName + ' ' + this.props.userLastName;
+      user.pictureUrl = this.props.userAccount.pictureUrl || null;
+    }
+    else {
+      const member = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
+      if (member) {
+        user = member;
+      }
+    }
     return <div className={ this.classes.menuSmall }>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
@@ -163,17 +179,11 @@ export default class Header extends Component {
             { hasUser ?
               <div className={ this.classes.userBoxInside }>
                 <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
+                <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + user.pictureUrl + ')' }} />
                 <div className={ this.classes.logged }>
                   {this.props.userCompany}
                   <div className={ this.classes.user }>
-                    { this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id ?
-                      this.props.userFirstName + ' ' + this.props.userLastName
-                      : this.props.teamMembers
-                        .filter(member => member.email == this.props.auth.getProfile().email)
-                        .map((member) => {
-                          return member.name
-                        })
-                    }
+                    { user.name }
                   </div>
                 </div>
               </div>
@@ -204,17 +214,11 @@ export default class Header extends Component {
       {hasUser ?
         <div className={ this.classes.userBoxOutside }>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + user.pictureUrl + ')' }} />
           <div className={ this.classes.logged }>
             {this.props.userCompany}
             <div className={ this.classes.user }>
-              { this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id ?
-                this.props.userFirstName + ' ' + this.props.userLastName
-                : this.props.teamMembers
-                  .filter(member => member.email == this.props.auth.getProfile().email)
-                  .map((member) => {
-                    return member.name
-                  })
-              }
+              { user.name }
             </div>
           </div>
         </div>

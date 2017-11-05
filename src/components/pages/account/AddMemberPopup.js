@@ -28,6 +28,19 @@ export default class AddMemberPopup extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.hidden !== this.props.hidden) {
+      this.setState({
+        name: '',
+        email: '',
+        role: '',
+        isAdmin: false,
+        specificChannels: [],
+        isSpecificChannels: false
+      });
+    }
+  }
+
   handleChangeChannels(event) {
     let update = event.map((obj) => {
       return obj.value;

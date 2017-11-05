@@ -10,7 +10,8 @@ import q from 'q';
 import history from 'history';
 import { withRouter } from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
-import { initialize } from 'components/utils/indicators';
+import { initialize as initializeIndicators } from 'components/utils/indicators';
+import { initialize as initializeChannels } from 'components/utils/channels';
 
 class AppComponent extends Component {
 
@@ -141,7 +142,28 @@ class AppComponent extends Component {
                 this.setState({
                   indicatorsSchema: data
                 });
-                initialize(data);
+                initializeIndicators(data);
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    serverCommunication.serverRequest('GET', 'metadata/channels', false, false, false, true)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  channelsSchema: data
+                });
+                initializeChannels(data);
               }
             })
         }
@@ -171,6 +193,8 @@ class AppComponent extends Component {
               if (!dontSetState) {
                 this.setDataAsState(data);
                 this.getPreviousData();
+                initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
+                initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
               deferred.resolve(data);
             })
@@ -198,7 +222,8 @@ class AppComponent extends Component {
               if (data) {
                 this.setDataAsState(data);
                 this.getPreviousData();
-                initialize(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
+                initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
+                initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
             })
         }
@@ -346,6 +371,7 @@ class AppComponent extends Component {
       monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
+      campaignIdeas: data.campaignIdeas || [],
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan || [],
       approvedBudgets: data.approvedBudgets || [],
