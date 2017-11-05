@@ -80,6 +80,9 @@ export default class AnnualTab extends Component {
     this.setState({ budgetField: nextProps.budget });
     this.setState({ budgetArrayField: nextProps.budgetArray });
     this.setState({maxChannelsField: nextProps.maxChannels});
+    if (nextProps.editMode) {
+      this.setState({editMode: true});
+    }
   }
 
   /**

@@ -61,6 +61,9 @@ export default class Plan extends Component {
       if (this.props.userAccount.freePlan === false) {
         this.plan(true, null, callback, localStorage.getItem('region'));
       }
+      else {
+        this.setState({editMode: true});
+      }
       disablePopupMode();
     }
   }
