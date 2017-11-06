@@ -59,7 +59,7 @@ export default class CurrentTab extends Component {
   }
 
   render() {
-    const { planDate, projectedPlan, isPlannerLoading, region } = this.state;
+    const { planDate, projectedPlan, isPlannerLoading, region, planUnknownChannels, inHouseChannels } = this.state;
 
     if (isPlannerLoading) {
       return (
@@ -78,7 +78,8 @@ export default class CurrentTab extends Component {
         </div>
       );
     }
-    const planJson = parseAnnualPlan(projectedPlan);
+
+    const planJson = parseAnnualPlan(projectedPlan, null, planUnknownChannels, inHouseChannels);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
@@ -91,10 +92,10 @@ export default class CurrentTab extends Component {
           return currentMonth === eventMonth;
         })
         .map((event, index) => {
-        return <p key={ index }>
-          {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
-        </p>
-      })
+          return <p key={ index }>
+            {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
+          </p>
+        })
       : null;
 
     return <div className={ this.classes.wrap }>

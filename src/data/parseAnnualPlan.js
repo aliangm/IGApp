@@ -2,7 +2,7 @@ import _ from 'lodash';
 import channelDescriptions from 'data/channelDescriptions';
 import { getTitle } from 'components/utils/channels';
 
-export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels) {
+export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels, inHouseChannels) {
   var sum = {};
   var returnObj = {};
   sum["__TOTAL__"] = { values : new Array(projectedPlan.length).fill(0) };
@@ -46,6 +46,14 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels)
           }
         });
       }
+    });
+  }
+  if (inHouseChannels && inHouseChannels.length > 0) {
+    inHouseChannels.forEach(channel => {
+      var title = getTitle(channel)
+        .split('/')
+        .map(item => item.trim());
+      parseInHouseChannels(title, returnObj, -1, projectedPlan.length, channel);
     });
   }
   _.merge(returnObj, sum);
@@ -181,6 +189,31 @@ function parseUnknownChannels(title, current, budget, month, length, sum, origin
       current[title[0]] = {};
       current[title[0]] = {children: parseUnknownChannels(title.splice(1, title.length - 1), current[title[0]], budget, month, length, sum, originalTitle)};
       current[title[0]].values = new Array(length).fill(0);
+      current[title[0]].icon = "plan:" + title[0];
+      current[title[0]].disabled= true;
+    }
+  }
+  return current;
+}
+
+function parseInHouseChannels(title, current, budget, length, channel) {
+  if (title.length == 1) {
+    if (!current[title[0]]) {
+      current[title[0]] = {};
+      current[title[0]].values = new Array(length).fill(budget);
+      current[title[0]].icon = "plan:" + channel;
+      current[title[0]].channel = channel;
+      current[title[0]].info = channelDescriptions[channel];
+    }
+  }
+  else {
+    if (current && current[title[0]]) {
+      return parseInHouseChannels(title.splice(1, title.length - 1), current[title[0]].children , budget, length, channel);
+    }
+    else {
+      current[title[0]] = {};
+      current[title[0]] = {children: parseInHouseChannels(title.splice(1, title.length - 1), current[title[0]], budget, length, channel)};
+      current[title[0]].values = new Array(length).fill(budget);
       current[title[0]].icon = "plan:" + title[0];
       current[title[0]].disabled= true;
     }

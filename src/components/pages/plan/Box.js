@@ -28,7 +28,14 @@ export default class Box extends Component {
 
     return <div className={ className }>
       <div className={ this.classes.head }>
-        <div className={ this.classes.headPrice }>{ this.props.price }</div>
+        {
+          this.props.price !== '$-1' ?
+            <div className={ this.classes.headPrice }>
+              { this.props.price }
+            </div>
+            :
+            <div className={ this.classes.inhouseIcon }/>
+        }
         <div className={ this.classes.headType }>{ this.props.title }</div>
         <div className={ this.classes.infoIconI } role="button" style={{
           opacity: '0.33',
@@ -85,7 +92,14 @@ export class Row extends Component {
       { titleElem }
 
       <div className={ this.classes.rowRight }>
-        <div className={ this.classes.rowPrice }>{ this.props.price }</div>
+        {
+          this.props.price !== '$-1' ?
+            <div className={this.classes.rowPrice}>
+              {this.props.price}
+            </div>
+            :
+            <div className={ this.classes.inhouseIconSmall }/>
+        }
         <div className={ this.classes.infoIconI } role="button" style={{
           opacity: '0.19',
           marginRight: '6px'
@@ -143,7 +157,15 @@ export class Level extends Component {
         </div>
 
         <div className={ this.classes.levelRight }>
-          <div className={ this.classes.levelPrice }>{ this.props.price }</div>
+          {
+            this.props.price !== '$-1' ?
+              <div className={ this.classes.levelPrice }>
+                { this.props.price }
+              </div>
+              :
+              <div className={ this.classes.inhouseIconSmall }/>
+          }
+
           <div className={ this.classes.infoIconI } role="button" style={{
             opacity: '0.19',
             marginRight: '6px',

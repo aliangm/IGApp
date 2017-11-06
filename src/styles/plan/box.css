@@ -169,6 +169,21 @@
   background-size: contain;
 }
 
+.inhouse-icon {
+  width: 33px;
+  height: 33px;
+
+  background: url(../../assets/in-house.svg) center center no-repeat;
+  background-size: contain;
+}
+
+.inhouse-icon-small {
+  width: 21px;
+  height: 21px;
+  margin-right: 6px;
+  composes: inhouse-icon;
+}
+
 .row-text {
   padding-left: 15px;
   color: #646973;
