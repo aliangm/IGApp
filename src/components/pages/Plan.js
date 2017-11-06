@@ -47,7 +47,8 @@ export default class Plan extends Component {
       selectedTab: 1,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
-      approveAll: this.approveAllBudgets.bind(this)
+      approveAll: this.approveAllBudgets.bind(this),
+      declineAll: this.declineAllBudgets.bind(this)
     };
   }
 
@@ -79,6 +80,14 @@ export default class Plan extends Component {
   approveAllBudgets() {
     const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
     return this.props.updateUserMonthPlan({approvedBudgets: projectedBudgets}, this.props.region, this.props.planDate);
+  }
+
+  declineAllBudgets() {
+    const projectedPlan = this.props.projectedPlan;
+    projectedPlan.forEach((month, index) => {
+      month.plannedChannelBudgets = this.props.approvedBudgets[index];
+    });
+    return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
   popup() {

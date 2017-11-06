@@ -464,9 +464,9 @@ export default class AnnualTab extends Component {
           const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
           const  titleElem = <div>
             { this.state.editMode && params.channel && !params.isOtherChannel ?
-                <div className={ this.classes.editChannelNameWrapper }>
-                  <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
-                </div>
+              <div className={ this.classes.editChannelNameWrapper }>
+                <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
+              </div>
               : null }
             <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.state.editMode}>
               <div
@@ -643,35 +643,44 @@ export default class AnnualTab extends Component {
             </div>
             <div className={ planStyles.locals.titleButtons }>
               { this.props.userAccount.freePlan ? null :
-                <Button type="accent2" style={{
-                  marginLeft: '15px',
-                  width: '114px'
-                }} onClick={() => {
-                  this.props.approveAll();
-                }}>
-                  Approve All
-                </Button>
+                <div data-selected={ this.state.dropmenuVisible ? true : null }>
+                  <div style={{ display: '-webkit-box' }}>
+                    <div className={this.classes.buttonTriangle}/>
+                    <Button type="reverse" contClassName={ this.classes.dropButton } style={{
+                      marginLeft: '15px',
+                      width: '102px'
+                    }} onClick={() => {
+                      this.setState({dropmenuVisible: true})
+                    }}>
+                      Apply All
+                    </Button>
+                  </div>
+                  <Popup
+                    className={ this.classes.dropmenu }
+                    hidden={ !this.state.dropmenuVisible } onClose={() => {
+                    this.setState({
+                      dropmenuVisible: false
+                    });
+                  }}
+                  >
+                    <div>
+                      <div className={ this.classes.dropmenuItem } onClick={ this.props.approveAll }>
+                        Approve all
+                      </div>
+                      <div className={ this.classes.dropmenuItem } onClick={ this.props.declineAll }>
+                        Decline all
+                      </div>
+                    </div>
+                  </Popup>
+                </div>
               }
               <Button type="reverse" style={{
                 marginLeft: '15px',
                 width: '102px'
               }} onClick={ this.forecast.bind(this) }>Forecast</Button>
-              <Button type="normalAccent" style={{
-                marginLeft: '15px',
-                width: '102px'
-              }} selected={ this.state.editMode ? true : null } onClick={() => {
-                if (this.state.editMode) {
-                  this.editUpdate();
-                }
-                this.setState({
-                  editMode: !this.state.editMode
-                });
-              }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
-                { this.state.editMode ? "Done" : "Edit" }
-              </Button>
               { this.props.userAccount.freePlan ? null :
                 <div>
-                  <Button type="primary2" style={{
+                  <Button type="reverse" style={{
                     marginLeft: '15px',
                     width: '102px'
                   }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
@@ -757,6 +766,19 @@ export default class AnnualTab extends Component {
                   </div>
                 </div>
               }
+              <Button type="primary2" style={{
+                marginLeft: '15px',
+                width: '102px'
+              }} selected={ this.state.editMode ? true : null } onClick={() => {
+                if (this.state.editMode) {
+                  this.editUpdate();
+                }
+                this.setState({
+                  editMode: !this.state.editMode
+                });
+              }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
+                { this.state.editMode ? "Done" : "Edit" }
+              </Button>
             </div>
           </div>
           <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>

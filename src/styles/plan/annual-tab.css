@@ -449,3 +449,44 @@
     position: absolute;
     top: 0;
 }
+
+.dropmenu {
+    width: 100px;
+    left: auto !important;
+    padding: 4px 0 !important;
+    min-height: inherit !important;
+    top: 64px !important;
+    margin-left: 23px;
+}
+
+.button-triangle {
+    border: .25rem solid transparent;
+    border-top-color: currentColor;
+    color: #2ea1f8;
+    position: relative;
+    top: 16px;
+    left: 107px;
+    height: fit-content;
+}
+
+.dropmenu-item {
+    padding: 0 13px;
+    display: -webkit-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    color: #273142;
+    font-size: 15px;
+    height: 33px;
+    text-decoration: none;
+}
+
+.dropmenu-item:hover, .dropmenu-item[data-selected] {
+    background-color: #E5F5F8;
+}
+
+.dropButton {
+    padding: 0 11px 0 0;
+}
