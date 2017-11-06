@@ -44,12 +44,12 @@ export default class TrackingPlan extends Component {
             utm.source,
             utm.medium,
             <div style={{ padding: '0 5px', marginBottom: '7px' }}>
-              <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '350px' }} value={ url.short } readOnly={true} onFocus={ (e) => e.target.select() }/>
-              <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.short) } style={{ marginTop: '-26px', marginLeft: '321px' }} data-checked={this.state.copied === url.short ? true : null}/>
+              <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '250px' }} value={ url.short } readOnly={true} onFocus={ (e) => e.target.select() }/>
+              <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.short) } style={{ marginTop: '-26px', marginLeft: '221px' }} data-checked={this.state.copied === url.short ? true : null}/>
             </div>,
             <div style={{ padding: '0 5px', marginBottom: '7px' }}>
-              <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '350px' }} value={ url.long } readOnly={true} onFocus={ (e) => e.target.select() }/>
-              <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.long) } style={{ marginTop: '-26px', marginLeft: '321px' }} data-checked={this.state.copied === url.long ? true : null}/>
+              <Textfield inputClassName={ trackingStyle.locals.urlTextbox } style={{ width: '250px' }} value={ url.long } readOnly={true} onFocus={ (e) => e.target.select() }/>
+              <div className={ trackingStyle.locals.copyToClipboard } onClick={ this.copy.bind(this, url.long) } style={{ marginTop: '-26px', marginLeft: '221px' }} data-checked={this.state.copied === url.long ? true : null}/>
             </div>,
             new Date(url.createDate).toLocaleDateString(),
           ], {
