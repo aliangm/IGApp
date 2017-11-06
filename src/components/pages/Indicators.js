@@ -6,7 +6,7 @@ import Page from 'components/Page';
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
 import BackButton from 'components/pages/profile/BackButton';
-import PlanButton from 'components/pages/indicators/PlanButton';
+import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Item from 'components/pages/indicators/Item';
 
@@ -262,17 +262,17 @@ export default class Indicators extends Component {
           { isPopupMode() ?
 
             <div className={ this.classes.colRight }>
-              <div className={ this.classes.row }>
-                <ProfileProgress progress={ 101 } image={
-                  require('assets/flower/5.png')
-                }
-                                 text="Seems you got some new super powers. Now the journey for GROWTH really begins!"/>
-              </div>
-              {/**
-               <div className={ this.classes.row }>
-               <ProfileInsights />
-               </div>
-               **/}
+            <div className={ this.classes.row }>
+            <ProfileProgress progress={ 76 } image={
+            require('assets/flower/4.png')
+          }
+            text="You rock! Hope you’re starting to get excited about planning the right way"/>
+            </div>
+          {/**
+           <div className={ this.classes.row }>
+           <ProfileInsights />
+           </div>
+           **/}
             </div>
 
             : null }
@@ -284,14 +284,14 @@ export default class Indicators extends Component {
             <BackButton onClick={() => {
               this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/preferences');
+                  history.push('/target-audience');
                 });
             }} />
             <div style={{ width: '30px' }} />
-            <PlanButton onClick={() => {
+            <NextButton onClick={() => {
               this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/plan');
+                  history.push('/preferences');
                 });
             }} />
           </div>
