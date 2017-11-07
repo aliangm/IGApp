@@ -7,23 +7,27 @@ import style from 'styles/onboarding/buttons.css';
 import Button from 'components/controls/Button';
 
 export default class SaveButton extends Component {
-	style = style;
+  style = style;
 
-	render() {
-		return <div>
+  static defaultProps = {
+    style: {
+      width: '128px',
+      letterSpacing: 0.075
+    }
+  };
+
+  render() {
+    return <div>
 			<Button type="accent2"
 							onClick={ this.props.onClick }
 							className={ this.classes.planButton }
 							icon="buttons:plan"
-							style={{
-        width: '128px',
-        letterSpacing: 0.075
-      }}
+							style={ this.props.style }
 			>
 				SAVE
 			</Button>
-      <label hidden={ !this.props.success} style={{ color: 'green' }}>Saved successfully!</label>
-      <label hidden={ !this.props.fail} style={{ color: 'red' }}>Failed to save</label>
+			<label hidden={ !this.props.success} style={{ color: 'green' }}>Saved successfully!</label>
+			<label hidden={ !this.props.fail} style={{ color: 'red' }}>Failed to save</label>
 		</div>;
-	}
+  }
 }

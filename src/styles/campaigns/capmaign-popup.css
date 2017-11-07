@@ -113,3 +113,11 @@
     margin-left: 15px;
     cursor: pointer;
 }
+
+.advanced {
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    color: #1165A3;
+    text-decoration: underline;
+}
