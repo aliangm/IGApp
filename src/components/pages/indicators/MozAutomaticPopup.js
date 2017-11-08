@@ -7,23 +7,29 @@ import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import Label from 'components/ControlsLabel';
 
-export default class FacebookAutomaticPopup extends Component {
+export default class MozAutomaticPopup extends Component {
 
   style = style;
 
   constructor(props) {
     super(props);
     this.state = {
-      identifier: ''
+      url: props.defaultUrl || ''
     };
   }
 
-  handleChangeIdentifier(event) {
-    this.setState({identifier: event.target.value});
+  componentWillReceiveProps(nextProps) {
+    if (this.props.defaultUrl !== nextProps.defaultUrl) {
+      this.setState({url: nextProps.defaultUrl});
+    }
+  }
+
+  handleChange(event) {
+    this.setState({url: event.target.value});
   }
 
   getUserData() {
-    serverCommunication.serverRequest('post', 'facebookapi', JSON.stringify({identifier: this.state.identifier}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('post', 'mozapi', JSON.stringify({url: this.state.url}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -45,10 +51,10 @@ export default class FacebookAutomaticPopup extends Component {
     return <div hidden={ this.props.hidden }>
       <Page popup={ true } width={'400px'}>
         <div className={ this.classes.row }>
-          <Label>Please enter your Facebook page name/URL</Label>
+          <Label>Please enter your website</Label>
         </div>
         <div className={ this.classes.row }>
-          <Textfield value={this.state.identifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="https://www.facebook.com/ExamplePage"/>
+          <Textfield value={this.state.url} onChange={ this.handleChange.bind(this)} placeHolder=""/>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>

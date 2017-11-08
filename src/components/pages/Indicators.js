@@ -23,13 +23,15 @@ import SocialPopup from 'components/pages/indicators/SocialPopup';
 import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticPopup';
 import Loading from 'components/pages/indicators/Loading';
 import { getIndicatorsWithProps } from 'components/utils/indicators';
+import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
 
 export default class Indicators extends Component {
   style = style;
   styles = [indiStyle];
 
   static defaultProps = {
-    actualIndicators: {}
+    actualIndicators: {},
+    userAccount: {}
   };
 
   constructor(props) {
@@ -71,6 +73,10 @@ export default class Indicators extends Component {
 
   showTwitterPopup() {
     this.setState({showTwitterPopup: true});
+  }
+
+  showMozPopup() {
+    this.setState({showMozPopup: true});
   }
 
   isFunnelAuto(indicator) {
@@ -178,6 +184,10 @@ export default class Indicators extends Component {
         showAutomaticPopup: this.showCRMPopup.bind(this),
         automaticIndicators: this.isFunnelAuto('users')
       },
+      domainAuthority: {
+        showAutomaticPopup: this.showMozPopup.bind(this),
+        automaticIndicators: this.props.mozapi && this.props.mozapi.url
+      },
       sessions: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
         automaticIndicators: this.isGoogleAuto()
@@ -249,6 +259,7 @@ export default class Indicators extends Component {
         </div>
         <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
         <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
+        <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
         <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
         <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
         <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
