@@ -138,11 +138,15 @@ export default class CampaignPopup extends Component {
   }
 
   setRefName(input) {
-    this.nameInput = input;
+    if (input) {
+      this.nameInput = input;
+    }
   }
 
   setRefSource(input) {
-    this.sourceInput = input;
+    if (input) {
+      this.sourceInput = input;
+    }
   }
 
   validate() {
@@ -161,12 +165,15 @@ export default class CampaignPopup extends Component {
       this.props.closePopup();
     }
     else {
-      if (!this.state.campaign.name){
-        this.nameInput.focus();
-      }
-      else {
-        this.sourceInput.focus();
-      }
+      this.setState({selectedTab: 0},
+        ()=> {
+          if (!this.state.campaign.name) {
+            this.nameInput.focus();
+          }
+          else {
+            this.sourceInput.focus();
+          }
+        });
     }
   }
 
