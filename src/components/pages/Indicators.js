@@ -158,19 +158,23 @@ export default class Indicators extends Component {
       },
       MCL: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
-        automaticIndicators: this.isFunnelAuto('MCL')
+        automaticIndicators: this.isFunnelAuto('MCL'),
+        isFunnel: true
       },
       MQL: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
-        automaticIndicators: this.isFunnelAuto('MQL')
+        automaticIndicators: this.isFunnelAuto('MQL'),
+        isFunnel: true
       },
       SQL: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
-        automaticIndicators: this.isFunnelAuto('SQL')
+        automaticIndicators: this.isFunnelAuto('SQL'),
+        isFunnel: true
       },
       opps: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
-        automaticIndicators: this.isFunnelAuto('opps')
+        automaticIndicators: this.isFunnelAuto('opps'),
+        isFunnel: true
       },
       LTV: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
