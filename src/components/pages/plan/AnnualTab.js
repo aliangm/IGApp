@@ -627,8 +627,12 @@ export default class AnnualTab extends Component {
         });
         return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
       });
+      const currentSuggested = {};
+      Object.keys(this.props.actualIndicators).forEach(indicator => {
+        currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
+      });
       // Current indicators values to first cell
-      projections.splice(0,0,{... this.props.actualIndicators, name: 'today'});
+      projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
       const objectives = {};
       this.props.objectives.forEach(objective => {
