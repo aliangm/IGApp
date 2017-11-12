@@ -89,11 +89,16 @@ export default class IndicatorsGraph extends Component {
     const lines = this.state.checkedIndicators.map(indicator =>
       <Line key={indicator} type='monotone' dataKey={indicator} stroke={indicatorsMapping[indicator].color} fill={indicatorsMapping[indicator].color} strokeWidth={3}/>
     );
+    const suggestedLines = this.state.checkedIndicators.map(indicator =>
+      <Line key={indicator+1} type='monotone' dataKey={indicator + 'Suggested'} stroke={indicatorsMapping[indicator].color} fill={indicatorsMapping[indicator].color} strokeWidth={3} strokeDasharray="7 11" dot={{ strokeDasharray:"initial", fill: 'white' }}/>
+    );
+
     const dots = this.state.checkedIndicators.map((indicator, index) =>
       this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="#e60000" stroke="white" stroke-width={2} key={index} label="O" alwaysShow={true}/>
     );
     const tooltip = (data) => {
-      const prevIndex = this.props.data.findIndex(month => month.name === data.label) - 1;
+      const currentIndex = this.props.data.findIndex(month => month.name === data.label);
+      const prevIndex = currentIndex - 1;
       if (data.active && data.payload && data.payload.length > 0) {
         return <div className={this.classes.customTooltip}>
           <div style={{ fontWeight: 'bold' }}>
@@ -101,14 +106,22 @@ export default class IndicatorsGraph extends Component {
           </div>
           {
             data.payload.map((item, index) => {
-              if (item.value) {
+              if (item.value && !item.dataKey.includes('Suggested')) {
                 return <div key={index}>
                   {indicatorsMapping[item.dataKey].title}: {item.value}
                   {prevIndex >= 0 ?
-                    <div style={{ color: item.value > 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] > 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
+                    <div style={{ color: item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
+                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
                     </div>
                     : null}
+                  <div>
+                    {indicatorsMapping[item.dataKey].title + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
+                    {prevIndex >= 0 ?
+                      <div style={{ color: this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
+                        {' (' + (this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') + Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
+                      </div>
+                      : null}
+                  </div>
                   {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
                     <div>
                       {indicatorsMapping[item.dataKey].title} (objective): {this.props.objectives[item.dataKey].y}
@@ -139,6 +152,7 @@ export default class IndicatorsGraph extends Component {
           { dots }
           <Tooltip content={ tooltip.bind(this) }/>
           { lines }
+          { suggestedLines }
         </LineChart >
       </div>
     </div>

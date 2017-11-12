@@ -252,3 +252,14 @@
     margin-right: 7.5px
   }
 }
+
+.diff {
+  display: inline-block;
+  color: #2ecc71;
+  font-weight: bold;
+  white-space: pre;
+}
+
+.diff[data-negative] {
+  color: #ce352d;
+}

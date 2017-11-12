@@ -55,7 +55,7 @@ export default class Campaigns extends Component {
 
   static defaultProps = {
     campaigns: [],
-    projectedPlan: [],
+    approvedBudgets: [],
     planUnknownChannels: [],
     inHouseChannels: [],
     teamMembers: [],
@@ -102,12 +102,12 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex } = this.state;
-    const { annualBudgetArray, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
+    const { campaigns, approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    const projectedChannels = projectedPlan && projectedPlan.length > 0 && projectedPlan[0] ? projectedPlan[0].plannedChannelBudgets : {};
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
+    const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0] ? approvedBudgets[0] : {};
     const inHouse = {};
     inHouseChannels.forEach(channel => {
       inHouse[channel] = 0;
@@ -118,7 +118,7 @@ export default class Campaigns extends Component {
         campaignsChannels[source] = 0;
       })
     });
-    let channels = _.merge({}, campaignsChannels, projectedChannels, unknownChannels, inHouse);
+    let channels = _.merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: { },
       icons: { },
@@ -143,10 +143,11 @@ export default class Campaigns extends Component {
 
     const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
 
+    const budget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
     let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
       res -= campaign.actualSpent || campaign.budget;
       return res;
-    }, annualBudgetArray[0]);
+    }, budget);
 
     let filteredCampaigns = activeCampaigns;
 

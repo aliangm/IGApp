@@ -16,7 +16,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels,
         .split('/')
         .map(item => item.trim());
       var obj = {};
-      _.merge(returnObj, parseMonth(title, channels[channel], index, returnObj, sum["__TOTAL__"], channel, approvedBudgets ? approvedBudgets : new Array(projectedPlan.length).fill(null)));
+      _.merge(returnObj, parseMonth(title, channels[channel], index, returnObj, channel, approvedBudgets ? approvedBudgets : new Array(projectedPlan.length).fill(null)));
     });
   });
   if (approvedBudgets) {
@@ -27,7 +27,7 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels,
             var title = getTitle(channel)
               .split('/')
               .map(item => item.trim());
-            parseActuals(title, returnObj, channels[channel], channel, month, projectedPlan.length);
+            parseActuals(title, returnObj, channels[channel], channel, month, projectedPlan.length, sum["__TOTAL__"]);
           }
         });
       }
@@ -62,9 +62,8 @@ export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels,
   return retJson;
 }
 
-function parseMonth(title, budget, month, current, sum, channel, approvedBudgets){
+function parseMonth(title, budget, month, current, channel, approvedBudgets){
   if (title.length == 1) {
-    sum.values[month] += budget;
     if (current && current[title[0]]){
       for(var i=current[title[0]].values.length; i< month ; i++){
         current[title[0]].values.push(0);
@@ -102,12 +101,12 @@ function parseMonth(title, budget, month, current, sum, channel, approvedBudgets
         current[title[0]].values.push(budget);
       }
       var obj = {};
-      obj[title[0]] = {children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, sum, channel, approvedBudgets)};
+      obj[title[0]] = {children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, channel, approvedBudgets)};
       return obj;
     }
     else {
       var obj = {};
-      obj[title[0]] = {values: [], children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, sum, channel, approvedBudgets)};
+      obj[title[0]] = {values: [], children: parseMonth(title.splice(1, title.length - 1), budget, month, current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, channel, approvedBudgets)};
       for (var i = 0; i < month; i++) {
         obj[title[0]].values.push(0);
       }
@@ -140,7 +139,7 @@ function fillZeros(json, approvedBudgets, length){
   })
 }
 
-function parseActuals(title, current, actualBudget, channel, month, length) {
+function parseActuals(title, current, actualBudget, channel, month, length, sum) {
   if (title.length == 1) {
     if (!current[title[0]]) {
       current[title[0]] = {};
@@ -148,19 +147,18 @@ function parseActuals(title, current, actualBudget, channel, month, length) {
       current[title[0]].icon = "plan:" + channel;
       current[title[0]].channel = channel;
       current[title[0]].approvedValues = new Array(length).fill(0);
-      current[title[0]].approvedValues[month] = actualBudget;
     }
-    else {
       current[title[0]].approvedValues[month] = actualBudget;
-    }
+      sum.values[month] += actualBudget;
+
   }
   else {
     if (current && current[title[0]]) {
-      return parseActuals(title.splice(1, title.length - 1), current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, actualBudget, channel, month, length);
+      return parseActuals(title.splice(1, title.length - 1), current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, actualBudget, channel, month, length, sum);
     }
     else {
       current[title[0]] = {};
-      current[title[0]] = {children: parseActuals(title.splice(1, title.length - 1), current[title[0]], actualBudget, channel, month, length)};
+      current[title[0]] = {children: parseActuals(title.splice(1, title.length - 1), current[title[0]], actualBudget, channel, month, length, sum)};
       current[title[0]].values = new Array(length).fill(0);
       current[title[0]].icon = "plan:" + title[0];
       current[title[0]].disabled= true;

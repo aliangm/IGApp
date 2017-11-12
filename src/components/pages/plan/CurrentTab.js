@@ -30,7 +30,7 @@ function formatDate(dateStr) {
 export default class CurrentTab extends Component {
   static propTypes = {
     planDate: PropTypes.string,
-    projectedPlan: PropTypes.array
+    approvedBudgets: PropTypes.array
   };
 
   static defaultProps = {
@@ -54,12 +54,12 @@ export default class CurrentTab extends Component {
     this.setState({
       planDate: data.planDate,
       region: data.region,
-      projectedPlan: data.projectedPlan,
+      approvedBudgets: data.approvedBudgets,
     });
   }
 
   render() {
-    const { planDate, projectedPlan, isPlannerLoading, region, planUnknownChannels, inHouseChannels } = this.state;
+    const { planDate, approvedBudgets, isPlannerLoading, region, planUnknownChannels, inHouseChannels } = this.state;
 
     if (isPlannerLoading) {
       return (
@@ -78,8 +78,8 @@ export default class CurrentTab extends Component {
         </div>
       );
     }
-
-    const planJson = parseAnnualPlan(projectedPlan, null, planUnknownChannels, inHouseChannels);
+    const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
+    const planJson = parseAnnualPlan(plan, null, planUnknownChannels, inHouseChannels);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
@@ -103,7 +103,7 @@ export default class CurrentTab extends Component {
       <div className={ planStyles.locals.title }>
         <div className={ planStyles.locals.titleMain }>
           <div className={ planStyles.locals.titleText }>
-            {formatDate(planDate)}: Recommended budget
+            {formatDate(planDate)}: Budget
           </div>
           <div className={ planStyles.locals.titlePrice }>{formatPrice(monthBudget)}</div>
         </div>

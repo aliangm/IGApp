@@ -61,12 +61,12 @@ export default class Analyze extends Component {
     previousData.forEach(item => {
       if (item.actualChannelBudgets && item.actualChannelBudgets.knownChannels) {
         Object.keys(item.actualChannelBudgets.knownChannels).forEach(channel => {
-          item.projectedPlan[0].plannedChannelBudgets[channel] = item.actualChannelBudgets.knownChannels[channel];
+          item.approvedBudgets[0][channel] = item.actualChannelBudgets.knownChannels[channel];
         });
       }
     });
-    const previousPlan = previousData.map(item => item.projectedPlan[0]);
-    const unknownChannels = previousData.map(item => item.unknownChannels[0]);
+    const previousPlan = previousData.map(item => item.approvedBudgets && item.approvedBudgets[0] ? { plannedChannelBudgets: item.approvedBudgets[0] } : {});
+    const unknownChannels = previousData.map(item => item.unknownChannels && item.unknownChannels[0] ? item.unknownChannels[0] : {});
     const planJson = parseAnnualPlan(previousPlan, null, unknownChannels);
     let budget = Object.keys(planJson)[0];
     const data = planJson[budget];

@@ -9,13 +9,15 @@ import style from 'styles/plan/planned-actual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import Paging from 'components/Paging';
+import { getTitle } from 'components/utils/channels';
 
 export default class PlannedVsActual extends Component {
   styles = [planStyles];
   style = style
 
   static defaultProps = {
-    plannedChannelBudgets: {},
+    planUnknownChannels: [],
+    approvedBudgets: [],
     knownChannels: {},
     unknownChannels: {},
     hoverRow: void 0,
@@ -38,10 +40,10 @@ export default class PlannedVsActual extends Component {
     this.setState({
       planDate: data.planDate,
       region: data.region,
-      plannedChannelBudgets: data.projectedPlan.length > 0 ? data.projectedPlan[0].plannedChannelBudgets : {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      monthBudget: data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null
+      approvedBudgets: data.approvedBudgets || [],
+      planUnknownChannels: data.unknownChannels || [],
     });
   }
 
@@ -61,7 +63,7 @@ export default class PlannedVsActual extends Component {
           this.setState({showText: true});
         }
         else {
-          var alreadyExist = Object.keys(this.state.plannedChannelBudgets);
+          var alreadyExist = Object.keys(this.state.approvedBudgets[0]);
           alreadyExist = alreadyExist.concat(Object.keys(this.state.knownChannels), Object.keys(this.state.unknownChannels));
           if (alreadyExist.indexOf(event.value) === -1) {
             var update = this.state.knownChannels;
@@ -78,7 +80,8 @@ export default class PlannedVsActual extends Component {
   }
 
   updateActual(key, value){
-    if (this.state.unknownChannels[key] !== undefined){
+    const title = getTitle(key);
+    if (!title){
       let update = this.state.unknownChannels;
       update[key] = value;
       this.setState({unknownChannels: update});
@@ -114,7 +117,7 @@ export default class PlannedVsActual extends Component {
     let channelOptions = [];
     this.keys = this.getDates();
     month = this.keys[this.state.month];
-    const data = parsePlannedVsActual(this.state.plannedChannelBudgets, this.state.knownChannels, this.state.unknownChannels);
+    const data = parsePlannedVsActual(this.state.approvedBudgets[0], this.state.planUnknownChannels[0], this.state.knownChannels, this.state.unknownChannels);
     if (data) {
       rows = data.map((item, i) => {
         return this.getTableRow(null, [
@@ -367,7 +370,7 @@ export default class PlannedVsActual extends Component {
         value.options.map(preventDuplicates);
       }
       else {
-        value.disabled = Object.keys(this.state.knownChannels).includes(value.value) || Object.keys(this.state.plannedChannelBudgets).includes(value.value);
+        value.disabled = Object.keys(this.state.knownChannels).includes(value.value) || Object.keys(this.state.approvedBudgets[0]).includes(value.value);
         return value;
       }
     };

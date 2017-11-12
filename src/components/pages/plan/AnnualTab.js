@@ -49,7 +49,9 @@ export default class AnnualTab extends Component {
     planDate: '',
     events: [],
     objectives: [],
-    annualBudget: 0
+    annualBudget: 0,
+    approvedBudgetsProjection: [],
+    annualBudgetArray: []
   };
 
   constructor(props) {
@@ -395,12 +397,15 @@ export default class AnnualTab extends Component {
   forecast() {
     const callback = (data) => {
       // PATCH
-      // Update user month plan projected indicators using another request
-      const projectedPlan = this.props.projectedPlan;
-      projectedPlan.forEach((month, index) => {
-        month.projectedIndicatorValues = data.projectedPlan[index].projectedIndicatorValues;
+      // Update user month plan using another request
+      const approvedBudgetsProjection = this.props.approvedBudgetsProjection;
+      data.projectedPlan.forEach((month, index) => {
+        if (!approvedBudgetsProjection[index]) {
+          approvedBudgetsProjection[index] = {};
+        }
+        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
       });
-      this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
+      this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
     };
     this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region);
   }
@@ -447,7 +452,7 @@ export default class AnnualTab extends Component {
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
-      budget = this.props.annualBudget !== null ? this.props.annualBudget : this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
+      budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
       budget = Math.ceil(budget/1000)*1000;
       let rows = [];
 
@@ -616,7 +621,11 @@ export default class AnnualTab extends Component {
 
       const dates = this.getDates();
       const projections = this.props.projectedPlan.map((item, index) => {
-        return {... item.projectedIndicatorValues, name: dates[index]}
+        const json = {};
+        Object.keys(item.projectedIndicatorValues).forEach(key => {
+          json[key + 'Suggested'] = item.projectedIndicatorValues[key];
+        });
+        return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
       });
       // Current indicators values to first cell
       projections.splice(0,0,{... this.props.actualIndicators, name: 'today'});

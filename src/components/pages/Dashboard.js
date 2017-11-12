@@ -27,7 +27,8 @@ export default class Dashboard extends Component {
   styles = [dashboardStyle];
 
   static defaultProps = {
-    projectedPlan: [],
+    approvedBudgets: [],
+    approvedBudgetsProjection: [],
     actualIndicators: {
       MCL: 0,
       MQL: 0,
@@ -75,11 +76,12 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const { planDate, projectedPlan, actualIndicators, unfilteredCampaigns, objectives, annualBudgetArray, previousData } = this.props;
-    const planJson = parseAnnualPlan(projectedPlan);
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, unfilteredCampaigns, objectives, annualBudgetArray, previousData, planUnknownChannels } = this.props;
+    const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
+    const planJson = parseAnnualPlan(plan, approvedBudgets, planUnknownChannels);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
-    const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
+    const monthBudget = planData['__TOTAL__'].values[0] || 0;
     const fatherChannelsWithBudgets = Object.keys(planData)
       .filter(channelName => channelName !== '__TOTAL__' && planData[channelName].values[0] !== 0)
       .map((fatherChannel)=> { return { name: fatherChannel, value: planData[fatherChannel].values[0] } });
@@ -137,7 +139,7 @@ export default class Dashboard extends Component {
       const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
       const maxRange = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
       const month = new Date(objective.timeFrame).getMonth();
-      const project = projectedPlan[month].projectedIndicatorValues[objective.indicator];
+      const project = approvedBudgetsProjection[month][objective.indicator];
       indicatorsOptions.forEach((indicator) => {
         if (indicator.value === objective.indicator) {
           title = indicator.label;

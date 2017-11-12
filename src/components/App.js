@@ -375,6 +375,7 @@ class AppComponent extends Component {
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan || [],
       approvedBudgets: data.approvedBudgets || [],
+      approvedBudgetsProjection: data.approvedBudgetsProjection || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray || [],

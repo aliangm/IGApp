@@ -69,3 +69,40 @@
   font-weight: 600;
   text-align: center;
 }
+
+.title-toggle {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+}
+
+.permissions-box {
+  border-radius: 5px;
+  border: solid 2px #1991eb;
+  display: inline-flex;
+  cursor: pointer;
+  user-select: none;
+}
+
+.permissions-frame {
+  width: 100px;
+  height: 35px;
+  background-color: white;
+  color: #1991eb;
+}
+
+.permissions-frame[data-active] {
+  width: 100px;
+  height: 35px;
+  background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
+  color: white;
+}
+
+.admin-text {
+  font-size: 16px;
+  text-align: center;
+  padding-top: 6px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
