@@ -12,12 +12,13 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import MarketFitPopup from 'components/pages/profile/MarketFitPopup';
 import ProductLaunchPopup from 'components/pages/profile/ProductLaunchPopup';
-
+import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
+import Toggle from 'components/controls/Toggle';
 import Label from 'components/ControlsLabel';
-
+import Textfield from 'components/controls/Textfield';
 import style from 'styles/onboarding/onboarding.css';
-
+import preferencesStyle from 'styles/preferences/preferences.css';
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 
@@ -25,6 +26,7 @@ export default class Profile extends Component {
 
 
   style = style;
+  styles = [preferencesStyle];
   /*
    state = {
    highlightInsights: false,
@@ -32,7 +34,8 @@ export default class Profile extends Component {
    };
    */
   static defaultProps = {
-    userProfile: {}
+    userProfile: {},
+    pricingTiers: []
   };
 
   constructor(props) {
@@ -72,6 +75,63 @@ export default class Profile extends Component {
       this.props.userProfile.coverage &&
       this.props.userProfile.loyalty &&
       this.props.userProfile.differentiation
+  }
+
+  handleChangePricing(parameter, index, event) {
+    let pricingTiers = this.props.pricingTiers || [];
+    if (!pricingTiers[index]) {
+      pricingTiers.push({});
+    }
+    pricingTiers[index][parameter] = parseInt(event.target.value.replace(/[-%$,]/g, ''));
+    this.props.updateState({pricingTiers: pricingTiers});
+  }
+
+  handleChangePricingPaid(isMonthly, index) {
+    let pricingTiers = this.props.pricingTiers || [];
+    if (!pricingTiers[index]) {
+      pricingTiers.push({});
+    }
+    pricingTiers[index].isMonthly = isMonthly;
+    this.props.updateState({pricingTiers: pricingTiers});
+  }
+
+  pricingTierRemove(index) {
+    let pricingTiers = this.props.pricingTiers || [];
+    pricingTiers.splice(index,1);
+    this.props.updateState({pricingTiers: pricingTiers});
+  }
+
+  calculatePricing(callback) {
+    let update = Object.assign({}, this.props.userProfile);
+
+    const price = this.props.pricingTiers.reduce((sum, item) => {
+      return sum + item.weight / 100 * item.price * (item.isMonthly ? 12 : 1);
+    }, 0);
+
+    if (price === 0)
+      update.price = "$0";
+    else if (price > 0 && price <= 10)
+      update.price = "$1-$10";
+    else if (price > 10 && price <= 100)
+      update.price = "$11-$100";
+    else if (price > 100 && price <= 500)
+      update.price = "$101-$500";
+    else if (price > 500 && price <= 1000)
+      update.price = "$501-$1000";
+    else if (price > 1000 && price <= 2500)
+      update.price = "$1001-$2500";
+    else if (price > 2500 && price <= 5000)
+      update.price = "$2501-$5000";
+    else if (price > 5000 && price <= 7500)
+      update.price = "$5001-$7500";
+    else if (price > 7500 && price <= 10000)
+      update.price = "$7501-$10000";
+    else if (price > 10000 && price <= 75000)
+      update.price = "$10001-$75000";
+    else if (price > 75000)
+      update.price = ">$75000";
+
+    this.props.updateState({userProfile: update}, callback);
   }
 
   render() {
@@ -141,28 +201,6 @@ export default class Profile extends Component {
             {value: 'High', label: 'High'},
             {value: 'Medium', label: 'Medium'},
             {value: 'Low', label: 'Low'},
-          ]
-        }
-      },
-      price: {
-        label: 'Price',
-        labelQuestion: [''],
-        description: ['What is your main pricing point? \n *In case of SaaS, which annual subscription option is the most popular?'],
-        select: {
-          name: 'price',
-          //onChange: () => {},
-          options: [
-            {value: '$0', label: '$0'},
-            {value: '$1-$10', label: '$1 to $10'},
-            {value: '$11-$100', label: '$11 to $100'},
-            {value: '$101-$500', label: '$101 to $500'},
-            {value: '$501-$1000', label: '$501 to $1000'},
-            {value: '$1001-$2500', label: '$1001 to $2500'},
-            {value: '$2501-$5000', label: '$2501 to $5000'},
-            {value: '$5001-$7500', label: '$5001 to $7500'},
-            {value: '$7501-$10000', label: '$7501 to $10,000'},
-            {value: '$10001-$75000', label: '$10,001 to $75,000'},
-            {value: '>$75000', label: '$75,001 or more'}
           ]
         }
       },
@@ -290,11 +328,34 @@ export default class Profile extends Component {
               <Select { ... selects.seatsPerAccount } selected={ this.props.userProfile.seatsPerAccount}
                       onChange={ this.handleChangeSelect.bind(this, 'seatsPerAccount') }/>
             </div>
-            <div className={ this.classes.row } style={{
-              width: '258px'
-            }}>
-              <Select { ... selects.price } selected={ this.props.userProfile.price}
-                      onChange={ this.handleChangeSelect.bind(this, 'price') }/>
+            <div className={ this.classes.row }>
+              <Label style={{ marginBottom: '12px', fontWeight: '600' }} question={['']} description={['What is your main pricing point? \n *In case of SaaS, which annual subscription option is the most popular?']}>
+                Price
+              </Label>
+              <MultiRow numOfRows={ this.props.pricingTiers.length } rowRemoved={ this.pricingTierRemove }>
+                {({index, data, update, removeButton}) => {
+                  return <div>
+                    <div className={preferencesStyle.locals.channelsRow}>
+                      <Label style={{
+                        marginBottom: '0',
+                        fontWeight: '600'
+                      }}>{`Tier ${ index + 1 }`} </Label>
+                    </div>
+                    <div style={{
+                    }} className={ preferencesStyle.locals.channelsRow }>
+                      <div className={ preferencesStyle.locals.objectiveText }>Price</div>
+                      <Textfield value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].price ? '$' + this.props.pricingTiers[index].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'price', index) } placeHolder="$"/>
+                      <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Weight</div>
+                      <Textfield value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].weight ? this.props.pricingTiers[index].weight + '%' : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'weight', index) } placeHolder="%"/>
+                      <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Paid</div>
+                      <Toggle leftText="Monthly" rightText="Annualy" leftActive={ this.props.pricingTiers[index] && this.props.pricingTiers[index].isMonthly } leftClick={ this.handleChangePricingPaid.bind(this, true, index) } rightClick={ this.handleChangePricingPaid.bind(this, false, index) } style={{ marginLeft: '10px' }}/>
+                      <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '5px'}}>
+                        {removeButton}
+                      </div>
+                    </div>
+                  </div>
+                }}
+              </MultiRow>
             </div>
             <div className={ this.classes.row }>
               <Label question={['']}
@@ -428,18 +489,22 @@ export default class Profile extends Component {
                 fields</label>
             </div>
             <BackButton onClick={() => {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile}, this.props.region, this.props.planDate)
+              this.calculatePricing(()=> {
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
                 .then(() => {
                   history.push('/welcome');
                 });
+            });
             }}/>
             <div style={{width: '30px'}}/>
             <NextButton onClick={() => {
               if (this.validate()) {
-                this.props.updateUserMonthPlan({userProfile: this.props.userProfile}, this.props.region, this.props.planDate)
-                  .then(() => {
-                    history.push('/target-audience');
-                  });
+                this.calculatePricing(() => {
+                  this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+                    .then(() => {
+                      history.push('/target-audience');
+                    });
+                });
               }
               else {
                 this.setState({validationError: true});
@@ -450,13 +515,15 @@ export default class Profile extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
               this.setState({saveFail: false, saveSuccess: false});
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile}, this.props.region, this.props.planDate)
+              this.calculatePricing(()=> {
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
                 .then(()=>{
                   this.setState({saveSuccess: true});
                 })
                 .catch(()=>{
                   this.setState({saveFail: true})
                 });
+              });
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }

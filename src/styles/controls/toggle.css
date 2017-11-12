@@ -1,0 +1,32 @@
+.inner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.box {
+    border-radius: 5px;
+    border: solid 2px #1991eb;
+    display: inline-flex;
+    cursor: pointer;
+    user-select: none;
+}
+
+.frame {
+    width: 90px;
+    height: 33px;
+    background-color: white;
+    color: #1991eb;
+}
+
+.frame[data-active] {
+    background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
+    color: white;
+}
+
+.frame-text {
+    font-size: 16px;
+    text-align: center;
+    padding-top: 6px;
+    font-weight: 600;
+}
