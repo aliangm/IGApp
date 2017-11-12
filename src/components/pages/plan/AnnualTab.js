@@ -117,13 +117,13 @@ export default class AnnualTab extends Component {
 
   getMonthHeaders = () => {
     const dates = this.getDates();
+    const currentMonth = parseInt(this.props.planDate.split('/')[0]);
     const headers = dates.map((month, index) => {
       const events = this.props.events ?
         this.props.events
           .filter(event => {
-            const currentMonth = parseInt(this.props.planDate.split('/')[0]);
             const eventMonth = parseInt(event.startDate.split('/')[1]);
-            return currentMonth + index === eventMonth;
+            return (currentMonth + index) % 12 === eventMonth % 12;
           })
           .map((event, index) => {
             return <p key={ index }>

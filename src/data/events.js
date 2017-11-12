@@ -386,8 +386,8 @@ module.exports = [
   {
     "eventName": "Midwest digital marketing conference",
     "link": "https://umsldigitalconference.com/",
-    "startDate": "",
-    "location": "",
+    "startDate": "27/03/2018",
+    "location": "St. Louis Missouri, USA",
     "vertical": "Martech",
     "companyType": ""
   },
