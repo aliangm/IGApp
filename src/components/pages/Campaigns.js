@@ -83,6 +83,7 @@ export default class Campaigns extends Component {
     else {
       const length = campaigns.push(campaign);
       this.setState({index: length-1});
+      console.log('Campaign was created');
     }
     return this.updateCampaigns(campaigns);
   };
