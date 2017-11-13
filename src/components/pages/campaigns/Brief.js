@@ -10,7 +10,7 @@ import AssetsPopup from 'components/pages/campaigns/AssetsPopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
-import { getChannelsWithTitles } from 'components/utils/channels';
+import { getChannelsWithTitles, getTitle } from 'components/utils/channels';
 
 export default class Brief extends Component {
 
@@ -25,31 +25,11 @@ export default class Brief extends Component {
     this.getEmailBody = this.getEmailBody.bind(this);
     this.getEmailHeader = this.getEmailHeader.bind(this);
     this.getEmailTo = this.getEmailTo.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyPress);
   }
 
   static defaultProps = {
     teamMembers: []
   };
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress);
-  }
-
-  handleKeyPress(e) {
-    /**
-     if (e.key === 'Enter') {
-      this.save();
-    }
-     **/
-    if (e.key === 'Escape') {
-      this.props.close();
-    }
-  }
 
   handleChangeSource = (event) => {
     let update = Object.assign({}, this.props.campaign);
@@ -136,7 +116,7 @@ export default class Brief extends Component {
     const newLine = "\r\n";
     return "Congrats! you have been assigned to a new marketing campaign through InfiniGrow. Let's have a look at the brief:" + newLine +
       newLine +
-      "- Source: " + this.props.channelTitle + newLine +
+      "- Source: " + getTitle(this.props.campaign.source) + newLine +
       "- Campaign Name: " + this.props.campaign.name + newLine +
       "- Campaign Budget: " + (this.props.campaign.actualSpent || this.props.campaign.budget) + newLine +
       "- Status: " + this.props.campaign.status + newLine +
@@ -159,6 +139,11 @@ export default class Brief extends Component {
       (this.props.campaign.additionalInformation ? ("Notes:" + newLine + this.props.campaign.additionalInformation + newLine + newLine) : '') +
       newLine +
       "Thanks!";
+  }
+
+  exportCampaign() {
+    const win = window.open(encodeURI("mailto:" + this.getEmailTo() + "?&subject=" + this.getEmailHeader() + "&body=" + this.getEmailBody()));
+    this.props.save();
   }
 
   render() {
@@ -426,8 +411,8 @@ export default class Brief extends Component {
           <Button type="warning" style={{ width: '100px', marginLeft: '30px' }} onClick={ this.archive.bind(this) }>Archive</Button>
         </div>
         <div className={ this.classes.footerRight }>
-          <Button type="primary2" style={{ width: '100px', marginRight: '30px' }} onClick={ this.props.save }>
-            <a className={ campaignPopupStyle.locals.export } href={ encodeURI("mailto:" + this.getEmailTo() + "?&subject=" + this.getEmailHeader() + "&body=" + this.getEmailBody()) } target="_blank">Export</a>
+          <Button type="primary2" style={{ width: '100px', marginRight: '30px' }}>
+            <a className={ campaignPopupStyle.locals.export } onClick={ this.exportCampaign.bind(this) }>Export</a>
           </Button>
           <SaveButton onClick={ this.props.save } />
         </div>

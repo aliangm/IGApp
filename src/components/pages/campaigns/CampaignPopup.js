@@ -33,6 +33,7 @@ export default class CampaignPopup extends Component {
     this.setRefName = this.setRefName.bind(this);
     this.setRefSource = this.setRefSource.bind(this);
     this.save = this.save.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,6 +43,14 @@ export default class CampaignPopup extends Component {
         campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign),
       });
     }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
   }
 
   static defaultProps = {
@@ -89,6 +98,17 @@ export default class CampaignPopup extends Component {
       additionalInformation: ''
     }
   };
+
+  handleKeyPress(e) {
+    /**
+     if (e.key === 'Enter') {
+      this.save();
+    }
+     **/
+    if (e.key === 'Escape') {
+      this.close();
+    }
+  }
 
   selectTab(selectedIndex) {
     this.setState({

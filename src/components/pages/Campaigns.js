@@ -81,7 +81,8 @@ export default class Campaigns extends Component {
       campaigns[index] = campaign;
     }
     else {
-      campaigns.push(campaign);
+      const length = campaigns.push(campaign);
+      this.setState({index: length-1});
     }
     return this.updateCampaigns(campaigns);
   };
