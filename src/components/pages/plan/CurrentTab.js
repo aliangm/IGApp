@@ -122,7 +122,7 @@ export default class CurrentTab extends Component {
               top: '20px'
             }} title="EVENTS">
               <PopupTextContent>
-                {events}
+                {events.length > 0 ? events : <p>No events</p>}
               </PopupTextContent>
             </PlanPopup>
           </div>
