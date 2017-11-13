@@ -114,29 +114,40 @@ export default class Brief extends Component {
 
   getEmailBody() {
     const newLine = "\r\n";
+    const sourceTitles = this.props.campaign.source.map(source => getTitle(source) || source);
+    const linksCategories = this.props.campaign.assets ?
+      [...new Set(this.props.campaign.assets.map(item => item.category))]
+      : [];
+    const links = linksCategories.map(category => {
+      return category + ':' + newLine +
+        this.props.campaign.assets.filter(asset => asset.category === category)
+        .map(asset => asset.name ? asset.name + ' - ' + asset.link : asset.link)
+    });
     return "Congrats! you have been assigned to a new marketing campaign through InfiniGrow. Let's have a look at the brief:" + newLine +
       newLine +
-      "- Source: " + getTitle(this.props.campaign.source) + newLine +
+      "- Sources: " + sourceTitles.join() + newLine +
       "- Campaign Name: " + this.props.campaign.name + newLine +
       "- Campaign Budget: " + (this.props.campaign.actualSpent || this.props.campaign.budget) + newLine +
       "- Status: " + this.props.campaign.status + newLine +
       newLine +
+      (this.props.campaign.startDate ? ("Start date: " + this.props.campaign.startDate + newLine + newLine) : '') +
+      (this.props.campaign.dueDate ? ("Due date: " + this.props.campaign.dueDate + newLine + newLine) : '') +
+      newLine +
       (this.props.campaign.time && this.props.campaign.time.marketing ? ("- Expected marketing time: " + this.props.campaign.time.marketing + " hours" + newLine) : '') +
       (this.props.campaign.time && this.props.campaign.time.development ? ("- Expected development time: " + this.props.campaign.time.development + " hours" + newLine) : '') +
       (this.props.campaign.time && this.props.campaign.time.design ? ("- Expected design time: " + this.props.campaign.time.design + " hours" + newLine) : '') +
-      newLine +
-      (this.props.campaign.dueDate ? ("Due date: " + this.props.campaign.dueDate + newLine + newLine) : '') +
-      (this.props.campaign.startDate ? ("Start date: " + this.props.campaign.startDate + newLine + newLine) : '') +
       "Campaign objectives:" + newLine +
-      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[0] ? ("- KPI: " + this.props.campaign.objectives.kpi[0] + ", Growth: " + this.props.campaign.objectives.growth[0] + newLine) : '') +
-      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[1] ? ("- KPI: " + this.props.campaign.objectives.kpi[1] + ", Growth: " + this.props.campaign.objectives.growth[1] + newLine) : '') +
-      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[2] ? ("- KPI: " + this.props.campaign.objectives.kpi[2] + ", Growth: " + this.props.campaign.objectives.growth[2] + newLine) : '') +
+      (this.props.campaign.focus ? "Campaign focus: " + this.props.campaign.focus + newLine : '') +
+      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[0] ? ("- KPI: " + this.props.campaign.objectives.kpi[0] + ", Expected Growth: " + this.props.campaign.objectives.growth[0] + ", Actual Growth: " + this.props.campaign.objectives.actualGrowth[0] + newLine) : '') +
+      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[1] ? ("- KPI: " + this.props.campaign.objectives.kpi[1] + ", Expected Growth: " + this.props.campaign.objectives.growth[1] + ", Actual Growth: " + this.props.campaign.objectives.actualGrowth[0] + newLine) : '') +
+      (this.props.campaign.objectives && this.props.campaign.objectives.kpi[2] ? ("- KPI: " + this.props.campaign.objectives.kpi[2] + ", Expected Growth: " + this.props.campaign.objectives.growth[2] + ", Actual Growth: " + this.props.campaign.objectives.actualGrowth[0] + newLine) : '') +
       newLine +
       (this.props.campaign.targetAudience ? ("Target audience:" + newLine + this.props.campaign.targetAudience + newLine + newLine) : '') +
       (this.props.campaign.description ? ("Campaign description:" + newLine + this.props.campaign.description + newLine + newLine) : '') +
       (this.props.campaign.referenceProjects ? ("Reference projects:" + newLine + this.props.campaign.referenceProjects + newLine + newLine) : '') +
       (this.props.campaign.keywords ? ("Keywords:" + newLine + this.props.campaign.keywords + newLine + newLine) : '') +
       (this.props.campaign.additionalInformation ? ("Notes:" + newLine + this.props.campaign.additionalInformation + newLine + newLine) : '') +
+      (links ? ('Links:' + newLine + links.join() + newLine + newLine) : '') +
       newLine +
       "Thanks!";
   }

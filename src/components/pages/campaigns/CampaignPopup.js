@@ -40,7 +40,7 @@ export default class CampaignPopup extends Component {
     if (this.props !== nextProps) {
       this.setState({
         visible: nextProps.visible || false,
-        campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign),
+        campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign)
       });
     }
   }
@@ -87,7 +87,9 @@ export default class CampaignPopup extends Component {
           ''
         ]
       },
-      tracking: {},
+      tracking: {
+        baseUrl: ''
+      },
       tasks: [],
       comments: [],
       assets: [],
