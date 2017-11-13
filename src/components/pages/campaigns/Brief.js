@@ -271,7 +271,7 @@ export default class Brief extends Component {
       </div>
       <div className={ this.classes.row }>
         <Label>Campaign Name*</Label>
-        <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref={ this.props.setRefName } style={{ width: '665px' }}/>
+        <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref={ this.props.setRefName }/>
       </div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
@@ -284,7 +284,7 @@ export default class Brief extends Component {
         </div>
       </div>
       <div className={ this.classes.row }>
-        <div className={ this.classes.cols }>
+        <div className={ this.classes.cols } style={{ width: '76%' }}>
           <div className={ this.classes.colLeft }>
             <div style={{ width: '166px' }}>
               <Label>Start Date</Label>
@@ -418,11 +418,11 @@ export default class Brief extends Component {
       </div>
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
-          <Button type="normal" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
+          <Button type="reverse" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
           <Button type="warning" style={{ width: '100px', marginLeft: '30px' }} onClick={ this.archive.bind(this) }>Archive</Button>
         </div>
         <div className={ this.classes.footerRight }>
-          <Button type="primary2" style={{ width: '100px', marginRight: '30px' }}>
+          <Button type="reverse" style={{ width: '100px', marginRight: '30px' }}>
             <a className={ campaignPopupStyle.locals.export } onClick={ this.exportCampaign.bind(this) }>Export</a>
           </Button>
           <SaveButton onClick={ this.props.save } />

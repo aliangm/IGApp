@@ -69,6 +69,7 @@ export default class Campaigns extends Component {
   updateCampaignsTemplates = (templateName, template) => {
     delete template.index;
     const campaignsTemplates = { ...this.props.campaignsTemplates, [templateName]: template };
+    this.setState({campaign: template});
     return this.props.updateUserMonthPlan({ campaignsTemplates }, this.props.region, this.props.planDate);
   };
 

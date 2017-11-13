@@ -215,7 +215,7 @@ export default class CampaignPopup extends Component {
     return <div>
       <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
         <div className={ campaignPopupStyle.locals.topRight }>
-          <Button contClassName={ campaignPopupStyle.locals.loadButton } type="normal" style={{ width: '53px', height: '25px', marginRight: '-6px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
+          <Button contClassName={ campaignPopupStyle.locals.loadButton } type="reverse" style={{ width: '53px', height: '25px', marginRight: '-6px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
           <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
         <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>

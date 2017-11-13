@@ -9,8 +9,6 @@
 
 .col-right {
   margin-left: auto;
-  padding-left: 16px;
-  width: 270px;
   flex-shrink: 0;
 }
 
