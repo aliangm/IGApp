@@ -182,79 +182,79 @@ export default class HubspotAutomaticPopup extends Component {
           <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={this.state.mapping.blogSubscribers !== undefined} onChange={ this.toggleCheckbox.bind(this, 'blogSubscribers') } className={ salesForceStyle.locals.label }>Blog Subscribers</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <Select { ... selects.tables} selected={ this.state.mapping.blogSubscribers } onChange={ this.handleChange.bind(this, 'blogSubscribers') } disabled={ this.state.mapping.blogSubscribers === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
+                <Select { ... selects.tables} selected={ this.state.mapping.blogSubscribers } onChange={ this.handleChange.bind(this, 'blogSubscribers') } disabled={ this.state.mapping.blogSubscribers === undefined } style={{ width: '166px'}} placeholder="Group By"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={this.state.mapping.MCL !== undefined} onChange={ this.toggleCheckbox.bind(this, 'MCL') } className={ salesForceStyle.locals.label }>Leads</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <Select { ... selects.tables} selected={ this.state.mapping.MCL } onChange={ this.handleChange.bind(this, 'MCL') } disabled={ this.state.mapping.MCL === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
+                <Select { ... selects.tables} selected={ this.state.mapping.MCL } onChange={ this.handleChange.bind(this, 'MCL') } disabled={ this.state.mapping.MCL === undefined } style={{ width: '166px'}} placeholder="Group By"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={this.state.mapping.MQL !== undefined} onChange={ this.toggleCheckbox.bind(this, 'MQL') } className={ salesForceStyle.locals.label }>Marketing Qualified Leads</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <Select { ... selects.tables} selected={ this.state.mapping.MQL } onChange={ this.handleChange.bind(this, 'MQL') } disabled={ this.state.mapping.MQL === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
+                <Select { ... selects.tables} selected={ this.state.mapping.MQL } onChange={ this.handleChange.bind(this, 'MQL') } disabled={ this.state.mapping.MQL === undefined } style={{ width: '166px'}} placeholder="Group By"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={this.state.mapping.SQL !== undefined} onChange={ this.toggleCheckbox.bind(this, 'SQL') } className={ salesForceStyle.locals.label }>Sales Qualified Leads</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <Select { ... selects.tables} selected={ this.state.mapping.SQL } onChange={ this.handleChange.bind(this, 'SQL') } disabled={ this.state.mapping.SQL === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
+                <Select { ... selects.tables} selected={ this.state.mapping.SQL } onChange={ this.handleChange.bind(this, 'SQL') } disabled={ this.state.mapping.SQL === undefined } style={{ width: '166px'}} placeholder="Group By"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={this.state.mapping.opps !== undefined} onChange={ this.toggleCheckbox.bind(this, 'opps') } className={ salesForceStyle.locals.label }>Opportunities</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <Select { ... selects.tables} selected={ this.state.mapping.opps } onChange={ this.handleChange.bind(this, 'opps') } disabled={ this.state.mapping.opps === undefined } style={{ width: 'initial'}} placeholder="Group By"/>
+                <Select { ... selects.tables} selected={ this.state.mapping.opps } onChange={ this.handleChange.bind(this, 'opps') } disabled={ this.state.mapping.opps === undefined } style={{ width: '166px'}} placeholder="Group By"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={this.state.mapping.users !== undefined} onChange={ this.toggleCheckbox.bind(this, 'users') } className={ salesForceStyle.locals.label }>Paying Accounts</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <Select { ... selects.tables} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ this.state.mapping.users === undefined } style={{ width: 'initial'}}  placeholder="Group By"/>
+                <Select { ... selects.tables} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ this.state.mapping.users === undefined } style={{ width: '166px'}}  placeholder="Group By"/>
               </div>
             </div>
           </div>

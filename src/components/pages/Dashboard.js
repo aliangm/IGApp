@@ -219,7 +219,7 @@ export default class Dashboard extends Component {
         </div>
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540px'}}>
               <div className={ dashboardStyle.locals.text }>
                 Marketing Mix Summary
               </div>
@@ -271,7 +271,7 @@ export default class Dashboard extends Component {
                 }
               </div>
             </div>
-            <div className={ dashboardStyle.locals.item }>
+            <div className={ dashboardStyle.locals.item } style={{ marginTop: '30px' }}>
               <div className={ dashboardStyle.locals.text }>
                 {minRatioTitle + ' Ratio'}
               </div>
@@ -330,7 +330,7 @@ export default class Dashboard extends Component {
         </div>
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540px'}}>
               <div className={ dashboardStyle.locals.text }>
                 Historical Performance
               </div>

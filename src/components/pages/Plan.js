@@ -56,7 +56,7 @@ export default class Plan extends Component {
     this.getRelevantEvents(this.props);
     let callback = (data) => {
       this.props.setDataAsState(data);
-      this.approveAllBudgets();
+      this.approveAllBudgets(true);
     };
     if (isPopupMode()) {
       if (this.props.userAccount.freePlan === false) {
@@ -77,9 +77,12 @@ export default class Plan extends Component {
     this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
   }
 
-  approveAllBudgets() {
-    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    return this.props.updateUserMonthPlan({approvedBudgets: projectedBudgets}, this.props.region, this.props.planDate);
+  approveAllBudgets(withProjections) {
+    const json = {approvedBudgets: this.props.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)};
+    if (withProjections) {
+      json.approvedBudgetsProjection = this.props.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
+    }
+    return this.props.updateUserMonthPlan(json, this.props.region, this.props.planDate);
   }
 
   declineAllBudgets() {

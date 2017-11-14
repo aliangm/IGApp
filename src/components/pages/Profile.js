@@ -65,11 +65,12 @@ export default class Profile extends Component {
   }
 
   validate() {
-    return this.props.userProfile.vertical &&
+    return this.props.pricingTiers &&
+      this.props.pricingTiers.length > 0 &&
+      this.props.userProfile.vertical &&
       this.props.userProfile.orientation &&
       this.props.userProfile.businessModel &&
       this.props.userProfile.seatsPerAccount &&
-      this.props.userProfile.price &&
       this.props.userProfile.platform &&
       this.props.userProfile.lifeCycle &&
       this.props.userProfile.coverage &&

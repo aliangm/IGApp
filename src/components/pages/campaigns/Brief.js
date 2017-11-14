@@ -95,16 +95,13 @@ export default class Brief extends Component {
   }
 
   getEmailTo() {
+    const profile = this.props.auth && this.props.auth.getProfile() && this.props.auth.getProfile();
     return (this.props.campaign.owner ?
-      this.props.campaign.owner.value == "me" ?
-        this.props.email :
+      profile.app_metadata.UID === this.props.campaign.owner ?
+        profile.email :
         this.props.teamMembers
-          .filter((item) => {
-            return item.name == this.props.campaign.owner;
-          })
-          .map((item) => {
-            return item.email;
-          })
+          .filter(item => item.userId === this.props.campaign.owner)
+          .map(item => item.email)
       : '');
   }
 
@@ -121,7 +118,7 @@ export default class Brief extends Component {
     const links = linksCategories.map(category => {
       return category + ':' + newLine +
         this.props.campaign.assets.filter(asset => asset.category === category)
-        .map(asset => asset.name ? asset.name + ' - ' + asset.link : asset.link)
+          .map(asset => asset.name ? asset.name + ' - ' + asset.link : asset.link)
     });
     return "Congrats! you have been assigned to a new marketing campaign through InfiniGrow. Let's have a look at the brief:" + newLine +
       newLine +

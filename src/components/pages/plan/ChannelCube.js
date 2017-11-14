@@ -162,7 +162,7 @@ export default class ChannelCube extends Component {
       return null;
     }
 
-    const progress = Math.floor(100 * price / monthBudget);
+    const progress = Math.round(100 * price / monthBudget);
 
     return (
       <Box
