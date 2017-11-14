@@ -218,7 +218,7 @@ export default class CampaignPopup extends Component {
           <Button contClassName={ campaignPopupStyle.locals.loadButton } type="reverse" style={{ width: '53px', height: '25px', marginRight: '-6px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
           <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
-        <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>
+        <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
         <div className={ planStyle.locals.headTabs }>
           {
             tabNames.map((name, i) => {
@@ -235,7 +235,7 @@ export default class CampaignPopup extends Component {
               }}>{ name }</div>
             })
           }
-          <div style={{ marginLeft: '212px', marginTop: '27px' }}>
+          <div style={{ marginLeft: '187px', marginTop: '27px' }}>
             <SaveButton style={{ width: '95px', height: '30px' }} onClick={ this.save }/>
           </div>
         </div>

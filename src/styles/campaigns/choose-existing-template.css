@@ -1,0 +1,23 @@
+.page-content {
+    padding: 0;
+    margin: 0;
+}
+
+.content {
+    padding: 0 38px;
+    margin: 40px 0;
+}
+
+.inner {
+    display: -webkit-box;
+    max-height: 530px;
+    overflow: auto;
+    padding: 0 38px;
+}
+
+.bottom {
+    display: flex;
+    justify-content: flex-end;
+    background-color: #cbcbcb;
+    height: 50px;
+}

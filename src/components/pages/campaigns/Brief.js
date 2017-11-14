@@ -415,8 +415,8 @@ export default class Brief extends Component {
       </div>
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
         <div className={ this.classes.footerLeft }>
-          <Button type="reverse" style={{ width: '165px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
-          <Button type="warning" style={{ width: '100px', marginLeft: '30px' }} onClick={ this.archive.bind(this) }>Archive</Button>
+          <Button type="warning" style={{ width: '100px' }} onClick={ this.archive.bind(this) }>Archive</Button>
+          <Button type="reverse" style={{ width: '165px', marginLeft: '30px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
         </div>
         <div className={ this.classes.footerRight }>
           <Button type="reverse" style={{ width: '100px', marginRight: '30px' }}>

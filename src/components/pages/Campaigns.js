@@ -7,6 +7,7 @@ import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import { Search, UnorderedSearchIndex } from 'js-search';
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
+import ChooseExistingTemplate from 'components/pages/campaigns/ChooseExistingTemplate';
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
@@ -49,7 +50,8 @@ export default class Campaigns extends Component {
       search: '',
       showPopup: false,
       index: undefined,
-      campaign: {}
+      campaign: {},
+      addNew: false
     };
   }
 
@@ -101,6 +103,10 @@ export default class Campaigns extends Component {
 
   showCampaign = (campaign) => {
     this.setState({showPopup: true, index: campaign.index, campaign: campaign || {}});
+  };
+
+  addNewCampaign = (campaign) => {
+    this.setState({addNew: true, campaign: campaign});
   };
 
   render() {
@@ -216,7 +222,8 @@ export default class Campaigns extends Component {
               processedChannels,
               filteredCampaigns: filteredCampaigns,
               updateCampaigns: this.updateCampaigns,
-              showCampaign: this.showCampaign
+              showCampaign: this.showCampaign,
+              addNewCampaign: this.addNewCampaign
             }))
           }
           <div hidden={ !this.state.showPopup }>
@@ -233,6 +240,9 @@ export default class Campaigns extends Component {
               auth={ this.props.auth }
               processedChannels={ processedChannels }
             />
+          </div>
+          <div hidden={ !this.state.addNew }>
+            <ChooseExistingTemplate showCampaign={ (template) => this.showCampaign(_.merge({}, this.state.campaign, template)) } close={ () => { this.setState({addNew: false}) } }/>
           </div>
         </div>
       </Page>
