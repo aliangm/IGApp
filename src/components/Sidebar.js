@@ -118,7 +118,7 @@ export class CollapsedMenuItem extends Component {
     showSubMenu: false
   };
   render() {
-    let className = this.classes.menuItem;
+    let className = this.classes.collapsedMenuItem;
 
     const submenu = this.props.subMenu.map((item, index) =>
       <SubMenuItem { ... item } key={ index }/>
