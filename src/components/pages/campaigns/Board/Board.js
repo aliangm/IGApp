@@ -7,11 +7,14 @@ import CustomDragLayer from './CustomDragLayer';
 import style from 'styles/campaigns/board.css';
 
 class Board extends Component {
-  style = style;
+  style = style
+  columns = { }
+  containerRect = { }
 
   static childContextTypes = {
     onCampaignUpdate: PropTypes.func,
     container: PropTypes.any,
+    containerRect: PropTypes.object,
     userAccount: PropTypes.object,
     auth: PropTypes.object,
     showCampaign: PropTypes.func,
@@ -22,6 +25,7 @@ class Board extends Component {
     return {
       onCampaignUpdate: this.props.onCampaignUpdate,
       container: this.board,
+      containerRect: this.containerRect,
       userAccount: this.props.userAccount,
       auth: this.props.auth,
       showCampaign: this.props.showCampaign,
@@ -34,8 +38,14 @@ class Board extends Component {
 
     this.state = {
       isScrolling: false,
-      lists: props.lists
+      lists: props.lists,
     };
+  }
+
+  componentDidMount() {
+    if (this.board) {
+      this.containerRect = this.board.getBoundingClientRect()
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -78,7 +88,7 @@ class Board extends Component {
     }
   };
 
-  startScrolling = (direction) => {
+  startScrolling = (direction, column) => {
     if (this.state.isScrolling) {
       clearInterval(this.scrollInterval);
     }
@@ -91,46 +101,64 @@ class Board extends Component {
         this.setState({ isScrolling: true }, this.scrollRight());
         break;
       case 'toTop':
-        this.setState({ isScrolling: true }, this.scrollTop());
+        this.setState({ isScrolling: true }, this.scrollTop(column));
         break;
       case 'toBottom':
-        this.setState({ isScrolling: true }, this.scrollBottom());
+        this.setState({ isScrolling: true }, this.scrollBottom(column));
         break;
       default:
         break;
     }
   };
 
-  scrollRight = () => {
-    const scroll = () => {
-      this.board.scrollLeft += 10;
-    };
+  scroll = (scrollFn) => {
+    this.setState({ isScrolling: true }, () => {
+      this.scrollInterval = setInterval(scrollFn, 10);
+    });
+  }
 
-    this.scrollInterval = setInterval(scroll, 10);
+  scrollRight = () => {
+    if (this.board.scrollLeft + this.board.offsetWidth >= this.board.scrollWidth) {
+      return
+    }
+
+    this.scroll(() => {
+      this.board.scrollLeft += 10;
+    })
   };
 
   scrollLeft = () => {
-    const scroll = () => {
+    if (this.board.scrollLeft === 0) {
+      return
+    }
+
+    this.scroll(() => {
       this.board.scrollLeft -= 10;
-    };
-
-    this.scrollInterval = setInterval(scroll, 10);
+    })
   };
 
-  scrollTop = () => {
-    const scroll = () => {
-      document.body.scrollTop -= 10;
-    };
+  scrollTop = (columnIndex) => {
+    const column = this.columns[columnIndex]
 
-    this.scrollInterval = setInterval(scroll, 10);
+    if (column.scrollTop === 0) {
+      return
+    }
+
+    this.scroll(() => {
+      column.scrollTop -= 10;
+    })
   };
 
-  scrollBottom = () => {
-    const scroll = () => {
-      document.body.scrollTop += 10;
-    };
+  scrollBottom = (columnIndex) => {
+    const column = this.columns[columnIndex]
 
-    this.scrollInterval = setInterval(scroll, 10);
+    if (column.scrollTop + column.offsetHeight >= column.scrollHeight) {
+      return
+    }
+
+    this.scroll(() => {
+      column.scrollTop += 10;
+    })
   };
 
   stopScrolling = () => {
@@ -154,6 +182,7 @@ class Board extends Component {
 					startScrolling={this.startScrolling}
 					stopScrolling={this.stopScrolling}
 					isScrolling={this.state.isScrolling}
+          getRef={(ref) => this.columns[i] = ref}
 				/>
 
 				<button className={ this.classes.addButton } onClick={ () => { this.openPopup(i) }}>
@@ -166,7 +195,7 @@ class Board extends Component {
   render() {
     const { lists } = this.state;
     return (
-			<div className={this.classes.board} style={{ height: '100%' }} ref={ref => this.board = ref}>
+			<div className={this.classes.board} ref={ref => this.board = ref}>
 				<CustomDragLayer snapToGrid={false} />
         {lists.map(this.renderColumn)}
 			</div>
