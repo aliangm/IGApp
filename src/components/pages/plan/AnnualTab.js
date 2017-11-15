@@ -72,10 +72,15 @@ export default class AnnualTab extends Component {
       collapsed: {},
       tableCollapsed: false,
       annualData: {},
-      editMode: false
+      editMode: false,
+      graphDimensions: {},
     };
     this.whatIf = this.whatIf.bind(this);
     this.handleChangeContextMenu = this.handleChangeContextMenu.bind(this);
+  }
+
+  componentDidMount() {
+    this.calculateGraphDimensions()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -85,6 +90,19 @@ export default class AnnualTab extends Component {
     if (nextProps.editMode) {
       this.setState({editMode: true});
     }
+  }
+
+  calculateGraphDimensions() {
+      if (this.planTable && this.firstColumnCell) {
+          window.requestAnimationFrame(() => {
+              this.setState({
+                  graphDimensions: {
+                    width: this.planTable.offsetWidth,
+                    marginLeft: this.firstColumnCell.offsetWidth,
+                  }
+              })
+          })
+      }
   }
 
   /**
@@ -814,7 +832,7 @@ export default class AnnualTab extends Component {
           <div className={ this.classes.innerBox }>
             <div className={ this.classes.wrap } ref="wrap">
               <div className={ this.classes.box }>
-                <table className={ this.classes.table }>
+                <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
                   <thead>
                   { headRow }
                   </thead>
@@ -974,8 +992,8 @@ export default class AnnualTab extends Component {
               :null }
           </div>
         </div>
-        <div className={ this.classes.indicatorsGraph }>
-          <IndicatorsGraph data={ projections } objectives={ objectives }/>
+        <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }}>
+          <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
         </div>
       </div>
     } else {
@@ -996,7 +1014,7 @@ export default class AnnualTab extends Component {
   getTableRow(title, items, props, channel, approvedValues)
   {
     return <tr {... props}>
-      <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
+      <td className={ this.classes.titleCell } ref={(ref) => this.firstColumnCell = ref}>{ this.getCellItem(title) }</td>
       {
         items.map((item, i) => {
           if (channel && this.state.editMode) {
