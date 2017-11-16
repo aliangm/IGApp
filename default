@@ -1,38 +1,25 @@
 server {
-	listen 80;
-	return 301 https://$host$request_uri;
-}
-
-server {
-	listen 443 default_server;
-
+	listen 80 default_server;
 
 	root /home/dorla/InfiniGrow/IGUI/develop/output;
 	index index.html index.htm;
 
-	ssl on;
-	ssl_certificate /etc/letsencrypt/live/app.infinigrow.com/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/app.infinigrow.com/privkey.pem;
+    if ($http_x_forwarded_proto != 'https') {
+        rewrite ^ https://$host$request_uri? permanent;
+    }
+
+    location /api/ {
+            rewrite ^/api/(.*) /$1 break;
+             proxy_pass http://localhost:3000;
+             proxy_http_version 1.1;
+             proxy_set_header Upgrade $http_upgrade;
+             proxy_set_header Connection 'upgrade';
+             proxy_set_header Host $host;
+             proxy_cache_bypass $http_upgrade;
+    }
 
 	location / {
 		try_files $uri $uri/ =404;
 	}
 
-}
-
-server {
-        listen 8443;
-
-        ssl on;
-        ssl_certificate /etc/letsencrypt/live/app.infinigrow.com/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/app.infinigrow.com/privkey.pem;
-
-        location / {
-                 proxy_pass http://localhost:3000;
-                 proxy_http_version 1.1;
-                 proxy_set_header Upgrade $http_upgrade;
-                 proxy_set_header Connection 'upgrade';
-                 proxy_set_header Host $host;
-                 proxy_cache_bypass $http_upgrade;
-        }
 }
