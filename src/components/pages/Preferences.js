@@ -48,7 +48,8 @@ export default class Preferences extends Component {
     planDay: 28,
     planDate: null,
     annualBudgetArray: [],
-    userAccount: {}
+    userAccount: {},
+    actualIndicators: {}
   };
 
   constructor(props) {
@@ -255,10 +256,21 @@ export default class Preferences extends Component {
   }
 
   isObjectiveActive(index) {
+    // If the objective achieved, show green.
+    // Else, if date passed - red.
+    // Else - none.
     const objective = this.props.objectives[index];
+    const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+    const targetValue = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
     const today = new Date();
     const date = objective && objective.timeFrame ? new Date(objective.timeFrame) : today;
-    return date >= today;
+    if (targetValue <= this.props.actualIndicators[objective.indicator]) {
+      return 'success';
+    }
+    if (date < today) {
+      return 'fail'
+    }
+    return null;
   }
 
   objectiveRemove(index) {
@@ -671,7 +683,7 @@ export default class Preferences extends Component {
                       <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '5px'}}>
                         {removeButton}
                       </div>
-                      <div className={preferencesStyle.locals.objectiveIcon} data-active={this.isObjectiveActive(index) ? true : null}/>
+                      <div className={preferencesStyle.locals.objectiveIcon} data-active={this.isObjectiveActive(index)}/>
                     </div>
                   </div>
                 }}
