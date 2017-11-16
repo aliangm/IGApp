@@ -48,7 +48,8 @@ export default class Plan extends Component {
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
       approveAll: this.approveAllBudgets.bind(this),
-      declineAll: this.declineAllBudgets.bind(this)
+      declineAll: this.declineAllBudgets.bind(this),
+      editMode: false
     };
   }
 
@@ -71,6 +72,9 @@ export default class Plan extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.getRelevantEvents(nextProps);
+    if (this.state.editMode) {
+      this.setState({editMode: false});
+    }
   }
 
   getRelevantEvents(props) {
