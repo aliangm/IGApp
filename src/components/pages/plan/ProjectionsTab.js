@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-
+import Toggle from 'components/controls/Toggle';
 import Button from 'components/controls/Button';
 import Item from 'components/pages/plan/ProjectionItem';
 import Popup from 'components/Popup';
@@ -100,18 +100,13 @@ export default class ProjectionsTab extends Component {
             </div>
           </div>
           <div className={ this.classes.titleToggle }>
-            <div className={ this.classes.permissionsBox }>
-              <div className={ this.classes.permissionsFrame } data-active={ this.state.approvedPlan ? true : null } onClick={ ()=>{ this.setState({approvedPlan: true}) } }>
-                <div className={ this.classes.adminText }>
-                  Current
-                </div>
-              </div>
-              <div className={ this.classes.permissionsFrame } data-active={ this.state.approvedPlan ? null : true } onClick={ ()=>{ this.setState({approvedPlan: false}) } }>
-                <div className={ this.classes.adminText }>
-                  Suggested
-                </div>
-              </div>
-            </div>
+            <Toggle
+              leftText="Current"
+              rightText="Suggested"
+              leftActive={ this.state.approvedPlan }
+              leftClick={ ()=>{ this.setState({approvedPlan: true}) } }
+              rightClick={ ()=>{ this.setState({approvedPlan: false}) } }
+            />
           </div>
           <div className={ planStyles.locals.titleButtons }>
             {

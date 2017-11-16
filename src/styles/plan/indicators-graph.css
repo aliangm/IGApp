@@ -22,7 +22,7 @@
     white-space: nowrap;
     margin-bottom: 9px;
     margin-top: 6px;
-    margin-left: 3px;
+    margin-left: 10px;
 }
 
 .colored-circle {
@@ -34,6 +34,7 @@
 }
 
 .menu-item {
+    margin-left: 7px;
     display: -webkit-box;
 }
 

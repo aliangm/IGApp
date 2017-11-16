@@ -48,7 +48,7 @@ export default class TrackingPlan extends Component {
             {trackingCode}
           </pre>
           </div>
-          <div style={{ display: 'flex', marginTop: '43px' }}>
+          <div style={{ display: 'flex', marginTop: '43px', marginRight: '12px' }}>
             <Button type="reverse"
                     onClick={ this.copy.bind(this, trackingCode, i) }
                     icon="buttons:copy"

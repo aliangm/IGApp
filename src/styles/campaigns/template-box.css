@@ -7,7 +7,7 @@
     border: 1px solid #4a90e2;
     background-color: #ECF4FD;
     display: inline-block;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .frame[data-selected] {

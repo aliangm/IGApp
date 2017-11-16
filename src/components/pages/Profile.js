@@ -346,10 +346,10 @@ export default class Profile extends Component {
                     }} className={ preferencesStyle.locals.channelsRow }>
                       <div className={ preferencesStyle.locals.objectiveText }>Price</div>
                       <Textfield value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].price ? '$' + this.props.pricingTiers[index].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'price', index) } placeHolder="$"/>
-                      <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Weight</div>
-                      <Textfield value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].weight ? this.props.pricingTiers[index].weight + '%' : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'weight', index) } placeHolder="%"/>
                       <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Paid</div>
                       <Toggle leftText="Monthly" rightText="Annualy" leftActive={ this.props.pricingTiers[index] && this.props.pricingTiers[index].isMonthly } leftClick={ this.handleChangePricingPaid.bind(this, true, index) } rightClick={ this.handleChangePricingPaid.bind(this, false, index) } style={{ marginLeft: '10px' }}/>
+                      <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Weight</div>
+                      <Textfield value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].weight ? this.props.pricingTiers[index].weight + '%' : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'weight', index) } placeHolder="%"/>
                       <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '5px'}}>
                         {removeButton}
                       </div>
