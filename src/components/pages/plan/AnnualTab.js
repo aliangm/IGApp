@@ -622,9 +622,11 @@ export default class AnnualTab extends Component {
       const dates = this.getDates();
       const projections = this.props.projectedPlan.map((item, index) => {
         const json = {};
-        Object.keys(item.projectedIndicatorValues).forEach(key => {
-          json[key + 'Suggested'] = item.projectedIndicatorValues[key];
-        });
+        if (item.projectedIndicatorValues) {
+          Object.keys(item.projectedIndicatorValues).forEach(key => {
+            json[key + 'Suggested'] = item.projectedIndicatorValues[key];
+          });
+        }
         return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
       });
       const currentSuggested = {};
