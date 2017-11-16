@@ -16,7 +16,7 @@ export default {
     const lock = new AuthService();
 		const profile = lock.getProfile();
 		const deferred = q.defer();
-		let URL = window.location.protocol + '//' + window.location.hostname + ':' + config.port + '/' + route;
+		let URL = window.location.protocol + '//' + window.location.hostname + (config.port ? ':' + config.port + '/' : '/api/') + route;
     if (profile && !withoutUID){
     	URL += '/' + profile.app_metadata.UID+ '/';
 		}
