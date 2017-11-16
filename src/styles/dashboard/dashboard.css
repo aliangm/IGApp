@@ -113,7 +113,7 @@
     margin-right: 10px;
 }
 
-.history-grow[data-grow] {
+.history-grow[data-decline] {
     color: red;
 }
 
@@ -128,7 +128,7 @@
     border-color: transparent transparent #24b10e transparent;
 }
 
-.history-arrow[data-grow] {
+.history-arrow[data-decline] {
     transform: rotate(180deg);
     border-color: transparent transparent red transparent;
 }

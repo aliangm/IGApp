@@ -171,7 +171,7 @@ export default class Dashboard extends Component {
     let grow = 0;
     if (indicatorsData[this.state.indicator]) {
       const current  = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - 1].value;
-      const previous = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - (this.state.months ? this.state.months : 1)].value;
+      const previous = indicatorsData[this.state.indicator][(this.state.months !== undefined ? indicatorsData[this.state.indicator].length - this.state.months - 1 : 0)].value;
       if (previous) {
         grow = Math.round((current-previous) / previous * 100)
       }
@@ -364,15 +364,15 @@ export default class Dashboard extends Component {
                 </div>
                 { grow ?
                   <div className={ this.classes.footerRight }>
-                    <div className={ dashboardStyle.locals.historyArrow }/>
-                    <div className={ dashboardStyle.locals.historyGrow }>
+                    <div className={ dashboardStyle.locals.historyArrow } data-decline={ grow < 0 ? true : null }/>
+                    <div className={ dashboardStyle.locals.historyGrow } data-decline={ grow < 0 ? true : null }>
                       { grow }%
                     </div>
                   </div>
                   : null }
               </div>
               <div className={ dashboardStyle.locals.chart }>
-                <AreaChart width={550} height={280} data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months, indicatorsData[this.state.indicator].length) : []} style={{ marginLeft: '-21px' }}>
+                <AreaChart width={550} height={280} data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months - 1, indicatorsData[this.state.indicator].length) : []} style={{ marginLeft: '-21px' }}>
                   <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
                   <YAxis style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
                   <CartesianGrid vertical={ false }/>
