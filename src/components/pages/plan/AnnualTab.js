@@ -376,6 +376,7 @@ export default class AnnualTab extends Component {
   }
 
   deleteRow(channel, event) {
+    this.setState({deletePopup: ''});
     event.preventDefault();
     let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
@@ -503,7 +504,7 @@ export default class AnnualTab extends Component {
                         className={ this.classes.rowDelete }
                         onClick={ () => this.setState({deletePopup: params.channel}) }
                       />
-                      <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
                         <DeleteChannelPopup
                           onNext={ this.deleteRow.bind(this, params.channel) }
                           onBack={ () => this.setState({deletePopup: ''}) }
