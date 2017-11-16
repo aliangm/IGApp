@@ -43,13 +43,13 @@ export default class Setup extends Component {
   handleChange(parameter, e) {
     let event = this.state.event;
     event[parameter] = e.target.value;
-    this.setState({event: event});
+    this.setState({event: event, showTrackingCode: false});
   }
 
   handleChangeSelect(parameter, e) {
     let event = this.state.event;
     event[parameter] = e.value;
-    this.setState({event: event});
+    this.setState({event: event, showTrackingCode: false});
   }
 
   addEvent() {
@@ -57,7 +57,12 @@ export default class Setup extends Component {
     const event = this.state.event;
     events.push(event);
     this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
-    this.setState({showTrackingCode: true});
+    this.setState({showTrackingCode: true, event: {
+      type: '',
+      name: '',
+      description: '',
+      url: ''
+    }});
   }
 
   copy(value) {
