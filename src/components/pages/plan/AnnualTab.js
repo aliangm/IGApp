@@ -132,8 +132,11 @@ export default class AnnualTab extends Component {
           })
         : null;
       return events.length > 0 ? <div style={{ position: 'relative' }}>
-          <div className={ this.classes.tableButton } onClick={ () => { this.setState({monthPopup: month}) }}>{ month }</div>
-          <Popup hidden={ month != this.state.monthPopup } className={ this.classes.eventPopup }>
+          <div className={ this.classes.tableButton } onClick={ () => { this.setState({monthPopup: month}) }}
+               onMouseEnter={ ()=> { this.setState({monthPopupHover: month}) }}
+               onMouseLeave={ ()=> { this.setState({monthPopupHover: ''}) } }>
+            { month }</div>
+          <Popup hidden={ month !== this.state.monthPopup && month !== this.state.monthPopupHover } className={ this.classes.eventPopup }>
             <div className={ popupStyle.locals.header }>
               <div className={ popupStyle.locals.title }>
                 {"Events - " + month}
@@ -141,7 +144,7 @@ export default class AnnualTab extends Component {
               <div className={ popupStyle.locals.close }
                    role="button"
                    onClick={ () => { this.setState({monthPopup: ''}) }}
-              ></div>
+              />
             </div>
             <PopupTextContent>
               {events}
