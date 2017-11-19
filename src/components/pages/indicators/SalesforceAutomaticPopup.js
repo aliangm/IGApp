@@ -189,66 +189,66 @@ export default class SalesforceAutomaticPopup extends Component {
                  subTitle="Define your pipeline stages"/>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={!!this.state.mapping.MCL} onChange={ this.toggleCheckbox.bind(this, 'MCL') } className={ salesForceStyle.locals.label }>Leads</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <MultiSelect { ... selects.statuses} selected={ this.state.mapping.MCL } onChange={ this.handleChange.bind(this, 'MCL') } disabled={ !this.state.mapping.MCL } style={{ width: 'initial'}} placeholder="Select Lead Status"/>
+                <MultiSelect { ... selects.statuses} selected={ this.state.mapping.MCL } onChange={ this.handleChange.bind(this, 'MCL') } disabled={ !this.state.mapping.MCL } style={{ width: '270px'}} placeholder="Select Lead Status"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={!!this.state.mapping.MQL} onChange={ this.toggleCheckbox.bind(this, 'MQL') } className={ salesForceStyle.locals.label }>Marketing Qualified Leads</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <MultiSelect { ... selects.statuses} selected={ this.state.mapping.MQL } onChange={ this.handleChange.bind(this, 'MQL') } disabled={ !this.state.mapping.MQL } style={{ width: 'initial'}} placeholder="Select Lead Status"/>
+                <MultiSelect { ... selects.statuses} selected={ this.state.mapping.MQL } onChange={ this.handleChange.bind(this, 'MQL') } disabled={ !this.state.mapping.MQL } style={{ width: '270px'}} placeholder="Select Lead Status"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={!!this.state.mapping.SQL} onChange={ this.toggleCheckbox.bind(this, 'SQL') } className={ salesForceStyle.locals.label }>Sales Qualified Leads</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <MultiSelect { ... selects.statuses} selected={ this.state.mapping.SQL } onChange={ this.handleChange.bind(this, 'SQL') } disabled={ !this.state.mapping.SQL } style={{ width: 'initial'}} placeholder="Select Lead Status"/>
+                <MultiSelect { ... selects.statuses} selected={ this.state.mapping.SQL } onChange={ this.handleChange.bind(this, 'SQL') } disabled={ !this.state.mapping.SQL } style={{ width: '270px'}} placeholder="Select Lead Status"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={!!this.state.mapping.opps} onChange={ this.toggleCheckbox.bind(this, 'opps') } className={ salesForceStyle.locals.label }>Opportunities</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <MultiSelect { ... selects.stages} selected={ this.state.mapping.opps } onChange={ this.handleChange.bind(this, 'opps') } disabled={ !this.state.mapping.opps } style={{ width: 'initial'}} placeholder="Select Opportunity Stage"/>
+                <MultiSelect { ... selects.stages} selected={ this.state.mapping.opps } onChange={ this.handleChange.bind(this, 'opps') } disabled={ !this.state.mapping.opps } style={{ width: '270px'}} placeholder="Select Opportunity Stage"/>
               </div>
             </div>
           </div>
           <div className={ this.classes.row }>
             <div className={ this.classes.cols }>
-              <div className={ this.classes.colLeft }>
+              <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
                 <Label checkbox={!!this.state.mapping.users} onChange={ this.toggleCheckbox.bind(this, 'users') } className={ salesForceStyle.locals.label }>Paying Accounts</Label>
               </div>
-              <div className={ this.classes.colCenter }>
+              <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
                 <div className={ salesForceStyle.locals.arrow }/>
               </div>
               <div className={ this.classes.colRight }>
-                <MultiSelect { ... selects.stages} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ !this.state.mapping.users } style={{ width: 'initial'}}  placeholder="Select Opportunity Stage"/>
+                <MultiSelect { ... selects.stages} selected={ this.state.mapping.users } onChange={ this.handleChange.bind(this, 'users') } disabled={ !this.state.mapping.users } style={{ width: '270px'}}  placeholder="Select Opportunity Stage"/>
               </div>
             </div>
           </div>

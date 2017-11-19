@@ -49,7 +49,9 @@ export default class AnnualTab extends Component {
     planDate: '',
     events: [],
     objectives: [],
-    annualBudget: 0
+    annualBudget: 0,
+    approvedBudgetsProjection: [],
+    annualBudgetArray: []
   };
 
   constructor(props) {
@@ -80,6 +82,9 @@ export default class AnnualTab extends Component {
     this.setState({ budgetField: nextProps.budget });
     this.setState({ budgetArrayField: nextProps.budgetArray });
     this.setState({maxChannelsField: nextProps.maxChannels});
+    if (nextProps.editMode) {
+      this.setState({editMode: true});
+    }
   }
 
   /**
@@ -112,13 +117,13 @@ export default class AnnualTab extends Component {
 
   getMonthHeaders = () => {
     const dates = this.getDates();
+    const currentMonth = parseInt(this.props.planDate.split('/')[0]);
     const headers = dates.map((month, index) => {
       const events = this.props.events ?
         this.props.events
           .filter(event => {
-            const currentMonth = parseInt(this.props.planDate.split('/')[0]);
             const eventMonth = parseInt(event.startDate.split('/')[1]);
-            return currentMonth + index === eventMonth;
+            return (currentMonth + index) % 12 === eventMonth % 12;
           })
           .map((event, index) => {
             return <p key={ index }>
@@ -371,6 +376,7 @@ export default class AnnualTab extends Component {
   }
 
   deleteRow(channel, event) {
+    this.setState({deletePopup: ''});
     event.preventDefault();
     let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
@@ -392,12 +398,15 @@ export default class AnnualTab extends Component {
   forecast() {
     const callback = (data) => {
       // PATCH
-      // Update user month plan projected indicators using another request
-      const projectedPlan = this.props.projectedPlan;
-      projectedPlan.forEach((month, index) => {
-        month.projectedIndicatorValues = data.projectedPlan[index].projectedIndicatorValues;
+      // Update user month plan using another request
+      const approvedBudgetsProjection = this.props.approvedBudgetsProjection;
+      data.projectedPlan.forEach((month, index) => {
+        if (!approvedBudgetsProjection[index]) {
+          approvedBudgetsProjection[index] = {};
+        }
+        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
       });
-      this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
+      this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
     };
     this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region);
   }
@@ -444,7 +453,7 @@ export default class AnnualTab extends Component {
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
-      budget = this.props.annualBudget !== null ? this.props.annualBudget : this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
+      budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
       budget = Math.ceil(budget/1000)*1000;
       let rows = [];
 
@@ -461,9 +470,9 @@ export default class AnnualTab extends Component {
           const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
           const  titleElem = <div>
             { this.state.editMode && params.channel && !params.isOtherChannel ?
-                <div className={ this.classes.editChannelNameWrapper }>
-                  <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
-                </div>
+              <div className={ this.classes.editChannelNameWrapper }>
+                <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
+              </div>
               : null }
             <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.state.editMode}>
               <div
@@ -495,7 +504,7 @@ export default class AnnualTab extends Component {
                         className={ this.classes.rowDelete }
                         onClick={ () => this.setState({deletePopup: params.channel}) }
                       />
-                      <Popup hidden={ params.channel != this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
                         <DeleteChannelPopup
                           onNext={ this.deleteRow.bind(this, params.channel) }
                           onBack={ () => this.setState({deletePopup: ''}) }
@@ -613,10 +622,20 @@ export default class AnnualTab extends Component {
 
       const dates = this.getDates();
       const projections = this.props.projectedPlan.map((item, index) => {
-        return {... item.projectedIndicatorValues, name: dates[index]}
+        const json = {};
+        if (item.projectedIndicatorValues) {
+          Object.keys(item.projectedIndicatorValues).forEach(key => {
+            json[key + 'Suggested'] = item.projectedIndicatorValues[key];
+          });
+        }
+        return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
+      });
+      const currentSuggested = {};
+      Object.keys(this.props.actualIndicators).forEach(indicator => {
+        currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
       });
       // Current indicators values to first cell
-      projections.splice(0,0,{... this.props.actualIndicators, name: 'today'});
+      projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
       const objectives = {};
       this.props.objectives.forEach(objective => {
@@ -640,35 +659,44 @@ export default class AnnualTab extends Component {
             </div>
             <div className={ planStyles.locals.titleButtons }>
               { this.props.userAccount.freePlan ? null :
-                <Button type="accent2" style={{
-                  marginLeft: '15px',
-                  width: '114px'
-                }} onClick={() => {
-                  this.props.approveAll();
-                }}>
-                  Approve All
-                </Button>
+                <div data-selected={ this.state.dropmenuVisible ? true : null }>
+                  <div style={{ display: '-webkit-box' }}>
+                    <div className={this.classes.buttonTriangle}/>
+                    <Button type="reverse" contClassName={ this.classes.dropButton } style={{
+                      marginLeft: '15px',
+                      width: '102px'
+                    }} onClick={() => {
+                      this.setState({dropmenuVisible: true})
+                    }}>
+                      Apply All
+                    </Button>
+                  </div>
+                  <Popup
+                    className={ this.classes.dropmenu }
+                    hidden={ !this.state.dropmenuVisible } onClose={() => {
+                    this.setState({
+                      dropmenuVisible: false
+                    });
+                  }}
+                  >
+                    <div>
+                      <div className={ this.classes.dropmenuItem } onClick={ this.props.approveAll }>
+                        Approve all
+                      </div>
+                      <div className={ this.classes.dropmenuItem } onClick={ this.props.declineAll }>
+                        Decline all
+                      </div>
+                    </div>
+                  </Popup>
+                </div>
               }
               <Button type="reverse" style={{
                 marginLeft: '15px',
                 width: '102px'
               }} onClick={ this.forecast.bind(this) }>Forecast</Button>
-              <Button type="normalAccent" style={{
-                marginLeft: '15px',
-                width: '102px'
-              }} selected={ this.state.editMode ? true : null } onClick={() => {
-                if (this.state.editMode) {
-                  this.editUpdate();
-                }
-                this.setState({
-                  editMode: !this.state.editMode
-                });
-              }} icon={this.state.editMode ? "buttons:like" : "buttons:edit"}>
-                { this.state.editMode ? "Done" : "Edit" }
-              </Button>
               { this.props.userAccount.freePlan ? null :
                 <div>
-                  <Button type="primary2" style={{
+                  <Button type="reverse" style={{
                     marginLeft: '15px',
                     width: '102px'
                   }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
@@ -754,6 +782,19 @@ export default class AnnualTab extends Component {
                   </div>
                 </div>
               }
+              <Button type="primary2" style={{
+                marginLeft: '15px',
+                width: '102px'
+              }} selected={ this.state.editMode ? true : null } onClick={() => {
+                if (this.state.editMode) {
+                  this.editUpdate();
+                }
+                this.setState({
+                  editMode: !this.state.editMode
+                });
+              }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
+                { this.state.editMode ? "Done" : "Edit" }
+              </Button>
             </div>
           </div>
           <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>

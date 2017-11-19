@@ -47,7 +47,9 @@ export default class Plan extends Component {
       selectedTab: 1,
       numberOfPlanUpdates: 0,
       whatIf: this.plan.bind(this),
-      approveAll: this.approveAllBudgets.bind(this)
+      approveAll: this.approveAllBudgets.bind(this),
+      declineAll: this.declineAllBudgets.bind(this),
+      editMode: false
     };
   }
 
@@ -55,11 +57,14 @@ export default class Plan extends Component {
     this.getRelevantEvents(this.props);
     let callback = (data) => {
       this.props.setDataAsState(data);
-      this.approveAllBudgets();
+      this.approveAllBudgets(true);
     };
     if (isPopupMode()) {
       if (this.props.userAccount.freePlan === false) {
         this.plan(true, null, callback, localStorage.getItem('region'));
+      }
+      else {
+        this.setState({editMode: true});
       }
       disablePopupMode();
     }
@@ -67,15 +72,29 @@ export default class Plan extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.getRelevantEvents(nextProps);
+    if (this.state.editMode) {
+      this.setState({editMode: false});
+    }
   }
 
   getRelevantEvents(props) {
     this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
   }
 
-  approveAllBudgets() {
-    const projectedBudgets = this.props.projectedPlan.map((projectedMonth)=>projectedMonth.plannedChannelBudgets);
-    return this.props.updateUserMonthPlan({approvedBudgets: projectedBudgets}, this.props.region, this.props.planDate);
+  approveAllBudgets(withProjections) {
+    const json = {approvedBudgets: this.props.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)};
+    if (withProjections) {
+      json.approvedBudgetsProjection = this.props.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
+    }
+    return this.props.updateUserMonthPlan(json, this.props.region, this.props.planDate);
+  }
+
+  declineAllBudgets() {
+    const projectedPlan = this.props.projectedPlan;
+    projectedPlan.forEach((month, index) => {
+      month.plannedChannelBudgets = this.props.approvedBudgets[index];
+    });
+    return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
   popup() {

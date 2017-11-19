@@ -29,7 +29,7 @@ export default class ByChannelTab extends Component {
   }
 
   render() {
-    const { processedChannels: channels, showCampaign, filteredCampaigns } = this.props;
+    const { processedChannels: channels, showCampaign, filteredCampaigns, addNewCampaign } = this.props;
 
     const page = channels.names.map((channel) => (
       <ChannelCampaigns
@@ -40,6 +40,7 @@ export default class ByChannelTab extends Component {
         campaigns={ filteredCampaigns.filter(item => item.source.includes(channel)) }
         channelIcon={ channels.icons[channel] }
         showCampaign={ showCampaign }
+        addNewCampaign={ addNewCampaign }
       />
     ));
 
@@ -52,6 +53,7 @@ export default class ByChannelTab extends Component {
           campaigns={ filteredCampaigns.filter(item => item.source.length > 1) }
           channelIcon="plan:multiChannel"
           showCampaign={ showCampaign }
+          addNewCampaign={ addNewCampaign }
         />
         { page }
       </div>

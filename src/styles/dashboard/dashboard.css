@@ -53,15 +53,16 @@
     -moz-box-sizing: border-box;
     box-shadow: -2px 1px 12px 1px #e0e0e0;
     margin: 15px;
-    display: inline-block;
     padding: 0 12px;
+    overflow: hidden;
+    display: block;
 }
 
 .text {
-    font-weight: 600;
+    font-weight: 500;
     color: #bbc2c5;
     font-size: 20px;
-    margin: 30px auto 0;
+    margin: 10px auto 0;
     justify-content: center;
     display: flex;
     border-bottom: 1px solid #f2f2f2;
@@ -71,7 +72,7 @@
 
 .number {
     margin-top: 18px;
-    font-size: 64px;
+    font-size: 60px;
     color:  #24b10e;
     display: flex;
     justify-content: center;
@@ -112,7 +113,7 @@
     margin-right: 10px;
 }
 
-.history-grow[data-grow] {
+.history-grow[data-decline] {
     color: red;
 }
 
@@ -127,7 +128,7 @@
     border-color: transparent transparent #24b10e transparent;
 }
 
-.history-arrow[data-grow] {
+.history-arrow[data-decline] {
     transform: rotate(180deg);
     border-color: transparent transparent red transparent;
 }

@@ -40,24 +40,46 @@ export default class Setup extends Component {
     }
   };
 
+  setTrackingCode() {
+    const code =  `analytics.track(${this.state.event.name}, {
+  type: ${this.state.event.type},
+  description: ${this.state.event.description}
+});`;
+    this.setState({
+      event: {
+        type: '',
+        name: '',
+        description: '',
+        url: ''
+      },
+      trackingCode: code
+    });
+  }
+
   handleChange(parameter, e) {
     let event = this.state.event;
     event[parameter] = e.target.value;
-    this.setState({event: event});
+    this.setState({event: event, showTrackingCode: false});
   }
 
   handleChangeSelect(parameter, e) {
     let event = this.state.event;
     event[parameter] = e.value;
-    this.setState({event: event});
+    this.setState({event: event, showTrackingCode: false});
   }
 
   addEvent() {
+    this.setTrackingCode();
     let events = this.props.attribution.events;
     const event = this.state.event;
     events.push(event);
     this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
-    this.setState({showTrackingCode: true});
+    this.setState({showTrackingCode: true, event: {
+      type: '',
+      name: '',
+      description: '',
+      url: ''
+    }});
   }
 
   copy(value) {
@@ -172,10 +194,6 @@ Depending on your templating language, that would look something like this:
   }
 
   getEvents() {
-    const trackingCode = `analytics.track(${this.state.event.name}, {
-  type: ${this.state.event.type},
-  description: ${this.state.event.description}
-});`;
     const selects = {
       type: {
         select: {
@@ -225,12 +243,12 @@ Depending on your templating language, that would look something like this:
         <div>
           <div className={ this.classes.snippetBox }>
           <pre className={ this.classes.snippet }>
-            {trackingCode}
+            {this.state.trackingCode}
           </pre>
           </div>
           <div className={ this.classes.codeWrap }>
             <Button type="reverse"
-                    onClick={ this.copy.bind(this, trackingCode) }
+                    onClick={ this.copy.bind(this, this.state.trackingCode) }
                     icon="buttons:copy"
                     style={{
                       width: '100px', marginBottom: '25px'
@@ -238,7 +256,7 @@ Depending on your templating language, that would look something like this:
             >
               Copy
             </Button>
-            <div className={ this.classes.copyMessage } hidden={ this.state.copied !== trackingCode }>
+            <div className={ this.classes.copyMessage } hidden={ this.state.copied !== this.state.trackingCode }>
               Copied!
             </div>
           </div>

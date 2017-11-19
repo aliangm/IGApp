@@ -14,7 +14,8 @@ class Board extends Component {
     container: PropTypes.any,
     userAccount: PropTypes.object,
     auth: PropTypes.object,
-    showCampaign: PropTypes.func
+    showCampaign: PropTypes.func,
+    addNewCampaign: PropTypes.func
   };
 
   getChildContext() {
@@ -23,7 +24,8 @@ class Board extends Component {
       container: this.board,
       userAccount: this.props.userAccount,
       auth: this.props.auth,
-      showCampaign: this.props.showCampaign
+      showCampaign: this.props.showCampaign,
+      addNewCampaign: this.props.addNewCampaign
     };
   }
 
@@ -136,7 +138,7 @@ class Board extends Component {
   };
 
   openPopup = (x) => {
-    this.props.showCampaign({status: this.state.lists[x].name})
+    this.props.addNewCampaign({status: this.state.lists[x].name});
   };
 
   renderColumn = (item, i) => {

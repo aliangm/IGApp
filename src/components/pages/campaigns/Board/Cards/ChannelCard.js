@@ -19,7 +19,8 @@ class Card extends Component {
   };
 
   static contextTypes = {
-    showCampaign: PropTypes.func
+    showCampaign: PropTypes.func,
+    addNewCampaign: PropTypes.func
   };
 
   state = {
@@ -50,7 +51,11 @@ class Card extends Component {
   }
 
   openPopup = (index) => {
-    this.context.showCampaign(index !== undefined ? this.props.item.campaigns[index] : { status: this.props.item.status, source: this.props.item.name ? [this.props.item.name] : []});
+    if (index !== undefined) {
+      this.context.showCampaign(this.props.item.campaigns[index]);
+    } else {
+      this.context.addNewCampaign({ status: this.props.item.status, source: this.props.item.name ? [this.props.item.name] : []});
+    }
   };
 
   render() {

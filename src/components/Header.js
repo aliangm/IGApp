@@ -16,6 +16,7 @@ export default class Header extends Component {
     super(props);
     this.state = {
       dropmenuVisible: false,
+      dropmenuVisibleBig: false,
       regionsVisible: false,
       createNewVisible: false,
       regions: []
@@ -41,6 +42,12 @@ export default class Header extends Component {
     });
   }
 
+  showDropmenuBig = () => {
+    this.setState({
+      dropmenuVisibleBig: true
+    });
+  }
+
   toggleRegions = () => {
     let currentVisible = this.state.regionsVisible;
     this.setState({
@@ -58,27 +65,17 @@ export default class Header extends Component {
       :null;
     let user = { name: '', pictureUrl: null };
     if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id) {
-        user.name = this.props.userFirstName + ' ' + this.props.userLastName;
-        user.pictureUrl = this.props.userAccount.pictureUrl || null;
+      user.name = this.props.userFirstName + ' ' + this.props.userLastName;
+      user.pictureUrl = this.props.userAccount.pictureUrl || null;
+    }
+    else {
+      const member = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
+      if (member) {
+        user = member;
       }
-      else {
-        const member = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
-        if (member) {
-          user = member;
-        }
-      }
+    }
     return <div className={ this.classes.menuBig }>
       <div className={ this.classes.itemsBox }>
-        { hasUser ?
-          <div className={ this.classes.item }>
-            <Button type="normalAccent" onClick={ this.logout } style={{
-              width: '120px'
-            }}>
-              Log Out
-              <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
-            </Button>
-          </div>
-          : null }
         { hasUser ?
           <div className={ this.classes.dropmenuButton }
                data-selected={ this.state.regionsVisible ? true : null }
@@ -98,12 +95,30 @@ export default class Header extends Component {
             <div className={ this.classes.settings } data-icon="header:settings" />
           </a>
           : null }
-        <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
-        {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
-        <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
-        <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
+        <div className={ this.classes.dropmenuButton }
+             data-selected={ this.state.dropmenuVisibleBig ? true : null }
+             role="button"
+             onClick={ this.showDropmenuBig }
+        >
+          <div className={ this.classes.dropmenuIcon } />
+          <Popup className={ this.classes.dropmenuPopup }
+                 hidden={ !this.state.dropmenuVisibleBig } onClose={() => {
+            this.setState({
+              dropmenuVisibleBig: false
+            });
+          }}
+          >
+            <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
+            {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
+            <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
+            <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
+            <div className={ this.classes.linkText } onClick={ this.logout } style={{ color: '#2571AB' }}>
+              Logout
+              <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
+            </div>
+          </Popup>
+        </div>
       </div>
-
       { hasUser ?
         <div className={ this.classes.userBox }>
           <div className={ this.classes.logged }>

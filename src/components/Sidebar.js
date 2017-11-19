@@ -43,8 +43,8 @@ export default class Sidebar extends Component {
     const subMenu = [
       { icon: "sidebar:company", link: "/profile", text: "Company" },
       { icon: "sidebar:target-audience", link: "/target-audience", text: "Target Audience" },
-      { icon: "sidebar:preferences", link: "/preferences", text: "Preferences" },
       { icon: "sidebar:indicators", link: "/indicators", text: "Metrics" },
+      { icon: "sidebar:preferences", link: "/preferences", text: "Preferences" },
     ];
     return <div>
       <div className={ this.classes.backface }
@@ -118,7 +118,7 @@ export class CollapsedMenuItem extends Component {
     showSubMenu: false
   };
   render() {
-    let className = this.classes.menuItem;
+    let className = this.classes.collapsedMenuItem;
 
     const submenu = this.props.subMenu.map((item, index) =>
       <SubMenuItem { ... item } key={ index }/>

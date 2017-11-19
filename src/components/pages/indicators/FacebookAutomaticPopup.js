@@ -7,7 +7,7 @@ import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import Label from 'components/ControlsLabel';
 
-export default class AutomaticIndicatorPopup extends Component {
+export default class FacebookAutomaticPopup extends Component {
 
   style = style;
 

@@ -71,6 +71,17 @@ export default class ProjectionItem extends Component {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
+  getDiff() {
+    const { diff } = this.props;
+    if (diff) {
+      return ' (' +
+        (diff > 0 ? '+' : '-') +
+        Math.abs(diff).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+        + ')';
+    }
+    return '';
+  }
+
   render() {
     return <div className={ this.classes.item } data-state={ this.state.state }>
       <div className={ this.classes.inner }>
@@ -80,8 +91,13 @@ export default class ProjectionItem extends Component {
             <div className={ this.classes.icon } data-icon={ this.props.icon } />
           </div>
           { this.state.state ?
-            <div className={ this.classes.status }>{ this.getValueText() }</div>
-          : null }
+            <div className={ this.classes.status }>
+              { this.getValueText() }
+              <div className={ this.classes.diff } data-negative={ this.props.diff > 0 ? null : true }>
+                { this.getDiff() }
+              </div>
+            </div>
+            : null }
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerState }>{ this.getStateText() }</div>

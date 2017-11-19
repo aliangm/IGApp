@@ -7,6 +7,7 @@ import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import { Search, UnorderedSearchIndex } from 'js-search';
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
+import ChooseExistingTemplate from 'components/pages/campaigns/ChooseExistingTemplate';
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
@@ -49,13 +50,14 @@ export default class Campaigns extends Component {
       search: '',
       showPopup: false,
       index: undefined,
-      campaign: {}
+      campaign: {},
+      addNew: false
     };
   }
 
   static defaultProps = {
     campaigns: [],
-    projectedPlan: [],
+    approvedBudgets: [],
     planUnknownChannels: [],
     inHouseChannels: [],
     teamMembers: [],
@@ -69,6 +71,7 @@ export default class Campaigns extends Component {
   updateCampaignsTemplates = (templateName, template) => {
     delete template.index;
     const campaignsTemplates = { ...this.props.campaignsTemplates, [templateName]: template };
+    this.setState({campaign: template});
     return this.props.updateUserMonthPlan({ campaignsTemplates }, this.props.region, this.props.planDate);
   };
 
@@ -81,7 +84,9 @@ export default class Campaigns extends Component {
       campaigns[index] = campaign;
     }
     else {
-      campaigns.push(campaign);
+      const length = campaigns.push(campaign);
+      this.setState({index: length-1});
+      console.log('Campaign was created');
     }
     return this.updateCampaigns(campaigns);
   };
@@ -100,14 +105,18 @@ export default class Campaigns extends Component {
     this.setState({showPopup: true, index: campaign.index, campaign: campaign || {}});
   };
 
+  addNewCampaign = (campaign) => {
+    this.setState({addNew: true, campaign: campaign});
+  };
+
   render() {
     const { selectedIndex } = this.state;
-    const { annualBudgetArray, campaigns, projectedPlan, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
+    const { campaigns, approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
-    const projectedChannels = projectedPlan && projectedPlan.length > 0 && projectedPlan[0] ? projectedPlan[0].plannedChannelBudgets : {};
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
+    const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0] ? approvedBudgets[0] : {};
     const inHouse = {};
     inHouseChannels.forEach(channel => {
       inHouse[channel] = 0;
@@ -118,7 +127,7 @@ export default class Campaigns extends Component {
         campaignsChannels[source] = 0;
       })
     });
-    let channels = _.merge({}, campaignsChannels, projectedChannels, unknownChannels, inHouse);
+    let channels = _.merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: { },
       icons: { },
@@ -143,10 +152,11 @@ export default class Campaigns extends Component {
 
     const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
 
+    const budget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
     let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
       res -= campaign.actualSpent || campaign.budget;
       return res;
-    }, annualBudgetArray[0]);
+    }, budget);
 
     let filteredCampaigns = activeCampaigns;
 
@@ -212,7 +222,8 @@ export default class Campaigns extends Component {
               processedChannels,
               filteredCampaigns: filteredCampaigns,
               updateCampaigns: this.updateCampaigns,
-              showCampaign: this.showCampaign
+              showCampaign: this.showCampaign,
+              addNewCampaign: this.addNewCampaign
             }))
           }
           <div hidden={ !this.state.showPopup }>
@@ -229,6 +240,9 @@ export default class Campaigns extends Component {
               auth={ this.props.auth }
               processedChannels={ processedChannels }
             />
+          </div>
+          <div hidden={ !this.state.addNew }>
+            <ChooseExistingTemplate showCampaign={ (template) => this.showCampaign(_.merge({}, this.state.campaign, template)) } close={ () => { this.setState({addNew: false}) } }/>
           </div>
         </div>
       </Page>

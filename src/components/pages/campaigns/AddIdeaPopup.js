@@ -68,7 +68,6 @@ export default class AddIdeaPopup extends Component {
             value={ this.state.description }
             className={ campaignPopupStyle.locals.textArea }
             onChange={ (e)=>{ this.setState({description: e.target.value}) } }
-            style={{ width: '100%' }}
           />
         </div>
         <div className={ this.classes.row }>

@@ -15,6 +15,7 @@ import UnsavedPopup from 'components/UnsavedPopup';
 import Button from 'components/controls/Button';
 import AddTemplatePopup from 'components/pages/campaigns/AddTemplatePopup';
 import LoadTemplatePopup from 'components/pages/campaigns/LoadTemplatePopup';
+import SaveButton from 'components/pages/profile/SaveButton';
 
 export default class CampaignPopup extends Component {
 
@@ -29,15 +30,27 @@ export default class CampaignPopup extends Component {
       visible: this.props.visible || false,
       campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign)
     };
+    this.setRefName = this.setRefName.bind(this);
+    this.setRefSource = this.setRefSource.bind(this);
+    this.save = this.save.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
       this.setState({
         visible: nextProps.visible || false,
-        campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign),
+        campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign)
       });
     }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
   }
 
   static defaultProps = {
@@ -49,7 +62,7 @@ export default class CampaignPopup extends Component {
       owner: '',
       source: [],
       dueDate: '',
-      startDate: '',
+      startDate: new Date().toLocaleDateString().replace(/[/]/g, '-'),
       actualSpent: 0,
       status: "New",
       time: {
@@ -74,7 +87,9 @@ export default class CampaignPopup extends Component {
           ''
         ]
       },
-      tracking: {},
+      tracking: {
+        baseUrl: ''
+      },
       tasks: [],
       comments: [],
       assets: [],
@@ -85,6 +100,17 @@ export default class CampaignPopup extends Component {
       additionalInformation: ''
     }
   };
+
+  handleKeyPress(e) {
+    /**
+     if (e.key === 'Enter') {
+      this.save();
+    }
+     **/
+    if (e.key === 'Escape') {
+      this.close();
+    }
+  }
 
   selectTab(selectedIndex) {
     this.setState({
@@ -133,6 +159,46 @@ export default class CampaignPopup extends Component {
     this.setState({showLoadTemplatePopup: false});
   }
 
+  setRefName(input) {
+    if (input) {
+      this.nameInput = input;
+    }
+  }
+
+  setRefSource(input) {
+    if (input) {
+      this.sourceInput = input;
+    }
+  }
+
+  validate() {
+    return this.state.campaign.name && this.state.campaign.source && this.state.campaign.source.length > 0;
+  }
+
+  save() {
+    if (this.validate()) {
+      this.updateState({unsaved: false});
+      this.props.updateCampaign(this.state.campaign)
+        .then(() => {
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      this.props.closePopup();
+    }
+    else {
+      this.setState({selectedTab: 0},
+        ()=> {
+          if (!this.state.campaign.name) {
+            this.nameInput.focus();
+          }
+          else {
+            this.sourceInput.focus();
+          }
+        });
+    }
+  }
+
   render() {
     const tabs = {
       'Brief': Brief,
@@ -149,10 +215,10 @@ export default class CampaignPopup extends Component {
     return <div>
       <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
         <div className={ campaignPopupStyle.locals.topRight }>
-          <Button contClassName={ campaignPopupStyle.locals.loadButton } type="normal" style={{ width: '53px', height: '25px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
+          <Button contClassName={ campaignPopupStyle.locals.loadButton } type="reverse" style={{ width: '53px', height: '25px', marginRight: '-6px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
           <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
-        <Title className={ campaignPopupStyle.locals.title } title={"Campaign Details - " + this.state.campaign.name}/>
+        <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
         <div className={ planStyle.locals.headTabs }>
           {
             tabNames.map((name, i) => {
@@ -164,11 +230,14 @@ export default class CampaignPopup extends Component {
                 className = planStyle.locals.headTab;
               }
 
-              return <div className={ className } key={ i } onClick={() => {
+              return <div style={{ margin: 0 }} className={ className } key={ i } onClick={() => {
                 this.selectTab(i);
               }}>{ name }</div>
             })
           }
+          <div style={{ marginLeft: '187px', marginTop: '27px' }}>
+            <SaveButton style={{ width: '95px', height: '30px' }} onClick={ this.save }/>
+          </div>
         </div>
         <div className={ campaignPopupStyle.locals.inner }>
           { selectedTab ? React.createElement(selectedTab, _.merge({ }, this.state, {
@@ -181,7 +250,10 @@ export default class CampaignPopup extends Component {
             firstName: this.props.firstName,
             lastName: this.props.lastName,
             auth: this.props.auth,
-            processedChannels: this.props.processedChannels
+            processedChannels: this.props.processedChannels,
+            setRefName: this.setRefName,
+            setRefSource: this.setRefSource,
+            save: this.save
           })) : null }
         </div>
       </Page>

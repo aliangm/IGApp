@@ -4,7 +4,7 @@
     background: #fff;
     min-height: 100px;
     border-radius: 4px;
-    box-shadow: 0 0 0 0 rgba(0,0,0,0.1);
+    box-shadow: -1px 1px 15px 1px #e0e0e0;
     color: #354052;
     transition: 0.15s;
     cursor: pointer;

@@ -53,15 +53,28 @@
 }
 
 .objective-icon {
-  background: url(../../assets/passed-objective.svg) center center no-repeat;
-  background-size: contain;
   width: 27px;
   height: 27px;
   margin-left: 10px;
   margin-top: 6px;
 }
 
-.objective-icon[data-active] {
+.objective-icon[data-active="success"] {
   background: url(../../assets/success_bltp.svg) center center no-repeat;
   background-size: contain;
+}
+
+.objective-icon[data-active="fail"] {
+  background: url(../../assets/passed-objective.svg) center center no-repeat;
+  background-size: contain;
+}
+
+.advanced-button {
+  margin-top: 55px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #1165A3;
+  text-decoration: underline;
 }

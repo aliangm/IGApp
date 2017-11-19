@@ -27,7 +27,8 @@ export default class Dashboard extends Component {
   styles = [dashboardStyle];
 
   static defaultProps = {
-    projectedPlan: [],
+    approvedBudgets: [],
+    approvedBudgetsProjection: [],
     actualIndicators: {
       MCL: 0,
       MQL: 0,
@@ -75,11 +76,12 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const { planDate, projectedPlan, actualIndicators, unfilteredCampaigns, objectives, annualBudgetArray, previousData } = this.props;
-    const planJson = parseAnnualPlan(projectedPlan);
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, unfilteredCampaigns, objectives, annualBudgetArray, previousData, planUnknownChannels } = this.props;
+    const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
+    const planJson = parseAnnualPlan(plan, approvedBudgets, planUnknownChannels);
     const planData = planJson[Object.keys(planJson)[0]];
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
-    const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
+    const monthBudget = planData['__TOTAL__'].values[0] || 0;
     const fatherChannelsWithBudgets = Object.keys(planData)
       .filter(channelName => channelName !== '__TOTAL__' && planData[channelName].values[0] !== 0)
       .map((fatherChannel)=> { return { name: fatherChannel, value: planData[fatherChannel].values[0] } });
@@ -137,7 +139,7 @@ export default class Dashboard extends Component {
       const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
       const maxRange = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
       const month = new Date(objective.timeFrame).getMonth();
-      const project = projectedPlan[month].projectedIndicatorValues[objective.indicator];
+      const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
       indicatorsOptions.forEach((indicator) => {
         if (indicator.value === objective.indicator) {
           title = indicator.label;
@@ -169,7 +171,7 @@ export default class Dashboard extends Component {
     let grow = 0;
     if (indicatorsData[this.state.indicator]) {
       const current  = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - 1].value;
-      const previous = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - (this.state.months ? this.state.months : 1)].value;
+      const previous = indicatorsData[this.state.indicator][(this.state.months !== undefined ? indicatorsData[this.state.indicator].length - this.state.months - 1 : 0)].value;
       if (previous) {
         grow = Math.round((current-previous) / previous * 100)
       }
@@ -217,7 +219,7 @@ export default class Dashboard extends Component {
         </div>
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540px'}}>
               <div className={ dashboardStyle.locals.text }>
                 Marketing Mix Summary
               </div>
@@ -269,7 +271,7 @@ export default class Dashboard extends Component {
                 }
               </div>
             </div>
-            <div className={ dashboardStyle.locals.item }>
+            <div className={ dashboardStyle.locals.item } style={{ marginTop: '30px' }}>
               <div className={ dashboardStyle.locals.text }>
                 {minRatioTitle + ' Ratio'}
               </div>
@@ -328,7 +330,7 @@ export default class Dashboard extends Component {
         </div>
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540'}}>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '412px', width: '540px'}}>
               <div className={ dashboardStyle.locals.text }>
                 Historical Performance
               </div>
@@ -362,15 +364,15 @@ export default class Dashboard extends Component {
                 </div>
                 { grow ?
                   <div className={ this.classes.footerRight }>
-                    <div className={ dashboardStyle.locals.historyArrow }/>
-                    <div className={ dashboardStyle.locals.historyGrow }>
+                    <div className={ dashboardStyle.locals.historyArrow } data-decline={ grow < 0 ? true : null }/>
+                    <div className={ dashboardStyle.locals.historyGrow } data-decline={ grow < 0 ? true : null }>
                       { grow }%
                     </div>
                   </div>
                   : null }
               </div>
               <div className={ dashboardStyle.locals.chart }>
-                <AreaChart width={550} height={280} data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months, indicatorsData[this.state.indicator].length) : []} style={{ marginLeft: '-21px' }}>
+                <AreaChart width={550} height={280} data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months - 1, indicatorsData[this.state.indicator].length) : []} style={{ marginLeft: '-21px' }}>
                   <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
                   <YAxis style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
                   <CartesianGrid vertical={ false }/>
