@@ -27,27 +27,19 @@ export default class ByChannelTab extends Component {
     const isCampaignsEqual = isEqual(nextProps.filteredCampaigns, this.props.filteredCampaigns);
 
     if (!isChannelsEqual || !isCampaignsEqual) {
-      const newState = { };
-
-      if (isCampaignsEqual) {
-        this.setState({
-          lists: this.getLists(nextProps)
-        });
-      } else {
-        this.setState({
-          campaigns: nextProps.filteredCampaigns,
-          lists: this.getLists(nextProps, nextProps.filteredCampaigns)
-        });
-      }
+      this.setState({
+        lists: this.getLists(nextProps)
+      });
     }
   }
 
   get campaigns() {
-    return this.state.campaigns || this.props.filteredCampaigns;
+    return this.props.filteredCampaigns;
   }
 
-  getLists(props = this.props, campaigns = this.campaigns) {
-    const { processedChannels } = props;
+  getLists(props = this.props) {
+    console.log('GET LISTS')
+    const { processedChannels, filteredCampaigns: campaigns } = props;
     const cards = processedChannels.names.map(name => ({
       id: name,
       status: 'New',
@@ -155,14 +147,6 @@ export default class ByChannelTab extends Component {
     return lists
   }
 
-  updateCampaigns(campaigns) {
-    this.setState({
-      campaigns: campaigns,
-      lists: this.getLists(this.props, campaigns)
-    });
-    return this.props.updateCampaigns(campaigns);
-  }
-
   updateCampaignsTemplates = (templateName, template) => {
     let campaignsTemplates = { ...this.props.campaignsTemplates, [templateName]: template };
 
@@ -170,7 +154,7 @@ export default class ByChannelTab extends Component {
   };
 
   handleCampaignsStatusChange = (updates) => {
-    const newCampaigns = cloneDeep(this.campaigns);
+    const newCampaigns = cloneDeep(this.props.filteredCampaigns);
 
     updates.forEach(({ id, status }) => {
       const campaign = newCampaigns.find(cmgn => cmgn.index === parseInt(id));
@@ -180,34 +164,7 @@ export default class ByChannelTab extends Component {
       }
     });
 
-    return this.updateCampaigns(newCampaigns);
-  };
-
-  handleCampaignUpdate = (campaign, index = -1, channel) => {
-    if (!campaign || !channel) {
-      return;
-    }
-
-    const { id, ...campaignFields } = campaign;
-
-    const newCampaigns = cloneDeep(this.campaigns);
-    const channelCampaigns = newCampaigns[channel];
-
-    if (!channelCampaigns) {
-      newCampaigns[channel] = [campaignFields];
-    } else if (index > -1) {
-      channelCampaigns.splice(index, 1, campaignFields);
-    } else {
-      const existedCompaignIndex = channelCampaigns.findIndex(cmpgn => cmpgn.name === campaignFields.name);
-
-      if (existedCompaignIndex > -1) {
-        channelCampaigns.splice(existedCompaignIndex, 1, campaignFields);
-      } else {
-        channelCampaigns.push(campaignFields);
-      }
-    }
-
-    return this.updateCampaigns(newCampaigns);
+    return this.props.updateCampaigns(newCampaigns);
   };
 
   render() {

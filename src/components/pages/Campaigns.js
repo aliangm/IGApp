@@ -51,6 +51,7 @@ export default class Campaigns extends Component {
       showPopup: false,
       index: undefined,
       campaign: {},
+      campaigns: props.campaigns,
       addNew: false
     };
   }
@@ -64,7 +65,19 @@ export default class Campaigns extends Component {
     annualBudgetArray: []
   };
 
+  componentWillReceiveProps({ campaigns }) {
+    if (this.props.campaigns !== campaigns) {
+      this.setCampaigns(campaigns)
+    }
+  }
+
+  setCampaigns = (campaigns) => {
+    this.setState({ campaigns })
+  }
+
   updateCampaigns = (campaigns) => {
+    this.setCampaigns(campaigns)
+
     return this.props.updateUserMonthPlan({ campaigns }, this.props.region, this.props.planDate);
   };
 
@@ -76,7 +89,7 @@ export default class Campaigns extends Component {
   };
 
   updateCampaign = (campaign) => {
-    let campaigns = this.props.campaigns;
+    let campaigns = this.state.campaigns.slice();
     const index = campaign.index;
     delete campaign.index;
     if (index !== undefined)
@@ -88,6 +101,9 @@ export default class Campaigns extends Component {
       this.setState({index: length-1});
       console.log('Campaign was created');
     }
+
+    this.setCampaigns(campaigns)
+
     return this.updateCampaigns(campaigns);
   };
 
@@ -110,8 +126,8 @@ export default class Campaigns extends Component {
   };
 
   render() {
-    const { selectedIndex } = this.state;
-    const { campaigns, approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
+    const { selectedIndex, campaigns } = this.state;
+    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
