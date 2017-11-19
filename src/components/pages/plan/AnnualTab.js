@@ -810,6 +810,18 @@ export default class AnnualTab extends Component {
                 }
               </div>
             </div>
+            <div className={ planStyles.locals.titleButtons }>
+              {this.state.editMode ?
+                <Button type="reverse" style={{
+                  width: '102px'
+                }} onClick={() => {
+                  this.setState({editMode: false});
+                  this.props.getUserMonthPlan(this.props.region);
+                }}>
+                  Cancel
+                </Button>
+                : null }
+            </div>
           </div>
           <div className={ this.classes.innerBox }>
             <div className={ this.classes.wrap } ref="wrap">
