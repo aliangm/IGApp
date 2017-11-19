@@ -38,6 +38,7 @@ export default class ByChannelTab extends Component {
   }
 
   getLists(props = this.props) {
+    const initialOrder = -1;
     const { processedChannels, filteredCampaigns: campaigns } = props;
     const cards = processedChannels.names.map(name => ({
       id: name,
@@ -47,7 +48,7 @@ export default class ByChannelTab extends Component {
       title: processedChannels.titles[name],
       icon: processedChannels.icons[name],
       campaigns: [],
-      order: -1,
+      order: initialOrder,
     }));
     cards.splice(0, 1, {
       id: "multi channel",
@@ -100,8 +101,6 @@ export default class ByChannelTab extends Component {
         cards: []
       },
     ];
-
-    const initialOrder = -1;
 
     campaigns.forEach(campaign => {
       const extendedCampaign = { ...campaign, id: `${campaign.index}`};
@@ -156,7 +155,6 @@ export default class ByChannelTab extends Component {
       })
     })
 
-    console.log('GET LISTS', lists)
     return lists
   }
 
@@ -167,7 +165,6 @@ export default class ByChannelTab extends Component {
   };
 
   handleCampaignsOrderChange = (updates) => {
-    console.log('UPDATES', updates)
     const newCampaigns = cloneDeep(this.props.filteredCampaigns);
 
     updates.forEach(({ id, status, order }) => {
