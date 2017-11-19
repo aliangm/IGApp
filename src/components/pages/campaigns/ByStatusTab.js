@@ -38,7 +38,6 @@ export default class ByChannelTab extends Component {
   }
 
   getLists(props = this.props) {
-    console.log('GET LISTS')
     const { processedChannels, filteredCampaigns: campaigns } = props;
     const cards = processedChannels.names.map(name => ({
       id: name,
@@ -47,7 +46,8 @@ export default class ByChannelTab extends Component {
       budget: processedChannels.budgets[name],
       title: processedChannels.titles[name],
       icon: processedChannels.icons[name],
-      campaigns: []
+      campaigns: [],
+      order: -1,
     }));
     cards.splice(0, 1, {
       id: "multi channel",
@@ -101,6 +101,8 @@ export default class ByChannelTab extends Component {
       },
     ];
 
+    const initialOrder = -1;
+
     campaigns.forEach(campaign => {
       const extendedCampaign = { ...campaign, id: `${campaign.index}`};
       const list = lists.find(l => l.name === campaign.status);
@@ -118,7 +120,8 @@ export default class ByChannelTab extends Component {
               title: "Multi Channel Campaigns",
               icon: "plan:multiChannel",
               budget: 0,
-              campaigns: [extendedCampaign]
+              campaigns: [extendedCampaign],
+              order: campaign.order !== undefined ? campaign.order : initialOrder
             });
           }
         }
@@ -137,13 +140,23 @@ export default class ByChannelTab extends Component {
               title: processedChannels.titles[source],
               icon: processedChannels.icons[source],
               budget: processedChannels.budgets[source],
-              campaigns: [extendedCampaign]
+              campaigns: [extendedCampaign],
+              order: campaign.order !== undefined ? campaign.order : initialOrder
             });
           }
         }
       });
     });
 
+    lists.forEach((list) => {
+      list.cards.sort((a, b) => a.order - b.order).forEach((card, index) => {
+        if (card.order === initialOrder) {
+          card.order = index
+        }
+      })
+    })
+
+    console.log('GET LISTS', lists)
     return lists
   }
 
@@ -153,14 +166,21 @@ export default class ByChannelTab extends Component {
     return this.props.updateCampaignsTemplates(campaignsTemplates);
   };
 
-  handleCampaignsStatusChange = (updates) => {
+  handleCampaignsOrderChange = (updates) => {
+    console.log('UPDATES', updates)
     const newCampaigns = cloneDeep(this.props.filteredCampaigns);
 
-    updates.forEach(({ id, status }) => {
+    updates.forEach(({ id, status, order }) => {
       const campaign = newCampaigns.find(cmgn => cmgn.index === parseInt(id));
 
       if (campaign) {
-        campaign.status = status;
+        if (status !== undefined) {
+          campaign.status = status;
+        }
+
+        if (order !== undefined) {
+          campaign.order = order;
+        }
       }
     });
 
@@ -172,7 +192,7 @@ export default class ByChannelTab extends Component {
       <div className={styles.wrap}>
         <Board
           lists={this.state.lists}
-          onCampaignsStatusChange={this.handleCampaignsStatusChange}
+          onCampaignsOrderChange={this.handleCampaignsOrderChange}
           showCampaign={this.props.showCampaign}
           addNewCampaign={this.props.addNewCampaign}
           userAccount={this.props.userAccount}
