@@ -139,7 +139,7 @@ export default class Dashboard extends Component {
       const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
       const maxRange = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
       const month = new Date(objective.timeFrame).getMonth();
-      const project = approvedBudgetsProjection[month][objective.indicator];
+      const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
       indicatorsOptions.forEach((indicator) => {
         if (indicator.value === objective.indicator) {
           title = indicator.label;

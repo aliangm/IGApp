@@ -54,6 +54,7 @@ export default class ChooseExistingTemplate extends Component {
       const template = campaignTemplates[this.state.focus][this.state.selected];
       this.props.close();
       this.props.showCampaign(template);
+      this.setState({selected: 0, focus: ''});
     }
     else {
       this.setState({selected: index});
