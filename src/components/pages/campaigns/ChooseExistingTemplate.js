@@ -40,6 +40,7 @@ export default class ChooseExistingTemplate extends Component {
       const template = campaignTemplates[this.state.focus][this.state.selected];
       this.props.close();
       this.props.showCampaign(template);
+      this.setState({selected: 0, focus: ''});
     }
     // Create new
     else if (this.state.selected === 0){
@@ -67,7 +68,7 @@ export default class ChooseExistingTemplate extends Component {
       <TemplateBox key={index} text={item.name} number={item.successRate + '%'} selected={this.state.selected === index} onClick={ this.templateClick.bind(this, index) }/>
     );
     return <div>
-      <Page popup={ true } width={'870px'} contentClassName={this.classes.pageContent}>
+      <Page popup={ true } width={'875px'} contentClassName={this.classes.pageContent}>
         <div className={this.classes.content}>
           <Title title="Create a new campaign"/>
         </div>

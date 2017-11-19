@@ -5,7 +5,7 @@ import { getTitle } from 'components/utils/channels';
 export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels, inHouseChannels) {
   var sum = {};
   var returnObj = {};
-  sum["__TOTAL__"] = { values : new Array(projectedPlan.length).fill(0) };
+  sum["__TOTAL__"] = { values : new Array(12).fill(0) };
   var budget = 0;
   projectedPlan.forEach((month, index)=> {
     //var month = projectedPlan[key];

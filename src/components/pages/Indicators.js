@@ -116,11 +116,6 @@ export default class Indicators extends Component {
     this.setState(newState);
   };
 
-  setDataAsState = (data) => {
-    _.merge(data.actualIndicators, this.props.actualIndicators);
-    this.props.setDataAsState(data);
-  };
-
   render() {
     const indicatorsSpecialProp = {
       facebookLikes: {
@@ -267,13 +262,13 @@ export default class Indicators extends Component {
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
         </div>
-        <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
-        <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
-        <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
-        <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
-        <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.setDataAsState } googleAuto={this.props.googleAuto}/>
-        <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
-        <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.setDataAsState }/>
+        <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
+        <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
+        <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
+        <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
+        <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
+        <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
+        <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
         <Loading hidden={ !this.state.loading }/>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>

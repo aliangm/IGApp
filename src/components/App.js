@@ -12,6 +12,7 @@ import { withRouter } from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
 import { initialize as initializeIndicators } from 'components/utils/indicators';
 import { initialize as initializeChannels } from 'components/utils/channels';
+import _ from 'lodash';
 
 class AppComponent extends Component {
 
@@ -347,6 +348,7 @@ class AppComponent extends Component {
   }
 
   setDataAsState(data) {
+    _.merge(data, this.state);
     this.setState({
       userProfile: data.userProfile,
       targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],

@@ -259,16 +259,19 @@ export default class Preferences extends Component {
     // If the objective achieved, show green.
     // Else, if date passed - red.
     // Else - none.
-    const objective = this.props.objectives[index];
-    const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-    const targetValue = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-    const today = new Date();
-    const date = objective && objective.timeFrame ? new Date(objective.timeFrame) : today;
-    if (targetValue <= this.props.actualIndicators[objective.indicator]) {
-      return 'success';
-    }
-    if (date < today) {
-      return 'fail'
+    if (index) {
+      const objective = this.props.objectives[index];
+      const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+      const targetValue = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+      const today = new Date();
+      const date = objective && objective.timeFrame ? new Date(objective.timeFrame) : today;
+      if (targetValue <= this.props.actualIndicators[objective.indicator]) {
+        return 'success';
+      }
+      if (date < today) {
+        return 'fail'
+      }
+      return null;
     }
     return null;
   }
