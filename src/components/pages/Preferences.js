@@ -536,8 +536,7 @@ export default class Preferences extends Component {
         <Title title="Preferences"
                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
         <div className={ this.classes.error }>
-          <label hidden={ !this.props.serverDown }> It look's like our server is down... :( <br/> Please contact our
-            support. </label>
+          <label hidden={ !this.props.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>

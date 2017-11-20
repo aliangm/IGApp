@@ -218,7 +218,7 @@ export default class Plan extends Component {
           </div>
         </div>
         <div className={ this.classes.serverDown }>
-          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
+          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
         <div>
           { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
