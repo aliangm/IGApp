@@ -48,10 +48,9 @@
     user-select: none;
     flex-shrink: 0;
     flex-grow: 0;
-    border: 1px #f8f8f8;
-    border-radius: 5px;
+    border: 1px #e3e6f4;
+    border-radius: 2px;
     -moz-box-sizing: border-box;
-    box-shadow: -2px 1px 12px 1px #e0e0e0;
     margin: 15px;
     padding: 0 12px;
     overflow: hidden;
@@ -60,8 +59,8 @@
 
 .text {
     font-weight: 500;
-    color: #bbc2c5;
-    font-size: 20px;
+    color: #636872;
+    font-size: 18px;
     margin: 10px auto 0;
     justify-content: center;
     display: flex;
@@ -71,8 +70,9 @@
 }
 
 .number {
-    margin-top: 18px;
-    font-size: 60px;
+    margin-top: 45px;
+    font-size: 40px;
+    font-weight: 600;
     color:  #24b10e;
     display: flex;
     justify-content: center;
