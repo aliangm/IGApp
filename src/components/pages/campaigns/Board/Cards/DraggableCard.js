@@ -29,15 +29,24 @@ const cardSource = {
 };
 
 const OPTIONS = {
-  arePropsEqual(props, otherProps) {
-    return props.item.id === otherProps.item.id &&
-			props.x === otherProps.x &&
-			props.y === otherProps.y &&
-      props.item.status === otherProps.item.status &&
-      props.item.campaigns === otherProps.item.campaigns &&
-      props.first === otherProps.first &&
-      props.last === otherProps.last;
-  }
+  card: {
+    arePropsEqual(props, otherProps) {
+      return props.item.id === otherProps.item.id &&
+        props.item.status === otherProps.item.status &&
+        props.item.campaigns === otherProps.item.campaigns &&
+        props.x === otherProps.x &&
+        props.y === otherProps.y
+    }
+  },
+  campaignCard: {
+    arePropsEqual(props, otherProps) {
+      return props.item === otherProps.item &&
+        props.x === otherProps.x &&
+        props.y === otherProps.y &&
+        props.first === otherProps.first &&
+        props.last === otherProps.last;
+    }
+  },
 };
 
 function collectDragSource(connectDragSource, monitor) {
@@ -56,7 +65,7 @@ const cardComponents = {
 function createDraggableCard(type) {
   const CardComponent = cardComponents[type];
 
-	return DragSource(type, cardSource, collectDragSource, OPTIONS)(class extends Component {
+	return DragSource(type, cardSource, collectDragSource, OPTIONS[type])(class extends Component {
 		static propTypes = {
 			item: PropTypes.object,
 			connectDragSource: PropTypes.func.isRequired,

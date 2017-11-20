@@ -6,12 +6,38 @@ import CustomDragLayer from './CustomDragLayer';
 
 import style from 'styles/campaigns/board.css';
 
+const getUpdatesForColumnIfNeeded = (columnList) => columnList.cards
+  .reduce((res, card) => {
+    card.campaigns.forEach((campaign) => {
+      if (campaign.order === undefined) {
+        res.push({
+          id: campaign.id,
+          order: card.order,
+        })
+      }
+    })
+
+    return res
+  }, [])
+
+const getUpdatesForShiftedItemsInColumn = (columnList, orderShift, fromIndex, toIndex = columnList.length) => columnList.cards
+  .slice(fromIndex, toIndex)
+  .reduce((res, card) => {
+    return res.concat(card.campaigns.map((campaign) => ({
+      id: campaign.id,
+      order: card.order + orderShift,
+    })))
+  }, [])
+
 class Board extends Component {
-  style = style;
+  style = style
+  columns = { }
+  containerRect = { }
 
   static childContextTypes = {
     onCampaignUpdate: PropTypes.func,
     container: PropTypes.any,
+    containerRect: PropTypes.object,
     userAccount: PropTypes.object,
     auth: PropTypes.object,
     showCampaign: PropTypes.func,
@@ -22,6 +48,7 @@ class Board extends Component {
     return {
       onCampaignUpdate: this.props.onCampaignUpdate,
       container: this.board,
+      containerRect: this.containerRect,
       userAccount: this.props.userAccount,
       auth: this.props.auth,
       showCampaign: this.props.showCampaign,
@@ -34,8 +61,14 @@ class Board extends Component {
 
     this.state = {
       isScrolling: false,
-      lists: props.lists
+      lists: props.lists,
     };
+  }
+
+  componentDidMount() {
+    if (this.board) {
+      this.containerRect = this.board.getBoundingClientRect()
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -49,14 +82,50 @@ class Board extends Component {
   moveCard = (lastX, lastY, nextX, nextY, meta) => {
     const newLists = this.state.lists.slice();
     const card = newLists[lastX].cards[lastY];
+    const isCampaign = meta.type === 'campaign' && lastX !== nextX
+    const hasCampaigns = card.campaigns && card.campaigns.length > 0
 
-    if (meta.type === 'campaign' && lastX !== nextX) {
-      this.props.onCampaignsStatusChange([{
-        id: meta.item.id,
-        status: this.state.lists[nextX].name
-      }]);
+    if (isCampaign || hasCampaigns) {
+      const updates = []
+      const nextList = newLists[nextX]
+      const prevList = newLists[lastX]
 
-      return;
+      // update all shifted items in 'lastX' and 'nextX' columns
+      if (nextList !== prevList) {
+        // for the initial case when campaigns have no order
+        updates.push(...getUpdatesForColumnIfNeeded(prevList))
+        updates.push(...getUpdatesForColumnIfNeeded(nextList))
+
+        updates.push(...getUpdatesForShiftedItemsInColumn(prevList, -1, lastY + 1))
+        updates.push(...getUpdatesForShiftedItemsInColumn(nextList, 1, nextY))
+      } else {
+        updates.push(...getUpdatesForColumnIfNeeded(nextList))
+
+        if (nextY > lastY) {
+          updates.push(...getUpdatesForShiftedItemsInColumn(nextList, -1, lastY + 1, nextY + 1))
+        } else {
+          updates.push(...getUpdatesForShiftedItemsInColumn(nextList, 1, nextY, lastY))
+        }
+      }
+
+      // update moved campaigns
+      if (isCampaign) {
+        updates.push({
+          id: meta.item.id,
+          status: this.state.lists[nextX].name,
+          order: nextY,
+        })
+      } else {
+        updates.push(...card.campaigns.map(campaign => ({
+          id: campaign.id,
+          status: this.state.lists[nextX].name,
+          order: nextY,
+        })))
+      }
+
+      this.props.onCampaignsOrderChange(updates)
+
+      return
     }
 
     if (lastX === nextX) {
@@ -69,16 +138,11 @@ class Board extends Component {
       // delete element from old place
       newLists[lastX].cards.splice(lastY, 1);
 
-      if (card.campaigns.length > 0) {
-        this.props.onCampaignsStatusChange(card.campaigns.map(campaign => ({
-          id: campaign.id,
-          status: this.state.lists[nextX].name
-        })))
-      }
+      this.setState({ lists: newLists })
     }
   };
 
-  startScrolling = (direction) => {
+  startScrolling = (direction, column) => {
     if (this.state.isScrolling) {
       clearInterval(this.scrollInterval);
     }
@@ -91,46 +155,64 @@ class Board extends Component {
         this.setState({ isScrolling: true }, this.scrollRight());
         break;
       case 'toTop':
-        this.setState({ isScrolling: true }, this.scrollTop());
+        this.setState({ isScrolling: true }, this.scrollTop(column));
         break;
       case 'toBottom':
-        this.setState({ isScrolling: true }, this.scrollBottom());
+        this.setState({ isScrolling: true }, this.scrollBottom(column));
         break;
       default:
         break;
     }
   };
 
-  scrollRight = () => {
-    const scroll = () => {
-      this.board.scrollLeft += 10;
-    };
+  scroll = (scrollFn) => {
+    this.setState({ isScrolling: true }, () => {
+      this.scrollInterval = setInterval(scrollFn, 10);
+    });
+  }
 
-    this.scrollInterval = setInterval(scroll, 10);
+  scrollRight = () => {
+    if (this.board.scrollLeft + this.board.offsetWidth >= this.board.scrollWidth) {
+      return
+    }
+
+    this.scroll(() => {
+      this.board.scrollLeft += 10;
+    })
   };
 
   scrollLeft = () => {
-    const scroll = () => {
+    if (this.board.scrollLeft === 0) {
+      return
+    }
+
+    this.scroll(() => {
       this.board.scrollLeft -= 10;
-    };
-
-    this.scrollInterval = setInterval(scroll, 10);
+    })
   };
 
-  scrollTop = () => {
-    const scroll = () => {
-      document.body.scrollTop -= 10;
-    };
+  scrollTop = (columnIndex) => {
+    const column = this.columns[columnIndex]
 
-    this.scrollInterval = setInterval(scroll, 10);
+    if (column.scrollTop === 0) {
+      return
+    }
+
+    this.scroll(() => {
+      column.scrollTop -= 10;
+    })
   };
 
-  scrollBottom = () => {
-    const scroll = () => {
-      document.body.scrollTop += 10;
-    };
+  scrollBottom = (columnIndex) => {
+    const column = this.columns[columnIndex]
 
-    this.scrollInterval = setInterval(scroll, 10);
+    if (column.scrollTop + column.offsetHeight >= column.scrollHeight) {
+      return
+    }
+
+    this.scroll(() => {
+      column.scrollTop += 10;
+    })
   };
 
   stopScrolling = () => {
@@ -154,6 +236,7 @@ class Board extends Component {
 					startScrolling={this.startScrolling}
 					stopScrolling={this.stopScrolling}
 					isScrolling={this.state.isScrolling}
+          getRef={(ref) => this.columns[i] = ref}
 				/>
 
 				<button className={ this.classes.addButton } onClick={ () => { this.openPopup(i) }}>
@@ -166,7 +249,7 @@ class Board extends Component {
   render() {
     const { lists } = this.state;
     return (
-			<div className={this.classes.board} style={{ height: '100%' }} ref={ref => this.board = ref}>
+			<div className={this.classes.board} ref={ref => this.board = ref}>
 				<CustomDragLayer snapToGrid={false} />
         {lists.map(this.renderColumn)}
 			</div>
