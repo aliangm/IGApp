@@ -1,12 +1,12 @@
 .pageInner {
     overflow: visible!important;
-    box-shadow: 0 0 0 1px #F6F8FA;
+    box-shadow: 0 0 0 1px #f5f6fb;
 }
 
 .content {
     margin: 0 !important;
     padding: 0 !important;
-    background: #F6F8FA;
+    background: #f5f6fb;
 }
 
 .head {

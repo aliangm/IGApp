@@ -73,7 +73,7 @@
 }
 
 .link:hover, .link[data-selected] {
-  background-color: #f6f8fa;
+  background-color: #f5f6fb;
 }
 
 .link-text {
