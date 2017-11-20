@@ -20,7 +20,6 @@ import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
-import history from 'history';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
@@ -483,14 +482,7 @@ export default class AnnualTab extends Component {
                   marginLeft: (level | 0) * 17 + 'px',
                   cursor: (params.channel && !this.state.editMode) ? 'pointer' : 'initial'
                 }}
-                className={ this.classes.rowTitle }
-                onClick={ () => {
-                  if (!this.state.editMode && params.channel) {
-                    history.push({
-                      pathname: `campaigns` ,
-                      query: { hash: params.channel }
-                    })
-                  } }}>
+                className={ this.classes.rowTitle }>
                 { params.children ?
                   <div
                     className={ this.classes.rowArrow }

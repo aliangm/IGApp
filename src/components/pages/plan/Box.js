@@ -1,6 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import names from 'classnames';
+import history from 'history';
 
 import style from 'styles/plan/box.css';
 
@@ -36,7 +37,14 @@ export default class Box extends Component {
             :
             <div className={ this.classes.inhouseIcon }/>
         }
-        <div className={ this.classes.headType }>{ this.props.title }</div>
+        <div className={ this.classes.headType }
+             data-link={ this.props.channel ? true : null }
+             onClick={ ()=> { if (this.props.channel) {
+               history.push({
+                 pathname: `campaigns` ,
+                 query: { hash: this.props.channel }
+               })
+             } } }>{ this.props.title }</div>
         <div className={ this.classes.infoIconI } role="button" style={{
           opacity: '0.33',
           marginTop: '7px'
@@ -82,7 +90,14 @@ export class Row extends Component {
         { this.props.title }
       </a>
     } else {
-      titleElem = <div className={ this.classes.rowText }>
+      titleElem = <div className={ this.classes.rowText }
+                       data-link={ this.props.channel ? true : null }
+                       onClick={ ()=> { if (this.props.channel) {
+                         history.push({
+                           pathname: `campaigns` ,
+                           query: { hash: this.props.channel }
+                         })
+                       } } }>
         { this.props.title }
       </div>
     }
@@ -152,7 +167,14 @@ export class Level extends Component {
     return <div className={ this.classes.level }>
       <div className={ boxClassName }>
         <div className={ this.classes.levelIcon } data-icon={ this.props.icon } />
-        <div className={ this.classes.levelText }>
+        <div className={ this.classes.levelText }
+             data-link={ this.props.channel ? true : null }
+             onClick={ ()=> { if (this.props.channel) {
+               history.push({
+                 pathname: `campaigns` ,
+                 query: { hash: this.props.channel }
+               })
+             } } }>
           { this.props.title }
         </div>
 

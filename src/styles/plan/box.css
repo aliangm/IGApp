@@ -45,6 +45,10 @@
   max-width: 80%;
 }
 
+.head-type[data-link] {
+  cursor: pointer;
+}
+
 .head-progress {
   position: absolute;
   top: 8px;
@@ -194,6 +198,10 @@
   width: 140px;
 }
 
+.row-text[data-link] {
+  cursor: pointer;
+}
+
 .row-link {
   composes: row-text;
   font-weight: bold;
@@ -319,6 +327,10 @@
   letter-spacing: -0.030em;
   line-height: 16px;
   padding-right: 6px;
+}
+
+.level-text[data-link] {
+  cursor: pointer;
 }
 
 .level-right {
