@@ -242,7 +242,11 @@ export default class Campaigns extends Component {
             />
           </div>
           <div hidden={ !this.state.addNew }>
-            <ChooseExistingTemplate showCampaign={ (template) => this.showCampaign(_.merge({}, this.state.campaign, template)) } close={ () => { this.setState({addNew: false}) } }/>
+            <ChooseExistingTemplate
+              showCampaign={ (template) => this.showCampaign(_.merge({}, this.state.campaign, template)) }
+              close={ () => { this.setState({addNew: false}) } }
+              campaignsTemplates={ this.props.campaignsTemplates }
+            />
           </div>
         </div>
       </Page>
