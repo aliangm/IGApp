@@ -171,7 +171,7 @@ export default class AnnualTab extends Component {
     }
     let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
     if (filterNanArray.length == 12 && preferences.maxChannels) {
-      this.props.whatIf(isCommitted, preferences, callback, this.props.region);
+      this.props.whatIf(isCommitted, preferences, callback, this.props.region, false);
     }
     /**
      this.setState({
@@ -269,7 +269,10 @@ export default class AnnualTab extends Component {
     let approvedMonth = this.props.approvedBudgets[month] || {};
     approvedMonth[channel] = parseInt(budget.replace(/[-$,]/g, ''));
     approvedBudgets[month] = approvedMonth;
-    this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate);
+    this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate)
+      .then(() => {
+        this.forecast();
+      })
   }
 
   declineChannel(month, channel, budget){
@@ -343,7 +346,7 @@ export default class AnnualTab extends Component {
   }
 
   editUpdate() {
-    this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
+    return this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
   }
 
   dragStart(value) {
@@ -410,7 +413,7 @@ export default class AnnualTab extends Component {
       });
       this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
     };
-    this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region);
+    this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region, true);
   }
 
   handleChangeContextMenu(event, data) {
@@ -675,7 +678,12 @@ export default class AnnualTab extends Component {
                   }}
                   >
                     <div>
-                      <div className={ this.classes.dropmenuItem } onClick={ this.props.approveAll }>
+                      <div className={ this.classes.dropmenuItem } onClick={ () => {
+                        this.props.approveAll()
+                          .then( () => {
+                            this.forecast();
+                          });
+                      }}>
                         Approve all
                       </div>
                       <div className={ this.classes.dropmenuItem } onClick={ this.props.declineAll }>
@@ -688,7 +696,12 @@ export default class AnnualTab extends Component {
               <Button type="reverse" style={{
                 marginLeft: '15px',
                 width: '102px'
-              }} onClick={ this.forecast.bind(this) }>Forecast</Button>
+              }} onClick={ () => {
+                const domElement = ReactDOM.findDOMNode(this.refs.forecastingGraph);
+                if (domElement) {
+                  domElement.scrollIntoView({block: "center"});
+                }
+              }}>Forecast</Button>
               { this.props.userAccount.freePlan ? null :
                 <div>
                   <Button type="reverse" style={{
@@ -782,7 +795,10 @@ export default class AnnualTab extends Component {
                 width: '102px'
               }} selected={ this.state.editMode ? true : null } onClick={() => {
                 if (this.state.editMode) {
-                  this.editUpdate();
+                  this.editUpdate()
+                    .then( () => {
+                      this.forecast();
+                    });
                 }
                 this.setState({
                   editMode: !this.state.editMode
@@ -981,7 +997,7 @@ export default class AnnualTab extends Component {
               :null }
           </div>
         </div>
-        <div className={ this.classes.indicatorsGraph }>
+        <div className={ this.classes.indicatorsGraph } ref="forecastingGraph">
           <IndicatorsGraph data={ projections } objectives={ objectives }/>
         </div>
       </div>
