@@ -41,7 +41,7 @@
 .menu-item {
   height: 64px;
   background: #273142;
-  border-bottom: 1px solid #2975ac;
+  border-bottom: 1px solid #2975ac3b;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -50,7 +50,7 @@
 }
 
 .menu-item:first-child {
-  border-top: 1px solid #2975ac;
+  border-top: 1px solid #2975ac3b;
 }
 
 .collapsed-menu-item {
@@ -242,7 +242,7 @@
 .sub-menu-item {
   height: 54px;
   background: #329ff1;
-  border-bottom: 1px solid #2975ac;
+  border-bottom: 1px solid #2975ac3b;
   display: flex;
   align-items: center;
   cursor: pointer;
