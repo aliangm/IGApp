@@ -20,14 +20,14 @@ import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
-import MultiRow from 'components/MultiRow';
-import Select from 'components/controls/Select';
 import EditableCell from 'components/pages/plan/EditableCell';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-import { formatChannels, formatFatherChannels } from 'components/utils/channels';
+import { formatChannels, output } from 'components/utils/channels';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
+import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
+import _ from 'lodash';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
@@ -283,11 +283,7 @@ export default class AnnualTab extends Component {
     this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
-  handleChangeSelect(event) {
-    this.setState({newChannel: event.value, channelAddedSuccessfully: false})
-  }
-
-  addChannel() {
+  addChannel(newChannel) {
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
     for (let i = 0; i < 12; i++) {
@@ -297,22 +293,24 @@ export default class AnnualTab extends Component {
       if (!projectedPlan[i] || Object.keys(projectedPlan[i]).length === 0) {
         projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
       }
-      projectedPlan[i].plannedChannelBudgets[this.state.newChannel] = 0;
-      approvedBudgets[i][this.state.newChannel] = 0;
+      projectedPlan[i].plannedChannelBudgets[newChannel] = 0;
+      approvedBudgets[i][newChannel] = 0;
     }
     this.props.updateUserMonthPlan({
       projectedPlan: projectedPlan,
       approvedBudgets: approvedBudgets
-    }, this.props.region, this.props.planDate);
-    this.setState({channelAddedSuccessfully: true});
+    }, this.props.region, this.props.planDate)
+      .then(() => {
+        this.setState({addChannelPopup: false});
+        const domElement = ReactDOM.findDOMNode(this.refs[newChannel]);
+        if (domElement) {
+          domElement.scrollIntoView({block: "center"});
+        }
+      });
   }
 
-  handleChangeText(event) {
-    this.setState({otherChannel: event.target.value, channelAddedSuccessfully: false});
-  }
-
-  addUnknownChannel() {
-    const channel = this.state.otherChannelHierarchy ? this.state.otherChannelHierarchy + ' / ' + this.state.otherChannel : this.state.otherChannel
+  addUnknownChannel(otherChannel, otherChannelHierarchy) {
+    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel
     let planUnknownChannels = this.props.planUnknownChannels;
     for (let i = 0; i < 12; i++) {
       if (!planUnknownChannels[i]) {
@@ -322,8 +320,14 @@ export default class AnnualTab extends Component {
     }
     this.props.updateUserMonthPlan({
       unknownChannels: planUnknownChannels
-    }, this.props.region, this.props.planDate);
-    this.setState({channelAddedSuccessfully: true});
+    }, this.props.region, this.props.planDate)
+      .then(() => {
+        this.setState({addChannelPopup: false});
+        const domElement = ReactDOM.findDOMNode(this.refs[channel]);
+        if (domElement) {
+          domElement.scrollIntoView({block: "center"});
+        }
+      });
   }
 
   editChannel(i, channel, event) {
@@ -453,8 +457,6 @@ export default class AnnualTab extends Component {
 
   render() {
     if (!this.props.isPlannerLoading) {
-      const channelOptions = formatChannels();
-      channelOptions.push({ label: 'Other?', value: 'OTHER' });
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
@@ -473,7 +475,7 @@ export default class AnnualTab extends Component {
           const params = data[item];
           const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
           const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
-          const  titleElem = <div>
+          const  titleElem = <div ref={ params.channel || null }>
             { this.state.editMode && params.channel && !params.isOtherChannel ?
               <div className={ this.classes.editChannelNameWrapper }>
                 <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
@@ -591,32 +593,16 @@ export default class AnnualTab extends Component {
         className: this.classes.footRow
       });
 
-      const isExist = (value) => {
-        let exist = false;
-        this.props.projectedPlan.forEach((month)=>{
-          if (month.plannedChannelBudgets && Object.keys(month.plannedChannelBudgets).includes(value)) {
-            exist = true;
+      const planChannels = _.merge([],
+        Object.keys(this.props.approvedBudgets.reduce((object, item) => {
+            return _.merge(object, item);
           }
-        });
-        this.props.approvedBudgets.forEach((month)=>{
-          if (month && Object.keys(month).includes(value)) {
-            exist = true;
+          , {})),
+        Object.keys(this.props.projectedPlan.reduce((object, item) => {
+            return _.merge(object, item.plannedChannelBudgets)
           }
-        });
-        return exist;
-      };
-
-      let preventDuplicates = (value) => {
-        if (value.options) {
-          value.options.map(preventDuplicates);
-        }
-        else {
-          value.disabled = isExist(value.value);
-          return value;
-        }
-      };
-
-      channelOptions.map(preventDuplicates);
+          , {}))
+      );
 
       const dates = this.getDates();
       const projections = this.props.projectedPlan.map((item, index) => {
@@ -808,7 +794,7 @@ export default class AnnualTab extends Component {
               </Button>
             </div>
           </div>
-          <div className={ planStyles.locals.title } style={{ height: '40px', padding: '0' }}>
+          <div className={ planStyles.locals.title } style={{ padding: '0', marginTop: '-15px' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ this.classes.titleBudget }>
                 Budget left to plan
@@ -823,14 +809,24 @@ export default class AnnualTab extends Component {
             </div>
             <div className={ planStyles.locals.titleButtons }>
               {this.state.editMode ?
-                <Button type="reverse" style={{
-                  width: '102px'
-                }} onClick={() => {
-                  this.setState({editMode: false});
-                  this.props.getUserMonthPlan(this.props.region);
-                }}>
-                  Cancel
-                </Button>
+                <div style={{ display: 'flex' }}>
+                  <Button type="primary2" style={{
+                    width: '102px'
+                  }} onClick={() => {
+                    this.setState({addChannelPopup: true});
+                  }}>
+                    Add Channel
+                  </Button>
+                  <Button type="reverse" style={{
+                    marginLeft: '15px',
+                    width: '102px'
+                  }} onClick={() => {
+                    this.setState({editMode: false});
+                    this.props.getUserMonthPlan(this.props.region);
+                  }}>
+                    Cancel
+                  </Button>
+                </div>
                 : null }
             </div>
           </div>
@@ -921,80 +917,15 @@ export default class AnnualTab extends Component {
                     not</p>
                 </PopupTextContent>
               </PlanPopup>
+              <AddChannelPopup
+                hidden={ !this.state.addChannelPopup }
+                onChannelChoose={ this.addChannel.bind(this) }
+                channels={ output() }
+                planChannels={ planChannels.map(item => { return { id: item } }) }
+                close={ () => { this.setState({addChannelPopup: false}) } }
+                addUnknownChannel={ this.addUnknownChannel.bind(this) }
+              />
             </div>
-            { this.state.editMode ?
-              <div className={ this.classes.addChannel }>
-                <div className={ this.classes.channelsRow }>
-                  <Select
-                    className={ this.classes.channelsSelect }
-                    selected={ this.state.newChannel }
-                    select={{
-                      menuTop: true,
-                      name: 'channels',
-                      onChange: (selected) => {
-                        update({
-                          selected: selected
-                        });
-                      },
-                      options: channelOptions
-                    }}
-                    onChange={ this.handleChangeSelect.bind(this) }
-                    label={ `Add a channel` }
-                  />
-                  <div hidden={ !this.state.newChannel || this.state.newChannel == "OTHER"  }>
-                    <Button type="primary2" style={{
-                      width: '72px',
-                      marginTop: '5px'
-                    }} onClick={
-                      this.addChannel.bind(this)
-                    }> Enter
-                    </Button>
-                  </div>
-                </div>
-                { this.state.newChannel == "OTHER" ?
-                  <div>
-                    <div className={ this.classes.channelsRow } style={{ display: 'flex', marginTop: '20px' }}>
-                      <Textfield style={{
-                        width: '292px'
-                      }}  onChange={
-                        this.handleChangeText.bind(this)
-                      }/>
-                      <Button type="primary2" style={{
-                        width: '72px',
-                        margin: '0 20px'
-                      }} onClick={
-                        this.addUnknownChannel.bind(this)
-                      }> Enter
-                      </Button>
-                    </div>
-                    <div className={ this.classes.channelsRow } style={{ display: 'flex', marginTop: '20px' }}>
-                      <Select
-                        style={{ width: '292px' }}
-                        className={ this.classes.channelsSelect }
-                        selected={ this.state.otherChannelHierarchy }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: formatFatherChannels()
-                        }}
-                        onChange={ (e)=> { this.setState({otherChannelHierarchy: e.value}) } }
-                        placeholder="channel category"
-                      />
-                    </div>
-                  </div>
-                  : null }
-                { this.state.channelAddedSuccessfully ?
-                  <label style={{ color: '#26B10F', marginTop: '10px' }}>
-                    Channel Added Successfully!
-                  </label>
-                  : null }
-              </div>
-              :null }
           </div>
         </div>
         <div className={ this.classes.indicatorsGraph } ref="forecastingGraph">
