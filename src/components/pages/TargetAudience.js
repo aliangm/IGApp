@@ -423,7 +423,7 @@ export default class TargetAudience extends Component {
           {isPopupMode() ?
             <div style={{ display: 'flex' }}>
               <BackButton onClick={() => {
-                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
+                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
                     history.push('/profile');
                   });
@@ -431,7 +431,7 @@ export default class TargetAudience extends Component {
               < div style = {{width: '30px'}} />
               <NextButton onClick={() => {
                 if (this.validate()) {
-                  this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
+                  this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
                       history.push('/indicators');
                     });
@@ -445,7 +445,7 @@ export default class TargetAudience extends Component {
             <SaveButton onClick={() => {
               if (this.validate()) {
                 this.setState({saveFail: false, saveSuccess: false});
-                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
+                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
                     this.setState({saveSuccess: true});
                   })

@@ -834,7 +834,8 @@ export default class Preferences extends Component {
                 inHouseChannels: this.props.inHouseChannels,
                 userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                 maxChannels: this.props.maxChannels,
-                planDay: this.props.planDay
+                planDay: this.props.planDay,
+                planNeedsUpdate: true
               }, this.props.region, this.props.planDate)
                 .then(() => {
                   history.push('/indicators');
@@ -852,7 +853,8 @@ export default class Preferences extends Component {
                   inHouseChannels: this.props.inHouseChannels,
                   userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
-                  planDay: this.props.planDay
+                  planDay: this.props.planDay,
+                  planNeedsUpdate: true
                 }, this.props.region, this.props.planDate)
                   .then(() => {
                     history.push('/plan');
@@ -879,7 +881,8 @@ export default class Preferences extends Component {
                   inHouseChannels: this.props.inHouseChannels,
                   userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
-                  planDay: this.props.planDay
+                  planDay: this.props.planDay,
+                  planNeedsUpdate: true
                 }, this.props.region, this.props.planDate)
                   .then(() => {
                     this.setState({saveSuccess: true});

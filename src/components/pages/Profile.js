@@ -490,7 +490,7 @@ export default class Profile extends Component {
             </div>
             <BackButton onClick={() => {
               this.calculatePricing(()=> {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                 .then(() => {
                   history.push('/welcome');
                 });
@@ -500,7 +500,7 @@ export default class Profile extends Component {
             <NextButton onClick={() => {
               if (this.validate()) {
                 this.calculatePricing(() => {
-                  this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+                  this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
                       history.push('/target-audience');
                     });
@@ -516,7 +516,7 @@ export default class Profile extends Component {
             <SaveButton onClick={() => {
               this.setState({saveFail: false, saveSuccess: false});
               this.calculatePricing(()=> {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                 .then(()=>{
                   this.setState({saveSuccess: true});
                 })

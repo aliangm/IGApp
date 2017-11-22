@@ -12,7 +12,6 @@ import { withRouter } from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
 import { initialize as initializeIndicators } from 'components/utils/indicators';
 import { initialize as initializeChannels } from 'components/utils/channels';
-import _ from 'lodash';
 
 class AppComponent extends Component {
 
@@ -392,7 +391,8 @@ class AppComponent extends Component {
       googleSheetsAuto: data.googlesheetsapi,
       isStripeAuto: !!data.stripeapi,
       attribution: data.attribution || { events: [] },
-      pricingTiers: data.pricingTiers || []
+      pricingTiers: data.pricingTiers || [],
+      planNeedsUpdate: data.planNeedsUpdate
     });
   }
 

@@ -189,7 +189,7 @@ export default class Plan extends Component {
           <div className={ this.classes.headTitle }>Plan</div>
           { this.props.userAccount.freePlan ? null :
             <div className={this.classes.headPlan}>
-              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}/>
+              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup} planNeedsUpdate={this.props.planNeedsUpdate}/>
               <Popup style={{
                 width: '265px',
                 top: '180%',
