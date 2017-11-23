@@ -6,6 +6,9 @@ import Board from './Board/Board'
 
 import styles from 'styles/campaigns/by-status-tab.css';
 
+const initialOrder = -1;
+const getCampaignOrder = (campaign) => campaign.order !== undefined ? campaign.order : initialOrder
+
 export default class ByChannelTab extends Component {
 
   static defaultProps = {
@@ -38,7 +41,6 @@ export default class ByChannelTab extends Component {
   }
 
   getLists(props = this.props) {
-    const initialOrder = -1;
     const { processedChannels, filteredCampaigns: campaigns } = props;
     const cards = processedChannels.names.map(name => ({
       id: name,
@@ -110,6 +112,10 @@ export default class ByChannelTab extends Component {
           const channelInList = list.cards.find(chnl => chnl.name === null);
 
           if (channelInList) {
+            if (channelInList.order === initialOrder) {
+              channelInList.order = getCampaignOrder(campaign)
+            }
+
             channelInList.campaigns.push(extendedCampaign);
           } else {
             list.cards.push({
@@ -120,7 +126,7 @@ export default class ByChannelTab extends Component {
               icon: "plan:multiChannel",
               budget: 0,
               campaigns: [extendedCampaign],
-              order: campaign.order !== undefined ? campaign.order : initialOrder
+              order: getCampaignOrder(campaign)
             });
           }
         }
@@ -130,6 +136,10 @@ export default class ByChannelTab extends Component {
           const channelInList = list.cards.find(chnl => chnl.name === source);
 
           if (channelInList) {
+            if (channelInList.order === initialOrder) {
+              channelInList.order = getCampaignOrder(campaign)
+            }
+
             channelInList.campaigns.push(extendedCampaign);
           } else {
             list.cards.push({
@@ -140,7 +150,7 @@ export default class ByChannelTab extends Component {
               icon: processedChannels.icons[source],
               budget: processedChannels.budgets[source],
               campaigns: [extendedCampaign],
-              order: campaign.order !== undefined ? campaign.order : initialOrder
+              order: getCampaignOrder(campaign)
             });
           }
         }
@@ -148,11 +158,23 @@ export default class ByChannelTab extends Component {
     });
 
     lists.forEach((list) => {
-      list.cards.sort((a, b) => a.order - b.order).forEach((card, index) => {
-        if (card.order === initialOrder) {
-          card.order = index
-        }
-      })
+      list.cards
+        .sort((a, b) => {
+          if (a.campaigns.length && !b.campaigns.length) {
+            return -1
+          }
+
+          if (!a.campaigns.length && b.campaigns.length) {
+            return 1
+          }
+
+          return a.order - b.order
+        })
+        .forEach((card, index) => {
+          if (card.order === initialOrder) {
+            card.order = index
+          }
+        })
     })
 
     return lists
