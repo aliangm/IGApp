@@ -38,6 +38,7 @@ export function getChannelsWithTitles() {
       return {value: item, label: schema.properties[item].title}
     });
   }
+  else return [];
 }
 
 export function getChannelsWithProps() {
