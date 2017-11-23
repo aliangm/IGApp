@@ -11,6 +11,13 @@ export default class IndicatorsGraph extends Component {
   style = style;
   styles = [onboardingStyle];
 
+  static defaultProps = {
+    dimensions: {
+      width: 0,
+      margin: 0,
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -18,9 +25,13 @@ export default class IndicatorsGraph extends Component {
     };
   }
 
-  static defaultProps = {
-    width: 1050
-  };
+  get width() {
+    return this.props.dimensions.width - this.marginLeft + 5
+  }
+
+  get marginLeft() {
+    return this.props.dimensions.marginLeft - 92
+  }
 
   toggleCheckbox(indicator) {
     let checkedIndicators = this.state.checkedIndicators;
@@ -144,8 +155,8 @@ export default class IndicatorsGraph extends Component {
           { menuItems }
         </div>
       </div>
-      <div className={ this.classes.chart }>
-        <LineChart width={this.props.width} height={300} data={ this.props.data }>
+      <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft }}>
+        <LineChart width={this.width} height={300} data={ this.props.data }>
           <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <YAxis width={82} style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <CartesianGrid vertical={ false }/>

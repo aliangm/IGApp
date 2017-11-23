@@ -2,7 +2,7 @@
     padding: 30px 20px;
     overflow-x: auto;
     overflow-y: hidden;
-    height: 100%;
+    height: calc(100vh - 330px); /* TODO - parents should be styled properly to get rid of this workaround */
     width: 100%;
     white-space: nowrap;
     position: relative;
