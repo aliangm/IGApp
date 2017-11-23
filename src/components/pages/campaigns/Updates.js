@@ -27,9 +27,9 @@ export default class Updates extends Component {
   getInitials(UID) {
     let initials;
     this.props.teamMembers.some(member => {
-      if (member.userId == UID) {
+      if (member.userId === UID) {
         const nameArray = member.name.split(' ');
-        initials = nameArray[0][0] + nameArray[1][0];
+        initials = (nameArray[0] ? nameArray[0][0] : '') + (nameArray[1] ? nameArray[1][0] : '');
       }
     });
     if (initials) {
