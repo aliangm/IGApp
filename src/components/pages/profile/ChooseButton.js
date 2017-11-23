@@ -15,15 +15,15 @@ export default class Button extends Component {
 
     if (textLen > 9) {
       textStyle = {
-        fontSize: '12px'
+        fontSize: '11px'
       };
     } else if (textLen > 8) {
       textStyle = {
-        fontSize: '13px'
+        fontSize: '12px'
       };
     } else if (textLen > 7) {
       textStyle = {
-        fontSize: '14px'
+        fontSize: '13px'
       };
     }
 

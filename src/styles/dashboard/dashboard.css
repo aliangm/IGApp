@@ -18,7 +18,7 @@
 }
 
 .head-title {
-    text-transform: uppercase;
+    text-transform: capitalize;
     font-size: 40px;
     /*line-height: 36px;*/
     letter-spacing: -0.01em;
@@ -58,9 +58,9 @@
 }
 
 .text {
-    font-weight: 500;
+    font-weight: 600;
     color: #636872;
-    font-size: 18px;
+    font-size: 16px;
     margin: 10px auto 0;
     justify-content: center;
     display: flex;
@@ -71,7 +71,7 @@
 
 .number {
     margin-top: 45px;
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 600;
     color:  #24b10e;
     display: flex;

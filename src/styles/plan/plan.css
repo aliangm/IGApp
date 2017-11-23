@@ -7,7 +7,7 @@
 }
 
 .head-title {
-  text-transform: uppercase;
+  text-transform: capitalize;
   font-size: 40px;
   /*line-height: 36px;*/
   letter-spacing: -0.01em;
