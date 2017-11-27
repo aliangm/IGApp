@@ -127,7 +127,7 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex, campaigns } = this.state;
-    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels } = this.props;
+    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification } = this.props;
     const selectedName = tabNames[selectedIndex];
     const selectedTab = tabs[selectedName];
 
@@ -255,6 +255,7 @@ export default class Campaigns extends Component {
               lastName={ userLastName }
               auth={ this.props.auth }
               processedChannels={ processedChannels }
+              addNotification = { addNotification }
             />
           </div>
           <div hidden={ !this.state.addNew }>

@@ -38,7 +38,7 @@ export default class CommentTextArea extends Component {
   };
 
   handleChange(event, newValue, newPlainTextValue, mentions) {
-    this.setState({comment: newValue, plainComment: newPlainTextValue})
+    this.setState({comment: newValue, plainComment: newPlainTextValue, mentions: mentions})
   }
 
   handleKeyPress(e) {
@@ -49,8 +49,11 @@ export default class CommentTextArea extends Component {
   }
 
   addOrEditComment() {
+    this.state.mentions.forEach((mention) => {
+      this.props.addNotification(mention.id, 'mention', {tagger: this.props.UID, campaignName: this.props.campaignName});
+    });
     this.props.addOrEditComment(this.state.plainComment, this.props.index);
-    this.setState({comment: '', plainComment: ''});
+    this.setState({comment: '', plainComment: '', mentions: []});
   }
 
   displayTransform(id, display, type) {

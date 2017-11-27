@@ -171,12 +171,24 @@
   background-size: auto 24px;
 }
 
+.notifications-icon {
+  width: 24px;
+  height: 24px;
+  background: url(../assets/notifications-button.svg) center center no-repeat;
+  background-size: auto 24px;
+}
+
+.notifications-icon[data-active] {
+  background: url(../assets/turn-notifications-on-button.svg) center center no-repeat;
+  background-size: auto 24px;
+}
+
 .dropmenu-popup {
   min-width: 160px !important;
   top: 100% !important;
   right: 0 !important;
   left: auto !important;
-  padding: 4px 0 !important;
+  padding: 4px 0;
   min-height: inherit !important;
 }
 

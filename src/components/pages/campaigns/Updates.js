@@ -94,7 +94,13 @@ export default class Updates extends Component {
         return <Comment key={ index } name={ name } comment={ comment.comment } time={ comment.time } initials={ initials } index={ index } editComment={ this.editComment.bind(this) } deleteComment={ this.deleteComment.bind(this,index) }/>
       });
     return <div>
-      <CommentTextArea addOrEditComment={ this.addComment.bind(this) } users={this.getMembersNames()}/>
+      <CommentTextArea
+        addOrEditComment={ this.addComment.bind(this) }
+        users={this.getMembersNames()}
+        addNotification={this.props.addNotification}
+        UID={this.state.UID}
+        campaignName={this.props.campaign.name}
+      />
       { comments.length > 0 ?
         <div>
           <div className={ this.classes.line }/>

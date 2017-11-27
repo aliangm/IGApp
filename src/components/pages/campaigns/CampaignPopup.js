@@ -242,7 +242,8 @@ export default class CampaignPopup extends Component {
             processedChannels: this.props.processedChannels,
             setRefName: this.setRefName,
             setRefSource: this.setRefSource,
-            save: this.save
+            save: this.save,
+            addNotification: this.props.addNotification
           })) : null }
         </div>
       </Page>

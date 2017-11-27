@@ -28,7 +28,8 @@ class AppComponent extends Component {
       updateState: this.updateState.bind(this),
       setDataAsState: this.setDataAsState.bind(this),
       unsaved: false,
-      auth: props.route.auth
+      auth: props.route.auth,
+      addNotification: this.addNotification.bind(this)
     };
   }
 
@@ -392,8 +393,21 @@ class AppComponent extends Component {
       isStripeAuto: !!data.stripeapi,
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers || [],
-      planNeedsUpdate: data.planNeedsUpdate
+      planNeedsUpdate: data.planNeedsUpdate,
+      notifications: data.notifications || []
     });
+  }
+
+  addNotification(userId, type, notification) {
+    let notifications = this.state.notifications || [];
+    notifications.push({
+      UID: userId,
+      timestamp: new Date(),
+      notificationType: type,
+      isRead: false,
+      notification: notification
+    });
+    this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
   }
 
   render() {
