@@ -1,7 +1,7 @@
 .arrow {
     width: 33px;
     height: 26px;
-    background-color: #fea58e;
+    background-color: #005e7c80;
     display: inline-flex;
     position: relative;
     margin: 117px 13px 0 12px;
@@ -15,7 +15,7 @@
 }
 .arrow:before {
     left: 100%;
-    border-left: 13px solid #fea58e;
+    border-left: 13px solid #005e7c80;
 }
 
 .conversion {
@@ -25,5 +25,5 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-top: 5px;
+    margin-top: 7px;
 }

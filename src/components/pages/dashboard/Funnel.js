@@ -15,22 +15,22 @@ export default class Funnel extends Component {
       MCL: {
         value: this.props.actualIndicators.MCL,
         title: getNickname('MCL'),
-        color: '#1990E7'
+        color: '#0099cc'
       },
       MQL: {
         value: this.props.actualIndicators.MQL,
         title: getNickname('MQL'),
-        color: '#1165A3'
+        color: '#0099ccb3'
       },
       SQL: {
         value: this.props.actualIndicators.SQL,
         title: getNickname('SQL'),
-        color: '#0A3A5E'
+        color: '#0099cc4d'
       },
       opps: {
         value: this.props.actualIndicators.opps,
         title: getNickname('opps'),
-        color: '#29C910'
+        color: '#33cc33b3'
       }
     };
     // Find max value for the columns height
