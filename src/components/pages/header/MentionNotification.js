@@ -20,7 +20,7 @@ export default class MentionNotification extends Component {
     if (initials) {
       return initials;
     }
-    else return this.props.firstName[0] + this.props.lastName[0];
+    else return this.props.userFirstName[0] + this.props.userLastName[0];
   }
 
   hashCode(str) { // java String#hashCode
