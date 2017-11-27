@@ -95,7 +95,7 @@
   composes: box;
   box-shadow: inset 0 0 0 2px #249533;
   color: #33aa44;
-  background: white;
+  background: #f5f6fb;
 }
 
 .warning {

@@ -15,9 +15,8 @@ export default class NextButton extends Component {
       <Button type="reverse2"
               onClick={ this.props.onClick }
               className={ this.classes.planButton }
-              icon="buttons:replan"
               style={{
-                width: '160px'
+                width: '130px'
               }}
       >
         Update Plan ({ this.props.numberOfPlanUpdates})
