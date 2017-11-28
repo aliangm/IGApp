@@ -322,7 +322,7 @@ export default class AnnualTab extends Component {
         this.setState({addChannelPopup: false});
         const domElement = ReactDOM.findDOMNode(this.refs[newChannel]);
         if (domElement) {
-          domElement.scrollIntoView({block: "center"});
+          domElement.scrollIntoView({});
         }
       });
   }
@@ -343,7 +343,7 @@ export default class AnnualTab extends Component {
         this.setState({addChannelPopup: false});
         const domElement = ReactDOM.findDOMNode(this.refs[channel]);
         if (domElement) {
-          domElement.scrollIntoView({block: "center"});
+          domElement.scrollIntoView({});
         }
       });
   }
@@ -703,7 +703,7 @@ export default class AnnualTab extends Component {
               }} onClick={ () => {
                 const domElement = ReactDOM.findDOMNode(this.refs.forecastingGraph);
                 if (domElement) {
-                  domElement.scrollIntoView({block: "center"});
+                  domElement.scrollIntoView({});
                 }
               }}>Forecast</Button>
               { this.props.userAccount.freePlan ? null :
