@@ -5,7 +5,6 @@ import Page from 'components/Page';
 
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
-import Calendar from 'components/controls/Calendar';
 import Label from 'components/ControlsLabel';
 import Notice from 'components/Notice';
 import MultiRow from 'components/MultiRow';
@@ -26,7 +25,8 @@ import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 import PlanFromExcel from 'components/PlanFromExcel';
 import { formatChannels } from 'components/utils/channels';
-import { getIndicatorsWithNicknames } from 'components/utils/indicators';
+import ObjectiveView from 'components/pages/preferences/ObjectiveView';
+import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
 
 export default class Preferences extends Component {
   style = style;
@@ -214,74 +214,34 @@ export default class Preferences extends Component {
     this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
   }
 
-  handleChangeObjectivesSelect(index, parameter, event) {
-    let update = this.props.objectives || [];
-    if (!update[index]) {
-      update[index] = {};
-    }
-    update[index][parameter] = event.value;
-    if (parameter === "indicator") {
-      update[index].currentValue = this.props.actualIndicators[event.value] || 0;
-    }
-    this.props.updateState({objectives: update});
-  }
-
-  handleChangeObjectivesNumber(index, parameter, event) {
-    let update = this.props.objectives || [];
-    if (!update[index]) {
-      update[index] = {};
-    }
-    update[index][parameter] = parseInt(event.target.value);
-    this.props.updateState({objectives: update});
-  }
-
-  handleChangeDate(index, value) {
-    let update = this.props.objectives || [];
-    if (!update[index]) {
-      update[index] = {};
-    }
-    update[index].timeFrame = value;
-    this.props.updateState({objectives: update});
-  }
-
-  handleChangeObjectiveOrder(index, event) {
-    let update = this.props.objectives || [];
-    if (!update[index]) {
-      update.splice(event.value, 0, {});
-    }
-    else {
-      update.splice(event.value, 0, update.splice(index, 1)[0]);
-    }
-    this.props.updateState({objectives: update});
-  }
-
-  isObjectiveActive(index) {
-    // If the objective achieved, show green.
-    // Else, if date passed - red.
-    // Else - none.
-    if (index) {
-      const objective = this.props.objectives[index];
-      if (objective) {
-        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-        const targetValue = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-        const today = new Date();
-        const date = objective && objective.timeFrame ? new Date(objective.timeFrame) : today;
-        if (targetValue <= this.props.actualIndicators[objective.indicator]) {
-          return 'success';
-        }
-        if (date < today) {
-          return 'fail'
-        }
-        return null;
-      }
-    }
-    return null;
-  }
-
   objectiveRemove(index) {
     let update = this.props.objectives || [];
     update.splice(index,1);
     this.props.updateState({objectives: update});
+  }
+
+  createOrUpdateObjective(objective, index) {
+    const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+    objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+    let objectives = this.props.objectives || [];
+    if (index) {
+      if (index === objective.order) {
+        objectives[index] = objective;
+      }
+      else {
+        objectives.splice(objective.order, 0, objective);
+      }
+    }
+    else {
+      if (objective.order === objectives.length) {
+        objectives.push(objective);
+      }
+      else {
+        objectives.splice(objective.order, 0, objective);
+      }
+    }
+    this.props.updateState({objectives: objectives})
+    this.setState({showObjectivesPopup: false, objectiveIndex: undefined});
   }
 
   createUserMinMonthBudgetJson(){
@@ -531,6 +491,20 @@ export default class Preferences extends Component {
       return {value: index, label: '#' + (index + 1)}
     });
 
+    const objectives = this.props.objectives.map((objective, index) => {
+      const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+      const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+      return <ObjectiveView
+        value={this.props.actualIndicators[objective.indicator]}
+        index={index}
+        key={index}
+        target={target}
+        {... objective}
+        editObjective={ () => { this.setState({showObjectivesPopup: true, objectiveIndex: index}) } }
+        deleteObjective={ ()=> { this.objectiveRemove(index) } }
+      />
+    });
+
     return <div>
       <Page popup={ isPopupMode() }>
         <Title title="Preferences"
@@ -600,98 +574,16 @@ export default class Preferences extends Component {
                 fontWeight: '600'
               }} question={['']}
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
-              <MultiRow numOfRows={ this.props.objectives.length } rowRemoved={this.objectiveRemove}>
-                {({index, data, update, removeButton}) => {
-                  return <div>
-                    <div className={preferencesStyle.locals.channelsRow}>
-                      <Label style={{
-                        marginBottom: '0',
-                        fontWeight: '600'
-                      }}>{`#${ index + 1 }`} </Label>
-                    </div>
-                    <div style={{
-                    }} className={ preferencesStyle.locals.channelsRow }>
-                      <div className={ preferencesStyle.locals.objectiveText }>I want</div>
-                      <Textfield type="number" value={ this.props.objectives[index] ? this.props.objectives[index].amount : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangeObjectivesNumber.bind(this, index, 'amount') }/>
-                      <Select
-                        className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.props.objectives[index] ? this.props.objectives[index].isPercentage : -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'type',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          placeholder: '%/num',
-                          options: [{label: '%', value: true}, {label: '(num)', value: false}]
-                        }}
-                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'isPercentage') }
-                      />
-                      <Select
-                        className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.props.objectives[index] ? this.props.objectives[index].direction : -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          placeholder: 'Direction',
-                          options: [{label: 'increase', value: 'increase'}, {
-                            label: 'decrease',
-                            value: 'decrease'
-                          }, {label: '(target)', value: 'equals'}]
-                        }}
-                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'direction') }
-                      />
-                      <div className={preferencesStyle.locals.objectiveText} style={{marginLeft: '10px'}}>in</div>
-                      <Select
-                        className={ preferencesStyle.locals.objectiveSelect }
-                        selected={ this.props.objectives[index] ? this.props.objectives[index].indicator : -1 }
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          placeholder: 'KPI',
-                          options: getIndicatorsWithNicknames()
-                        }}
-                        onChange={ this.handleChangeObjectivesSelect.bind(this, index, 'indicator') }
-                        style={{ width: '200px' }}
-                      />
-                      <div className={ preferencesStyle.locals.objectiveText } style={{ marginLeft: '10px' }}>until</div>
-                      <div style={{ marginLeft: '10px', width: '166px' }}>
-                        <Calendar value={ this.props.objectives[index] ? this.props.objectives[index].timeFrame : '' } onChange={ this.handleChangeDate.bind(this, index) }/>
-                      </div>
-                      <Select
-                        className={preferencesStyle.locals.objectiveSelect}
-                        selected={ index }
-                        select={{
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: objectivesOrder
-                        }}
-                        onChange={ this.handleChangeObjectiveOrder.bind(this, index) }
-                        style={{width: '50px'}}
-                      />
-                      <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '5px'}}>
-                        {removeButton}
-                      </div>
-                      <div className={preferencesStyle.locals.objectiveIcon} data-active={this.isObjectiveActive(index)}/>
-                    </div>
-                  </div>
-                }}
-              </MultiRow>
+              {objectives}
+              <div className={ preferencesStyle.locals.addObjective } onClick={() => { this.setState({showObjectivesPopup: true, objectiveIndex: undefined}) }}/>
+              <AddObjectivePopup
+                hidden={ !this.state.showObjectivesPopup }
+                index={ this.state.objectiveIndex }
+                objectives={this.props.objectives}
+                close={() => { this.setState({showObjectivesPopup: false}) } }
+                createOrUpdateObjective={this.createOrUpdateObjective.bind(this)}
+                actualIndicators={ this.props.actualIndicators }
+              />
             </div>
             { this.props.userAccount.freePlan ? null :
               <div>
