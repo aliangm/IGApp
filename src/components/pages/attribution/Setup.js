@@ -41,9 +41,9 @@ export default class Setup extends Component {
   };
 
   setTrackingCode() {
-    const code =  `analytics.track(${this.state.event.name}, {
-  type: ${this.state.event.type},
-  description: ${this.state.event.description}
+    const code =  `analytics.track('${this.state.event.name}', {
+  type: '${this.state.event.type}'${this.state.event.description ? `,
+  description: '${this.state.event.description}'` : ''}
 });`;
     this.setState({
       event: {
