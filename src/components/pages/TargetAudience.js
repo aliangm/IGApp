@@ -81,12 +81,6 @@ export default class TargetAudience extends Component {
     this.props.updateState({targetAudience: update});
   }
 
-  fakeChange(parameter, value, index, event){
-    let update = this.props.targetAudience.slice();
-    update[index].fields[parameter] = value;
-    this.props.updateState({targetAudience: update});
-  }
-
   addTab() {
     let update = this.props.targetAudience.slice();
     update.push({fields: {}, info: { weight: 100 }});
@@ -225,13 +219,11 @@ export default class TargetAudience extends Component {
           onChange: () => {},
           options: [
             { value: 'USA', label: 'USA' },
-            { value: 'Canada', label: 'Canada- Coming Soon!' },
-            { value: 'Western Europe', label: 'Western Europe- Coming Soon!' },
-            { value: 'Eastern Europe', label: 'Eastern Europe- Coming Soon!' },
-            { value: 'Latin America', label: 'Latin America- Coming Soon!' },
-            { value: 'Asia', label: 'Asia- Coming Soon!' },
-            { value: 'Australia', label: 'Australia- Coming Soon!' },
-            { value: 'Any', label: 'Any- Coming Soon!' }
+            { value: 'Canada', label: 'Canada' },
+            { value: 'Western Europe', label: 'Western Europe' },
+            { value: 'Eastern Europe', label: 'Eastern Europe' },
+            { value: 'Australia', label: 'Australia' },
+            { value: 'Any', label: 'Any' }
           ]
         }
       },
@@ -384,7 +376,7 @@ export default class TargetAudience extends Component {
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.location } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.location } onChange= { this.fakeChange.bind(this, 'location', 'USA', index) } />
+                    <Select { ... selects.location } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.location } onChange= { this.handleChangeSelect.bind(this, 'location', index) } />
                   </div>
                   <div className={ this.classes.row } style={{
                     marginBottom: '200px',
