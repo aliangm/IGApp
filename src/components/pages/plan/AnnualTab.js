@@ -28,6 +28,7 @@ import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contex
 import contextStyle from 'react-contextmenu/public/styles.css';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import _ from 'lodash';
+import Toggle from 'components/controls/Toggle';
 
 export default class AnnualTab extends Component {
   styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
@@ -73,6 +74,7 @@ export default class AnnualTab extends Component {
       annualData: {},
       editMode: false,
       graphDimensions: {},
+      approvedPlan: true
     };
     this.whatIf = this.whatIf.bind(this);
     this.handleChangeContextMenu = this.handleChangeContextMenu.bind(this);
@@ -92,16 +94,16 @@ export default class AnnualTab extends Component {
   }
 
   calculateGraphDimensions() {
-      if (this.planTable && this.firstColumnCell) {
-          window.requestAnimationFrame(() => {
-              this.setState({
-                  graphDimensions: {
-                    width: this.planTable.offsetWidth,
-                    marginLeft: this.firstColumnCell.offsetWidth,
-                  }
-              })
-          })
-      }
+    if (this.planTable && this.firstColumnCell) {
+      window.requestAnimationFrame(() => {
+        this.setState({
+          graphDimensions: {
+            width: this.planTable.offsetWidth,
+            marginLeft: this.firstColumnCell.offsetWidth,
+          }
+        })
+      })
+    }
   }
 
   /**
@@ -491,8 +493,18 @@ export default class AnnualTab extends Component {
           let key = parent + ':' + item + '-' + i;
           let collapsed = !!this.state.collapsed[key];
           const params = data[item];
-          const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-          const approvedValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
+          let values;
+          let hoverValues;
+          let isSecondGood = false;
+          if (this.state.approvedPlan) {
+            values = params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}});
+            hoverValues = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+            isSecondGood = true;
+          }
+          else {
+            values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+            hoverValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
+          }
           const  titleElem = <div ref={ params.channel || null }>
             { this.state.editMode && params.channel && !params.isOtherChannel ?
               <div className={ this.classes.editChannelNameWrapper }>
@@ -576,7 +588,7 @@ export default class AnnualTab extends Component {
             rowProps['data-disabled'] = true;
           }
 
-          const row = this.getTableRow(titleElem, values, rowProps, params.channel, approvedValues);
+          const row = this.getTableRow(titleElem, values, rowProps, params.channel, hoverValues, isSecondGood);
           rows.push(row);
 
           if (!collapsed && params.children) {
@@ -825,6 +837,15 @@ export default class AnnualTab extends Component {
                 }
               </div>
             </div>
+            <div className={ planStyles.locals.titleToggle } style={{ width: '50%' }}>
+              <Toggle
+                leftText="Current"
+                rightText="Suggested"
+                leftActive={ this.state.approvedPlan }
+                leftClick={ ()=>{ this.setState({approvedPlan: true}) } }
+                rightClick={ ()=>{ this.setState({approvedPlan: false}) } }
+              />
+            </div>
             <div className={ planStyles.locals.titleButtons }>
               {this.state.editMode ?
                 <div style={{ display: 'flex' }}>
@@ -965,7 +986,7 @@ export default class AnnualTab extends Component {
     }
   }
 
-  getTableRow(title, items, props, channel, approvedValues)
+  getTableRow(title, items, props, channel, hoverValues, isSecondGood)
   {
     return <tr {... props}>
       <td className={ this.classes.titleCell } ref={(ref) => this.firstColumnCell = ref}>{ this.getCellItem(title) }</td>
@@ -973,12 +994,27 @@ export default class AnnualTab extends Component {
         items.map((item, i) => {
           if (channel && this.state.editMode) {
             return <td className={ this.classes.valueCell } key={ i }>{
-              <EditableCell title={ (approvedValues && item != approvedValues[i]) ? "previous: " + approvedValues[i] : null } value={ item } onChange={ this.editChannel.bind(this, i, channel) } i={ i } channel={ channel } draggableValue={ this.state.draggableValue } dragStart={ this.dragStart.bind(this) } dragEnter={ this.dragEnter.bind(this, i, channel) } drop={ this.commitDrag.bind(this) } isDragging={ this.state.isDragging }/>
+              <EditableCell
+                title={ (hoverValues && item !== hoverValues[i]) ? "previous: " + hoverValues[i] : null }
+                value={ item }
+                onChange={ this.editChannel.bind(this, i, channel) }
+                i={ i }
+                channel={ channel }
+                draggableValue={ this.state.draggableValue }
+                dragStart={ this.dragStart.bind(this) }
+                dragEnter={ this.dragEnter.bind(this, i, channel) }
+                drop={ this.commitDrag.bind(this) }
+                isDragging={ this.state.isDragging }/>
             }</td>
           }
-          else if (channel && approvedValues && item != approvedValues[i]) {
-            return <PlanCell item={ item } approved={ approvedValues[i] } key={ i }
-                             approveChannel={ this.approveChannel.bind(this, i, channel, item) } declineChannel={ this.declineChannel.bind(this, i, channel, approvedValues[i]) }/>
+          else if (channel && hoverValues && item !== hoverValues[i]) {
+            return <PlanCell
+              item={ item }
+              hover={ hoverValues[i] }
+              key={ i }
+              approveChannel={ this.approveChannel.bind(this, i, channel, isSecondGood ? hoverValues[i] : item) }
+              declineChannel={ this.declineChannel.bind(this, i, channel, isSecondGood ? item : hoverValues[i]) }
+              isSecondGood={isSecondGood}/>
           }
           else return <td className={ this.classes.valueCell } key={ i }>{
               this.getCellItem(item)

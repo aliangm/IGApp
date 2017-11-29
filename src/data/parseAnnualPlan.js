@@ -113,6 +113,7 @@ function parseMonth(title, budget, month, current, channel, approvedBudgets){
       obj[title[0]].values.push(budget);
       obj[title[0]].icon = "plan:" + title[0];
       obj[title[0]].disabled= true;
+      obj[title[0]].approvedValues = new Array(approvedBudgets.length).fill(0);
       return obj;
     }
 
@@ -154,6 +155,7 @@ function parseActuals(title, current, actualBudget, channel, month, length, sum)
   }
   else {
     if (current && current[title[0]]) {
+      current[title[0]].approvedValues[month] += actualBudget;
       return parseActuals(title.splice(1, title.length - 1), current ? (current[title[0]] ? current[title[0]].children : undefined) : undefined, actualBudget, channel, month, length, sum);
     }
     else {
@@ -162,6 +164,8 @@ function parseActuals(title, current, actualBudget, channel, month, length, sum)
       current[title[0]].values = new Array(length).fill(0);
       current[title[0]].icon = "plan:" + title[0];
       current[title[0]].disabled= true;
+      current[title[0]].approvedValues = new Array(length).fill(0);
+      current[title[0]].approvedValues[month] += actualBudget;
     }
   }
   return current;

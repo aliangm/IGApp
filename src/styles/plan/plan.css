@@ -219,3 +219,10 @@
   position: relative;
   border: solid 2px white;
 }
+
+.title-toggle {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+}
