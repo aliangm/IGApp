@@ -225,7 +225,7 @@ export default class CampaignPopup extends Component {
             })
           }
           <div style={{ marginLeft: '187px', marginTop: '27px' }}>
-            <SaveButton style={{ width: '95px', height: '30px' }} onClick={ this.save }/>
+            <SaveButton onClick={ this.save }/>
           </div>
         </div>
         <div className={ campaignPopupStyle.locals.inner }>

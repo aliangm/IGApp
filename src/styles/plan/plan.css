@@ -8,7 +8,7 @@
 
 .head-title {
   text-transform: capitalize;
-  font-size: 40px;
+  font-size: 32px;
   /*line-height: 36px;*/
   letter-spacing: -0.01em;
   overflow: hidden;
@@ -50,7 +50,7 @@
   padding: 0 16px 0 15px;
   margin: 0 15px;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   display: flex;
   justify-content: center;
@@ -106,13 +106,13 @@
   flex-grow: 0;
   flex-shrink: 0;
   color: #646973;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 34px;
 }
 
 .title-price {
   color: #273142;
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 600;
   padding-left: 41px;
   margin-right: auto;

@@ -223,7 +223,7 @@ Depending on your templating language, that would look something like this:
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Type:*</Label>
-          <Select { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '212px' }}/>
+          <Select { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Description:</Label>

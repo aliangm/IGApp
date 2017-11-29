@@ -10,7 +10,10 @@ export default class Select extends Component {
   style = style;
 
   static defaultProps = {
-    labelQuestion: false
+    labelQuestion: false,
+    style: {
+      fontSize: '14px'
+    }
   };
 
   focus() {

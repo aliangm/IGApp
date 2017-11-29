@@ -24,7 +24,7 @@ export default class SaveButton extends Component {
 							icon="buttons:plan"
 							style={ this.props.style }
 			>
-				SAVE
+				Save
 			</Button>
 			<label hidden={ !this.props.success} style={{ color: 'green' }}>Saved successfully!</label>
 			<label hidden={ !this.props.fail} style={{ color: 'red' }}>Failed to save</label>
