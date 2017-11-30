@@ -1,6 +1,6 @@
 .wrap {
     position: relative;
-    max-width: 1096px;
+    max-width: 1162px;
 }
 
 .box {
@@ -388,7 +388,6 @@
 }
 
 .title-budget {
-    width: 50%;
     display: flex;
     justify-content: flex-end;
     -webkit-box-pack: end;

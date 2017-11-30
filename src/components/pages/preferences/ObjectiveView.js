@@ -10,7 +10,7 @@ export default class ObjectiveView extends Component {
   getDaysLeft() {
     const targetDate = new Date(this.props.timeFrame);
     const today = new Date();
-    return Math.ceil(Math.abs((today.getTime() - targetDate.getTime())/(24*60*60*1000))) + " days left";
+    return Math.max(Math.ceil((targetDate.getTime() - today.getTime())/(24*60*60*1000)), 0) + " days left";
   }
 
   isObjectiveActive() {

@@ -26,8 +26,10 @@ export default class SaveButton extends Component {
 			>
 				Save
 			</Button>
-			<label hidden={ !this.props.success} style={{ color: 'green' }}>Saved successfully!</label>
-			<label hidden={ !this.props.fail} style={{ color: 'red' }}>Failed to save</label>
+			<div style={{ marginTop: '5px', fontSize: '14px' }}>
+				<label hidden={ !this.props.success} style={{ color: 'green' }}>Saved successfully!</label>
+				<label hidden={ !this.props.fail} style={{ color: 'red' }}>Failed to save</label>
+			</div>
 		</div>;
   }
 }

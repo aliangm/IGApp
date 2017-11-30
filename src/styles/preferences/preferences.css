@@ -59,3 +59,8 @@
   height: 28px;
   cursor: pointer;
 }
+
+.objective-text {
+  margin-top: 7px;
+  font-weight: 600;
+}
