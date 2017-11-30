@@ -224,7 +224,7 @@ export default class Preferences extends Component {
     const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
     objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
     let objectives = this.props.objectives || [];
-    if (index) {
+    if (index !== undefined) {
       if (index === objective.order) {
         objectives[index] = objective;
       }
@@ -240,7 +240,7 @@ export default class Preferences extends Component {
         objectives.splice(objective.order, 0, objective);
       }
     }
-    this.props.updateState({objectives: objectives})
+    this.props.updateState({objectives: objectives});
     this.setState({showObjectivesPopup: false, objectiveIndex: undefined});
   }
 

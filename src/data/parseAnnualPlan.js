@@ -176,23 +176,30 @@ function parseUnknownChannels(title, current, budget, month, length, sum, origin
     if (!current[title[0]]) {
       current[title[0]] = {};
       current[title[0]].values = new Array(length).fill(0);
+      current[title[0]].approvedValues = new Array(length).fill(0);
       current[title[0]].icon = "plan:other";
       current[title[0]].channel = originalTitle;
       current[title[0]].isOtherChannel = true;
     }
     current[title[0]].values[month] += budget;
+    current[title[0]].approvedValues[month] += budget;
     sum.values[month] += budget;
   }
   else {
     if (current && current[title[0]]) {
+      current[title[0]].values[month] += budget;
+      current[title[0]].approvedValues[month] += budget;
       return parseUnknownChannels(title.splice(1, title.length - 1), current[title[0]].children , budget, month, length, sum, originalTitle);
     }
     else {
       current[title[0]] = {};
       current[title[0]] = {children: parseUnknownChannels(title.splice(1, title.length - 1), current[title[0]], budget, month, length, sum, originalTitle)};
       current[title[0]].values = new Array(length).fill(0);
+      current[title[0]].approvedValues = new Array(length).fill(0);
       current[title[0]].icon = "plan:" + title[0];
       current[title[0]].disabled= true;
+      current[title[0]].values[month] += budget;
+      current[title[0]].approvedValues[month] += budget;
     }
   }
   return current;

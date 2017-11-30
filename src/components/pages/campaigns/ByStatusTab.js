@@ -63,42 +63,42 @@ export default class ByChannelTab extends Component {
     });
     const lists = [
       {
-        id: 'new',
+        id: 'New',
         name: 'New',
         cards: cards
       },
       {
-        id: 'assigned',
+        id: 'Assigned',
         name: 'Assigned',
         cards: []
       },
       {
-        id: 'in-progress',
+        id: 'In Progress',
         name: 'In Progress',
         cards: []
       },
       {
-        id: 'in-review',
+        id: 'In Review',
         name: 'In Review',
         cards: []
       },
       {
-        id: 'approved',
+        id: 'Approved',
         name: 'Approved',
         cards: []
       },
       {
-        id: 'completed',
+        id: 'Completed',
         name: 'Completed',
         cards: []
       },
       {
-        id: 'on-hold',
-        name: 'On-Hold',
+        id: 'On Hold',
+        name: 'On Hold',
         cards: []
       },
       {
-        id: 'new',
+        id: 'Rejected',
         name: 'Rejected',
         cards: []
       },

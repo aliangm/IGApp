@@ -139,9 +139,11 @@ export default class Campaigns extends Component {
     });
     const campaignsChannels = {};
     campaigns.forEach(campaign => {
-      campaign.source.forEach(source => {
-        campaignsChannels[source] = 0;
-      })
+      if (!campaign.isArchived) {
+        campaign.source.forEach(source => {
+          campaignsChannels[source] = 0;
+        })
+      }
     });
     let channels = _.merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
     const processedChannels = {

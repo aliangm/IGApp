@@ -351,16 +351,16 @@ export default class AnnualTab extends Component {
   }
 
   editChannel(i, channel, event) {
-    let value = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    let value = parseInt(event.target.value.replace(/[-$,]/g, '')) || 0;
     let planUnknownChannels = this.props.planUnknownChannels || [];
     if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
-      planUnknownChannels[i][channel] = value || 0;
+      planUnknownChannels[i][channel] = value;
       this.props.updateState({planUnknownChannels: planUnknownChannels});
     }
     else {
       let projectedPlan = this.props.projectedPlan;
       let approvedBudgets = this.props.approvedBudgets;
-      projectedPlan[i].plannedChannelBudgets[channel] = value || 0;
+      projectedPlan[i].plannedChannelBudgets[channel] = value;
       if (!approvedBudgets[i]) {
         approvedBudgets[i] = {};
       }
@@ -447,7 +447,7 @@ export default class AnnualTab extends Component {
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
     for (let i=0; i< 12; i++) {
-      if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
+      if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
         planUnknownChannels[i][channel] = Math.round(planUnknownChannels[i][channel] * percent);
       }
       else {

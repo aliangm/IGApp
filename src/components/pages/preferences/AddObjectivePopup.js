@@ -59,7 +59,7 @@ export default class AddObjectivePopup extends Component {
         </div>
         <div className={ this.classes.row }>
           <Label>
-            Choose metrics as objectives
+            Choose metrics as objective
           </Label>
           <Select
             selected={ this.state.indicator }
@@ -82,7 +82,7 @@ export default class AddObjectivePopup extends Component {
               select={{
                 options: [{label: '%', value: true}, {label: '(num)', value: false}]
               }}
-              onChange={ (e)=>{ this.setState({isPercentage: e.value === '%'}) } }
+              onChange={ (e)=>{ this.setState({isPercentage: e.value}) } }
               placeholder='%/num'
               style={{ marginLeft: '20px', width: '78px' }}
             />
@@ -132,7 +132,7 @@ export default class AddObjectivePopup extends Component {
               type="primary2"
               style={{ width: '110px', marginLeft: '20px' }}
               onClick={ () => {this.props.createOrUpdateObjective(this.state, this.props.index)} }>
-              { this.props.index ? 'Edit Objective' : 'Add Objective' }
+              { this.props.index !== undefined ? 'Edit Objective' : 'Add Objective' }
             </Button>
           </div>
         </div>
