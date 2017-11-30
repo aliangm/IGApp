@@ -15,10 +15,10 @@ export default class UnsavedPopup extends Component {
   render(){
     return <div hidden={ this.props.hidden }>
       <Page popup={ true } width={'370px'}>
-          <div style={{ fontWeight: 'bold', fontSize: '18px', marginBottom: '15px', textAlign: 'center' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '15px', textAlign: 'center' }}>
             Your changes have not been saved.
           </div>
-          <div style={{ fontSize: '17px', marginBottom: '32px', textAlign: 'center'}}>
+          <div style={{ fontSize: '15px', marginBottom: '32px', textAlign: 'center'}}>
             Are you sure you want to leave this page?
           </div>
         <div className={ this.classes.footer } style={{ justifyContent: 'center' }}>
