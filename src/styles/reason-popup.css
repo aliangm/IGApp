@@ -1,4 +1,4 @@
-.center {
+    .center {
     display: flex;
     justify-content: center;
 }
@@ -75,7 +75,7 @@
 }
 
 .box-text {
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
     color: #53626b;
     margin: 110px 17px 0;

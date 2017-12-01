@@ -124,6 +124,7 @@ export default class CampaignPopup extends Component {
   close() {
     const callback = (userAnswer) => {
       if (userAnswer) {
+        this.setState({selectedTab: 0, unsaved: false});
         this.props.closePopup();
       }
       this.setState({showUnsavedPopup: false});
@@ -132,6 +133,7 @@ export default class CampaignPopup extends Component {
       this.setState({showUnsavedPopup: true, callback: callback});
     }
     else {
+      this.setState({selectedTab: 0});
       this.props.closePopup();
     }
   }
