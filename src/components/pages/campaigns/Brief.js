@@ -385,6 +385,14 @@ export default class Brief extends Component {
           </div>
         </div>
         <div className={ this.classes.row }>
+          <Label>Links
+            <div className={ campaignPopupStyle.locals.assetsIcon } onClick={()=>{ this.setState({assetsPopup: true}) }}/>
+          </Label>
+          <div className={ campaignPopupStyle.locals.assetsBox }>
+            { assets }
+          </div>
+        </div>
+        <div className={ this.classes.row }>
           <Label>Target Audience</Label>
           <textarea value={ this.props.campaign.targetAudience } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'targetAudience') }/>
         </div>
@@ -403,14 +411,6 @@ export default class Brief extends Component {
         <div className={ this.classes.row }>
           <Label>Notes</Label>
           <textarea value={ this.props.campaign.additionalInformation } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'additionalInformation') }/>
-        </div>
-        <div className={ this.classes.row }>
-          <Label>Links
-            <div className={ campaignPopupStyle.locals.assetsIcon } onClick={()=>{ this.setState({assetsPopup: true}) }}/>
-          </Label>
-          <div className={ campaignPopupStyle.locals.assetsBox }>
-            { assets }
-          </div>
         </div>
       </div>
       <div className={ this.classes.footer } style={{ marginBottom: '1px' }}>
