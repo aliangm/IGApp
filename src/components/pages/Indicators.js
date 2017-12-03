@@ -48,7 +48,7 @@ export default class Indicators extends Component {
     value = parseInt(value);
     if (!isNaN(value)) {
       update[name] = value;
-      this.props.updateState({actualIndicators: update});
+      this.props.updateUserMonthPlan({actualIndicators: update}, this.props.region, this.props.planDate);
     }
   }
 
@@ -278,17 +278,17 @@ export default class Indicators extends Component {
           { isPopupMode() ?
 
             <div className={ this.classes.colRight }>
-            <div className={ this.classes.row }>
-            <ProfileProgress progress={ 76 } image={
-            require('assets/flower/4.png')
-          }
-            text="You rock! Hope you’re starting to get excited about planning the right way"/>
-            </div>
-          {/**
-           <div className={ this.classes.row }>
-           <ProfileInsights />
-           </div>
-           **/}
+              <div className={ this.classes.row }>
+                <ProfileProgress progress={ 76 } image={
+                  require('assets/flower/4.png')
+                }
+                                 text="You rock! Hope you’re starting to get excited about planning the right way"/>
+              </div>
+              {/**
+               <div className={ this.classes.row }>
+               <ProfileInsights />
+               </div>
+               **/}
             </div>
 
             : null }
@@ -297,34 +297,17 @@ export default class Indicators extends Component {
         { isPopupMode() ?
 
           <div className={ this.classes.footer }>
-            <BackButton onClick={() => {
-              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                .then(() => {
-                  history.push('/target-audience');
-                });
-            }} />
+            <BackButton onClick={ () => {
+              history.push('/target-audience');
+            } }/>
             <div style={{ width: '30px' }} />
-            <NextButton onClick={() => {
-              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                .then(() => {
-                  history.push('/preferences');
-                });
-            }} />
+            <NextButton onClick={ () => {
+              history.push('/preferences');
+            } }/>
           </div>
 
           :
-          <div className={ this.classes.footer }>
-            <SaveButton onClick={() => {
-              this.setState({saveFail: false, saveSuccess: false});
-              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                .then(() => {
-                  this.setState({saveSuccess: true});
-                })
-                .catch(() => {
-                  this.setState({saveFail: true});
-                });
-            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
-          </div>
+          null
         }
       </Page>
     </div>
