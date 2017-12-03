@@ -20,6 +20,7 @@ export default class Header extends Component {
       dropmenuVisibleBig: false,
       regionsVisible: false,
       createNewVisible: false,
+      regionsVisibleBig: false,
       regions: []
     };
 
@@ -55,16 +56,21 @@ export default class Header extends Component {
     });
   }
 
-  showDropmenuBig = () => {
+  toggleDropmenuBig = () => {
     this.setState({
-      dropmenuVisibleBig: true
+      dropmenuVisibleBig: !this.state.dropmenuVisibleBig
+    });
+  }
+
+  toggleRegionsBig = () => {
+    this.setState({
+      regionsVisibleBig: !this.state.regionsVisibleBig
     });
   }
 
   toggleRegions = () => {
-    let currentVisible = this.state.regionsVisible;
     this.setState({
-      regionsVisible: !currentVisible
+      regionsVisible: !this.state.regionsVisible
     });
   }
 
@@ -101,31 +107,37 @@ export default class Header extends Component {
                  setTimeout(this.readNotifications.bind(this), 20000);
                }}
           >
-            <div className={ this.classes.notificationsIcon } data-active={ isUnreadNotifications ? true : null }/>
-            <Popup className={ this.classes.dropmenuPopup }
-                   style={{ padding: '0' }}
-                   hidden={ !this.state.notificationsVisible } onClose={() => {
-              this.setState({
-                notificationsVisible: false
-              });
-            }}
-            >
-              <Notifications {... this.props} userNotifications={userNotifications}/>
-            </Popup>
+            <div className={ this.classes.notificationsIcon } data-active={ isUnreadNotifications ? true : null }>
+              <Popup className={ this.classes.dropmenuPopup }
+                     style={{ padding: '0' }}
+                     hidden={ !this.state.notificationsVisible } onClose={() => {
+                this.setState({
+                  notificationsVisible: false
+                });
+              }}
+              >
+                <Notifications {... this.props} userNotifications={userNotifications}/>
+              </Popup>
+            </div>
           </div>
           : null }
         { hasUser ?
           <div className={ this.classes.dropmenuButton }
-               data-selected={ this.state.regionsVisible ? true : null }
+               data-selected={ this.state.regionsVisibleBig ? true : null }
                role="button"
-               onClick={ this.toggleRegions }
+               onClick={ this.toggleRegionsBig }
           >
-            <div className={ this.classes.locationIcon } />
-            <Popup className={ this.classes.dropmenuPopup }
-                   hidden={ !this.state.regionsVisible } ref="regionsPopup">
-              { regions }
-              <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }} style={{ fontWeight: 'bold', color: '#1165A3' }}>+ Add new</a>
-            </Popup>
+            <div className={ this.classes.locationIcon } >
+              <Popup className={ this.classes.dropmenuPopup }
+                     hidden={ !this.state.regionsVisibleBig } ref="regionsPopup" onClose={() => {
+                this.setState({
+                  regionsVisibleBig: false
+                });
+              }}>
+                { regions }
+                <a className={ this.classes.linkText } key={ '-1' } onClick={()=>{ this.setState({createNewVisible: true}) }} style={{ fontWeight: 'bold', color: '#1165A3' }}>+ Add new</a>
+              </Popup>
+            </div>
           </div>
           : null }
         { hasUser ?
@@ -136,25 +148,26 @@ export default class Header extends Component {
         <div className={ this.classes.dropmenuButton }
              data-selected={ this.state.dropmenuVisibleBig ? true : null }
              role="button"
-             onClick={ this.showDropmenuBig }
+             onClick={ this.toggleDropmenuBig }
         >
-          <div className={ this.classes.dropmenuIcon } />
-          <Popup className={ this.classes.dropmenuPopup }
-                 hidden={ !this.state.dropmenuVisibleBig } onClose={() => {
-            this.setState({
-              dropmenuVisibleBig: false
-            });
-          }}
-          >
-            <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
-            {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
-            <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
-            <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
-            <div className={ this.classes.linkText } onClick={ this.logout } style={{ color: '#2571AB' }}>
-              Logout
-              <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
-            </div>
-          </Popup>
+          <div className={ this.classes.dropmenuIcon } >
+            <Popup className={ this.classes.dropmenuPopup }
+                   hidden={ !this.state.dropmenuVisibleBig } onClose={() => {
+              this.setState({
+                dropmenuVisibleBig: false
+              });
+            }}
+            >
+              <a className={ this.classes.linkText } href="http://infinigrow.com/company/" target="_blank">About</a>
+              {/** <a className={ this.classes.linkText } href="#">Chat</a> **/}
+              <a className={ this.classes.linkText } href="http://infinigrow.com/contact/" target="_blank">Contact</a>
+              <a className={ this.classes.linkText } href="mailto:support@infinigrow.com?&subject=Support Request" target="_blank">Support</a>
+              <div className={ this.classes.linkText } onClick={ this.logout } style={{ color: '#2571AB' }}>
+                Logout
+                <div className={ this.classes.logOutIcon } data-icon="header:log-out" />
+              </div>
+            </Popup>
+          </div>
         </div>
       </div>
       { hasUser ?

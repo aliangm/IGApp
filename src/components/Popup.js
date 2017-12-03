@@ -43,7 +43,7 @@ export default class Popup extends Component {
     if (this.props.onClose) {
       const elem = ReactDOM.findDOMNode(this);
 
-      if (elem !== e.target && !elem.contains(e.target)) {
+      if (elem !== e.target && !elem.contains(e.target) && !e.target.contains(elem)) {
         this.props.onClose();
       }
     }
