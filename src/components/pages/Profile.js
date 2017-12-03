@@ -294,6 +294,7 @@ export default class Profile extends Component {
                 {key: 'Security', text: 'Security', icon: 'buttons:security'},
                 {key: 'IT', text: 'IT', icon: 'buttons:IT'},
                 {key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity'},
+                {key: 'Finance', text: 'Finance', icon: 'buttons:finance'},
               ]} selectedKey={ this.props.userProfile.vertical }
                           onChange={this.handleChangeButton.bind(this, 'vertical')}/>
             </div>
