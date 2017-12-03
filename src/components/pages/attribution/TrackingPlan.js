@@ -33,9 +33,9 @@ export default class TrackingPlan extends Component {
 
   render() {
     const rows = this.props.attribution.events.map((item, i) => {
-      const trackingCode = `analytics.track(${item.name}, {
-  type: ${item.type},
-  description: ${item.description}
+      const trackingCode = `analytics.track('${item.name}', {
+  type: '${item.type}'${item.description ? `,
+  description: '${item.description}'` : ''}
 });`;
       return this.getTableRow(null, [
         item.name,

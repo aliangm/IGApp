@@ -21,15 +21,15 @@ export default class Updates extends Component {
 
   componentDidMount() {
     const lock = new AuthService();
-    this.setState({UID: lock.getProfile().user_id});
+    this.setState({UID: lock.getProfile().user_id, adminUID: lock.getProfile().app_metadata.UID});
   }
 
   getInitials(UID) {
     let initials;
     this.props.teamMembers.some(member => {
-      if (member.userId == UID) {
+      if (member.userId === UID) {
         const nameArray = member.name.split(' ');
-        initials = nameArray[0][0] + nameArray[1][0];
+        initials = (nameArray[0] ? nameArray[0][0] : '') + (nameArray[1] ? nameArray[1][0] : '');
       }
     });
     if (initials) {
@@ -49,6 +49,12 @@ export default class Updates extends Component {
       return name;
     }
     else return this.props.firstName + ' ' + this.props.lastName;
+  }
+
+  getMembersNames() {
+    let names = this.props.teamMembers.map(member => {return {display: member.name, id: member.userId} });
+    names.push({display: this.props.firstName + ' ' + this.props.lastName, id: this.state.adminUID});
+    return names
   }
 
   addComment(comment) {
@@ -88,7 +94,13 @@ export default class Updates extends Component {
         return <Comment key={ index } name={ name } comment={ comment.comment } time={ comment.time } initials={ initials } index={ index } editComment={ this.editComment.bind(this) } deleteComment={ this.deleteComment.bind(this,index) }/>
       });
     return <div>
-      <CommentTextArea addOrEditComment={ this.addComment.bind(this) }/>
+      <CommentTextArea
+        addOrEditComment={ this.addComment.bind(this) }
+        users={this.getMembersNames()}
+        addNotification={this.props.addNotification}
+        UID={this.state.UID}
+        campaignName={this.props.campaign.name}
+      />
       { comments.length > 0 ?
         <div>
           <div className={ this.classes.line }/>

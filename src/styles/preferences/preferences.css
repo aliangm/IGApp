@@ -37,36 +37,9 @@
   margin-bottom: 0;
 }
 
-.objective-select {
-  width: 100px;
-  margin-left: 10px;
-}
-
-.objective-text {
-  margin-top: 7px;
-  font-weight: 600;
-}
-
 .divide-equally {
   margin-left: 38px;
   margin-top: 12px;
-}
-
-.objective-icon {
-  width: 27px;
-  height: 27px;
-  margin-left: 10px;
-  margin-top: 6px;
-}
-
-.objective-icon[data-active="success"] {
-  background: url(../../assets/success_bltp.svg) center center no-repeat;
-  background-size: contain;
-}
-
-.objective-icon[data-active="fail"] {
-  background: url(../../assets/passed-objective.svg) center center no-repeat;
-  background-size: contain;
 }
 
 .advanced-button {
@@ -77,4 +50,17 @@
   margin-bottom: 20px;
   color: #1165A3;
   text-decoration: underline;
+}
+
+.add-objective {
+  background: url(../../assets/plus.svg) center center no-repeat;
+  background-size: 24px auto;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.objective-text {
+  margin-top: 7px;
+  font-weight: 600;
 }

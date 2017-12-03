@@ -34,7 +34,25 @@ export default class Analyze extends Component {
       hoverRow: void 0,
       collapsed: {},
       tableCollapsed: false,
+      graphDimensions: {},
     };
+  }
+
+  componentDidMount() {
+    this.calculateGraphDimensions()
+  }
+
+  calculateGraphDimensions() {
+    if (this.planTable && this.firstColumnCell) {
+      window.requestAnimationFrame(() => {
+        this.setState({
+          graphDimensions: {
+            width: this.planTable.offsetWidth,
+            marginLeft: this.firstColumnCell.offsetWidth,
+          }
+        })
+      })
+    }
   }
 
   getDates = () => {
@@ -179,7 +197,7 @@ export default class Analyze extends Component {
         <div className={ this.classes.innerBox }>
           <div className={ analyzeStyle.locals.wrap } ref="wrap">
             <div className={ this.classes.box }>
-              <table className={ this.classes.table }>
+              <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
                 <thead>
                 { headRow }
                 </thead>
@@ -202,8 +220,8 @@ export default class Analyze extends Component {
 
           </div>
         </div>
-        <div className={ analyzeStyle.locals.wrap } style={{ width: 200 + 76 * (projections.length - 1) + 'px' }}>
-          <IndicatorsGraph data={ projections } width={88 + 76 * (projections.length - 1)} objectives={ objectives }/>
+        <div className={ analyzeStyle.locals.wrap } style={{ width: this.state.graphDimensions.width }}>
+          <IndicatorsGraph data={ projections } dimensions={this.state.graphDimensions} objectives={ objectives }/>
         </div>
       </Page>
     </div>
@@ -212,7 +230,7 @@ export default class Analyze extends Component {
   getTableRow(title, items, props)
   {
     return <tr {... props}>
-      <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
+      <td className={ this.classes.titleCell } ref={(ref) => this.firstColumnCell = ref}>{ this.getCellItem(title) }</td>
       {
         items.map((item, i) => {
           return <td className={ this.classes.valueCell } key={ i }>{

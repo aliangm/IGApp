@@ -12,7 +12,6 @@ import { withRouter } from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
 import { initialize as initializeIndicators } from 'components/utils/indicators';
 import { initialize as initializeChannels } from 'components/utils/channels';
-import _ from 'lodash';
 
 class AppComponent extends Component {
 
@@ -29,7 +28,8 @@ class AppComponent extends Component {
       updateState: this.updateState.bind(this),
       setDataAsState: this.setDataAsState.bind(this),
       unsaved: false,
-      auth: props.route.auth
+      auth: props.route.auth,
+      addNotification: this.addNotification.bind(this)
     };
   }
 
@@ -348,7 +348,6 @@ class AppComponent extends Component {
   }
 
   setDataAsState(data) {
-    _.merge(data, this.state);
     this.setState({
       userProfile: data.userProfile,
       targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
@@ -393,8 +392,22 @@ class AppComponent extends Component {
       googleSheetsAuto: data.googlesheetsapi,
       isStripeAuto: !!data.stripeapi,
       attribution: data.attribution || { events: [] },
-      pricingTiers: data.pricingTiers || []
+      pricingTiers: data.pricingTiers || [],
+      planNeedsUpdate: data.planNeedsUpdate,
+      notifications: data.notifications || []
     });
+  }
+
+  addNotification(userId, type, notification) {
+    let notifications = this.state.notifications || [];
+    notifications.push({
+      UID: userId,
+      timestamp: new Date(),
+      notificationType: type,
+      isRead: false,
+      notification: notification
+    });
+    this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
   }
 
   render() {

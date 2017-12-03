@@ -13,7 +13,8 @@ export default class MultiSelect extends Component {
   static defaultProps = {
     labelQuestion: false,
     style: {
-      width: '460px'
+      width: '460px',
+      fontSize: '14px'
     }
   };
 

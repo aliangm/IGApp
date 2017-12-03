@@ -366,7 +366,7 @@ export default class Dashboard extends Component {
                   <div className={ this.classes.footerRight }>
                     <div className={ dashboardStyle.locals.historyArrow } data-decline={ grow < 0 ? true : null }/>
                     <div className={ dashboardStyle.locals.historyGrow } data-decline={ grow < 0 ? true : null }>
-                      { grow }%
+                      { Math.abs(grow) }%
                     </div>
                   </div>
                   : null }

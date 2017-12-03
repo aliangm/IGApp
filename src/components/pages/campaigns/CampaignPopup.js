@@ -12,9 +12,7 @@ import planStyle from 'styles/plan/plan.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import UnsavedPopup from 'components/UnsavedPopup';
-import Button from 'components/controls/Button';
 import AddTemplatePopup from 'components/pages/campaigns/AddTemplatePopup';
-import LoadTemplatePopup from 'components/pages/campaigns/LoadTemplatePopup';
 import SaveButton from 'components/pages/profile/SaveButton';
 
 export default class CampaignPopup extends Component {
@@ -126,6 +124,7 @@ export default class CampaignPopup extends Component {
   close() {
     const callback = (userAnswer) => {
       if (userAnswer) {
+        this.setState({selectedTab: 0, unsaved: false});
         this.props.closePopup();
       }
       this.setState({showUnsavedPopup: false});
@@ -134,6 +133,7 @@ export default class CampaignPopup extends Component {
       this.setState({showUnsavedPopup: true, callback: callback});
     }
     else {
+      this.setState({selectedTab: 0});
       this.props.closePopup();
     }
   }
@@ -149,14 +149,6 @@ export default class CampaignPopup extends Component {
   createTemplate(templateName) {
     this.props.updateCampaignsTemplates(templateName, this.state.campaign);
     this.closeAddTemplatePopup();
-  }
-
-  openLoadTemplatePopup() {
-    this.setState({showLoadTemplatePopup: true});
-  }
-
-  closeLoadTemplatePopup() {
-    this.setState({showLoadTemplatePopup: false});
   }
 
   setRefName(input) {
@@ -215,7 +207,6 @@ export default class CampaignPopup extends Component {
     return <div>
       <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
         <div className={ campaignPopupStyle.locals.topRight }>
-          <Button contClassName={ campaignPopupStyle.locals.loadButton } type="reverse" style={{ width: '53px', height: '25px', marginRight: '-6px' }} onClick={ this.openLoadTemplatePopup.bind(this) }>Load</Button>
           <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
         <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
@@ -236,7 +227,7 @@ export default class CampaignPopup extends Component {
             })
           }
           <div style={{ marginLeft: '187px', marginTop: '27px' }}>
-            <SaveButton style={{ width: '95px', height: '30px' }} onClick={ this.save }/>
+            <SaveButton onClick={ this.save }/>
           </div>
         </div>
         <div className={ campaignPopupStyle.locals.inner }>
@@ -253,13 +244,13 @@ export default class CampaignPopup extends Component {
             processedChannels: this.props.processedChannels,
             setRefName: this.setRefName,
             setRefSource: this.setRefSource,
-            save: this.save
+            save: this.save,
+            addNotification: this.props.addNotification
           })) : null }
         </div>
       </Page>
       <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
       <AddTemplatePopup hidden={ !this.state.showAddTemplatePopup } closeAddTemplatePopup={ this.closeAddTemplatePopup.bind(this) } createTemplate={ this.createTemplate.bind(this) } campaignName={ this.state.campaign.name }/>
-      <LoadTemplatePopup hidden={ !this.state.showLoadTemplatePopup } closeLoadTemplatePopup={ this.closeLoadTemplatePopup.bind(this) } updateState={ this.updateState.bind(this) } campaignsTemplates={ this.props.campaignsTemplates }/>
     </div>
   }
 }

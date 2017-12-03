@@ -81,12 +81,6 @@ export default class TargetAudience extends Component {
     this.props.updateState({targetAudience: update});
   }
 
-  fakeChange(parameter, value, index, event){
-    let update = this.props.targetAudience.slice();
-    update[index].fields[parameter] = value;
-    this.props.updateState({targetAudience: update});
-  }
-
   addTab() {
     let update = this.props.targetAudience.slice();
     update.push({fields: {}, info: { weight: 100 }});
@@ -225,13 +219,11 @@ export default class TargetAudience extends Component {
           onChange: () => {},
           options: [
             { value: 'USA', label: 'USA' },
-            { value: 'Canada', label: 'Canada- Coming Soon!' },
-            { value: 'Western Europe', label: 'Western Europe- Coming Soon!' },
-            { value: 'Eastern Europe', label: 'Eastern Europe- Coming Soon!' },
-            { value: 'Latin America', label: 'Latin America- Coming Soon!' },
-            { value: 'Asia', label: 'Asia- Coming Soon!' },
-            { value: 'Australia', label: 'Australia- Coming Soon!' },
-            { value: 'Any', label: 'Any- Coming Soon!' }
+            { value: 'Canada', label: 'Canada' },
+            { value: 'Western Europe', label: 'Western Europe' },
+            { value: 'Eastern Europe', label: 'Eastern Europe' },
+            { value: 'Australia', label: 'Australia' },
+            { value: 'Any', label: 'Any' }
           ]
         }
       },
@@ -257,7 +249,7 @@ export default class TargetAudience extends Component {
       <Page popup={ isPopupMode() }>
         <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
         <div className={ this.classes.error }>
-          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
+          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
@@ -384,7 +376,7 @@ export default class TargetAudience extends Component {
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.location } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.location } onChange= { this.fakeChange.bind(this, 'location', 'USA', index) } />
+                    <Select { ... selects.location } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.location } onChange= { this.handleChangeSelect.bind(this, 'location', index) } />
                   </div>
                   <div className={ this.classes.row } style={{
                     marginBottom: '200px',
@@ -423,7 +415,7 @@ export default class TargetAudience extends Component {
           {isPopupMode() ?
             <div style={{ display: 'flex' }}>
               <BackButton onClick={() => {
-                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
+                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
                     history.push('/profile');
                   });
@@ -431,7 +423,7 @@ export default class TargetAudience extends Component {
               < div style = {{width: '30px'}} />
               <NextButton onClick={() => {
                 if (this.validate()) {
-                  this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
+                  this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
                       history.push('/indicators');
                     });
@@ -445,7 +437,7 @@ export default class TargetAudience extends Component {
             <SaveButton onClick={() => {
               if (this.validate()) {
                 this.setState({saveFail: false, saveSuccess: false});
-                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience}, this.props.region, this.props.planDate)
+                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
                     this.setState({saveSuccess: true});
                   })

@@ -61,7 +61,7 @@ export default class Plan extends Component {
     };
     if (isPopupMode()) {
       if (this.props.userAccount.freePlan === false) {
-        this.plan(true, null, callback, localStorage.getItem('region'));
+        this.plan(true, null, callback, this.props.region, false);
       }
       else {
         this.setState({editMode: true});
@@ -101,14 +101,16 @@ export default class Plan extends Component {
     this.setState({popup: true});
   }
 
-  plan(isCommitted, preferences, callback, region){
+  plan(isCommitted, preferences, callback, region, silent){
     let body = preferences ? JSON.stringify(preferences) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
-    this.setState({
-      isPlannerLoading: true,
-      popup: false,
-      serverDown: false
-    });
+    if (!silent) {
+      this.setState({
+        isPlannerLoading: true,
+        popup: false,
+        serverDown: false
+      });
+    }
     serverCommunication.serverRequest(func, 'plan', body, region)
       .then((response) => {
         if (response.ok) {
@@ -116,13 +118,17 @@ export default class Plan extends Component {
             .then((data) => {
               if (data) {
                 if (data.error) {
-                  this.setState({isPlannerLoading: false, isError: true});
+                  if (!silent) {
+                    this.setState({isPlannerLoading: false, isError: true});
+                  }
                 }
                 else {
-                  this.setState({
-                    isPlannerLoading: false,
-                    isError: false
-                  });
+                  if (!silent) {
+                    this.setState({
+                      isPlannerLoading: false,
+                      isError: false
+                    });
+                  }
                   if (callback) {
                     callback(data);
                   }
@@ -134,21 +140,29 @@ export default class Plan extends Component {
         }
         else {
           if (response.status == 401){
-            history.push('/');
+            if (!silent) {
+              history.push('/');
+            }
           }
           if (response.status == 400){
-            this.setState({isError: true, isPlannerLoading: false});
+            if (!silent) {
+              this.setState({isError: true, isPlannerLoading: false});
+            }
           }
           else {
-            this.setState({serverDown: true, isPlannerLoading: false});
+            if (!silent) {
+              this.setState({serverDown: true, isPlannerLoading: false});
+            }
           }
         }
       })
       .catch((err) => {
-        this.setState({
-          isPlannerLoading: false,
-          serverDown: true
-        });
+        if (!silent) {
+          this.setState({
+            isPlannerLoading: false,
+            serverDown: true
+          });
+        }
       });
   }
 
@@ -175,7 +189,7 @@ export default class Plan extends Component {
           <div className={ this.classes.headTitle }>Plan</div>
           { this.props.userAccount.freePlan ? null :
             <div className={this.classes.headPlan}>
-              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}/>
+              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup} planNeedsUpdate={this.props.planNeedsUpdate}/>
               <Popup style={{
                 width: '265px',
                 top: '180%',
@@ -187,7 +201,7 @@ export default class Plan extends Component {
               }}>
                 <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
                   this.props.setDataAsState(data)
-                }, this.props.region)} onBack={() => {
+                }, this.props.region, false)} onBack={() => {
                   this.setState({
                     popup: false
                   })
@@ -218,7 +232,7 @@ export default class Plan extends Component {
           </div>
         </div>
         <div className={ this.classes.serverDown }>
-          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our support. </label>
+          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
         <div>
           { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }

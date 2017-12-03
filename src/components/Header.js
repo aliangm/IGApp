@@ -8,9 +8,10 @@ import Popup from 'components/Popup';
 import global from 'global';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
+import Notifications from 'components/pages/header/Notifications';
 
 export default class Header extends Component {
-  style = style
+  style = style;
 
   constructor(props) {
     super(props);
@@ -29,8 +30,20 @@ export default class Header extends Component {
     user: true,
     regions: [],
     teamMembers: [],
-    userAccount: {}
+    userAccount: {},
+    notifications: []
   };
+
+  readNotifications() {
+    let notifications = this.props.notifications.slice();
+    notifications
+      .filter(notification => notification.UID === this.props.auth.getProfile().user_id)
+      .map(notification => {
+        notification.isRead = true;
+        return notification
+      });
+    this.props.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
+  }
 
   openSidebar = () => {
     global.dispatchEvent('sidebar:open');
@@ -74,8 +87,33 @@ export default class Header extends Component {
         user = member;
       }
     }
+
+    const userNotifications = this.props.notifications.filter(notification => notification.UID === this.props.auth.getProfile().user_id);
+    const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
     return <div className={ this.classes.menuBig }>
       <div className={ this.classes.itemsBox }>
+        { hasUser ?
+          <div className={ this.classes.dropmenuButton }
+               data-selected={ this.state.notificationsVisible ? true : null }
+               role="button"
+               onClick={ () => {
+                 this.setState({notificationsVisible: !this.state.notificationsVisible});
+                 setTimeout(this.readNotifications.bind(this), 20000);
+               }}
+          >
+            <div className={ this.classes.notificationsIcon } data-active={ isUnreadNotifications ? true : null }/>
+            <Popup className={ this.classes.dropmenuPopup }
+                   style={{ padding: '0' }}
+                   hidden={ !this.state.notificationsVisible } onClose={() => {
+              this.setState({
+                notificationsVisible: false
+              });
+            }}
+            >
+              <Notifications {... this.props} userNotifications={userNotifications}/>
+            </Popup>
+          </div>
+          : null }
         { hasUser ?
           <div className={ this.classes.dropmenuButton }
                data-selected={ this.state.regionsVisible ? true : null }

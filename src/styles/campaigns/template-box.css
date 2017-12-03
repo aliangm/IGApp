@@ -46,3 +46,19 @@
     left: 122px;
     position: absolute;
 }
+
+.icons {
+    top: 105px;
+    left: 19px;
+    position: absolute;
+    display: inline-flex;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+}

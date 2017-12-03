@@ -116,6 +116,7 @@ export default class ChannelCube extends Component {
       <BoxLevel
         key={name}
         icon={data.icon}
+        channel={data.channel}
         title={name}
         price={formatPrice(price)}
         disabled={data.disabled}
@@ -145,6 +146,7 @@ export default class ChannelCube extends Component {
         <BoxRow
           key={name}
           icon={data.icon}
+          channel={data.channel}
           title={name}
           price={formatPrice(price)}
           onInfoClick={(...args) => this.handleLeafOptionClick(...args, name, data)}
@@ -168,6 +170,7 @@ export default class ChannelCube extends Component {
       <Box
         className={this.classes.box}
         title={title}
+        channel={data.channel}
         price={formatPrice(price)}
         progress={progress}
         onInfoClick={this.handleBoxInfoClick}

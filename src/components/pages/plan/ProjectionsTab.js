@@ -99,7 +99,7 @@ export default class ProjectionsTab extends Component {
               Forecasting (months)
             </div>
           </div>
-          <div className={ this.classes.titleToggle }>
+          <div className={ planStyles.locals.titleToggle }>
             <Toggle
               leftText="Current"
               rightText="Suggested"

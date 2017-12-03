@@ -23,7 +23,7 @@ export default class ByChannelTab extends Component {
     if (this.props.location.query.hash) {
       const domElement = ReactDOM.findDOMNode(this.refs[this.props.location.query.hash]);
       if (domElement) {
-        domElement.scrollIntoView();
+        domElement.scrollIntoView({});
       }
     }
   }
@@ -41,6 +41,7 @@ export default class ByChannelTab extends Component {
         channelIcon={ channels.icons[channel] }
         showCampaign={ showCampaign }
         addNewCampaign={ addNewCampaign }
+        ref={channel}
       />
     ));
 

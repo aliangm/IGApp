@@ -41,9 +41,9 @@ export default class Setup extends Component {
   };
 
   setTrackingCode() {
-    const code =  `analytics.track(${this.state.event.name}, {
-  type: ${this.state.event.type},
-  description: ${this.state.event.description}
+    const code =  `analytics.track('${this.state.event.name}', {
+  type: '${this.state.event.type}'${this.state.event.description ? `,
+  description: '${this.state.event.description}'` : ''}
 });`;
     this.setState({
       event: {
@@ -211,7 +211,7 @@ Depending on your templating language, that would look something like this:
     };
     return <div>
       <div className={ this.classes.text }>
-        {`The track method is how you tell InfiniGrow about which actions your users are performing on your site. Every action triggers what we call an “event”, which can also have associated properties. Properties can be anything you want to record. Run these JavaScript snippets after an event/conversion has happened, such as on a confirmation page, thank you page, or success notification.
+        {`The track method is how you tell InfiniGrow about which actions your users are performing on your site. Every action triggers what we call an “event”, which can also have associated properties. Properties can be anything you want to record. Run these JavaScript snippets inside an event/conversion, after a button has been clicked (or any other relevant action the user did).
 
         Create a conversion event:
         `}
@@ -223,7 +223,7 @@ Depending on your templating language, that would look something like this:
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Type:*</Label>
-          <Select { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '222px' }}/>
+          <Select { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Description:</Label>

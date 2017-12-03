@@ -275,8 +275,7 @@ export default class Profile extends Component {
         <Title title="Company"
                subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/>
         <div className={ this.classes.error }>
-          <label hidden={ !this.state.serverDown }> It look's like our server is down... :( <br/> Please contact our
-            support. </label>
+          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
@@ -491,7 +490,7 @@ export default class Profile extends Component {
             </div>
             <BackButton onClick={() => {
               this.calculatePricing(()=> {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                 .then(() => {
                   history.push('/welcome');
                 });
@@ -501,7 +500,7 @@ export default class Profile extends Component {
             <NextButton onClick={() => {
               if (this.validate()) {
                 this.calculatePricing(() => {
-                  this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+                  this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
                       history.push('/target-audience');
                     });
@@ -517,7 +516,7 @@ export default class Profile extends Component {
             <SaveButton onClick={() => {
               this.setState({saveFail: false, saveSuccess: false});
               this.calculatePricing(()=> {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers}, this.props.region, this.props.planDate)
+              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                 .then(()=>{
                   this.setState({saveSuccess: true});
                 })

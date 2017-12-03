@@ -2,7 +2,7 @@
     border-radius: 50%;
     width: 50px;
     height: 50px;
-    background-color: #24b10e;
+    background-color: #33cc33;
     margin: 103px 32px 0;
     display: inline-block;
 }
@@ -17,10 +17,10 @@
 }
 
 .title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
-    color: #bbc2c5;
+    color: #636872;
     display: flex;
     justify-content: center;
-    margin-top: 111px;
+    margin-top: 117px;
 }

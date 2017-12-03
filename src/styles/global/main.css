@@ -5,11 +5,11 @@ body, html {
 }
 
 body {
-  background: #f6f8fa;
+  background: #f5f6fb;
 }
 
 body, input, select {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: "museo-sans","Source Sans Pro", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

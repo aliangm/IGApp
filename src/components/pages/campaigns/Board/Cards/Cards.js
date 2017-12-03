@@ -13,14 +13,15 @@ const CARD_HEIGHT = 100;  // height of a single card(excluding marginBottom/padd
 const CARD_MARGIN = 15;  // height of a marginBottom+paddingBottom
 const OFFSET_HEIGHT = 260; // height offset from the top of the page
 
-function getPlaceholderIndex(y, scrollY) {
+function getPlaceholderIndex(y, columnTop, columnScrollTop) {
   // shift placeholder if y position more than card height / 2
-  const yPos = y - OFFSET_HEIGHT + scrollY;
+  const yPos = y - columnTop + columnScrollTop;
   let placeholderIndex;
+
   if (yPos < CARD_HEIGHT / 2) {
     placeholderIndex = -1; // place at the start
   } else {
-    placeholderIndex = Math.floor((yPos - CARD_HEIGHT / 2) / (CARD_HEIGHT + CARD_MARGIN));
+    placeholderIndex = Math.floor((yPos - CARD_HEIGHT) / (CARD_HEIGHT + CARD_MARGIN));
   }
   return placeholderIndex;
 }
@@ -46,41 +47,42 @@ const specs = {
     }
 
     props.moveCard(lastX, lastY, nextX, nextY, { type: item.type, item: item.item });
+    props.stopScrolling();
   },
   hover(props, monitor, component) {
-		const item = monitor.getItem();
+    const item = monitor.getItem();
 
-		if (item.type === 'campaign' && monitor.getItem().x === props.x) {
-		  return;
+    if (item.type === 'campaign' && item.x === props.x) {
+      return;
     }
 
-		const { container } = component.context;
-		const containerRect = container.getBoundingClientRect();
+    const { element, elementRect, context } = component
+    const { container, containerRect } = context;
+    const clientOffset = monitor.getClientOffset()
 
     // defines where placeholder is rendered
-    const placeholderIndex = getPlaceholderIndex(
-      monitor.getClientOffset().y,
-			-containerRect.top
-    );
-    const SCROLL_H_THRESHOLD = 150;
+    const placeholderIndex = getPlaceholderIndex(clientOffset.y, elementRect.top, element.scrollTop);
+    const SCROLL_H_THRESHOLD = 50;
     const SCROLL_V_THRESHOLD = 150;
+    //
+    // console.log('HOVER', clientOffset, containerRect, item.x, props.x, props.y)
     // horizontal scroll
     if (!props.isScrolling) {
-      if (containerRect.right - monitor.getClientOffset().x < SCROLL_H_THRESHOLD) {
+      if (containerRect.right - clientOffset.x < SCROLL_H_THRESHOLD) {
         props.startScrolling('toRight');
-      } else if (monitor.getClientOffset().x - containerRect.left < SCROLL_H_THRESHOLD) {
+      } else if (clientOffset.x - containerRect.left < SCROLL_H_THRESHOLD) {
         props.startScrolling('toLeft');
-      } else if (monitor.getClientOffset().y < SCROLL_V_THRESHOLD) {
-				props.startScrolling('toTop');
-      } else if (window.innerHeight - monitor.getClientOffset().y < SCROLL_V_THRESHOLD) {
-				props.startScrolling('toBottom');
+      } else if (clientOffset.y - containerRect.top < SCROLL_V_THRESHOLD) {
+				props.startScrolling('toTop', props.x);
+      } else if (containerRect.bottom - clientOffset.y < SCROLL_V_THRESHOLD) {
+				props.startScrolling('toBottom', props.x);
       }
     } else {
       if (
-        containerRect.right - monitor.getClientOffset().x > SCROLL_H_THRESHOLD &&
-				monitor.getClientOffset().x - containerRect.left > SCROLL_H_THRESHOLD &&
-				monitor.getClientOffset().y > SCROLL_V_THRESHOLD &&
-				window.innerHeight - monitor.getClientOffset().y > SCROLL_V_THRESHOLD
+        containerRect.right - clientOffset.x > SCROLL_H_THRESHOLD &&
+				clientOffset.x - containerRect.left > SCROLL_H_THRESHOLD &&
+        clientOffset.y - containerRect.top > SCROLL_V_THRESHOLD &&
+        containerRect.bottom - clientOffset.y > SCROLL_V_THRESHOLD
       ) {
         props.stopScrolling();
       }
@@ -111,11 +113,13 @@ class Cards extends Component {
     canDrop: PropTypes.bool,
     startScrolling: PropTypes.func,
     stopScrolling: PropTypes.func,
-    isScrolling: PropTypes.bool
+    isScrolling: PropTypes.bool,
+    getRef: PropTypes.func,
   };
 
 	static contextTypes = {
 		container: PropTypes.any,
+    containerRect: PropTypes.object,
 	};
 
   constructor(props) {
@@ -126,8 +130,19 @@ class Cards extends Component {
     };
   }
 
+  componentDidMount() {
+    if (this.element) {
+      this.elementRect = this.element.getBoundingClientRect()
+    }
+  }
+
+  setRef = (ref) => {
+    this.element = ref
+    this.props.getRef(ref)
+  }
+
   render() {
-    const { connectDropTarget, x, cards, isOver, canDrop } = this.props;
+    const { connectDropTarget, x, cards, isOver, canDrop, getRef } = this.props;
     const { placeholderIndex } = this.state;
 
     let isPlaceHold = false;
@@ -174,7 +189,7 @@ class Cards extends Component {
     }
 
     return connectDropTarget(
-      <div className={this.classes.cards}>
+      <div className={this.classes.cards} ref={this.setRef}>
         {cardList}
       </div>
     );

@@ -46,6 +46,11 @@ class CampaignCard extends Component {
 			}
 			else {
         const member = user.teamMembers.find(member => member.userId === item.owner);
+
+        if (!member) {
+          return null;
+				}
+
         [firstName = '', lastName = ''] = member.name.split(' ');
       }
 		}
