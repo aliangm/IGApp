@@ -112,7 +112,7 @@ class AppComponent extends Component {
 
     Promise.all(tasks)
       .then( () => {
-        setInterval(() => { this.setState({loaded: true}); }, 1000);
+        setTimeout(() => { this.setState({loaded: true}); }, 1000);
       });
 
   }
