@@ -15,6 +15,7 @@ import { initialize as initializeChannels } from 'components/utils/channels';
 import Loading from 'components/pages/plan/Loading';
 import Popup from 'components/Popup';
 import style from 'styles/app.css';
+import { FeatureToggleProvider } from 'react-feature-toggles';
 
 class AppComponent extends Component {
 
@@ -211,6 +212,7 @@ class AppComponent extends Component {
                   userCompany: data.companyName,
                   logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
                   teamMembers: data.teamMembers,
+                  permissions: data.permissions
                 });
                 deferred.resolve();
               }
@@ -471,20 +473,22 @@ class AppComponent extends Component {
   render() {
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.state));
-    return <div>
-      <Header auth={ this.props.route.auth } {... this.state}/>
-      <Sidebar auth={ this.props.route.auth }/>
-      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-      { this.state.loaded ?
-        childrenWithProps
-        : <div className={ this.classes.loading }>
-          <Popup className={ this.classes.popup }>
-            <div>
-              <Loading />
-            </div>
-          </Popup>
-        </div> }
-    </div>
+    return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
+      <div>
+        <Header auth={ this.props.route.auth } {... this.state}/>
+        <Sidebar auth={ this.props.route.auth }/>
+        <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
+        { this.state.loaded ?
+          childrenWithProps
+          : <div className={ this.classes.loading }>
+            <Popup className={ this.classes.popup }>
+              <div>
+                <Loading />
+              </div>
+            </Popup>
+          </div> }
+      </div>
+    </FeatureToggleProvider>
   }
 }
 

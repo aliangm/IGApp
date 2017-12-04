@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-
+import { FeatureToggle } from 'react-feature-toggles';
 import { Link } from 'react-router';
 import global from 'global';
 
@@ -63,8 +63,10 @@ export default class Sidebar extends Component {
               <MenuItem icon="sidebar:analyze" link="/analyze" text="Analyze"/>
             </div>
             : null}
-          <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" />
-          <MenuItem icon="sidebar:attribution" link="/attribution" text="Attribution" />
+          <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns"/>
+          <FeatureToggle featureName="attribution">
+            <MenuItem icon="sidebar:attribution" link="/attribution" text="Attribution"/>
+          </FeatureToggle>
         </div>
 
       </div>
