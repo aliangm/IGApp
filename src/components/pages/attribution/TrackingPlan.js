@@ -31,6 +31,12 @@ export default class TrackingPlan extends Component {
     this.setState({copied: index});
   }
 
+  deleteEvent(index) {
+    const events = this.props.attribution.events;
+    events.splice(index, 1);
+    this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
+  }
+
   render() {
     const rows = this.props.attribution.events.map((item, i) => {
       const trackingCode = `analytics.track('${item.name}', {
@@ -48,19 +54,30 @@ export default class TrackingPlan extends Component {
             {trackingCode}
           </pre>
           </div>
-          <div style={{ display: 'flex', marginTop: '43px', marginRight: '12px' }}>
-            <Button type="reverse"
-                    onClick={ this.copy.bind(this, trackingCode, i) }
-                    icon="buttons:copy"
+          <div>
+            <div style={{ display: 'flex', marginTop: '21px', marginRight: '12px' }}>
+              <Button type="reverse"
+                      onClick={ this.copy.bind(this, trackingCode, i) }
+                      icon="buttons:copy"
+                      style={{
+                        width: '100px'
+                      }}
+              >
+                Copy
+              </Button>
+              <div className={ setupStyle.locals.copyMessage } hidden={ this.state.copied !== i }>
+                Copied!
+              </div>
+            </div>
+            <Button type="warning"
+                    onClick={ this.deleteEvent.bind(this, i) }
                     style={{
-                      width: '100px'
+                      width: '100px',
+                      marginTop: '10px'
                     }}
             >
-              Copy
+              Delete
             </Button>
-            <div className={ setupStyle.locals.copyMessage } hidden={ this.state.copied !== i }>
-              Copied!
-            </div>
           </div>
         </div>
       ], {
