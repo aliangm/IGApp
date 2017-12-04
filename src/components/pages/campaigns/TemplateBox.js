@@ -12,6 +12,11 @@ export default class TemplateBox extends Component {
     );
     return <div className={this.classes.frame} data-white={this.props.isWhite ? true : null} onClick={this.props.onClick} data-selected={this.props.selected ? true : null}>
       <div className={this.classes.inner}>
+        { this.props.isBack ?
+          <div className={this.classes.iconPosition}>
+            <div className={this.classes.backIcon}/>
+          </div>
+          : null }
         <div className={this.props.isCenter ? this.classes.frameTextCenter : this.classes.frameTextTop}>
           { this.props.text }
         </div>
