@@ -161,8 +161,8 @@ class AppComponent extends Component {
                 this.getPreviousData();
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
-                deferred.resolve();
               }
+              deferred.resolve();
             })
         }
         else if (response.status == 401){
@@ -217,8 +217,8 @@ class AppComponent extends Component {
                   teamMembers: data.teamMembers,
                   permissions: data.permissions
                 });
-                deferred.resolve();
               }
+              deferred.resolve();
             })
         }
         else if (response.status == 401){
@@ -393,8 +393,8 @@ class AppComponent extends Component {
                 this.setState({
                   regions: data
                 });
-                deferred.resolve();
               }
+              deferred.resolve();
             })
         }
         else if (response.status == 401){
