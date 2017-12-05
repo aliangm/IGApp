@@ -150,6 +150,7 @@ class AppComponent extends Component {
   }
 
   getUserMonthPlan(region, planDate) {
+    const deferred = q.defer();
     serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         if (response.ok) {
@@ -160,16 +161,21 @@ class AppComponent extends Component {
                 this.getPreviousData();
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
+                deferred.resolve();
               }
             })
         }
         else if (response.status == 401){
           history.push('/');
+          deferred.reject();
         }
       })
       .catch((err) => {
         console.log(err);
+        deferred.reject();
       });
+
+    return deferred.promise;
   }
 
   getPreviousData() {
