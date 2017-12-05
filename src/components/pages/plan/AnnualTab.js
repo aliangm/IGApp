@@ -284,25 +284,6 @@ export default class AnnualTab extends Component {
     this.setState({isCheckAnnual: !this.state.isCheckAnnual});
   }
 
-  approveChannel(month, channel, budget){
-    let approvedBudgets = this.props.approvedBudgets;
-    let approvedMonth = this.props.approvedBudgets[month] || {};
-    approvedMonth[channel] = parseInt(budget.replace(/[-$,]/g, ''));
-    approvedBudgets[month] = approvedMonth;
-    this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate)
-      .then(() => {
-        this.forecast();
-      })
-  }
-
-  declineChannel(month, channel, budget){
-    let projectedPlan = this.props.projectedPlan;
-    let projectedMonth = this.props.projectedPlan[month];
-    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.replace(/[-$,]/g, ''));
-    projectedPlan[month] = projectedMonth;
-    this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
-  }
-
   addChannel(newChannel) {
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
@@ -1012,8 +993,8 @@ export default class AnnualTab extends Component {
               item={ item }
               hover={ hoverValues[i] }
               key={ i }
-              approveChannel={ this.approveChannel.bind(this, i, channel, isSecondGood ? hoverValues[i] : item) }
-              declineChannel={ this.declineChannel.bind(this, i, channel, isSecondGood ? item : hoverValues[i]) }
+              approveChannel={ () => { this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item) } }
+              declineChannel={ () => { this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]) } }
               isSecondGood={isSecondGood}/>
           }
           else return <td className={ this.classes.valueCell } key={ i }>{

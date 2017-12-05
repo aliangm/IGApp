@@ -49,7 +49,9 @@ export default class Plan extends Component {
       whatIf: this.plan.bind(this),
       approveAll: this.approveAllBudgets.bind(this),
       declineAll: this.declineAllBudgets.bind(this),
-      editMode: false
+      editMode: false,
+      approveChannel: this.approveChannel.bind(this),
+      declineChannel: this.declineChannel.bind(this)
     };
   }
 
@@ -94,6 +96,25 @@ export default class Plan extends Component {
     projectedPlan.forEach((month, index) => {
       month.plannedChannelBudgets = this.props.approvedBudgets[index];
     });
+    return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
+  }
+
+  approveChannel(month, channel, budget){
+    let approvedBudgets = this.props.approvedBudgets;
+    let approvedMonth = this.props.approvedBudgets[month] || {};
+    approvedMonth[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
+    approvedBudgets[month] = approvedMonth;
+    return this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineChannel(month, channel, budget){
+    let projectedPlan = this.props.projectedPlan;
+    let projectedMonth = this.props.projectedPlan[month];
+    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
+    projectedPlan[month] = projectedMonth;
     return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 

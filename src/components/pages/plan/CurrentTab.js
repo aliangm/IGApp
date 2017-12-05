@@ -16,6 +16,7 @@ import style from 'styles/plan/current-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import Paging from 'components/Paging';
+import TopSuggestions from 'components/pages/plan/TopSuggestions';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -127,6 +128,9 @@ export default class CurrentTab extends Component {
             </PlanPopup>
           </div>
         </div>
+      </div>
+      <div style={{ padding: '0 31px' }}>
+        <TopSuggestions {... this.props}/>
       </div>
       <div className={ this.classes.innerBox }>
         <Masonry className={ this.classes.boxesContainer } options={{
