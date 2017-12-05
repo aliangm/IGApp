@@ -94,20 +94,13 @@ class AppComponent extends Component {
   }
 
   componentDidMount() {
+    this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave);
     const tasks = [
-
-      this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave),
-
       this.getUserAccount(),
-
       this.getRegions(),
-
       this.getIndicatorsMetadata(),
-
       this.getChannelsMetadata(),
-
       this.getUserMonthPlan(localStorage.getItem('region'), null)
-
     ];
 
     Promise.all(tasks)
