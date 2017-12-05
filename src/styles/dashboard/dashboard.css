@@ -139,3 +139,23 @@
     height: 64px;
     width:64px;
 }
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.sad-icon {
+    background: url(../../assets/sad-smiley.svg) center center no-repeat;
+    background-size: contain;
+    height: 35px;
+    width: 35px;
+    margin-top: 15px;
+}
+
+.no-metrics {
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9b9b9b;
+}

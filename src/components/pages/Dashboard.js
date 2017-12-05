@@ -211,9 +211,20 @@ export default class Dashboard extends Component {
               <div className={ dashboardStyle.locals.text }>
                 LTV:CAC Ratio
               </div>
-              <div className={ dashboardStyle.locals.number }>
-                {ratio}
-              </div>
+              { ratio && isFinite(ratio) ?
+                <div className={dashboardStyle.locals.number}>
+                  {ratio}
+                </div>
+                :
+                <div>
+                  <div className={ dashboardStyle.locals.center }>
+                    <div className={ dashboardStyle.locals.sadIcon }/>
+                  </div>
+                  <div className={ dashboardStyle.locals.noMetrics }>
+                    Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.
+                  </div>
+                </div>
+              }
             </div>
           </div>
         </div>
