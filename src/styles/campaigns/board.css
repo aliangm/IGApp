@@ -10,7 +10,7 @@
 }
 
 .desk, .desk-placeholder, .desk-placeholder:hover {
-    width: 280px;
+    width: 265px;
     display: inline-flex;
     flex-direction: column;
     height: 100%;
