@@ -457,7 +457,8 @@ class AppComponent extends Component {
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,
-      notifications: data.notifications || []
+      notifications: data.notifications || [],
+      CEVs: data.CEVs || {}
     });
   }
 
