@@ -479,7 +479,7 @@ export default class AnnualTab extends Component {
               }}>Forecast</Button>
             </div>
           </div>
-          <div className={ planStyles.locals.title } style={{ padding: '0', marginTop: '-15px' }}>
+          <div className={ planStyles.locals.title } style={{ padding: '0', height: '35px' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ this.classes.titleBudget }>
                 Budget left to plan
@@ -503,95 +503,93 @@ export default class AnnualTab extends Component {
             </div>
           </div>
           <div className={ this.classes.innerBox }>
-            <div className={ this.classes.wrap } ref="wrap">
-              <div className={ this.classes.box }>
-                <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
-                  <thead>
-                  { headRow }
-                  </thead>
-                  <tbody className={ this.classes.tableBody }>
-                  { rows }
-                  </tbody>
-                  <tfoot>
-                  { footRow }
-                  </tfoot>
-                </table>
-              </div>
+            <div className={ this.classes.box }>
+              <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
+                <thead>
+                { headRow }
+                </thead>
+                <tbody className={ this.classes.tableBody }>
+                { rows }
+                </tbody>
+                <tfoot>
+                { footRow }
+                </tfoot>
+              </table>
+            </div>
 
-              <div className={ this.classes.hoverBox }>
-                <table className={ this.classes.hoverTable }>
-                  <thead>{ headRow }</thead>
-                  <tbody>{ rows }</tbody>
-                  <tfoot>{ footRow }</tfoot>
-                </table>
-              </div>
+            <div className={ this.classes.hoverBox }>
+              <table className={ this.classes.hoverTable }>
+                <thead>{ headRow }</thead>
+                <tbody>{ rows }</tbody>
+                <tfoot>{ footRow }</tfoot>
+              </table>
+            </div>
 
-              <ContextMenu id="rightClick">
-                <SubMenu title="Increase by" hoverDelay={250}>
-                  <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
-                    10%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
-                    20%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
-                    30%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
-                    40%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
-                    50%
-                  </MenuItem>
-                </SubMenu>
-                <SubMenu title="Decrease by" hoverDelay={250}>
-                  <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
-                    10%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
-                    20%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
-                    30%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
-                    40%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
-                    50%
-                  </MenuItem>
-                </SubMenu>
-              </ContextMenu>
+            <ContextMenu id="rightClick">
+              <SubMenu title="Increase by" hoverDelay={250}>
+                <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
+                  10%
+                </MenuItem>
+                <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
+                  20%
+                </MenuItem>
+                <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
+                  30%
+                </MenuItem>
+                <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
+                  40%
+                </MenuItem>
+                <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
+                  50%
+                </MenuItem>
+              </SubMenu>
+              <SubMenu title="Decrease by" hoverDelay={250}>
+                <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
+                  10%
+                </MenuItem>
+                <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
+                  20%
+                </MenuItem>
+                <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
+                  30%
+                </MenuItem>
+                <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
+                  40%
+                </MenuItem>
+                <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
+                  50%
+                </MenuItem>
+              </SubMenu>
+            </ContextMenu>
 
-              <PlanPopup ref="headPopup" style={{
-                width: '350px',
-                left: this.state.popupLeft + 'px',
-                top: this.state.popupTop + 'px',
-                marginTop: '5px'
-              }} title="Events: Mar/16"
-                         onClose={() => {
-                           this.setState({
-                             popupShown: false,
-                             popupLeft: 0,
-                             popupTop: 0
-                           });
-                         }}
-              >
-                <PopupTextContent>
-                  <strong>User Events</strong>
-                  <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
-                    Louis
-                    Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-                  <strong>Global Events</strong>
-                  <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                    correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
-                    do
-                    not</p>
-                </PopupTextContent>
-              </PlanPopup>
-              <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref="forecastingGraph">
-                <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
-              </div>
+            <PlanPopup ref="headPopup" style={{
+              width: '350px',
+              left: this.state.popupLeft + 'px',
+              top: this.state.popupTop + 'px',
+              marginTop: '5px'
+            }} title="Events: Mar/16"
+                       onClose={() => {
+                         this.setState({
+                           popupShown: false,
+                           popupLeft: 0,
+                           popupTop: 0
+                         });
+                       }}
+            >
+              <PopupTextContent>
+                <strong>User Events</strong>
+                <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
+                  Louis
+                  Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
+                <strong>Global Events</strong>
+                <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
+                  correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
+                  do
+                  not</p>
+              </PopupTextContent>
+            </PlanPopup>
+            <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref="forecastingGraph">
+              <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
             </div>
           </div>
         </div>

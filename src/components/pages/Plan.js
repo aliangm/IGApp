@@ -451,7 +451,8 @@ export default class Plan extends Component {
               </Popup>
               <div>
                 <Button type="reverse" contClassName={ this.classes.dropButton } style={{
-                  width: '102px'
+                  width: '102px',
+                  marginLeft: '15px'
                 }} onClick={() => {
                   this.setState({dropmenuVisible: !this.state.dropmenuVisible})
                 }}>

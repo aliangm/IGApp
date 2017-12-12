@@ -1,5 +1,5 @@
 .head {
-  height: 100px;
+  height: 90px;
   border-bottom: 1px solid #e7e9ed;
   display: flex;
   align-items: center;
@@ -16,7 +16,6 @@
   color: #0099CC;
   flex-shrink: 0;
   flex-grow: 0;
-  min-width: 167px;
   padding-left: 32px;
 }
 
@@ -24,7 +23,7 @@
   margin-left: 30px;
   flex-shrink: 0;
   flex-grow: 0;
-  height: 85px;
+  height: 100%;
   display: flex;
 }
 
@@ -49,7 +48,6 @@
 .head-tab {
   height: 100%;
   padding: 0 16px 0 15px;
-  margin: 0 15px;
   text-transform: capitalize;
   font-size: 16px;
   font-weight: 600;
@@ -216,9 +214,9 @@
   border-radius: 50%;
   width: 20px;
   height: 20px;
-  left: -13px;
-  top: -10px;
-  position: relative;
+  left: 132px;
+  top: 16px;
+  position: absolute;
   border: solid 2px white;
 }
 
@@ -276,11 +274,21 @@
   composes: dropmenu-item;
   background-color: #259af2;
   color: white;
+  justify-content: center;
 }
 
 .dropmenu-item-cancel {
   composes: dropmenu-item;
   color: #259af2;
+  justify-content: center;
+}
+
+.dropmenu-item-cancel:hover, .dropmenu-item-cancel[data-selected] {
+  background-color: initial;
+}
+
+.dropmenu-item-add:hover, .dropmenu-item-add[data-selected] {
+  background-color: #259af2;
 }
 
 .dropButton {
