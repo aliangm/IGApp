@@ -226,22 +226,6 @@ export default class AnnualTab extends Component {
     this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
   }
 
-  forecast() {
-    const callback = (data) => {
-      // PATCH
-      // Update user month plan using another request
-      const approvedBudgetsProjection = this.props.approvedBudgetsProjection;
-      data.projectedPlan.forEach((month, index) => {
-        if (!approvedBudgetsProjection[index]) {
-          approvedBudgetsProjection[index] = {};
-        }
-        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
-      });
-      this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
-    };
-    this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region, true);
-  }
-
   handleChangeContextMenu(event, data) {
     const channel = data.channel;
     const percent = data.percent;

@@ -85,7 +85,7 @@ export default class Plan extends Component {
         this.plan(true, null, callback, this.props.region, false);
       }
       else {
-        this.setState({editMode: true});
+        this.setState({editMode: true, addChannelPopup: true});
       }
       disablePopupMode();
     }
@@ -373,6 +373,22 @@ export default class Plan extends Component {
       });
   }
 
+  forecast() {
+    const callback = (data) => {
+      // PATCH
+      // Update user month plan using another request
+      const approvedBudgetsProjection = this.props.approvedBudgetsProjection;
+      data.projectedPlan.forEach((month, index) => {
+        if (!approvedBudgetsProjection[index]) {
+          approvedBudgetsProjection[index] = {};
+        }
+        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
+      });
+      this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
+    };
+    this.plan(false, {useApprovedBudgets: true}, callback, this.props.region, true);
+  }
+
   setRef = (channel, ref) => {
     this.refs[channel] = ref;
   };
@@ -570,48 +586,52 @@ export default class Plan extends Component {
                   </PlanPopup>
                 </div>
               </div>
-              <Button type="primary2" style={{
-                marginLeft: '15px',
-                width: '102px'
-              }} selected={ this.state.editMode ? true : null } onClick={() => {
-                if (this.state.editMode) {
-                  this.editUpdate()
-                    .then( () => {
-                      this.forecast();
-                    });
-                }
-                this.setState({
-                  editMode: !this.state.editMode
-                });
-              }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
-                { this.state.editMode ? "Done" : "Edit" }
-              </Button>
-              <Popup
-                className={ this.classes.dropmenuEdit }
-                hidden={ !this.state.editMode }
-              >
+              { this.state.selectedTab === 1 ?
                 <div>
-                  <div className={ this.classes.dropmenuItemAdd } onClick={ () => {
-                    this.setState({addChannelPopup: true});
-                  }}>
-                    Add Channel
-                  </div>
-                  <div className={ this.classes.dropmenuItemCancel } onClick={ () => {
-                    this.setState({editMode: false});
-                    this.props.getUserMonthPlan(this.props.region);
-                  } }>
-                    Cancel
-                  </div>
+                  <Button type="primary2" style={{
+                    marginLeft: '15px',
+                    width: '102px'
+                  }} selected={ this.state.editMode ? true : null } onClick={() => {
+                    if (this.state.editMode) {
+                      this.editUpdate()
+                        .then( () => {
+                          this.forecast();
+                        });
+                    }
+                    this.setState({
+                      editMode: !this.state.editMode
+                    });
+                  }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
+                    { this.state.editMode ? "Done" : "Edit" }
+                  </Button>
+                  <Popup
+                    className={ this.classes.dropmenuEdit }
+                    hidden={ !this.state.editMode }
+                  >
+                    <div>
+                      <div className={ this.classes.dropmenuItemAdd } onClick={ () => {
+                        this.setState({addChannelPopup: true});
+                      }}>
+                        Add Channel
+                      </div>
+                      <div className={ this.classes.dropmenuItemCancel } onClick={ () => {
+                        this.setState({editMode: false});
+                        this.props.getUserMonthPlan(this.props.region);
+                      } }>
+                        Cancel
+                      </div>
+                    </div>
+                  </Popup>
+                  <AddChannelPopup
+                    hidden={ !this.state.addChannelPopup }
+                    onChannelChoose={ this.addChannel.bind(this) }
+                    channels={ output() }
+                    planChannels={ planChannels.map(item => { return { id: item } }) }
+                    close={ () => { this.setState({addChannelPopup: false}) } }
+                    addUnknownChannel={ this.addUnknownChannel.bind(this) }
+                  />
                 </div>
-              </Popup>
-              <AddChannelPopup
-                hidden={ !this.state.addChannelPopup }
-                onChannelChoose={ this.addChannel.bind(this) }
-                channels={ output() }
-                planChannels={ planChannels.map(item => { return { id: item } }) }
-                close={ () => { this.setState({addChannelPopup: false}) } }
-                addUnknownChannel={ this.addUnknownChannel.bind(this) }
-              />
+                : null }
             </div>
           }
         </div>
