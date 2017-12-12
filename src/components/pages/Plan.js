@@ -443,7 +443,7 @@ export default class Plan extends Component {
           </div>
           <div className={this.classes.headPlan}>
             { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
-              <div>
+              <div style={{ display: 'flex' }}>
                 <div className={this.classes.error}>
                   <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
                     href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
