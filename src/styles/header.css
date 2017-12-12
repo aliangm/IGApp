@@ -3,7 +3,7 @@
 .box {
   display: flex;
   align-items: center;
-  height: 79px;
+  height: 70px;
   background: white;
   position: fixed;
   top: 0;
@@ -17,10 +17,11 @@
   flex-grow: 0;
 
   background: #273142 url(assets/logo.png) center center no-repeat;
-  background-size: 92px auto;
+  background-size: 70px auto;
 
   width: 240px;
   height: 100%;
+  cursor: pointer;
 }
 
 .logo-menu {
@@ -128,19 +129,28 @@
 .user {
   font-size: 18px;
   font-weight: bold;
-  margin-top: 4px;
   letter-spacing: -0.010em;
+  margin-left: 20px;
+  line-height: 40px;
 }
 
 .user-logo {
-  composes: user-item;
-
-  width: 44px;
-  height: 44px;
-  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   background: center center no-repeat;
-  background-size: auto 44px;
+  background-size: 40px 40px;
   flex-shrink: 0;
+}
+
+.triangle {
+  border: 7px solid transparent;
+  border-top-color: currentColor;
+  color: #4b515e;
+  position: relative;
+  top: 18px;
+  left: 5px;
+  height: fit-content;
 }
 
 .log-out-icon {
@@ -162,6 +172,10 @@
   height: 24px;
   background: url(../assets/dots-more.svg) center center no-repeat;
   background-size: auto 24px;
+}
+
+.dropmenu {
+  display: inline-flex;
 }
 
 .location-icon {

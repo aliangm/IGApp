@@ -1,8 +1,6 @@
 import React from 'react';
-
 import Component from 'components/Component';
 import style from 'styles/header.css';
-
 import Button from 'components/controls/Button';
 import Popup from 'components/Popup';
 import global from 'global';
@@ -11,6 +9,7 @@ import RegionPopup from 'components/RegionPopup';
 import Notifications from 'components/pages/header/Notifications';
 
 export default class Header extends Component {
+
   style = style;
 
   constructor(props) {
@@ -48,31 +47,31 @@ export default class Header extends Component {
 
   openSidebar = () => {
     global.dispatchEvent('sidebar:open');
-  }
+  };
 
   showDropmenu = () => {
     this.setState({
       dropmenuVisible: true
     });
-  }
+  };
 
   toggleDropmenuBig = () => {
     this.setState({
       dropmenuVisibleBig: !this.state.dropmenuVisibleBig
     });
-  }
+  };
 
   toggleRegionsBig = () => {
     this.setState({
       regionsVisibleBig: !this.state.regionsVisibleBig
     });
-  }
+  };
 
   toggleRegions = () => {
     this.setState({
       regionsVisible: !this.state.regionsVisible
     });
-  }
+  };
 
   get menuBig() {
     const hasUser = this.props.user;
@@ -145,12 +144,22 @@ export default class Header extends Component {
             <div className={ this.classes.settings } data-icon="header:settings" />
           </a>
           : null }
+        { hasUser ?
+          <div className={this.classes.item}>
+            <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
+          </div>
+          : null }
         <div className={ this.classes.dropmenuButton }
              data-selected={ this.state.dropmenuVisibleBig ? true : null }
              role="button"
              onClick={ this.toggleDropmenuBig }
         >
-          <div className={ this.classes.dropmenuIcon } >
+          <div className={ this.classes.dropmenu } >
+            <div className={ this.classes.userLogo } style={{ backgroundImage: user.pictureUrl ? 'url(' + user.pictureUrl + ')' : 'none' }} />
+            <div className={ this.classes.user }>
+              { user.name }
+            </div>
+            <div className={ this.classes.triangle }/>
             <Popup className={ this.classes.dropmenuPopup }
                    hidden={ !this.state.dropmenuVisibleBig } onClose={() => {
               this.setState({
@@ -170,18 +179,6 @@ export default class Header extends Component {
           </div>
         </div>
       </div>
-      { hasUser ?
-        <div className={ this.classes.userBox }>
-          <div className={ this.classes.logged }>
-            {this.props.userCompany}
-            <div className={ this.classes.user }>
-              { user.name }
-            </div>
-          </div>
-          <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
-          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + user.pictureUrl + ')' }} />
-        </div>
-        : null }
     </div>
   }
 
@@ -305,7 +302,7 @@ export default class Header extends Component {
   render() {
     return <div className={ this.classes.box }>
       <div className={ this.classes.logoMenu } onClick={ this.openSidebar } />
-      <div className={ this.classes.logo }></div>
+      <div className={ this.classes.logo } onClick={ () => { history.push('/plan') } }/>
       { this.menuBig }
       { this.menuSmall }
       <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }} createUserMonthPlan={ this.props.createUserMonthPlan }/>

@@ -1,9 +1,9 @@
 .head {
-  height: 85px;
+  height: 100px;
   border-bottom: 1px solid #e7e9ed;
   display: flex;
   align-items: center;
-  background: white;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .head-title {
@@ -12,7 +12,7 @@
   /*line-height: 36px;*/
   letter-spacing: -0.01em;
   overflow: hidden;
-  font-weight: 600;
+  font-weight: 500;
   color: #0099CC;
   flex-shrink: 0;
   flex-grow: 0;
@@ -21,7 +21,7 @@
 }
 
 .head-tabs {
-  margin-left: auto;
+  margin-left: 30px;
   flex-shrink: 0;
   flex-grow: 0;
   height: 85px;
@@ -32,7 +32,7 @@
   height: 100%;
  /** padding: 0 32px 0 30px;
   margin: 0 5px;**/
-  margin-left: 10%;
+  margin-left: auto;
   text-transform: uppercase;
   font-size: 16px;
   font-weight: 600;
@@ -43,14 +43,15 @@
   cursor: pointer;
   position: relative;
   white-space: nowrap;
+  margin-right: 30px;
 }
 
 .head-tab {
   height: 100%;
   padding: 0 16px 0 15px;
   margin: 0 15px;
-  text-transform: uppercase;
-  font-size: 14px;
+  text-transform: capitalize;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   justify-content: center;
@@ -59,6 +60,7 @@
   cursor: pointer;
   position: relative;
   white-space: nowrap;
+  color: #354052;
 }
 
 .head-tab:hover {
@@ -76,8 +78,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px;
-  background: #0e568b;
+  height: 5px;
+  background: #1889dd;
 }
 
 .pageInner {
@@ -191,7 +193,7 @@
 }
 
 .error {
-  padding-left: 15px;
+  padding-right: 15px;
   color: red;
   font-size: 13px;
   text-align: left;
@@ -225,4 +227,87 @@
   align-items: flex-end;
   justify-content: center;
   width: 100%;
+}
+
+.dropmenu {
+  width: 100px;
+  left: 161px !important;
+  padding: 4px 0 !important;
+  min-height: inherit !important;
+  top: 74px !important;
+  text-transform: capitalize;
+}
+
+.dropmenu-edit {
+  left: 393px !important;
+  width: 110px;
+  composes: dropmenu;
+}
+
+.button-triangle {
+  border: .25rem solid transparent;
+  border-top-color: currentColor;
+  color: #2ea1f8;
+  position: relative;
+  top: 3px;
+  left: 13px;
+  height: fit-content;
+}
+
+.dropmenu-item {
+  padding: 0 13px;
+  display: -webkit-box;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  color: #273142;
+  font-size: 14px;
+  height: 33px;
+  text-decoration: none;
+}
+
+.dropmenu-item:hover, .dropmenu-item[data-selected] {
+  background-color: #E5F5F8;
+}
+
+.dropmenu-item-add {
+  composes: dropmenu-item;
+  background-color: #259af2;
+  color: white;
+}
+
+.dropmenu-item-cancel {
+  composes: dropmenu-item;
+  color: #259af2;
+}
+
+.dropButton {
+  padding: 0 11px 0 0;
+}
+
+.budget-change-box {
+  padding: 5px 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.left {
+  width: 50%;
+  display: flex;
+  justify-content: flex-start;
+  -webkit-box-pack: start;
+}
+
+.right {
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  -webkit-box-pack: end;
+}
+
+.budget-change-field {
+  flex-grow: 1;
+  flex-shrink: 0;
 }

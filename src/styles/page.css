@@ -1,5 +1,5 @@
 .static {
-  margin-top: 79px;
+  margin-top: 70px;
   margin-left: 240px;
   position: relative;
   z-index: 9;
@@ -11,7 +11,7 @@
 
 .popup {
   position: fixed;
-  top: 79px;
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -22,7 +22,6 @@
 }
 
 .box {
-  padding: 20px;
   max-width: 1051px;
 
   min-height: 100%;

@@ -60,7 +60,6 @@ export default class Sidebar extends Component {
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ subMenu }/>
               {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
               <MenuItem icon="sidebar:plan" link="/plan" text="Plan"/>
-              <MenuItem icon="sidebar:analyze" link="/analyze" text="Analyze"/>
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns"/>
