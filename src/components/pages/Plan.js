@@ -441,199 +441,201 @@ export default class Plan extends Component {
               })
             }
           </div>
-          { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
-            <div className={this.classes.headPlan}>
-              <div className={this.classes.error}>
-                <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
-                  href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
-              </div>
-              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup} planNeedsUpdate={this.props.planNeedsUpdate}/>
-              <Popup style={{
-                width: '265px',
-                top: '180%',
-                transform: 'translate(0, -50%)'
-              }} hidden={!this.state.popup} onClose={() => {
-                this.setState({
-                  popup: false
-                });
-              }}>
-                <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
-                  this.props.setDataAsState(data)
-                }, this.props.region, false)} onBack={() => {
+          <div className={this.classes.headPlan}>
+            { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
+              <div>
+                <div className={this.classes.error}>
+                  <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
+                    href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
+                </div>
+                <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup} planNeedsUpdate={this.props.planNeedsUpdate}/>
+                <Popup style={{
+                  width: '265px',
+                  top: '180%',
+                  transform: 'translate(0, -50%)'
+                }} hidden={!this.state.popup} onClose={() => {
                   this.setState({
                     popup: false
-                  })
-                }}/>
-              </Popup>
-              <div>
-                <Button type="reverse" contClassName={ this.classes.dropButton } style={{
-                  width: '102px',
-                  marginLeft: '15px'
-                }} onClick={() => {
-                  this.setState({dropmenuVisible: !this.state.dropmenuVisible})
+                  });
                 }}>
-                  Apply All
-                  <div className={this.classes.buttonTriangle}/>
-                </Button>
-                <Popup
-                  className={ this.classes.dropmenu }
-                  hidden={ !this.state.dropmenuVisible } onClose={() => {
-                  this.setState({
-                    dropmenuVisible: false
-                  });
-                }}
-                >
-                  <div>
-                    <div className={ this.classes.dropmenuItem } onClick={ () => {
-                      this.approveAllBudgets()
-                        .then( () => {
-                          this.forecast();
-                        });
-                    }}>
-                      Approve all
-                    </div>
-                    <div className={ this.classes.dropmenuItem } onClick={ this.declineAllBudgets.bind(this) }>
-                      Decline all
-                    </div>
-                  </div>
-                </Popup>
-              </div>
-              <div>
-                <Button type="reverse" style={{
-                  marginLeft: '15px',
-                  width: '102px'
-                }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                  this.setState({
-                    whatIfSelected: true
-                  });
-
-                  this.refs.whatIfPopup.open();
-                }}>What if</Button>
-                <div style={{ position: 'relative' }}>
-                  <PlanPopup ref="whatIfPopup" style={{
-                    width: '367px',
-                    right: '110px',
-                    left: 'auto',
-                    top: '-37px',
-                    textAlign: 'initial',
-                    cursor: 'initial'
-                  }} hideClose={ true } title="What If - Scenarios Management">
-                    <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                      <div className={ this.classes.left }>
-                        <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                      </div>
-                      <div className={ this.classes.right }>
-                        <Textfield style={{ maxWidth: '110px' }}
-                                   value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                   className={ this.classes.budgetChangeField }
-                                   onChange={ this.handleChangeBudget.bind(this) }
-                                   onKeyDown={(e) => {
-                                     if (e.keyCode === 13) {
-                                       this.whatIf();
-                                     }
-                                   }}
-                                   disabled={ !this.state.isCheckAnnual }
-                        />
-                      </div>
-                    </div>
-                    <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                      <div className={ this.classes.left }>
-                        <div className={ this.classes.left }>
-                          <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
-                        </div>
-                      </div>
-                      { this.state.isCheckAnnual ? null : this.monthBudgets() }
-                    </div>
-                    <div className={ this.classes.budgetChangeBox }>
-                      <div className={ this.classes.left }>
-                        <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
-                      </div>
-                      <div className={ this.classes.right }>
-                        <Textfield style={{
-                          maxWidth: '110px' }}
-                                   value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                   className={ this.classes.budgetChangeField }
-                                   onChange={(e) => {
-                                     this.setState({
-                                       maxChannelsField: e.target.value
-                                     });
-                                   }}
-                                   onKeyDown={(e) => {
-                                     if (e.keyCode === 13) {
-                                       this.whatIf();
-                                     }
-                                   }}
-                        />
-                      </div>
-                    </div>
-                    <div className={ this.classes.budgetChangeBox }>
-                      <Button type="primary2" style={{
-                        width: '110px'
-                      }} onClick={ this.whatIfTry }>Try</Button>
-                    </div>
-                    <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                      <div className={ this.classes.left }>
-                        <Button type="normal" style={{
-                          width: '110px'
-                        }} onClick={ this.whatIfCancel }>Cancel</Button>
-                      </div>
-                      <div className={ this.classes.right }>
-                        <Button type="accent2" style={{
-                          width: '110px'
-                        }} onClick={ this.whatIfCommit }>Commit</Button>
-                      </div>
-                    </div>
-                  </PlanPopup>
-                </div>
-              </div>
-              { this.state.selectedTab === 1 ?
-                <div>
-                  <Button type="primary2" style={{
-                    marginLeft: '15px',
-                    width: '102px'
-                  }} selected={ this.state.editMode ? true : null } onClick={() => {
-                    if (this.state.editMode) {
-                      this.editUpdate()
-                        .then( () => {
-                          this.forecast();
-                        });
-                    }
+                  <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
+                    this.props.setDataAsState(data)
+                  }, this.props.region, false)} onBack={() => {
                     this.setState({
-                      editMode: !this.state.editMode
-                    });
-                  }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
-                    { this.state.editMode ? "Done" : "Edit" }
+                      popup: false
+                    })
+                  }}/>
+                </Popup>
+                <div>
+                  <Button type="reverse" contClassName={ this.classes.dropButton } style={{
+                    width: '102px',
+                    marginLeft: '15px'
+                  }} onClick={() => {
+                    this.setState({dropmenuVisible: !this.state.dropmenuVisible})
+                  }}>
+                    Apply All
+                    <div className={this.classes.buttonTriangle}/>
                   </Button>
                   <Popup
-                    className={ this.classes.dropmenuEdit }
-                    hidden={ !this.state.editMode }
+                    className={ this.classes.dropmenu }
+                    hidden={ !this.state.dropmenuVisible } onClose={() => {
+                    this.setState({
+                      dropmenuVisible: false
+                    });
+                  }}
                   >
                     <div>
-                      <div className={ this.classes.dropmenuItemAdd } onClick={ () => {
-                        this.setState({addChannelPopup: true});
+                      <div className={ this.classes.dropmenuItem } onClick={ () => {
+                        this.approveAllBudgets()
+                          .then( () => {
+                            this.forecast();
+                          });
                       }}>
-                        Add Channel
+                        Approve all
                       </div>
-                      <div className={ this.classes.dropmenuItemCancel } onClick={ () => {
-                        this.setState({editMode: false});
-                        this.props.getUserMonthPlan(this.props.region);
-                      } }>
-                        Cancel
+                      <div className={ this.classes.dropmenuItem } onClick={ this.declineAllBudgets.bind(this) }>
+                        Decline all
                       </div>
                     </div>
                   </Popup>
-                  <AddChannelPopup
-                    hidden={ !this.state.addChannelPopup }
-                    onChannelChoose={ this.addChannel.bind(this) }
-                    channels={ output() }
-                    planChannels={ planChannels.map(item => { return { id: item } }) }
-                    close={ () => { this.setState({addChannelPopup: false}) } }
-                    addUnknownChannel={ this.addUnknownChannel.bind(this) }
-                  />
                 </div>
-                : null }
-            </div>
-          }
+                <div>
+                  <Button type="reverse" style={{
+                    marginLeft: '15px',
+                    width: '102px'
+                  }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
+                    this.setState({
+                      whatIfSelected: true
+                    });
+
+                    this.refs.whatIfPopup.open();
+                  }}>What if</Button>
+                  <div style={{ position: 'relative' }}>
+                    <PlanPopup ref="whatIfPopup" style={{
+                      width: '367px',
+                      right: '110px',
+                      left: 'auto',
+                      top: '-37px',
+                      textAlign: 'initial',
+                      cursor: 'initial'
+                    }} hideClose={ true } title="What If - Scenarios Management">
+                      <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
+                        <div className={ this.classes.left }>
+                          <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Textfield style={{ maxWidth: '110px' }}
+                                     value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
+                                     className={ this.classes.budgetChangeField }
+                                     onChange={ this.handleChangeBudget.bind(this) }
+                                     onKeyDown={(e) => {
+                                       if (e.keyCode === 13) {
+                                         this.whatIf();
+                                       }
+                                     }}
+                                     disabled={ !this.state.isCheckAnnual }
+                          />
+                        </div>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
+                        <div className={ this.classes.left }>
+                          <div className={ this.classes.left }>
+                            <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                          </div>
+                        </div>
+                        { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                      </div>
+                      <div className={ this.classes.budgetChangeBox }>
+                        <div className={ this.classes.left }>
+                          <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Textfield style={{
+                            maxWidth: '110px' }}
+                                     value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
+                                     className={ this.classes.budgetChangeField }
+                                     onChange={(e) => {
+                                       this.setState({
+                                         maxChannelsField: e.target.value
+                                       });
+                                     }}
+                                     onKeyDown={(e) => {
+                                       if (e.keyCode === 13) {
+                                         this.whatIf();
+                                       }
+                                     }}
+                          />
+                        </div>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox }>
+                        <Button type="primary2" style={{
+                          width: '110px'
+                        }} onClick={ this.whatIfTry }>Try</Button>
+                      </div>
+                      <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
+                        <div className={ this.classes.left }>
+                          <Button type="normal" style={{
+                            width: '110px'
+                          }} onClick={ this.whatIfCancel }>Cancel</Button>
+                        </div>
+                        <div className={ this.classes.right }>
+                          <Button type="accent2" style={{
+                            width: '110px'
+                          }} onClick={ this.whatIfCommit }>Commit</Button>
+                        </div>
+                      </div>
+                    </PlanPopup>
+                  </div>
+                </div>
+              </div>
+            }
+            { this.state.selectedTab === 1 ?
+              <div>
+                <Button type="primary2" style={{
+                  marginLeft: '15px',
+                  width: '102px'
+                }} selected={ this.state.editMode ? true : null } onClick={() => {
+                  if (this.state.editMode) {
+                    this.editUpdate()
+                      .then( () => {
+                        this.forecast();
+                      });
+                  }
+                  this.setState({
+                    editMode: !this.state.editMode
+                  });
+                }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
+                  { this.state.editMode ? "Done" : "Edit" }
+                </Button>
+                <Popup
+                  className={ this.classes.dropmenuEdit }
+                  hidden={ !this.state.editMode }
+                >
+                  <div>
+                    <div className={ this.classes.dropmenuItemAdd } onClick={ () => {
+                      this.setState({addChannelPopup: true});
+                    }}>
+                      Add Channel
+                    </div>
+                    <div className={ this.classes.dropmenuItemCancel } onClick={ () => {
+                      this.setState({editMode: false});
+                      this.props.getUserMonthPlan(this.props.region);
+                    } }>
+                      Cancel
+                    </div>
+                  </div>
+                </Popup>
+                <AddChannelPopup
+                  hidden={ !this.state.addChannelPopup }
+                  onChannelChoose={ this.addChannel.bind(this) }
+                  channels={ output() }
+                  planChannels={ planChannels.map(item => { return { id: item } }) }
+                  close={ () => { this.setState({addChannelPopup: false}) } }
+                  addUnknownChannel={ this.addUnknownChannel.bind(this) }
+                />
+              </div>
+              : null }
+          </div>
         </div>
         <div className={ this.classes.serverDown }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
