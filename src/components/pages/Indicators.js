@@ -1,18 +1,14 @@
 import React from 'react';
-
 import Component from 'components/Component';
 import Page from 'components/Page';
-
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Item from 'components/pages/indicators/Item';
-
 import style from 'styles/onboarding/onboarding.css';
 import indiStyle from 'styles/indicators/indicators.css';
-
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import history from 'history';
 import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
@@ -24,9 +20,9 @@ import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticP
 import Loading from 'components/pages/indicators/Loading';
 import { getIndicatorsWithProps } from 'components/utils/indicators';
 import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
-import _ from 'lodash';
 
 export default class Indicators extends Component {
+
   style = style;
   styles = [indiStyle];
 
@@ -247,6 +243,7 @@ export default class Indicators extends Component {
           maxValue={ properties[indicator].range.max }
           isPercentage={ properties[indicator].isPercentage }
           description ={ properties[indicator].description }
+          formula ={ properties[indicator].formula }
           isDirectionDown={ !properties[indicator].isDirectionUp }
           isDollar={ properties[indicator].isDollar }
           {... indicatorsSpecialProp[indicator]}

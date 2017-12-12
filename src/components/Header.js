@@ -290,8 +290,10 @@ export default class Header extends Component {
   }
 
   logout() {
-    this.props.auth.logout();
-    history.push('/');
+    this.props.updateState({unsaved: false}, () => {
+      this.props.auth.logout();
+      history.push('/');
+    });
   }
 
   changeRegion(region) {

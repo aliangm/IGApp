@@ -126,12 +126,14 @@ export default class IndicatorsGraph extends Component {
                     </div>
                     : null}
                   <div>
-                    {indicatorsMapping[item.dataKey].title + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
-                    {prevIndex >= 0 ?
-                      <div style={{ color: this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                        {' (' + (this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') + Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
+                    { prevIndex >= 0 && this.props.data[prevIndex][item.dataKey + 'Suggested'] ?
+                      <div>
+                        {indicatorsMapping[item.dataKey].title + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
+                        <div style={{ color: this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
+                          {' (' + (this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') + Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
+                        </div>
                       </div>
-                      : null}
+                      : null }
                   </div>
                   {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
                     <div>
@@ -155,8 +157,8 @@ export default class IndicatorsGraph extends Component {
           { menuItems }
         </div>
       </div>
-      <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft }}>
-        <LineChart width={this.width} height={300} data={ this.props.data }>
+      <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft, marginTop: '30px' }}>
+        <LineChart width={this.width} height={260} data={ this.props.data }>
           <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <YAxis width={82} style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <CartesianGrid vertical={ false }/>

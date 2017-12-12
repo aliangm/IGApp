@@ -247,7 +247,7 @@ export default class Campaigns extends Component {
           <div hidden={ !this.state.showPopup }>
             <CampaignPopup
               campaign={ this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign  }
-              channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
+              channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
               closePopup={ this.closePopup.bind(this) }
               updateCampaign={ this.updateCampaign }
               teamMembers={ teamMembers }

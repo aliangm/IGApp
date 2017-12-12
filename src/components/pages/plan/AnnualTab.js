@@ -185,7 +185,7 @@ export default class AnnualTab extends Component {
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
     this.state.draggableValues.forEach(cell => {
-      if (planUnknownChannels.length > 0 && planUnknownChannels[cell.i][cell.channel] !== undefined) {
+      if (planUnknownChannels.length > 0 && planUnknownChannels[cell.i] && planUnknownChannels[cell.i][cell.channel] !== undefined) {
         planUnknownChannels[cell.i][cell.channel] = value || 0;
       }
       else {
