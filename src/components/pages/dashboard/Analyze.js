@@ -101,10 +101,10 @@ export default class Analyze extends Component {
       'Cost',
       'Conversions',
       getIndicatorNickname('MCL'),
-      getIndicatorNickname('MQL'),
-      getIndicatorNickname('SQL'),
       "CPL",
+      getIndicatorNickname('MQL'),
       "CPM",
+      getIndicatorNickname('SQL'),
       "CPS"
     ], {
       className: dashboardStyle.locals.headRow
@@ -120,10 +120,10 @@ export default class Analyze extends Component {
           '$' + formatBudget(sumedBudgets[item]),
           Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item] : 0) + sum, 0) * 100) / 100,
           Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MCL"] ? CEVs["MCL"][item] : 0) + sum, 0) * 100) / 100,
-          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0) * 100) / 100,
-          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0) * 100) / 100,
           CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MCL"] ? CEVs["MCL"][item] : 0) + sum, 0) ? '$' + formatBudget(Math.round( sumedBudgets[item] / CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MCL"] ? CEVs["MCL"][item] : 0) + sum, 0))) : 0,
+          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0) * 100) / 100,
           CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0) ? '$' + formatBudget(Math.round( sumedBudgets[item] / CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0))) : 0,
+          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0) * 100) / 100,
           CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0) ? '$' + formatBudget(Math.round( sumedBudgets[item] / CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0))) : 0
         ],{
           key: item,

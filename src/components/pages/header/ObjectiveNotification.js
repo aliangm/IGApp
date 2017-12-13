@@ -28,10 +28,13 @@ export default class ObjectiveNotification extends Component {
           is now
         </div>
         <div className={ objectiveStyle.locals.textColor } style={{color: this.props.notification.isSuccess ? '#24b10e' : '#c62b36'}}>
-          {this.props.notification.value}
+          {this.props.notification.value || 0}
         </div>
         <div className={ objectiveStyle.locals.text }>
-          as planned. Go to
+          {this.props.notification.isSuccess ? "as planned. " : ", " + (this.props.notification.target - (this.props.notification.value || 0)) + " less than planned."}
+        </div>
+        <div className={ objectiveStyle.locals.text }>
+          Go to
         </div>
         <div className={ objectiveStyle.locals.textBold }>
           Preferences

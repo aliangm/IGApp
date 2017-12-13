@@ -1,11 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/annual-tab.css';
+import planStyle from 'styles/plan/plan.css';
 import cellStyle from 'styles/plan/plan-cell.css'
 
 export default class PlanCell extends Component {
+
   style = style;
-  styles = [cellStyle];
+  styles = [cellStyle, planStyle];
 
   constructor(props) {
     super(props);
@@ -21,10 +23,10 @@ export default class PlanCell extends Component {
     >
       <div hidden={ !this.state.hoverCell }>
         <div className={ cellStyle.locals.hover }>
-          <div className={ this.classes.left }>
+          <div className={ planStyle.locals.left }>
             <div className={ cellStyle.locals.reject } onClick={ this.props.declineChannel }/>
           </div>
-          <div className={ this.classes.right }>
+          <div className={ planStyle.locals.right }>
             <div className={ cellStyle.locals.accept } onClick={ this.props.approveChannel }/>
           </div>
         </div>

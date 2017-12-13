@@ -166,22 +166,15 @@ export default class CMO extends Component {
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
           <div className={ dashboardStyle.locals.item }>
             <div className={ dashboardStyle.locals.text }>
-              LTV:CAC Ratio
+              Annual Budget Left To Plan
             </div>
-            { ratio && isFinite(ratio) ?
-              <div className={dashboardStyle.locals.number}>
-                {ratio}
-              </div>
-              :
-              <div>
-                <div className={ dashboardStyle.locals.center }>
-                  <div className={ dashboardStyle.locals.sadIcon }/>
-                </div>
-                <div className={ dashboardStyle.locals.noMetrics }>
-                  Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.
-                </div>
-              </div>
-            }
+            <div className={ dashboardStyle.locals.number }>
+              {
+                Math.abs(budgetLeftToPlan) >= 100 ?
+                  '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  : <div className={ dashboardStyle.locals.budgetLeftToPlanOk }/>
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -199,15 +192,22 @@ export default class CMO extends Component {
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
           <div className={ dashboardStyle.locals.item }>
             <div className={ dashboardStyle.locals.text }>
-              Annual Budget Left To Plan
+              LTV:CAC Ratio
             </div>
-            <div className={ dashboardStyle.locals.number }>
-              {
-                Math.abs(budgetLeftToPlan) >= 100 ?
-                  '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  : <div className={ dashboardStyle.locals.budgetLeftToPlanOk }/>
-              }
-            </div>
+            { ratio && isFinite(ratio) ?
+              <div className={dashboardStyle.locals.number}>
+                {ratio}
+              </div>
+              :
+              <div>
+                <div className={ dashboardStyle.locals.center }>
+                  <div className={ dashboardStyle.locals.sadIcon }/>
+                </div>
+                <div className={ dashboardStyle.locals.noMetrics }>
+                  Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.
+                </div>
+              </div>
+            }
           </div>
           <div className={ dashboardStyle.locals.item } style={{ marginTop: '30px' }}>
             <div className={ dashboardStyle.locals.text }>
