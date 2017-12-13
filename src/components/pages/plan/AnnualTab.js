@@ -476,7 +476,7 @@ export default class AnnualTab extends Component {
                 }
               </div>
             </div>
-            <div className={ planStyles.locals.titleToggle } style={{ width: '50%' }}>
+            <div className={ planStyles.locals.titleToggle } style={{ width: '69%' }}>
               <Toggle
                 leftText="Current"
                 rightText="Suggested"

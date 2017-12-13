@@ -249,6 +249,10 @@
   text-decoration: none;
 }
 
+.sub-menu-item:hover {
+  background: #329ff1;
+}
+
 .sub-menu-item-selected {
   composes: sub-menu-item;
 

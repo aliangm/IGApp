@@ -213,7 +213,7 @@
   border-radius: 50%;
   width: 20px;
   height: 20px;
-  left: 132px;
+  left: 117px;
   top: 16px;
   position: absolute;
   border: solid 2px white;
@@ -228,7 +228,7 @@
 
 .dropmenu {
   width: 100px;
-  left: 161px !important;
+  left: 145px !important;
   padding: 4px 0 !important;
   min-height: inherit !important;
   top: 74px !important;
@@ -236,7 +236,7 @@
 }
 
 .dropmenu-edit {
-  left: 393px !important;
+  left: 374px !important;
   width: 110px;
   composes: dropmenu;
 }

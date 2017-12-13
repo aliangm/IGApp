@@ -20,6 +20,7 @@
     color: #273142;
     font-size: 14px;
     font-weight: 600;
+    width: 100%;
 }
 
 .table :global(tr) {
@@ -47,7 +48,7 @@
 
 .table :global(td):first-child {
     border-left: none;
-    min-width: 197px;
+    width: 200px;
 }
 
 .table :global(td):last-child {
