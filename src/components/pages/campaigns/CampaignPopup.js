@@ -176,6 +176,7 @@ export default class CampaignPopup extends Component {
         .catch((err) => {
           console.log(err);
         });
+      this.setState({selectedTab: 0});
       this.props.closePopup();
     }
     else {

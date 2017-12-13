@@ -304,7 +304,7 @@ export default class Indicators extends Component {
           </div>
 
           :
-          null
+          <div style={{ paddingBottom: '60px' }}/>
         }
       </Page>
     </div>

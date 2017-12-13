@@ -6,7 +6,6 @@
 }
 
 .header {
-  height: 35px;
   border-bottom: 1px solid #dddee5;
   position: relative;
   margin: 0 15px;
@@ -18,8 +17,6 @@
   font-weight: bold;
   letter-spacing: 0.050em;
   padding-top: 15px;
-  /*text-transform: uppercase;*/
-  line-height: 11px;
 }
 
 .close {
