@@ -120,7 +120,7 @@ export default class CMO extends Component {
     const objectivesGauges = objectives.map((objective, index) => {
       let title;
       const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-      const maxRange = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+      const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
       const month = new Date(objective.timeFrame).getMonth();
       const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
       indicatorsOptions.forEach((indicator) => {
@@ -128,7 +128,16 @@ export default class CMO extends Component {
           title = indicator.label;
         }
       });
-      return <Objective maxRange={ maxRange } current={ actualIndicators[objective.indicator] } title={ title } project={ project } key={ index } directionDown={ objective.direction === "decrease" }/>
+      return <Objective
+        target={ target }
+        value={ actualIndicators[objective.indicator] }
+        title={ title }
+        project={ project }
+        key={ index }
+        directionDown={ objective.direction === "decrease" }
+        timeFrame={objective.timeFrame}
+        color={COLORS[index % COLORS.length]}
+      />
     });
 
     return <div className={ dashboardStyle.locals.wrap }>
@@ -251,12 +260,12 @@ export default class CMO extends Component {
                 <div className={ dashboardStyle.locals.index }>
                   {
                     fatherChannelsWithBudgets.map((element, i) => (
-                      <div key={i} style={{ display: 'flex', marginTop: '-8px' }}>
-                        <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '10px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
+                      <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
+                        <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
                         <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
                           {element.name}
                         </div>
-                        <div style={{ fontSize: '14px', fontWeight: '600', width: '60px' }}>
+                        <div style={{ fontSize: '14px', fontWeight: '600', width: '70px' }}>
                           ${formatBudget(element.value)}
                         </div>
                         <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
@@ -291,7 +300,7 @@ export default class CMO extends Component {
       { objectivesGauges.length > 0 ?
         <div className={ this.classes.cols } style={{ width: '825px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '350px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
+            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '280px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
               <div className={ dashboardStyle.locals.text }>
                 Objectives
               </div>
