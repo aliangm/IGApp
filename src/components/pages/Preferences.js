@@ -45,7 +45,6 @@ export default class Preferences extends Component {
     userMinMonthBudgets: [],
     blockedChannels: [],
     inHouseChannels: [],
-    planDay: 28,
     planDate: null,
     annualBudgetArray: [],
     userAccount: {},
@@ -140,10 +139,6 @@ export default class Preferences extends Component {
     let update = this.props.annualBudgetArray || [];
     update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
     this.props.updateState({annualBudgetArray: update}, this.calculateBudgets);
-  }
-
-  handleChangePlanDay(event) {
-    this.props.updateState({planDay: event.value});
   }
 
   handleChangeBlockedChannels(event) {
@@ -411,45 +406,6 @@ export default class Preferences extends Component {
             {value: 'Thought Leadership', label: 'Thought Leadership'}
           ]
         }
-      },
-      planDay: {
-        label: 'Plan-Next-Month Day',
-        labelQuestion: [''],
-        description: ['Choose the next-plan-month day. After this day in the month, re-planning will plan your next month (re-planning before this day will plan the current month).'],
-        select: {
-          name: 'planDay',
-          onChange: () => {},
-          options: [
-            {value:1 , label: 1},
-            {value:2 , label: 2},
-            {value:3 , label: 3},
-            {value:4 , label: 4},
-            {value:5 , label: 5},
-            {value:6 , label: 6},
-            {value:7 , label: 7},
-            {value:8 , label: 8},
-            {value:9 , label: 9},
-            {value:10 , label: 10},
-            {value:11 , label: 11},
-            {value:12 , label: 12},
-            {value:13 , label: 13},
-            {value:14 , label: 14},
-            {value:15 , label: 15},
-            {value:16 , label: 16},
-            {value:17 , label: 17},
-            {value:18 , label: 18},
-            {value:19 , label: 19},
-            {value:20 , label: 20},
-            {value:21 , label: 21},
-            {value:22 , label: 22},
-            {value:23 , label: 23},
-            {value:24 , label: 24},
-            {value:25 , label: 25},
-            {value:26 , label: 26},
-            {value:27 , label: 27},
-            {value:28 , label: 28},
-          ]
-        }
       }
     };
 
@@ -587,14 +543,6 @@ export default class Preferences extends Component {
             </div>
             { this.props.userAccount.freePlan ? null :
               <div>
-                <div className={this.classes.row} style={{
-                  // maxWidth: '440px',
-                  // minWidth: '200px',
-                  width: '70px'
-                }}>
-                  <Select {...selects.planDay} selected={this.props.planDay}
-                          onChange={this.handleChangePlanDay.bind(this)}/>
-                </div>
                 <div className={ preferencesStyle.locals.advancedButton } onClick={()=>{ this.setState({showAdvancedFields: !this.state.showAdvancedFields}) }}>
                   Advanced
                 </div>
@@ -726,7 +674,6 @@ export default class Preferences extends Component {
                 inHouseChannels: this.props.inHouseChannels,
                 userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                 maxChannels: this.props.maxChannels,
-                planDay: this.props.planDay,
                 planNeedsUpdate: true
               }, this.props.region, this.props.planDate)
                 .then(() => {
@@ -745,7 +692,6 @@ export default class Preferences extends Component {
                   inHouseChannels: this.props.inHouseChannels,
                   userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
-                  planDay: this.props.planDay,
                   planNeedsUpdate: true
                 }, this.props.region, this.props.planDate)
                   .then(() => {
@@ -773,7 +719,6 @@ export default class Preferences extends Component {
                   inHouseChannels: this.props.inHouseChannels,
                   userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
-                  planDay: this.props.planDay,
                   planNeedsUpdate: true
                 }, this.props.region, this.props.planDate)
                   .then(() => {

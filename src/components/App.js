@@ -417,7 +417,6 @@ class AppComponent extends Component {
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
-      planDay: data.planDay,
       region: data.region,
       goals: {
         primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
