@@ -442,30 +442,33 @@ export default class Plan extends Component {
             }
           </div>
           <div className={this.classes.headPlan}>
-            <div>
-              <div className={this.classes.error}>
-                <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
-                  href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
-              </div>
-              <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup} planNeedsUpdate={this.props.planNeedsUpdate}/>
-              <Popup style={{
-                width: '265px',
-                top: '180%',
-                transform: 'translate(0, -50%)'
-              }} hidden={!this.state.popup} onClose={() => {
-                this.setState({
-                  popup: false
-                });
-              }}>
-                <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
-                  this.props.setDataAsState(data)
-                }, this.props.region, false)} onBack={() => {
+            {this.props.userAccount.freePlan ? null :
+              <div>
+                <div className={this.classes.error}>
+                  <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
+                    href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
+                </div>
+                <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}
+                              planNeedsUpdate={this.props.planNeedsUpdate}/>
+                <Popup style={{
+                  width: '265px',
+                  top: '180%',
+                  transform: 'translate(0, -50%)'
+                }} hidden={!this.state.popup} onClose={() => {
                   this.setState({
                     popup: false
-                  })
-                }}/>
-              </Popup>
-            </div>
+                  });
+                }}>
+                  <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
+                    this.props.setDataAsState(data)
+                  }, this.props.region, false)} onBack={() => {
+                    this.setState({
+                      popup: false
+                    })
+                  }}/>
+                </Popup>
+              </div>
+            }
             { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
               <div style={{ display: 'flex' }}>
                 <div>

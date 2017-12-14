@@ -267,7 +267,6 @@ export default class AnnualTab extends Component {
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
       budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
-      budget = Math.ceil(budget/1000)*1000;
       let rows = [];
 
       const handleRows = (data, parent, level) => {
@@ -409,6 +408,7 @@ export default class AnnualTab extends Component {
         className: this.classes.footRow
       });
 
+      const currentSuggested = {};
       const dates = this.getDates();
       const projections = this.props.projectedPlan.map((item, index) => {
         const json = {};
@@ -416,13 +416,13 @@ export default class AnnualTab extends Component {
           Object.keys(item.projectedIndicatorValues).forEach(key => {
             json[key + 'Suggested'] = item.projectedIndicatorValues[key];
           });
+          Object.keys(this.props.actualIndicators).forEach(indicator => {
+            currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
+          });
         }
         return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
       });
-      const currentSuggested = {};
-      Object.keys(this.props.actualIndicators).forEach(indicator => {
-        currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
-      });
+
       // Current indicators values to first cell
       projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
@@ -443,7 +443,7 @@ export default class AnnualTab extends Component {
                 Annual Budget
               </div>
               <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
-                ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
+                ${ (Math.ceil(budget/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
               </div>
             </div>
             <div className={ planStyles.locals.titleButtons }>
