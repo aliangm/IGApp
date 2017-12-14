@@ -461,7 +461,7 @@ class AppComponent extends Component {
     });
   }
 
-  addNotification(userId, type, notification) {
+  addNotification(userId, type, notification, isSendEmail) {
     let notifications = this.state.notifications || [];
     notifications.push({
       UID: userId,
@@ -471,6 +471,18 @@ class AppComponent extends Component {
       notification: notification
     });
     this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
+    /*
+    if (isSendEmail) {
+      serverCommunication.serverRequest('POST', 'email', {
+          email: this.state.teamMembers.find(member => member.userId === userId).email,
+          type: type,
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : 'Dor Lahav',
+          campaignName: notification.campaignName
+        },
+        false, false, true
+      );
+    }
+    */
   }
 
   render() {
