@@ -209,7 +209,7 @@ export default class Analyze extends Component {
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item}
-               style={{display: 'inline-block', height: '412px', width: '540px'}}>
+               style={{display: 'inline-block', height: '412px', width: '825px'}}>
             <div className={dashboardStyle.locals.text}>
               Historical Performance
             </div>
@@ -240,7 +240,7 @@ export default class Analyze extends Component {
                 : null}
             </div>
             <div className={dashboardStyle.locals.chart}>
-              <AreaChart width={550} height={280}
+              <AreaChart width={825} height={280}
                          data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months - 1, indicatorsData[this.state.indicator].length) : []}
                          style={{marginLeft: '-21px'}}>
                 <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
