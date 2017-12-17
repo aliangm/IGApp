@@ -216,7 +216,7 @@ export default class Campaigns extends Component {
             }
           </div>
         </div>
-        <div>
+        <div style={{ paddingTop: '90px' }}>
           {selectedIndex !== 2 ?
             <div className={ this.classes.campaignsTitle }>
               <div className={ this.classes.campaignsTitleDate }>

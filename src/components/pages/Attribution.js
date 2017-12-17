@@ -57,7 +57,7 @@ export default class Attribution extends Component {
               }
             </div>
           </div>
-          <div>
+          <div style={{ paddingTop: '90px' }}>
             { selectedTab ? React.createElement(selectedTab, _.merge(this.props)) : null }
           </div>
         </Page>
