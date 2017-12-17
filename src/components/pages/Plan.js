@@ -112,6 +112,7 @@ export default class Plan extends Component {
     projectedPlan.forEach((month, index) => {
       month.plannedChannelBudgets = this.props.approvedBudgets[index];
     });
+    this.setState({dropmenuVisible: false});
     return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
@@ -495,6 +496,7 @@ export default class Plan extends Component {
                           .then( () => {
                             this.forecast();
                           });
+                        this.setState({dropmenuVisible: false});
                       }}>
                         Approve all
                       </div>
