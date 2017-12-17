@@ -134,7 +134,8 @@
 .icon {
   width: 98px;
   height: 98px;
-  background: none center center no-repeat;
+  background-position: center center;
+  background-repeat: no-repeat;
   background-size: contain;
 }
 
