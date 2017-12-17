@@ -176,6 +176,7 @@ export default class CampaignPopup extends Component {
         .catch((err) => {
           console.log(err);
         });
+      this.setState({selectedTab: 0});
       this.props.closePopup();
     }
     else {
@@ -210,7 +211,7 @@ export default class CampaignPopup extends Component {
           <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
         <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
-        <div className={ planStyle.locals.headTabs }>
+        <div className={ planStyle.locals.headTabs } style={{ height: '85px', margin: '0 38px' }}>
           {
             tabNames.map((name, i) => {
               let className;
@@ -221,12 +222,12 @@ export default class CampaignPopup extends Component {
                 className = planStyle.locals.headTab;
               }
 
-              return <div style={{ margin: 0 }} className={ className } key={ i } onClick={() => {
+              return <div className={ className } key={ i } onClick={() => {
                 this.selectTab(i);
               }}>{ name }</div>
             })
           }
-          <div style={{ marginLeft: '187px', marginTop: '27px' }}>
+          <div style={{ marginLeft: 'auto', alignSelf: 'center' }}>
             <SaveButton onClick={ this.save }/>
           </div>
         </div>

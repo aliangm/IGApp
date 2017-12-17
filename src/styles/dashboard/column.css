@@ -1,5 +1,6 @@
 .column {
     margin-left: 12px;
+    border-radius: 5px 5px 0 0;
 }
 
 .amount {
@@ -22,5 +23,6 @@
     color: #636872;
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    padding-top: 11px;
+    background-color: white;
 }

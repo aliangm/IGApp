@@ -12,14 +12,21 @@ import { withRouter } from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
 import { initialize as initializeIndicators } from 'components/utils/indicators';
 import { initialize as initializeChannels } from 'components/utils/channels';
+import Loading from 'components/pages/plan/Loading';
+import Popup from 'components/Popup';
+import style from 'styles/app.css';
+import { FeatureToggleProvider } from 'react-feature-toggles';
 
 class AppComponent extends Component {
+
+  style = style;
 
   constructor(props) {
     super(props);
     this.routerWillLeave = this.routerWillLeave.bind(this);
     this.handleCallback = this.handleCallback.bind(this);
     this.state = {
+      loaded: false,
       getUserMonthPlan: this.getUserMonthPlan.bind(this),
       updateUserMonthPlan: this.updateUserMonthPlan.bind(this),
       updateUserAccount: this.updateUserAccount.bind(this),
@@ -88,95 +95,23 @@ class AppComponent extends Component {
 
   componentDidMount() {
     this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave);
+    const tasks = [
+      this.getUserAccount(),
+      this.getRegions(),
+      this.getIndicatorsMetadata(),
+      this.getChannelsMetadata(),
+      this.getUserMonthPlan(localStorage.getItem('region'), null)
+    ];
 
-    serverCommunication.serverRequest('GET', 'useraccount')
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                this.setState({
-                  userAccount: data,
-                  userFirstName: data.firstName,
-                  userLastName: data.lastName,
-                  userCompany: data.companyName,
-                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                  teamMembers: data.teamMembers,
-                });
-              }
-            })
-        }
-        else if (response.status == 401){
-          history.push('/');
-        }
+    Promise.all(tasks)
+      .then( () => {
+        setTimeout(() => { this.setState({loaded: true}); }, 1000);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch( (err) => {
+          console.log(err);
+        }
+      )
 
-    serverCommunication.serverRequest('GET', 'regions')
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                this.setState({
-                  regions: data
-                });
-              }
-            })
-        }
-        else if (response.status == 401){
-          history.push('/');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    serverCommunication.serverRequest('GET', 'metadata/indicators', false, false, false, true)
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                this.setState({
-                  indicatorsSchema: data
-                });
-                initializeIndicators(data);
-              }
-            })
-        }
-        else if (response.status == 401){
-          history.push('/');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    serverCommunication.serverRequest('GET', 'metadata/channels', false, false, false, true)
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                this.setState({
-                  channelsSchema: data
-                });
-                initializeChannels(data);
-              }
-            })
-        }
-        else if (response.status == 401){
-          history.push('/');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    this.getUserMonthPlan(localStorage.getItem('region'), null);
   }
 
   updateState(newState, callback){
@@ -215,6 +150,7 @@ class AppComponent extends Component {
   }
 
   getUserMonthPlan(region, planDate) {
+    const deferred = q.defer();
     serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         if (response.ok) {
@@ -226,15 +162,20 @@ class AppComponent extends Component {
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
+              deferred.resolve();
             })
         }
         else if (response.status == 401){
           history.push('/');
+          deferred.reject();
         }
       })
       .catch((err) => {
         console.log(err);
+        deferred.reject();
       });
+
+    return deferred.promise;
   }
 
   getPreviousData() {
@@ -257,6 +198,40 @@ class AppComponent extends Component {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  getUserAccount() {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('GET', 'useraccount')
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  userAccount: data,
+                  userFirstName: data.firstName,
+                  userLastName: data.lastName,
+                  userCompany: data.companyName,
+                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                  teamMembers: data.teamMembers,
+                  permissions: data.permissions
+                });
+              }
+              deferred.resolve();
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
   }
 
   updateUserAccount(body, region, planDate) {
@@ -287,6 +262,7 @@ class AppComponent extends Component {
         console.log(err);
         deferred.reject();
       });
+
     return deferred.promise;
   }
 
@@ -318,6 +294,7 @@ class AppComponent extends Component {
         console.log(err);
         deferred.reject();
       });
+
     return deferred.promise;
   }
 
@@ -347,6 +324,92 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  getChannelsMetadata() {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('GET', 'metadata/channels', false, false, false, true)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  channelsSchema: data
+                });
+                initializeChannels(data);
+                deferred.resolve();
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
+  }
+
+  getIndicatorsMetadata() {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('GET', 'metadata/indicators', false, false, false, true)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  indicatorsSchema: data
+                });
+                initializeIndicators(data);
+                deferred.resolve();
+              }
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
+  }
+
+  getRegions() {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('GET', 'regions')
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                this.setState({
+                  regions: data
+                });
+              }
+              deferred.resolve();
+            })
+        }
+        else if (response.status == 401){
+          history.push('/');
+          deferred.reject();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
+  }
+
   setDataAsState(data) {
     this.setState({
       userProfile: data.userProfile,
@@ -354,7 +417,6 @@ class AppComponent extends Component {
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
-      planDay: data.planDay,
       region: data.region,
       goals: {
         primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
@@ -394,11 +456,12 @@ class AppComponent extends Component {
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,
-      notifications: data.notifications || []
+      notifications: data.notifications || [],
+      CEVs: data.CEVs || {}
     });
   }
 
-  addNotification(userId, type, notification) {
+  addNotification(userId, type, notification, isSendEmail) {
     let notifications = this.state.notifications || [];
     notifications.push({
       UID: userId,
@@ -408,17 +471,39 @@ class AppComponent extends Component {
       notification: notification
     });
     this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
+    /*
+    if (isSendEmail) {
+      serverCommunication.serverRequest('POST', 'email', {
+          email: this.state.teamMembers.find(member => member.userId === userId).email,
+          type: type,
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : 'Dor Lahav',
+          campaignName: notification.campaignName
+        },
+        false, false, true
+      );
+    }
+    */
   }
 
   render() {
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.state));
-    return <div>
-      <Header auth={ this.props.route.auth } {... this.state}/>
-      <Sidebar auth={ this.props.route.auth }/>
-      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-      { childrenWithProps }
-    </div>
+    return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
+      <div>
+        <Header auth={ this.props.route.auth } {... this.state}/>
+        <Sidebar auth={ this.props.route.auth }/>
+        <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
+        { this.state.loaded ?
+          childrenWithProps
+          : <div className={ this.classes.loading }>
+            <Popup className={ this.classes.popup }>
+              <div>
+                <Loading />
+              </div>
+            </Popup>
+          </div> }
+      </div>
+    </FeatureToggleProvider>
   }
 }
 

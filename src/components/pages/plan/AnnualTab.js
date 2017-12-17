@@ -5,13 +5,10 @@ import Component from 'components/Component';
 import Popup from 'components/Popup';
 import Loading from 'components/pages/plan/Loading';
 import Button from 'components/controls/Button';
-import Textfield from 'components/controls/Textfield';
 import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
 import Explanation from 'components/pages/plan/Explanation';
-import Label from 'components/ControlsLabel';
-
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
@@ -26,15 +23,13 @@ import { formatChannels, output } from 'components/utils/channels';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
-import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
-import _ from 'lodash';
 import Toggle from 'components/controls/Toggle';
 
 export default class AnnualTab extends Component {
-  styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
-  style = style;
 
-  budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
+  style = style;
+  styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
+
   monthNames = [
     "Jan", "Feb", "Mar",
     "Apr", "May", "Jun", "Jul",
@@ -49,7 +44,6 @@ export default class AnnualTab extends Component {
     planDate: '',
     events: [],
     objectives: [],
-    annualBudget: 0,
     approvedBudgetsProjection: [],
     annualBudgetArray: []
   };
@@ -57,26 +51,15 @@ export default class AnnualTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //budget: 315000,
-      whatIfSelected: false,
       popupShown: false,
       popupLeft: 0,
       pouppTop: 0,
-
-      budgetField: props.budget || '',
-      budgetArrayField: props.budgetArray || [],
-      maxChannelsField: props.maxChannels || '',
-      isCheckAnnual: !!props.budget,
-
       hoverRow: void 0,
       collapsed: {},
       tableCollapsed: false,
-      annualData: {},
-      editMode: false,
       graphDimensions: {},
       approvedPlan: true
     };
-    this.whatIf = this.whatIf.bind(this);
     this.handleChangeContextMenu = this.handleChangeContextMenu.bind(this);
   }
 
@@ -88,9 +71,6 @@ export default class AnnualTab extends Component {
     this.setState({ budgetField: nextProps.budget });
     this.setState({ budgetArrayField: nextProps.budgetArray });
     this.setState({maxChannelsField: nextProps.maxChannels});
-    if (nextProps.editMode) {
-      this.setState({editMode: true});
-    }
   }
 
   calculateGraphDimensions() {
@@ -176,180 +156,6 @@ export default class AnnualTab extends Component {
     return headers;
   };
 
-  whatIf = (isCommitted, callback) => {
-    this.setState({whatIfSelected: false});
-    let preferences = {};
-
-    preferences.annualBudgetArray = this.state.budgetArrayField;
-    preferences.annualBudget = this.state.budgetField;
-    const maxChannels = parseInt(this.state.maxChannelsField);
-    if (isNaN(maxChannels)) {
-      preferences.maxChannels = -1;
-    }
-    else {
-      preferences.maxChannels = maxChannels;
-    }
-    let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
-    if (filterNanArray.length == 12 && preferences.maxChannels) {
-      this.props.whatIf(isCommitted, preferences, callback, this.props.region, false);
-    }
-    /**
-     this.setState({
-      budget: budget,
-      budgetField: '$'
-    });**/
-  }
-
-  whatIfCommit = () => {
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      this.refs.whatIfPopup.close();
-      this.setState({whatIfSelected: false, isTemp: false});
-    }
-    this.whatIf(true, callback);
-  }
-
-  whatIfTry = () => {
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      this.refs.whatIfPopup.open();
-      this.setState({whatIfSelected: true, isTemp: true});
-    }
-    this.whatIf(false, callback);
-  }
-
-  whatIfCancel = () => {
-    this.refs.whatIfPopup.close();
-    this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.getUserMonthPlan(this.props.region);
-  }
-
-  handleChangeBudget(event) {
-    let update = {};
-    update.budgetField = parseInt(event.target.value.replace(/[-$,]/g, ''));
-
-    let planDate = this.props.planDate.split("/");
-    let firstMonth = parseInt(planDate[0]) - 1;
-
-    let budget = [];
-    this.budgetWeights.forEach((element, index) => {
-      budget[(index + 12 - firstMonth) % 12] = Math.round(element * update.budgetField);
-    });
-    update.budgetArrayField = budget;
-
-    this.setState(update);
-  }
-
-  handleChangeBudgetArray(index, event) {
-    let update = this.state.budgetArrayField || [];
-    update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
-    this.setState({budgetArrayField: update});
-  }
-
-  monthBudgets() {
-    const datesArray = this.getDates();
-    return datesArray.map((month, index) => {
-      return <div className={ this.classes.budgetChangeBox } key={index} style={{ marginLeft: '8px', paddingBottom: '0px', paddingTop: '0px' }}>
-        <div className={ this.classes.left }>
-          <Label style={{width: '70px', marginTop: '8px'}}>{month}</Label>
-        </div>
-        <div className={ this.classes.right }>
-          <Textfield
-            value={"$" + (this.state.budgetArrayField && this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-            onChange={ this.handleChangeBudgetArray.bind(this, index) } style={{
-            width: '110px'
-          }}/>
-        </div>
-      </div>
-    });
-  }
-
-  toggleCheck() {
-    if (this.state.isCheckAnnual) {
-      let prevBudget = this.state.budgetField;
-      let planDate = this.props.planDate.split("/");
-      let firstMonth = parseInt(planDate[0]) - 1;
-
-      let budget = [];
-      this.budgetWeights.forEach((element, index) => {
-        budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
-      });
-
-      this.setState({budgetField: null, budgetArrayField: budget});
-    }
-    else {
-      let sum = this.state.budgetArrayField.reduce((a, b) => a + b, 0);
-      this.setState({budgetField: sum});
-    }
-    this.setState({isCheckAnnual: !this.state.isCheckAnnual});
-  }
-
-  approveChannel(month, channel, budget){
-    let approvedBudgets = this.props.approvedBudgets;
-    let approvedMonth = this.props.approvedBudgets[month] || {};
-    approvedMonth[channel] = parseInt(budget.replace(/[-$,]/g, ''));
-    approvedBudgets[month] = approvedMonth;
-    this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate)
-      .then(() => {
-        this.forecast();
-      })
-  }
-
-  declineChannel(month, channel, budget){
-    let projectedPlan = this.props.projectedPlan;
-    let projectedMonth = this.props.projectedPlan[month];
-    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.replace(/[-$,]/g, ''));
-    projectedPlan[month] = projectedMonth;
-    this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
-  }
-
-  addChannel(newChannel) {
-    let projectedPlan = this.props.projectedPlan;
-    let approvedBudgets = this.props.approvedBudgets;
-    for (let i = 0; i < 12; i++) {
-      if (!approvedBudgets[i]) {
-        approvedBudgets[i] = {};
-      }
-      if (!projectedPlan[i] || Object.keys(projectedPlan[i]).length === 0) {
-        projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
-      }
-      projectedPlan[i].plannedChannelBudgets[newChannel] = 0;
-      approvedBudgets[i][newChannel] = 0;
-    }
-    this.props.updateUserMonthPlan({
-      projectedPlan: projectedPlan,
-      approvedBudgets: approvedBudgets
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this.refs[newChannel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
-        }
-      });
-  }
-
-  addUnknownChannel(otherChannel, otherChannelHierarchy) {
-    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel
-    let planUnknownChannels = this.props.planUnknownChannels;
-    for (let i = 0; i < 12; i++) {
-      if (!planUnknownChannels[i]) {
-        planUnknownChannels[i] = {};
-      }
-      planUnknownChannels[i][channel] = 0;
-    }
-    this.props.updateUserMonthPlan({
-      unknownChannels: planUnknownChannels
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this.refs[channel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
-        }
-      });
-  }
-
   editChannel(i, channel, event) {
     let value = parseInt(event.target.value.replace(/[-$,]/g, '')) || 0;
     let planUnknownChannels = this.props.planUnknownChannels || [];
@@ -369,10 +175,6 @@ export default class AnnualTab extends Component {
     }
   }
 
-  editUpdate() {
-    return this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
-  }
-
   dragStart(value) {
     this.setState({draggableValue: value, isDragging: true});
   }
@@ -383,7 +185,7 @@ export default class AnnualTab extends Component {
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
     this.state.draggableValues.forEach(cell => {
-      if (planUnknownChannels.length > 0 && planUnknownChannels[cell.i][cell.channel] !== undefined) {
+      if (planUnknownChannels.length > 0 && planUnknownChannels[cell.i] && planUnknownChannels[cell.i][cell.channel] !== undefined) {
         planUnknownChannels[cell.i][cell.channel] = value || 0;
       }
       else {
@@ -422,22 +224,6 @@ export default class AnnualTab extends Component {
       }
     }
     this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
-  }
-
-  forecast() {
-    const callback = (data) => {
-      // PATCH
-      // Update user month plan using another request
-      const approvedBudgetsProjection = this.props.approvedBudgetsProjection;
-      data.projectedPlan.forEach((month, index) => {
-        if (!approvedBudgetsProjection[index]) {
-          approvedBudgetsProjection[index] = {};
-        }
-        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
-      });
-      this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
-    };
-    this.props.whatIf(false, {useApprovedBudgets: true}, callback, this.props.region, true);
   }
 
   handleChangeContextMenu(event, data) {
@@ -481,7 +267,6 @@ export default class AnnualTab extends Component {
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
       budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
-      budget = Math.ceil(budget/1000)*1000;
       let rows = [];
 
       const handleRows = (data, parent, level) => {
@@ -505,17 +290,17 @@ export default class AnnualTab extends Component {
             values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
             hoverValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
           }
-          const  titleElem = <div ref={ params.channel || null }>
-            { this.state.editMode && params.channel && !params.isOtherChannel ?
+          const  titleElem = <div ref={ params.channel ? this.props.setRef.bind(this, params.channel) : null }>
+            { this.props.editMode && params.channel && !params.isOtherChannel ?
               <div className={ this.classes.editChannelNameWrapper }>
                 <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
               </div>
               : null }
-            <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.state.editMode}>
+            <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.props.editMode}>
               <div
                 style={{
                   marginLeft: (level | 0) * 17 + 'px',
-                  cursor: (params.channel && !this.state.editMode) ? 'pointer' : 'initial'
+                  cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
                 }}
                 className={ this.classes.rowTitle }>
                 { params.children ?
@@ -528,7 +313,7 @@ export default class AnnualTab extends Component {
                     }}
                   />
                   :
-                  this.state.editMode ?
+                  this.props.editMode ?
                     <div>
                       <div
                         className={ this.classes.rowDelete }
@@ -570,7 +355,7 @@ export default class AnnualTab extends Component {
           </div>
 
           const rowProps = {
-            className: this.state.editMode ? null :this.classes.tableRow,
+            className: this.props.editMode ? null :this.classes.tableRow,
             key: key,
             onMouseEnter: () => {
               this.setState({
@@ -623,17 +408,7 @@ export default class AnnualTab extends Component {
         className: this.classes.footRow
       });
 
-      const planChannels = _.merge([],
-        Object.keys(this.props.approvedBudgets.reduce((object, item) => {
-            return _.merge(object, item);
-          }
-          , {})),
-        Object.keys(this.props.projectedPlan.reduce((object, item) => {
-            return _.merge(object, item.plannedChannelBudgets)
-          }
-          , {}))
-      );
-
+      const currentSuggested = {};
       const dates = this.getDates();
       const projections = this.props.projectedPlan.map((item, index) => {
         const json = {};
@@ -641,13 +416,13 @@ export default class AnnualTab extends Component {
           Object.keys(item.projectedIndicatorValues).forEach(key => {
             json[key + 'Suggested'] = item.projectedIndicatorValues[key];
           });
+          Object.keys(this.props.actualIndicators).forEach(indicator => {
+            currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
+          });
         }
         return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
       });
-      const currentSuggested = {};
-      Object.keys(this.props.actualIndicators).forEach(indicator => {
-        currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
-      });
+
       // Current indicators values to first cell
       projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
@@ -668,49 +443,17 @@ export default class AnnualTab extends Component {
                 Annual Budget
               </div>
               <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
-                ${ budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
+                ${ (Math.ceil(budget/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
               </div>
             </div>
             <div className={ planStyles.locals.titleButtons }>
               { this.props.userAccount.freePlan ? null :
                 <div data-selected={ this.state.dropmenuVisible ? true : null }>
-                  <div style={{ display: '-webkit-box' }}>
-                    <div className={this.classes.buttonTriangle}/>
-                    <Button type="reverse" contClassName={ this.classes.dropButton } style={{
-                      marginLeft: '15px',
-                      width: '102px'
-                    }} onClick={() => {
-                      this.setState({dropmenuVisible: true})
-                    }}>
-                      Apply All
-                    </Button>
-                  </div>
-                  <Popup
-                    className={ this.classes.dropmenu }
-                    hidden={ !this.state.dropmenuVisible } onClose={() => {
-                    this.setState({
-                      dropmenuVisible: false
-                    });
-                  }}
-                  >
-                    <div>
-                      <div className={ this.classes.dropmenuItem } onClick={ () => {
-                        this.props.approveAll()
-                          .then( () => {
-                            this.forecast();
-                          });
-                      }}>
-                        Approve all
-                      </div>
-                      <div className={ this.classes.dropmenuItem } onClick={ this.props.declineAll }>
-                        Decline all
-                      </div>
-                    </div>
-                  </Popup>
+
                 </div>
               }
               <Button type="reverse" style={{
-                marginLeft: '15px',
+                marginRight: '10px',
                 width: '102px'
               }} onClick={ () => {
                 const domElement = ReactDOM.findDOMNode(this.refs.forecastingGraph);
@@ -718,113 +461,9 @@ export default class AnnualTab extends Component {
                   domElement.scrollIntoView({});
                 }
               }}>Forecast</Button>
-              { this.props.userAccount.freePlan ? null :
-                <div>
-                  <Button type="reverse" style={{
-                    marginLeft: '15px',
-                    width: '102px'
-                  }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                    this.setState({
-                      whatIfSelected: true
-                    });
-
-                    this.refs.whatIfPopup.open();
-                  }}>What if</Button>
-                  <div style={{ position: 'relative' }}>
-                    <PlanPopup ref="whatIfPopup" style={{
-                      width: '367px',
-                      right: '110px',
-                      left: 'auto',
-                      top: '-37px'
-                    }} hideClose={ true } title="What If - Scenarios Management">
-                      <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                        <div className={ this.classes.left }>
-                          <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                        </div>
-                        <div className={ this.classes.right }>
-                          <Textfield style={{ maxWidth: '110px' }}
-                                     value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                     className={ this.classes.budgetChangeField }
-                                     onChange={ this.handleChangeBudget.bind(this) }
-                                     onKeyDown={(e) => {
-                                       if (e.keyCode === 13) {
-                                         this.whatIf();
-                                       }
-                                     }}
-                                     disabled={ !this.state.isCheckAnnual }
-                          />
-                        </div>
-                      </div>
-                      <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                        <div className={ this.classes.left }>
-                          <div className={ this.classes.left }>
-                            <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
-                          </div>
-                        </div>
-                        { this.state.isCheckAnnual ? null : this.monthBudgets() }
-                      </div>
-                      <div className={ this.classes.budgetChangeBox }>
-                        <div className={ this.classes.left }>
-                          <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
-                        </div>
-                        <div className={ this.classes.right }>
-                          <Textfield style={{
-                            maxWidth: '110px' }}
-                                     value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                     className={ this.classes.budgetChangeField }
-                                     onChange={(e) => {
-                                       this.setState({
-                                         maxChannelsField: e.target.value
-                                       });
-                                     }}
-                                     onKeyDown={(e) => {
-                                       if (e.keyCode === 13) {
-                                         this.whatIf();
-                                       }
-                                     }}
-                          />
-                        </div>
-                      </div>
-                      <div className={ this.classes.budgetChangeBox }>
-                        <Button type="primary2" style={{
-                          width: '110px'
-                        }} onClick={ this.whatIfTry }>Try</Button>
-                      </div>
-                      <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                        <div className={ this.classes.left }>
-                          <Button type="normal" style={{
-                            width: '110px'
-                          }} onClick={ this.whatIfCancel }>Cancel</Button>
-                        </div>
-                        <div className={ this.classes.right }>
-                          <Button type="accent2" style={{
-                            width: '110px'
-                          }} onClick={ this.whatIfCommit }>Commit</Button>
-                        </div>
-                      </div>
-                    </PlanPopup>
-                  </div>
-                </div>
-              }
-              <Button type="primary2" style={{
-                marginLeft: '15px',
-                width: '102px'
-              }} selected={ this.state.editMode ? true : null } onClick={() => {
-                if (this.state.editMode) {
-                  this.editUpdate()
-                    .then( () => {
-                      this.forecast();
-                    });
-                }
-                this.setState({
-                  editMode: !this.state.editMode
-                });
-              }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
-                { this.state.editMode ? "Done" : "Edit" }
-              </Button>
             </div>
           </div>
-          <div className={ planStyles.locals.title } style={{ padding: '0', marginTop: '-15px' }}>
+          <div className={ planStyles.locals.title } style={{ padding: '0', height: '35px' }}>
             <div className={ planStyles.locals.titleMain }>
               <div className={ this.classes.titleBudget }>
                 Budget left to plan
@@ -837,7 +476,7 @@ export default class AnnualTab extends Component {
                 }
               </div>
             </div>
-            <div className={ planStyles.locals.titleToggle } style={{ width: '50%' }}>
+            <div className={ planStyles.locals.titleToggle } style={{ width: '69%' }}>
               <Toggle
                 leftText="Current"
                 rightText="Suggested"
@@ -846,129 +485,97 @@ export default class AnnualTab extends Component {
                 rightClick={ ()=>{ this.setState({approvedPlan: false}) } }
               />
             </div>
-            <div className={ planStyles.locals.titleButtons }>
-              {this.state.editMode ?
-                <div style={{ display: 'flex' }}>
-                  <Button type="primary2" style={{
-                    width: '102px'
-                  }} onClick={() => {
-                    this.setState({addChannelPopup: true});
-                  }}>
-                    Add Channel
-                  </Button>
-                  <Button type="reverse" style={{
-                    marginLeft: '15px',
-                    width: '102px'
-                  }} onClick={() => {
-                    this.setState({editMode: false});
-                    this.props.getUserMonthPlan(this.props.region);
-                  }}>
-                    Cancel
-                  </Button>
-                </div>
-                : null }
-            </div>
           </div>
           <div className={ this.classes.innerBox }>
-            <div className={ this.classes.wrap } ref="wrap">
-              <div className={ this.classes.box }>
-                <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
-                  <thead>
-                  { headRow }
-                  </thead>
-                  <tbody className={ this.classes.tableBody }>
-                  { rows }
-                  </tbody>
-                  <tfoot>
-                  { footRow }
-                  </tfoot>
-                </table>
-              </div>
+            <div className={ this.classes.box }>
+              <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
+                <thead>
+                { headRow }
+                </thead>
+                <tbody className={ this.classes.tableBody }>
+                { rows }
+                </tbody>
+                <tfoot>
+                { footRow }
+                </tfoot>
+              </table>
+            </div>
 
-              <div className={ this.classes.hoverBox }>
-                <table className={ this.classes.hoverTable }>
-                  <thead>{ headRow }</thead>
-                  <tbody>{ rows }</tbody>
-                  <tfoot>{ footRow }</tfoot>
-                </table>
-              </div>
+            <div className={ this.classes.hoverBox }>
+              <table className={ this.classes.hoverTable }>
+                <thead>{ headRow }</thead>
+                <tbody>{ rows }</tbody>
+                <tfoot>{ footRow }</tfoot>
+              </table>
+            </div>
 
-              <ContextMenu id="rightClick">
-                <SubMenu title="Increase by" hoverDelay={250}>
-                  <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
-                    10%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
-                    20%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
-                    30%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
-                    40%
-                  </MenuItem>
-                  <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
-                    50%
-                  </MenuItem>
-                </SubMenu>
-                <SubMenu title="Decrease by" hoverDelay={250}>
-                  <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
-                    10%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
-                    20%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
-                    30%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
-                    40%
-                  </MenuItem>
-                  <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
-                    50%
-                  </MenuItem>
-                </SubMenu>
-              </ContextMenu>
+            <ContextMenu id="rightClick">
+              <SubMenu title="Increase by" hoverDelay={250}>
+                <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
+                  10%
+                </MenuItem>
+                <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
+                  20%
+                </MenuItem>
+                <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
+                  30%
+                </MenuItem>
+                <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
+                  40%
+                </MenuItem>
+                <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
+                  50%
+                </MenuItem>
+              </SubMenu>
+              <SubMenu title="Decrease by" hoverDelay={250}>
+                <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
+                  10%
+                </MenuItem>
+                <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
+                  20%
+                </MenuItem>
+                <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
+                  30%
+                </MenuItem>
+                <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
+                  40%
+                </MenuItem>
+                <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
+                  50%
+                </MenuItem>
+              </SubMenu>
+            </ContextMenu>
 
-              <PlanPopup ref="headPopup" style={{
-                width: '350px',
-                left: this.state.popupLeft + 'px',
-                top: this.state.popupTop + 'px',
-                marginTop: '5px'
-              }} title="Events: Mar/16"
-                         onClose={() => {
-                           this.setState({
-                             popupShown: false,
-                             popupLeft: 0,
-                             popupTop: 0
-                           });
-                         }}
-              >
-                <PopupTextContent>
-                  <strong>User Events</strong>
-                  <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
-                    Louis
-                    Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-                  <strong>Global Events</strong>
-                  <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                    correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
-                    do
-                    not</p>
-                </PopupTextContent>
-              </PlanPopup>
-              <AddChannelPopup
-                hidden={ !this.state.addChannelPopup }
-                onChannelChoose={ this.addChannel.bind(this) }
-                channels={ output() }
-                planChannels={ planChannels.map(item => { return { id: item } }) }
-                close={ () => { this.setState({addChannelPopup: false}) } }
-                addUnknownChannel={ this.addUnknownChannel.bind(this) }
-              />
+            <PlanPopup ref="headPopup" style={{
+              width: '350px',
+              left: this.state.popupLeft + 'px',
+              top: this.state.popupTop + 'px',
+              marginTop: '5px'
+            }} title="Events: Mar/16"
+                       onClose={() => {
+                         this.setState({
+                           popupShown: false,
+                           popupLeft: 0,
+                           popupTop: 0
+                         });
+                       }}
+            >
+              <PopupTextContent>
+                <strong>User Events</strong>
+                <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
+                  Louis
+                  Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
+                <strong>Global Events</strong>
+                <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
+                  correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
+                  do
+                  not</p>
+              </PopupTextContent>
+            </PlanPopup>
+            <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref="forecastingGraph">
+              <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
             </div>
           </div>
-        </div>
-        <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref="forecastingGraph">
-          <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
         </div>
       </div>
     } else {
@@ -992,7 +599,7 @@ export default class AnnualTab extends Component {
       <td className={ this.classes.titleCell } ref={(ref) => this.firstColumnCell = ref}>{ this.getCellItem(title) }</td>
       {
         items.map((item, i) => {
-          if (channel && this.state.editMode) {
+          if (channel && this.props.editMode) {
             return <td className={ this.classes.valueCell } key={ i }>{
               <EditableCell
                 title={ (hoverValues && item !== hoverValues[i]) ? "previous: " + hoverValues[i] : null }
@@ -1012,8 +619,8 @@ export default class AnnualTab extends Component {
               item={ item }
               hover={ hoverValues[i] }
               key={ i }
-              approveChannel={ this.approveChannel.bind(this, i, channel, isSecondGood ? hoverValues[i] : item) }
-              declineChannel={ this.declineChannel.bind(this, i, channel, isSecondGood ? item : hoverValues[i]) }
+              approveChannel={ () => { this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item) } }
+              declineChannel={ () => { this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]) } }
               isSecondGood={isSecondGood}/>
           }
           else return <td className={ this.classes.valueCell } key={ i }>{

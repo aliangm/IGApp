@@ -23,6 +23,19 @@
     position: relative;
 }
 
+.icon-position {
+    justify-content: center;
+    display: flex;
+}
+
+.back-icon {
+    width: 30px;
+    height: 23px;
+    background: url('../../assets/back.svg') center center no-repeat;
+    background-size: contain;
+    position: absolute;
+}
+
 .frame-text {
     font-weight: bold;
     color: #0564A5;

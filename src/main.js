@@ -15,7 +15,6 @@ import Campaigns from './components/pages/Campaigns';
 import Attribution from './components/pages/Attribution';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
-import Analyze from './components/pages/Analyze';
 import AuthService from './components/utils/AuthService'
 import App from './components/App';
 
@@ -51,7 +50,6 @@ ReactDOM.render(
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
       <Route path="/welcome" component={ Welcome } onEnter={ requireAdminAuth }/>
       <Route path="/plan" component={ Plan } onEnter={ requireAdminAuth }/>
-      <Route path="/analyze" component={ Analyze } onEnter={ requireAdminAuth }/>
       <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
       <Route path="/attribution" component={ Attribution } onEnter={ requireAuth }/>
     </Route>

@@ -298,7 +298,7 @@ export default class Item extends Component {
             <Button type="accent2" style={{
               width: '80px',
               textTransform: 'uppercase'
-            }} onClick={ this.useStatus }>Done</Button>
+            }} onClick={ this.useStatus }>Save</Button>
           </div>
         </div>
       </Popup>

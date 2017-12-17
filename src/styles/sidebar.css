@@ -3,7 +3,7 @@
 .box {
   width: 240px;
   position: fixed;
-  top: 79px;
+  top: 70px;
   left: 0;
   bottom: 0;
   background: #273142;
@@ -105,7 +105,7 @@
 }
 
 .sub-menu-item-icon {
-  margin-left: 60px;
+  margin-left: 48px;
   width: 20px;
   height: 18px;
   background: none left center no-repeat;
@@ -157,7 +157,7 @@
   z-index: 10;
 }
 
-@media (min-width: 561px) and (max-width: 1280px) {
+@media (min-width: 561px) and (max-width: 1440px) {
   .box {
     width: 88px;
     transition: width 300ms;
@@ -241,13 +241,16 @@
 
 .sub-menu-item {
   height: 54px;
-  background: #329ff1;
   border-bottom: 1px solid #2975ac3b;
   display: flex;
   align-items: center;
   cursor: pointer;
   position: relative;
   text-decoration: none;
+}
+
+.sub-menu-item:hover {
+  background: #329ff1;
 }
 
 .sub-menu-item-selected {

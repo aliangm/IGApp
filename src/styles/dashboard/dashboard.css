@@ -1,3 +1,9 @@
+.wrap {
+    position: relative;
+    max-width: 1162px;
+    padding: 20px;
+}
+
 .pageInner {
     overflow: visible!important;
     box-shadow: 0 0 0 1px #f5f6fb;
@@ -80,7 +86,6 @@
 
 .index {
     display: inline-block;
-    line-height: 32px;
     margin-left: 6px;
 }
 
@@ -138,4 +143,77 @@
     background-size: contain;
     height: 64px;
     width:64px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.sad-icon {
+    background: url(../../assets/sad-smiley.svg) center center no-repeat;
+    background-size: contain;
+    height: 35px;
+    width: 35px;
+    margin-top: 15px;
+}
+
+.no-metrics {
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9b9b9b;
+}
+
+.table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-body :global(tr):nth-child(even) {
+    background: #F1F4F8;
+}
+
+.table-body :global(tr):nth-child(odd) {
+    background: white;
+}
+
+.head-row {
+    font-size: 18px;
+    font-weight: 600;
+    height: 40px;
+    color: #354052;
+}
+
+.table-row {
+    height: 30px;
+    font-size: 16px;
+    color: #354052;
+}
+
+.channel-table {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    color: #3aa1ee;
+}
+
+.upper-panel {
+    width: 1096px;
+    height: 30px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    border: solid 1px #dfe2e5;
+    margin: 12px 15px 5px;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9b9b9b;
+    padding: 0 7px;
+}
+
+.select {
+    height: 20px;
+    padding: 0 !important;
 }

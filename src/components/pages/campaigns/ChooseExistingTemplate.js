@@ -117,7 +117,7 @@ export default class ChooseExistingTemplate extends Component {
           {
             this.state.focus ?
               <div className={this.classes.inner}>
-                <TemplateBox isWhite={true} isCenter={true} text={ this.state.focus }
+                <TemplateBox isWhite={true} isCenter={true} text={ this.state.focus } isBack={true}
                              onClick={() => {
                                this.setState({focus: '', selected: ''})
                              }}/>
@@ -126,7 +126,7 @@ export default class ChooseExistingTemplate extends Component {
               :
               this.state.userTemplates ?
                 <div className={this.classes.inner}>
-                  <TemplateBox isWhite={true} isCenter={true} text={ 'my templates' }
+                  <TemplateBox isWhite={true} isCenter={true} text={ 'my templates' } isBack={true}
                                onClick={() => {
                                  this.setState({userTemplates: false, selected: ''})
                                }}/>

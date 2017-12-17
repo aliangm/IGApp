@@ -1,6 +1,6 @@
 .wrap {
     position: relative;
-    max-width: 1162px;
+    padding: 0 20px;
 }
 
 .box {
@@ -20,6 +20,7 @@
     color: #273142;
     font-size: 14px;
     font-weight: 600;
+    width: 100%;
 }
 
 .table :global(tr) {
@@ -47,7 +48,7 @@
 
 .table :global(td):first-child {
     border-left: none;
-    min-width: 197px;
+    width: 200px;
 }
 
 .table :global(td):last-child {
@@ -111,31 +112,6 @@
     background: #0e568b;
 }
 
-.budget-change-box {
-    padding: 5px 12px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.left {
-    width: 50%;
-    display: flex;
-    justify-content: flex-start;
-    -webkit-box-pack: start;
-}
-
-.right {
-    width: 50%;
-    display: flex;
-    justify-content: flex-end;
-    -webkit-box-pack: end;
-}
-
-.budget-change-field {
-    flex-grow: 1;
-    flex-shrink: 0;
-}
-
 .row-title {
     composes: cell-item;
     white-space: pre-line;
@@ -183,15 +159,15 @@
 }
 
 .row-delete {
-    height: 20px;
-    width: 20px;
+    height: 15px;
+    width: 15px;
     cursor: pointer;
     background: url(../../assets/cancel-button.svg) center center no-repeat;
     background-size: contain;
     position: absolute;
-    left: -5px;
+    left: 0;
     top: 50%;
-    margin-top: -10px;
+    margin-top: -7px;
 }
 
 .row-icon {
@@ -332,10 +308,6 @@
     opacity: 1;
 }
 
-.wrap {
-    position: relative;
-}
-
 .loading {
     position: absolute;
     top: 0;
@@ -407,7 +379,7 @@
 }
 
 .inner-box {
-    margin: 15px 0;
+    margin: 20px 0;
 }
 
 .event-popup {
@@ -447,45 +419,4 @@
     left: 0;
     position: absolute;
     top: 0;
-}
-
-.dropmenu {
-    width: 100px;
-    left: auto !important;
-    padding: 4px 0 !important;
-    min-height: inherit !important;
-    top: 64px !important;
-    margin-left: 23px;
-}
-
-.button-triangle {
-    border: .25rem solid transparent;
-    border-top-color: currentColor;
-    color: #2ea1f8;
-    position: relative;
-    top: 16px;
-    left: 107px;
-    height: fit-content;
-}
-
-.dropmenu-item {
-    padding: 0 13px;
-    display: -webkit-box;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    color: #273142;
-    font-size: 14px;
-    height: 33px;
-    text-decoration: none;
-}
-
-.dropmenu-item:hover, .dropmenu-item[data-selected] {
-    background-color: #E5F5F8;
-}
-
-.dropButton {
-    padding: 0 11px 0 0;
 }

@@ -1,18 +1,14 @@
 import React from 'react';
-
 import Component from 'components/Component';
 import Page from 'components/Page';
-
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Item from 'components/pages/indicators/Item';
-
 import style from 'styles/onboarding/onboarding.css';
 import indiStyle from 'styles/indicators/indicators.css';
-
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import history from 'history';
 import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
@@ -24,9 +20,9 @@ import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticP
 import Loading from 'components/pages/indicators/Loading';
 import { getIndicatorsWithProps } from 'components/utils/indicators';
 import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
-import _ from 'lodash';
 
 export default class Indicators extends Component {
+
   style = style;
   styles = [indiStyle];
 
@@ -48,7 +44,7 @@ export default class Indicators extends Component {
     value = parseInt(value);
     if (!isNaN(value)) {
       update[name] = value;
-      this.props.updateState({actualIndicators: update});
+      this.props.updateUserMonthPlan({actualIndicators: update}, this.props.region, this.props.planDate);
     }
   }
 
@@ -247,6 +243,7 @@ export default class Indicators extends Component {
           maxValue={ properties[indicator].range.max }
           isPercentage={ properties[indicator].isPercentage }
           description ={ properties[indicator].description }
+          formula ={ properties[indicator].formula }
           isDirectionDown={ !properties[indicator].isDirectionUp }
           isDollar={ properties[indicator].isDollar }
           {... indicatorsSpecialProp[indicator]}
@@ -278,17 +275,17 @@ export default class Indicators extends Component {
           { isPopupMode() ?
 
             <div className={ this.classes.colRight }>
-            <div className={ this.classes.row }>
-            <ProfileProgress progress={ 76 } image={
-            require('assets/flower/4.png')
-          }
-            text="You rock! Hope you’re starting to get excited about planning the right way"/>
-            </div>
-          {/**
-           <div className={ this.classes.row }>
-           <ProfileInsights />
-           </div>
-           **/}
+              <div className={ this.classes.row }>
+                <ProfileProgress progress={ 76 } image={
+                  require('assets/flower/4.png')
+                }
+                                 text="You rock! Hope you’re starting to get excited about planning the right way"/>
+              </div>
+              {/**
+               <div className={ this.classes.row }>
+               <ProfileInsights />
+               </div>
+               **/}
             </div>
 
             : null }
@@ -297,34 +294,17 @@ export default class Indicators extends Component {
         { isPopupMode() ?
 
           <div className={ this.classes.footer }>
-            <BackButton onClick={() => {
-              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                .then(() => {
-                  history.push('/target-audience');
-                });
-            }} />
+            <BackButton onClick={ () => {
+              history.push('/target-audience');
+            } }/>
             <div style={{ width: '30px' }} />
-            <NextButton onClick={() => {
-              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                .then(() => {
-                  history.push('/preferences');
-                });
-            }} />
+            <NextButton onClick={ () => {
+              history.push('/preferences');
+            } }/>
           </div>
 
           :
-          <div className={ this.classes.footer }>
-            <SaveButton onClick={() => {
-              this.setState({saveFail: false, saveSuccess: false});
-              this.props.updateUserMonthPlan({actualIndicators: this.props.actualIndicators}, this.props.region, this.props.planDate)
-                .then(() => {
-                  this.setState({saveSuccess: true});
-                })
-                .catch(() => {
-                  this.setState({saveFail: true});
-                });
-            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
-          </div>
+          <div style={{ paddingBottom: '60px' }}/>
         }
       </Page>
     </div>

@@ -1,19 +1,14 @@
 import React from 'react';
 import Component from 'components/Component';
-
-import Page from 'components/Page';
-import Title from 'components/onboarding/Title';
 import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-
 import style from 'styles/plan/annual-tab.css';
 import icons from 'styles/icons/plan.css';
-import analyzeStyle from 'styles/analyze/analyze.css';
 
-export default class Analyze extends Component {
+export default class AnalyzeTable extends Component {
 
   style = style;
-  styles = [icons, analyzeStyle];
+  styles = [icons];
 
   monthNames = [
     "Jan", "Feb", "Mar",
@@ -192,38 +187,35 @@ export default class Analyze extends Component {
     });
 
     return <div>
-      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
-        <Title title="Analyze"/>
-        <div className={ this.classes.innerBox }>
-          <div className={ analyzeStyle.locals.wrap } ref="wrap">
-            <div className={ this.classes.box }>
-              <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
-                <thead>
-                { headRow }
-                </thead>
-                <tbody className={ this.classes.tableBody }>
-                { rows }
-                </tbody>
-                <tfoot>
-                { footRow }
-                </tfoot>
-              </table>
-            </div>
-
-            <div className={ this.classes.hoverBox }>
-              <table className={ this.classes.hoverTable }>
-                <thead>{ headRow }</thead>
-                <tbody>{ rows }</tbody>
-                <tfoot>{ footRow }</tfoot>
-              </table>
-            </div>
-
+      <div className={ this.classes.innerBox }>
+        <div style={{ margin: '15px' }} ref="wrap">
+          <div className={ this.classes.box }>
+            <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
+              <thead>
+              { headRow }
+              </thead>
+              <tbody className={ this.classes.tableBody }>
+              { rows }
+              </tbody>
+              <tfoot>
+              { footRow }
+              </tfoot>
+            </table>
           </div>
+
+          <div className={ this.classes.hoverBox }>
+            <table className={ this.classes.hoverTable }>
+              <thead>{ headRow }</thead>
+              <tbody>{ rows }</tbody>
+              <tfoot>{ footRow }</tfoot>
+            </table>
+          </div>
+
         </div>
-        <div className={ analyzeStyle.locals.wrap } style={{ width: this.state.graphDimensions.width }}>
-          <IndicatorsGraph data={ projections } dimensions={this.state.graphDimensions} objectives={ objectives }/>
-        </div>
-      </Page>
+      </div>
+      <div style={{ width: this.state.graphDimensions.width, margin: '15px' }}>
+        <IndicatorsGraph data={ projections } dimensions={this.state.graphDimensions} objectives={ objectives }/>
+      </div>
     </div>
   }
 
