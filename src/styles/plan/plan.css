@@ -1,9 +1,9 @@
 .head {
   height: 90px;
-  border-bottom: 1px solid #e7e9ed;
+  border-bottom: 2px solid #e7e9ed;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.5);
+  background: #fafbfd;
   position: fixed;
   top: 70px;
   width: calc(100% - 240px);
