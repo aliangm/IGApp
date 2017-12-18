@@ -71,6 +71,13 @@ export default class Preferences extends Component {
 
   componentDidMount() {
     this.getUserMinMonthBudgetsLines(this.props.userMinMonthBudgets, this.props.planDate);
+    // Advanced toggle open?
+    if (this.props.maxChannels !== -1 ||
+      this.state.userMinMonthBudgetsLines.length > 0 ||
+      this.props.inHouseChannels.length > 0 ||
+      this.props.blockedChannels.length > 0) {
+        this.setState({showAdvancedFields: true});
+    }
   }
 
   componentWillReceiveProps(nextProps) {
