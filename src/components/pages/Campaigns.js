@@ -39,8 +39,9 @@ function getDateString(stringDate) {
 }
 
 export default class Campaigns extends Component {
-  styles = [planStyle, icons];
+
   style = campaignsStyle;
+  styles = [planStyle, icons];
 
   constructor(props) {
     super(props);
@@ -65,6 +66,12 @@ export default class Campaigns extends Component {
     annualBudgetArray: []
   };
 
+  componentDidMount() {
+    if(this.props.location.query.campaign) {
+      this.setState({showPopup: true, index:this.props.location.query.campaign});
+    }
+  }
+
   componentWillReceiveProps({ campaigns }) {
     if (this.props.campaigns !== campaigns) {
       this.setCampaigns(campaigns)
@@ -73,10 +80,10 @@ export default class Campaigns extends Component {
 
   setCampaigns = (campaigns) => {
     this.setState({ campaigns })
-  }
+  };
 
   updateCampaigns = (campaigns) => {
-    this.setCampaigns(campaigns)
+    this.setCampaigns(campaigns);
 
     return this.props.updateUserMonthPlan({ campaigns }, this.props.region, this.props.planDate);
   };
@@ -102,7 +109,7 @@ export default class Campaigns extends Component {
       console.log('Campaign was created');
     }
 
-    this.setCampaigns(campaigns)
+    this.setCampaigns(campaigns);
 
     return this.updateCampaigns(campaigns);
   };

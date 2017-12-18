@@ -84,6 +84,7 @@ export default class Updates extends Component {
   }
 
   render() {
+    const users = this.getMembersNames();
     const comments = this.props.campaign.comments
       .sort((a, b) => {
         return new Date(b.time) - new Date(a.time)
@@ -91,15 +92,30 @@ export default class Updates extends Component {
       .map((comment, index) => {
         const initials = this.getInitials(comment.user);
         const name = this.getName(comment.user);
-        return <Comment key={ index } name={ name } comment={ comment.comment } time={ comment.time } initials={ initials } index={ index } editComment={ this.editComment.bind(this) } deleteComment={ this.deleteComment.bind(this,index) }/>
+        return <Comment
+          key={ index }
+          name={ name }
+          comment={ comment.comment }
+          time={ comment.time }
+          initials={ initials }
+          index={ index }
+          editComment={ this.editComment.bind(this) }
+          deleteComment={ this.deleteComment.bind(this,index) }
+          users={users}
+          campaignIndex={this.props.campaign.index}
+          addNotification={this.props.addNotification}
+          UID={this.state.UID}
+          campaignName={this.props.campaign.name}
+        />
       });
     return <div>
       <CommentTextArea
         addOrEditComment={ this.addComment.bind(this) }
-        users={this.getMembersNames()}
+        users={users}
         addNotification={this.props.addNotification}
         UID={this.state.UID}
         campaignName={this.props.campaign.name}
+        index={this.props.campaign.index}
       />
       { comments.length > 0 ?
         <div>
