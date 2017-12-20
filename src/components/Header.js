@@ -8,6 +8,16 @@ import history from 'history';
 import RegionPopup from 'components/RegionPopup';
 import Notifications from 'components/pages/header/Notifications';
 
+function formatDate(dateStr) {
+  if (dateStr) {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const [monthNum, yearNum] = dateStr.split("/");
+
+    return `${monthNames[monthNum - 1]} ${yearNum}`;
+  }
+  else return null;
+}
+
 export default class Header extends Component {
 
   style = style;
@@ -96,6 +106,9 @@ export default class Header extends Component {
     const userNotifications = this.props.notifications.filter(notification => notification.UID === this.props.auth.getProfile().user_id);
     const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
     return <div className={ this.classes.menuBig }>
+      <div className={ this.classes.planDate }>
+        { formatDate(this.props.planDate) }
+      </div>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
           <div className={ this.classes.dropmenuButton }
