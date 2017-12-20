@@ -298,13 +298,13 @@ export default class CMO extends Component {
         </div>
       </div>
       { objectivesGauges.length > 0 ?
-        <div className={ this.classes.cols } style={{ width: '825px' }}>
+        <div className={ this.classes.cols } style={{ maxWidth: '1140px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '280px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
+            <div className={ dashboardStyle.locals.item } style={{ height: 'auto', width: 'auto' }}>
               <div className={ dashboardStyle.locals.text }>
                 Objectives
               </div>
-              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
+              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center', display: 'block' }}>
                 {objectivesGauges}
               </div>
             </div>
