@@ -12,6 +12,7 @@ import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
 import { getNickname, getTitle } from 'components/utils/channels';
+import Label from 'components/ControlsLabel';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -53,7 +54,8 @@ export default class Campaigns extends Component {
       index: undefined,
       campaign: {},
       campaigns: props.campaigns,
-      addNew: false
+      addNew: false,
+      onlyMyCampaigns: false
     };
   }
 
@@ -185,12 +187,18 @@ export default class Campaigns extends Component {
 
     let filteredCampaigns = activeCampaigns;
 
-    if (this.props.auth.getProfile().isAdmin === false) {
+    const profile = this.props.auth.getProfile();
+
+    if (profile.isAdmin === false) {
       const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
       if (member && member.specificChannels && member.specificChannels.length > 0) {
         filteredCampaigns = activeCampaigns.filter(campaign => member.specificChannels.some(channel => campaign.source.includes(channel)));
         processedChannels.names = processedChannels.names.filter(channel => member.specificChannels.includes(channel));
       }
+    }
+
+    if (this.state.onlyMyCampaigns) {
+      filteredCampaigns = filteredCampaigns.filter(campaign => campaign.owner === profile.user_id);
     }
 
     if (this.state.search) {
@@ -222,12 +230,20 @@ export default class Campaigns extends Component {
               })
             }
           </div>
+          <div className={ planStyle.locals.headPlan }>
+            <Label
+              checkbox={this.state.onlyMyCampaigns}
+              onChange={ () => { this.setState({onlyMyCampaigns: !this.state.onlyMyCampaigns}) } }
+              style={{ margin: '0', alignSelf: 'center', textTransform: 'capitalize', fontSize: '12px' }}
+            >
+              Show only my campaigns
+            </Label>
+          </div>
         </div>
         <div style={{ paddingTop: '90px' }}>
           {selectedIndex !== 2 ?
             <div className={ this.classes.campaignsTitle }>
               <div className={ this.classes.campaignsTitleDate }>
-                { getDateString(planDate) } - Campaigns
                 <div className={ this.classes.search }>
                   <div className={ this.classes.searchIcon }/>
                   <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
