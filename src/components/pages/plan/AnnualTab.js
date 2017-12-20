@@ -24,6 +24,7 @@ import buttonsStyle from 'styles/onboarding/buttons.css';
 import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
 import Toggle from 'components/controls/Toggle';
+import { timeFrameToDate } from 'components/utils/objective';
 
 export default class AnnualTab extends Component {
 
@@ -430,7 +431,7 @@ export default class AnnualTab extends Component {
       this.props.objectives.forEach(objective => {
         const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
         const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
-        const date = new Date(objective.timeFrame);
+        const date = timeFrameToDate(objective.timeFrame);
         const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
         objectives[objective.indicator] = {x: monthStr, y: target};
       });

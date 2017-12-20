@@ -9,6 +9,7 @@ import Funnel from 'components/pages/dashboard/Funnel';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
+import { timeFrameToDate } from 'components/utils/objective';
 
 export default class CMO extends Component {
 
@@ -121,7 +122,7 @@ export default class CMO extends Component {
       let title;
       const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
       const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-      const month = new Date(objective.timeFrame).getMonth();
+      const month = timeFrameToDate(objective.timeFrame).getMonth();
       const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
       indicatorsOptions.forEach((indicator) => {
         if (indicator.value === objective.indicator) {

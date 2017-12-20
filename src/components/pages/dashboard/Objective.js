@@ -2,6 +2,7 @@ import React from "react";
 import Component from "components/Component";
 import icons from 'styles/icons/indicators.css';
 import style from 'styles/dashboard/objective.css';
+import { timeFrameToDate } from 'components/utils/objective';
 
 export default class Objective extends Component {
 
@@ -14,7 +15,7 @@ export default class Objective extends Component {
   };
 
   getDaysLeft() {
-    const targetDate = new Date(this.props.timeFrame);
+    const targetDate = timeFrameToDate(this.props.timeFrame);
     const today = new Date();
     return Math.max(Math.ceil((targetDate.getTime() - today.getTime())/(24*60*60*1000)), 0) + " days left";
   }
@@ -24,7 +25,7 @@ export default class Objective extends Component {
     // Else, if date passed - red.
     // Else - none.
     const today = new Date();
-    const date = new Date(this.props.timeFrame);
+    const date = timeFrameToDate(this.props.timeFrame);
     if (this.props.target <= this.props.value) {
       return 'success';
     }
