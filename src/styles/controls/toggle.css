@@ -12,6 +12,23 @@
     user-select: none;
 }
 
+.blue {
+    composes: box;
+}
+
+.grey {
+    composes: box;
+    border: solid 2px #C3C5D2;
+}
+
+.grey .frame {
+    color: #a2a2a2;
+}
+
+.grey .frame[data-active] {
+    background: linear-gradient(to top, #ccc 0%, #C3C5D2 100%);
+}
+
 .frame {
     width: 90px;
     height: 33px;

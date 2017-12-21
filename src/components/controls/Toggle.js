@@ -6,10 +6,16 @@ export default class Toggle extends Component {
 
   style = style;
 
+  static defaultProps = {
+    type: 'blue'
+  };
+
   render() {
 
+    let boxClassName = this.classes[this.props.type];
+
     return <div className={this.classes.inner} style={ this.props.style }>
-      <div className={this.classes.box}>
+      <div className={boxClassName}>
         <div className={this.classes.frame} data-active={this.props.leftActive ? true : null}
              onClick={ this.props.leftClick }>
           <div className={this.classes.frameText}>
