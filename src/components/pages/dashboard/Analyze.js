@@ -245,13 +245,14 @@ export default class Analyze extends Component {
         </div>
       </div>
       <FeatureToggle featureName="attribution">
-        <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'auto', padding: '20px 0' }}>
+        <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'auto', padding: '15px 0' }}>
           <Toggle
             leftText="channels"
             rightText="campaigns"
             leftActive={ this.state.showChannels }
             leftClick={ ()=>{ this.setState({showChannels: true}) } }
             rightClick={ ()=>{ this.setState({showChannels: false}) } }
+            type="grey"
           />
           <table className={dashboardStyle.locals.table}>
             <thead>
