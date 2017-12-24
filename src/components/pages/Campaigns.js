@@ -109,6 +109,9 @@ export default class Campaigns extends Component {
       const length = campaigns.push(campaign);
       this.setState({index: length-1});
       console.log('Campaign was created');
+      if (!this.props.userAccount.steps || !this.props.userAccount.steps.campaign) {
+        this.props.updateUserAccount({'steps.campaign': true});
+      }
     }
 
     this.setCampaigns(campaigns);

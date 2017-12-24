@@ -10,6 +10,7 @@ import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import { timeFrameToDate } from 'components/utils/objective';
+import Steps from 'components/pages/dashboard/Steps';
 
 export default class CMO extends Component {
 
@@ -142,6 +143,7 @@ export default class CMO extends Component {
     });
 
     return <div className={ dashboardStyle.locals.wrap }>
+      <Steps {... this.props}/>
       <div className={ this.classes.cols } style={{ width: '825px' }}>
         <div className={ this.classes.colLeft }>
           <div className={ dashboardStyle.locals.item }>

@@ -606,6 +606,9 @@ export default class Plan extends Component {
                     this.editUpdate()
                       .then( () => {
                         this.forecast();
+                        if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
+                          this.props.updateUserAccount({'steps.plan': true});
+                        }
                       });
                   }
                   this.setState({

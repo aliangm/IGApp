@@ -234,9 +234,9 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  updateUserAccount(body, region, planDate) {
+  updateUserAccount(body) {
     const deferred = q.defer();
-    serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(body), region, planDate)
+    serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(body))
       .then((response) => {
         if (response.ok) {
           response.json()
