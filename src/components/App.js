@@ -491,7 +491,7 @@ class AppComponent extends Component {
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header auth={ this.props.route.auth } {... this.state}/>
-        <Sidebar auth={ this.props.route.auth }/>
+        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         { this.state.loaded ?
           childrenWithProps

@@ -7,6 +7,7 @@ import Setup from 'components/pages/attribution/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import { FeatureToggle } from 'react-feature-toggles';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 export default class Attribution extends Component {
   style = style;
@@ -57,9 +58,19 @@ export default class Attribution extends Component {
               }
             </div>
           </div>
-          <div style={{ paddingTop: '90px' }}>
-            { selectedTab ? React.createElement(selectedTab, _.merge(this.props)) : null }
-          </div>
+          { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
+            <div style={{paddingTop: '90px'}}>
+              {selectedTab ? React.createElement(selectedTab, _.merge(this.props)) : null}
+            </div>
+            :
+            <FirstPageVisit
+              title="Understanding data starts by collecting it"
+              content="You can learn and improve a lot from your data. Track leads’ and users’ interactions with your brand to better understand your investments' effectiveness."
+              action="Implement Attribution >"
+              icon="step:attribution"
+              onClick={ () => { this.props.updateUserAccount({'pages.attribution': true}) } }
+            />
+          }
         </Page>
       </div>
     </FeatureToggle>

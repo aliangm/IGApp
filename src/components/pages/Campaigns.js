@@ -13,6 +13,7 @@ import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
 import { getNickname, getTitle } from 'components/utils/channels';
 import Label from 'components/ControlsLabel';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -243,57 +244,74 @@ export default class Campaigns extends Component {
             </Label>
           </div>
         </div>
-        <div style={{ paddingTop: '90px' }}>
-          {selectedIndex !== 2 ?
-            <div className={ this.classes.campaignsTitle }>
-              <div className={ this.classes.campaignsTitleDate }>
-                <div className={ this.classes.search }>
-                  <div className={ this.classes.searchIcon }/>
-                  <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
-                  <div className={ this.classes.searchClear } onClick={ ()=>{ this.setState({search: ''}) } }/>
+        { this.props.userAccount.pages && this.props.userAccount.pages.campaigns ?
+          <div style={{paddingTop: '90px'}}>
+            {selectedIndex !== 2 ?
+              <div className={this.classes.campaignsTitle}>
+                <div className={this.classes.campaignsTitleDate}>
+                  <div className={this.classes.search}>
+                    <div className={this.classes.searchIcon}/>
+                    <input value={this.state.search} onChange={(e) => {
+                      this.setState({search: e.target.value})
+                    }} className={this.classes.searchInput}/>
+                    <div className={this.classes.searchClear} onClick={() => {
+                      this.setState({search: ''})
+                    }}/>
+                  </div>
+                </div>
+                <div className={this.classes.campaignsTitleBudget}>
+                  Budget left to invest
+                  <div className={this.classes.campaignsTitleArrow}
+                       style={{color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d'}}>
+                    ${budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0}
+                  </div>
                 </div>
               </div>
-              <div className={ this.classes.campaignsTitleBudget }>
-                Budget left to invest
-                <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
-                  ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0 }
-                </div>
-              </div>
+              : null}
+            {
+              selectedTab && React.createElement(selectedTab, _.merge({}, this.props, {
+                processedChannels,
+                filteredCampaigns: filteredCampaigns,
+                updateCampaigns: this.updateCampaigns,
+                showCampaign: this.showCampaign,
+                addNewCampaign: this.addNewCampaign
+              }))
+            }
+            <div hidden={!this.state.showPopup}>
+              <CampaignPopup
+                campaign={this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign}
+                channelTitle={processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source]}
+                closePopup={this.closePopup.bind(this)}
+                updateCampaign={this.updateCampaign}
+                teamMembers={teamMembers}
+                campaignsTemplates={campaignsTemplates}
+                updateCampaignsTemplates={this.updateCampaignsTemplates}
+                firstName={userFirstName}
+                lastName={userLastName}
+                auth={this.props.auth}
+                processedChannels={processedChannels}
+                addNotification={addNotification}
+              />
             </div>
-            : null }
-          {
-            selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
-              processedChannels,
-              filteredCampaigns: filteredCampaigns,
-              updateCampaigns: this.updateCampaigns,
-              showCampaign: this.showCampaign,
-              addNewCampaign: this.addNewCampaign
-            }))
-          }
-          <div hidden={ !this.state.showPopup }>
-            <CampaignPopup
-              campaign={ this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign  }
-              channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
-              closePopup={ this.closePopup.bind(this) }
-              updateCampaign={ this.updateCampaign }
-              teamMembers={ teamMembers }
-              campaignsTemplates={ campaignsTemplates }
-              updateCampaignsTemplates={ this.updateCampaignsTemplates }
-              firstName={ userFirstName }
-              lastName={ userLastName }
-              auth={ this.props.auth }
-              processedChannels={ processedChannels }
-              addNotification = { addNotification }
-            />
+            <div hidden={!this.state.addNew}>
+              <ChooseExistingTemplate
+                showCampaign={(template) => this.showCampaign(_.merge({}, this.state.campaign, template))}
+                close={() => {
+                  this.setState({addNew: false})
+                }}
+                campaignsTemplates={this.props.campaignsTemplates}
+              />
+            </div>
           </div>
-          <div hidden={ !this.state.addNew }>
-            <ChooseExistingTemplate
-              showCampaign={ (template) => this.showCampaign(_.merge({}, this.state.campaign, template)) }
-              close={ () => { this.setState({addNew: false}) } }
-              campaignsTemplates={ this.props.campaignsTemplates }
-            />
-          </div>
-        </div>
+          :
+          <FirstPageVisit
+            title="Managing campaigns & activities couldn't be easier"
+            content="Manage campaigns & activities across marketing channels. All organized in one place, without spreadsheets, email, or any other tool, so you (and your team) can focus on getting sh*t done!"
+            action="Take me to Campaigns >"
+            icon="step:campaign"
+            onClick={ () => { this.props.updateUserAccount({'pages.campaigns': true}) } }
+          />
+        }
       </Page>
     </div>
   }

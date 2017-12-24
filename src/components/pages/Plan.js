@@ -21,6 +21,7 @@ import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import { output } from 'components/utils/channels';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -650,9 +651,19 @@ export default class Plan extends Component {
         <div className={ this.classes.serverDown }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
-        <div>
-          { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
-        </div>
+        { this.props.userAccount.pages && this.props.userAccount.pages.plan ?
+          <div>
+            {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
+          </div>
+          :
+          <FirstPageVisit
+            title="One place for understanding your route to growth"
+            content="Everything starts with planning. Plan where, when and how you're going to invest your marketing budget to achieve your goals."
+            action="Let's plan some budgets >"
+            icon="step:plan"
+            onClick={ () => { this.props.updateUserAccount({'pages.plan': true}) } }
+          />
+        }
       </Page>
     </div>
   }
