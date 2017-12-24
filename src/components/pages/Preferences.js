@@ -76,7 +76,7 @@ export default class Preferences extends Component {
       this.state.userMinMonthBudgetsLines.length > 0 ||
       this.props.inHouseChannels.length > 0 ||
       this.props.blockedChannels.length > 0) {
-        this.setState({showAdvancedFields: true});
+      this.setState({showAdvancedFields: true});
     }
   }
 
@@ -729,13 +729,8 @@ export default class Preferences extends Component {
                   userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
                   planNeedsUpdate: true
-                }, this.props.region, this.props.planDate)
-                  .then(() => {
-                    this.setState({saveSuccess: true});
-                  })
-                  .catch(() => {
-                    this.setState({saveFail: true});
-                  });
+                }, this.props.region, this.props.planDate);
+                this.setState({saveSuccess: true});
               }
               else {
                 this.setState({saveFail: true});

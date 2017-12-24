@@ -491,11 +491,11 @@ export default class Profile extends Component {
             </div>
             <BackButton onClick={() => {
               this.calculatePricing(()=> {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
-                .then(() => {
-                  history.push('/welcome');
-                });
-            });
+                this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
+                  .then(() => {
+                    history.push('/welcome');
+                  });
+              });
             }}/>
             <div style={{width: '30px'}}/>
             <NextButton onClick={() => {
@@ -517,13 +517,8 @@ export default class Profile extends Component {
             <SaveButton onClick={() => {
               this.setState({saveFail: false, saveSuccess: false});
               this.calculatePricing(()=> {
-              this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
-                .then(()=>{
-                  this.setState({saveSuccess: true});
-                })
-                .catch(()=>{
-                  this.setState({saveFail: true})
-                });
+                this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate);
+                this.setState({saveSuccess: true});
               });
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>

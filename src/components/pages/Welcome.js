@@ -204,10 +204,10 @@ export default class Welcome extends Component {
         <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
       </div>
       { this.props.userAccount.pictureUrl ?
-      <div className={ this.classes.row }>
-        <Label>Picture</Label>
-        <div className={ welcomeStyle.locals.userPicture } style={{ backgroundImage: 'url(' + this.props.userAccount.pictureUrl + ')' }} />
-      </div>
+        <div className={ this.classes.row }>
+          <Label>Picture</Label>
+          <div className={ welcomeStyle.locals.userPicture } style={{ backgroundImage: 'url(' + this.props.userAccount.pictureUrl + ')' }} />
+        </div>
         : null }
     </div>;
     const companyAccount = <div>
@@ -340,13 +340,8 @@ export default class Welcome extends Component {
           <div className={ this.classes.footer }>
             <SaveButton onClick={() => {
               this.setState({saveFail: false, saveSuccess: false});
-              this.props.updateUserAccount(this.props.userAccount)
-                .then(() => {
-                  this.setState({saveSuccess: true});
-                })
-                .catch(() => {
-                  this.setState({saveFail: true});
-                });
+              this.props.updateUserAccount(this.props.userAccount);
+              this.setState({saveSuccess: true});
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }

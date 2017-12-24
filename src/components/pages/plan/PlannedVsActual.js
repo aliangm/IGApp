@@ -444,15 +444,10 @@ export default class PlannedVsActual extends Component {
               <SaveButton onClick={() => {
                 this.setState({saveFail: false, saveSuccess: false});
                 this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
-                  .then(() => {
-                    this.setState({saveSuccess: true});
-                    if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
-                      this.props.updateUserAccount({'steps.plannedVsActual': true});
-                    }
-                  })
-                  .catch(() => {
-                    this.setState({saveFail: true});
-                  });
+                this.setState({saveSuccess: true});
+                if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
+                  this.props.updateUserAccount({'steps.plannedVsActual': true});
+                }
               }} success={ this.state.saveSuccess} fail={ this.state.saveFail }/>
             </div>
           </div>
