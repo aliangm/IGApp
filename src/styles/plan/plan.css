@@ -10,6 +10,12 @@
   z-index: 9;
 }
 
+@media (max-width: 1440px) {
+  .head {
+    width: calc(100% - 88px);
+  }
+}
+
 .head-title {
   text-transform: capitalize;
   font-size: 32px;
