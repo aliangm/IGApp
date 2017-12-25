@@ -14,6 +14,8 @@ import campaignsStyle from 'styles/campaigns/campaigns.css';
 import { getNickname, getTitle } from 'components/utils/channels';
 import Label from 'components/ControlsLabel';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
+import Button from 'components/controls/Button';
+import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -235,10 +237,17 @@ export default class Campaigns extends Component {
             }
           </div>
           <div className={ planStyle.locals.headPlan }>
+            <Button type="reverse" style={{
+              width: '102px'
+            }} onClick={() => {
+              this.setState({importSalesforceCampaigns: true})
+            }}>
+              Import
+            </Button>
             <Label
               checkbox={this.state.onlyMyCampaigns}
               onChange={ () => { this.setState({onlyMyCampaigns: !this.state.onlyMyCampaigns}) } }
-              style={{ margin: '0', alignSelf: 'center', textTransform: 'capitalize', fontSize: '12px' }}
+              style={{ margin: '0', alignSelf: 'center', textTransform: 'capitalize', fontSize: '12px', marginLeft: '15px' }}
             >
               Show only my campaigns
             </Label>
@@ -302,6 +311,14 @@ export default class Campaigns extends Component {
                 campaignsTemplates={this.props.campaignsTemplates}
               />
             </div>
+            <ImportCampaignsPopup
+              hidden={ !this.state.importSalesforceCampaigns }
+              close={ ()=>{ this.setState({importSalesforceCampaigns: false}) } }
+              setDataAsState={ this.props.setDataAsState }
+              updateState={ this.updateState }
+              salesforceAuto={this.props.salesforceAuto}
+              userAccount={this.props.userAccount}
+            />
           </div>
           :
           <FirstPageVisit
