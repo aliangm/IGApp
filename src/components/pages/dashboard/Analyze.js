@@ -90,10 +90,13 @@ export default class Analyze extends Component {
     });
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
-      const current = indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1].value;
-      const previous = indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)].value;
-      if (previous) {
-        grow = Math.round((current - previous) / previous * 100)
+      const current = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1].value;
+      const previous = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)].value;
+      if (current) {
+        if (previous) {
+          grow = Math.round((current - previous) / previous * 100)
+        }
+        else grow = Infinity;
       }
     }
     const CEVsArray = relevantData.map(item => item.CEVs || {});
@@ -162,8 +165,8 @@ export default class Analyze extends Component {
         .filter(campaign => campaign.isArchived !== true)
         .map((campaign, index) => {
             const budget = campaign.budget || campaign.actualSpent;
-            const conversion = campaign.attribution.conversion;
-            const funnelIndicator = campaign.attribution[this.state.attributionTableIndicator];
+            const conversion = campaign.attribution && campaign.attribution.conversion;
+            const funnelIndicator = campaign.attribution && campaign.attribution[this.state.attributionTableIndicator];
             return (funnelIndicator || conversion) ?
               this.getTableRow(null,
                 [
@@ -195,7 +198,7 @@ export default class Analyze extends Component {
           onChange={(e) => {
             this.setState({months: e.value})
           }}
-          style={{ width: '44px', margin: '0 8px' }}
+          style={{ width: '55px', margin: '0 8px' }}
           innerClassName={dashboardStyle.locals.select }
         />
         <div className={dashboardStyle.locals.historyConfigText}>
@@ -292,7 +295,7 @@ export default class Analyze extends Component {
                 <div className={this.classes.footerRight}>
                   <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
                   <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}>
-                    {Math.abs(grow)}%
+                    {isFinite(grow) ? Math.abs(grow) + '%' : '∞'}
                   </div>
                 </div>
                 : null}

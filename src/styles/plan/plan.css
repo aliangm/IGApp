@@ -116,6 +116,7 @@
   color: #646973;
   font-size: 20px;
   line-height: 34px;
+  white-space: pre;
 }
 
 .title-price {
@@ -237,15 +238,14 @@
 
 .dropmenu {
   width: 100px;
-  left: 145px !important;
+  left: 15px !important;
   padding: 4px 0 !important;
   min-height: inherit !important;
-  top: 74px !important;
+  top: 45px !important;
   text-transform: capitalize;
 }
 
 .dropmenu-edit {
-  left: 374px !important;
   width: 110px;
   composes: dropmenu;
 }

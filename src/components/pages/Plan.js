@@ -445,7 +445,7 @@ export default class Plan extends Component {
           </div>
           <div className={this.classes.headPlan}>
             {this.props.userAccount.freePlan ? null :
-              <div>
+              <div style={{ position: 'relative' }}>
                 <div className={this.classes.error}>
                   <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
                     href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
@@ -454,7 +454,8 @@ export default class Plan extends Component {
                               planNeedsUpdate={this.props.planNeedsUpdate}/>
                 <Popup style={{
                   width: '265px',
-                  top: '180%',
+                  top: '130px',
+                  left: '-137px',
                   transform: 'translate(0, -50%)'
                 }} hidden={!this.state.popup} onClose={() => {
                   this.setState({
@@ -472,7 +473,7 @@ export default class Plan extends Component {
               </div>
             }
             { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', position: 'relative' }}>
                 <div>
                   <Button type="reverse" contClassName={ this.classes.dropButton } style={{
                     width: '102px',
@@ -598,7 +599,7 @@ export default class Plan extends Component {
               </div>
             }
             { this.state.selectedTab === 1 ?
-              <div>
+              <div style={{ position: 'relative' }}>
                 <Button type="primary2" style={{
                   marginLeft: '15px',
                   width: '102px'

@@ -39,7 +39,7 @@ export default class CampaignsByFocus extends Component {
           ${formatBudgetShortened(focuses[focus])}
         </div>
         <div className={this.classes.focusPercentage}>
-          {Math.round(focuses[focus]/totalBudget*100)}%
+          {totalBudget ? Math.round(focuses[focus]/totalBudget*100) : 0}%
         </div>
       </div>
     );
@@ -59,7 +59,7 @@ export default class CampaignsByFocus extends Component {
         <div className={this.classes.right}>
           <div className={this.classes.supporting}>
             <div className={this.classes.supportingNumber}>
-              {Math.round(campaignsWithFocus / numberOfCampaigns * 100)}%
+              {numberOfCampaigns ? Math.round(campaignsWithFocus / numberOfCampaigns * 100) : 0}%
             </div>
             <div className={this.classes.supportingText}>
               {" supporting"}

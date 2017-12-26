@@ -255,7 +255,7 @@ export default class Header extends Component {
             { hasUser ?
               <div className={ this.classes.userBoxInside }>
                 <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
-                <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + user.pictureUrl + ')' }} />
+                <div className={ this.classes.userLogo } style={{ backgroundImage: user.pictureUrl ? 'url(' + user.pictureUrl + ')' : '' }} />
                 <div className={ this.classes.logged }>
                   {this.props.userCompany}
                   <div className={ this.classes.user }>
@@ -290,7 +290,7 @@ export default class Header extends Component {
       {hasUser ?
         <div className={ this.classes.userBoxOutside }>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
-          <div className={ this.classes.userLogo } style={{ backgroundImage: 'url(' + user.pictureUrl + ')' }} />
+          <div className={ this.classes.userLogo } style={{ backgroundImage: user.pictureUrl ? 'url(' + user.pictureUrl + ')' : '' }} />
           <div className={ this.classes.logged }>
             {this.props.userCompany}
             <div className={ this.classes.user }>

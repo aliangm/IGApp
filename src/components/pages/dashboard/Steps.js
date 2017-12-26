@@ -18,7 +18,7 @@ export default class Steps extends Component {
     return <div hidden={(plan && attribution && campaign && idea && plannedVsActual) || this.props.userAccount.dontShowSteps}>
       <div>
         <div className={this.classes.center}>
-          <div className={this.classes.picture} style={{ backgroundImage: 'url(' + this.props.userAccount.pictureUrl + ')' }}/>
+          <div className={this.classes.picture} style={{ backgroundImage: this.props.userAccount.pictureUrl ? 'url(' + this.props.userAccount.pictureUrl + ')' : '' }}/>
         </div>
         <div className={this.classes.title}>
           {"Welcome to InfiniGrow, " + this.props.userAccount.firstName + "!"}
