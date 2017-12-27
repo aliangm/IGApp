@@ -199,7 +199,6 @@ export default class Analyze extends Component {
             this.setState({months: e.value})
           }}
           style={{ width: '55px', margin: '0 8px' }}
-          innerClassName={dashboardStyle.locals.select }
         />
         <div className={dashboardStyle.locals.historyConfigText}>
           months

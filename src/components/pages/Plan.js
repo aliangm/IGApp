@@ -522,9 +522,8 @@ export default class Plan extends Component {
                   <div style={{ position: 'relative' }}>
                     <PlanPopup ref="whatIfPopup" style={{
                       width: '367px',
-                      right: '110px',
-                      left: 'auto',
-                      top: '-37px',
+                      left: '-252px',
+                      top: '10px',
                       textAlign: 'initial',
                       cursor: 'initial'
                     }} hideClose={ true } title="What If - Scenarios Management">
