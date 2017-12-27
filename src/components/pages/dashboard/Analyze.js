@@ -112,6 +112,7 @@ export default class Analyze extends Component {
         { this.state.showChannels ? 'Channel' : 'campaign' }
       </div>,
       'Cost',
+      'Web Visits',
       'Conversions',
       <div style={{display: 'inline-flex'}}>
         { this.state.editMetric ?
@@ -142,15 +143,17 @@ export default class Analyze extends Component {
     const rows = this.state.showChannels ?
       Object.keys(sumedBudgets).map(item => {
         const budget = sumedBudgets[item];
+        const webVisits =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item] : 0) + sum, 0);
         const conversion =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item] : 0) + sum, 0);
         const funnelIndicator = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item] : 0) + sum, 0);
-        return sumedBudgets[item] && (funnelIndicator || conversion) ?
+        return sumedBudgets[item] && (funnelIndicator || conversion || webVisits) ?
           this.getTableRow(null,
             [
               <div className={dashboardStyle.locals.channelTable}>
                 {getChannelNickname(item)}
               </div>,
               '$' + formatBudget(budget),
+              webVisits,
               conversion,
               Math.round(funnelIndicator * 100) / 100,
               funnelIndicator ? '$' + formatBudget(Math.round(sumedBudgets[item] / funnelIndicator)) : 0,
@@ -165,15 +168,17 @@ export default class Analyze extends Component {
         .filter(campaign => campaign.isArchived !== true)
         .map((campaign, index) => {
             const budget = campaign.budget || campaign.actualSpent;
+            const webVisits = campaign.attribution && campaign.attribution.webVisits;
             const conversion = campaign.attribution && campaign.attribution.conversion;
             const funnelIndicator = campaign.attribution && campaign.attribution[this.state.attributionTableIndicator];
-            return (funnelIndicator || conversion) ?
+            return (funnelIndicator || conversion || webVisits) ?
               this.getTableRow(null,
                 [
                   <div className={dashboardStyle.locals.channelTable}>
                     {campaign.name}
                   </div>,
                   '$' + formatBudget(budget),
+                  webVisits,
                   conversion,
                   Math.round(funnelIndicator),
                   budget ? Math.round(funnelIndicator / budget) : 0,
