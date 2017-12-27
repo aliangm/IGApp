@@ -259,7 +259,7 @@ export default class HubspotAutomaticPopup extends Component {
             </div>
           </div>
           <div className={ this.classes.row }>
-            <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckboxMulti.bind(this, 'owners') }>Group by hubspot owners / regions (optional)</Label>
+            <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckboxMulti.bind(this, 'owners') }>Filter by hubspot owners / regions (optional)</Label>
             <MultiSelect { ... selects.owners} selected={ this.state.mapping.owners } onChange={ this.handleChangeMulti.bind(this, 'owners') } disabled={ !this.state.mapping.owners } style={{ width: 'initial'}}  placeholder="Select your region owners"/>
           </div>
           <div className={ this.classes.footer }>

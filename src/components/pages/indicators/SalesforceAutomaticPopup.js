@@ -253,7 +253,7 @@ export default class SalesforceAutomaticPopup extends Component {
             </div>
           </div>
           <div className={ this.classes.row }>
-            <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckbox.bind(this, 'owners') } className={ salesForceStyle.locals.ownersLabel }>Group by salesforce owners / regions (optional)</Label>
+            <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckbox.bind(this, 'owners') } className={ salesForceStyle.locals.ownersLabel }>Filter by salesforce owners / regions (optional)</Label>
             <MultiSelect { ... selects.owners} selected={ this.state.mapping.owners } onChange={ this.handleChange.bind(this, 'owners') } disabled={ !this.state.mapping.owners } style={{ width: 'initial'}}  placeholder="Select your region owners"/>
           </div>
           <div className={ this.classes.footer }>
