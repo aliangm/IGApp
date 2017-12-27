@@ -203,6 +203,10 @@ export default class Welcome extends Component {
       <div className={ this.classes.row }>
         <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
       </div>
+      <div className={ this.classes.row }>
+        <Label>Email</Label>
+        <Textfield value={ this.props.userAccount.email } readOnly={true}/>
+      </div>
       { this.props.userAccount.pictureUrl ?
         <div className={ this.classes.row }>
           <Label>Picture</Label>
