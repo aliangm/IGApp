@@ -471,18 +471,18 @@ class AppComponent extends Component {
       notification: notification
     });
     this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
-    /*
     if (isSendEmail) {
-      serverCommunication.serverRequest('POST', 'email', {
-          email: this.state.teamMembers.find(member => member.userId === userId).email,
+      serverCommunication.serverRequest('POST', 'email', JSON.stringify({
+          email: this.state.teamMembers.find(member => member.userId === userId) ? this.state.teamMembers.find(member => member.userId === userId).email : this.state.userAccount.email,
+          name: this.state.teamMembers.find(member => member.userId === userId) ? this.state.teamMembers.find(member => member.userId === userId).name : this.state.userFirstName + ' ' + this.state.userLastName,
           type: type,
-          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : 'Dor Lahav',
-          campaignName: notification.campaignName
-        },
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : this.state.userFirstName + ' ' + this.state.userLastName,
+          campaignName: notification.campaignName,
+          plainComment: notification.plainComment
+        }),
         false, false, true
       );
     }
-    */
   }
 
   render() {
