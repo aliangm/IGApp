@@ -121,6 +121,7 @@ class AppComponent extends Component {
 
   updateUserMonthPlan(body, region, planDate, dontSetState) {
     const deferred = q.defer();
+    this.setState({unsaved: false});
     serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify(body), region, planDate)
       .then((response) => {
         if (response.ok) {
@@ -236,6 +237,7 @@ class AppComponent extends Component {
 
   updateUserAccount(body) {
     const deferred = q.defer();
+    this.setState({unsaved: false});
     serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(body))
       .then((response) => {
         if (response.ok) {
@@ -247,8 +249,7 @@ class AppComponent extends Component {
                 userLastName: data.lastName,
                 userCompany: data.companyName,
                 logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                teamMembers: data.teamMembers,
-                unsaved: false
+                teamMembers: data.teamMembers
               });
               deferred.resolve();
             });
@@ -443,7 +444,6 @@ class AppComponent extends Component {
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
-      unsaved: false,
       googleAuto: data.googleapi,
       hubspotAuto: data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
