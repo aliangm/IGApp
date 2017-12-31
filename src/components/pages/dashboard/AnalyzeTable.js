@@ -40,11 +40,13 @@ export default class AnalyzeTable extends Component {
 
   calculateGraphDimensions() {
     if (this.planTable && this.firstColumnCell) {
+      const planTableOffsetWidth = this.planTable.offsetWidth;
+      const firstColumnOffsetWidth = this.firstColumnCell.offsetWidth;
       window.requestAnimationFrame(() => {
         this.setState({
           graphDimensions: {
-            width: this.planTable.offsetWidth,
-            marginLeft: this.firstColumnCell.offsetWidth,
+            width: planTableOffsetWidth,
+            marginLeft: firstColumnOffsetWidth,
           }
         })
       })

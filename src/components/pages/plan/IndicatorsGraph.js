@@ -14,9 +14,9 @@ export default class IndicatorsGraph extends Component {
   static defaultProps = {
     dimensions: {
       width: 0,
-      margin: 0,
+      marginLeft: 0,
     }
-  }
+  };
 
   constructor(props) {
     super(props);

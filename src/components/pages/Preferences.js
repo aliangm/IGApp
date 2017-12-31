@@ -227,6 +227,7 @@ export default class Preferences extends Component {
     const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
     objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
     objective.nickname = getNickname(objective.indicator);
+    objective.alreadyNotified = false;
     let objectives = this.props.objectives || [];
     if (index !== undefined) {
       if (index === objective.order) {
