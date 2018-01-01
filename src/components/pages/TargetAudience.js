@@ -437,13 +437,8 @@ export default class TargetAudience extends Component {
             <SaveButton onClick={() => {
               if (this.validate()) {
                 this.setState({saveFail: false, saveSuccess: false});
-                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
-                  .then(() => {
-                    this.setState({saveSuccess: true});
-                  })
-                  .catch(() => {
-                    this.setState({saveFail: true});
-                  });
+                this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate);
+                this.setState({saveSuccess: true});
               }
               else {
                 this.setState({validationError: true});

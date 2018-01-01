@@ -121,6 +121,7 @@ class AppComponent extends Component {
 
   updateUserMonthPlan(body, region, planDate, dontSetState) {
     const deferred = q.defer();
+    this.setState({unsaved: false});
     serverCommunication.serverRequest('PUT', 'usermonthplan', JSON.stringify(body), region, planDate)
       .then((response) => {
         if (response.ok) {
@@ -234,9 +235,10 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  updateUserAccount(body, region, planDate) {
+  updateUserAccount(body) {
     const deferred = q.defer();
-    serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(body), region, planDate)
+    this.setState({unsaved: false});
+    serverCommunication.serverRequest('PUT', 'useraccount', JSON.stringify(body))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -247,8 +249,7 @@ class AppComponent extends Component {
                 userLastName: data.lastName,
                 userCompany: data.companyName,
                 logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                teamMembers: data.teamMembers,
-                unsaved: false
+                teamMembers: data.teamMembers
               });
               deferred.resolve();
             });
@@ -443,7 +444,6 @@ class AppComponent extends Component {
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
-      unsaved: false,
       googleAuto: data.googleapi,
       hubspotAuto: data.hubspotapi,
       isFacebookAuto: !!data.facebookapi,
@@ -471,18 +471,18 @@ class AppComponent extends Component {
       notification: notification
     });
     this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
-    /*
     if (isSendEmail) {
-      serverCommunication.serverRequest('POST', 'email', {
-          email: this.state.teamMembers.find(member => member.userId === userId).email,
+      serverCommunication.serverRequest('POST', 'email', JSON.stringify({
+          email: this.state.teamMembers.find(member => member.userId === userId) ? this.state.teamMembers.find(member => member.userId === userId).email : this.state.userAccount.email,
+          name: this.state.teamMembers.find(member => member.userId === userId) ? this.state.teamMembers.find(member => member.userId === userId).name : this.state.userFirstName + ' ' + this.state.userLastName,
           type: type,
-          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : 'Dor Lahav',
-          campaignName: notification.campaignName
-        },
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : this.state.userFirstName + ' ' + this.state.userLastName,
+          campaignName: notification.campaignName,
+          plainComment: notification.plainComment
+        }),
         false, false, true
       );
     }
-    */
   }
 
   render() {
@@ -491,7 +491,7 @@ class AppComponent extends Component {
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header auth={ this.props.route.auth } {... this.state}/>
-        <Sidebar auth={ this.props.route.auth }/>
+        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         { this.state.loaded ?
           childrenWithProps

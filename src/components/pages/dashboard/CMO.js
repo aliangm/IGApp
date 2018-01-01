@@ -9,6 +9,8 @@ import Funnel from 'components/pages/dashboard/Funnel';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
+import { timeFrameToDate } from 'components/utils/objective';
+import Steps from 'components/pages/dashboard/Steps';
 
 export default class CMO extends Component {
 
@@ -121,7 +123,7 @@ export default class CMO extends Component {
       let title;
       const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
       const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-      const month = new Date(objective.timeFrame).getMonth();
+      const month = timeFrameToDate(objective.timeFrame).getMonth();
       const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
       indicatorsOptions.forEach((indicator) => {
         if (indicator.value === objective.indicator) {
@@ -141,6 +143,7 @@ export default class CMO extends Component {
     });
 
     return <div className={ dashboardStyle.locals.wrap }>
+      <Steps {... this.props}/>
       <div className={ this.classes.cols } style={{ width: '825px' }}>
         <div className={ this.classes.colLeft }>
           <div className={ dashboardStyle.locals.item }>
@@ -298,13 +301,13 @@ export default class CMO extends Component {
         </div>
       </div>
       { objectivesGauges.length > 0 ?
-        <div className={ this.classes.cols } style={{ width: '825px' }}>
+        <div className={ this.classes.cols } style={{ maxWidth: '1140px' }}>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '280px', width: objectivesGauges.length *255 + (objectivesGauges.length-1) * 30 + 'px'}}>
+            <div className={ dashboardStyle.locals.item } style={{ height: 'auto', width: 'auto' }}>
               <div className={ dashboardStyle.locals.text }>
                 Objectives
               </div>
-              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
+              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center', display: 'block' }}>
                 {objectivesGauges}
               </div>
             </div>

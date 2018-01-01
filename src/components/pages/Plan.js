@@ -21,6 +21,7 @@ import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import { output } from 'components/utils/channels';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -112,6 +113,7 @@ export default class Plan extends Component {
     projectedPlan.forEach((month, index) => {
       month.plannedChannelBudgets = this.props.approvedBudgets[index];
     });
+    this.setState({dropmenuVisible: false});
     return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
   }
 
@@ -443,7 +445,7 @@ export default class Plan extends Component {
           </div>
           <div className={this.classes.headPlan}>
             {this.props.userAccount.freePlan ? null :
-              <div>
+              <div style={{ position: 'relative' }}>
                 <div className={this.classes.error}>
                   <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
                     href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
@@ -452,7 +454,8 @@ export default class Plan extends Component {
                               planNeedsUpdate={this.props.planNeedsUpdate}/>
                 <Popup style={{
                   width: '265px',
-                  top: '180%',
+                  top: '130px',
+                  left: '-137px',
                   transform: 'translate(0, -50%)'
                 }} hidden={!this.state.popup} onClose={() => {
                   this.setState({
@@ -470,7 +473,7 @@ export default class Plan extends Component {
               </div>
             }
             { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', position: 'relative' }}>
                 <div>
                   <Button type="reverse" contClassName={ this.classes.dropButton } style={{
                     width: '102px',
@@ -495,6 +498,7 @@ export default class Plan extends Component {
                           .then( () => {
                             this.forecast();
                           });
+                        this.setState({dropmenuVisible: false});
                       }}>
                         Approve all
                       </div>
@@ -518,9 +522,8 @@ export default class Plan extends Component {
                   <div style={{ position: 'relative' }}>
                     <PlanPopup ref="whatIfPopup" style={{
                       width: '367px',
-                      right: '110px',
-                      left: 'auto',
-                      top: '-37px',
+                      left: '-252px',
+                      top: '10px',
                       textAlign: 'initial',
                       cursor: 'initial'
                     }} hideClose={ true } title="What If - Scenarios Management">
@@ -595,7 +598,7 @@ export default class Plan extends Component {
               </div>
             }
             { this.state.selectedTab === 1 ?
-              <div>
+              <div style={{ position: 'relative' }}>
                 <Button type="primary2" style={{
                   marginLeft: '15px',
                   width: '102px'
@@ -604,6 +607,9 @@ export default class Plan extends Component {
                     this.editUpdate()
                       .then( () => {
                         this.forecast();
+                        if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
+                          this.props.updateUserAccount({'steps.plan': true});
+                        }
                       });
                   }
                   this.setState({
@@ -646,7 +652,7 @@ export default class Plan extends Component {
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
         <div>
-          { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
+          {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
         </div>
       </Page>
     </div>

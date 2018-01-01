@@ -2,13 +2,14 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/preferences/objective-view.css';
 import { getNickname } from 'components/utils/indicators';
+import { timeFrameToDate } from 'components/utils/objective';
 
 export default class ObjectiveView extends Component {
 
   style = style;
 
   getDaysLeft() {
-    const targetDate = new Date(this.props.timeFrame);
+    const targetDate = timeFrameToDate(this.props.timeFrame);
     const today = new Date();
     return Math.max(Math.ceil((targetDate.getTime() - today.getTime())/(24*60*60*1000)), 0) + " days left";
   }
@@ -18,7 +19,7 @@ export default class ObjectiveView extends Component {
     // Else, if date passed - red.
     // Else - none.
     const today = new Date();
-    const date = new Date(this.props.timeFrame);
+    const date = timeFrameToDate(this.props.timeFrame);
     if (this.props.target <= this.props.value) {
       return 'success';
     }

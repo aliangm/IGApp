@@ -75,7 +75,15 @@ export default class Task extends Component {
   render() {
     return <div className={ this.classes.comment }>
       { this.state.editMode ?
-        <CommentTextArea comment={ this.props.comment } addOrEditComment={ this.editComment.bind(this) }/>
+        <CommentTextArea
+          comment={ this.props.comment }
+          addOrEditComment={ this.editComment.bind(this) }
+          index={ this.props.campaignIndex }
+          users={this.props.users}
+          addNotification={this.props.addNotification}
+          UID={this.props.UID}
+          campaignName={this.props.campaignName}
+        />
         :
         <div className={ this.classes.frame }>
           <div className={ this.classes.content }>

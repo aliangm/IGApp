@@ -4,6 +4,7 @@ import { parseAnnualPlan } from 'data/parseAnnualPlan';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import style from 'styles/plan/annual-tab.css';
 import icons from 'styles/icons/plan.css';
+import { timeFrameToDate } from 'components/utils/objective';
 
 export default class AnalyzeTable extends Component {
 
@@ -39,11 +40,13 @@ export default class AnalyzeTable extends Component {
 
   calculateGraphDimensions() {
     if (this.planTable && this.firstColumnCell) {
+      const planTableOffsetWidth = this.planTable.offsetWidth;
+      const firstColumnOffsetWidth = this.firstColumnCell.offsetWidth;
       window.requestAnimationFrame(() => {
         this.setState({
           graphDimensions: {
-            width: this.planTable.offsetWidth,
-            marginLeft: this.firstColumnCell.offsetWidth,
+            width: planTableOffsetWidth,
+            marginLeft: firstColumnOffsetWidth,
           }
         })
       })
@@ -181,7 +184,7 @@ export default class AnalyzeTable extends Component {
     this.props.objectives.forEach(objective => {
       const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
       const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
-      const date = new Date(objective.timeFrame);
+      const date = timeFrameToDate(objective.timeFrame);
       const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
       objectives[objective.indicator] = {x: monthStr, y: target};
     });

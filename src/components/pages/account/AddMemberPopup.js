@@ -1,13 +1,12 @@
 import React from 'react';
 import Component from 'components/Component';
-
 import Button from 'components/controls/Button';
 import Page from 'components/Page';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import MultiSelect from 'components/controls/MultiSelect';
 import { formatChannels } from 'components/utils/channels';
-
+import Toggle from 'components/controls/Toggle';
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
 
@@ -81,20 +80,16 @@ export default class AddMemberPopup extends Component {
             onChange={ (e)=>{ this.setState({role: e.target.value}) } }
           />
         </div>
-        <div className={ this.classes.row }>
+        <div className={ this.classes.row } style={{ display: 'inline-block' }}>
           <Label>Permissions</Label>
-          <div className={ popupStyle.locals.permissionsBox }>
-            <div className={ popupStyle.locals.permissionsFrame } data-active={ this.state.isAdmin ? true : null } onClick={ ()=>{ this.setState({isAdmin: true}) } }>
-              <div className={ popupStyle.locals.adminText }>
-                Admin
-              </div>
-            </div>
-            <div className={ popupStyle.locals.permissionsFrame } data-active={ this.state.isAdmin ? null : true } onClick={ ()=>{ this.setState({isAdmin: false}) } }>
-              <div className={ popupStyle.locals.adminText }>
-                User
-              </div>
-            </div>
-          </div>
+          <Toggle
+            leftText="Admin"
+            rightText="User"
+            leftActive={ this.state.isAdmin }
+            leftClick={ ()=>{ this.setState({isAdmin: true}) } }
+            rightClick={ ()=>{ this.setState({isAdmin: false}) } }
+            type="grey"
+          />
         </div>
         { !this.state.isAdmin ?
           <div className={this.classes.row}>

@@ -39,7 +39,7 @@
   flex-grow: 1;
   height: 100%;
   border-bottom: 1px solid #e6eaee;
-  padding: 0 20px;
+  padding: 0 30px;
   box-sizing: border-box;
 }
 
@@ -305,4 +305,14 @@
   .dropmenu-button:hover .dropmenu-button[data-selected] {
     background: rgba(255, 255, 255, 0.2);
   }
+}
+
+.plan-date {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #354052;
+  text-transform: uppercase;
 }

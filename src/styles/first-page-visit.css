@@ -1,0 +1,31 @@
+.inner {
+    padding-top: 190px;
+    width: 630px;
+    margin-left: 110px;
+    display: inline-flex;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #354052;
+}
+
+.content {
+    font-size: 16px;
+    font-weight: 500;
+    color: #354052;
+    margin: 25px 0;
+}
+
+.icon {
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 65px;
+    height: 65px;
+}
+
+.button {
+    padding: 0 14px;
+}

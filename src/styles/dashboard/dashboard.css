@@ -1,7 +1,7 @@
 .wrap {
     position: relative;
     max-width: 1162px;
-    padding: 20px;
+    padding: 90px 20px 0;
 }
 
 .pageInner {
@@ -95,7 +95,7 @@
 }
 
 .history-config {
-    display: -webkit-box;
+    display: flex;
     font-size: 14px;
     font-weight: 500;
     color: #9b9b9b;
@@ -103,11 +103,7 @@
 }
 
 .history-config-text {
-    margin: 9px 8px 0;
-}
-
-.history-config-text:first-child {
-    margin-left: 0;
+    align-self: center;
 }
 
 .history-grow {
@@ -179,6 +175,14 @@
     background: white;
 }
 
+.table :global(td):first-child {
+    padding-left: 20px;
+}
+
+.table :global(td):last-child {
+    padding-right: 20px;
+}
+
 .head-row {
     font-size: 18px;
     font-weight: 600;
@@ -201,7 +205,7 @@
 
 .upper-panel {
     width: 1096px;
-    height: 30px;
+    height: 35px;
     border-radius: 2px;
     background-color: #ffffff;
     border: solid 1px #dfe2e5;
@@ -213,7 +217,11 @@
     padding: 0 7px;
 }
 
-.select {
-    height: 20px;
-    padding: 0 !important;
+.metric-edit {
+    font-size: 12px;
+    font-weight: 500;
+    color: #9b9b9b;
+    align-self: center;
+    margin-left: 16px;
+    cursor: pointer;
 }

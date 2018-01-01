@@ -16,31 +16,3 @@
     padding-bottom: 14px;
     margin-bottom: 25px;
 }
-
-.permissionsBox {
-    border-radius: 5px;
-    border: solid 2px #c3c5d2;
-    display: inline-flex;
-    cursor: pointer;
-    user-select: none;
-}
-
-.permissions-frame {
-    width: 82px;
-    height: 35px;
-    background-color: white;
-}
-
-.permissions-frame[data-active] {
-    width: 82px;
-    height: 35px;
-    background-color: #c3c5d2;
-}
-
-.admin-text {
-    font-size: 16px;
-    color: #000000;
-    text-align: center;
-    padding-top: 6px;
-    text-transform: uppercase;
-}

@@ -64,7 +64,7 @@ export default class SignIn extends Component {
                   history.push('/welcome');
                 }
                 else {
-                  history.push('/plan')
+                  history.push('/dashboard')
                 }
               }
             })

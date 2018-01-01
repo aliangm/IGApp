@@ -1,9 +1,19 @@
 .head {
   height: 90px;
-  border-bottom: 1px solid #e7e9ed;
+  border-bottom: 2px solid #e7e9ed;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.5);
+  background: #fafbfd;
+  position: fixed;
+  top: 70px;
+  width: calc(100% - 240px);
+  z-index: 9;
+}
+
+@media (max-width: 1440px) {
+  .head {
+    width: calc(100% - 88px);
+  }
 }
 
 .head-title {
@@ -38,7 +48,6 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  cursor: pointer;
   position: relative;
   white-space: nowrap;
   margin-right: 30px;
@@ -107,6 +116,7 @@
   color: #646973;
   font-size: 20px;
   line-height: 34px;
+  white-space: pre;
 }
 
 .title-price {
@@ -214,7 +224,7 @@
   width: 20px;
   height: 20px;
   left: 117px;
-  top: 16px;
+  top: -10px;
   position: absolute;
   border: solid 2px white;
 }
@@ -228,15 +238,14 @@
 
 .dropmenu {
   width: 100px;
-  left: 145px !important;
+  left: 15px !important;
   padding: 4px 0 !important;
   min-height: inherit !important;
-  top: 74px !important;
+  top: 45px !important;
   text-transform: capitalize;
 }
 
 .dropmenu-edit {
-  left: 374px !important;
   width: 110px;
   composes: dropmenu;
 }

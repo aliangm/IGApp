@@ -71,6 +71,13 @@ export default class Preferences extends Component {
 
   componentDidMount() {
     this.getUserMinMonthBudgetsLines(this.props.userMinMonthBudgets, this.props.planDate);
+    // Advanced toggle open?
+    if (this.props.maxChannels !== -1 ||
+      this.state.userMinMonthBudgetsLines.length > 0 ||
+      this.props.inHouseChannels.length > 0 ||
+      this.props.blockedChannels.length > 0) {
+      this.setState({showAdvancedFields: true});
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -220,6 +227,7 @@ export default class Preferences extends Component {
     const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
     objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
     objective.nickname = getNickname(objective.indicator);
+    objective.alreadyNotified = false;
     let objectives = this.props.objectives || [];
     if (index !== undefined) {
       if (index === objective.order) {
@@ -722,13 +730,8 @@ export default class Preferences extends Component {
                   userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
                   planNeedsUpdate: true
-                }, this.props.region, this.props.planDate)
-                  .then(() => {
-                    this.setState({saveSuccess: true});
-                  })
-                  .catch(() => {
-                    this.setState({saveFail: true});
-                  });
+                }, this.props.region, this.props.planDate);
+                this.setState({saveSuccess: true});
               }
               else {
                 this.setState({saveFail: true});

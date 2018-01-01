@@ -31,6 +31,34 @@ export default class Brief extends Component {
     teamMembers: []
   };
 
+  componentWillReceiveProps(nextProps) {
+    // Advanced toggle open?
+    if (nextProps.campaign.time.design ||
+      nextProps.campaign.time.development ||
+      nextProps.campaign.time.marketing ||
+      nextProps.campaign.focus ||
+      nextProps.campaign.objectives.kpi[0] ||
+      nextProps.campaign.objectives.kpi[1] ||
+      nextProps.campaign.objectives.kpi[2] ||
+      nextProps.campaign.objectives.growth[0] ||
+      nextProps.campaign.objectives.growth[1] ||
+      nextProps.campaign.objectives.growth[2] ||
+      nextProps.campaign.objectives.actualGrowth[0] ||
+      nextProps.campaign.objectives.actualGrowth[1] ||
+      nextProps.campaign.objectives.actualGrowth[2] ||
+      nextProps.campaign.targetAudience ||
+      nextProps.campaign.assets.length > 0 ||
+      nextProps.campaign.description ||
+      nextProps.campaign.referenceProjects ||
+      nextProps.campaign.keywords ||
+      nextProps.campaign.additionalInformation) {
+        this.setState({showAdvanced: true});
+    }
+    else {
+      this.setState({showAdvanced: false});
+    }
+  }
+
   handleChangeSource = (event) => {
     let update = Object.assign({}, this.props.campaign);
     update.source = event.map((obj) => {

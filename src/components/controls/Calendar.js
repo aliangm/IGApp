@@ -80,7 +80,7 @@ export default class Calendar extends Component {
         {({ value }) => {
           return <Textfield
             className={ inputClassName }
-            onFocus={ this.openCalendar }
+            onClick={ this.openCalendar }
             readOnly
             value={ this.props.value }
             placeHolder={ this.props.placeholder }

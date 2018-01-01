@@ -1,5 +1,6 @@
 .inner {
-    padding: 0 35px;
+    padding: 25px;
+    display: inline-block;
 }
 
 .center {
@@ -16,38 +17,14 @@
 }
 
 .current {
-    composes: center;
     font-size: 22px;
     font-weight: bold;
-    color: #9b9b9b;
-    margin-top: -45px;
+    fill: #9b9b9b;
 }
 
 .target {
     font-size: 12px;
-    color: #9b9b9b;
-    position: relative;
-    top: 100px;
-    left: 170px;
-}
-
-.half-circle {
-    height: 89px;
-    width: 178px;
-    border-radius: 90px 90px 0 0;
-    border: 3px solid #e2e7ee;
-    border-bottom-width: 0;
-}
-
-.half-circle-fill {
-    border-radius: 90px 90px 0 0;
-    border: solid 12px;
-    border-bottom-width: 0;
-    position: absolute;
-    margin-left: -2px;
-    margin-top: -11px;
-    height: 90px;
-    width: 160px;
+    fill: #9b9b9b;
 }
 
 .text-bottom {
@@ -80,7 +57,6 @@
 .objective-icon {
     width: 15px;
     height: 15px;
-    margin-top: 29px;
 }
 
 .objective-icon[data-active="success"] {
@@ -91,4 +67,15 @@
 .objective-icon[data-active="fail"] {
     background: url(../../assets/passed-objective.svg) center center no-repeat;
     background-size: contain;
+}
+
+.circle-background {
+    fill: none;
+    stroke: #e2e7ee;
+}
+
+.circle-progress {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
 }

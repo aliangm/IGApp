@@ -15,15 +15,16 @@ export default class TopSuggestions extends Component {
   }
 
   render() {
-    const suggestionsOrdered = Object.keys(this.props.approvedBudgets[0])
-      .filter(item => (this.props.projectedPlan[0].plannedChannelBudgets[item] || 0) !== (this.props.approvedBudgets[0][item] || 0))
-      .map(item => {
-        return {
-          channel: item,
-          suggested: this.props.projectedPlan[0].plannedChannelBudgets[item] || 0,
-          current: this.props.approvedBudgets[0][item] || 0
-        } })
-      .sort((a, b) => Math.abs(b.suggested - b.current) - Math.abs(a.suggested - a.current));
+    const suggestionsOrdered = this.props.approvedBudgets[0] ? Object.keys(this.props.approvedBudgets[0])
+        .filter(item => (this.props.projectedPlan[0].plannedChannelBudgets[item] || 0) !== (this.props.approvedBudgets[0][item] || 0))
+        .map(item => {
+          return {
+            channel: item,
+            suggested: this.props.projectedPlan[0].plannedChannelBudgets[item] || 0,
+            current: this.props.approvedBudgets[0][item] || 0
+          } })
+        .sort((a, b) => Math.abs(b.suggested - b.current) - Math.abs(a.suggested - a.current))
+      : [];
     const topSuggestions = suggestionsOrdered.slice(0, 5).map(item =>
       <Suggestion
         {... item}

@@ -20,6 +20,10 @@ export default class Sidebar extends Component {
     global.addEventListener('sidebar:open', this.onOpen);
   }
 
+  static defaultProps = {
+    userAccount: {}
+  };
+
   onOpen = () => {
     this.setState({
       open: true
@@ -61,15 +65,15 @@ export default class Sidebar extends Component {
         <div className={ this.classes.menu }>
           {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
             <div>
-              <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard" onClick={this.closeSubMenu}/>
+              <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={true}/>
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ subMenu } isOpen={ this.state.openSubMenu } toggleSubMenu={ () => { this.setState({openSubMenu: !this.state.openSubMenu}) } }/>
               {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
-              <MenuItem icon="sidebar:plan" link="/plan" text="Plan" onClick={this.closeSubMenu}/>
+              <MenuItem icon="sidebar:plan" link="/plan" text="Plan" onClick={this.closeSubMenu} notFirstTime={true}/>
             </div>
             : null}
-          <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" onClick={this.closeSubMenu}/>
+          <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
           <FeatureToggle featureName="attribution">
-            <MenuItem icon="sidebar:attribution" link="/attribution" text="Attribution" onClick={this.closeSubMenu}/>
+            <MenuItem icon="sidebar:attribution" link="/attribution" text="Attribution" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
           </FeatureToggle>
         </div>
 
@@ -97,6 +101,7 @@ export class MenuItem extends Component {
       <div className={ this.classes.menuItemText }>
         { this.props.text }
       </div>
+      <div className={this.classes.menuItemFirstTime} hidden={this.props.notFirstTime}/>
     </Link>
   }
 }

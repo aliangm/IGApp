@@ -50,7 +50,7 @@ export default class CommentTextArea extends Component {
 
   addOrEditComment() {
     this.state.mentions.forEach((mention) => {
-      this.props.addNotification(mention.id, 'mention', {tagger: this.props.UID, campaignName: this.props.campaignName}, true);
+      this.props.addNotification(mention.id, 'mention', {tagger: this.props.UID, campaignName: this.props.campaignName, plainComment: this.state.plainComment}, true);
     });
     this.props.addOrEditComment(this.state.plainComment, this.props.index);
     this.setState({comment: '', plainComment: '', mentions: []});

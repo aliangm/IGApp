@@ -12,6 +12,10 @@ import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
 import { getNickname, getTitle } from 'components/utils/channels';
+import Label from 'components/ControlsLabel';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
+import Button from 'components/controls/Button';
+import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -39,8 +43,9 @@ function getDateString(stringDate) {
 }
 
 export default class Campaigns extends Component {
-  styles = [planStyle, icons];
+
   style = campaignsStyle;
+  styles = [planStyle, icons];
 
   constructor(props) {
     super(props);
@@ -52,7 +57,8 @@ export default class Campaigns extends Component {
       index: undefined,
       campaign: {},
       campaigns: props.campaigns,
-      addNew: false
+      addNew: false,
+      onlyMyCampaigns: false
     };
   }
 
@@ -65,6 +71,12 @@ export default class Campaigns extends Component {
     annualBudgetArray: []
   };
 
+  componentDidMount() {
+    if(this.props.location.query.campaign) {
+      this.setState({showPopup: true, index:this.props.location.query.campaign});
+    }
+  }
+
   componentWillReceiveProps({ campaigns }) {
     if (this.props.campaigns !== campaigns) {
       this.setCampaigns(campaigns)
@@ -73,10 +85,10 @@ export default class Campaigns extends Component {
 
   setCampaigns = (campaigns) => {
     this.setState({ campaigns })
-  }
+  };
 
   updateCampaigns = (campaigns) => {
-    this.setCampaigns(campaigns)
+    this.setCampaigns(campaigns);
 
     return this.props.updateUserMonthPlan({ campaigns }, this.props.region, this.props.planDate);
   };
@@ -100,9 +112,12 @@ export default class Campaigns extends Component {
       const length = campaigns.push(campaign);
       this.setState({index: length-1});
       console.log('Campaign was created');
+      if (!this.props.userAccount.steps || !this.props.userAccount.steps.campaign) {
+        this.props.updateUserAccount({'steps.campaign': true});
+      }
     }
 
-    this.setCampaigns(campaigns)
+    this.setCampaigns(campaigns);
 
     return this.updateCampaigns(campaigns);
   };
@@ -178,12 +193,18 @@ export default class Campaigns extends Component {
 
     let filteredCampaigns = activeCampaigns;
 
-    if (this.props.auth.getProfile().isAdmin === false) {
+    const profile = this.props.auth.getProfile();
+
+    if (profile.isAdmin === false) {
       const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
       if (member && member.specificChannels && member.specificChannels.length > 0) {
         filteredCampaigns = activeCampaigns.filter(campaign => member.specificChannels.some(channel => campaign.source.includes(channel)));
         processedChannels.names = processedChannels.names.filter(channel => member.specificChannels.includes(channel));
       }
+    }
+
+    if (this.state.onlyMyCampaigns) {
+      filteredCampaigns = filteredCampaigns.filter(campaign => campaign.owner === profile.user_id);
     }
 
     if (this.state.search) {
@@ -215,59 +236,99 @@ export default class Campaigns extends Component {
               })
             }
           </div>
+          <div className={ planStyle.locals.headPlan }>
+            <Button type="reverse" style={{
+              width: '102px'
+            }} onClick={() => {
+              this.setState({importSalesforceCampaigns: true})
+            }}>
+              Import
+            </Button>
+            <Label
+              checkbox={this.state.onlyMyCampaigns}
+              onChange={ () => { this.setState({onlyMyCampaigns: !this.state.onlyMyCampaigns}) } }
+              style={{ margin: '0', alignSelf: 'center', textTransform: 'capitalize', fontSize: '12px', marginLeft: '15px' }}
+            >
+              Show only my campaigns
+            </Label>
+          </div>
         </div>
-        <div>
-          {selectedIndex !== 2 ?
-            <div className={ this.classes.campaignsTitle }>
-              <div className={ this.classes.campaignsTitleDate }>
-                { getDateString(planDate) } - Campaigns
-                <div className={ this.classes.search }>
-                  <div className={ this.classes.searchIcon }/>
-                  <input value={ this.state.search } onChange={ (e)=>{ this.setState({search: e.target.value}) } } className={ this.classes.searchInput }/>
-                  <div className={ this.classes.searchClear } onClick={ ()=>{ this.setState({search: ''}) } }/>
+        { this.props.userAccount.pages && this.props.userAccount.pages.campaigns ?
+          <div style={{paddingTop: '90px'}}>
+            {selectedIndex !== 2 ?
+              <div className={this.classes.campaignsTitle}>
+                <div className={this.classes.campaignsTitleDate}>
+                  <div className={this.classes.search}>
+                    <div className={this.classes.searchIcon}/>
+                    <input value={this.state.search} onChange={(e) => {
+                      this.setState({search: e.target.value})
+                    }} className={this.classes.searchInput}/>
+                    <div className={this.classes.searchClear} onClick={() => {
+                      this.setState({search: ''})
+                    }}/>
+                  </div>
+                </div>
+                <div className={this.classes.campaignsTitleBudget}>
+                  Budget left to invest
+                  <div className={this.classes.campaignsTitleArrow}
+                       style={{color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d'}}>
+                    ${budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0}
+                  </div>
                 </div>
               </div>
-              <div className={ this.classes.campaignsTitleBudget }>
-                Budget left to invest
-                <div className={ this.classes.campaignsTitleArrow } style={{ color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d' }}>
-                  ${ budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0 }
-                </div>
-              </div>
+              : null}
+            {
+              selectedTab && React.createElement(selectedTab, _.merge({}, this.props, {
+                processedChannels,
+                filteredCampaigns: filteredCampaigns,
+                updateCampaigns: this.updateCampaigns,
+                showCampaign: this.showCampaign,
+                addNewCampaign: this.addNewCampaign
+              }))
+            }
+            <div hidden={!this.state.showPopup}>
+              <CampaignPopup
+                campaign={this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign}
+                channelTitle={processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source]}
+                closePopup={this.closePopup.bind(this)}
+                updateCampaign={this.updateCampaign}
+                teamMembers={teamMembers}
+                campaignsTemplates={campaignsTemplates}
+                updateCampaignsTemplates={this.updateCampaignsTemplates}
+                firstName={userFirstName}
+                lastName={userLastName}
+                auth={this.props.auth}
+                processedChannels={processedChannels}
+                addNotification={addNotification}
+              />
             </div>
-            : null }
-          {
-            selectedTab && React.createElement(selectedTab, _.merge({ }, this.props, {
-              processedChannels,
-              filteredCampaigns: filteredCampaigns,
-              updateCampaigns: this.updateCampaigns,
-              showCampaign: this.showCampaign,
-              addNewCampaign: this.addNewCampaign
-            }))
-          }
-          <div hidden={ !this.state.showPopup }>
-            <CampaignPopup
-              campaign={ this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign  }
-              channelTitle={ processedChannels.titles[this.state.index !== undefined ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source : this.state.campaign && this.state.campaign.source] }
-              closePopup={ this.closePopup.bind(this) }
-              updateCampaign={ this.updateCampaign }
-              teamMembers={ teamMembers }
-              campaignsTemplates={ campaignsTemplates }
-              updateCampaignsTemplates={ this.updateCampaignsTemplates }
-              firstName={ userFirstName }
-              lastName={ userLastName }
-              auth={ this.props.auth }
-              processedChannels={ processedChannels }
-              addNotification = { addNotification }
+            <div hidden={!this.state.addNew}>
+              <ChooseExistingTemplate
+                showCampaign={(template) => this.showCampaign(_.merge({}, this.state.campaign, template))}
+                close={() => {
+                  this.setState({addNew: false})
+                }}
+                campaignsTemplates={this.props.campaignsTemplates}
+              />
+            </div>
+            <ImportCampaignsPopup
+              hidden={ !this.state.importSalesforceCampaigns }
+              close={ ()=>{ this.setState({importSalesforceCampaigns: false}) } }
+              setDataAsState={ this.props.setDataAsState }
+              updateState={ this.updateState }
+              salesforceAuto={this.props.salesforceAuto}
+              userAccount={this.props.userAccount}
             />
           </div>
-          <div hidden={ !this.state.addNew }>
-            <ChooseExistingTemplate
-              showCampaign={ (template) => this.showCampaign(_.merge({}, this.state.campaign, template)) }
-              close={ () => { this.setState({addNew: false}) } }
-              campaignsTemplates={ this.props.campaignsTemplates }
-            />
-          </div>
-        </div>
+          :
+          <FirstPageVisit
+            title="Managing campaigns & activities couldn't be easier"
+            content="Manage campaigns & activities across marketing channels. All organized in one place, without spreadsheets, email, or any other tool, so you (and your team) can focus on getting sh*t done!"
+            action="Take me to Campaigns >"
+            icon="step:campaign"
+            onClick={ () => { this.props.updateUserAccount({'pages.campaigns': true}) } }
+          />
+        }
       </Page>
     </div>
   }

@@ -12,8 +12,9 @@ import Paging from 'components/Paging';
 import { getTitle } from 'components/utils/channels';
 
 export default class PlannedVsActual extends Component {
+
+  style = style;
   styles = [planStyles];
-  style = style
 
   static defaultProps = {
     planUnknownChannels: [],
@@ -117,7 +118,7 @@ export default class PlannedVsActual extends Component {
     let channelOptions = [];
     this.keys = this.getDates();
     month = this.keys[this.state.month];
-    const data = parsePlannedVsActual(this.state.approvedBudgets[0], this.state.planUnknownChannels[0], this.state.knownChannels, this.state.unknownChannels);
+    const data = parsePlannedVsActual(this.state.approvedBudgets[0] || {}, this.state.planUnknownChannels[0] || {}, this.state.knownChannels, this.state.unknownChannels);
     if (data) {
       rows = data.map((item, i) => {
         return this.getTableRow(null, [
@@ -370,14 +371,14 @@ export default class PlannedVsActual extends Component {
         value.options.map(preventDuplicates);
       }
       else {
-        value.disabled = Object.keys(this.state.knownChannels).includes(value.value) || Object.keys(this.state.approvedBudgets[0]).includes(value.value);
+        value.disabled = Object.keys(this.state.knownChannels).includes(value.value) || Object.keys(this.state.approvedBudgets[0] || {}).includes(value.value);
         return value;
       }
     };
 
     channelOptions.map(preventDuplicates);
 
-    return <div>
+    return <div style={{ paddingTop: '90px' }}>
       <div className={ planStyles.locals.title }>
         <Paging month={ this.state.planDate } pagingUpdateState={ this.pagingUpdateState } region={ this.state.region }/>
       </div>
@@ -444,12 +445,10 @@ export default class PlannedVsActual extends Component {
               <SaveButton onClick={() => {
                 this.setState({saveFail: false, saveSuccess: false});
                 this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
-                  .then(() => {
-                    this.setState({saveSuccess: true});
-                  })
-                  .catch(() => {
-                    this.setState({saveFail: true});
-                  });
+                this.setState({saveSuccess: true});
+                if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
+                  this.props.updateUserAccount({'steps.plannedVsActual': true});
+                }
               }} success={ this.state.saveSuccess} fail={ this.state.saveFail }/>
             </div>
           </div>

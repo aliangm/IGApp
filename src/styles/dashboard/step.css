@@ -1,0 +1,62 @@
+@import "../global/mixins.css";
+
+@mixin icon-nodpi step:profile, ../../assets/step-icons/profile;
+@mixin icon-nodpi step:plan, ../../assets/step-icons/plan;
+@mixin icon-nodpi step:attribution, ../../assets/step-icons/filter;
+@mixin icon-nodpi step:campaign, ../../assets/step-icons/campaigns;
+@mixin icon-nodpi step:idea, ../../assets/step-icons/light-bulb;
+@mixin icon-nodpi step:plannedVsActual, ../../assets/step-icons/planned-vs-actual;
+
+.box {
+    width: 320px;
+    height: 161px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    margin: 15px;
+    padding: 15px;
+    display: inline-grid;
+    border: 1px #e3e6f4;
+}
+
+.icon {
+    background-size: contain;
+    width: 35px;
+    height: 35px;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.title {
+    composes: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #354052;
+}
+
+.text {
+    composes: center;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #354052;
+    text-align: center;
+    height: 57px;
+    font-weight: 300;
+}
+
+.done {
+    background: url(../../assets/check-mark-clean.svg) center center no-repeat;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    margin-top: 5px;
+}
+
+.button {
+    padding: 0 14px;
+}

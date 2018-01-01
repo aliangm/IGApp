@@ -47,7 +47,12 @@ export default class MentionNotification extends Component {
       tagger = user.name;
       taggerPicture = user.pictureUrl;
     }
-    return <div className={ this.classes.inner } data-unread={this.props.isRead ? null : true} onClick={ () => { history.push('/campaigns') } }>
+    return <div className={ this.classes.inner } data-unread={this.props.isRead ? null : true} onClick={ () => {
+      history.push({
+        pathname: '/campaigns',
+        query: { campaign: this.props.notification.index }
+      });
+    } }>
       {
         taggerPicture ?
           <div className={this.classes.picture} style={{backgroundImage: 'url(' + taggerPicture + ')'}}/>

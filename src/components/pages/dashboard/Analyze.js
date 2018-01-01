@@ -11,6 +11,7 @@ import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
+import Toggle from 'components/controls/Toggle';
 
 export default class Analyze extends Component {
 
@@ -25,8 +26,10 @@ export default class Analyze extends Component {
     super();
 
     this.state = {
-      indicator: 'SQL',
-      months: 0
+      historicalPerformanceIndicator: 'SQL',
+      attributionTableIndicator: 'MCL',
+      months: 0,
+      showChannels: true
     };
   }
 
@@ -48,7 +51,7 @@ export default class Analyze extends Component {
   }
 
   render() {
-    const { previousData } = this.props;
+    const { previousData, campaigns } = this.props;
 
     const indicatorsOptions = getIndicatorsWithNicknames();
 
@@ -86,51 +89,106 @@ export default class Analyze extends Component {
       })
     });
     let grow = 0;
-    if (indicatorsData[this.state.indicator]) {
-      const current = indicatorsData[this.state.indicator][indicatorsData[this.state.indicator].length - 1].value;
-      const previous = indicatorsData[this.state.indicator][(this.state.months !== undefined ? indicatorsData[this.state.indicator].length - this.state.months - 1 : 0)].value;
-      if (previous) {
-        grow = Math.round((current - previous) / previous * 100)
+    if (indicatorsData[this.state.historicalPerformanceIndicator]) {
+      const current = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1].value;
+      const previous = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)].value;
+      if (current) {
+        if (previous) {
+          grow = Math.round((current - previous) / previous * 100)
+        }
+        else grow = Infinity;
       }
     }
     const CEVsArray = relevantData.map(item => item.CEVs || {});
+    const metrics = [
+      {value: 'MCL', label: getIndicatorNickname('MCL')},
+      {value: 'MQL', label: getIndicatorNickname('MQL')},
+      {value: 'SQL', label: getIndicatorNickname('SQL')},
+      {value: 'opps', label: getIndicatorNickname('opps')},
+      {value: 'users', label: getIndicatorNickname('users')},
+    ];
     const headRow = this.getTableRow(null, [
       <div style={{ fontWeight: 'bold', fontSize: '22px' }}>
-        Channel
+        { this.state.showChannels ? 'Channel' : 'campaign' }
       </div>,
       'Cost',
+      'Web Visits',
       'Conversions',
-      getIndicatorNickname('MCL'),
-      "CPL",
-      getIndicatorNickname('MQL'),
-      "CPM",
-      getIndicatorNickname('SQL'),
-      "CPS"
+      <div style={{display: 'inline-flex'}}>
+        { this.state.editMetric ?
+          <Select
+            selected={this.state.attributionTableIndicator}
+            select={{
+              options: metrics
+            }}
+            onChange={(e) => {
+              this.setState({attributionTableIndicator: e.value})
+            }}
+            style={{ width: '80px', fontWeight: 'initial', fontSize: 'initial', color: 'initial' }}
+          />
+          :
+          getIndicatorNickname(this.state.attributionTableIndicator)
+        }
+        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
+          this.setState({editMetric: !this.state.editMetric})
+        }}>
+          { this.state.editMetric ? 'Done' : 'Edit' }
+        </div>
+      </div>,
+      "CP" + getIndicatorNickname(this.state.attributionTableIndicator).charAt(0)
     ], {
       className: dashboardStyle.locals.headRow
     });
 
-    const rows = Object.keys(sumedBudgets).map(item =>
-      sumedBudgets[item] ?
-      this.getTableRow(null,
-        [
-          <div className={dashboardStyle.locals.channelTable}>
-            {getChannelNickname(item)}
-          </div>,
-          '$' + formatBudget(sumedBudgets[item]),
-          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item] : 0) + sum, 0) * 100) / 100,
-          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MCL"] ? CEVs["MCL"][item] : 0) + sum, 0) * 100) / 100,
-          CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MCL"] ? CEVs["MCL"][item] : 0) + sum, 0) ? '$' + formatBudget(Math.round( sumedBudgets[item] / CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MCL"] ? CEVs["MCL"][item] : 0) + sum, 0))) : 0,
-          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0) * 100) / 100,
-          CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0) ? '$' + formatBudget(Math.round( sumedBudgets[item] / CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["MQL"] ? CEVs["MQL"][item] : 0) + sum, 0))) : 0,
-          Math.round(CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0) * 100) / 100,
-          CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0) ? '$' + formatBudget(Math.round( sumedBudgets[item] / CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["SQL"] ? CEVs["SQL"][item] : 0) + sum, 0))) : 0
-        ],{
-          key: item,
-          className: dashboardStyle.locals.tableRow
-        })
-        : null
-    );
+    const rows = this.state.showChannels ?
+      Object.keys(sumedBudgets).map(item => {
+        const budget = sumedBudgets[item];
+        const webVisits =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item] : 0) + sum, 0);
+        const conversion =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item] : 0) + sum, 0);
+        const funnelIndicator = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item] : 0) + sum, 0);
+        return sumedBudgets[item] && (funnelIndicator || conversion || webVisits) ?
+          this.getTableRow(null,
+            [
+              <div className={dashboardStyle.locals.channelTable}>
+                {getChannelNickname(item)}
+              </div>,
+              '$' + formatBudget(budget),
+              webVisits,
+              conversion,
+              Math.round(funnelIndicator * 100) / 100,
+              funnelIndicator ? '$' + formatBudget(Math.round(sumedBudgets[item] / funnelIndicator)) : 0,
+            ], {
+              key: item,
+              className: dashboardStyle.locals.tableRow
+            })
+          : null
+      })
+      :
+      campaigns
+        .filter(campaign => campaign.isArchived !== true)
+        .map((campaign, index) => {
+            const budget = campaign.budget || campaign.actualSpent;
+            const webVisits = campaign.attribution && campaign.attribution.webVisits;
+            const conversion = campaign.attribution && campaign.attribution.conversion;
+            const funnelIndicator = campaign.attribution && campaign.attribution[this.state.attributionTableIndicator];
+            return (funnelIndicator || conversion || webVisits) ?
+              this.getTableRow(null,
+                [
+                  <div className={dashboardStyle.locals.channelTable}>
+                    {campaign.name}
+                  </div>,
+                  '$' + formatBudget(budget),
+                  webVisits,
+                  conversion,
+                  Math.round(funnelIndicator),
+                  budget ? Math.round(funnelIndicator / budget) : 0,
+                ], {
+                  key: index,
+                  className: dashboardStyle.locals.tableRow
+                })
+              : null;
+          }
+        );
 
     return <div className={dashboardStyle.locals.wrap}>
       <div className={dashboardStyle.locals.upperPanel}>
@@ -145,8 +203,7 @@ export default class Analyze extends Component {
           onChange={(e) => {
             this.setState({months: e.value})
           }}
-          style={{ width: '44px' }}
-          innerClassName={dashboardStyle.locals.select }
+          style={{ width: '55px', margin: '0 8px' }}
         />
         <div className={dashboardStyle.locals.historyConfigText}>
           months
@@ -195,21 +252,29 @@ export default class Analyze extends Component {
         </div>
       </div>
       <FeatureToggle featureName="attribution">
-      <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'auto', padding: '20px' }}>
-        <table className={dashboardStyle.locals.table}>
-          <thead>
-          {headRow}
-          </thead>
-          <tbody className={dashboardStyle.locals.tableBody}>
-          {rows}
-          </tbody>
-        </table>
-      </div>
+        <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'auto', padding: '15px 0' }}>
+          <Toggle
+            leftText="channels"
+            rightText="campaigns"
+            leftActive={ this.state.showChannels }
+            leftClick={ ()=>{ this.setState({showChannels: true}) } }
+            rightClick={ ()=>{ this.setState({showChannels: false}) } }
+            type="grey"
+          />
+          <table className={dashboardStyle.locals.table}>
+            <thead>
+            {headRow}
+            </thead>
+            <tbody className={dashboardStyle.locals.tableBody}>
+            {rows}
+            </tbody>
+          </table>
+        </div>
       </FeatureToggle>
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item}
-               style={{display: 'inline-block', height: '412px', width: '540px'}}>
+               style={{display: 'inline-block', height: '412px', width: '825px'}}>
             <div className={dashboardStyle.locals.text}>
               Historical Performance
             </div>
@@ -219,14 +284,14 @@ export default class Analyze extends Component {
                   <div className={dashboardStyle.locals.historyConfigText}>
                     Show
                   </div>
-                  <Select selected={this.state.indicator}
+                  <Select selected={this.state.historicalPerformanceIndicator}
                           select={{
                             options: indicatorsOptions
                           }}
                           onChange={(e) => {
-                            this.setState({indicator: e.value})
+                            this.setState({historicalPerformanceIndicator: e.value})
                           }}
-                          style={{width: '172px'}}
+                          style={{ width: '172px', marginLeft: '8px' }}
                   />
                 </div>
               </div>
@@ -234,14 +299,14 @@ export default class Analyze extends Component {
                 <div className={this.classes.footerRight}>
                   <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
                   <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}>
-                    {Math.abs(grow)}%
+                    {isFinite(grow) ? Math.abs(grow) + '%' : '∞'}
                   </div>
                 </div>
                 : null}
             </div>
             <div className={dashboardStyle.locals.chart}>
-              <AreaChart width={550} height={280}
-                         data={indicatorsData[this.state.indicator] ? indicatorsData[this.state.indicator].slice(indicatorsData[this.state.indicator].length - this.state.months - 1, indicatorsData[this.state.indicator].length) : []}
+              <AreaChart width={825} height={280}
+                         data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1, indicatorsData[this.state.historicalPerformanceIndicator].length) : []}
                          style={{marginLeft: '-21px'}}>
                 <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
                 <YAxis style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
