@@ -194,7 +194,7 @@ export default class CMO extends Component {
         <div className={ this.classes.colLeft }>
           <div className={ dashboardStyle.locals.item } style={{ height: '412px', width: '825px' }}>
             <div className={ dashboardStyle.locals.text }>
-              Lead Funnel
+              Funnel
             </div>
             <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
               <Funnel actualIndicators={ actualIndicators }/>
