@@ -449,22 +449,6 @@ export default class AnnualTab extends Component {
                 ${ (Math.ceil(budget/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
               </div>
             </div>
-            <div className={ planStyles.locals.titleButtons }>
-              { this.props.userAccount.freePlan ? null :
-                <div data-selected={ this.state.dropmenuVisible ? true : null }>
-
-                </div>
-              }
-              <Button type="reverse" style={{
-                marginRight: '10px',
-                width: '102px'
-              }} onClick={ () => {
-                const domElement = ReactDOM.findDOMNode(this.refs.forecastingGraph);
-                if (domElement) {
-                  domElement.scrollIntoView({});
-                }
-              }}>Forecast</Button>
-            </div>
           </div>
           <div className={ planStyles.locals.title } style={{ padding: '0', height: '35px' }}>
             <div className={ planStyles.locals.titleMain }>
@@ -575,7 +559,7 @@ export default class AnnualTab extends Component {
                   not</p>
               </PopupTextContent>
             </PlanPopup>
-            <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref="forecastingGraph">
+            <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref={this.props.forecastingGraphRef.bind(this)}>
               <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
             </div>
           </div>

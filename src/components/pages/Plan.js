@@ -71,6 +71,7 @@ export default class Plan extends Component {
       maxChannelsField: props.maxChannels || '',
       isCheckAnnual: !!props.budget,
       setRef: this.setRef.bind(this),
+      forecastingGraphRef: this.forecastingGraphRef.bind(this),
       whatIfSelected: false,
     };
   }
@@ -368,7 +369,7 @@ export default class Plan extends Component {
     }, this.props.region, this.props.planDate)
       .then(() => {
         this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this.refs[channel]);
+        const domElement = ReactDOM.findDOMNode(this[channel]);
         if (domElement) {
           domElement.scrollIntoView({});
         }
@@ -393,6 +394,10 @@ export default class Plan extends Component {
 
   setRef = (channel, ref) => {
     this[channel] = ref;
+  };
+
+  forecastingGraphRef = ref => {
+    this.forecastingGraph = ref;
   };
 
   selectTab(index) {
@@ -444,7 +449,7 @@ export default class Plan extends Component {
             }
           </div>
           <div className={this.classes.headPlan}>
-            {this.props.userAccount.freePlan ? null :
+            { this.props.userAccount.freePlan ? null :
               <div style={{ position: 'relative' }}>
                 <div className={this.classes.error}>
                   <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
@@ -472,9 +477,17 @@ export default class Plan extends Component {
                 </Popup>
               </div>
             }
+            { this.state.selectedTab !== 1 ? null :
+              <div className={this.classes.forecastButton} onClick={ () => {
+                const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
+                if (domElement) {
+                  domElement.scrollIntoView({});
+                }
+              }}/>
+            }
             { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
               <div style={{ display: 'flex', position: 'relative' }}>
-                <div>
+                <div data-selected={ this.state.dropmenuVisible ? true : null }>
                   <Button type="reverse" contClassName={ this.classes.dropButton } style={{
                     width: '102px',
                     marginLeft: '15px'

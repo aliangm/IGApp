@@ -327,3 +327,14 @@
   flex-grow: 1;
   flex-shrink: 0;
 }
+
+.forecast-button {
+  margin-left: 15px;
+  background: url(../../assets/graph.svg) center center no-repeat;
+  background-size: 26px auto;
+  width: 36px;
+  height: 36px;
+  box-shadow: inset 0 0 0 2px #2ea1f8;
+  border-radius: 4px;
+  cursor: pointer;
+}
