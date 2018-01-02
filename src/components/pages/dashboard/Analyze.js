@@ -12,6 +12,7 @@ import { getNickname as getIndicatorNickname } from 'components/utils/indicators
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
 import Toggle from 'components/controls/Toggle';
+import Label from 'components/ControlsLabel';
 
 export default class Analyze extends Component {
 
@@ -113,7 +114,12 @@ export default class Analyze extends Component {
       </div>,
       'Cost',
       'Web Visits',
-      'Conversions',
+      <Label
+        style={{ marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', textTransform: 'capitalize' }}
+        question={['']}
+        description={['number of times the channel/campaign led to a direct online conversion event on your website or landing pages.']}>
+        'Conversions'
+      </Label>,
       <div style={{display: 'inline-flex'}}>
         { this.state.editMetric ?
           <Select
@@ -135,7 +141,12 @@ export default class Analyze extends Component {
           { this.state.editMetric ? 'Done' : 'Edit' }
         </div>
       </div>,
-      "CP" + getIndicatorNickname(this.state.attributionTableIndicator).charAt(0)
+      <Label
+        style={{ width: '80px', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052' }}
+        question={['']}
+        description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator)]}>
+        {"CP" + getIndicatorNickname(this.state.attributionTableIndicator).charAt(0)}
+      </Label>
     ], {
       className: dashboardStyle.locals.headRow
     });
