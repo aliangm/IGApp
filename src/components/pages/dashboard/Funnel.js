@@ -13,25 +13,25 @@ export default class Funnel extends Component {
   render() {
     const funnel = {
       MCL: {
-        value: this.props.actualIndicators.MCL,
+        value: this.props.MCL,
         title: getNickname('MCL'),
         fillColor: '#0099cc',
         backgroundColor: 'rgba(0, 153, 204, 0.1)'
       },
       MQL: {
-        value: this.props.actualIndicators.MQL,
+        value: this.props.MQL,
         title: getNickname('MQL'),
         fillColor: '#0099ccb3',
         backgroundColor: 'rgba(0, 153, 204, 0.1)'
       },
       SQL: {
-        value: this.props.actualIndicators.SQL,
+        value: this.props.SQL,
         title: getNickname('SQL'),
         fillColor: '#0099cc4d',
         backgroundColor: 'rgba(0, 153, 204, 0.1)'
       },
       opps: {
-        value: this.props.actualIndicators.opps,
+        value: this.props.opps,
         title: getNickname('opps'),
         fillColor: '#33cc33b3',
         backgroundColor: 'rgba(50, 204, 50, 0.1)'
@@ -44,13 +44,13 @@ export default class Funnel extends Component {
       .map((item, index, values) => {
         return <div className={ this.classes.inner } key={ index }>
           <Column {... funnel[item]} maxValue={maxValue}/>
-          <Arrow value={ index + 1 == values.length ? this.props.actualIndicators.users/funnel[item].value : funnel[values[index + 1]].value/funnel[item].value }/>
+          <Arrow value={ index + 1 == values.length ? this.props.users/funnel[item].value : funnel[values[index + 1]].value/funnel[item].value }/>
         </div>
       });
 
     return <div className={ this.classes.inner }>
       {funnelObject}
-      <Circle value={ this.props.actualIndicators.users } title={ getNickname('users') }/>
+      <Circle value={ this.props.users } title={ getNickname('users') }/>
       <div className={ this.classes.line }/>
     </div>
   }

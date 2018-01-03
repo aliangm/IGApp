@@ -11,6 +11,7 @@ import { formatBudget } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import { timeFrameToDate } from 'components/utils/objective';
 import Steps from 'components/pages/dashboard/Steps';
+import Label from 'components/ControlsLabel';
 
 export default class CMO extends Component {
 
@@ -37,7 +38,8 @@ export default class CMO extends Component {
 
     this.state = {
       activeIndex: void 0,
-      indicator: 'SQL'
+      indicator: 'SQL',
+      onlyThisMonth: false
     };
     this.onPieEnter = this.onPieEnter.bind(this);
   }
@@ -66,7 +68,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData } = this.props;
     const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
     const planJson = parseAnnualPlan(plan, approvedBudgets, planUnknownChannels);
     const planData = planJson[Object.keys(planJson)[0]];
@@ -117,6 +119,23 @@ export default class CMO extends Component {
     const minRatioTitle = funnelRatios
       .filter(item => item.value == minRatio)
       .map(item => item.name);
+
+    const funnelMetricsValues = this.state.onlyThisMonth && previousData.length > 1 ?
+      {
+        MCL: actualIndicators.MCL - (previousData[previousData.length - 2].actualIndicators.MCL || 0),
+        MQL: actualIndicators.MQL - (previousData[previousData.length - 2].actualIndicators.MQL || 0),
+        SQL: actualIndicators.SQL - (previousData[previousData.length - 2].actualIndicators.SQL || 0),
+        opps: actualIndicators.opps - (previousData[previousData.length - 2].actualIndicators.opps || 0),
+        users: actualIndicators.users - (previousData[previousData.length - 2].actualIndicators.users || 0)
+      }
+      :
+      {
+        MCL: actualIndicators.MCL,
+        MQL: actualIndicators.MQL,
+        SQL: actualIndicators.SQL,
+        opps: actualIndicators.opps,
+        users: actualIndicators.users
+      };
 
     const indicatorsOptions = getIndicatorsWithNicknames();
     const objectivesGauges = objectives.map((objective, index) => {
@@ -193,11 +212,20 @@ export default class CMO extends Component {
       <div className={ this.classes.cols } style={{ width: '825px' }}>
         <div className={ this.classes.colLeft }>
           <div className={ dashboardStyle.locals.item } style={{ height: '412px', width: '825px' }}>
-            <div className={ dashboardStyle.locals.text }>
-              Funnel
+            <div style={{ display: 'flex', position: 'relative' }}>
+              <Label
+                checkbox={this.state.onlyThisMonth}
+                onChange={ () => { this.setState({onlyThisMonth: !this.state.onlyThisMonth}) } }
+                style={{ margin: '0', alignSelf: 'center', textTransform: 'capitalize', fontSize: '12px', position: 'absolute' }}
+              >
+                Show only this month results
+              </Label>
+              <div className={ dashboardStyle.locals.text }>
+                Funnel
+              </div>
             </div>
             <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center' }}>
-              <Funnel actualIndicators={ actualIndicators }/>
+              <Funnel {... funnelMetricsValues}/>
             </div>
           </div>
         </div>
