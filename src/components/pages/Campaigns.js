@@ -16,6 +16,7 @@ import Label from 'components/ControlsLabel';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
+import { formatBudget } from 'components/utils/budget';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -272,7 +273,10 @@ export default class Campaigns extends Component {
                   Budget left to invest
                   <div className={this.classes.campaignsTitleArrow}
                        style={{color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d'}}>
-                    ${budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0}
+                    ${budgetLeftToSpend ? formatBudget(budgetLeftToSpend) : 0}
+                  </div>
+                  <div>
+                    {' / $' + formatBudget(budget)}
                   </div>
                 </div>
               </div>
