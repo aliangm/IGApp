@@ -22,6 +22,7 @@ import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import { output } from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
+import PlanLoading from 'components/pages/plan/PlanLoading';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -72,7 +73,7 @@ export default class Plan extends Component {
       isCheckAnnual: !!props.budget,
       setRef: this.setRef.bind(this),
       forecastingGraphRef: this.forecastingGraphRef.bind(this),
-      whatIfSelected: false,
+      whatIfSelected: false
     };
   }
 
@@ -159,13 +160,12 @@ export default class Plan extends Component {
               if (data) {
                 if (data.error) {
                   if (!silent) {
-                    this.setState({isPlannerLoading: false, isError: true});
+                    this.setState({isError: true});
                   }
                 }
                 else {
                   if (!silent) {
                     this.setState({
-                      isPlannerLoading: false,
                       isError: false
                     });
                   }
@@ -186,12 +186,12 @@ export default class Plan extends Component {
           }
           if (response.status == 400){
             if (!silent) {
-              this.setState({isError: true, isPlannerLoading: false});
+              this.setState({isError: true});
             }
           }
           else {
             if (!silent) {
-              this.setState({serverDown: true, isPlannerLoading: false});
+              this.setState({serverDown: true});
             }
           }
         }
@@ -199,7 +199,6 @@ export default class Plan extends Component {
       .catch((err) => {
         if (!silent) {
           this.setState({
-            isPlannerLoading: false,
             serverDown: true
           });
         }
@@ -661,10 +660,11 @@ export default class Plan extends Component {
               : null }
           </div>
         </div>
-        <div className={ this.classes.serverDown }>
-          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
-        </div>
-        <div>
+        <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
+        <div className={ this.classes.wrap } data-loading={ this.state.isPlannerLoading ? true : null }>
+          <div className={ this.classes.serverDown }>
+            <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
+          </div>
           {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
         </div>
       </Page>

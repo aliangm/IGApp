@@ -1,6 +1,6 @@
 .wrap {
     position: relative;
-    padding: 90px 20px 0;
+    padding: 0 20px;
 }
 
 .box {
@@ -297,15 +297,6 @@
     .wrap {
         margin: 0 10px;
     }
-}
-
-.wrap[data-loading] .box {
-    filter: blur(8px);
-}
-
-.wrap[data-loading] .loading {
-    /*display: flex;*/
-    opacity: 1;
 }
 
 .loading {

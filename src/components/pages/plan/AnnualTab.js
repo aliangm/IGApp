@@ -265,7 +265,6 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    if (!this.props.isPlannerLoading) {
       const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
       let budget = Object.keys(planJson)[0];
       const data = planJson[budget];
@@ -565,19 +564,6 @@ export default class AnnualTab extends Component {
           </div>
         </div>
       </div>
-    } else {
-      return <div className={ this.classes.loading }>
-        <Popup className={ this.classes.popup }>
-          <div>
-            <Loading />
-          </div>
-
-          <div className={ this.classes.popupText }>
-            Please wait while the system optimizes your plan
-          </div>
-        </Popup>
-      </div>
-    }
   }
 
   getTableRow(title, items, props, channel, hoverValues, isSecondGood)

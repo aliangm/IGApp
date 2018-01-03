@@ -378,7 +378,7 @@ export default class PlannedVsActual extends Component {
 
     channelOptions.map(preventDuplicates);
 
-    return <div style={{ paddingTop: '90px' }}>
+    return <div>
       <div className={ planStyles.locals.title }>
         <Paging month={ this.state.planDate } pagingUpdateState={ this.pagingUpdateState } region={ this.state.region }/>
       </div>

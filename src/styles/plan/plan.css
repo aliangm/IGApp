@@ -88,6 +88,14 @@
   background: #1889dd;
 }
 
+.wrap {
+  padding-top: 90px;
+}
+
+.wrap[data-loading] {
+  filter: blur(8px);
+}
+
 .pageInner {
   overflow: visible!important;
 }

@@ -50,7 +50,6 @@ export default class ProjectionsTab extends Component {
   };
 
   render() {
-    if (!this.props.isPlannerLoading) {
       const selectedTab = this.state.selectedTab;
       let groups = [];
       const properties = getIndicatorsWithProps() || {};
@@ -129,19 +128,5 @@ export default class ProjectionsTab extends Component {
           </div>
         </div>
       </div>
-    }
-    else {
-      return <div className={ this.classes.loading }>
-        <Popup className={ this.classes.popup }>
-          <div>
-            <Loading />
-          </div>
-
-          <div className={ this.classes.popupText }>
-            Please wait while the system optimizes your plan
-          </div>
-        </Popup>
-      </div>
-    }
   }
 }
