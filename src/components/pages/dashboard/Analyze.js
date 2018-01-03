@@ -13,6 +13,7 @@ import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
 import Toggle from 'components/controls/Toggle';
 import Label from 'components/ControlsLabel';
+import { timeFrameToDate } from 'components/utils/objective';
 
 export default class Analyze extends Component {
 
@@ -48,6 +49,20 @@ export default class Analyze extends Component {
       return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
     }
 
+    return null;
+  }
+
+  getObjectiveFormattedDate(dateStr) {
+    if (dateStr) {
+      const date = timeFrameToDate(dateStr);
+      const monthNames = [
+        "Jan", "Feb", "Mar",
+        "Apr", "May", "Jun", "Jul",
+        "Aug", "Sep", "Oct",
+        "Nov", "Dec"
+      ];
+      return monthNames[date.getMonth()] + '/' + date.getDate() + '/' + date.getFullYear().toString().substr(2, 2);
+    }
     return null;
   }
 
@@ -201,6 +216,42 @@ export default class Analyze extends Component {
           }
         );
 
+    const objectivesHeadRow = this.getTableRow(null, [
+      <div style={{ fontWeight: 'bold', fontSize: '22px' }}>
+        Objective
+      </div>,
+      'Date',
+      'Target',
+      'Actual',
+      'Delta'
+    ], {
+      className: dashboardStyle.locals.headRow
+    });
+
+    const objectivesRows = this.props.objectives.map(objective => {
+      const grow = Math.round(this.props.actualIndicators[objective.indicator] - objective.target);
+      return this.getTableRow(null, [
+        getIndicatorNickname(objective.indicator),
+        this.getObjectiveFormattedDate(objective.timeFrame),
+        objective.target,
+        this.props.actualIndicators[objective.indicator],
+        <div>
+          {grow ?
+            <div style={{ display: 'flex' }}>
+              <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
+              <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null} style={{ marginRight: '0' }}>
+                {Math.abs(grow)}
+              </div>
+            </div>
+            :
+            <div className={dashboardStyle.locals.checkMark}/>
+          }
+        </div>,
+      ], {
+        className: dashboardStyle.locals.tableRow
+      })
+    });
+
     return <div className={dashboardStyle.locals.wrap}>
       <div className={dashboardStyle.locals.upperPanel}>
         <div className={dashboardStyle.locals.historyConfigText}>
@@ -282,14 +333,14 @@ export default class Analyze extends Component {
           </table>
         </div>
       </FeatureToggle>
-      <div className={this.classes.cols} style={{width: '825px'}}>
+      <div className={this.classes.cols} style={{width: '1110px'}}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item}
-               style={{display: 'inline-block', height: '412px', width: '825px'}}>
+               style={{display: 'inline-block', height: '412px', width: '540px'}}>
             <div className={dashboardStyle.locals.text}>
               Historical Performance
             </div>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex', marginTop: '7px' }}>
               <div className={this.classes.footerLeft}>
                 <div className={dashboardStyle.locals.historyConfig}>
                   <div className={dashboardStyle.locals.historyConfigText}>
@@ -316,7 +367,7 @@ export default class Analyze extends Component {
                 : null}
             </div>
             <div className={dashboardStyle.locals.chart}>
-              <AreaChart width={825} height={280}
+              <AreaChart width={540} height={280}
                          data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1, indicatorsData[this.state.historicalPerformanceIndicator].length) : []}
                          style={{marginLeft: '-21px'}}>
                 <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
@@ -329,6 +380,19 @@ export default class Analyze extends Component {
           </div>
         </div>
         <div className={this.classes.colRight}>
+          <div className={dashboardStyle.locals.item} style={{ display: 'inline-block', height: '412px', width: '540px', overflow: 'auto', padding: '15px 0' }}>
+            <div className={dashboardStyle.locals.text}>
+              Objectives - planned vs actual
+            </div>
+            <table className={dashboardStyle.locals.table}>
+              <thead>
+              {objectivesHeadRow}
+              </thead>
+              <tbody className={dashboardStyle.locals.tableBody}>
+              {objectivesRows}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <div>
