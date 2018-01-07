@@ -249,7 +249,8 @@ class AppComponent extends Component {
                 userLastName: data.lastName,
                 userCompany: data.companyName,
                 logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
-                teamMembers: data.teamMembers
+                teamMembers: data.teamMembers,
+                permissions: data.permissions
               });
               deferred.resolve();
             });
@@ -281,6 +282,7 @@ class AppComponent extends Component {
                 userCompany: data.companyName,
                 logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
+                permissions: data.permissions,
                 unsaved: false
               });
               deferred.resolve();

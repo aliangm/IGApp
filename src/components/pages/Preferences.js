@@ -28,6 +28,7 @@ import { formatChannels } from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
 import { getNickname } from 'components/utils/indicators';
+import { FeatureToggle } from 'react-feature-toggles';
 
 export default class Preferences extends Component {
   style = style;
@@ -551,7 +552,7 @@ export default class Preferences extends Component {
                 actualIndicators={ this.props.actualIndicators }
               />
             </div>
-            { this.props.userAccount.freePlan ? null :
+            <FeatureToggle featureName="plannerAI">
               <div>
                 <div className={ preferencesStyle.locals.advancedButton } onClick={()=>{ this.setState({showAdvancedFields: !this.state.showAdvancedFields}) }}>
                   Advanced
@@ -641,7 +642,7 @@ export default class Preferences extends Component {
                   </div>
                 </div>
               </div>
-            }
+            </FeatureToggle>
             <div className={ this.classes.row } style={{ marginTop: '55px' }}>
               <PlanFromExcel {... this.props}/>
             </div>

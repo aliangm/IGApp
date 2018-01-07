@@ -57,7 +57,18 @@ export default class Welcome extends Component {
 
   componentDidMount() {
     if(this.props.location.query.new) {
-      this.props.createUserAccount({freePlan: this.props.location.query.freePlan, email: this.props.auth.getProfile().email})
+      const json = {
+        email: this.props.auth.getProfile().email
+      };
+      if (this.props.location.query.freePlan === "true") {
+        json['permissions.plannerAI'] = false;
+        json['pages.dashboard'] = true;
+      }
+      else {
+        json['permissions.plannerAI'] = true;
+        json['pages.plan'] = true;
+      }
+      this.props.createUserAccount(json)
         .then(() => {
         })
         .catch((err) => {

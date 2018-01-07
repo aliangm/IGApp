@@ -65,10 +65,10 @@ export default class Sidebar extends Component {
         <div className={ this.classes.menu }>
           {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
             <div>
-              <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={true}/>
+              <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard}/>
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ subMenu } isOpen={ this.state.openSubMenu } toggleSubMenu={ () => { this.setState({openSubMenu: !this.state.openSubMenu}) } }/>
               {/** <MenuItem icon="sidebar:manual" link="/manual" text="Manual" /> **/}
-              <MenuItem icon="sidebar:plan" link="/plan" text="Plan" onClick={this.closeSubMenu} notFirstTime={true}/>
+              <MenuItem icon="sidebar:plan" link="/plan" text="Plan" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.plan}/>
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
