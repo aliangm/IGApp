@@ -7,7 +7,7 @@ import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
 import _ from 'lodash';
-import { getNickname as getChannelNickname } from 'components/utils/channels';
+import { getChannelsWithNicknames } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
@@ -67,8 +67,8 @@ export default class Analyze extends Component {
   }
 
   render() {
-    const { previousData, campaigns } = this.props;
-
+    const { previousData, attribution, campaigns } = this.props;
+    const attributionCampaigns = attribution.campaigns || [];
     const indicatorsOptions = getIndicatorsWithNicknames();
 
     const months = previousData.map((item, index) => {
@@ -123,7 +123,7 @@ export default class Analyze extends Component {
       {value: 'opps', label: getIndicatorNickname('opps')},
       {value: 'users', label: getIndicatorNickname('users')},
     ];
-    const headRow = this.getTableRow(null, [
+    const headlines = [
       <div style={{ fontWeight: 'bold', fontSize: '22px' }}>
         { this.state.showChannels ? 'Channel' : 'campaign' }
       </div>,
@@ -162,52 +162,67 @@ export default class Analyze extends Component {
         description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator)]}>
         {"CP" + getIndicatorNickname(this.state.attributionTableIndicator).charAt(0)}
       </Label>
-    ], {
+    ];
+    if (!this.state.showChannels) {
+      headlines.push('Channels');
+    }
+    const headRow = this.getTableRow(null, headlines, {
       className: dashboardStyle.locals.headRow
     });
 
     const rows = this.state.showChannels ?
-      Object.keys(sumedBudgets).map(item => {
-        const budget = sumedBudgets[item];
-        const webVisits =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item] : 0) + sum, 0);
-        const conversion =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item] : 0) + sum, 0);
-        const funnelIndicator = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item] : 0) + sum, 0);
-        return sumedBudgets[item] && (funnelIndicator || conversion || webVisits) ?
+      getChannelsWithNicknames().map(item => {
+        const channel = item.value;
+        const budget = sumedBudgets[channel] || 0;
+        const webVisits =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][channel] : 0) + sum, 0);
+        const conversion =CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][channel] : 0) + sum, 0);
+        const funnelIndicator = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][channel] : 0) + sum, 0);
+        return (funnelIndicator || conversion || webVisits) ?
           this.getTableRow(null,
             [
               <div className={dashboardStyle.locals.channelTable}>
-                {getChannelNickname(item)}
+                {item.label}
               </div>,
               '$' + formatBudget(budget),
               webVisits,
               conversion,
               Math.round(funnelIndicator * 100) / 100,
-              funnelIndicator ? '$' + formatBudget(Math.round(sumedBudgets[item] / funnelIndicator)) : 0,
+              funnelIndicator ? '$' + formatBudget(Math.round(budget / funnelIndicator)) : 0,
             ], {
-              key: item,
+              key: channel,
               className: dashboardStyle.locals.tableRow
             })
           : null
       })
       :
-      campaigns
-        .filter(campaign => campaign.isArchived !== true)
-        .map((campaign, index) => {
-            const budget = campaign.budget || campaign.actualSpent;
-            const webVisits = campaign.attribution && campaign.attribution.webVisits;
-            const conversion = campaign.attribution && campaign.attribution.conversion;
-            const funnelIndicator = campaign.attribution && campaign.attribution[this.state.attributionTableIndicator];
+      attributionCampaigns
+        .map((campaignObj, index) => {
+            const campaignUTM = Object.keys(campaignObj)[0];
+            const campaign = campaignObj[campaignUTM];
+            let budget = 0;
+            const campaignForBudget = campaigns.find(campaign => campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM));
+            if (campaignForBudget) {
+              budget = campaignForBudget.actualSpent || campaignForBudget.budget;
+            }
+            const webVisits = campaign.webVisits;
+            const conversion = campaign.conversion;
+            const funnelIndicator = campaign[this.state.attributionTableIndicator];
             return (funnelIndicator || conversion || webVisits) ?
               this.getTableRow(null,
                 [
                   <div className={dashboardStyle.locals.channelTable}>
-                    {campaign.name}
+                    {campaignUTM}
                   </div>,
                   '$' + formatBudget(budget),
                   webVisits,
                   conversion,
                   Math.round(funnelIndicator),
                   budget ? Math.round(funnelIndicator / budget) : 0,
+                  <div style={{ display: 'flex' }}>
+                    {campaign.channels.map(channel =>
+                      <div key={channel} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
+                    )}
+                  </div>
                 ], {
                   key: index,
                   className: dashboardStyle.locals.tableRow
