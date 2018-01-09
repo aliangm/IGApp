@@ -476,10 +476,10 @@ class AppComponent extends Component {
     this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
     if (isSendEmail) {
       serverCommunication.serverRequest('POST', 'email', JSON.stringify({
-          email: this.state.teamMembers.find(member => member.userId === userId) ? this.state.teamMembers.find(member => member.userId === userId).email : this.state.userAccount.email,
-          name: this.state.teamMembers.find(member => member.userId === userId) ? this.state.teamMembers.find(member => member.userId === userId).name : this.state.userFirstName + ' ' + this.state.userLastName,
+          email: this.state.teamMembers.find(member => member.userId === userId).email,
+          name: this.state.teamMembers.find(member => member.userId === userId).name,
           type: type,
-          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger) ? this.state.teamMembers.find(member => member.userId === notification.tagger).name : this.state.userFirstName + ' ' + this.state.userLastName,
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger).name,
           campaignName: notification.campaignName,
           plainComment: notification.plainComment
         }),

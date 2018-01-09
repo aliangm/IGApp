@@ -59,6 +59,7 @@
     text-align: center;
     font-size: 12px;
     line-height: 22px;
+    background-size: auto 24px;
 }
 
 .card-icon, .campaigns-count, .campaign-icon, .initials {

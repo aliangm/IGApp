@@ -194,18 +194,17 @@ export default class Campaigns extends Component {
 
     let filteredCampaigns = activeCampaigns;
 
-    const profile = this.props.auth.getProfile();
+    const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id)
 
-    if (profile.isAdmin === false) {
-      const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
-      if (member && member.specificChannels && member.specificChannels.length > 0) {
+    if (member && member.isAdmin === false) {
+      if (member.specificChannels && member.specificChannels.length > 0) {
         filteredCampaigns = activeCampaigns.filter(campaign => member.specificChannels.some(channel => campaign.source.includes(channel)));
         processedChannels.names = processedChannels.names.filter(channel => member.specificChannels.includes(channel));
       }
     }
 
     if (this.state.onlyMyCampaigns) {
-      filteredCampaigns = filteredCampaigns.filter(campaign => campaign.owner === profile.user_id);
+      filteredCampaigns = filteredCampaigns.filter(campaign => campaign.owner === member.userId);
     }
 
     if (this.state.search) {

@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/dashboard/steps.css';
 import Step from 'components/pages/dashboard/Step';
 import history from 'history';
+import Avatar from 'components/Avatar';
 
 export default class Steps extends Component {
 
@@ -15,13 +16,14 @@ export default class Steps extends Component {
     const campaign = this.props.userAccount.steps && this.props.userAccount.steps.campaign;
     const idea = this.props.userAccount.steps && this.props.userAccount.steps.campaignIdea;
     const plannedVsActual = this.props.userAccount.steps && this.props.userAccount.steps.plannedVsActual;
+    const member = this.props.userAccount.teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
     return <div hidden={(plan && attribution && campaign && idea && plannedVsActual) || this.props.userAccount.dontShowSteps}>
       <div>
         <div className={this.classes.center}>
-          <div className={this.classes.picture} style={{ backgroundImage: this.props.userAccount.pictureUrl ? 'url(' + this.props.userAccount.pictureUrl + ')' : '' }}/>
+          <Avatar member={member} className={this.classes.picture}/>
         </div>
         <div className={this.classes.title}>
-          {"Welcome to InfiniGrow, " + this.props.userAccount.firstName + "!"}
+          {"Welcome to InfiniGrow" + ((member && member.name) ? ", " + member.name.split(' ')[0] : '') + "!"}
         </div>
         <div className={this.classes.subTitle}>
           Getting Started

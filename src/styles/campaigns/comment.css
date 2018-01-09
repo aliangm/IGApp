@@ -20,7 +20,6 @@
     display: inline-flex;
     text-transform: uppercase;
     font-size: 10px;
-    background-color: #f5a623;
     border: solid 1px #a7a7a7;
     margin-right: 10px;
     width: 18px;
@@ -29,6 +28,7 @@
     justify-content: center;
     box-sizing: border-box;
     line-height: 16px;
+    background-size: auto 18px;
 }
 
 .name {
