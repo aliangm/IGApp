@@ -9,7 +9,7 @@ export default class Avatar extends Component {
   getInitials() {
     const member = this.props.member;
     const [firstName = '', lastName = ''] = member.name.split(' ');
-    return firstName[0] + lastName[0];
+    return (firstName[0] || '') + (lastName[0] || '');
   }
 
   hashCode(str) { // java String#hashCode
