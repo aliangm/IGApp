@@ -245,27 +245,31 @@ export default class Analyze extends Component {
 
     const objectivesRows = this.props.objectives.map((objective, index) => {
       const grow = Math.round(this.props.actualIndicators[objective.indicator] - objective.target);
-      return this.getTableRow(null, [
-        getIndicatorNickname(objective.indicator),
-        this.getObjectiveFormattedDate(objective.timeFrame),
-        objective.target,
-        this.props.actualIndicators[objective.indicator],
-        <div>
-          {grow ?
-            <div style={{ display: 'flex' }}>
-              <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
-              <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null} style={{ marginRight: '0' }}>
-                {Math.abs(grow)}
+      const objectiveDate = timeFrameToDate(objective.timeFrame);
+      if (objectiveDate <= new Date()) {
+        return this.getTableRow(null, [
+          getIndicatorNickname(objective.indicator),
+          this.getObjectiveFormattedDate(objective.timeFrame),
+          objective.target,
+          this.props.actualIndicators[objective.indicator],
+          <div>
+            {grow ?
+              <div style={{display: 'flex'}}>
+                <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
+                <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
+                     style={{marginRight: '0'}}>
+                  {Math.abs(grow)}
+                </div>
               </div>
-            </div>
-            :
-            <div className={dashboardStyle.locals.checkMark}/>
-          }
-        </div>,
-      ], {
-        key: index,
-        className: dashboardStyle.locals.tableRow
-      })
+              :
+              <div className={dashboardStyle.locals.checkMark}/>
+            }
+          </div>,
+        ], {
+          key: index,
+          className: dashboardStyle.locals.tableRow
+        })
+      }
     });
 
     return <div className={dashboardStyle.locals.wrap}>

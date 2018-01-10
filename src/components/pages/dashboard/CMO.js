@@ -139,26 +139,28 @@ export default class CMO extends Component {
 
     const indicatorsOptions = getIndicatorsWithNicknames();
     const objectivesGauges = objectives.map((objective, index) => {
-      let title;
-      const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-      const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-      const month = timeFrameToDate(objective.timeFrame).getMonth();
-      const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
-      indicatorsOptions.forEach((indicator) => {
-        if (indicator.value === objective.indicator) {
-          title = indicator.label;
-        }
-      });
-      return <Objective
-        target={ target }
-        value={ actualIndicators[objective.indicator] }
-        title={ title }
-        project={ project }
-        key={ index }
-        directionDown={ objective.direction === "decrease" }
-        timeFrame={objective.timeFrame}
-        color={COLORS[index % COLORS.length]}
-      />
+      if (!objective.isArchived) {
+        let title;
+        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+        const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+        const month = timeFrameToDate(objective.timeFrame).getMonth();
+        const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
+        indicatorsOptions.forEach((indicator) => {
+          if (indicator.value === objective.indicator) {
+            title = indicator.label;
+          }
+        });
+        return <Objective
+          target={target}
+          value={actualIndicators[objective.indicator]}
+          title={title}
+          project={project}
+          key={index}
+          directionDown={objective.direction === "decrease"}
+          timeFrame={objective.timeFrame}
+          color={COLORS[index % COLORS.length]}
+        />
+      }
     });
 
     return <div className={ dashboardStyle.locals.wrap }>

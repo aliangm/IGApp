@@ -229,6 +229,20 @@ export default class Preferences extends Component {
     objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
     objective.nickname = getNickname(objective.indicator);
     objective.alreadyNotified = false;
+    if (objective.isRecurrent) {
+      const now = new Date();
+      let endDate;
+      if (objective.isMonthly) {
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      }
+      else {
+        const quarter = Math.floor((now.getMonth() / 3));
+        const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
+        endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+      }
+      objective.timeFrame = (endDate.getMonth()+1) + "-" + endDate.getDate() + "-" + endDate.getFullYear();
+
+    }
     let objectives = this.props.objectives || [];
     if (index !== undefined) {
       if (index === objective.order) {
@@ -459,17 +473,23 @@ export default class Preferences extends Component {
     });
 
     const objectives = this.props.objectives.map((objective, index) => {
-      const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-      const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-      return <ObjectiveView
-        value={this.props.actualIndicators[objective.indicator]}
-        index={index}
-        key={index}
-        target={target}
-        {... objective}
-        editObjective={ () => { this.setState({showObjectivesPopup: true, objectiveIndex: index}) } }
-        deleteObjective={ ()=> { this.objectiveRemove(index) } }
-      />
+      if (!objective.isArchived) {
+        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+        const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+        return <ObjectiveView
+          value={this.props.actualIndicators[objective.indicator]}
+          index={index}
+          key={index}
+          target={target}
+          {...objective}
+          editObjective={() => {
+            this.setState({showObjectivesPopup: true, objectiveIndex: index})
+          }}
+          deleteObjective={() => {
+            this.objectiveRemove(index)
+          }}
+        />
+      }
     });
 
     return <div>
