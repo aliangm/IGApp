@@ -226,7 +226,7 @@ Depending on your templating language, that would look something like this:
       <div className={ this.classes.addEvent }>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Event name:*</Label>
-          <Textfield value={ this.state.event.name } onChange={ this.handleChange.bind(this, 'name') }/>
+          <Textfield value={ this.state.event.name } onChange={ this.handleChange.bind(this, 'name') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Type:*</Label>
@@ -234,11 +234,11 @@ Depending on your templating language, that would look something like this:
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Description:</Label>
-          <Textfield value={ this.state.event.description } onChange={ this.handleChange.bind(this, 'description') }/>
+          <Textfield value={ this.state.event.description } onChange={ this.handleChange.bind(this, 'description') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Web page url:</Label>
-          <Textfield value={ this.state.event.url } onChange={ this.handleChange.bind(this, 'url') }/>
+          <Textfield value={ this.state.event.url } onChange={ this.handleChange.bind(this, 'url') } style={{ width: '189px' }}/>
         </div>
         <Button
           type="accent2"
