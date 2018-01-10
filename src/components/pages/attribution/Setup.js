@@ -37,7 +37,7 @@ export default class Setup extends Component {
         description: '',
         url: ''
       }
-    }
+    };
   };
 
   setTrackingCode() {
@@ -69,17 +69,24 @@ export default class Setup extends Component {
   }
 
   addEvent() {
-    this.setTrackingCode();
-    let events = this.props.attribution.events;
-    const event = this.state.event;
-    events.push(event);
-    this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
-    this.setState({showTrackingCode: true, event: {
-      type: '',
-      name: '',
-      description: '',
-      url: ''
-    }});
+    if (!this.state.event.type) {
+      this.typeInput.focus();
+    }
+    else {
+      this.setTrackingCode();
+      let events = this.props.attribution.events;
+      const event = this.state.event;
+      events.push(event);
+      this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
+      this.setState({
+        showTrackingCode: true, event: {
+          type: '',
+          name: '',
+          description: '',
+          url: ''
+        }
+      });
+    }
   }
 
   copy(value) {
@@ -223,7 +230,7 @@ Depending on your templating language, that would look something like this:
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Type:*</Label>
-          <Select { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '189px' }}/>
+          <Select ref={ (input) => {this.typeInput = input} } { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Description:</Label>

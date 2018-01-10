@@ -9,6 +9,8 @@ import Label from 'components/ControlsLabel';
 import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
+import Textfield from 'components/controls/Textfield';
+import { formatBudget } from 'components/utils/budget';
 
 export default class SalesforceAutomaticPopup extends Component {
 
@@ -39,7 +41,8 @@ export default class SalesforceAutomaticPopup extends Component {
         ],
         users: [
           "Closed Won"
-        ]
+        ],
+        CAC: []
       }
     };
   }
@@ -109,22 +112,39 @@ export default class SalesforceAutomaticPopup extends Component {
   }
 
   getUserData() {
-    serverCommunication.serverRequest('put', 'salesforceapi', JSON.stringify(this.state.mapping), localStorage.getItem('region'))
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              this.props.setDataAsState(data);
-              this.close();
-            });
-        }
-        else if (response.status == 401) {
-          history.push('/');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+    let valid = true;
+    if (this.state.mapping.CAC){
+      if (!this.state.mapping.CAC[0]) {
+        valid = false;
+        this.refs.month1.focus();
+      }
+      if (!this.state.mapping.CAC[1]) {
+        valid = false;
+        this.refs.month2.focus();
+      }
+      if (!this.state.mapping.CAC[2]) {
+        valid = false;
+        this.refs.month3.focus();
+      }
+    }
+    if (valid) {
+      serverCommunication.serverRequest('put', 'salesforceapi', JSON.stringify(this.state.mapping), localStorage.getItem('region'))
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.props.setDataAsState(data);
+                this.close();
+              });
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    }
   }
 
   toggleCheckbox(indicator) {
@@ -143,6 +163,12 @@ export default class SalesforceAutomaticPopup extends Component {
     mapping[indicator] = event.map((obj) => {
       return obj.value;
     });
+    this.setState({mapping: mapping});
+  }
+
+  handleChangeCAC(index, event) {
+    let mapping = this.state.mapping;
+    mapping.CAC[index] = parseInt(event.target.value.replace(/[-$,]/g, ''));
     this.setState({mapping: mapping});
   }
 
@@ -255,6 +281,53 @@ export default class SalesforceAutomaticPopup extends Component {
           <div className={ this.classes.row }>
             <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckbox.bind(this, 'owners') } className={ salesForceStyle.locals.ownersLabel }>Filter by salesforce owners / regions (optional)</Label>
             <MultiSelect { ... selects.owners} selected={ this.state.mapping.owners } onChange={ this.handleChange.bind(this, 'owners') } disabled={ !this.state.mapping.owners } style={{ width: 'initial'}}  placeholder="Select your region owners"/>
+          </div>
+          <div className={ this.classes.row } hidden={this.props.data && this.props.data.isCACAuto}>
+            <Label checkbox={!!this.state.mapping.CAC} onChange={ this.toggleCheckbox.bind(this, 'CAC') } className={ salesForceStyle.locals.label }>Calculate CAC</Label>
+            <div hidden={!this.state.mapping.CAC}>
+              <div className={ this.classes.row }>
+                How much did you invest on all marketing activities over the last 3 months?
+              </div>
+              <div className={ this.classes.row }>
+                <div className={ this.classes.cols }>
+                  <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
+                    <Label className={ salesForceStyle.locals.label }>3 months ago</Label>
+                  </div>
+                  <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
+                    <div className={ salesForceStyle.locals.arrow }/>
+                  </div>
+                  <div className={ this.classes.colRight }>
+                    <Textfield value={ "$" + (formatBudget(this.state.mapping.CAC && this.state.mapping.CAC[0]) || '') } onChange={ this.handleChangeCAC.bind(this, 0) } ref="month1"/>
+                  </div>
+                </div>
+              </div>
+              <div className={ this.classes.row }>
+                <div className={ this.classes.cols }>
+                  <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
+                    <Label className={ salesForceStyle.locals.label }>2 months ago</Label>
+                  </div>
+                  <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
+                    <div className={ salesForceStyle.locals.arrow }/>
+                  </div>
+                  <div className={ this.classes.colRight }>
+                    <Textfield value={ "$" + (formatBudget(this.state.mapping.CAC && this.state.mapping.CAC[1]) || '') } onChange={ this.handleChangeCAC.bind(this, 1) } ref="month2"/>
+                  </div>
+                </div>
+              </div>
+              <div className={ this.classes.row }>
+                <div className={ this.classes.cols }>
+                  <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
+                    <Label className={ salesForceStyle.locals.label }>last month</Label>
+                  </div>
+                  <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
+                    <div className={ salesForceStyle.locals.arrow }/>
+                  </div>
+                  <div className={ this.classes.colRight }>
+                    <Textfield value={ "$" + (formatBudget(this.state.mapping.CAC && this.state.mapping.CAC[2]) || '') } onChange={ this.handleChangeCAC.bind(this, 2) } ref="month3"/>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>

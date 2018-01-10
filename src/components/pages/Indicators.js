@@ -190,7 +190,7 @@ export default class Indicators extends Component {
       },
       CAC: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
-        automaticIndicators: this.isSheetAuto('CAC')
+        automaticIndicators: this.isSheetAuto('CAC') || (this.props.salesforceAuto && this.props.salesforceAuto.isCACAuto)
       },
       users: {
         showAutomaticPopup: this.showCRMPopup.bind(this),

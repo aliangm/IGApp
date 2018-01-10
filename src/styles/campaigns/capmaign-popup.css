@@ -57,12 +57,6 @@
     white-space: nowrap;
 }
 
-.export {
-    color: inherit;
-    text-decoration: inherit;
-    cursor: inherit;
-}
-
 .inner {
     margin-top: 45px;
     padding: 0 38px;

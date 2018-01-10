@@ -243,7 +243,7 @@ export default class Analyze extends Component {
       className: dashboardStyle.locals.headRow
     });
 
-    const objectivesRows = this.props.objectives.map(objective => {
+    const objectivesRows = this.props.objectives.map((objective, index) => {
       const grow = Math.round(this.props.actualIndicators[objective.indicator] - objective.target);
       return this.getTableRow(null, [
         getIndicatorNickname(objective.indicator),
@@ -263,6 +263,7 @@ export default class Analyze extends Component {
           }
         </div>,
       ], {
+        key: index,
         className: dashboardStyle.locals.tableRow
       })
     });
