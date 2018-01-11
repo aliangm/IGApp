@@ -240,7 +240,7 @@ export default class Analyze extends Component {
       'Actual',
       'Delta'
     ], {
-      className: dashboardStyle.locals.headRow
+      className: dashboardStyle.locals.objectivesHeadRow
     });
 
     const objectivesRows = this.props.objectives.map((objective, index) => {
@@ -267,7 +267,7 @@ export default class Analyze extends Component {
           </div>,
         ], {
           key: index,
-          className: dashboardStyle.locals.tableRow
+          className: dashboardStyle.locals.objectivesTableRow
         })
       }
     });
@@ -404,11 +404,11 @@ export default class Analyze extends Component {
             <div className={dashboardStyle.locals.text}>
               Objectives - planned vs actual
             </div>
-            <table className={dashboardStyle.locals.table}>
+            <table className={dashboardStyle.locals.objectivesTable}>
               <thead>
               {objectivesHeadRow}
               </thead>
-              <tbody className={dashboardStyle.locals.tableBody}>
+              <tbody className={dashboardStyle.locals.objectiveTableBody}>
               {objectivesRows}
               </tbody>
             </table>
