@@ -166,6 +166,12 @@
     width: 100%;
 }
 
+.table-body {
+    height: 353px;
+    overflow: auto;
+    display: block;
+}
+
 .table-body :global(tr):nth-child(even) {
     background: #F1F4F8;
 }
@@ -178,17 +184,26 @@
     padding-left: 20px;
 }
 
+.row {
+    text-align: center;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
 .head-row {
     font-size: 18px;
     font-weight: 600;
     height: 40px;
     color: #354052;
+    composes: row;
 }
 
 .table-row {
     height: 30px;
     font-size: 16px;
     color: #354052;
+    composes: row;
 }
 
 .channel-table {

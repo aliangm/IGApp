@@ -124,16 +124,16 @@ export default class Analyze extends Component {
       {value: 'users', label: getIndicatorNickname('users')},
     ];
     const headlines = [
-      <div style={{ fontWeight: 'bold', fontSize: '22px' }}>
+      <div style={{ fontWeight: 'bold', fontSize: '22px', textAlign: 'left' }}>
         { this.state.showChannels ? 'Channel' : 'campaign' }
       </div>,
       'Cost',
       'Web Visits',
       <Label
-        style={{ marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', textTransform: 'capitalize' }}
+        style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
         question={['']}
         description={['number of times the channel/campaign led to a direct online conversion event on your website or landing pages.']}>
-        'Conversions'
+        Conversions
       </Label>,
       <div style={{display: 'inline-flex'}}>
         { this.state.editMetric ?
@@ -145,7 +145,7 @@ export default class Analyze extends Component {
             onChange={(e) => {
               this.setState({attributionTableIndicator: e.value})
             }}
-            style={{ width: '80px', fontWeight: 'initial', fontSize: 'initial', color: 'initial' }}
+            style={{ width: '160px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
           getIndicatorNickname(this.state.attributionTableIndicator)
@@ -157,7 +157,7 @@ export default class Analyze extends Component {
         </div>
       </div>,
       <Label
-        style={{ width: '80px', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052' }}
+        style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center' }}
         question={['']}
         description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator)]}>
         {"CP" + getIndicatorNickname(this.state.attributionTableIndicator).charAt(0)}
@@ -218,7 +218,7 @@ export default class Analyze extends Component {
                   conversion,
                   Math.round(funnelIndicator),
                   budget ? Math.round(funnelIndicator / budget) : 0,
-                  <div style={{ display: 'flex' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
                     {campaign.channels.map(channel =>
                       <div key={channel} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
                     )}
@@ -334,7 +334,7 @@ export default class Analyze extends Component {
         </div>
       </div>
       <FeatureToggle featureName="attribution">
-        <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'auto', padding: '15px 0' }}>
+        <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0' }}>
           <Toggle
             leftText="channels"
             rightText="campaigns"
