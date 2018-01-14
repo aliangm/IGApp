@@ -478,7 +478,7 @@ export default class Plan extends Component {
               </div>
             </FeatureToggle>
             { this.state.selectedTab !== 1 ? null :
-              <div className={this.classes.forecastButton} onClick={ () => {
+              <div className={this.classes.forecastButton} title="forecasting" onClick={ () => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
                   domElement.scrollIntoView({});
