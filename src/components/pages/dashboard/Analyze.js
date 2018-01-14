@@ -15,6 +15,7 @@ import Toggle from 'components/controls/Toggle';
 import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
 import history from 'history';
+import { formatDate } from 'components/utils/date';
 
 export default class Analyze extends Component {
 
@@ -25,13 +26,13 @@ export default class Analyze extends Component {
     previousData: []
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       historicalPerformanceIndicator: 'SQL',
       attributionTableIndicator: 'MCL',
-      months: 0,
+      months: props.previousData.length - 1,
       showChannels: true
     };
   }
@@ -73,7 +74,7 @@ export default class Analyze extends Component {
     const indicatorsOptions = getIndicatorsWithNicknames();
 
     const months = previousData.map((item, index) => {
-      return {value: index, label: index + 1}
+      return {value: index, label: formatDate(item.planDate)}
     });
     let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
@@ -94,7 +95,7 @@ export default class Analyze extends Component {
       })
     });
 
-    const relevantData = sortedPreviousData.slice(sortedPreviousData.length - this.state.months - 1);
+    const relevantData = sortedPreviousData.slice(this.state.months);
     const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? item.approvedBudgets[0] : {});
     let sumedBudgets = {};
     budgets.forEach(month => {
@@ -108,7 +109,7 @@ export default class Analyze extends Component {
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
       const current = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1].value;
-      const previous = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1 : 0)].value;
+      const previous = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? this.state.months : 0)] && indicatorsData[this.state.historicalPerformanceIndicator][(this.state.months !== undefined ? this.state.months : 0)].value;
       if (current) {
         if (previous) {
           grow = Math.round((current - previous) / previous * 100)
@@ -285,7 +286,7 @@ export default class Analyze extends Component {
     return <div className={dashboardStyle.locals.wrap}>
       <div className={dashboardStyle.locals.upperPanel}>
         <div className={dashboardStyle.locals.historyConfigText}>
-          Date range: last
+          Date range:
         </div>
         <Select
           selected={this.state.months}
@@ -295,10 +296,10 @@ export default class Analyze extends Component {
           onChange={(e) => {
             this.setState({months: e.value})
           }}
-          style={{ width: '55px', margin: '0 8px' }}
+          style={{ width: '75px', margin: '0 8px' }}
         />
         <div className={dashboardStyle.locals.historyConfigText}>
-          months
+          - {formatDate(this.props.planDate)}
         </div>
       </div>
       <div className={this.classes.cols} style={{width: '825px'}}>
@@ -398,7 +399,7 @@ export default class Analyze extends Component {
             </div>
             <div className={dashboardStyle.locals.chart}>
               <AreaChart width={540} height={280}
-                         data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(indicatorsData[this.state.historicalPerformanceIndicator].length - this.state.months - 1, indicatorsData[this.state.historicalPerformanceIndicator].length) : []}
+                         data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(this.state.months) : []}
                          style={{marginLeft: '-21px'}}>
                 <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
                 <YAxis style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
