@@ -28,6 +28,7 @@ import { formatChannels } from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
 import { getNickname } from 'components/utils/indicators';
+import { FeatureToggle } from 'react-feature-toggles';
 
 export default class Preferences extends Component {
   style = style;
@@ -228,6 +229,20 @@ export default class Preferences extends Component {
     objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
     objective.nickname = getNickname(objective.indicator);
     objective.alreadyNotified = false;
+    if (objective.isRecurrent) {
+      const now = new Date();
+      let endDate;
+      if (objective.isMonthly) {
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      }
+      else {
+        const quarter = Math.floor((now.getMonth() / 3));
+        const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
+        endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+      }
+      objective.timeFrame = (endDate.getMonth()+1) + "-" + endDate.getDate() + "-" + endDate.getFullYear();
+
+    }
     let objectives = this.props.objectives || [];
     if (index !== undefined) {
       if (index === objective.order) {
@@ -458,17 +473,23 @@ export default class Preferences extends Component {
     });
 
     const objectives = this.props.objectives.map((objective, index) => {
-      const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-      const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-      return <ObjectiveView
-        value={this.props.actualIndicators[objective.indicator]}
-        index={index}
-        key={index}
-        target={target}
-        {... objective}
-        editObjective={ () => { this.setState({showObjectivesPopup: true, objectiveIndex: index}) } }
-        deleteObjective={ ()=> { this.objectiveRemove(index) } }
-      />
+      if (!objective.isArchived) {
+        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+        const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
+        return <ObjectiveView
+          value={this.props.actualIndicators[objective.indicator]}
+          index={index}
+          key={index}
+          target={target}
+          {...objective}
+          editObjective={() => {
+            this.setState({showObjectivesPopup: true, objectiveIndex: index})
+          }}
+          deleteObjective={() => {
+            this.objectiveRemove(index)
+          }}
+        />
+      }
     });
 
     return <div>
@@ -551,7 +572,7 @@ export default class Preferences extends Component {
                 actualIndicators={ this.props.actualIndicators }
               />
             </div>
-            { this.props.userAccount.freePlan ? null :
+            <FeatureToggle featureName="plannerAI">
               <div>
                 <div className={ preferencesStyle.locals.advancedButton } onClick={()=>{ this.setState({showAdvancedFields: !this.state.showAdvancedFields}) }}>
                   Advanced
@@ -641,7 +662,7 @@ export default class Preferences extends Component {
                   </div>
                 </div>
               </div>
-            }
+            </FeatureToggle>
             <div className={ this.classes.row } style={{ marginTop: '55px' }}>
               <PlanFromExcel {... this.props}/>
             </div>

@@ -1,0 +1,18 @@
+.picture {
+    width: 45px;
+    height: 45px;
+    background: none center center no-repeat;
+    background-size: contain;
+}
+
+.initials {
+    composes: picture;
+    display: inline-flex;
+    text-transform: uppercase;
+    font-size: 14px;
+    border: solid 1px #a7a7a7;
+    color: white;
+    justify-content: center;
+    box-sizing: border-box;
+    align-items: center;
+}

@@ -131,16 +131,15 @@
   font-weight: bold;
   letter-spacing: -0.010em;
   margin-left: 20px;
-  line-height: 40px;
+  align-self: center;
 }
 
 .user-logo {
-  width: 40px;
-  height: 40px;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50%;
   background: center center no-repeat;
-  background-size: 40px 40px;
-  flex-shrink: 0;
+  background-size: contain;
 }
 
 .triangle {
@@ -148,9 +147,9 @@
   border-top-color: currentColor;
   color: #4b515e;
   position: relative;
-  top: 18px;
+  top: 5px;
   left: 5px;
-  height: fit-content;
+  align-self: center;
 }
 
 .log-out-icon {

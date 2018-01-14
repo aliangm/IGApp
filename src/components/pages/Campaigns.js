@@ -16,6 +16,7 @@ import Label from 'components/ControlsLabel';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
+import { formatBudget } from 'components/utils/budget';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -193,18 +194,17 @@ export default class Campaigns extends Component {
 
     let filteredCampaigns = activeCampaigns;
 
-    const profile = this.props.auth.getProfile();
+    const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id)
 
-    if (profile.isAdmin === false) {
-      const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
-      if (member && member.specificChannels && member.specificChannels.length > 0) {
+    if (member && member.isAdmin === false) {
+      if (member.specificChannels && member.specificChannels.length > 0) {
         filteredCampaigns = activeCampaigns.filter(campaign => member.specificChannels.some(channel => campaign.source.includes(channel)));
         processedChannels.names = processedChannels.names.filter(channel => member.specificChannels.includes(channel));
       }
     }
 
     if (this.state.onlyMyCampaigns) {
-      filteredCampaigns = filteredCampaigns.filter(campaign => campaign.owner === profile.user_id);
+      filteredCampaigns = filteredCampaigns.filter(campaign => campaign.owner === member.userId);
     }
 
     if (this.state.search) {
@@ -272,7 +272,10 @@ export default class Campaigns extends Component {
                   Budget left to invest
                   <div className={this.classes.campaignsTitleArrow}
                        style={{color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d'}}>
-                    ${budgetLeftToSpend ? budgetLeftToSpend.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0}
+                    ${budgetLeftToSpend ? formatBudget(budgetLeftToSpend) : 0}
+                  </div>
+                  <div>
+                    {' / $' + formatBudget(budget)}
                   </div>
                 </div>
               </div>

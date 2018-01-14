@@ -147,6 +147,19 @@ export default class SalesforceAutomaticPopup extends Component {
     this.props.close();
   }
 
+  next() {
+    const isEmpty = Object.keys(this.refs).some(ref => {
+      if (!this.refs[ref].props.selected){
+        this.refs[ref].focus();
+        return true;
+      }
+      return false;
+    });
+    if (!isEmpty) {
+      this.setState({tab: 1})
+    }
+  }
+
   render(){
     const selects = {
       owners: {
@@ -206,7 +219,12 @@ export default class SalesforceAutomaticPopup extends Component {
             <div className={ salesForceStyle.locals.arrow }/>
           </div>
           <div className={ this.classes.colRight }>
-            <Select { ... selects.channels} style={{ width: '270px'}} selected={this.state.campaignsMapping.types[type.Type]} onChange={this.handleChange.bind(this, type.Type, 'types')}/>
+            <Select { ... selects.channels}
+                    style={{ width: '270px'}}
+                    selected={this.state.campaignsMapping.types[type.Type]}
+                    onChange={this.handleChange.bind(this, type.Type, 'types')}
+                    ref={"type" + index}
+            />
           </div>
         </div>
       </div>
@@ -227,7 +245,14 @@ export default class SalesforceAutomaticPopup extends Component {
       </div>
     );
     const campaignsRows = this.state.campaigns.map((campaign, index) =>
-      <Label key={index} checkbox={this.state.selectedCampaigns.includes(campaign.Id)} onChange={ this.toggleCheckbox.bind(this, campaign.Id) }>{campaign.Name}</Label>
+      <Label
+        key={index}
+        style={{ textTransform: 'capitalize' }}
+        checkbox={this.state.selectedCampaigns.includes(campaign.Id)}
+        onChange={ this.toggleCheckbox.bind(this, campaign.Id) }
+      >
+        {campaign.Name}
+      </Label>
     );
     return <div style={{ width: '100%' }}>
       <div className={ CRMStyle.locals.salesforce } onClick={ this.getAuthorization.bind(this) }/>
@@ -253,7 +278,7 @@ export default class SalesforceAutomaticPopup extends Component {
                   <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
                 </div>
                 <div className={ this.classes.footerRight }>
-                  <Button type="primary2" style={{ width: '100px' }} onClick={ () => { this.setState({tab: 1}) } }>Next</Button>
+                  <Button type="primary2" style={{ width: '100px' }} onClick={ this.next.bind(this) }>Next</Button>
                 </div>
               </div>
             </div>
@@ -266,7 +291,7 @@ export default class SalesforceAutomaticPopup extends Component {
               {campaignsRows}
               <div className={ this.classes.footer }>
                 <div className={ this.classes.footerLeft }>
-                  <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
+                  <Button type="normal" style={{ width: '100px' }} onClick={ () => { this.setState({tab: 0}) } }>Back</Button>
                 </div>
                 <div className={ this.classes.footerRight }>
                   <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>

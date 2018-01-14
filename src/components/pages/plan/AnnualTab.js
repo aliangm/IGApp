@@ -25,6 +25,7 @@ import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contex
 import contextStyle from 'react-contextmenu/public/styles.css';
 import Toggle from 'components/controls/Toggle';
 import { timeFrameToDate } from 'components/utils/objective';
+import { FeatureToggle } from 'react-feature-toggles';
 
 export default class AnnualTab extends Component {
 
@@ -265,220 +266,204 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    if (!this.props.isPlannerLoading) {
-      const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
-      let budget = Object.keys(planJson)[0];
-      const data = planJson[budget];
-      budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
-      let rows = [];
+    const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
+    let budget = Object.keys(planJson)[0];
+    const data = planJson[budget];
+    budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
+    let rows = [];
 
-      const handleRows = (data, parent, level) => {
-        level = level | 0;
+    const handleRows = (data, parent, level) => {
+      level = level | 0;
 
-        Object.keys(data).sort().forEach((item, i) => {
-          if (item === '__TOTAL__') return null;
+      Object.keys(data).sort().forEach((item, i) => {
+        if (item === '__TOTAL__') return null;
 
-          let key = parent + ':' + item + '-' + i;
-          let collapsed = !!this.state.collapsed[key];
-          const params = data[item];
-          let values;
-          let hoverValues;
-          let isSecondGood = false;
-          if (this.state.approvedPlan) {
-            values = params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}});
-            hoverValues = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-            isSecondGood = true;
-          }
-          else {
-            values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-            hoverValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
-          }
-          const  titleElem = <div ref={ params.channel ? this.props.setRef.bind(this, params.channel) : null }>
-            { this.props.editMode && params.channel && !params.isOtherChannel ?
-              <div className={ this.classes.editChannelNameWrapper }>
-                <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
-              </div>
-              : null }
-            <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.props.editMode}>
-              <div
-                style={{
-                  marginLeft: (level | 0) * 17 + 'px',
-                  cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
-                }}
-                className={ this.classes.rowTitle }>
-                { params.children ?
-                  <div
-                    className={ this.classes.rowArrow }
-                    data-collapsed={ collapsed || null }
-                    onClick={() => {
-                      this.state.collapsed[key] = !collapsed;
-                      this.forceUpdate();
-                    }}
-                  />
-                  :
-                  this.props.editMode ?
-                    <div>
-                      <div
-                        className={ this.classes.rowDelete }
-                        onClick={ () => this.setState({deletePopup: params.channel}) }
+        let key = parent + ':' + item + '-' + i;
+        let collapsed = !!this.state.collapsed[key];
+        const params = data[item];
+        let values;
+        let hoverValues;
+        let isSecondGood = false;
+        if (this.state.approvedPlan) {
+          values = params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}});
+          hoverValues = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+          isSecondGood = true;
+        }
+        else {
+          values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+          hoverValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
+        }
+        const  titleElem = <div ref={ params.channel ? this.props.setRef.bind(this, params.channel) : null }>
+          { this.props.editMode && params.channel && !params.isOtherChannel ?
+            <div className={ this.classes.editChannelNameWrapper }>
+              <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
+            </div>
+            : null }
+          <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.props.editMode}>
+            <div
+              style={{
+                marginLeft: (level | 0) * 17 + 'px',
+                cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
+              }}
+              className={ this.classes.rowTitle }>
+              { params.children ?
+                <div
+                  className={ this.classes.rowArrow }
+                  data-collapsed={ collapsed || null }
+                  onClick={() => {
+                    this.state.collapsed[key] = !collapsed;
+                    this.forceUpdate();
+                  }}
+                />
+                :
+                this.props.editMode ?
+                  <div>
+                    <div
+                      className={ this.classes.rowDelete }
+                      onClick={ () => this.setState({deletePopup: params.channel}) }
+                    />
+                    <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <DeleteChannelPopup
+                        onNext={ this.deleteRow.bind(this, params.channel) }
+                        onBack={ () => this.setState({deletePopup: ''}) }
                       />
-                      <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                        <DeleteChannelPopup
-                          onNext={ this.deleteRow.bind(this, params.channel) }
-                          onBack={ () => this.setState({deletePopup: ''}) }
-                        />
-                      </Popup>
-                      <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                        <EditChannelNamePopup
-                          channel={ this.state.editChannelName }
-                          onNext={ this.editChannelName.bind(this) }
-                          onBack={ () => this.setState({editChannelName: ''}) }
-                        />
-                      </Popup>
-                    </div>
-                    : null }
-
-                { params.icon ?
-                  <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-                  : null }
-
-                { params.icon_mask ?
-                  <div className={ this.classes.rowMaskIcon }>
-                    <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                    </Popup>
+                    <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <EditChannelNamePopup
+                        channel={ this.state.editChannelName }
+                        onNext={ this.editChannelName.bind(this) }
+                        onBack={ () => this.setState({editChannelName: ''}) }
+                      />
+                    </Popup>
                   </div>
                   : null }
-                {/**   { item.length > 13 ?
+
+              { params.icon ?
+                <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
+                : null }
+
+              { params.icon_mask ?
+                <div className={ this.classes.rowMaskIcon }>
+                  <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                </div>
+                : null }
+              {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
                 </div>
                 : item }**/}
-                {item}
-              </div>
-            </ContextMenuTrigger>
-          </div>
+              {item}
+            </div>
+          </ContextMenuTrigger>
+        </div>
 
-          const rowProps = {
-            className: this.props.editMode ? null :this.classes.tableRow,
-            key: key,
-            onMouseEnter: () => {
-              this.setState({
-                hoverRow: key
-              });
-            },
-            onMouseLeave: () => {
-              this.setState({
-                hoverRow: void 0
-              });
-            }
-          };
-
-          if (params.disabled) {
-            rowProps['data-disabled'] = true;
+        const rowProps = {
+          className: this.props.editMode ? null :this.classes.tableRow,
+          key: key,
+          onMouseEnter: () => {
+            this.setState({
+              hoverRow: key
+            });
+          },
+          onMouseLeave: () => {
+            this.setState({
+              hoverRow: void 0
+            });
           }
+        };
 
-          const row = this.getTableRow(titleElem, values, rowProps, params.channel, hoverValues, isSecondGood);
-          rows.push(row);
+        if (params.disabled) {
+          rowProps['data-disabled'] = true;
+        }
 
-          if (!collapsed && params.children) {
-            handleRows(params.children, key, level + 1);
-          }
+        const row = this.getTableRow(titleElem, values, rowProps, params.channel, hoverValues, isSecondGood);
+        rows.push(row);
+
+        if (!collapsed && params.children) {
+          handleRows(params.children, key, level + 1);
+        }
+      });
+    }
+
+    if (data && !this.state.tableCollapsed) {
+      handleRows(data);
+    }
+
+    const budgetLeftToPlan = budget - data['__TOTAL__'].values.reduce((a, b) => a + b, 0);
+
+    const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
+      <div
+        className={ this.classes.rowArrow }
+        data-collapsed={ this.state.tableCollapsed || null }
+        onClick={() => {
+          this.state.tableCollapsed = !this.state.tableCollapsed;
+          this.forceUpdate();
+        }}
+      />
+      { 'Marketing Channel' }
+    </div>, this.getMonthHeaders(), {
+      className: this.classes.headRow
+    });
+
+    const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
+      { 'TOTAL' }
+    </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
+      className: this.classes.footRow
+    });
+
+    const currentSuggested = {};
+    const dates = this.getDates();
+    const projections = this.props.projectedPlan.map((item, index) => {
+      const json = {};
+      if (item.projectedIndicatorValues) {
+        Object.keys(item.projectedIndicatorValues).forEach(key => {
+          json[key + 'Suggested'] = item.projectedIndicatorValues[key];
+        });
+        Object.keys(this.props.actualIndicators).forEach(indicator => {
+          currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
         });
       }
+      return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
+    });
 
-      if (data && !this.state.tableCollapsed) {
-        handleRows(data);
-      }
+    // Current indicators values to first cell
+    projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
-      const budgetLeftToPlan = budget - data['__TOTAL__'].values.reduce((a, b) => a + b, 0);
+    const objectives = {};
+    this.props.objectives.forEach(objective => {
+      const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
+      const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
+      const date = timeFrameToDate(objective.timeFrame);
+      const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+      objectives[objective.indicator] = {x: monthStr, y: target};
+    });
 
-      const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
-        <div
-          className={ this.classes.rowArrow }
-          data-collapsed={ this.state.tableCollapsed || null }
-          onClick={() => {
-            this.state.tableCollapsed = !this.state.tableCollapsed;
-            this.forceUpdate();
-          }}
-        />
-        { 'Marketing Channel' }
-      </div>, this.getMonthHeaders(), {
-        className: this.classes.headRow
-      });
-
-      const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-        { 'TOTAL' }
-      </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
-        className: this.classes.footRow
-      });
-
-      const currentSuggested = {};
-      const dates = this.getDates();
-      const projections = this.props.projectedPlan.map((item, index) => {
-        const json = {};
-        if (item.projectedIndicatorValues) {
-          Object.keys(item.projectedIndicatorValues).forEach(key => {
-            json[key + 'Suggested'] = item.projectedIndicatorValues[key];
-          });
-          Object.keys(this.props.actualIndicators).forEach(indicator => {
-            currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
-          });
-        }
-        return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
-      });
-
-      // Current indicators values to first cell
-      projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
-
-      const objectives = {};
-      this.props.objectives.forEach(objective => {
-        const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
-        const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
-        const date = timeFrameToDate(objective.timeFrame);
-        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
-        objectives[objective.indicator] = {x: monthStr, y: target};
-      });
-
-      return <div>
-        <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
-          <div className={ planStyles.locals.title } style={{ padding: '0' }}>
-            <div className={ planStyles.locals.titleMain }>
-              <div className={ planStyles.locals.titleText }>
-                Annual Budget
-              </div>
-              <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
-                ${ (Math.ceil(budget/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
-              </div>
+    return <div>
+      <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
+        <div className={ planStyles.locals.title } style={{ padding: '0' }}>
+          <div className={ planStyles.locals.titleMain }>
+            <div className={ planStyles.locals.titleText }>
+              Annual Budget
             </div>
-            <div className={ planStyles.locals.titleButtons }>
-              { this.props.userAccount.freePlan ? null :
-                <div data-selected={ this.state.dropmenuVisible ? true : null }>
-
-                </div>
-              }
-              <Button type="reverse" style={{
-                marginRight: '10px',
-                width: '102px'
-              }} onClick={ () => {
-                const domElement = ReactDOM.findDOMNode(this.refs.forecastingGraph);
-                if (domElement) {
-                  domElement.scrollIntoView({});
-                }
-              }}>Forecast</Button>
+            <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
+              ${ (Math.ceil(budget/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
             </div>
           </div>
-          <div className={ planStyles.locals.title } style={{ padding: '0', height: '35px' }}>
-            <div className={ planStyles.locals.titleMain }>
-              <div className={ this.classes.titleBudget }>
-                Budget left to plan
-              </div>
-              <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
-                {
-                  Math.abs(budgetLeftToPlan) >= 100 ?
-                    '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                    : <div className={ planStyles.locals.budgetLeftToPlanOk }/>
-                }
-              </div>
+        </div>
+        <div className={ planStyles.locals.title } style={{ padding: '0', height: '35px' }}>
+          <div className={ planStyles.locals.titleMain }>
+            <div className={ this.classes.titleBudget }>
+              Budget left to plan
             </div>
+            <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
+              {
+                Math.abs(budgetLeftToPlan) >= 100 ?
+                  '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  : <div className={ planStyles.locals.budgetLeftToPlanOk }/>
+              }
+            </div>
+          </div>
+          <FeatureToggle featureName="plannerAI">
             <div className={ planStyles.locals.titleToggle } style={{ width: '69%' }}>
               <Toggle
                 leftText="Current"
@@ -488,112 +473,100 @@ export default class AnnualTab extends Component {
                 rightClick={ ()=>{ this.setState({approvedPlan: false}) } }
               />
             </div>
+          </FeatureToggle>
+        </div>
+        <div className={ this.classes.innerBox }>
+          <div className={ this.classes.box }>
+            <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
+              <thead>
+              { headRow }
+              </thead>
+              <tbody className={ this.classes.tableBody }>
+              { rows }
+              </tbody>
+              <tfoot>
+              { footRow }
+              </tfoot>
+            </table>
           </div>
-          <div className={ this.classes.innerBox }>
-            <div className={ this.classes.box }>
-              <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
-                <thead>
-                { headRow }
-                </thead>
-                <tbody className={ this.classes.tableBody }>
-                { rows }
-                </tbody>
-                <tfoot>
-                { footRow }
-                </tfoot>
-              </table>
-            </div>
 
-            <div className={ this.classes.hoverBox }>
-              <table className={ this.classes.hoverTable }>
-                <thead>{ headRow }</thead>
-                <tbody>{ rows }</tbody>
-                <tfoot>{ footRow }</tfoot>
-              </table>
-            </div>
+          <div className={ this.classes.hoverBox }>
+            <table className={ this.classes.hoverTable }>
+              <thead>{ headRow }</thead>
+              <tbody>{ rows }</tbody>
+              <tfoot>{ footRow }</tfoot>
+            </table>
+          </div>
 
-            <ContextMenu id="rightClick">
-              <SubMenu title="Increase by" hoverDelay={250}>
-                <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
-                  10%
-                </MenuItem>
-                <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
-                  20%
-                </MenuItem>
-                <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
-                  30%
-                </MenuItem>
-                <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
-                  40%
-                </MenuItem>
-                <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
-                  50%
-                </MenuItem>
-              </SubMenu>
-              <SubMenu title="Decrease by" hoverDelay={250}>
-                <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
-                  10%
-                </MenuItem>
-                <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
-                  20%
-                </MenuItem>
-                <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
-                  30%
-                </MenuItem>
-                <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
-                  40%
-                </MenuItem>
-                <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
-                  50%
-                </MenuItem>
-              </SubMenu>
-            </ContextMenu>
+          <ContextMenu id="rightClick">
+            <SubMenu title="Increase by" hoverDelay={250}>
+              <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
+                10%
+              </MenuItem>
+              <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
+                20%
+              </MenuItem>
+              <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
+                30%
+              </MenuItem>
+              <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
+                40%
+              </MenuItem>
+              <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
+                50%
+              </MenuItem>
+            </SubMenu>
+            <SubMenu title="Decrease by" hoverDelay={250}>
+              <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
+                10%
+              </MenuItem>
+              <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
+                20%
+              </MenuItem>
+              <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
+                30%
+              </MenuItem>
+              <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
+                40%
+              </MenuItem>
+              <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
+                50%
+              </MenuItem>
+            </SubMenu>
+          </ContextMenu>
 
-            <PlanPopup ref="headPopup" style={{
-              width: '350px',
-              left: this.state.popupLeft + 'px',
-              top: this.state.popupTop + 'px',
-              marginTop: '5px'
-            }} title="Events: Mar/16"
-                       onClose={() => {
-                         this.setState({
-                           popupShown: false,
-                           popupLeft: 0,
-                           popupTop: 0
-                         });
-                       }}
-            >
-              <PopupTextContent>
-                <strong>User Events</strong>
-                <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
-                  Louis
-                  Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-                <strong>Global Events</strong>
-                <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                  correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
-                  do
-                  not</p>
-              </PopupTextContent>
-            </PlanPopup>
-            <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref="forecastingGraph">
-              <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
-            </div>
+          <PlanPopup ref="headPopup" style={{
+            width: '350px',
+            left: this.state.popupLeft + 'px',
+            top: this.state.popupTop + 'px',
+            marginTop: '5px'
+          }} title="Events: Mar/16"
+                     onClose={() => {
+                       this.setState({
+                         popupShown: false,
+                         popupLeft: 0,
+                         popupTop: 0
+                       });
+                     }}
+          >
+            <PopupTextContent>
+              <strong>User Events</strong>
+              <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
+                Louis
+                Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
+              <strong>Global Events</strong>
+              <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
+                correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
+                do
+                not</p>
+            </PopupTextContent>
+          </PlanPopup>
+          <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref={this.props.forecastingGraphRef.bind(this)}>
+            <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
           </div>
         </div>
       </div>
-    } else {
-      return <div className={ this.classes.loading }>
-        <Popup className={ this.classes.popup }>
-          <div>
-            <Loading />
-          </div>
-
-          <div className={ this.classes.popupText }>
-            Please wait while the system optimizes your plan
-          </div>
-        </Popup>
-      </div>
-    }
+    </div>
   }
 
   getTableRow(title, items, props, channel, hoverValues, isSecondGood)

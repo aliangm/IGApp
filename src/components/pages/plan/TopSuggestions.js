@@ -2,6 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/top-suggestions.css';
 import Suggestion from 'components/pages/plan/Suggestion';
+import { FeatureToggle } from 'react-feature-toggles';
 
 export default class TopSuggestions extends Component {
 
@@ -33,28 +34,30 @@ export default class TopSuggestions extends Component {
         declineChannel={ () => { this.props.declineChannel(0, item.channel, item.current) } }
       />
     );
-    return <div>
-      <div className={this.classes.title} onClick={ () => { this.setState({active: !this.state.active}) } } data-active={ this.state.active ? true : null }>
-        Top Suggestions
-      </div>
-      <div hidden={ !this.state.active }>
-        <div className={this.classes.innerPos}>
-          <div className={this.classes.inner}>
-            {
-              topSuggestions && topSuggestions.length > 0
-                ?
-                topSuggestions
-                :
-                <div className={this.classes.noSuggestionsPos}>
-                  <div className={this.classes.noSuggestionsText}>
-                    Great - no more suggestions for this month :)
+    return <FeatureToggle featureName="plannerAI">
+      <div>
+        <div className={this.classes.title} onClick={ () => { this.setState({active: !this.state.active}) } } data-active={ this.state.active ? true : null }>
+          Top Suggestions
+        </div>
+        <div hidden={ !this.state.active }>
+          <div className={this.classes.innerPos}>
+            <div className={this.classes.inner}>
+              {
+                topSuggestions && topSuggestions.length > 0
+                  ?
+                  topSuggestions
+                  :
+                  <div className={this.classes.noSuggestionsPos}>
+                    <div className={this.classes.noSuggestionsText}>
+                      Great - no more suggestions for this month :)
+                    </div>
                   </div>
-                </div>
-            }
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </FeatureToggle>
   }
 
 }

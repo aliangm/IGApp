@@ -7,6 +7,7 @@ import global from 'global';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
 import Notifications from 'components/pages/header/Notifications';
+import Avatar from 'components/Avatar';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -91,17 +92,7 @@ export default class Header extends Component {
         return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.region ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
       })
       :null;
-    let user = { name: '', pictureUrl: null };
-    if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id) {
-      user.name = this.props.userFirstName + ' ' + this.props.userLastName;
-      user.pictureUrl = this.props.userAccount.pictureUrl || null;
-    }
-    else {
-      const member = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
-      if (member) {
-        user = member;
-      }
-    }
+    const user = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
 
     const userNotifications = this.props.notifications.filter(notification => notification.UID === this.props.auth.getProfile().user_id);
     const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
@@ -168,9 +159,9 @@ export default class Header extends Component {
              onClick={ this.toggleDropmenuBig }
         >
           <div className={ this.classes.dropmenu } >
-            <div className={ this.classes.userLogo } style={{ backgroundImage: user.pictureUrl ? 'url(' + user.pictureUrl + ')' : 'none' }} />
+            <Avatar member={user} className={this.classes.userLogo}/>
             <div className={ this.classes.user }>
-              { user.name }
+              { user && user.name }
             </div>
             <div className={ this.classes.triangle }/>
             <Popup className={ this.classes.dropmenuPopup }
@@ -202,17 +193,7 @@ export default class Header extends Component {
         return <div className={ this.classes.linkText } key={ region } data-selected={ region == this.props.region ? true : null } onClick={this.changeRegion.bind(this, region)}>{region}</div>
       })
       : null;
-    let user = { name: '', pictureUrl: null };
-    if (this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.UID ===  this.props.auth.getProfile().user_id) {
-      user.name = this.props.userFirstName + ' ' + this.props.userLastName;
-      user.pictureUrl = this.props.userAccount.pictureUrl || null;
-    }
-    else {
-      const member = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
-      if (member) {
-        user = member;
-      }
-    }
+    const user = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
     return <div className={ this.classes.menuSmall }>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
@@ -255,11 +236,11 @@ export default class Header extends Component {
             { hasUser ?
               <div className={ this.classes.userBoxInside }>
                 <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
-                <div className={ this.classes.userLogo } style={{ backgroundImage: user.pictureUrl ? 'url(' + user.pictureUrl + ')' : '' }} />
+                <Avatar member={user} className={this.classes.userLogo}/>
                 <div className={ this.classes.logged }>
                   {this.props.userCompany}
                   <div className={ this.classes.user }>
-                    { user.name }
+                    { user && user.name }
                   </div>
                 </div>
               </div>
@@ -290,11 +271,11 @@ export default class Header extends Component {
       {hasUser ?
         <div className={ this.classes.userBoxOutside }>
           <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
-          <div className={ this.classes.userLogo } style={{ backgroundImage: user.pictureUrl ? 'url(' + user.pictureUrl + ')' : '' }} />
+          <Avatar member={user} className={this.classes.userLogo}/>
           <div className={ this.classes.logged }>
             {this.props.userCompany}
             <div className={ this.classes.user }>
-              { user.name }
+              { user && user.name }
             </div>
           </div>
         </div>

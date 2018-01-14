@@ -5,6 +5,7 @@ import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import CMO from 'components/pages/dashboard/CMO';
 import Analyze from 'components/pages/dashboard/Analyze';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 export default class Dashboard extends Component {
 
@@ -60,9 +61,21 @@ export default class Dashboard extends Component {
         <div className={ this.classes.serverDown }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
-        <div>
-          { selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null }
-        </div>
+        { this.props.userAccount.pages && this.props.userAccount.pages.dashboard ?
+          <div>
+            {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
+          </div>
+          :
+          <FirstPageVisit
+            title="360 view on all marketing data and performance"
+            content="Control and visibility over your marketing mix, data and performance are crucial for marketing success. Get a one-point-view of what happens at any given moment."
+            action="Show me the data >"
+            icon="step:dashboard"
+            onClick={() => {
+              this.props.updateUserAccount({'pages.dashboard': true})
+            }}
+          />
+        }
       </Page>
     </div>
   }

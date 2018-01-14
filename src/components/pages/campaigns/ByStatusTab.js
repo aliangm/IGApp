@@ -47,6 +47,7 @@ export default class ByChannelTab extends Component {
       status: 'New',
       name,
       budget: processedChannels.budgets[name],
+      campaignsBudget: 0,
       title: processedChannels.titles[name],
       icon: processedChannels.icons[name],
       campaigns: [],
@@ -57,6 +58,7 @@ export default class ByChannelTab extends Component {
       status: 'New',
       name: null,
       budget: 0,
+      campaignsBudget: 0,
       title: "Multi Channel Campaigns",
       icon: "plan:multiChannel",
       campaigns: []
@@ -115,7 +117,7 @@ export default class ByChannelTab extends Component {
             if (channelInList.order === initialOrder) {
               channelInList.order = getCampaignOrder(campaign)
             }
-
+            channelInList.campaignsBudget += campaign.actualSpent || campaign.budget;
             channelInList.campaigns.push(extendedCampaign);
           } else {
             list.cards.push({
@@ -125,6 +127,7 @@ export default class ByChannelTab extends Component {
               title: "Multi Channel Campaigns",
               icon: "plan:multiChannel",
               budget: 0,
+              campaignsBudget: campaign.actualSpent || campaign.budget,
               campaigns: [extendedCampaign],
               order: getCampaignOrder(campaign)
             });
@@ -139,7 +142,7 @@ export default class ByChannelTab extends Component {
             if (channelInList.order === initialOrder) {
               channelInList.order = getCampaignOrder(campaign)
             }
-
+            channelInList.campaignsBudget += campaign.actualSpent || campaign.budget;
             channelInList.campaigns.push(extendedCampaign);
           } else {
             list.cards.push({
@@ -149,6 +152,7 @@ export default class ByChannelTab extends Component {
               title: processedChannels.titles[source],
               icon: processedChannels.icons[source],
               budget: processedChannels.budgets[source],
+              campaignsBudget: campaign.actualSpent || campaign.budget,
               campaigns: [extendedCampaign],
               order: getCampaignOrder(campaign)
             });

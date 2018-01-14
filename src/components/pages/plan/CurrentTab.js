@@ -62,23 +62,6 @@ export default class CurrentTab extends Component {
   render() {
     const { planDate, approvedBudgets, isPlannerLoading, region, planUnknownChannels, inHouseChannels } = this.state;
 
-    if (isPlannerLoading) {
-      return (
-        <div className={ this.classes.wrap } data-loading="true">
-          <div className={ this.classes.loading }>
-            <Popup className={ this.classes.popup }>
-              <div>
-                <Loading />
-              </div>
-
-              <div className={ this.classes.popupText }>
-                Please wait while the system optimizes your plan
-              </div>
-            </Popup>
-          </div>
-        </div>
-      );
-    }
     const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
     const planJson = parseAnnualPlan(plan, null, planUnknownChannels, inHouseChannels);
     const planData = planJson[Object.keys(planJson)[0]];

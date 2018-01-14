@@ -24,7 +24,7 @@ import serverCommunication from 'data/serverCommunication';
 import ButtonWithSurePopup from 'components/pages/account/ButtonWithSurePopup';
 import AddMemberPopup from 'components/pages/account/AddMemberPopup';
 import Tabs from 'components/onboarding/Tabs';
-
+import Avatar from 'components/Avatar';
 
 export default class Welcome extends Component {
   style = style;
@@ -57,7 +57,24 @@ export default class Welcome extends Component {
 
   componentDidMount() {
     if(this.props.location.query.new) {
-      this.props.createUserAccount({freePlan: this.props.location.query.freePlan, email: this.props.auth.getProfile().email})
+      const teamMembers = [{
+        email: this.props.auth.getProfile().email,
+        name: '',
+        role: '',
+        userId: this.props.auth.getProfile().user_id
+      }];
+      const json = {
+        teamMembers: teamMembers
+      };
+      if (this.props.location.query.freePlan === "true") {
+        json['permissions.plannerAI'] = false;
+        json['pages.dashboard'] = true;
+      }
+      else {
+        json['permissions.plannerAI'] = true;
+        json['pages.plan'] = true;
+      }
+      this.props.createUserAccount(json)
         .then(() => {
         })
         .catch((err) => {
@@ -69,6 +86,12 @@ export default class Welcome extends Component {
   handleChange(parameter, event) {
     let update = Object.assign({}, this.props.userAccount);
     update[parameter] = event.target.value;
+    this.props.updateState({userAccount: update});
+  }
+
+  handleChangeName(index, event) {
+    let update = Object.assign({}, this.props.userAccount);
+    update.teamMembers[index].name = event.target.value;
     this.props.updateState({userAccount: update});
   }
 
@@ -85,6 +108,12 @@ export default class Welcome extends Component {
   handleChangeSelect(parameter, event) {
     let update = Object.assign({}, this.props.userAccount);
     update[parameter] = event.value;
+    this.props.updateState({userAccount: update});
+  }
+
+  handleChangeRole(event) {
+    let update = Object.assign({}, this.props.userAccount);
+    update.teamMembers[0].role = event.value;
     this.props.updateState({userAccount: update});
   }
 
@@ -149,7 +178,7 @@ export default class Welcome extends Component {
     ], {
       className: PlannedVsActualstyle.locals.headRow
     });
-    const rows = this.props.userAccount.teamMembers.map((item, i) => {
+    const rows = this.props.userAccount.teamMembers.slice(1).map((item, i) => {
       return this.getTableRow(null, [
         <div className={ PlannedVsActualstyle.locals.cellItem }>
           { item.name }
@@ -191,28 +220,24 @@ export default class Welcome extends Component {
       }
     };
     const title = isPopupMode() ? "Welcome! Let's get you started" : "Account";
+    const member = this.props.userAccount.teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
+    const memberIndex = this.props.userAccount.teamMembers.findIndex(member => member.userId === this.props.auth.getProfile().user_id);
     const userAccount = <div>
       <div className={ this.classes.row }>
-        <Label>First Name</Label>
-        <Textfield value={ this.props.userAccount.firstName } onChange={ this.handleChange.bind(this, 'firstName')}/>
+        <Label>Name</Label>
+        <Textfield value={ member && member.name } onChange={ this.handleChangeName.bind(this, memberIndex)}/>
       </div>
       <div className={ this.classes.row }>
-        <Label>Last Name</Label>
-        <Textfield value={ this.props.userAccount.lastName } onChange={ this.handleChange.bind(this, 'lastName')}/>
-      </div>
-      <div className={ this.classes.row }>
-        <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ this.props.userAccount.role} onChange={ this.handleChangeSelect.bind(this, 'role')}/>
+        <Select { ... selects.role } className={ welcomeStyle.locals.select } selected={ member && member.role} onChange={ this.handleChangeRole.bind(this)}/>
       </div>
       <div className={ this.classes.row }>
         <Label>Email</Label>
-        <Textfield value={ this.props.userAccount.email } readOnly={true}/>
+        <Textfield value={ member && member.email } readOnly={true}/>
       </div>
-      { this.props.userAccount.pictureUrl ?
-        <div className={ this.classes.row }>
-          <Label>Picture</Label>
-          <div className={ welcomeStyle.locals.userPicture } style={{ backgroundImage: 'url(' + this.props.userAccount.pictureUrl + ')' }} />
-        </div>
-        : null }
+      <div className={ this.classes.row }>
+        <Label>Picture</Label>
+        <Avatar member={member} className={welcomeStyle.locals.userPicture}/>
+      </div>
     </div>;
     const companyAccount = <div>
       <div className={ this.classes.row }>

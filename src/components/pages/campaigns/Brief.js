@@ -52,7 +52,7 @@ export default class Brief extends Component {
       nextProps.campaign.referenceProjects ||
       nextProps.campaign.keywords ||
       nextProps.campaign.additionalInformation) {
-        this.setState({showAdvanced: true});
+      this.setState({showAdvanced: true});
     }
     else {
       this.setState({showAdvanced: false});
@@ -123,13 +123,10 @@ export default class Brief extends Component {
   }
 
   getEmailTo() {
-    const profile = this.props.auth && this.props.auth.getProfile() && this.props.auth.getProfile();
     return (this.props.campaign.owner ?
-      profile.app_metadata.UID === this.props.campaign.owner ?
-        profile.email :
-        this.props.teamMembers
-          .filter(item => item.userId === this.props.campaign.owner)
-          .map(item => item.email)
+      this.props.teamMembers
+        .filter(item => item.userId === this.props.campaign.owner)
+        .map(item => item.email)
       : '');
   }
 
@@ -243,20 +240,6 @@ export default class Brief extends Component {
           selects.owner.select.options.push({value: member.userId, label: label});
         }
       });
-    }
-    if (this.props.auth.getProfile() && this.props.auth.getProfile().app_metadata) {
-      if (this.props.auth.getProfile().user_id === this.props.auth.getProfile().app_metadata.UID) {
-        selects.owner.select.options.push({
-          value: this.props.auth.getProfile().user_id,
-          label: this.props.firstName ? this.props.firstName + " (me)" : "Me"
-        });
-      }
-      else {
-        selects.owner.select.options.push({
-          value: this.props.auth.getProfile().app_metadata.UID,
-          label: this.props.firstName + " " + this.props.lastName
-        });
-      }
     }
 
     const assetsCategories = this.props.campaign.assets ?
@@ -447,8 +430,8 @@ export default class Brief extends Component {
           <Button type="reverse" style={{ width: '165px', marginLeft: '30px' }} onClick={ this.props.openAddTemplatePopup }>Save as a template</Button>
         </div>
         <div className={ this.classes.footerRight }>
-          <Button type="reverse" style={{ width: '100px', marginRight: '30px' }}>
-            <a className={ campaignPopupStyle.locals.export } onClick={ this.exportCampaign.bind(this) }>Export</a>
+          <Button type="reverse" style={{ width: '100px', marginRight: '30px' }} onClick={ this.exportCampaign.bind(this) }>
+            Export
           </Button>
           <SaveButton onClick={ this.props.save } />
         </div>

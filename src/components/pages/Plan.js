@@ -22,6 +22,8 @@ import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import { output } from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
+import PlanLoading from 'components/pages/plan/PlanLoading';
+import { FeatureToggle } from 'react-feature-toggles';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -71,7 +73,8 @@ export default class Plan extends Component {
       maxChannelsField: props.maxChannels || '',
       isCheckAnnual: !!props.budget,
       setRef: this.setRef.bind(this),
-      whatIfSelected: false,
+      forecastingGraphRef: this.forecastingGraphRef.bind(this),
+      whatIfSelected: false
     };
   }
 
@@ -82,13 +85,13 @@ export default class Plan extends Component {
       this.approveAllBudgets(true);
     };
     if (isPopupMode()) {
-      if (this.props.userAccount.freePlan === false) {
+      disablePopupMode();
+      if (this.props.userAccount.permissions.plannerAI) {
         this.plan(true, null, callback, this.props.region, false);
       }
       else {
-        this.setState({editMode: true, addChannelPopup: true});
+        history.push('/dashboard');
       }
-      disablePopupMode();
     }
   }
 
@@ -158,13 +161,12 @@ export default class Plan extends Component {
               if (data) {
                 if (data.error) {
                   if (!silent) {
-                    this.setState({isPlannerLoading: false, isError: true});
+                    this.setState({isError: true});
                   }
                 }
                 else {
                   if (!silent) {
                     this.setState({
-                      isPlannerLoading: false,
                       isError: false
                     });
                   }
@@ -185,12 +187,12 @@ export default class Plan extends Component {
           }
           if (response.status == 400){
             if (!silent) {
-              this.setState({isError: true, isPlannerLoading: false});
+              this.setState({isError: true});
             }
           }
           else {
             if (!silent) {
-              this.setState({serverDown: true, isPlannerLoading: false});
+              this.setState({serverDown: true});
             }
           }
         }
@@ -198,7 +200,6 @@ export default class Plan extends Component {
       .catch((err) => {
         if (!silent) {
           this.setState({
-            isPlannerLoading: false,
             serverDown: true
           });
         }
@@ -368,7 +369,7 @@ export default class Plan extends Component {
     }, this.props.region, this.props.planDate)
       .then(() => {
         this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this.refs[channel]);
+        const domElement = ReactDOM.findDOMNode(this[channel]);
         if (domElement) {
           domElement.scrollIntoView({});
         }
@@ -393,6 +394,10 @@ export default class Plan extends Component {
 
   setRef = (channel, ref) => {
     this[channel] = ref;
+  };
+
+  forecastingGraphRef = ref => {
+    this.forecastingGraph = ref;
   };
 
   selectTab(index) {
@@ -444,7 +449,7 @@ export default class Plan extends Component {
             }
           </div>
           <div className={this.classes.headPlan}>
-            {this.props.userAccount.freePlan ? null :
+            <FeatureToggle featureName="plannerAI">
               <div style={{ position: 'relative' }}>
                 <div className={this.classes.error}>
                   <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
@@ -471,131 +476,141 @@ export default class Plan extends Component {
                   }}/>
                 </Popup>
               </div>
+            </FeatureToggle>
+            { this.state.selectedTab !== 1 ? null :
+              <div className={this.classes.forecastButton} onClick={ () => {
+                const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
+                if (domElement) {
+                  domElement.scrollIntoView({});
+                }
+              }}/>
             }
-            { this.props.userAccount.freePlan || this.state.selectedTab !== 1 ? null :
-              <div style={{ display: 'flex', position: 'relative' }}>
-                <div>
-                  <Button type="reverse" contClassName={ this.classes.dropButton } style={{
-                    width: '102px',
-                    marginLeft: '15px'
-                  }} onClick={() => {
-                    this.setState({dropmenuVisible: !this.state.dropmenuVisible})
-                  }}>
-                    Apply All
-                    <div className={this.classes.buttonTriangle}/>
-                  </Button>
-                  <Popup
-                    className={ this.classes.dropmenu }
-                    hidden={ !this.state.dropmenuVisible } onClose={() => {
-                    this.setState({
-                      dropmenuVisible: false
-                    });
-                  }}
-                  >
-                    <div>
-                      <div className={ this.classes.dropmenuItem } onClick={ () => {
-                        this.approveAllBudgets()
-                          .then( () => {
-                            this.forecast();
-                          });
-                        this.setState({dropmenuVisible: false});
-                      }}>
-                        Approve all
+            { this.state.selectedTab !== 1 ? null :
+              <FeatureToggle featureName="plannerAI">
+                <div style={{ display: 'flex', position: 'relative' }}>
+                  <div data-selected={ this.state.dropmenuVisible ? true : null }>
+                    <Button type="reverse" contClassName={ this.classes.dropButton } style={{
+                      width: '102px',
+                      marginLeft: '15px'
+                    }} onClick={() => {
+                      this.setState({dropmenuVisible: !this.state.dropmenuVisible})
+                    }}>
+                      Apply All
+                      <div className={this.classes.buttonTriangle}/>
+                    </Button>
+                    <Popup
+                      className={ this.classes.dropmenu }
+                      hidden={ !this.state.dropmenuVisible } onClose={() => {
+                      this.setState({
+                        dropmenuVisible: false
+                      });
+                    }}
+                    >
+                      <div>
+                        <div className={ this.classes.dropmenuItem } onClick={ () => {
+                          this.approveAllBudgets()
+                            .then( () => {
+                              this.forecast();
+                            });
+                          this.setState({dropmenuVisible: false});
+                        }}>
+                          Approve all
+                        </div>
+                        <div className={ this.classes.dropmenuItem } onClick={ this.declineAllBudgets.bind(this) }>
+                          Decline all
+                        </div>
                       </div>
-                      <div className={ this.classes.dropmenuItem } onClick={ this.declineAllBudgets.bind(this) }>
-                        Decline all
-                      </div>
-                    </div>
-                  </Popup>
-                </div>
-                <div>
-                  <Button type="reverse" style={{
-                    marginLeft: '15px',
-                    width: '102px'
-                  }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                    this.setState({
-                      whatIfSelected: true
-                    });
+                    </Popup>
+                  </div>
+                  <div>
+                    <Button type="reverse" style={{
+                      marginLeft: '15px',
+                      width: '102px'
+                    }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
+                      this.setState({
+                        whatIfSelected: true
+                      });
 
-                    this.refs.whatIfPopup.open();
-                  }}>What if</Button>
-                  <div style={{ position: 'relative' }}>
-                    <PlanPopup ref="whatIfPopup" style={{
-                      width: '367px',
-                      left: '-252px',
-                      top: '10px',
-                      textAlign: 'initial',
-                      cursor: 'initial'
-                    }} hideClose={ true } title="What If - Scenarios Management">
-                      <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                        <div className={ this.classes.left }>
-                          <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                        </div>
-                        <div className={ this.classes.right }>
-                          <Textfield style={{ maxWidth: '110px' }}
-                                     value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                     className={ this.classes.budgetChangeField }
-                                     onChange={ this.handleChangeBudget.bind(this) }
-                                     onKeyDown={(e) => {
-                                       if (e.keyCode === 13) {
-                                         this.whatIf();
-                                       }
-                                     }}
-                                     disabled={ !this.state.isCheckAnnual }
-                          />
-                        </div>
-                      </div>
-                      <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                        <div className={ this.classes.left }>
+                      this.refs.whatIfPopup.open();
+                    }}>What if</Button>
+                    <div style={{ position: 'relative' }}>
+                      <PlanPopup ref="whatIfPopup" style={{
+                        width: '367px',
+                        left: '-252px',
+                        top: '10px',
+                        textAlign: 'initial',
+                        cursor: 'initial'
+                      }} hideClose={ true } title="What If - Scenarios Management">
+                        <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
                           <div className={ this.classes.left }>
-                            <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                            <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                          </div>
+                          <div className={ this.classes.right }>
+                            <Textfield style={{ maxWidth: '110px' }}
+                                       value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
+                                       className={ this.classes.budgetChangeField }
+                                       onChange={ this.handleChangeBudget.bind(this) }
+                                       onKeyDown={(e) => {
+                                         if (e.keyCode === 13) {
+                                           this.whatIf();
+                                         }
+                                       }}
+                                       disabled={ !this.state.isCheckAnnual }
+                            />
                           </div>
                         </div>
-                        { this.state.isCheckAnnual ? null : this.monthBudgets() }
-                      </div>
-                      <div className={ this.classes.budgetChangeBox }>
-                        <div className={ this.classes.left }>
-                          <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                        <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
+                          <div className={ this.classes.left }>
+                            <div className={ this.classes.left }>
+                              <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                            </div>
+                          </div>
+                          { this.state.isCheckAnnual ? null : this.monthBudgets() }
                         </div>
-                        <div className={ this.classes.right }>
-                          <Textfield style={{
-                            maxWidth: '110px' }}
-                                     value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                     className={ this.classes.budgetChangeField }
-                                     onChange={(e) => {
-                                       this.setState({
-                                         maxChannelsField: e.target.value
-                                       });
-                                     }}
-                                     onKeyDown={(e) => {
-                                       if (e.keyCode === 13) {
-                                         this.whatIf();
-                                       }
-                                     }}
-                          />
+                        <div className={ this.classes.budgetChangeBox }>
+                          <div className={ this.classes.left }>
+                            <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                          </div>
+                          <div className={ this.classes.right }>
+                            <Textfield style={{
+                              maxWidth: '110px' }}
+                                       value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
+                                       className={ this.classes.budgetChangeField }
+                                       onChange={(e) => {
+                                         this.setState({
+                                           maxChannelsField: e.target.value
+                                         });
+                                       }}
+                                       onKeyDown={(e) => {
+                                         if (e.keyCode === 13) {
+                                           this.whatIf();
+                                         }
+                                       }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className={ this.classes.budgetChangeBox }>
-                        <Button type="primary2" style={{
-                          width: '110px'
-                        }} onClick={ this.whatIfTry }>Try</Button>
-                      </div>
-                      <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                        <div className={ this.classes.left }>
-                          <Button type="normal" style={{
+                        <div className={ this.classes.budgetChangeBox }>
+                          <Button type="primary2" style={{
                             width: '110px'
-                          }} onClick={ this.whatIfCancel }>Cancel</Button>
+                          }} onClick={ this.whatIfTry }>Try</Button>
                         </div>
-                        <div className={ this.classes.right }>
-                          <Button type="accent2" style={{
-                            width: '110px'
-                          }} onClick={ this.whatIfCommit }>Commit</Button>
+                        <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
+                          <div className={ this.classes.left }>
+                            <Button type="normal" style={{
+                              width: '110px'
+                            }} onClick={ this.whatIfCancel }>Cancel</Button>
+                          </div>
+                          <div className={ this.classes.right }>
+                            <Button type="accent2" style={{
+                              width: '110px'
+                            }} onClick={ this.whatIfCommit }>Commit</Button>
+                          </div>
                         </div>
-                      </div>
-                    </PlanPopup>
+                      </PlanPopup>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </FeatureToggle>
             }
             { this.state.selectedTab === 1 ?
               <div style={{ position: 'relative' }}>
@@ -648,12 +663,26 @@ export default class Plan extends Component {
               : null }
           </div>
         </div>
-        <div className={ this.classes.serverDown }>
-          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
-        </div>
-        <div>
-          {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
-        </div>
+        <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
+        { this.props.userAccount.pages && this.props.userAccount.pages.plan ?
+          <div className={this.classes.wrap} data-loading={this.state.isPlannerLoading ? true : null}>
+            <div className={this.classes.serverDown}>
+              <label hidden={!this.state.serverDown}>Something is wrong... Let us check what is it and fix it for you
+                :)</label>
+            </div>
+            {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
+          </div>
+          :
+          <FirstPageVisit
+            title="One place for understanding your route to growth"
+            content="Everything starts with planning. Plan where, when and how you're going to invest your marketing budget to achieve your goals."
+            action="Let's plan some budgets >"
+            icon="step:plan"
+            onClick={() => {
+              this.props.updateUserAccount({'pages.plan': true})
+            }}
+          />
+        }
       </Page>
     </div>
   }

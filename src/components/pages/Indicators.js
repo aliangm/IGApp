@@ -20,6 +20,7 @@ import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticP
 import Loading from 'components/pages/indicators/Loading';
 import { getIndicatorsWithProps } from 'components/utils/indicators';
 import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
+import YoutubeAutomaticPopup from 'components/pages/indicators/YoutubeAutomaticPopup';
 
 export default class Indicators extends Component {
 
@@ -74,6 +75,10 @@ export default class Indicators extends Component {
 
   showMozPopup() {
     this.setState({showMozPopup: true});
+  }
+
+  showYoutubePopup() {
+    this.setState({showYoutubePopup: true});
   }
 
   isFunnelAuto(indicator) {
@@ -150,8 +155,14 @@ export default class Indicators extends Component {
       pinterestEngagement: {
         link: 'pin'
       },
+      youtubeSubscribers: {
+        showAutomaticPopup: this.showYoutubePopup.bind(this),
+        automaticIndicators: this.props.isYoutubeAuto
+      },
       youtubeEngagement: {
-        link: 'utu'
+        link: 'utu',
+        showAutomaticPopup: this.showYoutubePopup.bind(this),
+        automaticIndicators: this.props.isYoutubeAuto
       },
       MCL: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
@@ -179,7 +190,7 @@ export default class Indicators extends Component {
       },
       CAC: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
-        automaticIndicators: this.isSheetAuto('CAC')
+        automaticIndicators: this.isSheetAuto('CAC') || (this.props.salesforceAuto && this.props.salesforceAuto.isCACAuto)
       },
       users: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
@@ -266,6 +277,7 @@ export default class Indicators extends Component {
         <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
         <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
         <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
+        <YoutubeAutomaticPopup hidden={ !this.state.showYoutubePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showYoutubePopup: false}) }}/>
         <Loading hidden={ !this.state.loading }/>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>

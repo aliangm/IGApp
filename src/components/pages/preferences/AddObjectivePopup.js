@@ -10,6 +10,7 @@ import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import Calendar from 'components/controls/Calendar';
+import Toggle from 'components/controls/Toggle';
 
 export default class AddObjectivePopup extends Component {
 
@@ -20,6 +21,8 @@ export default class AddObjectivePopup extends Component {
     super(props);
     this.state = {
       indicator: '',
+      isRecurrent: false,
+      isMonthly: true,
       amount: '',
       isPercentage: '',
       direction: '',
@@ -37,6 +40,8 @@ export default class AddObjectivePopup extends Component {
       else {
         this.setState({
           indicator: '',
+          isRecurrent: false,
+          isMonthly: true,
           amount: '',
           isPercentage: '',
           direction: '',
@@ -48,6 +53,13 @@ export default class AddObjectivePopup extends Component {
   }
 
   render() {
+    const directionOptions = [
+      {label: 'increase', value: 'increase'},
+      {label: 'decrease', value: 'decrease'},
+    ];
+    if (!this.state.isRecurrent) {
+      directionOptions.push({label: '(target)', value: 'equals'});
+    }
     const objectivesOrder = this.props.objectives.map((item, index) => {
       return {value: index, label: '#' + (index + 1)}
     });
@@ -71,6 +83,16 @@ export default class AddObjectivePopup extends Component {
             style={{ width: '200px' }}
           />
         </div>
+        <div className={ this.classes.row } style={{ display: 'flex' }}>
+          <Toggle
+            leftText="One Time"
+            rightText="Recurrent"
+            leftActive={ !this.state.isRecurrent }
+            leftClick={ ()=>{ this.setState({isRecurrent: false}) } }
+            rightClick={ ()=>{ this.setState({isRecurrent: true}) } }
+            type="grey"
+          />
+        </div>
         <div className={ this.classes.row }>
           <Label>
             Numeric objective
@@ -89,10 +111,7 @@ export default class AddObjectivePopup extends Component {
             <Select
               selected={ this.state.direction }
               select={{
-                options: [{label: 'increase', value: 'increase'}, {
-                  label: 'decrease',
-                  value: 'decrease'
-                }, {label: '(target)', value: 'equals'}]
+                options: directionOptions
               }}
               onChange={ (e)=>{ this.setState({direction: e.value}) } }
               placeholder='Direction'
@@ -100,14 +119,29 @@ export default class AddObjectivePopup extends Component {
             />
           </div>
         </div>
-        <div className={ this.classes.row }>
-          <Label>
-            Due date
-          </Label>
-          <div style={{ width: '200px' }}>
-            <Calendar value={ this.state.timeFrame } onChange={ (e)=>{ this.setState({timeFrame: e}) } }/>
+        { !this.state.isRecurrent ?
+          <div className={this.classes.row}>
+            <Label>
+              Due date
+            </Label>
+            <div style={{width: '200px'}}>
+              <Calendar value={this.state.timeFrame} onChange={(e) => {
+                this.setState({timeFrame: e})
+              }}/>
+            </div>
           </div>
-        </div>
+          :
+          <div className={this.classes.row} style={{ display: 'flex' }}>
+            <Toggle
+              leftText="Monthly"
+              rightText="Quarterly"
+              leftActive={ this.state.isMonthly }
+              leftClick={ ()=>{ this.setState({isMonthly: true}) } }
+              rightClick={ ()=>{ this.setState({isMonthly: false}) } }
+              type="grey"
+            />
+          </div>
+        }
         <div className={ this.classes.row }>
           <Label>
             Order

@@ -21,8 +21,10 @@ export default class CampaignSummary extends Component {
       <div className={ this.classes.top }>
         <div className={ this.classes.row } style={{  }}>
           <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft } style={{ height: '63px' }}>
+            <div className={ this.classes.colLeft }>
+              <div className={ this.classes.title }>
               { this.props.campaign.name }
+              </div>
             </div>
             <div className={ this.classes.colRight }>
               <div className={ this.classes.menu } data-icon="campaign:menu" onClick={ () => { this.props.showCampaign(this.props.campaign) } }/>

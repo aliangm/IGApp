@@ -37,7 +37,7 @@ export default class Setup extends Component {
         description: '',
         url: ''
       }
-    }
+    };
   };
 
   setTrackingCode() {
@@ -69,17 +69,24 @@ export default class Setup extends Component {
   }
 
   addEvent() {
-    this.setTrackingCode();
-    let events = this.props.attribution.events;
-    const event = this.state.event;
-    events.push(event);
-    this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
-    this.setState({showTrackingCode: true, event: {
-      type: '',
-      name: '',
-      description: '',
-      url: ''
-    }});
+    if (!this.state.event.type) {
+      this.typeInput.focus();
+    }
+    else {
+      this.setTrackingCode();
+      let events = this.props.attribution.events;
+      const event = this.state.event;
+      events.push(event);
+      this.props.updateUserMonthPlan({'attribution.events': events}, this.props.region, this.props.planDate);
+      this.setState({
+        showTrackingCode: true, event: {
+          type: '',
+          name: '',
+          description: '',
+          url: ''
+        }
+      });
+    }
   }
 
   copy(value) {
@@ -219,19 +226,19 @@ Depending on your templating language, that would look something like this:
       <div className={ this.classes.addEvent }>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Event name:*</Label>
-          <Textfield value={ this.state.event.name } onChange={ this.handleChange.bind(this, 'name') }/>
+          <Textfield value={ this.state.event.name } onChange={ this.handleChange.bind(this, 'name') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Type:*</Label>
-          <Select { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '189px' }}/>
+          <Select ref={ (input) => {this.typeInput = input} } { ... selects.type } selected={ this.state.event.type } onChange={ this.handleChangeSelect.bind(this, 'type') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Description:</Label>
-          <Textfield value={ this.state.event.description } onChange={ this.handleChange.bind(this, 'description') }/>
+          <Textfield value={ this.state.event.description } onChange={ this.handleChange.bind(this, 'description') } style={{ width: '189px' }}/>
         </div>
         <div className={ this.classes.row }>
           <Label className={ this.classes.label }>Web page url:</Label>
-          <Textfield value={ this.state.event.url } onChange={ this.handleChange.bind(this, 'url') }/>
+          <Textfield value={ this.state.event.url } onChange={ this.handleChange.bind(this, 'url') } style={{ width: '189px' }}/>
         </div>
         <Button
           type="accent2"

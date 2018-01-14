@@ -5,11 +5,12 @@ import onboardingStyle from 'styles/onboarding/onboarding.css';
 import CommentTextArea from 'components/pages/campaigns/CommentTextArea';
 import Popup from 'components/Popup';
 import Button from 'components/controls/Button';
+import Avatar from 'components/Avatar';
 
 export default class Task extends Component {
 
-  style=style;
-  styles=[onboardingStyle];
+  style = style;
+  styles = [onboardingStyle];
 
   constructor(props) {
     super(props);
@@ -46,22 +47,6 @@ export default class Task extends Component {
     return Math.floor(seconds) + " seconds ago";
   }
 
-  hashCode(str) { // java String#hashCode
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-  }
-
-  intToRGB(i){
-    const c = (i & 0x00FFFFFF)
-      .toString(16)
-      .toUpperCase();
-
-    return "00000".substring(0, 6 - c.length) + c;
-  }
-
   editComment(comment) {
     this.props.editComment(comment, this.props.index);
     this.setState({editMode: false});
@@ -81,17 +66,15 @@ export default class Task extends Component {
           index={ this.props.campaignIndex }
           users={this.props.users}
           addNotification={this.props.addNotification}
-          UID={this.props.UID}
+          userId={this.props.member.userId}
           campaignName={this.props.campaignName}
         />
         :
         <div className={ this.classes.frame }>
           <div className={ this.classes.content }>
-            <div className={ this.classes.initials } style={{ backgroundColor: "#" + this.intToRGB(this.hashCode(this.props.name))}}>
-              {this.props.initials}
-            </div>
+            <Avatar member ={this.props.member} className={ this.classes.initials }/>
             <div className={ this.classes.name }>
-              {this.props.name}
+              {this.props.member && this.props.member.name}
             </div>
             <div className={ this.classes.commentText }>
               {this.props.comment}

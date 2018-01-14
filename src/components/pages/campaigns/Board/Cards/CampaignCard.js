@@ -5,76 +5,63 @@ import Component from 'components/Component';
 import { formatBudget } from 'components/utils/budget';
 
 import style from 'styles/campaigns/card.css';
+import Avatar from 'components/Avatar';
 
 class CampaignCard extends Component {
-	style = style;
+  style = style;
 
-	static propTypes = {
-		item: PropTypes.object.isRequired,
-		channel: PropTypes.string,
-		draggingPreview: PropTypes.bool,
-		first: PropTypes.bool,
-		last: PropTypes.bool
-	};
+  static propTypes = {
+    item: PropTypes.object.isRequired,
+    channel: PropTypes.string,
+    draggingPreview: PropTypes.bool,
+    first: PropTypes.bool,
+    last: PropTypes.bool
+  };
 
-	static contextTypes = {
-		userAccount: PropTypes.object,
+  static contextTypes = {
+    userAccount: PropTypes.object,
     auth: PropTypes.object
-	};
+  };
 
-	getInitials() {
-		const { item } = this.props;
-    const { userAccount: user = {}, auth } = this.context;
+  getMember() {
+    const { item } = this.props;
+    const { userAccount: user = {} } = this.context;
 
-		if (!item.owner) {
-			return null;
-		}
+    if (!item.owner) {
+      return null;
+    }
 
-		let firstName;
-		let lastName;
-		if (item.owner === auth.getProfile().UID) {
+    if (item.owner === "other") {
+      return null;
+    }
+    else {
+      const member = user.teamMembers.find(member => member.userId === item.owner);
 
-			firstName = user.firstName;
-			lastName = user.lastName;
-
-			if (!firstName || !lastName) {
-				return null;
-			}
-		} else {
-			if (item.owner === "other") {
-        [firstName = '', lastName = ''] = "Other".split(' ');
-			}
-			else {
-        const member = user.teamMembers.find(member => member.userId === item.owner);
-
-        if (!member) {
-          return null;
-				}
-
-        [firstName = '', lastName = ''] = member.name.split(' ');
+      if (!member) {
+        return null;
       }
-		}
 
-		return (firstName[0] || '') + (lastName[0] || '');
-	}
+      return member
+    }
+    return null;
+  }
 
-	render() {
-		const { item, onClick, draggingPreview, first, last } = this.props;
-		const initials = this.getInitials();
+  render() {
+    const { item, onClick, draggingPreview, first, last } = this.props;
 
-		return (
-			<div className={classnames(this.classes.campaign,{
-				[this.classes.draggingPreview]: draggingPreview,
-				[this.classes.firstCampaign]: first,
-			})} id={item.id} onClick={onClick}>
-				<div className={this.classes.campaignName}>{item.name}</div>
-				<div className={this.classes.campaignFooter}>
-					<span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget)}</span>
-					{initials && <div className={this.classes.initials}>{initials}</div>}
-				</div>
-			</div>
-		);
-	}
+    return (
+      <div className={classnames(this.classes.campaign,{
+        [this.classes.draggingPreview]: draggingPreview,
+        [this.classes.firstCampaign]: first,
+      })} id={item.id} onClick={onClick}>
+        <div className={this.classes.campaignName}>{item.name}</div>
+        <div className={this.classes.campaignFooter}>
+          <span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget)}</span>
+          <Avatar member={this.getMember()} className={this.classes.initials}/>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default CampaignCard

@@ -21,46 +21,17 @@ export default class Updates extends Component {
 
   componentDidMount() {
     const lock = new AuthService();
-    this.setState({UID: lock.getProfile().user_id, adminUID: lock.getProfile().app_metadata.UID});
-  }
-
-  getInitials(UID) {
-    let initials;
-    this.props.teamMembers.some(member => {
-      if (member.userId === UID) {
-        const nameArray = member.name.split(' ');
-        initials = (nameArray[0] ? nameArray[0][0] : '') + (nameArray[1] ? nameArray[1][0] : '');
-      }
-    });
-    if (initials) {
-      return initials;
-    }
-    else return this.props.firstName[0] + this.props.lastName[0];
-  }
-
-  getName(UID) {
-    let name;
-    this.props.teamMembers.some(member => {
-      if (member.userId == UID) {
-        name = member.name;
-      }
-    });
-    if (name){
-      return name;
-    }
-    else return this.props.firstName + ' ' + this.props.lastName;
+    this.setState({userId: lock.getProfile().user_id});
   }
 
   getMembersNames() {
-    let names = this.props.teamMembers.map(member => {return {display: member.name, id: member.userId} });
-    names.push({display: this.props.firstName + ' ' + this.props.lastName, id: this.state.adminUID});
-    return names
+    return this.props.teamMembers.map(member => {return {display: member.name, id: member.userId} });
   }
 
   addComment(comment) {
     if (comment) {
       let update = Object.assign({}, this.props.campaign);
-      update.comments.push({user: this.state.UID, comment: comment, time: new Date()});
+      update.comments.push({user: this.state.userId, comment: comment, time: new Date()});
       this.props.updateState({campaign: update, unsaved: false});
       this.props.updateCampaign(update);
     }
@@ -90,21 +61,18 @@ export default class Updates extends Component {
         return new Date(b.time) - new Date(a.time)
       })
       .map((comment, index) => {
-        const initials = this.getInitials(comment.user);
-        const name = this.getName(comment.user);
+        const member = this.props.teamMembers.find(member => member.userId === this.state.userId);
         return <Comment
           key={ index }
-          name={ name }
           comment={ comment.comment }
           time={ comment.time }
-          initials={ initials }
           index={ index }
           editComment={ this.editComment.bind(this) }
           deleteComment={ this.deleteComment.bind(this,index) }
           users={users}
+          member={member}
           campaignIndex={this.props.campaign.index}
           addNotification={this.props.addNotification}
-          UID={this.state.UID}
           campaignName={this.props.campaign.name}
         />
       });
@@ -113,7 +81,7 @@ export default class Updates extends Component {
         addOrEditComment={ this.addComment.bind(this) }
         users={users}
         addNotification={this.props.addNotification}
-        UID={this.state.UID}
+        userId={this.state.userId}
         campaignName={this.props.campaign.name}
         index={this.props.campaign.index}
       />

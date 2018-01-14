@@ -41,6 +41,15 @@ export function getChannelsWithTitles() {
   else return [];
 }
 
+export function getChannelsWithNicknames() {
+  if (isInitialized) {
+    return Object.keys(schema.properties).map(item => {
+      return {value: item, label: schema.properties[item].nickname}
+    });
+  }
+  else return [];
+}
+
 export function getChannelsWithProps() {
   if (isInitialized) {
     return schema.properties;
