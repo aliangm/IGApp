@@ -7,13 +7,14 @@ import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
 import _ from 'lodash';
-import { getChannelsWithNicknames } from 'components/utils/channels';
+import { getChannelsWithNicknames, getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
 import Toggle from 'components/controls/Toggle';
 import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
+import history from 'history';
 
 export default class Analyze extends Component {
 
@@ -180,8 +181,11 @@ export default class Analyze extends Component {
         return (funnelIndicator || conversion || webVisits) ?
           this.getTableRow(null,
             [
-              <div className={dashboardStyle.locals.channelTable}>
-                {item.label}
+              <div style={{ display: '-webkit-box' }}>
+                <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
+                <div className={dashboardStyle.locals.channelTable}>
+                  {item.label}
+                </div>
               </div>,
               '$' + formatBudget(budget),
               webVisits,
@@ -200,9 +204,10 @@ export default class Analyze extends Component {
             const campaignUTM = Object.keys(campaignObj)[0];
             const campaign = campaignObj[campaignUTM];
             let budget = 0;
-            const campaignForBudget = campaigns.find(campaign => campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM));
-            if (campaignForBudget) {
-              budget = campaignForBudget.actualSpent || campaignForBudget.budget;
+            const platformCampaignIndex = campaigns.findIndex(campaign => campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM));
+            const platformCampaign = campaigns[platformCampaignIndex];
+            if (platformCampaign) {
+              budget = platformCampaign.actualSpent || platformCampaign.budget;
             }
             const webVisits = campaign.webVisits;
             const conversion = campaign.conversion;
@@ -210,7 +215,12 @@ export default class Analyze extends Component {
             return (funnelIndicator || conversion || webVisits) ?
               this.getTableRow(null,
                 [
-                  <div className={dashboardStyle.locals.channelTable}>
+                  <div className={dashboardStyle.locals.channelTable} data-link={ platformCampaign ? true : null} onClick={() => { if (platformCampaign) {
+                    history.push({
+                      pathname: '/campaigns',
+                      query: { campaign: platformCampaignIndex }
+                    });
+                  } }}>
                     {campaignUTM}
                   </div>,
                   '$' + formatBudget(budget),
@@ -220,7 +230,7 @@ export default class Analyze extends Component {
                   budget ? Math.round(funnelIndicator / budget) : 0,
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
                     {campaign.channels.map(channel =>
-                      <div key={channel} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
+                      <div key={channel} title={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
                     )}
                   </div>
                 ], {
