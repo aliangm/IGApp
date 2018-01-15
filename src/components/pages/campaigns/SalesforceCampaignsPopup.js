@@ -19,6 +19,7 @@ export default class SalesforceAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectAll: true,
       types: [],
       statuses: [],
       owners: [],
@@ -65,6 +66,16 @@ export default class SalesforceAutomaticPopup extends Component {
     if (nextProps.data && nextProps.data.campaignsMapping) {
       this.setState({campaignsMapping: nextProps.data.campaignsMapping});
     }
+  }
+
+  selectAll() {
+    this.setState({selectAll: !this.state.selectAll}, () => {
+      let selectedCampaigns = [];
+      if (this.state.selectAll) {
+        selectedCampaigns = this.state.campaigns.map(campaign => campaign.Id);
+      }
+      this.setState({selectedCampaigns: selectedCampaigns});
+    })
   }
 
   getAuthorization() {
@@ -287,6 +298,15 @@ export default class SalesforceAutomaticPopup extends Component {
               <Title title="SalesForce - Import Campaigns"/>
               <div className={ this.classes.row }>
                 <Label style={{ fontSize: '20px' }}>Choose which campaigns to import</Label>
+              </div>
+              <div className={ this.classes.row }>
+                <Label
+                  style={{ textTransform: 'capitalize' }}
+                  checkbox={this.state.selectAll}
+                  onChange={ this.selectAll.bind(this) }
+                >
+                  Select All
+                </Label>
               </div>
               {campaignsRows}
               <div className={ this.classes.footer }>
