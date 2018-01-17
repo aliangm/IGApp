@@ -27,7 +27,7 @@ var del = require('del');
   };
 
   var webpackConfig = require('./webpack.config.builder.js')({
-    production: false,
+    production: process.env.NODE_ENV !== "dev",
     env: {
       folder: DIST_FOLDER
     }

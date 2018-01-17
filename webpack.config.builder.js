@@ -30,7 +30,10 @@ module.exports = function(args) {
   const plugins = [
     new AsyncModulePlugin(),
     // new webpack.optimize.CommonsChunkPlugin(entryName, null, false),
-    new webpack.DefinePlugin(constants),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
+    }),
+    new webpack.optimize.UglifyJsPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
