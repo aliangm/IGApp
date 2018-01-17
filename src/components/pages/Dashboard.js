@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
@@ -63,7 +63,7 @@ export default class Dashboard extends Component {
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.dashboard ?
           <div>
-            {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
+            {selectedTab ? React.createElement(selectedTab, merge({}, this.props, this.state)) : null}
           </div>
           :
           <FirstPageVisit

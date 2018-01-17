@@ -314,7 +314,7 @@ export default class TargetAudience extends Component {
                       { key: 'R&D', text: 'R&D', icon: 'buttons:rd' },
                       { key: 'IT', text: 'IT', icon: 'buttons:IT' },
                       { key: 'Security', text: 'Security', icon: 'buttons:security' },
-                      { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
+                      { key: 'Finance', text: 'Finance', icon: 'buttons:finance2' },
                       { key: 'HR', text: 'HR', icon: 'buttons:hr' },
                       { key: 'Design', text: 'Design', icon: 'buttons:design' },
                       { key: 'BizDev', text: 'BizDev', icon: 'buttons:bizdev' },

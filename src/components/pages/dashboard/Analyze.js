@@ -6,7 +6,7 @@ import dashboardStyle from "styles/dashboard/dashboard.css";
 import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import { getChannelsWithNicknames, getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
@@ -356,7 +356,7 @@ export default class Analyze extends Component {
               Channels
             </div>
             <div className={dashboardStyle.locals.number}>
-              {Object.keys(budgets.reduce((sum, item) => _.merge(sum, item), {})).length}
+              {Object.keys(budgets.reduce((sum, item) => merge(sum, item), {})).length}
             </div>
           </div>
         </div>

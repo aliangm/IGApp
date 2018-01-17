@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
@@ -60,7 +60,7 @@ export default class Attribution extends Component {
           </div>
           { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
             <div style={{paddingTop: '90px'}}>
-              {selectedTab ? React.createElement(selectedTab, _.merge(this.props)) : null}
+              {selectedTab ? React.createElement(selectedTab, merge(this.props)) : null}
             </div>
             :
             <FirstPageVisit

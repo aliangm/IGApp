@@ -33,7 +33,6 @@ module.exports = function(args) {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
     }),
-    new webpack.optimize.UglifyJsPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
@@ -50,6 +49,10 @@ module.exports = function(args) {
       { from: 'src/excel-templates', to: 'excel-templates' },
     ])
   ];
+
+  if (isProd) {
+    plugins.push(new webpack.optimize.UglifyJsPlugin());
+  }
 
   const postcssLoader = '!postcss-loader?parser=postcss-safe-parser';
   let cssLoader = 'css?modules&camelCase&importLoaders=1&localIdentName=[folder]-[name]__[local]---[hash:base64:5]';

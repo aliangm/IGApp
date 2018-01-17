@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/header/notifications.css';
 import MentionNotification from 'components/pages/header/MentionNotification';
 import ObjectiveNotification from 'components/pages/header/ObjectiveNotification';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 
 export default class Notifications extends Component {
 
@@ -41,7 +41,7 @@ export default class Notifications extends Component {
 
   render() {
     const notifications = this.props.userNotifications.reverse().slice(0,5).map((item, index) =>
-      React.createElement(this.types[item.notificationType], _.merge({}, this.props, item, {key: index, timeSince: this.timeSince(new Date(item.timestamp))}))
+      React.createElement(this.types[item.notificationType], merge({}, this.props, item, {key: index, timeSince: this.timeSince(new Date(item.timestamp))}))
     );
     return <div className={ this.classes.frame }>
       <div className={ this.classes.title }>

@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
@@ -161,7 +161,7 @@ export default class Campaigns extends Component {
         })
       }
     });
-    let channels = _.merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
+    let channels = merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: { },
       icons: { },
@@ -281,7 +281,7 @@ export default class Campaigns extends Component {
               </div>
               : null}
             {
-              selectedTab && React.createElement(selectedTab, _.merge({}, this.props, {
+              selectedTab && React.createElement(selectedTab, merge({}, this.props, {
                 processedChannels,
                 filteredCampaigns: filteredCampaigns,
                 updateCampaigns: this.updateCampaigns,
@@ -307,7 +307,7 @@ export default class Campaigns extends Component {
             </div>
             <div hidden={!this.state.addNew}>
               <ChooseExistingTemplate
-                showCampaign={(template) => this.showCampaign(_.merge({}, this.state.campaign, template))}
+                showCampaign={(template) => this.showCampaign(merge({}, this.state.campaign, template))}
                 close={() => {
                   this.setState({addNew: false})
                 }}

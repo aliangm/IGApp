@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import Popup from 'components/Popup';
@@ -407,13 +407,13 @@ export default class Plan extends Component {
   }
 
   render() {
-    const planChannels = _.merge([],
+    const planChannels = merge([],
       Object.keys(this.props.approvedBudgets.reduce((object, item) => {
-          return _.merge(object, item);
+          return merge(object, item);
         }
         , {})),
       Object.keys(this.props.projectedPlan.reduce((object, item) => {
-          return _.merge(object, item.plannedChannelBudgets)
+          return merge(object, item.plannedChannelBudgets)
         }
         , {}))
     );
@@ -670,7 +670,7 @@ export default class Plan extends Component {
               <label hidden={!this.state.serverDown}>Something is wrong... Let us check what is it and fix it for you
                 :)</label>
             </div>
-            {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
+            {selectedTab ? React.createElement(selectedTab, merge({}, this.props, this.state)) : null}
           </div>
           :
           <FirstPageVisit
