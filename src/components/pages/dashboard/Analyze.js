@@ -213,17 +213,17 @@ export default class Analyze extends Component {
       if (platformCampaign) {
         budget = platformCampaign.actualSpent || platformCampaign.budget;
       }
-      const CPX = budget ? funnelIndicator / budget : 0;
-      return {
+      const json = {
         label: campaignUTM,
         budget: budget,
         webVisits: campaign.webVisits,
         conversion: campaign.conversion,
         funnelIndicator: campaign[this.state.attributionTableIndicator],
-        CPX: CPX,
         channels: campaign.channels,
         platformCampaignIndex: platformCampaignIndex
-      }
+      };
+      json.CPX = budget ? json.funnelIndicator / json.budget : 0;
+      return json;
     });
 
     const rows = this.state.showChannels ?
