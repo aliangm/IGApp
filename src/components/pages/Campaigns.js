@@ -320,6 +320,7 @@ export default class Campaigns extends Component {
               setDataAsState={ this.props.setDataAsState }
               updateState={ this.updateState }
               salesforceAuto={this.props.salesforceAuto}
+              adwordsapi={this.props.adwordsapi}
               userAccount={this.props.userAccount}
             />
           </div>
