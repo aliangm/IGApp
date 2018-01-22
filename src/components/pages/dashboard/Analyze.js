@@ -345,7 +345,7 @@ export default class Analyze extends Component {
           }}
           style={{ width: '75px', margin: '0 8px' }}
         />
-        <div className={dashboardStyle.locals.historyConfigText}>
+        <div className={dashboardStyle.locals.historyConfigText} style={{ fontWeight: 'bold' }}>
           - {formatDate(this.props.planDate)}
         </div>
       </div>
