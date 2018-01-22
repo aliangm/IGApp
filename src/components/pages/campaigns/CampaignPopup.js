@@ -68,23 +68,19 @@ export default class CampaignPopup extends Component {
         design: 0,
         marketing: 0
       },
-      objectives: {
-        kpi: [
-          '',
-          '',
-          ''
-        ],
-        growth: [
-          '',
-          '',
-          ''
-        ],
-        actualGrowth: [
-          '',
-          '',
-          ''
-        ]
-      },
+      objectives: [{
+        growth: '',
+        kpi: '',
+        actualGrowth: ''
+      },{
+        growth: '',
+        kpi: '',
+        actualGrowth: ''
+      },{
+        growth: '',
+        kpi: '',
+        actualGrowth: ''
+      }],
       tracking: {
         baseUrl: ''
       },
