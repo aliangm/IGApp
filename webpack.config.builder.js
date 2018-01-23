@@ -23,16 +23,17 @@ module.exports = function(args) {
 
   const MAIN_ENTRY = 'main';
   const entry = {};
-
+  const json = {};
+  if (isProd) {
+    json['process.env.NODE_ENV'] = 'production';
+  }
   //SAFARI BUG FIX - no object.assign, need to use babels
   //entry[MAIN_ENTRY] = 'main.js';
   entry[MAIN_ENTRY] = ['babel-polyfill', 'main.js'];
   const plugins = [
     new AsyncModulePlugin(),
     // new webpack.optimize.CommonsChunkPlugin(entryName, null, false),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
-    }),
+    new webpack.DefinePlugin(json),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
