@@ -124,7 +124,6 @@ export default class Indicators extends Component {
         automaticIndicators: this.props.isFacebookAuto
       },
       facebookEngagement: {
-        link: 'fb',
         showAutomaticPopup: this.showFacebookPopup.bind(this),
         automaticIndicators: this.props.isFacebookAuto
       },
@@ -134,8 +133,7 @@ export default class Indicators extends Component {
       },
       twitterEngagement: {
         showAutomaticPopup: this.showTwitterPopup.bind(this),
-        automaticIndicators: this.props.isTwitterAuto,
-        link: 'twtr'
+        automaticIndicators: this.props.isTwitterAuto
       },
       linkedinFollowers: {
         showAutomaticPopup: this.showSocialPopup.bind(this),
@@ -143,24 +141,13 @@ export default class Indicators extends Component {
       },
       linkedinEngagement: {
         showAutomaticPopup: this.showSocialPopup.bind(this),
-        automaticIndicators: this.props.isLinkedinAuto,
-        link: 'in'
-      },
-      instagramEngagement: {
-        link: 'inst'
-      },
-      googlePlusEngagement: {
-        link: 'gp'
-      },
-      pinterestEngagement: {
-        link: 'pin'
+        automaticIndicators: this.props.isLinkedinAuto
       },
       youtubeSubscribers: {
         showAutomaticPopup: this.showYoutubePopup.bind(this),
         automaticIndicators: this.props.isYoutubeAuto
       },
       youtubeEngagement: {
-        link: 'utu',
         showAutomaticPopup: this.showYoutubePopup.bind(this),
         automaticIndicators: this.props.isYoutubeAuto
       },

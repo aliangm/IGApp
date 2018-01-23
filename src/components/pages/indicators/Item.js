@@ -225,13 +225,6 @@ export default class Item extends Component {
           });
         }}>
           {/* <div className={ this.classes.menu } hidden={ !this.state.menuShown } > */}
-          { this.props.link ?
-            <a href={'/engagement-calculator#' + this.props.link} target="_blank">
-              <div className={ this.classes.menuItem } style={{ color: '-webkit-link' }}>
-                Calculate
-              </div>
-            </a>
-            : null }
           { this.props.showAutomaticPopup ?
             <div className={ this.classes.menuItem } onClick={() => {
               this.selectState('auto');
