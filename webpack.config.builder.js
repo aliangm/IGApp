@@ -23,9 +23,8 @@ module.exports = function(args) {
 
   const MAIN_ENTRY = 'main';
   const entry = {};
-  const json = {};
   if (isProd) {
-    json['process.env.NODE_ENV'] = 'production';
+    constants['process.env.NODE_ENV'] = 'production';
   }
   //SAFARI BUG FIX - no object.assign, need to use babels
   //entry[MAIN_ENTRY] = 'main.js';
@@ -33,7 +32,7 @@ module.exports = function(args) {
   const plugins = [
     new AsyncModulePlugin(),
     // new webpack.optimize.CommonsChunkPlugin(entryName, null, false),
-    new webpack.DefinePlugin(json),
+    new webpack.DefinePlugin(constants),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
