@@ -216,10 +216,19 @@ export default class Analyze extends Component {
       const campaignUTM = Object.keys(campaignObj)[0];
       const campaign = campaignObj[campaignUTM];
       let budget = 0;
-      const platformCampaignIndex = campaigns.findIndex(campaign => campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM));
+      const platformCampaignIndex = campaigns.findIndex(campaign => (campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM)) && !campaign.isArchived);
       const platformCampaign = campaigns[platformCampaignIndex];
       if (platformCampaign) {
-        budget = platformCampaign.actualSpent || platformCampaign.budget;
+        if (campaign.isOneTime) {
+          if (campaign.dueDate && timeFrameToDate(campaign.dueDate).getMonth() === new Date().getMonth()) {
+            budget = platformCampaign.actualSpent || platformCampaign.budget || 0;
+          }
+        }
+        else {
+          if (!campaign.dueDate || (campaign.dueDate && timeFrameToDate(campaign.dueDate) < new Date())) {
+            budget = platformCampaign.actualSpent || platformCampaign.budget || 0;
+          }
+        }
       }
       const json = {
         label: campaignUTM,

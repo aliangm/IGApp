@@ -56,12 +56,13 @@ export default class CampaignPopup extends Component {
     campaign: {
       index: undefined,
       name: '',
-      budget: 0,
+      budget: null,
+      isOneTime: false,
       owner: '',
       source: [],
       dueDate: '',
       startDate: new Date().toLocaleDateString().replace(/[/]/g, '-'),
-      actualSpent: 0,
+      actualSpent: null,
       status: "New",
       focus: '',
       time: {

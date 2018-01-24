@@ -17,6 +17,7 @@ import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import { formatBudget } from 'components/utils/budget';
+import { timeFrameToDate } from 'components/utils/objective';
 
 const tabs = {
   'By Channel': ByChannelTab,
@@ -188,13 +189,24 @@ export default class Campaigns extends Component {
 
     const budget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
     let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
-      res -= (campaign.actualSpent || 0) || (campaign.budget || 0);
+      if (!campaign.isArchived) {
+        if (campaign.isOneTime) {
+          if (campaign.dueDate && timeFrameToDate(campaign.dueDate).getMonth() === new Date().getMonth()) {
+            res -= campaign.actualSpent || campaign.budget || 0;
+          }
+        }
+        else {
+          if (!campaign.dueDate || (campaign.dueDate &&  new Date() <= timeFrameToDate(campaign.dueDate))) {
+            res -= campaign.actualSpent || campaign.budget || 0;
+          }
+        }
+      }
       return res;
     }, budget);
 
     let filteredCampaigns = activeCampaigns;
 
-    const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id)
+    const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
 
     if (member && member.isAdmin === false) {
       if (member.specificChannels && member.specificChannels.length > 0) {

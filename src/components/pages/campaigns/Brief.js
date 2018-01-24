@@ -11,6 +11,7 @@ import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
 import { getChannelsWithTitles, getTitle } from 'components/utils/channels';
+import Toggle from 'components/controls/Toggle';
 
 export default class Brief extends Component {
 
@@ -70,6 +71,12 @@ export default class Brief extends Component {
   handleChangeBudget(parameter, event){
     let update = Object.assign({}, this.props.campaign);
     update[parameter] = parseInt(event.target.value.replace(/[-$h,]/g, ''));
+    this.props.updateState({campaign: update});
+  }
+
+  handleChangeBool(bool) {
+    let update = Object.assign({}, this.props.campaign);
+    update.isOneTime = bool;
     this.props.updateState({campaign: update});
   }
 
@@ -302,6 +309,17 @@ export default class Brief extends Component {
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
+            <Label>Campaign Name*</Label>
+            <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref={ this.props.setRefName } style={{ width: '428px' }}/>
+          </div>
+          <div className={ this.classes.colRight }>
+            <Select { ... selects.owner } style={{ width: '166px' }} selected={ this.props.campaign.owner } onChange= { this.handleChangeSelect.bind(this, 'owner') }/>
+          </div>
+        </div>
+      </div>
+      <div className={ this.classes.row }>
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
             <Label>Budget</Label>
             <Textfield value={"$" + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'budget')} style={{
               width: '166px'
@@ -314,13 +332,17 @@ export default class Brief extends Component {
             }} />
           </div>
           <div className={ this.classes.colRight }>
-            <Select { ... selects.owner } style={{ width: '166px' }} selected={ this.props.campaign.owner } onChange= { this.handleChangeSelect.bind(this, 'owner') }/>
+            <Label>Budget Type</Label>
+            <Toggle
+              leftText="Recurrent "
+              rightText="One time"
+              leftActive={ !this.props.campaign.isOneTime }
+              leftClick={ this.handleChangeBool.bind(this, false) }
+              rightClick={ this.handleChangeBool.bind(this, true) }
+              type="grey"
+            />
           </div>
         </div>
-      </div>
-      <div className={ this.classes.row }>
-        <Label>Campaign Name*</Label>
-        <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref={ this.props.setRefName }/>
       </div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
