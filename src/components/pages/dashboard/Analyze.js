@@ -170,7 +170,7 @@ export default class Analyze extends Component {
             onChange={(e) => {
               this.setState({attributionTableIndicator: e.value})
             }}
-            style={{ width: '160px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
+            style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
           getIndicatorNickname(this.state.attributionTableIndicator)
