@@ -63,6 +63,7 @@ export default class CampaignPopup extends Component {
       startDate: new Date().toLocaleDateString().replace(/[/]/g, '-'),
       actualSpent: 0,
       status: "New",
+      focus: '',
       time: {
         development: 0,
         design: 0,

@@ -21,14 +21,17 @@ export default class YoutubeAutomaticPopup extends Component {
   }
 
   handleChangeIdentifier(event) {
+    this.setState({fullIdentifier: event.target.value});
     if (event.target.value.match(/.*youtube.com\/channel\/.*/)) {
-      this.setState({type: 'channel', id: event.target.value.replace(/.*youtube.com\/channel\//, ''), fullIdentifier: event.target.value});
+      this.setState({
+        type: 'channel',
+        id: event.target.value.replace(/.*youtube.com\/channel\//, '')
+      });
     }
     else if (event.target.value.match(/.*youtube.com\/user\/.*/)) {
       this.setState({
         type: 'user',
-        id: event.target.value.replace(/.*youtube.com\/user\//, ''),
-        fullIdentifier: event.target.value
+        id: event.target.value.replace(/.*youtube.com\/user\//, '')
       });
     }
   }

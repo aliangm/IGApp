@@ -188,7 +188,7 @@ export default class Campaigns extends Component {
 
     const budget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
     let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
-      res -= campaign.actualSpent || campaign.budget;
+      res -= (campaign.actualSpent || 0) || (campaign.budget || 0);
       return res;
     }, budget);
 
