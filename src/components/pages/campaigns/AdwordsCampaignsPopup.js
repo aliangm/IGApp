@@ -191,9 +191,9 @@ export default class SalesforceAutomaticPopup extends Component {
             </div>
             :
             <div>
-              <Title title="SalesForce - Import Campaigns"/>
+              <Title title="Google AdWords - Import Campaigns"/>
               <div className={ this.classes.row }>
-                <Label style={{ fontSize: '20px' }}>Choose which campaigns to import</Label>
+                <Label style={{ fontSize: '20px', textTransform: 'capitalize' }}>Choose which campaigns to import</Label>
               </div>
               <div className={ this.classes.row }>
                 <Label
