@@ -143,6 +143,12 @@ export default class Analyze extends Component {
       <div onClick={this.sortBy.bind(this, 'budget')} style={{ cursor: 'pointer' }}>
         Cost
       </div>,
+      <div onClick={this.sortBy.bind(this, 'revenue')} style={{ cursor: 'pointer' }}>
+        Revenue
+      </div>,
+      <div onClick={this.sortBy.bind(this, 'ROI')} style={{ cursor: 'pointer' }}>
+        ROI
+      </div>,
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{ cursor: 'pointer' }}>
         Web Visits
       </div>,
@@ -196,10 +202,12 @@ export default class Analyze extends Component {
         channel: item.value,
         label: item.label,
         budget: sumedBudgets[item.value] || 0,
+        revenue: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["revenue"] ? CEVs["revenue"][item.value] : 0) + sum, 0),
         webVisits: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item.value] : 0) + sum, 0),
         conversion: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item.value] : 0) + sum, 0),
         funnelIndicator: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0) + sum, 0),
       };
+      json.ROI = json.budget ? json.revenue / json.budget : 0;
       json.CPX = json.funnelIndicator ? json.budget / json.funnelIndicator : 0;
       return json;
     }) ;
@@ -216,13 +224,15 @@ export default class Analyze extends Component {
       const json = {
         label: campaignUTM,
         budget: budget,
+        revenue: campaign.revenue,
         webVisits: campaign.webVisits,
         conversion: campaign.conversion,
         funnelIndicator: campaign[this.state.attributionTableIndicator],
         channels: campaign.channels,
         platformCampaignIndex: platformCampaignIndex
       };
-      json.CPX = budget ? json.funnelIndicator / json.budget : 0;
+      json.ROI = json.budget ? json.revenue / json.budget : 0;
+      json.CPX = json.budget ? json.funnelIndicator / json.budget : 0;
       return json;
     });
 
@@ -232,7 +242,7 @@ export default class Analyze extends Component {
           (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
         )
         .map(item => {
-          const { channel, label, budget, webVisits, conversion, funnelIndicator, CPX } = item;
+          const { channel, label, budget, revenue, webVisits, conversion, funnelIndicator, ROI, CPX } = item;
           return (funnelIndicator || conversion || webVisits) ?
             this.getTableRow(null,
               [
@@ -243,6 +253,8 @@ export default class Analyze extends Component {
                   </div>
                 </div>,
                 '$' + formatBudget(budget),
+                '$' + formatBudget(revenue),
+                Math.round(ROI) * 100 + '%',
                 webVisits,
                 conversion,
                 Math.round(funnelIndicator * 100) / 100,
@@ -259,7 +271,7 @@ export default class Analyze extends Component {
           (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
         )
         .map(item => {
-            const { label, budget, webVisits, conversion, funnelIndicator, CPX, channels, platformCampaignIndex } = item;
+            const { label, budget, revenue, webVisits, conversion, funnelIndicator, ROI, CPX, channels, platformCampaignIndex } = item;
             return (funnelIndicator || conversion || webVisits) ?
               this.getTableRow(null,
                 [
@@ -272,6 +284,8 @@ export default class Analyze extends Component {
                     {label}
                   </div>,
                   '$' + formatBudget(budget),
+                  '$' + formatBudget(revenue),
+                  Math.round(ROI) * 100 + '%',
                   webVisits,
                   conversion,
                   Math.round(funnelIndicator),
