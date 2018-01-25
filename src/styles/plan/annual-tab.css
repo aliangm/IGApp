@@ -27,7 +27,7 @@
     position: fixed;
     top: 160px;
     z-index: 1;
-    width: calc(100% - 282px);
+    width: calc(100% - 281px);
     display: inline-table;
     table-layout: fixed;
     opacity:0;
@@ -39,7 +39,7 @@
 
 @media (min-width: 561px) and (max-width: 1440px) {
     .sticky-header {
-        width: calc(100% - 130px);
+        width: calc(100% - 129px);
     }
 }
 
