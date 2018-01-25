@@ -74,6 +74,7 @@
 .table :global(td):first-child {
     border-left: none;
     width: 200px;
+    padding: 0 1px;
 }
 
 .table :global(td):last-child {

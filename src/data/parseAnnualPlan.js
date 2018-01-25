@@ -90,7 +90,7 @@ function parseMonth(title, budget, month, current, channel, approvedBudgets){
   }
   else {
     if (current && current[title[0]]) {
-      if (current[title[0]].values[month] !== null){
+      if (current[title[0]].values[month] != null){
         current[title[0]].values[month]+= budget;
       }
       else {

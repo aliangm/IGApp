@@ -320,7 +320,7 @@ export default class Brief extends Component {
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <Label>Budget</Label>
+            <Label>{this.props.campaign.isOneTime ? 'Budget' : 'Monthly Budget'}</Label>
             <Textfield value={"$" + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'budget')} style={{
               width: '166px'
             }} />
