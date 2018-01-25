@@ -24,7 +24,7 @@ module.exports = function(args) {
   const MAIN_ENTRY = 'main';
   const entry = {};
   if (isProd) {
-    constants['process.env.NODE_ENV'] = 'production';
+    constants['process.env.NODE_ENV'] = "'production'";
   }
   //SAFARI BUG FIX - no object.assign, need to use babels
   //entry[MAIN_ENTRY] = 'main.js';
