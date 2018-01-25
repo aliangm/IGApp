@@ -187,12 +187,12 @@ export default class Plan extends Component {
           }
           if (response.status == 400){
             if (!silent) {
-              this.setState({isError: true});
+              this.setState({isError: true, isPlannerLoading: false});
             }
           }
           else {
             if (!silent) {
-              this.setState({serverDown: true});
+              this.setState({serverDown: true, isPlannerLoading: false});
             }
           }
         }
@@ -200,7 +200,7 @@ export default class Plan extends Component {
       .catch((err) => {
         if (!silent) {
           this.setState({
-            serverDown: true
+            serverDown: true, isPlannerLoading: false
           });
         }
       });

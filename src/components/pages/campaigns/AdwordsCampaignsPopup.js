@@ -11,7 +11,7 @@ import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import { formatChannels } from 'components/utils/channels';
 
-export default class SalesforceAutomaticPopup extends Component {
+export default class AdwordsCampaignsPopup extends Component {
 
   style = style;
   styles = [salesForceStyle, CRMStyle];
