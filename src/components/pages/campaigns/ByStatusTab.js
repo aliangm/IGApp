@@ -117,7 +117,7 @@ export default class ByChannelTab extends Component {
             if (channelInList.order === initialOrder) {
               channelInList.order = getCampaignOrder(campaign)
             }
-            channelInList.campaignsBudget += campaign.actualSpent || campaign.budget;
+            channelInList.campaignsBudget += campaign.actualSpent || campaign.budget || 0;
             channelInList.campaigns.push(extendedCampaign);
           } else {
             list.cards.push({
@@ -127,7 +127,7 @@ export default class ByChannelTab extends Component {
               title: "Multi Channel Campaigns",
               icon: "plan:multiChannel",
               budget: 0,
-              campaignsBudget: campaign.actualSpent || campaign.budget,
+              campaignsBudget: campaign.actualSpent || campaign.budget || 0,
               campaigns: [extendedCampaign],
               order: getCampaignOrder(campaign)
             });
@@ -142,7 +142,7 @@ export default class ByChannelTab extends Component {
             if (channelInList.order === initialOrder) {
               channelInList.order = getCampaignOrder(campaign)
             }
-            channelInList.campaignsBudget += campaign.actualSpent || campaign.budget;
+            channelInList.campaignsBudget += campaign.actualSpent || campaign.budget || 0;
             channelInList.campaigns.push(extendedCampaign);
           } else {
             list.cards.push({
@@ -152,7 +152,7 @@ export default class ByChannelTab extends Component {
               title: processedChannels.titles[source],
               icon: processedChannels.icons[source],
               budget: processedChannels.budgets[source],
-              campaignsBudget: campaign.actualSpent || campaign.budget,
+              campaignsBudget: campaign.actualSpent || campaign.budget || 0,
               campaigns: [extendedCampaign],
               order: getCampaignOrder(campaign)
             });
