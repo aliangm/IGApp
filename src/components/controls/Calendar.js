@@ -38,6 +38,11 @@ export default class Calendar extends Component {
     open: false
   }
 
+  focus() {
+    this.textfield.focus();
+    this.openCalendar();
+  }
+
   onChange = (value) => {
     this.setState({ value });
     if (this.props.onChange) {
@@ -79,6 +84,7 @@ export default class Calendar extends Component {
       >
         {({ value }) => {
           return <Textfield
+            ref={ (t) => { this.textfield = t; } }
             className={ inputClassName }
             onClick={ this.openCalendar }
             readOnly

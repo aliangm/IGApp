@@ -365,7 +365,7 @@ export default class Brief extends Component {
           <div className={ this.classes.colCenter }>
             <div style={{ width: '166px' }}>
               <Label>Due Date</Label>
-              <Calendar value={ this.props.campaign.dueDate } onChange={ this.handleChangeDate.bind(this, 'dueDate') }/>
+              <Calendar value={ this.props.campaign.dueDate } onChange={ this.handleChangeDate.bind(this, 'dueDate') } ref={ this.props.setRefDueDate }/>
             </div>
           </div>
           <div className={ this.classes.colRight } style={{ width: '166px' }}>

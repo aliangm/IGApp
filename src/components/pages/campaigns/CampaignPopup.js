@@ -30,6 +30,7 @@ export default class CampaignPopup extends Component {
     };
     this.setRefName = this.setRefName.bind(this);
     this.setRefSource = this.setRefSource.bind(this);
+    this.setRefDueDate = this.setRefDueDate.bind(this);
     this.save = this.save.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
@@ -161,8 +162,14 @@ export default class CampaignPopup extends Component {
     }
   }
 
+  setRefDueDate(input) {
+    if (input) {
+      this.dueDateInput = input;
+    }
+  }
+
   validate() {
-    return this.state.campaign.name && this.state.campaign.source && this.state.campaign.source.length > 0;
+    return this.state.campaign.name && this.state.campaign.source && this.state.campaign.source.length > 0 && (!this.state.campaign.isOneTime || this.state.campaign.dueDate);
   }
 
   save() {
@@ -183,8 +190,11 @@ export default class CampaignPopup extends Component {
           if (!this.state.campaign.name) {
             this.nameInput.focus();
           }
-          else {
+          else if (!this.state.campaign.source) {
             this.sourceInput.focus();
+          }
+          else {
+            this.dueDateInput.focus();
           }
         });
     }
@@ -243,6 +253,7 @@ export default class CampaignPopup extends Component {
             processedChannels: this.props.processedChannels,
             setRefName: this.setRefName,
             setRefSource: this.setRefSource,
+            setRefDueDate: this.setRefDueDate,
             save: this.save,
             addNotification: this.props.addNotification
           })) : null }
