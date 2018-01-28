@@ -255,6 +255,8 @@
     background-repeat: no-repeat;
     background-position: center center;
     margin-right: 10px;
+    min-width: 20px;
+    min-height: 20px;
 }
 
 .objectives-table {

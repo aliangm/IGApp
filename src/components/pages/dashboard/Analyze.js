@@ -258,7 +258,7 @@ export default class Analyze extends Component {
           return (funnelIndicator || conversion || webVisits) ?
             this.getTableRow(null,
               [
-                <div style={{ display: '-webkit-box' }}>
+                <div style={{ display: 'flex' }}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
                   <div className={dashboardStyle.locals.channelTable}>
                     {label}
