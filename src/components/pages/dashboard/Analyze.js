@@ -197,7 +197,10 @@ export default class Analyze extends Component {
       className: dashboardStyle.locals.headRow
     });
 
-    const channelsWithData = getChannelsWithNicknames().map(item => {
+    const channelsArray = getChannelsWithNicknames();
+    channelsArray.push({value: 'direct', label: 'Direct'});
+
+    const channelsWithData = channelsArray.map(item => {
       const json =  {
         channel: item.value,
         label: item.label,
