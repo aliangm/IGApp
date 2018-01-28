@@ -109,6 +109,7 @@ export default class Analyze extends Component {
 
     const relevantData = sortedPreviousData.slice(this.state.months);
     const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? item.approvedBudgets[0] : {});
+    const totalCost = budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0);
     let sumedBudgets = {};
     budgets.forEach(month => {
       Object.keys(month).forEach(channel => {
@@ -130,6 +131,7 @@ export default class Analyze extends Component {
       }
     }
     const CEVsArray = relevantData.map(item => item.CEVs || {});
+    const totalRevenue = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs.revenue ? Object.keys(CEVs.revenue).reduce((channelsSum, item) => channelsSum + CEVs.revenue[item], 0) : 0) + sum, 0);
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
       {value: 'MQL', label: getIndicatorNickname('MQL')},
@@ -411,7 +413,7 @@ export default class Analyze extends Component {
               Total Cost
             </div>
             <div className={dashboardStyle.locals.number}>
-              ${formatBudgetShortened(budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0))}
+              ${formatBudgetShortened(totalCost)}
             </div>
           </div>
         </div>
@@ -421,7 +423,7 @@ export default class Analyze extends Component {
               Total Revenue
             </div>
             <div className={dashboardStyle.locals.number}>
-              -
+              ${formatBudgetShortened(totalRevenue)}
             </div>
           </div>
         </div>
@@ -431,7 +433,7 @@ export default class Analyze extends Component {
               ROI
             </div>
             <div className={dashboardStyle.locals.number}>
-              -
+              {Math.round(totalRevenue / totalCost * 100)}%
             </div>
           </div>
         </div>
