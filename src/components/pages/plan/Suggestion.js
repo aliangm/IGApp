@@ -17,13 +17,17 @@ export default class Suggestion extends Component {
 
   approve() {
     this.setState({showIcon: 'approve'}, () => {
-      this.props.approveChannel();
+      setTimeout(() => {
+        this.props.approveChannel();
+      }, 1000);
     });
   }
 
   decline() {
     this.setState({showIcon: 'decline'}, () => {
-      this.props.declineChannel();
+      setTimeout(() => {
+        this.props.declineChannel();
+      }, 1000);
     });
   }
 

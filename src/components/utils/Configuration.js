@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import merge from 'lodash/merge';
 
 const config = {
   default: {
@@ -16,4 +16,4 @@ const config = {
   }
 };
 
-module.exports = _.merge(config.default, config[window.location.hostname]);
+module.exports = merge(config.default, config[window.location.hostname]);

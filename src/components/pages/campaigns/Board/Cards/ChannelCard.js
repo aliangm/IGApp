@@ -69,7 +69,7 @@ class Card extends Component {
         <div className={this.classes.card} onClick={this.handleClick}>
           <div className={this.classes.cardName}>{item.title}</div>
           <div className={this.classes.cardFooter}>
-            <span className={this.classes.cardBudget}>${formatBudget(item.campaignsBudget)}</span>
+            <span className={this.classes.cardBudget}>${formatBudget(item.campaignsBudget || 0)}</span>
             <span className={this.classes.budget}>{" / $" + formatBudget(item.budget)}</span>
             <div className={this.classes.campaignsCount}>{item.campaigns.length}</div>
             <div className={ this.classes.cardIcon } data-icon={item.icon} />

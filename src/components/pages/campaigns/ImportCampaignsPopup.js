@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/indicators/crm-popup.css';
 import SalesforceCampaignsPopup from 'components/pages/campaigns/SalesforceCampaignsPopup';
+import AdwordsCampaignsPopup from 'components/pages/campaigns/AdwordsCampaignsPopup';
 
 export default class ImportCampaignsPopup extends Component {
 
@@ -22,6 +23,13 @@ export default class ImportCampaignsPopup extends Component {
                 close={ this.props.close }
                 data={this.props.salesforceAuto}
                 userAccount={this.props.userAccount}
+              />
+            </div>
+            <div className={ this.classes.row }>
+              <AdwordsCampaignsPopup
+                setDataAsState={ this.props.setDataAsState }
+                close={ this.props.close }
+                data={this.props.adwordsapi}
               />
             </div>
           </div>

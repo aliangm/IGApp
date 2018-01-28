@@ -46,6 +46,12 @@
     background-size: contain;
 }
 
+.adwords {
+    composes: box;
+    background: url(../../assets/words.png) center center no-repeat;
+    background-size: contain;
+}
+
 .title {
     font-weight: bold;
     font-size: 18px;

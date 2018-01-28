@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import Title from 'components/onboarding/Title';
@@ -26,7 +26,7 @@ export default class CampaignPopup extends Component {
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
-      campaign: _.merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign)
+      campaign: merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign)
     };
     this.setRefName = this.setRefName.bind(this);
     this.setRefSource = this.setRefSource.bind(this);
@@ -38,7 +38,7 @@ export default class CampaignPopup extends Component {
     if (this.props !== nextProps) {
       this.setState({
         visible: nextProps.visible || false,
-        campaign: _.merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign)
+        campaign: merge({}, CampaignPopup.defaultProps.campaign, nextProps.campaign)
       });
     }
   }
@@ -56,35 +56,33 @@ export default class CampaignPopup extends Component {
     campaign: {
       index: undefined,
       name: '',
-      budget: 0,
+      budget: null,
+      isOneTime: false,
       owner: '',
       source: [],
       dueDate: '',
       startDate: new Date().toLocaleDateString().replace(/[/]/g, '-'),
-      actualSpent: 0,
+      actualSpent: null,
       status: "New",
+      focus: '',
       time: {
         development: 0,
         design: 0,
         marketing: 0
       },
-      objectives: {
-        kpi: [
-          '',
-          '',
-          ''
-        ],
-        growth: [
-          '',
-          '',
-          ''
-        ],
-        actualGrowth: [
-          '',
-          '',
-          ''
-        ]
-      },
+      objectives: [{
+        growth: '',
+        kpi: '',
+        actualGrowth: ''
+      },{
+        growth: '',
+        kpi: '',
+        actualGrowth: ''
+      },{
+        growth: '',
+        kpi: '',
+        actualGrowth: ''
+      }],
       tracking: {
         baseUrl: ''
       },
@@ -232,7 +230,7 @@ export default class CampaignPopup extends Component {
           </div>
         </div>
         <div className={ campaignPopupStyle.locals.inner }>
-          { selectedTab ? React.createElement(selectedTab, _.merge({ }, this.state, {
+          { selectedTab ? React.createElement(selectedTab, merge({ }, this.state, {
             updateState: this.updateState.bind(this),
             close: this.close,
             openAddTemplatePopup: this.openAddTemplatePopup.bind(this),

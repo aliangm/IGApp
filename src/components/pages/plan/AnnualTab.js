@@ -60,14 +60,24 @@ export default class AnnualTab extends Component {
       collapsed: {},
       tableCollapsed: false,
       graphDimensions: {},
-      approvedPlan: true
+      approvedPlan: true,
+      isSticky: false
     };
     this.handleChangeContextMenu = this.handleChangeContextMenu.bind(this);
   }
 
   componentDidMount() {
-    this.calculateGraphDimensions()
+    this.calculateGraphDimensions();
+    window.addEventListener('scroll', this.handleScroll);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll = () => {
+    this.setState({isSticky: window.pageYOffset >= (this.planTable && this.planTable.offsetTop)})
+  };
 
   componentWillReceiveProps(nextProps) {
     this.setState({ budgetField: nextProps.budget });
@@ -490,13 +500,9 @@ export default class AnnualTab extends Component {
             </table>
           </div>
 
-          <div className={ this.classes.hoverBox }>
-            <table className={ this.classes.hoverTable }>
-              <thead>{ headRow }</thead>
-              <tbody>{ rows }</tbody>
-              <tfoot>{ footRow }</tfoot>
-            </table>
-          </div>
+          <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
+          { headRow }
+          </thead>
 
           <ContextMenu id="rightClick">
             <SubMenu title="Increase by" hoverDelay={250}>

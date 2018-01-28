@@ -56,7 +56,7 @@ class CampaignCard extends Component {
       })} id={item.id} onClick={onClick}>
         <div className={this.classes.campaignName}>{item.name}</div>
         <div className={this.classes.campaignFooter}>
-          <span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget)}</span>
+          <span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget || 0)}</span>
           <Avatar member={this.getMember()} className={this.classes.initials}/>
         </div>
       </div>

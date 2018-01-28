@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import _ from 'lodash';
+import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import Popup from 'components/Popup';
@@ -187,12 +187,12 @@ export default class Plan extends Component {
           }
           if (response.status == 400){
             if (!silent) {
-              this.setState({isError: true});
+              this.setState({isError: true, isPlannerLoading: false});
             }
           }
           else {
             if (!silent) {
-              this.setState({serverDown: true});
+              this.setState({serverDown: true, isPlannerLoading: false});
             }
           }
         }
@@ -200,7 +200,7 @@ export default class Plan extends Component {
       .catch((err) => {
         if (!silent) {
           this.setState({
-            serverDown: true
+            serverDown: true, isPlannerLoading: false
           });
         }
       });
@@ -407,13 +407,13 @@ export default class Plan extends Component {
   }
 
   render() {
-    const planChannels = _.merge([],
+    const planChannels = merge([],
       Object.keys(this.props.approvedBudgets.reduce((object, item) => {
-          return _.merge(object, item);
+          return merge(object, item);
         }
         , {})),
       Object.keys(this.props.projectedPlan.reduce((object, item) => {
-          return _.merge(object, item.plannedChannelBudgets)
+          return merge(object, item.plannedChannelBudgets)
         }
         , {}))
     );
@@ -478,7 +478,7 @@ export default class Plan extends Component {
               </div>
             </FeatureToggle>
             { this.state.selectedTab !== 1 ? null :
-              <div className={this.classes.forecastButton} onClick={ () => {
+              <div className={this.classes.forecastButton} title="forecasting" onClick={ () => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
                   domElement.scrollIntoView({});
@@ -670,7 +670,7 @@ export default class Plan extends Component {
               <label hidden={!this.state.serverDown}>Something is wrong... Let us check what is it and fix it for you
                 :)</label>
             </div>
-            {selectedTab ? React.createElement(selectedTab, _.merge({}, this.props, this.state)) : null}
+            {selectedTab ? React.createElement(selectedTab, merge({}, this.props, this.state)) : null}
           </div>
           :
           <FirstPageVisit

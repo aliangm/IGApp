@@ -14,17 +14,30 @@ export default class YoutubeAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: '',
-      fullIdentifier: ''
+      id: '',
+      fullIdentifier: '',
+      type: ''
     };
   }
 
   handleChangeIdentifier(event) {
-    this.setState({identifier: event.target.value.replace('https://www.youtube.com/channel/', ''), fullIdentifier: event.target.value});
+    this.setState({fullIdentifier: event.target.value});
+    if (event.target.value.match(/.*youtube.com\/channel\/.*/)) {
+      this.setState({
+        type: 'channel',
+        id: event.target.value.replace(/.*youtube.com\/channel\//, '')
+      });
+    }
+    else if (event.target.value.match(/.*youtube.com\/user\/.*/)) {
+      this.setState({
+        type: 'user',
+        id: event.target.value.replace(/.*youtube.com\/user\//, '')
+      });
+    }
   }
 
   getUserData() {
-    serverCommunication.serverRequest('post', 'youtubeapi', JSON.stringify({identifier: this.state.identifier}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('post', 'youtubeapi', JSON.stringify({type: this.state.type, id: this.state.id}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -49,7 +62,7 @@ export default class YoutubeAutomaticPopup extends Component {
           <Label>Please enter your youtube channel id/URL</Label>
         </div>
         <div className={ this.classes.row }>
-          <Textfield value={this.state.fullIdentifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="https://www.youtube.com/channel/channelId"/>
+          <Textfield value={this.state.fullIdentifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="https://www.youtube.com/channel/channel_id"/>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>

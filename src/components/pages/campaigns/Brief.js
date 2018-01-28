@@ -11,6 +11,7 @@ import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
 import { getChannelsWithTitles, getTitle } from 'components/utils/channels';
+import Toggle from 'components/controls/Toggle';
 
 export default class Brief extends Component {
 
@@ -37,15 +38,15 @@ export default class Brief extends Component {
       nextProps.campaign.time.development ||
       nextProps.campaign.time.marketing ||
       nextProps.campaign.focus ||
-      nextProps.campaign.objectives.kpi[0] ||
-      nextProps.campaign.objectives.kpi[1] ||
-      nextProps.campaign.objectives.kpi[2] ||
-      nextProps.campaign.objectives.growth[0] ||
-      nextProps.campaign.objectives.growth[1] ||
-      nextProps.campaign.objectives.growth[2] ||
-      nextProps.campaign.objectives.actualGrowth[0] ||
-      nextProps.campaign.objectives.actualGrowth[1] ||
-      nextProps.campaign.objectives.actualGrowth[2] ||
+      nextProps.campaign.objectives[0].kpi ||
+      nextProps.campaign.objectives[1].kpi ||
+      nextProps.campaign.objectives[2].kpi ||
+      nextProps.campaign.objectives[0].growth ||
+      nextProps.campaign.objectives[1].growth ||
+      nextProps.campaign.objectives[2].growth ||
+      nextProps.campaign.objectives[0].actualGrowth ||
+      nextProps.campaign.objectives[1].actualGrowth ||
+      nextProps.campaign.objectives[2].actualGrowth ||
       nextProps.campaign.targetAudience ||
       nextProps.campaign.assets.length > 0 ||
       nextProps.campaign.description ||
@@ -73,6 +74,12 @@ export default class Brief extends Component {
     this.props.updateState({campaign: update});
   }
 
+  handleChangeBool(bool) {
+    let update = Object.assign({}, this.props.campaign);
+    update.isOneTime = bool;
+    this.props.updateState({campaign: update});
+  }
+
   handleChangeText(parameter, event) {
     let update = Object.assign({}, this.props.campaign);
     update[parameter] = event.target.value;
@@ -93,7 +100,7 @@ export default class Brief extends Component {
 
   handleChangeObjectives(parameter, index, event) {
     let update = Object.assign({}, this.props.campaign);
-    update.objectives[parameter][index] = event.target.value;
+    update.objectives[index][parameter] = event.target.value;
     this.props.updateState({campaign: update});
   }
 
@@ -179,6 +186,16 @@ export default class Brief extends Component {
     this.props.save();
   }
 
+  addObjectivesRow() {
+    let update = Object.assign({}, this.props.campaign);
+    update.objectives.push({
+      growth: '',
+      kpi: '',
+      actualGrowth: ''
+    });
+    this.props.updateState({campaign: update});
+  }
+
   render() {
     const selects = {
       owner: {
@@ -257,11 +274,53 @@ export default class Brief extends Component {
         </div>
       </div>
     });
+
+    const objectiveRows = <div className={ this.classes.cols }>
+      <div className={ this.classes.colLeft }>
+        <Label style={{
+          width: '166px'
+        }}>KPI</Label>
+        { this.props.campaign.objectives.map((item,index) =>
+          <Textfield key={index} value={ item && item.kpi } onChange={ this.handleChangeObjectives.bind(this, 'kpi', index)} style={{ width: '166px', marginTop: '8px' }} />
+        )}
+      </div>
+      <div className={ this.classes.colCenter }>
+        <Label style={{
+          width: '166px'
+        }}>Expected Growth</Label>
+        { this.props.campaign.objectives.map((item, index) =>
+          <Textfield key={index} value={ item && item.growth } onChange={ this.handleChangeObjectives.bind(this, 'growth', index)} style={{ width: '166px', marginTop: '8px' }} />
+        )}
+      </div>
+      <div className={ this.classes.colRight }>
+        <Label style={{
+          width: '166px'
+        }}>Actual Growth</Label>
+        { this.props.campaign.objectives.map((item, index) =>
+          <Textfield key={index} value={ item && item.actualGrowth } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', index)} style={{
+            width: '166px',
+            marginTop: '8px'
+          }} />
+        )}
+      </div>
+    </div>;
+
     return <div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <Label>Budget</Label>
+            <Label>Campaign Name*</Label>
+            <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref={ this.props.setRefName } style={{ width: '428px' }}/>
+          </div>
+          <div className={ this.classes.colRight }>
+            <Select { ... selects.owner } style={{ width: '166px' }} selected={ this.props.campaign.owner } onChange= { this.handleChangeSelect.bind(this, 'owner') }/>
+          </div>
+        </div>
+      </div>
+      <div className={ this.classes.row }>
+        <div className={ this.classes.cols }>
+          <div className={ this.classes.colLeft }>
+            <Label>{this.props.campaign.isOneTime ? 'Budget' : 'Monthly Budget'}</Label>
             <Textfield value={"$" + (this.props.campaign.budget ? this.props.campaign.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')} onChange={ this.handleChangeBudget.bind(this, 'budget')} style={{
               width: '166px'
             }} />
@@ -273,13 +332,17 @@ export default class Brief extends Component {
             }} />
           </div>
           <div className={ this.classes.colRight }>
-            <Select { ... selects.owner } style={{ width: '166px' }} selected={ this.props.campaign.owner } onChange= { this.handleChangeSelect.bind(this, 'owner') }/>
+            <Label>Budget Type</Label>
+            <Toggle
+              leftText="Recurrent "
+              rightText="One time"
+              leftActive={ !this.props.campaign.isOneTime }
+              leftClick={ this.handleChangeBool.bind(this, false) }
+              rightClick={ this.handleChangeBool.bind(this, true) }
+              type="grey"
+            />
           </div>
         </div>
-      </div>
-      <div className={ this.classes.row }>
-        <Label>Campaign Name*</Label>
-        <Textfield value={ this.props.campaign.name } required={ true } onChange={ this.handleChangeText.bind(this, 'name')} ref={ this.props.setRefName }/>
       </div>
       <div className={ this.classes.row }>
         <div className={ this.classes.cols }>
@@ -341,59 +404,10 @@ export default class Brief extends Component {
         <div className={ this.classes.row }>
           <Label style={{ fontSize: '18px', fontWeight: 'bold' }}>Campaign Objectives</Label>
           <Select { ... selects.focus } selected={ this.props.campaign.focus } onChange= { this.handleChangeSelect.bind(this, 'focus') } style={{ width: '166px', marginBottom: '14px' }}/>
-          <div className={ this.classes.cols }>
-            <div className={ this.classes.colLeft }>
-              <Label style={{
-                width: '166px'
-              }}>KPI</Label>
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.kpi[0] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 0)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.kpi[1] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 1)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.kpi[2] } onChange={ this.handleChangeObjectives.bind(this, 'kpi', 2)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-            </div>
-            <div className={ this.classes.colCenter }>
-              <Label style={{
-                width: '166px'
-              }}>Expected Growth</Label>
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.growth[0] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 0)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.growth[1] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 1)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.growth[2] } onChange={ this.handleChangeObjectives.bind(this, 'growth', 2)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-            </div>
-            <div className={ this.classes.colRight }>
-              <Label style={{
-                width: '166px'
-              }}>Actual Growth</Label>
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.actualGrowth[0] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 0)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.actualGrowth[1] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 1)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-              <Textfield value={ this.props.campaign.objectives && this.props.campaign.objectives.actualGrowth[2] } onChange={ this.handleChangeObjectives.bind(this, 'actualGrowth', 2)} style={{
-                width: '166px',
-                marginTop: '8px'
-              }} />
-            </div>
-          </div>
+          { objectiveRows }
+          <Button type="reverse" style={{ width: '100px', marginTop: '8px' }} onClick={ this.addObjectivesRow.bind(this) }>
+            Add
+          </Button>
         </div>
         <div className={ this.classes.row }>
           <Label>Links
