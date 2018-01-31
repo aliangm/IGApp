@@ -52,6 +52,12 @@
     background-size: contain;
 }
 
+.facebookads {
+    composes: box;
+    background: url(../../assets/facebook-ads.svg) center center no-repeat;
+    background-size: contain;
+}
+
 .title {
     font-weight: bold;
     font-size: 18px;
