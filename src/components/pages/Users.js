@@ -81,7 +81,7 @@ export default class Users extends Component {
         <div className={this.classes.container}>
           { uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={"plan:" + item}/> )}
         </div>,
-        getNickname(user.funnelStage),
+        getNickname(user.funnelStage[user.funnelStage.length-1]),
         user.journey.length,
         <div className={this.classes.container}>
           { user.countries.map(item => <div key={item.code} className={this.classes.container}><ReactCountryFlag code={item.code} svg/><div style={{ marginLeft: '5px' }}>{item.code}</div></div>) }
