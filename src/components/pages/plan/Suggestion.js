@@ -43,8 +43,9 @@ export default class Suggestion extends Component {
           <div className={this.classes.title}>
             {getNickname(channel)}
           </div>
-          <div className={this.classes.center}>
+          <div className={this.classes.center} style={{ position: 'relative' }}>
             <div className={this.classes.channelIcon} data-icon={"plan:" + channel}/>
+            <div className={this.classes.forecastButton} onClick={ this.props.forecast }/>
           </div>
           <div className={this.classes.budgets}>
             <div className={this.classes.current}>

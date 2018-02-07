@@ -74,7 +74,8 @@ export default class Plan extends Component {
       isCheckAnnual: !!props.budget,
       setRef: this.setRef.bind(this),
       forecastingGraphRef: this.forecastingGraphRef.bind(this),
-      whatIfSelected: false
+      whatIfSelected: false,
+      plan: this.plan.bind(this)
     };
   }
 
