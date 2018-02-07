@@ -541,7 +541,7 @@ export default class Analyze extends Component {
       <FeatureToggle featureName="attribution">
         <div className={ dashboardStyle.locals.item } style={{ height: '387px', width: '1110px' }}>
           <div className={dashboardStyle.locals.text}>
-            Top Conversion Journeys/Paths
+            Top Conversion Journeys
           </div>
           <div>
             <div className={dashboardStyle.locals.conversionGoal}>
