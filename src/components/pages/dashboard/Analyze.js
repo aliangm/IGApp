@@ -438,8 +438,8 @@ export default class Analyze extends Component {
       <div key={index} className={dashboardStyle.locals.journeyRow}>
         <div style={{ width: '78%' }}>
           <div className={dashboardStyle.locals.journey}>
-            { item.channels.map(channel =>
-              <div className={dashboardStyle.locals.channelBox}>
+            { item.channels.map((channel, index) =>
+              <div className={dashboardStyle.locals.channelBox} key={index}>
                 <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel} style={{ margin: '0 5px' }}/>
                 <div className={dashboardStyle.locals.channelText}>
                   {getChannelNickname(channel)}
@@ -562,7 +562,9 @@ export default class Analyze extends Component {
             <div style={{ display: 'flex' }}>
               <div className={ dashboardStyle.locals.index }>
                 {
-                  fatherChannelsWithBudgets.map((element, i) => (
+                  fatherChannelsWithBudgets
+                    .sort((a, b) => b.value - a.value)
+                    .map((element, i) => (
                     <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
                       <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
                       <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
