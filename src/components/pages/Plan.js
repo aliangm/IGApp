@@ -83,7 +83,10 @@ export default class Plan extends Component {
     this.getRelevantEvents(this.props);
     let callback = (data) => {
       this.props.setDataAsState(data);
-      this.approveAllBudgets(true);
+      // if user didn't upload an excel
+      if (!this.props.approvedBudgets || this.props.approvedBudgets.length === 0) {
+        this.approveAllBudgets(true);
+      }
     };
     if (isPopupMode()) {
       disablePopupMode();
