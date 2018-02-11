@@ -7,7 +7,7 @@ import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
 import merge from 'lodash/merge';
-import { getChannelsWithNicknames, getNickname as getChannelNickname } from 'components/utils/channels';
+import { getChannelsWithNicknames, getNickname as getChannelNickname, getTitle as getChannelTitle } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
@@ -16,6 +16,7 @@ import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
 import history from 'history';
 import { formatDate } from 'components/utils/date';
+import { PieChart, Pie, Cell } from "recharts";
 
 export default class Analyze extends Component {
 
@@ -32,6 +33,8 @@ export default class Analyze extends Component {
     this.state = {
       historicalPerformanceIndicator: 'SQL',
       attributionTableIndicator: 'MCL',
+      conversionIndicator: 'MCL',
+      attributionTableRevenueMetric: 'revenue',
       months: props.previousData.length - 1,
       showChannels: true,
       soryBy: 'webVisits',
@@ -80,6 +83,20 @@ export default class Analyze extends Component {
   }
 
   render() {
+    const COLORS = [
+      '#289df5',
+      '#40557d',
+      '#f0b499',
+      '#ffd400',
+      '#3373b4',
+      '#72c4b9',
+      '#04E762',
+      '#FB5607',
+      '#FF006E',
+      '#8338EC',
+      '#76E5FC',
+      '#036D19'
+    ];
     const { previousData, attribution, campaigns } = this.props;
     const attributionCampaigns = attribution.campaigns || [];
     const indicatorsOptions = getIndicatorsWithNicknames();
@@ -108,6 +125,7 @@ export default class Analyze extends Component {
 
     const relevantData = sortedPreviousData.slice(this.state.months);
     const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? item.approvedBudgets[0] : {});
+    const totalCost = budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0);
     let sumedBudgets = {};
     budgets.forEach(month => {
       Object.keys(month).forEach(channel => {
@@ -129,6 +147,7 @@ export default class Analyze extends Component {
       }
     }
     const CEVsArray = relevantData.map(item => item.CEVs || {});
+    const totalRevenue = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs.revenue ? Object.keys(CEVs.revenue).reduce((channelsSum, item) => channelsSum + CEVs.revenue[item], 0) : 0) + sum, 0);
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
       {value: 'MQL', label: getIndicatorNickname('MQL')},
@@ -143,8 +162,26 @@ export default class Analyze extends Component {
       <div onClick={this.sortBy.bind(this, 'budget')} style={{ cursor: 'pointer' }}>
         Cost
       </div>,
-      <div onClick={this.sortBy.bind(this, 'revenue')} style={{ cursor: 'pointer' }}>
-        Revenue
+      <div style={{display: 'inline-flex', cursor: 'pointer'}} onClick={this.sortBy.bind(this, 'revenueMetric')}>
+        { this.state.editRevenueMetric ?
+          <Select
+            selected={this.state.attributionTableRevenueMetric}
+            select={{
+              options: [{value: 'revenue', label: 'Revenue'}, {value: 'pipeline', label: 'Pipeline'}]
+            }}
+            onChange={(e) => {
+              this.setState({attributionTableRevenueMetric: e.value})
+            }}
+            style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
+          />
+          :
+          this.state.attributionTableRevenueMetric === 'revenue' ? 'Revenue' : 'Pipeline'
+        }
+        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
+          this.setState({editRevenueMetric: !this.state.editRevenueMetric})
+        }}>
+          { this.state.editRevenueMetric ? 'Done' : 'Edit' }
+        </div>
       </div>,
       <div onClick={this.sortBy.bind(this, 'ROI')} style={{ cursor: 'pointer' }}>
         ROI
@@ -197,17 +234,20 @@ export default class Analyze extends Component {
       className: dashboardStyle.locals.headRow
     });
 
-    const channelsWithData = getChannelsWithNicknames().map(item => {
+    const channelsArray = getChannelsWithNicknames();
+    channelsArray.push({value: 'direct', label: 'Direct'});
+
+    const channelsWithData = channelsArray.map(item => {
       const json =  {
         channel: item.value,
         label: item.label,
         budget: sumedBudgets[item.value] || 0,
-        revenue: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["revenue"] ? CEVs["revenue"][item.value] : 0) + sum, 0),
+        revenueMetric: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableRevenueMetric] ? CEVs[this.state.attributionTableRevenueMetric][item.value] : 0) + sum, 0),
         webVisits: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item.value] : 0) + sum, 0),
         conversion: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item.value] : 0) + sum, 0),
         funnelIndicator: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0) + sum, 0),
       };
-      json.ROI = json.budget ? json.revenue / json.budget : 0;
+      json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
       json.CPX = json.funnelIndicator ? json.budget / json.funnelIndicator : 0;
       return json;
     }) ;
@@ -233,14 +273,14 @@ export default class Analyze extends Component {
       const json = {
         label: campaignUTM,
         budget: budget,
-        revenue: campaign.revenue,
+        revenueMetric: campaign[this.state.attributionTableRevenueMetric],
         webVisits: campaign.webVisits,
         conversion: campaign.conversion,
         funnelIndicator: campaign[this.state.attributionTableIndicator],
         channels: campaign.channels,
         platformCampaignIndex: platformCampaignIndex
       };
-      json.ROI = json.budget ? json.revenue / json.budget : 0;
+      json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
       json.CPX = json.budget ? json.funnelIndicator / json.budget : 0;
       return json;
     });
@@ -251,19 +291,19 @@ export default class Analyze extends Component {
           (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
         )
         .map(item => {
-          const { channel, label, budget, revenue, webVisits, conversion, funnelIndicator, ROI, CPX } = item;
+          const { channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX } = item;
           return (funnelIndicator || conversion || webVisits) ?
             this.getTableRow(null,
               [
-                <div style={{ display: '-webkit-box' }}>
+                <div style={{ display: 'flex' }}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
                   <div className={dashboardStyle.locals.channelTable}>
                     {label}
                   </div>
                 </div>,
                 '$' + formatBudget(budget),
-                '$' + formatBudget(revenue),
-                Math.round(ROI) * 100 + '%',
+                '$' + formatBudget(revenueMetric),
+                Math.round(ROI * 100) + '%',
                 webVisits,
                 conversion,
                 Math.round(funnelIndicator * 100) / 100,
@@ -280,7 +320,7 @@ export default class Analyze extends Component {
           (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
         )
         .map(item => {
-            const { label, budget, revenue, webVisits, conversion, funnelIndicator, ROI, CPX, channels, platformCampaignIndex } = item;
+            const { label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX, channels, platformCampaignIndex } = item;
             return (funnelIndicator || conversion || webVisits) ?
               this.getTableRow(null,
                 [
@@ -293,8 +333,8 @@ export default class Analyze extends Component {
                     {label}
                   </div>,
                   '$' + formatBudget(budget),
-                  '$' + formatBudget(revenue),
-                  Math.round(ROI) * 100 + '%',
+                  '$' + formatBudget(revenueMetric),
+                  Math.round(ROI * 100) + '%',
                   webVisits,
                   conversion,
                   Math.round(funnelIndicator),
@@ -353,6 +393,72 @@ export default class Analyze extends Component {
       }
     });
 
+    const CEV = CEVsArray.reduce((mergedItem, CEVs) => merge(mergedItem, CEVs && CEVs[this.state.conversionIndicator]), {});
+    const fatherChannelsWithBudgets = [];
+    let fatherChannelsSum = 0;
+    Object.keys(CEV).forEach(channel => {
+      const channelTitle = getChannelTitle(channel);
+      if (channelTitle && CEV[channel]) {
+        fatherChannelsSum += CEV[channel];
+        const fatherChannel = channelTitle.split('/')[0];
+        const existsFather = fatherChannelsWithBudgets.find(item => item.name === fatherChannel);
+        if (existsFather) {
+          existsFather.value += CEV[channel];
+        }
+        else {
+          fatherChannelsWithBudgets.push({name: fatherChannel, value: CEV[channel]});
+        }
+      }
+    });
+
+    const usersArray = relevantData.map(item => item.attribution && item.attribution.users || {});
+    const users = usersArray.reduce((mergedItem, monthUsers) => merge(mergedItem, monthUsers), []);
+    const journeys = [];
+    let journeysSum = 0;
+    users.forEach(user => {
+      const journey = user.journey
+        .filter(item => item.channel && item.channel !== 'direct' && item.funnelStage === this.state.conversionIndicator)
+        .map(item => item.channel);
+      if (journey && journey.length > 0) {
+        journeysSum++;
+        const alreadyExists = journeys.find(item => item.channels.length === journey.length && item.channels.every((item, index) => item === journey[index]));
+        if (alreadyExists) {
+          alreadyExists.count++;
+        }
+        else {
+          journeys.push({
+            channels: journey,
+            count: 1
+          })
+        }
+      }
+    });
+
+    const journeysUI = journeys
+      .sort((a, b) => b.count - a.count)
+      .map((item, index) =>
+      <div key={index} className={dashboardStyle.locals.journeyRow}>
+        <div style={{ width: '78%' }}>
+          <div className={dashboardStyle.locals.journey}>
+            { item.channels.map((channel, index) =>
+              <div className={dashboardStyle.locals.channelBox} key={index}>
+                <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel} style={{ margin: '0 5px' }}/>
+                <div className={dashboardStyle.locals.channelText}>
+                  {getChannelNickname(channel)}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div>
+          {item.count}
+        </div>
+        <div style={{ marginLeft: '48px' }}>
+          {Math.round(item.count / journeysSum * 100)}%
+        </div>
+      </div>
+    );
+
     return <div className={dashboardStyle.locals.wrap}>
       <div className={dashboardStyle.locals.upperPanel}>
         <div className={dashboardStyle.locals.historyConfigText}>
@@ -389,7 +495,7 @@ export default class Analyze extends Component {
               Total Cost
             </div>
             <div className={dashboardStyle.locals.number}>
-              ${formatBudgetShortened(budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0))}
+              ${formatBudgetShortened(totalCost)}
             </div>
           </div>
         </div>
@@ -399,7 +505,7 @@ export default class Analyze extends Component {
               Total Revenue
             </div>
             <div className={dashboardStyle.locals.number}>
-              -
+              ${formatBudgetShortened(totalRevenue)}
             </div>
           </div>
         </div>
@@ -409,7 +515,7 @@ export default class Analyze extends Component {
               ROI
             </div>
             <div className={dashboardStyle.locals.number}>
-              -
+              {Math.round(totalRevenue / totalCost * 100)}%
             </div>
           </div>
         </div>
@@ -432,6 +538,80 @@ export default class Analyze extends Component {
             {rows}
             </tbody>
           </table>
+        </div>
+      </FeatureToggle>
+      <FeatureToggle featureName="attribution">
+        <div className={ dashboardStyle.locals.item } style={{ height: '387px', width: '1110px' }}>
+          <div className={dashboardStyle.locals.text}>
+            Top Conversion Journeys
+          </div>
+          <div>
+            <div className={dashboardStyle.locals.conversionGoal}>
+              Choose a conversion goal
+              <Select
+                selected={this.state.conversionIndicator}
+                select={{
+                  options: metrics
+                }}
+                onChange={(e) => {
+                  this.setState({conversionIndicator: e.value})
+                }}
+                style={{ width: '143px', marginLeft: '10px' }}
+              />
+            </div>
+          </div>
+          <div style={{ position: 'relative', display: 'flex', padding: '10px 0', height: '275px' }}>
+            <div style={{ display: 'flex' }}>
+              <div className={ dashboardStyle.locals.index }>
+                {
+                  fatherChannelsWithBudgets
+                    .sort((a, b) => b.value - a.value)
+                    .map((element, i) => (
+                    <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
+                      <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
+                      <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
+                        {element.name}
+                      </div>
+                      <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
+                        ({Math.round(element.value/fatherChannelsSum*100)}%)
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+              <div style={{ marginLeft: '-127px', marginTop: '-30px' }}>
+                <PieChart width={429} height={350} onMouseEnter={(d, i) => { this.setState({activeIndex: i})}} onMouseLeave={ () => { this.setState({activeIndex: void 0}) } }>
+                  <Pie
+                    data={fatherChannelsWithBudgets}
+                    cx={250}
+                    cy={150}
+                    labelLine={true}
+                    innerRadius={75}
+                    outerRadius={100}
+                    isAnimationActive={false}
+                  >
+                    {
+                      fatherChannelsWithBudgets .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={index}/>)
+                    }
+                  </Pie>
+                </PieChart>
+              </div>
+            </div>
+            <div className={dashboardStyle.locals.line}/>
+            <div style={{ width: '625px', marginLeft: '-35px' }}>
+              <div style={{ display: 'flex' }}>
+                <div style={{ marginLeft: '75%' }}>
+                  Conv
+                </div>
+                <div style={{ marginLeft: '20px' }}>
+                  % of Total
+                </div>
+              </div>
+              <div style={{ overflowY: 'auto', height: '266px' }}>
+                {journeysUI}
+              </div>
+            </div>
+          </div>
         </div>
       </FeatureToggle>
       <div className={this.classes.cols} style={{width: '1110px'}}>

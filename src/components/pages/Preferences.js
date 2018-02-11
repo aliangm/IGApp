@@ -570,6 +570,7 @@ export default class Preferences extends Component {
                 close={() => { this.setState({showObjectivesPopup: false}) } }
                 createOrUpdateObjective={this.createOrUpdateObjective.bind(this)}
                 actualIndicators={ this.props.actualIndicators }
+                projectedPlan={ this.props.projectedPlan }
               />
             </div>
             <FeatureToggle featureName="plannerAI">

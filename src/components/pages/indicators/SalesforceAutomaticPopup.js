@@ -2,6 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import MultiSelect from 'components/controls/MultiSelect';
+import Select from 'components/controls/Select';
 import style from 'styles/onboarding/onboarding.css';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
@@ -23,6 +24,7 @@ export default class SalesforceAutomaticPopup extends Component {
       statuses: [],
       stages: [],
       owners: [],
+      fields: [],
       code: null,
       hidden: true,
       mapping: {
@@ -42,7 +44,10 @@ export default class SalesforceAutomaticPopup extends Component {
         users: [
           "Closed Won"
         ],
-        CAC: []
+        CAC: [],
+        MRR: {
+          defaultMonths: 12
+        }
       }
     };
   }
@@ -99,7 +104,7 @@ export default class SalesforceAutomaticPopup extends Component {
         if (response.ok) {
           response.json()
             .then((data) => {
-              this.setState({statuses: data.statuses, stages: data.stages, owners: data.owners, hidden: false});
+              this.setState({statuses: data.statuses, stages: data.stages, owners: data.owners, fields: data.fields, hidden: false});
             });
         }
         else if (response.status == 401) {
@@ -158,6 +163,17 @@ export default class SalesforceAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
+  toggleCheckboxObject(indicator) {
+    let mapping = this.state.mapping;
+    if (mapping[indicator]) {
+      delete mapping[indicator];
+    }
+    else {
+      mapping[indicator] = {};
+    }
+    this.setState({mapping: mapping});
+  }
+
   handleChange(indicator, event) {
     let mapping = this.state.mapping;
     mapping[indicator] = event.map((obj) => {
@@ -169,6 +185,21 @@ export default class SalesforceAutomaticPopup extends Component {
   handleChangeCAC(index, event) {
     let mapping = this.state.mapping;
     mapping.CAC[index] = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    this.setState({mapping: mapping});
+  }
+
+  handleChangeField(event) {
+    let mapping = this.state.mapping;
+    const fieldName = event.value;
+    mapping.MRR.field = fieldName;
+    const fieldWithProps = this.state.fields.find(field => field.name === fieldName);
+    mapping.MRR.type = fieldWithProps.type === "date" ? "date" : "number";
+    this.setState({mapping: mapping});
+  }
+
+  handleChangeDefault(event) {
+    let mapping = this.state.mapping;
+    mapping.MRR.defaultMonths = parseInt(event.target.value) || '';
     this.setState({mapping: mapping});
   }
 
@@ -205,7 +236,25 @@ export default class SalesforceAutomaticPopup extends Component {
               return {value: owner.Id, label: owner.Name}
             })
         }
-      }
+      },
+      fields: {
+        select: {
+          name: 'fields',
+          options: this.state.fields
+            .map(field => {
+              return {value: field.name, label: field.label}
+            })
+        }
+      },
+      types: {
+        select: {
+          name: 'types',
+          options: [
+            {value: 'number', label: 'number'},
+            {value: 'date', label: 'date'}
+          ]
+        }
+      },
     };
     return <div style={{ width: '100%' }}>
       <div className={ CRMStyle.locals.salesforce } onClick={ this.getAuthorization.bind(this) }/>
@@ -281,6 +330,41 @@ export default class SalesforceAutomaticPopup extends Component {
           <div className={ this.classes.row }>
             <Label checkbox={!!this.state.mapping.owners} onChange={ this.toggleCheckbox.bind(this, 'owners') } className={ salesForceStyle.locals.ownersLabel }>Filter by salesforce owners / regions (optional)</Label>
             <MultiSelect { ... selects.owners} selected={ this.state.mapping.owners } onChange={ this.handleChange.bind(this, 'owners') } disabled={ !this.state.mapping.owners } style={{ width: 'initial'}}  placeholder="Select your region owners"/>
+          </div>
+          <div className={ this.classes.row }>
+            <div className={ this.classes.row }>
+              <Label checkbox={this.state.mapping.MRR !== undefined} onChange={ this.toggleCheckboxObject.bind(this, 'MRR') } className={ salesForceStyle.locals.label }>Calculate MRR</Label>
+            </div>
+            <div hidden={this.state.mapping.MRR === undefined}>
+              <div className={ this.classes.row }>
+                <div className={ this.classes.cols }>
+                  <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
+                    <Label className={ salesForceStyle.locals.label }>Default licensing period (months)</Label>
+                  </div>
+                  <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
+                    <div className={ salesForceStyle.locals.arrow }/>
+                  </div>
+                  <div className={ this.classes.colRight }>
+                    <Textfield value={ this.state.mapping.MRR && this.state.mapping.MRR.defaultMonths } onChange={ this.handleChangeDefault.bind(this) } style={{ width: '270px'}}/>
+                  </div>
+                </div>
+              </div>
+              <div className={ this.classes.row }>
+                <div className={ this.classes.cols }>
+                  <div className={ this.classes.colLeft } style={{ flexGrow: 'initial' }}>
+                    <Label className={ salesForceStyle.locals.label } question={['']}
+                           description={['* If relevant, which custom field indicates how the amount of each deal should be divided. Choose a number (each deal amount will be divided by this number, which indicates # of months per deal) or a date (the amount will be divided to all months between close date and this date).']}>Divide deal amounts by</Label>
+                  </div>
+                  <div className={ this.classes.colCenter } style={{ flexGrow: 'initial', margin: 'initial' }}>
+                    <div className={ salesForceStyle.locals.arrow }/>
+                  </div>
+                  <div className={ this.classes.colRight }>
+                    <Select { ... selects.fields } selected={ this.state.mapping.MRR && this.state.mapping.MRR.field }
+                            onChange={ this.handleChangeField.bind(this) } style={{ width: '270px'}} placeholder="choose if relevant"/>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className={ this.classes.row } hidden={this.props.data && this.props.data.isCACAuto}>
             <Label checkbox={!!this.state.mapping.CAC} onChange={ this.toggleCheckbox.bind(this, 'CAC') } className={ salesForceStyle.locals.label }>Calculate CAC</Label>

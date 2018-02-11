@@ -255,6 +255,10 @@
     background-repeat: no-repeat;
     background-position: center center;
     margin-right: 10px;
+    min-width: 20px;
+    min-height: 20px;
+    align-self: center;
+    background-color: white;
 }
 
 .objectives-table {
@@ -286,4 +290,72 @@
     height: 30px;
     font-size: 16px;
     color: #354052;
+}
+
+.conversion-goal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 13px;
+}
+
+.line {
+    width: 3px;
+    height: 93%;
+    background-color: #f2f2f2;
+    position: absolute;
+    left: 455px;
+}
+
+.journey-row {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.journey {
+    background-color: #f1f4f8;
+    height: 40px;
+    border-radius: 3px;
+    align-items: center;
+    padding: 0 5px;
+    margin: 5px 0;
+    display: inline-flex;
+}
+
+.channel-box {
+    background-color: #646466;
+    width: 83px;
+    height: 34px;
+    display: flex;
+    position: relative;
+    border-radius: 3px 0 0 3px;
+    margin-right: 25px;
+}
+
+.channel-box:not(:last-child):before {
+    content: '';
+    position: absolute;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    left: 100%;
+    border-left: 17px solid #646466;
+}
+
+.channel-box:last-child {
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.channel-text {
+    font-size: 10px;
+    font-weight: bold;
+    color: #ffffff;
+    align-self: center;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-right: 5px;
 }

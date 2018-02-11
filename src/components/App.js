@@ -457,6 +457,7 @@ class AppComponent extends Component {
       googleSheetsAuto: data.googlesheetsapi,
       isStripeAuto: !!data.stripeapi,
       adwordsapi: data.adwordsapi,
+      facebookadsapi: data.facebookadsapi,
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,

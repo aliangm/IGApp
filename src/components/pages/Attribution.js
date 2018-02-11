@@ -29,7 +29,7 @@ export default class Attribution extends Component {
     const tabs = {
       "Setup": Setup,
       "Tracking Plan": TrackingPlan,
-      "Tracking URLs": TrackingUrls
+      "Campaign URLs": TrackingUrls
     };
 
     const tabNames = Object.keys(tabs);
