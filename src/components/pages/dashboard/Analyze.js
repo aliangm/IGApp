@@ -414,11 +414,13 @@ export default class Analyze extends Component {
     const usersArray = relevantData.map(item => item.attribution && item.attribution.users || {});
     const users = usersArray.reduce((mergedItem, monthUsers) => merge(mergedItem, monthUsers), []);
     const journeys = [];
+    let journeysSum = 0;
     users.forEach(user => {
       const journey = user.journey
         .filter(item => item.channel && item.channel !== 'direct' && item.funnelStage === this.state.conversionIndicator)
         .map(item => item.channel);
       if (journey && journey.length > 0) {
+        journeysSum++;
         const alreadyExists = journeys.find(item => item.channels.length === journey.length && item.channels.every((item, index) => item === journey[index]));
         if (alreadyExists) {
           alreadyExists.count++;
@@ -452,7 +454,7 @@ export default class Analyze extends Component {
           {item.count}
         </div>
         <div style={{ marginLeft: '48px' }}>
-          {Math.round(item.count / journeys.length * 100)}%
+          {Math.round(item.count / journeysSum * 100)}%
         </div>
       </div>
     );
