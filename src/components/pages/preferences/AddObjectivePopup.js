@@ -15,6 +15,8 @@ import NotSure from 'components/onboarding/NotSure';
 import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import navStyle from 'styles/profile/market-fit-popup.css';
 import { timeFrameToDate } from 'components/utils/objective';
+import { isPopupMode } from 'modules/popup-mode';
+import { formatBudget } from 'components/utils/budget';
 
 export default class AddObjectivePopup extends Component {
 
@@ -166,7 +168,7 @@ export default class AddObjectivePopup extends Component {
                   <div>
                     <div className={this.classes.row}>
                       <Label style={{ justifyContent: 'center', textTransform: 'none', fontSize: '15px', fontWeight: '500', whiteSpace: 'pre' }}>
-                        {"I want to reach a target of "} <span style={{fontWeight: '700'}}>{this.state.amount}</span>{" " + getNickname(this.state.indicator) +" by " + this.state.timeFrame}
+                        {"I want to reach a target of "} <span style={{fontWeight: '700'}}>{formatBudget(this.state.amount)}</span>{" " + getNickname(this.state.indicator) +" by " + this.state.timeFrame}
                       </Label>
                     </div>
                     <div className={ navStyle.locals.nav }>
@@ -198,7 +200,7 @@ export default class AddObjectivePopup extends Component {
           </div>
         </Page>
         :
-        <Page popup={true} width={'400px'} contentClassName={popupStyle.locals.content}
+        <Page popup={true} width={'410px'} contentClassName={popupStyle.locals.content}
               innerClassName={popupStyle.locals.inner}>
           <div className={popupStyle.locals.title}>
             Add Objective
@@ -237,9 +239,9 @@ export default class AddObjectivePopup extends Component {
           <div className={this.classes.row}>
             <Label>
               Numeric objective
-              { this.state.isRecurrent ? null :
+              <div hidden={(this.state.isRecurrent || isPopupMode())}>
                 <NotSure style={{
-                  marginLeft: '75px'
+                  marginLeft: '88px'
                 }} onClick={() => {
                   if (this.state.indicator) {
                     this.setState({notSure: 1});
@@ -248,7 +250,7 @@ export default class AddObjectivePopup extends Component {
                     this.refs.indicator.focus();
                   }
                 }}/>
-              }
+              </div>
             </Label>
             <div style={{display: 'inline-flex'}}>
               <Textfield type="number" value={this.state.amount} onChange={(e) => {
@@ -263,7 +265,7 @@ export default class AddObjectivePopup extends Component {
                   this.setState({isPercentage: e.value})
                 }}
                 placeholder='%/num'
-                style={{marginLeft: '20px', width: '78px'}}
+                style={{marginLeft: '20px', width: '88px'}}
               />
               <Select
                 selected={this.state.direction}

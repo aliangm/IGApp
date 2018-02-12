@@ -162,7 +162,7 @@ export default class Analyze extends Component {
       <div onClick={this.sortBy.bind(this, 'budget')} style={{ cursor: 'pointer' }}>
         Cost
       </div>,
-      <div style={{display: 'inline-flex', cursor: 'pointer'}} onClick={this.sortBy.bind(this, 'revenueMetric')}>
+      <div style={{display: 'inline-flex'}}>
         { this.state.editRevenueMetric ?
           <Select
             selected={this.state.attributionTableRevenueMetric}
@@ -175,7 +175,9 @@ export default class Analyze extends Component {
             style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          this.state.attributionTableRevenueMetric === 'revenue' ? 'Revenue' : 'Pipeline'
+          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }}>
+            {this.state.attributionTableRevenueMetric === 'revenue' ? 'Revenue' : 'Pipeline'}
+          </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
           this.setState({editRevenueMetric: !this.state.editRevenueMetric})
@@ -197,7 +199,7 @@ export default class Analyze extends Component {
           Conversions
         </Label>
       </div>,
-      <div style={{display: 'inline-flex', cursor: 'pointer'}} onClick={this.sortBy.bind(this, 'funnelIndicator')}>
+      <div style={{display: 'inline-flex'}}>
         { this.state.editMetric ?
           <Select
             selected={this.state.attributionTableIndicator}
@@ -210,7 +212,9 @@ export default class Analyze extends Component {
             style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          getIndicatorNickname(this.state.attributionTableIndicator)
+          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{ cursor: 'pointer' }}>
+            {getIndicatorNickname(this.state.attributionTableIndicator)}
+          </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
           this.setState({editMetric: !this.state.editMetric})
@@ -437,27 +441,27 @@ export default class Analyze extends Component {
     const journeysUI = journeys
       .sort((a, b) => b.count - a.count)
       .map((item, index) =>
-      <div key={index} className={dashboardStyle.locals.journeyRow}>
-        <div style={{ width: '78%' }}>
-          <div className={dashboardStyle.locals.journey}>
-            { item.channels.map((channel, index) =>
-              <div className={dashboardStyle.locals.channelBox} key={index}>
-                <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel} style={{ margin: '0 5px' }}/>
-                <div className={dashboardStyle.locals.channelText}>
-                  {getChannelNickname(channel)}
+        <div key={index} className={dashboardStyle.locals.journeyRow}>
+          <div style={{ width: '78%' }}>
+            <div className={dashboardStyle.locals.journey}>
+              { item.channels.map((channel, index) =>
+                <div className={dashboardStyle.locals.channelBox} key={index}>
+                  <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel} style={{ margin: '0 5px' }}/>
+                  <div className={dashboardStyle.locals.channelText}>
+                    {getChannelNickname(channel)}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          </div>
+          <div>
+            {item.count}
+          </div>
+          <div style={{ marginLeft: '48px' }}>
+            {Math.round(item.count / journeysSum * 100)}%
           </div>
         </div>
-        <div>
-          {item.count}
-        </div>
-        <div style={{ marginLeft: '48px' }}>
-          {Math.round(item.count / journeysSum * 100)}%
-        </div>
-      </div>
-    );
+      );
 
     return <div className={dashboardStyle.locals.wrap}>
       <div className={dashboardStyle.locals.upperPanel}>
@@ -567,16 +571,16 @@ export default class Analyze extends Component {
                   fatherChannelsWithBudgets
                     .sort((a, b) => b.value - a.value)
                     .map((element, i) => (
-                    <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
-                      <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
-                      <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
-                        {element.name}
+                      <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
+                        <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
+                        <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
+                          {element.name}
+                        </div>
+                        <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
+                          ({Math.round(element.value/fatherChannelsSum*100)}%)
+                        </div>
                       </div>
-                      <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
-                        ({Math.round(element.value/fatherChannelsSum*100)}%)
-                      </div>
-                    </div>
-                  ))
+                    ))
                 }
               </div>
               <div style={{ marginLeft: '-127px', marginTop: '-30px' }}>
