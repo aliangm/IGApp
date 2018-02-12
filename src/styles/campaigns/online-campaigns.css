@@ -1,0 +1,69 @@
+@import "../global/mixins.css";
+
+.wrap {
+    padding: 15px;
+    border: 1px #e3e6f4;
+    border-radius: 2px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+}
+
+.table :global(td):first-child {
+    padding-left: 15px;
+}
+
+.head-row {
+    height: 70px;
+    border-radius: 2px;
+    background-color: #65b7f3;
+    border: solid 1px #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.table-row {
+    height: 70px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    border-top: 10px solid #F5F6FB;
+    font-size: 16px;
+    color: #354052;
+}
+
+.icon {
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-width: 30px;
+    min-height: 30px;
+    margin-left: 15px;
+}
+
+.channel-icon {
+    composes: icon;
+    align-self: center;
+    background-color: white;
+}
+
+@mixin icon-nodpi status:On Hold, ../../assets/on-hold;
+@mixin icon-nodpi status:In Progress, ../../assets/in-progress;
+
+.status-icon {
+    composes: icon;
+}
+
+.metric-edit {
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    align-self: center;
+    margin-left: 16px;
+    cursor: pointer;
+}
