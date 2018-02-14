@@ -421,7 +421,7 @@ export default class Analyze extends Component {
     let journeysSum = 0;
     users.forEach(user => {
       const journey = user.journey
-        .filter(item => item.channel && item.channel !== 'direct' && item.funnelStage === this.state.conversionIndicator)
+        .filter(item => item.channel && item.channel !== 'direct' && item.funnelStage.includes(this.state.conversionIndicator))
         .map(item => item.channel);
       if (journey && journey.length > 0) {
         journeysSum++;
