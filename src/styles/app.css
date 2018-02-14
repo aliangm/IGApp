@@ -1,3 +1,10 @@
+.wrap {
+}
+
+.wrap[data-loading] {
+    filter: blur(8px);
+}
+
 .loading {
     position: fixed;
     top: 35%;
