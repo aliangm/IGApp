@@ -124,7 +124,7 @@ export default class Analyze extends Component {
     });
 
     const relevantData = sortedPreviousData.slice(this.state.months);
-    const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? item.approvedBudgets[0] : {});
+    const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? merge(item.approvedBudgets[0], item.actualChannelBudgets && item.actualChannelBudgets.knownChannels ? item.actualChannelBudgets.knownChannels : {}) : {});
     const totalCost = budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0);
     let sumedBudgets = {};
     budgets.forEach(month => {
