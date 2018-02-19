@@ -104,6 +104,12 @@ export default class Brief extends Component {
     this.props.updateState({campaign: update});
   }
 
+  handleChangeObjectivesSelect(parameter, index, event) {
+    let update = Object.assign({}, this.props.campaign);
+    update.objectives[index][parameter] = event.value;
+    this.props.updateState({campaign: update});
+  }
+
   handleChangeTracking(parameter, event) {
     let update = Object.assign({}, this.props.campaign);
     update.tracking[parameter] = event.target.value;
@@ -242,6 +248,26 @@ export default class Brief extends Component {
             {value: 'Referral', label: 'Referral'},
           ]
         }
+      },
+      objectives: {
+        select: {
+          name: 'objective',
+          options: [
+            {value: 'impressions', label: 'Impressions'},
+            {value: 'clicks', label: 'Clicks'},
+            {value: 'ctr', label: 'CTR'},
+            {value: 'cpc', label: 'CPC'},
+            {value: 'conversions', label: 'Conversions'},
+            {value: 'revenue', label: 'Revenue'},
+            {value: 'webVisits', label: 'Web Visits'},
+            {value: 'MCL', label: 'Leads'},
+            {value: 'MQL', label: 'MQLs'},
+            {value: 'SQL', label: 'SQLs'},
+            {value: 'opps', label: 'Opps'},
+            {value: 'users', label: 'Paying Accounts'},
+            {value: 'MRR', label: 'MRR'},
+          ]
+        }
       }
     };
     // Handle manual channels
@@ -281,7 +307,7 @@ export default class Brief extends Component {
           width: '166px'
         }}>KPI</Label>
         { this.props.campaign.objectives.map((item,index) =>
-          <Textfield key={index} value={ item && item.kpi } onChange={ this.handleChangeObjectives.bind(this, 'kpi', index)} style={{ width: '166px', marginTop: '8px' }} />
+          <Select key={index} { ... selects.objectives } style={{ width: '166px', marginTop: '8px' }} selected={ item && item.kpi } onChange= { this.handleChangeObjectivesSelect.bind(this, 'kpi', index) }/>
         )}
       </div>
       <div className={ this.classes.colCenter }>

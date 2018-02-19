@@ -5,6 +5,7 @@ import Page from 'components/Page';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
+import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import { Search, UnorderedSearchIndex } from 'js-search';
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 import ChooseExistingTemplate from 'components/pages/campaigns/ChooseExistingTemplate';
@@ -22,6 +23,7 @@ import { timeFrameToDate } from 'components/utils/objective';
 const tabs = {
   'By Channel': ByChannelTab,
   'By Status': ByStatusTab,
+  'Online Performence': OnlineTab,
   'Ideas': IdeasTab
 };
 

@@ -58,7 +58,7 @@ export default class PlanFromExcel extends Component {
         });
         if (isValid) {
           this.setState({successUpload: true});
-          return this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate);
+          return this.props.updateState({approvedBudgets: approvedBudgets});
         }
         else {
           this.setState({successUpload: false})

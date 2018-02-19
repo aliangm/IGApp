@@ -11,7 +11,6 @@ import ProjectionsTab from 'components/pages/plan/ProjectionsTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
 import PlannedVsActual from 'components/pages/plan/PlannedVsActual';
 import ReplanButton from 'components/pages/plan/ReplanButton';
-import serverCommunication from 'data/serverCommunication';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
@@ -22,7 +21,6 @@ import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import { output } from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
-import PlanLoading from 'components/pages/plan/PlanLoading';
 import { FeatureToggle } from 'react-feature-toggles';
 
 function formatDate(dateStr) {
@@ -57,16 +55,12 @@ export default class Plan extends Component {
 
   constructor(props) {
     super(props);
-    this.plan = this.plan.bind(this);
-    this.approveAllBudgets = this.approveAllBudgets.bind(this);
     this.popup = this.popup.bind(this);
     this.state = {
       selectedTab: 1,
       numberOfPlanUpdates: 0,
-      whatIf: this.plan.bind(this),
+      whatIf: this.props.plan,
       editMode: false,
-      approveChannel: this.approveChannel.bind(this),
-      declineChannel: this.declineChannel.bind(this),
       dropmenuVisible: false,
       budgetField: props.budget || '',
       budgetArrayField: props.budgetArray || [],
@@ -74,8 +68,7 @@ export default class Plan extends Component {
       isCheckAnnual: !!props.budget,
       setRef: this.setRef.bind(this),
       forecastingGraphRef: this.forecastingGraphRef.bind(this),
-      whatIfSelected: false,
-      plan: this.plan.bind(this)
+      whatIfSelected: false
     };
   }
 
@@ -83,12 +76,15 @@ export default class Plan extends Component {
     this.getRelevantEvents(this.props);
     let callback = (data) => {
       this.props.setDataAsState(data);
-      this.approveAllBudgets(true);
+      // if user didn't upload an excel
+      if (!this.props.approvedBudgets || this.props.approvedBudgets.length === 0) {
+        this.props.approveAllBudgets(true);
+      }
     };
     if (isPopupMode()) {
       disablePopupMode();
       if (this.props.userAccount.permissions.plannerAI) {
-        this.plan(true, null, callback, this.props.region, false);
+        this.props.plan(true, null, callback, this.props.region, false);
       }
       else {
         history.push('/dashboard');
@@ -104,107 +100,8 @@ export default class Plan extends Component {
     this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
   }
 
-  approveAllBudgets(withProjections) {
-    const json = {approvedBudgets: this.props.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)};
-    if (withProjections) {
-      json.approvedBudgetsProjection = this.props.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
-    }
-    return this.props.updateUserMonthPlan(json, this.props.region, this.props.planDate);
-  }
-
-  declineAllBudgets() {
-    const projectedPlan = this.props.projectedPlan;
-    projectedPlan.forEach((month, index) => {
-      month.plannedChannelBudgets = this.props.approvedBudgets[index];
-    });
-    this.setState({dropmenuVisible: false});
-    return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
-  }
-
-  approveChannel(month, channel, budget){
-    let approvedBudgets = this.props.approvedBudgets;
-    let approvedMonth = this.props.approvedBudgets[month] || {};
-    approvedMonth[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
-    approvedBudgets[month] = approvedMonth;
-    return this.props.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.props.region, this.props.planDate)
-      .then(() => {
-        this.forecast();
-      })
-  }
-
-  declineChannel(month, channel, budget){
-    let projectedPlan = this.props.projectedPlan;
-    let projectedMonth = this.props.projectedPlan[month];
-    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
-    projectedPlan[month] = projectedMonth;
-    return this.props.updateUserMonthPlan({projectedPlan: projectedPlan}, this.props.region, this.props.planDate);
-  }
-
   popup() {
     this.setState({popup: true});
-  }
-
-  plan(isCommitted, preferences, callback, region, silent){
-    let body = preferences ? JSON.stringify(preferences) : null;
-    let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
-    if (!silent) {
-      this.setState({
-        isPlannerLoading: true,
-        popup: false,
-        serverDown: false
-      });
-    }
-    serverCommunication.serverRequest(func, 'plan', body, region)
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                if (data.error) {
-                  if (!silent) {
-                    this.setState({isError: true});
-                  }
-                }
-                else {
-                  if (!silent) {
-                    this.setState({
-                      isError: false
-                    });
-                  }
-                  if (callback) {
-                    callback(data);
-                  }
-                }
-              }
-              else {
-              }
-            })
-        }
-        else {
-          if (response.status == 401){
-            if (!silent) {
-              history.push('/');
-            }
-          }
-          if (response.status == 400){
-            if (!silent) {
-              this.setState({isError: true, isPlannerLoading: false});
-            }
-          }
-          else {
-            if (!silent) {
-              this.setState({serverDown: true, isPlannerLoading: false});
-            }
-          }
-        }
-      })
-      .catch((err) => {
-        if (!silent) {
-          this.setState({
-            serverDown: true, isPlannerLoading: false
-          });
-        }
-      });
   }
 
   toggleCheck() {
@@ -287,7 +184,7 @@ export default class Plan extends Component {
     }
     let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
     if (filterNanArray.length == 12 && preferences.maxChannels) {
-      this.plan(isCommitted, preferences, callback, this.props.region, false);
+      this.props.plan(isCommitted, preferences, callback, this.props.region, false);
     }
     /**
      this.setState({
@@ -377,22 +274,6 @@ export default class Plan extends Component {
       });
   }
 
-  forecast() {
-    const callback = (data) => {
-      // PATCH
-      // Update user month plan using another request
-      const approvedBudgetsProjection = this.props.approvedBudgetsProjection;
-      data.projectedPlan.forEach((month, index) => {
-        if (!approvedBudgetsProjection[index]) {
-          approvedBudgetsProjection[index] = {};
-        }
-        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
-      });
-      this.props.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.props.region, this.props.planDate);
-    };
-    this.plan(false, {useApprovedBudgets: true}, callback, this.props.region, true);
-  }
-
   setRef = (channel, ref) => {
     this[channel] = ref;
   };
@@ -451,31 +332,35 @@ export default class Plan extends Component {
           </div>
           <div className={this.classes.headPlan}>
             <FeatureToggle featureName="plannerAI">
-              <div style={{ position: 'relative' }}>
+              <div style={{ display: 'flex' }}>
                 <div className={this.classes.error}>
-                  <label hidden={!this.state.isError}>You've reached the plan updates limit.<br/> To upgrade, click <a
+                  <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade, click <a
                     href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
                 </div>
-                <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}
-                              planNeedsUpdate={this.props.planNeedsUpdate}/>
-                <Popup style={{
-                  width: '265px',
-                  top: '130px',
-                  left: '-137px',
-                  transform: 'translate(0, -50%)'
-                }} hidden={!this.state.popup} onClose={() => {
-                  this.setState({
-                    popup: false
-                  });
-                }}>
-                  <PlanNextMonthPopup hidden={!this.state.popup} onNext={this.plan.bind(this, true, false, (data) => {
-                    this.props.setDataAsState(data)
-                  }, this.props.region, false)} onBack={() => {
+                <div style={{ position: 'relative' }}>
+                  <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}
+                                planNeedsUpdate={this.props.planNeedsUpdate}/>
+                  <Popup style={{
+                    width: '265px',
+                    top: '130px',
+                    left: '-137px',
+                    transform: 'translate(0, -50%)'
+                  }} hidden={!this.state.popup} onClose={() => {
                     this.setState({
                       popup: false
-                    })
-                  }}/>
-                </Popup>
+                    });
+                  }}>
+                    <PlanNextMonthPopup hidden={!this.state.popup} onNext={() => {
+                      this.setState({popup: false})
+                      this.props.plan(true, false, (data) => {
+                        this.props.setDataAsState(data);
+                      }, this.props.region, false)}} onBack={() => {
+                      this.setState({
+                        popup: false
+                      })
+                    }}/>
+                  </Popup>
+                </div>
               </div>
             </FeatureToggle>
             { this.state.selectedTab !== 1 ? null :
@@ -509,15 +394,15 @@ export default class Plan extends Component {
                     >
                       <div>
                         <div className={ this.classes.dropmenuItem } onClick={ () => {
-                          this.approveAllBudgets()
-                            .then( () => {
-                              this.forecast();
-                            });
+                          this.props.approveAllBudgets();
                           this.setState({dropmenuVisible: false});
                         }}>
                           Approve all
                         </div>
-                        <div className={ this.classes.dropmenuItem } onClick={ this.declineAllBudgets.bind(this) }>
+                        <div className={ this.classes.dropmenuItem } onClick={ () => {
+                          this.props.declineAllBudgets();
+                          this.setState({dropmenuVisible: false});
+                        }}>
                           Decline all
                         </div>
                       </div>
@@ -622,7 +507,7 @@ export default class Plan extends Component {
                   if (this.state.editMode) {
                     this.editUpdate()
                       .then( () => {
-                        this.forecast();
+                        this.props.forecast();
                         if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
                           this.props.updateUserAccount({'steps.plan': true});
                         }
@@ -664,11 +549,10 @@ export default class Plan extends Component {
               : null }
           </div>
         </div>
-        <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
         { this.props.userAccount.pages && this.props.userAccount.pages.plan ?
-          <div className={this.classes.wrap} data-loading={this.state.isPlannerLoading ? true : null}>
+          <div className={this.classes.wrap}>
             <div className={this.classes.serverDown}>
-              <label hidden={!this.state.serverDown}>Something is wrong... Let us check what is it and fix it for you
+              <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
                 :)</label>
             </div>
             {selectedTab ? React.createElement(selectedTab, merge({}, this.props, this.state)) : null}

@@ -145,6 +145,7 @@
 @mixin icon-nodpi sidebar:analyze, ../assets/sidebar-icons/stock-data-analysis;
 @mixin icon-nodpi sidebar:attribution, ../assets/sidebar-icons/filter;
 @mixin icon-nodpi sidebar:users, ../assets/sidebar-icons/users;
+@mixin icon-nodpi sidebar:insights, ../assets/sidebar-icons/insights;
 
 .backface {
   position: fixed;

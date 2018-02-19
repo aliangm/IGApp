@@ -16,6 +16,7 @@ import Loading from 'components/pages/plan/Loading';
 import Popup from 'components/Popup';
 import style from 'styles/app.css';
 import { FeatureToggleProvider } from 'react-feature-toggles';
+import PlanLoading from 'components/pages/plan/PlanLoading';
 
 class AppComponent extends Component {
 
@@ -36,7 +37,13 @@ class AppComponent extends Component {
       setDataAsState: this.setDataAsState.bind(this),
       unsaved: false,
       auth: props.route.auth,
-      addNotification: this.addNotification.bind(this)
+      addNotification: this.addNotification.bind(this),
+      plan: this.plan.bind(this),
+      forecast: this.forecast.bind(this),
+      approveAllBudgets: this.approveAllBudgets.bind(this),
+      approveChannel: this.approveChannel.bind(this),
+      declineAllBudgets: this.declineAllBudgets.bind(this),
+      declineChannel: this.declineChannel.bind(this)
     };
   }
 
@@ -462,7 +469,8 @@ class AppComponent extends Component {
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
-      CEVs: data.CEVs || {}
+      CEVs: data.CEVs || {},
+      CIM: data.CIM || {}
     });
   }
 
@@ -490,6 +498,123 @@ class AppComponent extends Component {
     }
   }
 
+  approveAllBudgets(withProjections) {
+    const json = {approvedBudgets: this.state.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)};
+    if (withProjections) {
+      json.approvedBudgetsProjection = this.state.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
+    }
+    return this.state.updateUserMonthPlan(json, this.state.region, this.state.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineAllBudgets() {
+    const projectedPlan = this.state.projectedPlan;
+    projectedPlan.forEach((month, index) => {
+      month.plannedChannelBudgets = this.state.approvedBudgets[index];
+    });
+    // this.setState({dropmenuVisible: false});
+    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
+  }
+
+  approveChannel(month, channel, budget){
+    let approvedBudgets = this.state.approvedBudgets;
+    let approvedMonth = this.state.approvedBudgets[month] || {};
+    approvedMonth[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
+    approvedBudgets[month] = approvedMonth;
+    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineChannel(month, channel, budget){
+    let projectedPlan = this.state.projectedPlan;
+    let projectedMonth = this.state.projectedPlan[month];
+    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
+    projectedPlan[month] = projectedMonth;
+    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
+  }
+
+  plan(isCommitted, preferences, callback, region, silent){
+    let body = preferences ? JSON.stringify(preferences) : null;
+    let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
+    if (!silent) {
+      this.setState({
+        isPlannerLoading: true,
+        serverDown: false
+      });
+    }
+    serverCommunication.serverRequest(func, 'plan', body, region)
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              if (data) {
+                if (data.error) {
+                  if (!silent) {
+                    this.setState({isPlannerError: true});
+                  }
+                }
+                else {
+                  if (!silent) {
+                    this.setState({
+                      isPlannerError: false
+                    });
+                  }
+                  if (callback) {
+                    callback(data);
+                  }
+                }
+              }
+              else {
+              }
+            })
+        }
+        else {
+          if (response.status == 401){
+            if (!silent) {
+              history.push('/');
+            }
+          }
+          if (response.status == 400){
+            if (!silent) {
+              this.setState({isPlannerError: true, isPlannerLoading: false});
+            }
+          }
+          else {
+            if (!silent) {
+              this.setState({serverDown: true, isPlannerLoading: false});
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        if (!silent) {
+          this.setState({
+            serverDown: true, isPlannerLoading: false
+          });
+        }
+      });
+  }
+
+  forecast() {
+    const callback = (data) => {
+      // PATCH
+      // Update user month plan using another request
+      const approvedBudgetsProjection = this.state.approvedBudgetsProjection;
+      data.projectedPlan.forEach((month, index) => {
+        if (!approvedBudgetsProjection[index]) {
+          approvedBudgetsProjection[index] = {};
+        }
+        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
+      });
+      this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.state.region, this.state.planDate);
+    };
+    this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
+  }
+
   render() {
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.state));
@@ -498,8 +623,11 @@ class AppComponent extends Component {
         <Header auth={ this.props.route.auth } {... this.state}/>
         <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
+        <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
         { this.state.loaded ?
-          childrenWithProps
+          <div className={this.classes.wrap} data-loading={this.state.isPlannerLoading ? true : null}>
+            {childrenWithProps}
+          </div>
           : <div className={ this.classes.loading }>
             <Popup className={ this.classes.popup }>
               <div>
