@@ -7,6 +7,7 @@
 @mixin icon-nodpi step:idea, ../../assets/step-icons/light-bulb;
 @mixin icon-nodpi step:plannedVsActual, ../../assets/step-icons/planned-vs-actual;
 @mixin icon-nodpi step:dashboard, ../../assets/step-icons/dashboard;
+@mixin icon-nodpi step:insights, ../../assets/step-icons/insights;
 
 .box {
     width: 320px;

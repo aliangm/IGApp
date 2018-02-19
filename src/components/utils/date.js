@@ -7,3 +7,18 @@ export function formatDate(dateStr) {
   }
   else return null;
 }
+
+export function getDates(dateStr) {
+  if (dateStr) {
+    const dates = [];
+    const planDate = dateStr.split("/");
+    const date = new Date(planDate[1], planDate[0] - 1);
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    for (let i = 0; i < 12; i++) {
+      date.setMonth(date.getMonth() + i);
+      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
+    }
+    return dates;
+  }
+  return [];
+}

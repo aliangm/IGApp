@@ -469,7 +469,8 @@ class AppComponent extends Component {
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
-      CEVs: data.CEVs || {}
+      CEVs: data.CEVs || {},
+      CIM: data.CIM || {}
     });
   }
 
