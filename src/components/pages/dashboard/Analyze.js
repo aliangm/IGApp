@@ -191,12 +191,12 @@ export default class Analyze extends Component {
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{ cursor: 'pointer' }}>
         Web Visits
       </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer', display: 'flex' }}>
         <Label
           style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
           question={['']}
           description={['number of times the channel/campaign led to a direct online conversion event on your website or landing pages.']}>
-          Conversions
+          Conv.
         </Label>
       </div>,
       <div style={{display: 'inline-flex'}}>
@@ -222,7 +222,7 @@ export default class Analyze extends Component {
           { this.state.editMetric ? 'Done' : 'Edit' }
         </div>
       </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }}>
         <Label
           style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center' }}
           question={['']}
@@ -343,7 +343,7 @@ export default class Analyze extends Component {
                   conversion,
                   Math.round(funnelIndicator),
                   '$' + formatBudget(Math.round(CPX)),
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ display: 'flex' }}>
                     {channels.map(channel =>
                       <div key={channel} title={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
                     )}
