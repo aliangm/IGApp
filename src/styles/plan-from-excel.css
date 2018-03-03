@@ -4,6 +4,7 @@
     height: 200px;
     border-radius: 10px;
     border: 2px dashed rgb(102, 102, 102);
+    cursor: pointer;
 }
 
 .drop-zone-active {

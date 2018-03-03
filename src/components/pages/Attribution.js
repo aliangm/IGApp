@@ -6,8 +6,11 @@ import style from 'styles/plan/plan.css';
 import Setup from 'components/pages/attribution/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
+import Offline from 'components/pages/attribution/Offline';
+import UploadOfflinePopup from 'components/pages/attribution/UploadOfflinePopup';
 import { FeatureToggle } from 'react-feature-toggles';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
+import Button from 'components/controls/Button';
 
 export default class Attribution extends Component {
   style = style;
@@ -29,7 +32,8 @@ export default class Attribution extends Component {
     const tabs = {
       "Setup": Setup,
       "Tracking Plan": TrackingPlan,
-      "Campaign URLs": TrackingUrls
+      "Campaign URLs": TrackingUrls,
+      "Offline": Offline
     };
 
     const tabNames = Object.keys(tabs);
@@ -57,10 +61,24 @@ export default class Attribution extends Component {
                 })
               }
             </div>
+            <div className={this.classes.headPlan}>
+              { this.state.selectedTab !== 3 ? null :
+                <Button type="primary2" style={{
+                  width: '102px'
+                }} selected={ this.state.showOfflinePopup ? true : null } onClick={() => {
+                  this.setState({showOfflinePopup: true})
+                }}>
+                  Upload
+                </Button>
+              }
+            </div>
           </div>
           { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
             <div style={{paddingTop: '90px'}}>
               {selectedTab ? React.createElement(selectedTab, merge(this.props)) : null}
+              <div hidden={!this.state.showOfflinePopup}>
+                <UploadOfflinePopup close={ () => { this.setState({showOfflinePopup: false}) } } setDataAsState={this.props.setDataAsState}/>
+              </div>
             </div>
             :
             <FirstPageVisit
