@@ -32,9 +32,9 @@ export default class Offline extends Component {
       className: this.classes.headRow
     });
 
-    const rows = offline.map((item, index) => {
+    const rows = offline && offline.map((item, index) =>
 
-      return this.getTableRow(null, [
+      this.getTableRow(null, [
         <div style={{ display: 'flex' }}>
           <div className={this.classes.icon} data-icon={"plan:" + item.channel}/>
           {getNickname(item.channel)}
@@ -50,7 +50,7 @@ export default class Offline extends Component {
         className: this.classes.tableRow,
         style: {cursor: 'initial'}
       })
-    });
+    );
 
     return <div>
       <div className={this.classes.inner}>
