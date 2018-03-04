@@ -182,10 +182,10 @@
 
 .table :global(td):first-child {
     padding-left: 20px;
+    width: 200px;
 }
 
 .row {
-    text-align: center;
     display: table;
     width: 100%;
     table-layout: fixed;

@@ -75,7 +75,7 @@ export default class Calendar extends Component {
     return <div className={ this.classes.box }>
       <DatePicker
         ref="picker"
-        disabled={ false }
+        disabled={ this.props.disabled }
         calendar={ calendar }
         value={ this.state.value }
         formatter={ dateFormatter }
@@ -90,6 +90,7 @@ export default class Calendar extends Component {
             readOnly
             value={ this.props.value }
             placeHolder={ this.props.placeholder }
+            disabled={ this.props.disabled }
           />
         }}
       </DatePicker>
