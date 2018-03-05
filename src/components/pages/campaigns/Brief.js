@@ -452,10 +452,6 @@ export default class Brief extends Component {
           <textarea value={ this.props.campaign.description } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'description') }/>
         </div>
         <div className={ this.classes.row }>
-          <Label>Reference Projects</Label>
-          <textarea value={ this.props.campaign.referenceProjects } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'referenceProjects') }/>
-        </div>
-        <div className={ this.classes.row }>
           <Label>Keywords</Label>
           <textarea value={ this.props.campaign.keywords } className={ campaignPopupStyle.locals.textArea } onChange={ this.handleChangeText.bind(this, 'keywords') }/>
         </div>
