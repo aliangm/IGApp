@@ -224,10 +224,10 @@ export default class Analyze extends Component {
       </div>,
       <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }}>
         <Label
-          style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center' }}
+          style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
           question={['']}
           description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator)]}>
-          {"CP" + getIndicatorNickname(this.state.attributionTableIndicator).charAt(0)}
+          Efficiency
         </Label>
       </div>
     ];
