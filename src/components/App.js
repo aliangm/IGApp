@@ -465,6 +465,7 @@ class AppComponent extends Component {
       isStripeAuto: !!data.stripeapi,
       adwordsapi: data.adwordsapi,
       facebookadsapi: data.facebookadsapi,
+      linkedinadsapi: data.linkedinadsapi,
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,

@@ -72,7 +72,7 @@ export default class OnlineCampaigns extends Component {
     });
 
     const rows = campaigns
-      .filter(campaign => campaign.adwordsId || campaign.facebookadsId)
+      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId)
       .map((campaign, index) => {
         const attributionData = attribution && attribution.campaigns && attribution.campaigns.find(item => (Object.keys(item)[0] === campaign.name || (item.tracking && item.tracking.campaignUTM === Object.keys(item)[0])));
         const user = campaign.owner && this.props.teamMembers.find(user => user.userId === campaign.owner);

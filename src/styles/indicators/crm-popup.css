@@ -58,6 +58,12 @@
     background-size: contain;
 }
 
+.linkedinads {
+    composes: box;
+    background: url(../../assets/linkedin-ads.png) center center no-repeat;
+    background-size: contain;
+}
+
 .title {
     font-weight: bold;
     font-size: 18px;
