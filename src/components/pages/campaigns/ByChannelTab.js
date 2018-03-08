@@ -31,7 +31,7 @@ export default class ByChannelTab extends Component {
   render() {
     const { processedChannels: channels, showCampaign, filteredCampaigns, addNewCampaign } = this.props;
 
-    const page = channels.names.map((channel) => (
+    const page = channels.names.sort().map((channel) => (
       <ChannelCampaigns
         channelTitle = { channels.titles[channel] }
         channelBudget = { channels.budgets[channel] }
