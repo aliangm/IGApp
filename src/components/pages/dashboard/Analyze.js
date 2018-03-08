@@ -16,7 +16,6 @@ import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
 import history from 'history';
 import { formatDate } from 'components/utils/date';
-import { PieChart, Pie, Cell } from "recharts";
 import appStyle from 'styles/app.css';
 import Loading from 'components/pages/plan/Loading';
 import Popup from 'components/Popup';
@@ -584,63 +583,25 @@ export default class Analyze extends Component {
                 </div>
               </div>
               <div style={{position: 'relative', display: 'flex', padding: '10px 0', height: '275px'}}>
-                <div style={{display: 'flex'}}>
-                  <div className={dashboardStyle.locals.index}>
-                    {
-                      fatherChannelsWithBudgets
-                        .sort((a, b) => b.value - a.value)
-                        .map((element, i) => (
-                          <div key={i} style={{display: 'flex', marginTop: '5px'}}>
-                            <div style={{
-                              border: '2px solid ' + COLORS[i % COLORS.length],
-                              borderRadius: '50%',
-                              height: '8px',
-                              width: '8px',
-                              display: 'inline-flex',
-                              marginTop: '2px',
-                              backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'
-                            }}/>
-                            <div style={{
-                              fontWeight: this.state.activeIndex === i ? "bold" : 'initial',
-                              display: 'inline',
-                              paddingLeft: '4px',
-                              fontSize: '14px',
-                              width: '135px'
-                            }}>
-                              {element.name}
-                            </div>
-                            <div style={{width: '50px', fontSize: '14px', color: '#7f8fa4'}}>
-                              ({Math.round(element.value / fatherChannelsSum * 100)}%)
-                            </div>
+                <div>
+                  {
+                    fatherChannelsWithBudgets
+                      .sort((a, b) => b.value - a.value)
+                      .map((element, i) => (
+                        <div key={i} className={dashboardStyle.locals.fatherChannelBox}>
+                          <div className={dashboardStyle.locals.fatherChannelBoxFill} style={{ width: Math.round(element.value / fatherChannelsSum * 400) + 'px' }}/>
+                          <div className={dashboardStyle.locals.fatherChannelTitle}>
+                            {element.name}
                           </div>
-                        ))
-                    }
-                  </div>
-                  <div style={{marginLeft: '-127px', marginTop: '-30px'}}>
-                    <PieChart width={429} height={350} onMouseEnter={(d, i) => {
-                      this.setState({activeIndex: i})
-                    }} onMouseLeave={() => {
-                      this.setState({activeIndex: void 0})
-                    }}>
-                      <Pie
-                        data={fatherChannelsWithBudgets}
-                        cx={250}
-                        cy={150}
-                        labelLine={true}
-                        innerRadius={75}
-                        outerRadius={100}
-                        isAnimationActive={false}
-                      >
-                        {
-                          fatherChannelsWithBudgets.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}
-                                                                                key={index}/>)
-                        }
-                      </Pie>
-                    </PieChart>
-                  </div>
+                          <div className={dashboardStyle.locals.fatherChannelValue}>
+                            {Math.round(element.value)} ({Math.round(element.value / fatherChannelsSum * 100)}%)
+                          </div>
+                        </div>
+                      ))
+                  }
                 </div>
                 <div className={dashboardStyle.locals.line}/>
-                <div style={{width: '625px', marginLeft: '-35px'}}>
+                <div style={{width: '625px', marginLeft: '30px'}}>
                   <div style={{display: 'flex'}}>
                     <div style={{marginLeft: '75%'}}>
                       Conv

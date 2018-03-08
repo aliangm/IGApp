@@ -359,3 +359,38 @@
     -webkit-box-orient: vertical;
     margin-right: 5px;
 }
+
+.father-channel-box {
+    border: 1px solid #CECECE;
+    height: 50px;
+    width: 400px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 0 20px;
+}
+
+.father-channel-box:first-child {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.father-channel-box:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.father-channel-box-fill {
+    background-color: rgba(50, 159, 241, 0.4);
+    height: 100%;
+    position: absolute;
+}
+
+.father-channel-title {
+    margin-left: 20px;
+}
+
+.father-channel-value {
+    margin-left: auto;
+    margin-right: 20px;
+}
