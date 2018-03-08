@@ -75,7 +75,7 @@ export default class Sidebar extends Component {
           <FeatureToggle featureName="attribution">
             <div>
               <MenuItem icon="sidebar:attribution" link="/attribution" text="Attribution" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
-              <MenuItem icon="sidebar:users" link="/audiences" text="Audiences" onClick={this.closeSubMenu} notFirstTime={true}/>
+              <MenuItem icon="sidebar:users" link="/audiences" text="Audiences" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.users}/>
             </div>
           </FeatureToggle>
           <MenuItem icon="sidebar:insights" link="/insights" text="Insights" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.insights}/>

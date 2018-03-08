@@ -8,6 +8,7 @@ import { getNickname } from 'components/utils/indicators';
 import icons from 'styles/icons/plan.css';
 import uniq from 'lodash/uniq';
 import UsersPopup from 'components/pages/users/UsersPopup';
+import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 export default class Users extends Component {
 
@@ -103,18 +104,30 @@ export default class Users extends Component {
         <div className={ planStyle.locals.head }>
           <div className={ planStyle.locals.headTitle }>Audiences</div>
         </div>
-        <div className={ planStyle.locals.wrap }>
-          <div className={this.classes.inner}>
-            <table className={ this.classes.table }>
-              <thead>
-              { headRow }
-              </thead>
-              <tbody>
-              { rows }
-              </tbody>
-            </table>
+        { this.props.userAccount.pages && this.props.userAccount.pages.users ?
+          <div className={planStyle.locals.wrap}>
+            <div className={this.classes.inner}>
+              <table className={this.classes.table}>
+                <thead>
+                {headRow}
+                </thead>
+                <tbody>
+                {rows}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+          :
+          <FirstPageVisit
+            title="Analyze your audiences’ full journeys, one by one"
+            content="Weather if it’s for ABM, or just to understand individuals’ journeys to see behind the numbers, sometimes you want to analyze users’ journeys, one by one."
+            action="Let’s dig in >"
+            icon="step:users"
+            onClick={() => {
+              this.props.updateUserAccount({'pages.users': true})
+            }}
+          />
+        }
       </Page>
       <div hidden={!this.state.showPopup}>
         <UsersPopup user={this.state.selectedUser} close={ () => { this.setState({showPopup: false, selectedUser: {}}) } }/>
