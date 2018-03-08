@@ -58,7 +58,7 @@ export default class Users extends Component {
       'User',
       'Channels',
       'Stage',
-      '# of events',
+      '# of sessions',
       'Country',
       'First touch',
       'Last touch',
@@ -68,8 +68,8 @@ export default class Users extends Component {
     });
 
     const rows = users.map((user, index) => {
-      const firstTouchPoint = new Date(user.journey[0].timestamp);
-      const lastTouchPoint = new Date(user.journey[user.journey.length-1].timestamp);
+      const firstTouchPoint = new Date(user.journey[0].startTime);
+      const lastTouchPoint = new Date(user.journey[user.journey.length-1].endTime);
       const uniqChannels = uniq(user.journey.map(item => item.channel));
       return this.getTableRow(null, [
         <div className={this.classes.container}>
@@ -101,7 +101,7 @@ export default class Users extends Component {
     return <div>
       <Page contentClassName={ planStyle.locals.content } innerClassName={ planStyle.locals.pageInner } width="100%">
         <div className={ planStyle.locals.head }>
-          <div className={ planStyle.locals.headTitle }>Users</div>
+          <div className={ planStyle.locals.headTitle }>Audiences</div>
         </div>
         <div className={ planStyle.locals.wrap }>
           <div className={this.classes.inner}>

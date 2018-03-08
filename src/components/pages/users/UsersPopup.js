@@ -5,6 +5,7 @@ import style from 'styles/users/users-popup.css';
 import ReactCountryFlag from 'react-country-flag';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import Popup from 'components/Popup';
 
 export default class UsersPopup extends Component {
 
@@ -12,6 +13,9 @@ export default class UsersPopup extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      showOtherPagesPopup: false
+    };
   }
 
   static defaultProps = {
@@ -56,14 +60,13 @@ export default class UsersPopup extends Component {
 
   render() {
     const {user, close} = this.props;
-    const firstTouchPoint = user.journey && user.journey[0] && new Date(user.journey[0].timestamp);
-    const lastTouchPoint = user.journey && user.journey[user.journey.length-1] && new Date(user.journey[user.journey.length-1].timestamp);
+    const firstTouchPoint = user.journey && user.journey[0] && new Date(user.journey[0].startTime);
+    const lastTouchPoint = user.journey && user.journey[user.journey.length-1] && new Date(user.journey[user.journey.length-1].endTime);
     const channels = user.journey && user.journey.map((item, index) => <div key={index} className={this.classes.channelBox}>
       <div className={this.classes.icon} data-icon={"plan:" + item.channel} style={{ width: '40px', height: '40px', margin: '0 5px' }}/>
       <div>{item.channel === 'direct' ? 'Direct' : getChannelNickname(item.channel)}</div>
     </div>);
     const events = [];
-    let currentFunnelStage = user.journey && user.journey[0] && user.journey[0].funnelStage;
     user.journey && user.journey.forEach(item => {
       if (item.channel !== 'direct') {
         events.push(<div className={this.classes.eventLine} key={events.length}>
@@ -71,48 +74,65 @@ export default class UsersPopup extends Component {
           <div className={this.classes.eventText}>
             Visited website through <b>{getChannelNickname(item.channel)}</b>
             <div className={this.classes.eventTime}>
-              {this.stringifyDate(item.timestamp)}
+              {this.stringifyDate(item.startTime)}
             </div>
           </div>
         </div>)
       }
-      if (item.page) {
+      if (item.page && item.page.length > 0) {
+        const otherPages = item.page.slice(1);
         events.push(<div className={this.classes.eventLine} key={events.length}>
           <div className={this.classes.iconCircleSmall} data-icon="event:page"/>
           <div className={this.classes.eventText}>
-            {item.page}
+            {item.page[0] + " "}
+            { otherPages && otherPages.length > 0 ?
+              <span>
+               and other
+                <span className={this.classes.otherPages} onClick={()=>{ this.setState({showOtherPagesPopup: true}) }}>
+                  {" " + otherPages.length} page/s
+                </span>
+                <span hidden={!this.state.showOtherPagesPopup} style={{ position: 'relative' }}>
+                  <Popup className={this.classes.otherPagesPopup} onClose={() => { this.setState({showOtherPagesPopup: false}) }}>
+                    {otherPages.map(item => <div>{item}</div>)}
+                  </Popup>
+                </span>
+              </span>
+              : null }
             <div className={this.classes.eventTime}>
-              {this.stringifyDate(item.timestamp)}
+              {this.stringifyDate(item.startTime)}
             </div>
           </div>
         </div>);
       }
-      if (item.event) {
-        events.push(<div className={this.classes.eventLine} key={events.length}>
-          <div className={this.classes.iconCircleSmall} data-icon="event:conversion"/>
-          <div className={this.classes.eventText}>
-            Conversion Event - <b>{item.event}</b>
-            <div className={this.classes.eventTime}>
-              {this.stringifyDate(item.timestamp)}
-            </div>
-          </div>
-        </div>);
+      if (item.event && item.event.length > 0) {
+        item.event.forEach(event => {
+          if (event) {
+            events.push(<div className={this.classes.eventLine} key={events.length}>
+              <div className={this.classes.iconCircleSmall} data-icon="event:conversion"/>
+              <div className={this.classes.eventText}>
+                Conversion Event - <b>{event}</b>
+                <div className={this.classes.eventTime}>
+                  {this.stringifyDate(item.startTime)}
+                </div>
+              </div>
+            </div>)
+          }
+        });
       }
-      if (item.funnelStage !== currentFunnelStage) {
+      if (item.funnelStage && item.funnelStage.length > 1) {
         events.push(<div className={this.classes.eventLine} key={events.length}>
           <div className={this.classes.iconCircleSmall} data-icon="event:status"/>
           <div className={this.classes.eventText}>
-            Status change - <b>{getIndicatorNickname(currentFunnelStage) + " > " + getIndicatorNickname(item.funnelStage)}</b>
+            Status change - <b>{getIndicatorNickname(item.funnelStage[0]) + " > " + getIndicatorNickname(item.funnelStage[item.funnelStage.length - 1])}</b>
             <div className={this.classes.eventTime}>
-              {this.stringifyDate(item.timestamp)}
+              {this.stringifyDate(item.startTime)}
             </div>
           </div>
         </div>);
-        currentFunnelStage = item.funnelStage;
       }
     });
     return <div>
-      <Page popup={true} width="934px">
+      <Page popup={true} width="934px" contentClassName={ this.classes.content } innerClassName={ this.classes.inner }>
         <div style={{ position: 'relative' }}>
           <div className={ this.classes.topRight }>
             <div className={ this.classes.close } onClick={ close }/>
@@ -126,7 +146,7 @@ export default class UsersPopup extends Component {
           </div>
           <div className={this.classes.headerBigText}>
             Stage Name
-            <div className={this.classes.headerSmallText}>{user.funnelStage}</div>
+            <div className={this.classes.headerSmallText}>{user.funnelStage && getIndicatorNickname(user.funnelStage)}</div>
           </div>
           <div className={this.classes.headerBigText}>
             First Touch
@@ -139,6 +159,10 @@ export default class UsersPopup extends Component {
           <div className={this.classes.headerBigText}>
             Country
             { user.countries && user.countries.map(item => <div key={item.code} className={this.classes.container} style={{ height: '20px', width: '45px', marginTop: '5px' }}><ReactCountryFlag code={item.code} svg/><div className={this.classes.headerSmallText} style={{ marginLeft: '5px' }}>{item.code}</div></div>) }
+          </div>
+          <div className={this.classes.headerBigText}>
+            Device
+            { user.devices && user.devices.map(item => <div key={item} className={this.classes.device} data-icon={"device:" + item}/>) }
           </div>
         </div>
         <div className={this.classes.channels}>

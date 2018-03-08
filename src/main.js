@@ -54,7 +54,7 @@ ReactDOM.render(
       <Route path="/plan" component={ Plan } onEnter={ requireAdminAuth }/>
       <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
       <Route path="/attribution" component={ Attribution } onEnter={ requireAuth }/>
-      <Route path="/users" component={ Users } onEnter={ requireAdminAuth }/>
+      <Route path="/audiences" component={ Users } onEnter={ requireAdminAuth }/>
       <Route path="/insights" component={ Insights } onEnter={ requireAdminAuth }/>
     </Route>
   </Router>,
