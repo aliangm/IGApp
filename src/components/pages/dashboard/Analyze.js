@@ -17,11 +17,14 @@ import { timeFrameToDate } from 'components/utils/objective';
 import history from 'history';
 import { formatDate } from 'components/utils/date';
 import { PieChart, Pie, Cell } from "recharts";
+import appStyle from 'styles/app.css';
+import Loading from 'components/pages/plan/Loading';
+import Popup from 'components/Popup';
 
 export default class Analyze extends Component {
 
   style = style;
-  styles = [dashboardStyle];
+  styles = [dashboardStyle, appStyle];
 
   static defaultProps = {
     previousData: []
@@ -38,7 +41,8 @@ export default class Analyze extends Component {
       months: props.previousData.length - 1,
       showChannels: true,
       soryBy: 'webVisits',
-      isDesc: 1
+      isDesc: 1,
+      loaded: false
     };
   }
 
@@ -97,7 +101,7 @@ export default class Analyze extends Component {
       '#76E5FC',
       '#036D19'
     ];
-    const { previousData, attribution, campaigns } = this.props;
+    const { previousData, attribution, campaigns, CEVs } = this.props;
     const attributionCampaigns = attribution.campaigns || [];
     const indicatorsOptions = getIndicatorsWithNicknames();
 
@@ -146,8 +150,7 @@ export default class Analyze extends Component {
         else grow = Infinity;
       }
     }
-    const CEVsArray = relevantData.map(item => item.CEVs || {});
-    const totalRevenue = CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs.revenue ? Object.keys(CEVs.revenue).reduce((channelsSum, item) => channelsSum + CEVs.revenue[item], 0) : 0) + sum, 0);
+    const totalRevenue = (CEVs && CEVs.revenue ? Object.keys(CEVs.revenue).reduce((channelsSum, item) => channelsSum + CEVs.revenue[item], 0) : 0);
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
       {value: 'MQL', label: getIndicatorNickname('MQL')},
@@ -246,10 +249,10 @@ export default class Analyze extends Component {
         channel: item.value,
         label: item.label,
         budget: sumedBudgets[item.value] || 0,
-        revenueMetric: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableRevenueMetric] ? CEVs[this.state.attributionTableRevenueMetric][item.value] : 0) + sum, 0),
-        webVisits: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item.value] : 0) + sum, 0),
-        conversion: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs["conversion"] ? CEVs["conversion"][item.value] : 0) + sum, 0),
-        funnelIndicator: CEVsArray.reduce((sum, CEVs) => (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0) + sum, 0),
+        revenueMetric:(CEVs && CEVs[this.state.attributionTableRevenueMetric] ? CEVs[this.state.attributionTableRevenueMetric][item.value] : 0),
+        webVisits: (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item.value] : 0),
+        conversion: (CEVs && CEVs["conversion"] ? CEVs["conversion"][item.value] : 0),
+        funnelIndicator: (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0),
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
       json.CPX = json.funnelIndicator ? json.budget / json.funnelIndicator : 0;
@@ -397,7 +400,7 @@ export default class Analyze extends Component {
       }
     });
 
-    const CEV = CEVsArray.reduce((mergedItem, CEVs) => merge(mergedItem, CEVs && CEVs[this.state.conversionIndicator]), {});
+    const CEV = CEVs && CEVs[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
     let fatherChannelsSum = 0;
     Object.keys(CEV).forEach(channel => {
@@ -415,8 +418,7 @@ export default class Analyze extends Component {
       }
     });
 
-    const usersArray = relevantData.map(item => item.attribution && item.attribution.users || {});
-    const users = usersArray.reduce((mergedItem, monthUsers) => merge(mergedItem, monthUsers), []);
+    const users = attribution && attribution.users;
     const journeys = [];
     let journeysSum = 0;
     users.forEach(user => {
@@ -474,7 +476,9 @@ export default class Analyze extends Component {
             options: months
           }}
           onChange={(e) => {
-            this.setState({months: e.value})
+            this.setState({months: e.value, loaded: true});
+            this.props.calculateAttributionData(this.props.previousData.length - e.value - 1)
+              .then(()=> { this.setState({loaded: false}) })
           }}
           style={{ width: '75px', margin: '0 8px' }}
         />
@@ -482,207 +486,249 @@ export default class Analyze extends Component {
           - {formatDate(this.props.planDate)}
         </div>
       </div>
-      <div className={this.classes.cols} style={{width: '825px'}}>
-        <div className={this.classes.colLeft}>
-          <div className={dashboardStyle.locals.item}>
-            <div className={dashboardStyle.locals.text}>
-              Channels
+      {this.state.loaded ?
+        <div className={appStyle.locals.loading}>
+          <Popup className={appStyle.locals.popup}>
+            <div>
+              <Loading/>
             </div>
-            <div className={dashboardStyle.locals.number}>
-              {Object.keys(budgets.reduce((sum, item) => merge(sum, item), {})).length}
+          </Popup>
+        </div>
+        :
+        <div>
+          <div className={this.classes.cols} style={{width: '825px'}}>
+            <div className={this.classes.colLeft}>
+              <div className={dashboardStyle.locals.item}>
+                <div className={dashboardStyle.locals.text}>
+                  Channels
+                </div>
+                <div className={dashboardStyle.locals.number}>
+                  {Object.keys(budgets.reduce((sum, item) => merge(sum, item), {})).length}
+                </div>
+              </div>
+            </div>
+            <div className={this.classes.colCenter}>
+              <div className={dashboardStyle.locals.item}>
+                <div className={dashboardStyle.locals.text}>
+                  Total Cost
+                </div>
+                <div className={dashboardStyle.locals.number}>
+                  ${formatBudgetShortened(totalCost)}
+                </div>
+              </div>
+            </div>
+            <div className={this.classes.colCenter}>
+              <div className={dashboardStyle.locals.item}>
+                <div className={dashboardStyle.locals.text}>
+                  Total Revenue
+                </div>
+                <div className={dashboardStyle.locals.number}>
+                  ${formatBudgetShortened(totalRevenue)}
+                </div>
+              </div>
+            </div>
+            <div className={this.classes.colRight}>
+              <div className={dashboardStyle.locals.item}>
+                <div className={dashboardStyle.locals.text}>
+                  ROI
+                </div>
+                <div className={dashboardStyle.locals.number}>
+                  {Math.round(totalRevenue / totalCost * 100)}%
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className={this.classes.colCenter}>
-          <div className={dashboardStyle.locals.item}>
-            <div className={dashboardStyle.locals.text}>
-              Total Cost
-            </div>
-            <div className={dashboardStyle.locals.number}>
-              ${formatBudgetShortened(totalCost)}
-            </div>
-          </div>
-        </div>
-        <div className={this.classes.colCenter}>
-          <div className={dashboardStyle.locals.item}>
-            <div className={dashboardStyle.locals.text}>
-              Total Revenue
-            </div>
-            <div className={dashboardStyle.locals.number}>
-              ${formatBudgetShortened(totalRevenue)}
-            </div>
-          </div>
-        </div>
-        <div className={this.classes.colRight}>
-          <div className={dashboardStyle.locals.item}>
-            <div className={dashboardStyle.locals.text}>
-              ROI
-            </div>
-            <div className={dashboardStyle.locals.number}>
-              {Math.round(totalRevenue / totalCost * 100)}%
-            </div>
-          </div>
-        </div>
-      </div>
-      <FeatureToggle featureName="attribution">
-        <div className={ dashboardStyle.locals.item } style={{ height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0' }}>
-          <Toggle
-            leftText="channels"
-            rightText="campaigns"
-            leftActive={ this.state.showChannels }
-            leftClick={ ()=>{ this.setState({showChannels: true}) } }
-            rightClick={ ()=>{ this.setState({showChannels: false}) } }
-            type="grey"
-          />
-          <table className={dashboardStyle.locals.table}>
-            <thead>
-            {headRow}
-            </thead>
-            <tbody className={dashboardStyle.locals.tableBody}>
-            {rows}
-            </tbody>
-          </table>
-        </div>
-      </FeatureToggle>
-      <FeatureToggle featureName="attribution">
-        <div className={ dashboardStyle.locals.item } style={{ height: '387px', width: '1110px' }}>
-          <div className={dashboardStyle.locals.text}>
-            Top Conversion Journeys
-          </div>
-          <div>
-            <div className={dashboardStyle.locals.conversionGoal}>
-              Choose a conversion goal
-              <Select
-                selected={this.state.conversionIndicator}
-                select={{
-                  options: metrics
+          <FeatureToggle featureName="attribution">
+            <div className={dashboardStyle.locals.item}
+                 style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
+              <Toggle
+                leftText="channels"
+                rightText="campaigns"
+                leftActive={this.state.showChannels}
+                leftClick={() => {
+                  this.setState({showChannels: true})
                 }}
-                onChange={(e) => {
-                  this.setState({conversionIndicator: e.value})
+                rightClick={() => {
+                  this.setState({showChannels: false})
                 }}
-                style={{ width: '143px', marginLeft: '10px' }}
+                type="grey"
               />
+              <table className={dashboardStyle.locals.table}>
+                <thead>
+                {headRow}
+                </thead>
+                <tbody className={dashboardStyle.locals.tableBody}>
+                {rows}
+                </tbody>
+              </table>
             </div>
-          </div>
-          <div style={{ position: 'relative', display: 'flex', padding: '10px 0', height: '275px' }}>
-            <div style={{ display: 'flex' }}>
-              <div className={ dashboardStyle.locals.index }>
-                {
-                  fatherChannelsWithBudgets
-                    .sort((a, b) => b.value - a.value)
-                    .map((element, i) => (
-                      <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
-                        <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
-                        <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
-                          {element.name}
-                        </div>
-                        <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
-                          ({Math.round(element.value/fatherChannelsSum*100)}%)
-                        </div>
-                      </div>
-                    ))
-                }
+          </FeatureToggle>
+          <FeatureToggle featureName="attribution">
+            <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
+              <div className={dashboardStyle.locals.text}>
+                Top Conversion Journeys
               </div>
-              <div style={{ marginLeft: '-127px', marginTop: '-30px' }}>
-                <PieChart width={429} height={350} onMouseEnter={(d, i) => { this.setState({activeIndex: i})}} onMouseLeave={ () => { this.setState({activeIndex: void 0}) } }>
-                  <Pie
-                    data={fatherChannelsWithBudgets}
-                    cx={250}
-                    cy={150}
-                    labelLine={true}
-                    innerRadius={75}
-                    outerRadius={100}
-                    isAnimationActive={false}
-                  >
-                    {
-                      fatherChannelsWithBudgets .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={index}/>)
-                    }
-                  </Pie>
-                </PieChart>
-              </div>
-            </div>
-            <div className={dashboardStyle.locals.line}/>
-            <div style={{ width: '625px', marginLeft: '-35px' }}>
-              <div style={{ display: 'flex' }}>
-                <div style={{ marginLeft: '75%' }}>
-                  Conv
-                </div>
-                <div style={{ marginLeft: '20px' }}>
-                  % of Total
-                </div>
-              </div>
-              <div style={{ overflowY: 'auto', height: '266px' }}>
-                {journeysUI}
-              </div>
-            </div>
-          </div>
-        </div>
-      </FeatureToggle>
-      <div className={this.classes.cols} style={{width: '1110px'}}>
-        <div className={this.classes.colLeft}>
-          <div className={dashboardStyle.locals.item}
-               style={{display: 'inline-block', height: '412px', width: '540px'}}>
-            <div className={dashboardStyle.locals.text}>
-              Historical Performance
-            </div>
-            <div style={{ display: 'flex', marginTop: '7px' }}>
-              <div className={this.classes.footerLeft}>
-                <div className={dashboardStyle.locals.historyConfig}>
-                  <div className={dashboardStyle.locals.historyConfigText}>
-                    Show
-                  </div>
-                  <Select selected={this.state.historicalPerformanceIndicator}
-                          select={{
-                            options: indicatorsOptions
-                          }}
-                          onChange={(e) => {
-                            this.setState({historicalPerformanceIndicator: e.value})
-                          }}
-                          style={{ width: '172px', marginLeft: '8px' }}
+              <div>
+                <div className={dashboardStyle.locals.conversionGoal}>
+                  Choose a conversion goal
+                  <Select
+                    selected={this.state.conversionIndicator}
+                    select={{
+                      options: metrics
+                    }}
+                    onChange={(e) => {
+                      this.setState({conversionIndicator: e.value})
+                    }}
+                    style={{width: '143px', marginLeft: '10px'}}
                   />
                 </div>
               </div>
-              {grow ?
-                <div className={this.classes.footerRight}>
-                  <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
-                  <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}>
-                    {isFinite(grow) ? Math.abs(grow) + '%' : '∞'}
+              <div style={{position: 'relative', display: 'flex', padding: '10px 0', height: '275px'}}>
+                <div style={{display: 'flex'}}>
+                  <div className={dashboardStyle.locals.index}>
+                    {
+                      fatherChannelsWithBudgets
+                        .sort((a, b) => b.value - a.value)
+                        .map((element, i) => (
+                          <div key={i} style={{display: 'flex', marginTop: '5px'}}>
+                            <div style={{
+                              border: '2px solid ' + COLORS[i % COLORS.length],
+                              borderRadius: '50%',
+                              height: '8px',
+                              width: '8px',
+                              display: 'inline-flex',
+                              marginTop: '2px',
+                              backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'
+                            }}/>
+                            <div style={{
+                              fontWeight: this.state.activeIndex === i ? "bold" : 'initial',
+                              display: 'inline',
+                              paddingLeft: '4px',
+                              fontSize: '14px',
+                              width: '135px'
+                            }}>
+                              {element.name}
+                            </div>
+                            <div style={{width: '50px', fontSize: '14px', color: '#7f8fa4'}}>
+                              ({Math.round(element.value / fatherChannelsSum * 100)}%)
+                            </div>
+                          </div>
+                        ))
+                    }
+                  </div>
+                  <div style={{marginLeft: '-127px', marginTop: '-30px'}}>
+                    <PieChart width={429} height={350} onMouseEnter={(d, i) => {
+                      this.setState({activeIndex: i})
+                    }} onMouseLeave={() => {
+                      this.setState({activeIndex: void 0})
+                    }}>
+                      <Pie
+                        data={fatherChannelsWithBudgets}
+                        cx={250}
+                        cy={150}
+                        labelLine={true}
+                        innerRadius={75}
+                        outerRadius={100}
+                        isAnimationActive={false}
+                      >
+                        {
+                          fatherChannelsWithBudgets.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}
+                                                                                key={index}/>)
+                        }
+                      </Pie>
+                    </PieChart>
                   </div>
                 </div>
-                : null}
+                <div className={dashboardStyle.locals.line}/>
+                <div style={{width: '625px', marginLeft: '-35px'}}>
+                  <div style={{display: 'flex'}}>
+                    <div style={{marginLeft: '75%'}}>
+                      Conv
+                    </div>
+                    <div style={{marginLeft: '20px'}}>
+                      % of Total
+                    </div>
+                  </div>
+                  <div style={{overflowY: 'auto', height: '266px'}}>
+                    {journeysUI}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className={dashboardStyle.locals.chart}>
-              <AreaChart width={540} height={280}
-                         data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(this.state.months) : []}
-                         style={{marginLeft: '-21px'}}>
-                <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
-                <YAxis style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
-                <CartesianGrid vertical={false}/>
-                <Tooltip/>
-                <Area type='monotone' dataKey='value' stroke='#6BCCFF' fill='#DFECF7' strokeWidth={3}/>
-              </AreaChart>
+          </FeatureToggle>
+          <div className={this.classes.cols} style={{width: '1110px'}}>
+            <div className={this.classes.colLeft}>
+              <div className={dashboardStyle.locals.item}
+                   style={{display: 'inline-block', height: '412px', width: '540px'}}>
+                <div className={dashboardStyle.locals.text}>
+                  Historical Performance
+                </div>
+                <div style={{display: 'flex', marginTop: '7px'}}>
+                  <div className={this.classes.footerLeft}>
+                    <div className={dashboardStyle.locals.historyConfig}>
+                      <div className={dashboardStyle.locals.historyConfigText}>
+                        Show
+                      </div>
+                      <Select selected={this.state.historicalPerformanceIndicator}
+                              select={{
+                                options: indicatorsOptions
+                              }}
+                              onChange={(e) => {
+                                this.setState({historicalPerformanceIndicator: e.value})
+                              }}
+                              style={{width: '172px', marginLeft: '8px'}}
+                      />
+                    </div>
+                  </div>
+                  {grow ?
+                    <div className={this.classes.footerRight}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}>
+                        {isFinite(grow) ? Math.abs(grow) + '%' : '∞'}
+                      </div>
+                    </div>
+                    : null}
+                </div>
+                <div className={dashboardStyle.locals.chart}>
+                  <AreaChart width={540} height={280}
+                             data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(this.state.months) : []}
+                             style={{marginLeft: '-21px'}}>
+                    <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
+                    <YAxis style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
+                    <CartesianGrid vertical={false}/>
+                    <Tooltip/>
+                    <Area type='monotone' dataKey='value' stroke='#6BCCFF' fill='#DFECF7' strokeWidth={3}/>
+                  </AreaChart>
+                </div>
+              </div>
+            </div>
+            <div className={this.classes.colRight}>
+              <div className={dashboardStyle.locals.item} style={{
+                display: 'inline-block',
+                height: '412px',
+                width: '540px',
+                overflow: 'auto',
+                padding: '15px 0'
+              }}>
+                <div className={dashboardStyle.locals.text}>
+                  Objectives - planned vs actual
+                </div>
+                <table className={dashboardStyle.locals.objectivesTable}>
+                  <thead>
+                  {objectivesHeadRow}
+                  </thead>
+                  <tbody className={dashboardStyle.locals.objectiveTableBody}>
+                  {objectivesRows}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-        <div className={this.classes.colRight}>
-          <div className={dashboardStyle.locals.item} style={{ display: 'inline-block', height: '412px', width: '540px', overflow: 'auto', padding: '15px 0' }}>
-            <div className={dashboardStyle.locals.text}>
-              Objectives - planned vs actual
-            </div>
-            <table className={dashboardStyle.locals.objectivesTable}>
-              <thead>
-              {objectivesHeadRow}
-              </thead>
-              <tbody className={dashboardStyle.locals.objectiveTableBody}>
-              {objectivesRows}
-              </tbody>
-            </table>
+          <div>
+            <AnalyzeTable {...this.props}/>
           </div>
         </div>
-      </div>
-      <div>
-        <AnalyzeTable { ... this.props}/>
-      </div>
+      }
     </div>
   }
 

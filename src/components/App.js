@@ -43,7 +43,8 @@ class AppComponent extends Component {
       approveAllBudgets: this.approveAllBudgets.bind(this),
       approveChannel: this.approveChannel.bind(this),
       declineAllBudgets: this.declineAllBudgets.bind(this),
-      declineChannel: this.declineChannel.bind(this)
+      declineChannel: this.declineChannel.bind(this),
+      calculateAttributionData: this.calculateAttributionData.bind(this)
     };
   }
 
@@ -614,6 +615,26 @@ class AppComponent extends Component {
       this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.state.region, this.state.planDate);
     };
     this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
+  }
+
+  calculateAttributionData(monthsExceptThisMonth) {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth}), localStorage.getItem('region'))
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setDataAsState(data);
+              deferred.resolve();
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
   }
 
   render() {
