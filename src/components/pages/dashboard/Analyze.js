@@ -41,7 +41,8 @@ export default class Analyze extends Component {
       showChannels: true,
       soryBy: 'webVisits',
       isDesc: 1,
-      loaded: false
+      isLoading: false,
+      attributionModel: false
     };
   }
 
@@ -85,21 +86,13 @@ export default class Analyze extends Component {
     }
   }
 
+  calculateAttributionData() {
+    this.setState({isLoading: true});
+    this.props.calculateAttributionData(this.props.previousData.length - this.state.months - 1, this.state.attributionModel)
+      .then(()=> { this.setState({isLoading: false}) })
+  }
+
   render() {
-    const COLORS = [
-      '#289df5',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#04E762',
-      '#FB5607',
-      '#FF006E',
-      '#8338EC',
-      '#76E5FC',
-      '#036D19'
-    ];
     const { previousData, attribution, campaigns, CEVs } = this.props;
     const attributionCampaigns = attribution.campaigns || [];
     const indicatorsOptions = getIndicatorsWithNicknames();
@@ -156,6 +149,11 @@ export default class Analyze extends Component {
       {value: 'SQL', label: getIndicatorNickname('SQL')},
       {value: 'opps', label: getIndicatorNickname('opps')},
       {value: 'users', label: getIndicatorNickname('users')},
+    ];
+    const attributionModels = [
+      {value: false, label: 'Full Journey'},
+      {value: 'firsttouch', label: 'Introducer'},
+      {value: 'lasttouch', label: 'Converter'}
     ];
     const headlines = [
       <div style={{ fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer' }} onClick={this.sortBy.bind(this, 'label')}>
@@ -475,9 +473,7 @@ export default class Analyze extends Component {
             options: months
           }}
           onChange={(e) => {
-            this.setState({months: e.value, loaded: true});
-            this.props.calculateAttributionData(this.props.previousData.length - e.value - 1)
-              .then(()=> { this.setState({loaded: false}) })
+            this.setState({months: e.value}, this.calculateAttributionData.bind(this));
           }}
           style={{ width: '75px', margin: '0 8px' }}
         />
@@ -485,7 +481,7 @@ export default class Analyze extends Component {
           - {formatDate(this.props.planDate)}
         </div>
       </div>
-      {this.state.loaded ?
+      {this.state.isLoading ?
         <div className={appStyle.locals.loading}>
           <Popup className={appStyle.locals.popup}>
             <div>
@@ -567,7 +563,19 @@ export default class Analyze extends Component {
               <div className={dashboardStyle.locals.text}>
                 Top Conversion Journeys
               </div>
-              <div>
+              <div style={{ display: 'flex' }}>
+                <div>
+                  <Select
+                    selected={this.state.attributionModel}
+                    select={{
+                      options: attributionModels
+                    }}
+                    onChange={(e) => {
+                      this.setState({attributionModel: e.value}, this.calculateAttributionData.bind(this))
+                    }}
+                    style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
+                  />
+                </div>
                 <div className={dashboardStyle.locals.conversionGoal}>
                   Choose a conversion goal
                   <Select
