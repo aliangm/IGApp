@@ -50,7 +50,7 @@ export default class Sidebar extends Component {
 
   render() {
     const subMenu = [
-      { icon: "sidebar:company", link: "/profile", text: "Company" },
+      { icon: "sidebar:company", link: "/profile", text: "Product" },
       { icon: "sidebar:target-audience", link: "/target-audience", text: "Target Audience" },
       { icon: "sidebar:indicators", link: "/indicators", text: "Metrics" },
       { icon: "sidebar:preferences", link: "/preferences", text: "Preferences" },
