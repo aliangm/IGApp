@@ -15,7 +15,18 @@ export default class OnlineCampaigns extends Component {
     super(props);
     this.state = {
       editMetric: false,
-      selectedAttributionMetric: 'MQL'
+      selectedAttributionMetric: 'MCL',
+      soryBy: 'impressions',
+      isDesc: 1
+    }
+  }
+
+  sortBy(param) {
+    if (this.state.sortBy === param) {
+      this.setState({isDesc: this.state.isDesc * -1});
+    }
+    else {
+      this.setState({sortBy: param});
     }
   }
 
@@ -38,12 +49,22 @@ export default class OnlineCampaigns extends Component {
     const headRow = this.getTableRow(null, [
       'Status',
       'Channel',
-      'Campaign Name',
+      <div onClick={this.sortBy.bind(this, 'name')} style={{ cursor: 'pointer' }}>
+        Campaign Name
+      </div>,
       'Owner',
-      'Impressions',
-      'Clicks',
-      'Conv.',
-      'Ad Spend',
+      <div onClick={this.sortBy.bind(this, 'impressions')} style={{ cursor: 'pointer' }}>
+        Impressions
+      </div>,
+      <div onClick={this.sortBy.bind(this, 'clicks')} style={{ cursor: 'pointer' }}>
+        Clicks
+      </div>,
+      <div onClick={this.sortBy.bind(this, 'conversions')} style={{ cursor: 'pointer' }}>
+        Conv.
+      </div>,
+      <div onClick={this.sortBy.bind(this, 'actualSpent')} style={{ cursor: 'pointer' }}>
+        Ad Spend
+      </div>,
       <div style={{display: 'inline-flex'}}>
         { editMetric ?
           <Select
@@ -57,7 +78,7 @@ export default class OnlineCampaigns extends Component {
             style={{ width: '160px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          <div>
+          <div onClick={this.sortBy.bind(this, selectedAttributionMetric)} style={{ cursor: 'pointer' }}>
             {metrics.find(item => item.value === selectedAttributionMetric).label}
           </div>
         }
@@ -71,15 +92,31 @@ export default class OnlineCampaigns extends Component {
       className: this.classes.headRow
     });
 
-    const rows = campaigns
+    const campaignsWithAttribution = campaigns
       .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId)
-      .map((campaign, index) => {
-        const attributionData = attribution && attribution.campaigns && attribution.campaigns.find(item => (Object.keys(item)[0] === campaign.name || (item.tracking && item.tracking.campaignUTM === Object.keys(item)[0])));
+      .map(campaign => {
+        let attributionData = attribution && attribution.campaigns && attribution.campaigns.find(item => (Object.keys(item)[0] === campaign.name || (item.tracking && item.tracking.campaignUTM === Object.keys(item)[0])));
+        attributionData = attributionData ? attributionData[Object.keys(attributionData)[0]] : {};
         const user = campaign.owner && this.props.teamMembers.find(user => user.userId === campaign.owner);
         const clicksObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "clicks");
         const impressionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "impressions");
         const conversionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "conversions");
-        return this.getTableRow(null, [
+        return {
+          impressions: impressionsObj ? impressionsObj.actualGrowth : 0,
+          clicks: clicksObj ? clicksObj.actualGrowth : 0,
+          conversions: conversionsObj ? conversionsObj.actualGrowth : 0,
+          ... campaign,
+          ... attributionData,
+          user: user
+        };
+      });
+
+    const rows = campaignsWithAttribution
+      .sort((item1, item2) =>
+        ((item2[this.state.sortBy] || 0) - (item1[this.state.sortBy] || 0)) * this.state.isDesc
+      )
+      .map((campaign, index) =>
+        this.getTableRow(null, [
           <div className={this.classes.statusIcon} data-icon={"status:" + campaign.status} title={campaign.status}/>,
           <div>
             {campaign.source.map(channel =>
@@ -87,19 +124,19 @@ export default class OnlineCampaigns extends Component {
             )}
           </div>,
           campaign.name,
-          <div title={user && user.name}>
-            <Avatar member={user} className={this.classes.icon}/>
+          <div title={campaign.user && campaign.user.name}>
+            <Avatar member={campaign.user} className={this.classes.icon}/>
           </div>,
-          impressionsObj ? impressionsObj.actualGrowth : 0,
-          clicksObj ? clicksObj.actualGrowth : 0,
-          conversionsObj ? conversionsObj.actualGrowth : 0,
-          '$' + formatBudget(campaign.actualSpent),
-          attributionData ? attributionData[Object.keys(attributionData)[0]][selectedAttributionMetric] : 0
+          campaign.impressions,
+          campaign.clicks,
+          campaign.conversions,
+          '$' + formatBudget(campaign.actualSpent || 0),
+          campaign[selectedAttributionMetric] || 0
         ], {
           key: index,
           className: this.classes.tableRow
         })
-      });
+      );
 
     return (
       <div className={ this.classes.wrap }>
