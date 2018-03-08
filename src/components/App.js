@@ -617,9 +617,9 @@ class AppComponent extends Component {
     this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
   }
 
-  calculateAttributionData(monthsExceptThisMonth) {
+  calculateAttributionData(monthsExceptThisMonth, attributionModel) {
     const deferred = q.defer();
-    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth, attributionModel: attributionModel}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
