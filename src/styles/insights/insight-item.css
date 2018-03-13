@@ -33,6 +33,7 @@
     background-color: #0099cc;
     border: solid 2px #e3e6f4;
     padding: 15px;
+    position: relative;
 }
 
 .right-side[data-green] {
@@ -114,6 +115,14 @@
     margin-left: 20px;
 }
 
+.balancer-button {
+    composes: button;
+    border: solid 2px #259af2;
+    color: #259af2;
+    margin-left: 20px;
+    width: 150px;
+}
+
 .icon {
     width: 12px;
     height: 12px;
@@ -129,5 +138,11 @@
 .decline-icon {
     composes: icon;
     background: url(../../assets/cancel-music.svg) center center no-repeat;
+    background-size: contain;
+}
+
+.balancer-icon {
+    composes: icon;
+    background: url(../../assets/yin-yang.svg) center center no-repeat;
     background-size: contain;
 }
