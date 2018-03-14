@@ -171,6 +171,26 @@ export default class Indicators extends Component {
         automaticIndicators: this.isFunnelAuto('opps'),
         isFunnel: true
       },
+      newMCL: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MCL'),
+        isFunnel: true
+      },
+      newMQL: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MQL'),
+        isFunnel: true
+      },
+      newSQL: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('SQL'),
+        isFunnel: true
+      },
+      newOpps: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('opps'),
+        isFunnel: true
+      },
       LTV: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
         automaticIndicators: this.isFinanceAuto('LTV')
@@ -180,6 +200,10 @@ export default class Indicators extends Component {
         automaticIndicators: this.isSheetAuto('CAC') || (this.props.salesforceAuto && this.props.salesforceAuto.isCACAuto)
       },
       users: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('users')
+      },
+      newUsers: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
         automaticIndicators: this.isFunnelAuto('users')
       },
