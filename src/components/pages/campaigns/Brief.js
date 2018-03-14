@@ -12,11 +12,12 @@ import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
 import { getChannelsWithTitles, getTitle } from 'components/utils/channels';
 import Toggle from 'components/controls/Toggle';
+import buttonsStyle from 'styles/onboarding/buttons.css';
 
 export default class Brief extends Component {
 
   style = style;
-  styles = [campaignPopupStyle];
+  styles = [campaignPopupStyle, buttonsStyle];
 
   constructor(props) {
     super(props);
@@ -469,7 +470,17 @@ export default class Brief extends Component {
           <Button type="reverse" style={{ width: '100px', marginRight: '30px' }} onClick={ this.exportCampaign.bind(this) }>
             Export
           </Button>
-          <SaveButton onClick={ this.props.save } />
+          { this.props.campaign.index !== undefined ?
+            <SaveButton onClick={this.props.save}/>
+            :
+            <Button
+              type="accent2"
+              icon="buttons:plan"
+              className={buttonsStyle.locals.planButton}
+              onClick={this.props.save}>
+              Create
+            </Button>
+          }
         </div>
       </div>
       <AssetsPopup hidden={ !this.state.assetsPopup } updateCampaign={ () => {this.props.updateCampaign(this.props.campaign)} } updateState={ this.props.updateState } campaign={ this.props.campaign } close={ ()=> { this.setState({assetsPopup: false}) }}/>

@@ -14,11 +14,13 @@ import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import UnsavedPopup from 'components/UnsavedPopup';
 import AddTemplatePopup from 'components/pages/campaigns/AddTemplatePopup';
 import SaveButton from 'components/pages/profile/SaveButton';
+import buttonsStyle from 'styles/onboarding/buttons.css';
+import Button from 'components/controls/Button';
 
 export default class CampaignPopup extends Component {
 
   style = style;
-  styles = [campaignPopupStyle, planStyle];
+  styles = [campaignPopupStyle, planStyle, buttonsStyle];
 
   constructor(props) {
     super(props);
@@ -236,7 +238,17 @@ export default class CampaignPopup extends Component {
             })
           }
           <div style={{ marginLeft: 'auto', alignSelf: 'center' }}>
-            <SaveButton onClick={ this.save }/>
+            { this.state.campaign.index !== undefined ?
+              <SaveButton onClick={this.save}/>
+              :
+              <Button
+                type="accent2"
+                icon="buttons:plan"
+                className={buttonsStyle.locals.planButton}
+                onClick={this.save}>
+                Create
+              </Button>
+            }
           </div>
         </div>
         <div className={ campaignPopupStyle.locals.inner }>
