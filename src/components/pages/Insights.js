@@ -27,7 +27,7 @@ export default class Insights extends Component {
 
   render() {
     const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel} = this.props;
-    const {showBalancerPopup, channelToRemove, channelToBalance} = this.state;
+    const {showBalancerPopup, suggestedChannel, balancingChannel} = this.state;
     const relevantObjectives = objectives
       .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
       .map(item => item.indicator);
@@ -52,15 +52,22 @@ export default class Insights extends Component {
       });
       const dates = getDates(planDate);
       const findBalancer = (channel) => {
-        const budget = approvedBudgets[0][channel] || 0;
-        const delta = 0.1 * budget;
+        const budget = (nextMonthBudgets[channel] || 0) - (approvedBudgets[0][channel] || 0);
+        const delta = 0.2 * budget;
         const lowerRange = budget - delta;
         const higherRange = budget + delta;
         const relevantChannel = orderedSuggestions
           .filter(item => item !== channel)
-          .find(item => nextMonthBudgets[item] > lowerRange && nextMonthBudgets[item] < higherRange);
+          .find(item =>
+            (budget > 0 ?
+              (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) > lowerRange && (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) < higherRange
+              :
+              (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) < lowerRange && (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) > higherRange));
         if (relevantChannel) {
-          this.setState({channelToRemove: channel, channelToBalance: relevantChannel, showBalancerPopup: true});
+          this.setState({suggestedChannel: channel, balancingChannel: relevantChannel, showBalancerPopup: true});
+        }
+        else {
+          this.setState({showBalancerPopup: true});
         }
       };
       return <InsightItem
@@ -88,75 +95,120 @@ export default class Insights extends Component {
               {cubes}
               {showBalancerPopup ?
                 <Page popup={true} width="825px" contentClassName={insightsStyle.locals.popupContent}>
-                  <div className={this.classes.frame} style={{marginBottom: '0', height: '300px'}}>
-                    <div className={this.classes.leftSide}>
-                      <div className={this.classes.title}>
-                        2-Sides Optimization Opportunity
-                      </div>
-                      <div className={this.classes.text}>
-                        Removing <b>{getChannelNickname(channelToRemove)}</b> from your mix
-                        in <b>{getDates(planDate)[0]}</b> and instead
-                        adding <b>{getChannelNickname(channelToBalance)}</b>, could improve your
-                        forecasted<br/>
-                        {relevantObjectives.slice(0, 2).map((objective, index) => {
-                          const ratio = Math.abs(Math.round((((nextMonthBudgets[channelToBalance] - (approvedBudgets[0][channelToBalance] || 0)) * CIM[channelToBalance][objective]) + ((nextMonthBudgets[channelToRemove] - (approvedBudgets[0][channelToRemove] || 0)) * CIM[channelToRemove][objective])) / currentBudgets * 100));
-                          return <div key={index}>
-                            - <b>{getIndicatorNickname(objective)}</b> {ratio >= 0 ? 'by' : 'only by'} <b>{ratio}%</b><br/>
-                          </div>
-                        })
-                        }
-                        Suggested budget: <b>${formatBudget(nextMonthBudgets[channelToBalance])}</b>.<br/>
-                        Saved budget: <b>${formatBudget(approvedBudgets[0][channelToRemove] || 0)}</b>.<br/>
-                        Total budget change: <b style={{ color: '#2fae23' }}>${formatBudget((approvedBudgets[0][channelToRemove] || 0) - nextMonthBudgets[channelToBalance])}</b>.
-                      </div>
-                      <div className={this.classes.buttons} style={{ top: '243px' }}>
-                        <Button className={this.classes.approveButton} onClick={ () => {
-                          approveChannel(0, channelToRemove, nextMonthBudgets[channelToRemove] || 0);
-                          approveChannel(0, channelToBalance, nextMonthBudgets[channelToBalance]);
-                          this.setState({channelToRemove: '', channelToBalance: '', showBalancerPopup: false});
-                        }
-                        }>
-                          <div className={this.classes.approveIcon}/>
-                          Approve
-                        </Button>
-                        <Button className={this.classes.declineButton} onClick={ () => {
-                          declineChannel(0, channelToRemove, (approvedBudgets[0][channelToRemove] || 0));
-                          declineChannel(0, channelToBalance, (approvedBudgets[0][channelToBalance] || 0));
-                          this.setState({channelToRemove: '', channelToBalance: '', showBalancerPopup: false});
+                  {balancingChannel ?
+                    <div className={this.classes.frame} style={{marginBottom: '0', height: '300px'}}>
+                      <div className={this.classes.leftSide}>
+                        <div className={this.classes.title}>
+                          2-Sides Optimization Opportunity
+                        </div>
+                        <div className={this.classes.text}>
+                          {nextMonthBudgets[suggestedChannel] && approvedBudgets[0][suggestedChannel] ?
+                            nextMonthBudgets[suggestedChannel] > approvedBudgets[0][suggestedChannel] ?
+                              <span>Raising <b>{getChannelNickname(suggestedChannel)}</b> budget</span>
+                              :
+                              <span>Reducing <b>{getChannelNickname(suggestedChannel)}</b> budget</span>
+                            : nextMonthBudgets[suggestedChannel] ?
+                              <span>Adding <b>{getChannelNickname(suggestedChannel)}</b> to your mix</span>
+                              :
+                              <span>Removing <b>{getChannelNickname(suggestedChannel)}</b> from your mix</span>
+                          }
+                          in <b>{getDates(planDate)[0]}</b> and instead
+                          {nextMonthBudgets[balancingChannel] && approvedBudgets[0][balancingChannel] ?
+                            nextMonthBudgets[balancingChannel] > approvedBudgets[0][balancingChannel] ?
+                              <span> raising <b>{getChannelNickname(balancingChannel)}</b> budget</span>
+                              :
+                              <span> reducing <b>{getChannelNickname(balancingChannel)}</b> budget</span>
+                            : nextMonthBudgets[balancingChannel] ?
+                              <span> adding <b>{getChannelNickname(balancingChannel)}</b> to your mix</span>
+                              :
+                              <span> removing <b>{getChannelNickname(balancingChannel)}</b> from your mix</span>
+                          }
+                          ,
+                          could {((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) > (nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0))) ? 'improve' : 'reduce'} your
+                          forecasted<br/>
+                          {relevantObjectives.slice(0, 2).map((objective, index) => {
+                            const ratio = Math.round((((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][objective]) + ((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][objective])) / currentBudgets * 100);
+                            return <div key={index}>
+                              - <b>{getIndicatorNickname(objective)}</b> {ratio >= 0 ? 'by' : 'only by'} <b>{ratio}%</b><br/>
+                            </div>
+                          })
+                          }
+                          Suggested budget
+                          ({getChannelNickname(suggestedChannel)}): <b>${formatBudget(nextMonthBudgets[suggestedChannel])}</b>.<br/>
+                          Suggested budget
+                          ({getChannelNickname(balancingChannel)}): <b>${formatBudget(nextMonthBudgets[balancingChannel])}</b>.<br/>
+                          Saved budget
+                          ({getChannelNickname(suggestedChannel)}): <b>${formatBudget(approvedBudgets[0][suggestedChannel] || 0)}</b>.<br/>
+                          Saved budget
+                          ({getChannelNickname(balancingChannel)}): <b>${formatBudget(approvedBudgets[0][balancingChannel] || 0)}</b>.<br/>
+                          Total budget change: <b
+                          style={{color: '#2fae23'}}>${formatBudget((approvedBudgets[0][suggestedChannel] || 0) + (approvedBudgets[0][balancingChannel] || 0) - nextMonthBudgets[suggestedChannel] - nextMonthBudgets[balancingChannel])}</b>.
+                        </div>
+                        <div className={this.classes.buttons} style={{top: '243px'}}>
+                          <Button className={this.classes.approveButton} onClick={() => {
+                            approveChannel(0, suggestedChannel, nextMonthBudgets[suggestedChannel] || 0);
+                            approveChannel(0, balancingChannel, nextMonthBudgets[balancingChannel]);
+                            this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false});
+                          }
+                          }>
+                            <div className={this.classes.approveIcon}/>
+                            Approve
+                          </Button>
+                          <Button className={this.classes.declineButton} onClick={() => {
+                            declineChannel(0, suggestedChannel, (approvedBudgets[0][suggestedChannel] || 0));
+                            declineChannel(0, balancingChannel, (approvedBudgets[0][balancingChannel] || 0));
+                            this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false});
 
-                        }
-                        }>
-                          <div className={this.classes.declineIcon}/>
-                          Decline
-                        </Button>
-                      </div>
-                    </div>
-                    <div className={this.classes.rightSide}>
-                      <div className={insightsStyle.locals.closePopup} onClick={ () => { this.setState({channelToRemove: '', channelToBalance: '', showBalancerPopup: false}) } }/>
-                      <div className={this.classes.end}>
-                        <div className={this.classes.investBox} style={{ width: '94px' }}>
-                          Optimize
+                          }
+                          }>
+                            <div className={this.classes.declineIcon}/>
+                            Decline
+                          </Button>
                         </div>
                       </div>
-                      <div className={this.classes.summaryTitleContainer}>
-                        <div className={insightsStyle.locals.channelIcons}>
-                          <div className={insightsStyle.locals.upperIcon} data-icon={"plan:" + channelToBalance}/>
-                          <div className={insightsStyle.locals.lowerIcon} data-icon={"plan:" + channelToRemove}/>
+                      <div className={this.classes.rightSide}>
+                        <div className={insightsStyle.locals.closePopup} onClick={() => {
+                          this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false})
+                        }}/>
+                        <div className={this.classes.end}>
+                          <div className={this.classes.investBox} style={{width: '94px'}}>
+                            Optimize
+                          </div>
                         </div>
-                        <div className={this.classes.summaryTitle}>
-                          {relevantObjectives[0] && Math.abs(Math.round((((nextMonthBudgets[channelToBalance] - (approvedBudgets[0][channelToBalance] || 0)) * CIM[channelToBalance][relevantObjectives[0]]) + ((nextMonthBudgets[channelToRemove] - (approvedBudgets[0][channelToRemove] || 0)) * CIM[channelToRemove][relevantObjectives[0]])) / currentBudgets * 100))}%
+                        <div className={this.classes.summaryTitleContainer}>
+                          <div className={insightsStyle.locals.channelIcons}>
+                            <div className={insightsStyle.locals.upperIcon} data-icon={"plan:" + balancingChannel}/>
+                            <div className={insightsStyle.locals.lowerIcon} data-icon={"plan:" + suggestedChannel}/>
+                          </div>
+                          <div className={this.classes.summaryTitle}>
+                            {relevantObjectives[0] && Math.abs(Math.round((((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][relevantObjectives[0]]) + ((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][relevantObjectives[0]])) / currentBudgets * 100))}%
+                          </div>
                         </div>
-                      </div>
-                      <div className={this.classes.summaryText}>
-                        Improve in forecasted {relevantObjectives[0] && getIndicatorNickname(relevantObjectives[0])}{relevantObjectives.slice(1, 2).map((objective, index) => {
-                        const ratio = Math.abs(Math.round((((nextMonthBudgets[channelToBalance] - (approvedBudgets[0][channelToBalance] || 0)) * CIM[channelToBalance][objective]) + ((nextMonthBudgets[channelToRemove] - (approvedBudgets[0][channelToRemove] || 0)) * CIM[channelToRemove][objective])) / currentBudgets * 100));
-                        return <span key={index}>
+                        <div className={this.classes.summaryText}>
+                          Improve in
+                          forecasted {relevantObjectives[0] && getIndicatorNickname(relevantObjectives[0])}{relevantObjectives.slice(1, 2).map((objective, index) => {
+                          const ratio = Math.abs(Math.round((((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][objective]) + ((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][objective])) / currentBudgets * 100));
+                          return <span key={index}>
                           , and {Math.abs(ratio)}% {ratio >= 0 ? 'improve' : 'decline'} in forecasted {getIndicatorNickname(objective)}
                         </span>
-                      })}
+                        })}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    :
+                    <div className={this.classes.frame} style={{marginBottom: '0', height: '300px'}}>
+                      <div className={this.classes.leftSide}>
+                        <div className={this.classes.title}>
+                          No balancing channel found.
+                        </div>
+                      </div>
+                      <div className={this.classes.rightSide}>
+                        <div className={insightsStyle.locals.closePopup} onClick={() => {
+                          this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false})
+                        }}/>
+                      </div>
+                    </div>
+                  }
                 </Page>
                 : null
               }
