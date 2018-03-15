@@ -360,13 +360,14 @@
 }
 
 .father-channel-box {
-    border: 1px solid #CECECE;
+    border: 2px solid #CECECE;
     height: 50px;
     width: 400px;
     display: flex;
     align-items: center;
     position: relative;
     margin: 0 20px;
+    margin-top: -2px;
 }
 
 .father-channel-box:first-child {
