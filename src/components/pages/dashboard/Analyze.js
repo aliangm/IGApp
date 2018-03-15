@@ -311,7 +311,7 @@ export default class Analyze extends Component {
                 webVisits,
                 conversion,
                 Math.round(funnelIndicator * 100) / 100,
-                '$' + formatBudget(Math.round(CPX))
+                '$' + (CPX ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator)) : CPX)
               ], {
                 key: channel,
                 className: dashboardStyle.locals.tableRow
