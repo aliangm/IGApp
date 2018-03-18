@@ -4,6 +4,7 @@ import Button from 'components/controls/Button';
 import style from 'styles/paging.css';
 import serverCommunication from 'data/serverCommunication';
 import history from 'history';
+import { formatDate } from 'components/utils/date';
 
 export default class Paging extends Component {
 
@@ -50,7 +51,7 @@ export default class Paging extends Component {
         width: '200px',
         textAlign: 'center'
       }}>
-        { this.props.month }
+        { formatDate(this.props.month) }
       </div>
       <Button type="primary2" style={{
         width: '36px',

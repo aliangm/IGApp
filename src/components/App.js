@@ -43,7 +43,8 @@ class AppComponent extends Component {
       approveAllBudgets: this.approveAllBudgets.bind(this),
       approveChannel: this.approveChannel.bind(this),
       declineAllBudgets: this.declineAllBudgets.bind(this),
-      declineChannel: this.declineChannel.bind(this)
+      declineChannel: this.declineChannel.bind(this),
+      calculateAttributionData: this.calculateAttributionData.bind(this)
     };
   }
 
@@ -465,6 +466,7 @@ class AppComponent extends Component {
       isStripeAuto: !!data.stripeapi,
       adwordsapi: data.adwordsapi,
       facebookadsapi: data.facebookadsapi,
+      linkedinadsapi: data.linkedinadsapi,
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers || [],
       planNeedsUpdate: data.planNeedsUpdate,
@@ -613,6 +615,26 @@ class AppComponent extends Component {
       this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.state.region, this.state.planDate);
     };
     this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
+  }
+
+  calculateAttributionData(monthsExceptThisMonth, attributionModel) {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth, attributionModel: attributionModel}), localStorage.getItem('region'))
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setDataAsState(data);
+              deferred.resolve();
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
   }
 
   render() {

@@ -5,6 +5,7 @@ import style from 'styles/indicators/crm-popup.css';
 import SalesforceCampaignsPopup from 'components/pages/campaigns/SalesforceCampaignsPopup';
 import AdwordsCampaignsPopup from 'components/pages/campaigns/AdwordsCampaignsPopup';
 import FacebookCampaignsPopup from 'components/pages/campaigns/FacebookCampaignsPopup';
+import LinkedinCampaignsPopup from 'components/pages/campaigns/LinkedinCampaignsPopup';
 
 export default class ImportCampaignsPopup extends Component {
 
@@ -39,6 +40,13 @@ export default class ImportCampaignsPopup extends Component {
                 close={ this.props.close }
                 data={this.props.facebookadsapi}
                 />
+            </div>
+            <div className={ this.classes.row }>
+              <LinkedinCampaignsPopup
+                setDataAsState={ this.props.setDataAsState }
+                close={ this.props.close }
+                data={this.props.linkedinadsapi}
+              />
             </div>
           </div>
         </Page>

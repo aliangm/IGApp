@@ -79,7 +79,7 @@
     margin-top: 45px;
     font-size: 36px;
     font-weight: 600;
-    color:  #24b10e;
+    color:  #354052;
     display: flex;
     justify-content: center;
 }
@@ -294,9 +294,8 @@
 
 .conversion-goal {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 13px;
+    margin: 14px auto 0;
 }
 
 .line {
@@ -358,4 +357,41 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     margin-right: 5px;
+}
+
+.father-channel-box {
+    border: 2px solid #CECECE;
+    height: 50px;
+    width: 400px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 0 20px;
+    margin-top: -2px;
+}
+
+.father-channel-box:first-child {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin-top: 24px;
+}
+
+.father-channel-box:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.father-channel-box-fill {
+    background-color: rgba(50, 159, 241, 0.25);
+    height: 100%;
+    position: absolute;
+}
+
+.father-channel-title {
+    margin-left: 20px;
+}
+
+.father-channel-value {
+    margin-left: auto;
+    margin-right: 20px;
 }

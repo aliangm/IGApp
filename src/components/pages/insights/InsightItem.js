@@ -11,22 +11,22 @@ export default class InsightItem extends Component {
   styles = [icons];
 
   render() {
-    const {channel, channelNickname, objectivesRatio, dates, currentBudget, suggestedBudget, approveChannel, declineChannel} = this.props;
+    const {channel, channelNickname, objectivesRatio, dates, currentBudget, suggestedBudget, approveChannel, declineChannel, findBalancer} = this.props;
     const leftSideObjectives = objectivesRatio.slice(0, 2).map((item, index) => <div key={index}>
-      - <b>{item.nickname}</b> by <b>{item.ratio}%</b><br/>
+      - <b>{item.nickname}</b> {item.ratio >= 0 ? 'by' : 'only by'} <b>{Math.abs(item.ratio)}%</b><br/>
     </div>);
     const rightSideObjectives = objectivesRatio.slice(1, 2).map((item, index) => <span key={index}>
-      , and {item.ratio}% improve in forecasted {item.nickname}
+      , and {Math.abs(item.ratio)}% {item.ratio >= 0 ? 'improve' : 'decline'} in forecasted {item.nickname}
     </span>);
     return <div>
-      {currentBudget ?
+      {currentBudget && suggestedBudget ?
         <div className={this.classes.frame}>
           <div className={this.classes.leftSide}>
             <div className={this.classes.title}>
               Budget Optimization Opportunity
             </div>
             <div className={this.classes.text}>
-              Raising <b>{channelNickname}</b> budget in <b>{dates}</b> by <b>{Math.round(suggestedBudget / currentBudget * 100)}%</b>, could improve your forecasted<br/>
+              {suggestedBudget > currentBudget ? 'Raising' : 'Reducing'} <b>{channelNickname}</b> budget in <b>{dates}</b> by <b>{Math.round((suggestedBudget > currentBudget ? suggestedBudget / currentBudget - 1 : currentBudget / suggestedBudget - 1) * 100)}%</b>, could {suggestedBudget > currentBudget ? 'improve' : 'reduce'} your forecasted<br/>
               {leftSideObjectives}
               Suggested budget: <b>${formatBudget(suggestedBudget)}</b>.
             </div>
@@ -39,12 +39,16 @@ export default class InsightItem extends Component {
                 <div className={this.classes.declineIcon}/>
                 Decline
               </Button>
+              <Button className={this.classes.balancerButton} onClick={findBalancer}>
+                <div className={this.classes.balancerIcon}/>
+                Find a balancer
+              </Button>
             </div>
           </div>
           <div className={this.classes.rightSide}>
             <div className={this.classes.end}>
               <div className={this.classes.investBox}>
-                Invest
+                {suggestedBudget > currentBudget ? 'Invest' : 'Save'}
               </div>
             </div>
             <div className={this.classes.summaryTitleContainer}>
@@ -65,7 +69,7 @@ export default class InsightItem extends Component {
               Channel Opportunity
             </div>
             <div className={this.classes.text}>
-              Adding <b>{channelNickname}</b> to your mix in <b>{dates}</b>, could improve your forecasted<br/>
+              {suggestedBudget ? 'Adding' : 'Removing'} <b>{channelNickname}</b> {suggestedBudget ? 'to' : 'from'} your mix in <b>{dates}</b>, could {suggestedBudget ? 'improve' : 'reduce'} your forecasted<br/>
               {leftSideObjectives}
               Suggested budget: <b>${formatBudget(suggestedBudget)}</b>.
             </div>
@@ -77,6 +81,10 @@ export default class InsightItem extends Component {
               <Button className={this.classes.declineButton} onClick={declineChannel}>
                 <div className={this.classes.declineIcon}/>
                 Decline
+              </Button>
+              <Button className={this.classes.balancerButton} onClick={findBalancer}>
+                <div className={this.classes.balancerIcon}/>
+                Find a balancer
               </Button>
             </div>
           </div>

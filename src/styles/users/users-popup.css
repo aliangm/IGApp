@@ -1,5 +1,14 @@
 @import "../global/mixins.css";
 
+.content {
+    margin: 0;
+    padding: 40px 38px;
+}
+
+.inner {
+    overflow: initial;
+}
+
 .container {
     display: flex;
 }
@@ -32,7 +41,7 @@
 .header-big-text {
     font-size: 20px;
     font-weight: 600;
-    margin-right: 45px;
+    margin-right: auto;
     align-self: center;
 }
 
@@ -132,6 +141,28 @@
     align-items: center;
     position: relative;
     margin-top: 25px;
+}
+
+.device {
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    margin-top: 5px;
+}
+
+.other-pages {
+    text-decoration: underline;
+    color: -webkit-link;
+    cursor: pointer;
+}
+
+.other-pages-popup {
+    left: 5px;
+    padding: 10px;
+    font-size: 14px;
+    width: max-content;
 }
 
 @mixin icon-nodpi event:conversion, ../../assets/event;
