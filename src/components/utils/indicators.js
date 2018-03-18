@@ -24,6 +24,12 @@ export function getNickname(indicator) {
   }
 }
 
+export function getMetadata(type, indicator) {
+  if (isInitialized) {
+    return schema.properties[indicator][type];
+  }
+}
+
 export function getIndicatorsWithNicknames() {
   if (isInitialized) {
     return Object.keys(schema.properties).map(item => {

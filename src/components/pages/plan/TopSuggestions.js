@@ -5,7 +5,7 @@ import suggestionStyle from 'styles/plan/suggestion.css';
 import Suggestion from 'components/pages/plan/Suggestion';
 import { FeatureToggle } from 'react-feature-toggles';
 import Page from 'components/Page';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import { getNickname as getIndicatorNickname, getMetadata } from 'components/utils/indicators';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { formatBudget } from 'components/utils/budget';
 import { formatDate } from 'components/utils/date';
@@ -70,7 +70,7 @@ export default class TopSuggestions extends Component {
     });
 
     const rows = ifApprovedMetrics && Object.keys(ifApprovedMetrics)
-      .filter(metric => ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric] !== 0)
+      .filter(metric => ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric] !== 0 && getMetadata('isObjective', metric))
       .map(metric => {
         const diff = Math.round(ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric]);
         return this.getTableRow(null, [

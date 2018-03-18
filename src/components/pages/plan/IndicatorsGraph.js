@@ -4,7 +4,7 @@ import { XAxis, Tooltip, LineChart , Line, YAxis, CartesianGrid, ReferenceDot  }
 import style from "styles/plan/indicators-graph.css";
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
-import { getNickname } from 'components/utils/indicators';
+import { getNickname, getIndicatorsWithProps } from 'components/utils/indicators';
 
 export default class IndicatorsGraph extends Component {
 
@@ -49,48 +49,27 @@ export default class IndicatorsGraph extends Component {
   }
 
   render () {
-    const indicatorsMapping = {
-      MCL: {
-        title: getNickname('MCL'),
-        color: '#1165A3'
-      },
-      MQL: {
-        title: getNickname('MQL'),
-        color: '#25B10E'
-      },
-      SQL: {
-        title: getNickname('SQL'),
-        color: '#D5E1A3'
-      },
-      opps: {
-        title: getNickname('opps'),
-        color: '#7CDEDC'
-      },
-      users: {
-        title: getNickname('users'),
-        color: '#7284A8'
-      },
-      sessions: {
-        title: getNickname('sessions'),
-        color: '#D0101E'
-      },
-      MRR: {
-        title: getNickname('MRR'),
-        color: '#FD950B'
-      },
-      ARPA: {
-        title: getNickname('ARPA'),
-        color: '#BDC4A7'
-      },
-      LTV: {
-        title: getNickname('LTV'),
-        color: '#06BEE1'
-      },
-      CAC: {
-        title: getNickname('CAC'),
-        color: '#A70D6E'
-      }
-    };
+    const COLORS = [
+      '#289df5',
+      '#40557d',
+      '#f0b499',
+      '#ffd400',
+      '#3373b4',
+      '#72c4b9',
+      '#04E762',
+      '#FB5607',
+      '#FF006E',
+      '#8338EC',
+      '#76E5FC',
+      '#036D19'
+    ];
+    const indicators = getIndicatorsWithProps();
+    const indicatorsMapping = {};
+    Object.keys(indicators)
+      .filter(item => indicators[item].isObjective)
+      .forEach((item, index) =>
+        indicatorsMapping[item] = {title: indicators[item].nickname, color: COLORS[index % COLORS.length] }
+      );
     const menuItems = Object.keys(indicatorsMapping).map(indicator =>
       <div className={ this.classes.menuItem } key={indicator}>
         <Label checkbox={ this.state.checkedIndicators.indexOf(indicator) !== -1 } onChange={ this.toggleCheckbox.bind(this, indicator) } style={{ marginBottom: '3px', fontSize: '12px' }}>{indicatorsMapping[indicator].title}</Label>
