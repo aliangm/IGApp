@@ -7,11 +7,13 @@ import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
+import { getMetadata } from 'components/utils/channels';
 import { formatBudget } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import { timeFrameToDate } from 'components/utils/objective';
 import Steps from 'components/pages/dashboard/Steps';
 import Label from 'components/ControlsLabel';
+import merge from 'lodash/merge';
 
 export default class CMO extends Component {
 
@@ -69,15 +71,13 @@ export default class CMO extends Component {
 
   render() {
     const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData } = this.props;
-    const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
-    const planJson = parseAnnualPlan(plan, approvedBudgets, planUnknownChannels);
-    const planData = planJson[Object.keys(planJson)[0]];
-    const monthBudget = planData['__TOTAL__'].values[0] || 0;
-    const annualBudget = planData['__TOTAL__'].values.reduce((a,b) => a+b, 0);
-    const fatherChannelsWithBudgets = Object.keys(planData)
-      .filter(channelName => channelName !== '__TOTAL__' && planData[channelName].values[0] !== 0)
-      .map((fatherChannel)=> { return { name: fatherChannel, value: planData[fatherChannel].values[0] } });
-    const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - planData['__TOTAL__'].values.reduce((a, b) => a + b, 0);
+    const merged = merge(approvedBudgets, planUnknownChannels);
+    const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
+    const annualBudget = merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);
+    const fatherChannelsWithBudgets = Object.keys(merged && merged[0])
+      .filter(channel => merged[0][channel])
+      .map(channel => { return { name: getMetadata('category', channel), value: merged[0][channel] } });
+    const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - annualBudget;
 
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
@@ -295,7 +295,7 @@ export default class CMO extends Component {
                     fatherChannelsWithBudgets.map((element, i) => (
                       <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
                         <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
-                        <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px' }}>
+                        <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '135px', textTransform: 'capitalize' }}>
                           {element.name}
                         </div>
                         <div style={{ fontSize: '14px', fontWeight: '600', width: '70px' }}>

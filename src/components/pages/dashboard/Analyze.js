@@ -7,7 +7,7 @@ import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
 import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
 import merge from 'lodash/merge';
-import { getChannelsWithNicknames, getNickname as getChannelNickname, getTitle as getChannelTitle } from 'components/utils/channels';
+import { getChannelsWithNicknames, getNickname as getChannelNickname, getMetadata } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import AnalyzeTable from 'components/pages/dashboard/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
@@ -401,16 +401,15 @@ export default class Analyze extends Component {
     const fatherChannelsWithBudgets = [];
     let fatherChannelsSum = 0;
     Object.keys(CEV).forEach(channel => {
-      const channelTitle = getChannelTitle(channel);
-      if (channelTitle && CEV[channel]) {
+      const channelCategory = getMetadata('category', channel);
+      if (channelCategory && CEV[channel]) {
         fatherChannelsSum += CEV[channel];
-        const fatherChannel = channelTitle.split('/')[0];
-        const existsFather = fatherChannelsWithBudgets.find(item => item.name === fatherChannel);
+        const existsFather = fatherChannelsWithBudgets.find(item => item.name === channelCategory);
         if (existsFather) {
           existsFather.value += CEV[channel];
         }
         else {
-          fatherChannelsWithBudgets.push({name: fatherChannel, value: CEV[channel]});
+          fatherChannelsWithBudgets.push({name: channelCategory, value: CEV[channel]});
         }
       }
     });
