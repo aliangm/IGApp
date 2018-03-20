@@ -160,6 +160,7 @@ class AppComponent extends Component {
 
   getUserMonthPlan(region, planDate) {
     const deferred = q.defer();
+    this.setState({unsaved: false});
     serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         if (response.ok) {
