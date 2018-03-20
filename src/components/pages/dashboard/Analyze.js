@@ -19,6 +19,7 @@ import { formatDate } from 'components/utils/date';
 import appStyle from 'styles/app.css';
 import Loading from 'components/pages/plan/Loading';
 import Popup from 'components/Popup';
+import ReactTooltip from 'react-tooltip';
 
 export default class Analyze extends Component {
 
@@ -344,8 +345,9 @@ export default class Analyze extends Component {
                   Math.round(funnelIndicator),
                   '$' + formatBudget(Math.round(CPX)),
                   <div style={{ display: 'flex' }}>
+                    <ReactTooltip/>
                     {channels.map(channel =>
-                      <div key={channel} title={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
+                      <div key={channel} data-tip={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
                     )}
                   </div>
                 ], {

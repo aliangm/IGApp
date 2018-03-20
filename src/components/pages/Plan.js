@@ -22,6 +22,7 @@ import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import { output } from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { FeatureToggle } from 'react-feature-toggles';
+import ReactTooltip from 'react-tooltip';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -310,6 +311,7 @@ export default class Plan extends Component {
     const selectedName = tabNames[this.state.selectedTab];
     const selectedTab = tabs[selectedName];
     return <div>
+      <ReactTooltip/>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
@@ -364,7 +366,7 @@ export default class Plan extends Component {
               </div>
             </FeatureToggle>
             { this.state.selectedTab !== 1 ? null :
-              <div className={this.classes.forecastButton} title="forecasting" onClick={ () => {
+              <div className={this.classes.forecastButton} data-tip="forecasting" onClick={ () => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
                   domElement.scrollIntoView({});
