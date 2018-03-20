@@ -11,6 +11,7 @@ import { formatBudget } from 'components/utils/budget';
 import { formatDate } from 'components/utils/date';
 import Loading from 'components/pages/plan/Loading';
 import cloneDeepWith  from 'lodash/cloneDeepWith';
+import merge from "lodash/merge";
 
 export default class TopSuggestions extends Component {
 
@@ -38,8 +39,10 @@ export default class TopSuggestions extends Component {
 
     const { active, showPopup, item, ifApprovedMetrics } = this.state;
     const { approvedBudgets, projectedPlan, approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection } = this.props;
-
-    const suggestionsOrdered = approvedBudgets[0] ? Object.keys(approvedBudgets[0])
+    const zeroBudgetSuggestions = {};
+    Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
+    const nextMonthBudgets = merge(zeroBudgetSuggestions, projectedPlan[0].plannedChannelBudgets);
+    const suggestionsOrdered = nextMonthBudgets ? Object.keys(nextMonthBudgets)
         .filter(item => (projectedPlan[0].plannedChannelBudgets[item] || 0) !== (approvedBudgets[0][item] || 0))
         .map(item => {
           return {
