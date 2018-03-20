@@ -74,9 +74,19 @@ export default class CMO extends Component {
     const merged = merge(approvedBudgets, planUnknownChannels);
     const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
     const annualBudget = merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);
-    const fatherChannelsWithBudgets = Object.keys(merged && merged[0])
+    const fatherChannelsWithBudgets = [];
+    Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
-      .map(channel => { return { name: getMetadata('category', channel), value: merged[0][channel] } });
+      .forEach(channel => {
+        const category = getMetadata('category', channel);
+        const alreadyExistItem = fatherChannelsWithBudgets.find(item => item.name === category);
+        if (!alreadyExistItem) {
+          fatherChannelsWithBudgets.push({name: category, value: merged[0][channel]})
+        }
+        else {
+          alreadyExistItem.value += merged[0][channel];
+        }
+      });
     const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - annualBudget;
 
     const numberOfActiveCampaigns = campaigns
