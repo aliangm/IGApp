@@ -13,6 +13,7 @@ import FirstPageVisit from 'components/pages/FirstPageVisit';
 import merge from 'lodash/merge';
 import { formatBudget } from 'components/utils/budget';
 import Button from 'components/controls/Button';
+import ReactDOM from "react-dom";
 
 export default class Insights extends Component {
 
@@ -25,9 +26,39 @@ export default class Insights extends Component {
     }
   }
 
+  close = () => {
+    this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false});
+  };
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.onOutsideClick, true);
+    document.addEventListener('touchstart', this.onOutsideClick, true);
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.onOutsideClick, true);
+    document.removeEventListener('touchstart', this.onOutsideClick, true);
+    document.removeEventListener('keydown', this.handleKeyPress);
+  }
+
+  onOutsideClick = (e) => {
+    const elem = ReactDOM.findDOMNode(this.refs.popup);
+
+    if (elem !== e.target && !elem.contains(e.target)) {
+      this.close();
+    }
+  };
+
+  handleKeyPress = (e) => {
+    if (e.key === 'Escape') {
+      this.close();
+    }
+  };
+
   render() {
     const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel} = this.props;
-    const {showBalancerPopup, suggestedChannel, balancingChannel} = this.state;
+    const {showBalancerPopup, suggestedChannel, balancingChannel, findAlternative} = this.state;
     const relevantObjectives = objectives
       .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
       .map(item => item.indicator);
@@ -51,20 +82,19 @@ export default class Insights extends Component {
         }
       });
       const dates = getDates(planDate);
-      const findBalancer = (channel) => {
+      const findBalancer = (channel, skip = 0) => {
         const budget = (nextMonthBudgets[channel] || 0) - (approvedBudgets[0][channel] || 0);
         const delta = 0.2 * budget;
         const lowerRange = budget - delta;
         const higherRange = budget + delta;
-        const relevantChannel = orderedSuggestions
-          .filter(item => item !== channel)
-          .find(item =>
+        const alternatives = orderedSuggestions
+          .filter(item => item !== channel &&
             (budget > 0 ?
               (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) > lowerRange && (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) < higherRange
               :
               (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) < lowerRange && (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) > higherRange));
-        if (relevantChannel) {
-          this.setState({suggestedChannel: channel, balancingChannel: relevantChannel, showBalancerPopup: true});
+        if (alternatives && alternatives.length > 0) {
+          this.setState({suggestedChannel: channel, balancingChannel: alternatives[skip % alternatives.length], showBalancerPopup: true, findAlternative: alternatives.length > 1 ? () => { findBalancer(channel, ++skip)} : null });
         }
         else {
           this.setState({showBalancerPopup: true});
@@ -95,6 +125,7 @@ export default class Insights extends Component {
               {cubes}
               {showBalancerPopup ?
                 <Page popup={true} width="825px" contentClassName={insightsStyle.locals.popupContent}>
+                  <span ref="popup">
                   {balancingChannel ?
                     <div className={this.classes.frame} style={{marginBottom: '0', height: '300px'}}>
                       <div className={this.classes.leftSide}>
@@ -134,13 +165,9 @@ export default class Insights extends Component {
                           })
                           }
                           Suggested budget
-                          ({getChannelNickname(suggestedChannel)}): <b>${formatBudget(nextMonthBudgets[suggestedChannel])}</b>.<br/>
+                          ({getChannelNickname(suggestedChannel)}): <b>${formatBudget(nextMonthBudgets[suggestedChannel])}</b> (${formatBudget(nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0))}).<br/>
                           Suggested budget
-                          ({getChannelNickname(balancingChannel)}): <b>${formatBudget(nextMonthBudgets[balancingChannel])}</b>.<br/>
-                          Saved budget
-                          ({getChannelNickname(suggestedChannel)}): <b>${formatBudget(approvedBudgets[0][suggestedChannel] || 0)}</b>.<br/>
-                          Saved budget
-                          ({getChannelNickname(balancingChannel)}): <b>${formatBudget(approvedBudgets[0][balancingChannel] || 0)}</b>.<br/>
+                          ({getChannelNickname(balancingChannel)}): <b>${formatBudget(nextMonthBudgets[balancingChannel])}</b> (${formatBudget(nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0))}).<br/>
                           Total budget change: <b
                           style={{color: '#2fae23'}}>${formatBudget((approvedBudgets[0][suggestedChannel] || 0) + (approvedBudgets[0][balancingChannel] || 0) - nextMonthBudgets[suggestedChannel] - nextMonthBudgets[balancingChannel])}</b>.
                         </div>
@@ -148,7 +175,7 @@ export default class Insights extends Component {
                           <Button className={this.classes.approveButton} onClick={() => {
                             approveChannel(0, suggestedChannel, nextMonthBudgets[suggestedChannel] || 0);
                             approveChannel(0, balancingChannel, nextMonthBudgets[balancingChannel]);
-                            this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false});
+                            this.close();
                           }
                           }>
                             <div className={this.classes.approveIcon}/>
@@ -157,18 +184,23 @@ export default class Insights extends Component {
                           <Button className={this.classes.declineButton} onClick={() => {
                             declineChannel(0, suggestedChannel, (approvedBudgets[0][suggestedChannel] || 0));
                             declineChannel(0, balancingChannel, (approvedBudgets[0][balancingChannel] || 0));
-                            this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false});
-
+                            this.close();
                           }
                           }>
                             <div className={this.classes.declineIcon}/>
                             Decline
                           </Button>
+                          <div hidden={!findAlternative}>
+                            <Button className={this.classes.balancerButton} style={{ width: '232px' }} onClick={findAlternative}>
+                              <div className={this.classes.balancerIcon}/>
+                              Find an alternative balancer
+                            </Button>
+                          </div>
                         </div>
                       </div>
                       <div className={this.classes.rightSide}>
                         <div className={insightsStyle.locals.closePopup} onClick={() => {
-                          this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false})
+                          this.close();
                         }}/>
                         <div className={this.classes.end}>
                           <div className={this.classes.investBox} style={{width: '94px'}}>
@@ -204,11 +236,12 @@ export default class Insights extends Component {
                       </div>
                       <div className={this.classes.rightSide}>
                         <div className={insightsStyle.locals.closePopup} onClick={() => {
-                          this.setState({suggestedChannel: '', balancingChannel: '', showBalancerPopup: false})
+                          this.close();
                         }}/>
                       </div>
                     </div>
                   }
+                  </span>
                 </Page>
                 : null
               }
