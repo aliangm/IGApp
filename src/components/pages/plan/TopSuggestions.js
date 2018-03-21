@@ -84,7 +84,7 @@ export default class TopSuggestions extends Component {
           <div style={{display: 'flex'}}>
             <div className={this.classes.historyArrow} data-decline={diff < 0 ? true : null}/>
             <div className={this.classes.historyGrow} data-decline={diff < 0 ? true : null}>
-              {formatBudget(Math.abs(diff))}
+              {formatBudget(Math.abs(diff))} ({Math.round(((ifApprovedMetrics[metric]-actualIndicators[metric]) / (approvedBudgetsProjection[0][metric]-actualIndicators[metric]) - 1) * 100)}%)
             </div>
           </div>
         ], {
