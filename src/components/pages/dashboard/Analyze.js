@@ -227,7 +227,7 @@ export default class Analyze extends Component {
         <Label
           style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
           question={['']}
-          description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator)]}>
+          description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)]}>
           Efficiency
         </Label>
       </div>
@@ -312,7 +312,7 @@ export default class Analyze extends Component {
                 webVisits,
                 conversion,
                 Math.round(funnelIndicator * 100) / 100,
-                '$' + (CPX ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator)) : CPX)
+                '$' + (CPX ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : CPX)
               ], {
                 key: channel,
                 className: dashboardStyle.locals.tableRow
