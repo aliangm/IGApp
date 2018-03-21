@@ -57,7 +57,7 @@ export default class Insights extends Component {
   };
 
   render() {
-    const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel} = this.props;
+    const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel, approvedBudgetsProjection, actualIndicators} = this.props;
     const {showBalancerPopup, suggestedChannel, balancingChannel, findAlternative} = this.state;
     const relevantObjectives = objectives
       .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
@@ -76,9 +76,11 @@ export default class Insights extends Component {
       });
     const cubes = orderedSuggestions.map(channel => {
       const objectivesRatio = relevantObjectives.map(objective => {
+        const ratio = ((nextMonthBudgets[channel] - (approvedBudgets[0][channel] || 0)) * CIM[channel][objective]) / currentBudgets;
         return {
-          ratio: Math.round(((nextMonthBudgets[channel] - (approvedBudgets[0][channel] || 0)) * CIM[channel][objective]) / currentBudgets * 100),
-          nickname: getIndicatorNickname(objective)
+          ratio: Math.round(ratio * 100),
+          nickname: getIndicatorNickname(objective),
+          projected: Math.round((approvedBudgetsProjection[0][objective] - actualIndicators[objective]) * ratio)
         }
       });
       const dates = getDates(planDate);
