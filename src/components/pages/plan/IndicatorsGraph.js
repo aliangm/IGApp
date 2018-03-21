@@ -137,7 +137,7 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft, marginTop: '30px' }}>
-        <LineChart width={this.width} height={260} data={ this.props.data }>
+        <LineChart width={this.width} height={400} data={ this.props.data }>
           <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
           <YAxis width={82} style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }} domain={['dataMin', 'dataMax']}/>
           <CartesianGrid vertical={ false }/>
