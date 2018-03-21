@@ -131,7 +131,7 @@ export default class IndicatorsGraph extends Component {
       <div className={ this.classes.menuPosition }>
         <div className={ this.classes.menu }>
           <div className={ this.classes.menuTitle }>
-            Metrics - Forecasting
+            Forecasting
           </div>
           { menuItems }
         </div>
