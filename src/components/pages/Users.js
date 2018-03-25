@@ -9,11 +9,14 @@ import icons from 'styles/icons/plan.css';
 import uniq from 'lodash/uniq';
 import UsersPopup from 'components/pages/users/UsersPopup';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
+import dashboardStyle from "styles/dashboard/dashboard.css";
+import { formatDate } from 'components/utils/date';
+import Select from 'components/controls/Select';
 
 export default class Users extends Component {
 
   style = style;
-  styles = [planStyle, icons];
+  styles = [planStyle, icons, dashboardStyle];
 
   constructor(props) {
     super(props);
@@ -53,7 +56,7 @@ export default class Users extends Component {
 
   render() {
 
-    const { attribution } = this.props;
+    const { attribution, previousData } = this.props;
     const { users } = attribution;
     const headRow = this.getTableRow(null, [
       'User',
@@ -99,6 +102,10 @@ export default class Users extends Component {
       })
     });
 
+    const months = previousData.map((item, index) => {
+      return {value: index, label: formatDate(item.planDate)}
+    });
+
     return <div>
       <Page contentClassName={ planStyle.locals.content } innerClassName={ planStyle.locals.pageInner } width="100%">
         <div className={ planStyle.locals.head }>
@@ -106,6 +113,24 @@ export default class Users extends Component {
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.users ?
           <div className={planStyle.locals.wrap}>
+            <div className={dashboardStyle.locals.upperPanel}>
+              <div className={dashboardStyle.locals.historyConfigText}>
+                Date range:
+              </div>
+              <Select
+                selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+                select={{
+                  options: months
+                }}
+                onChange={(e) => {
+                   this.props.calculateAttributionData(months.length - e.value - 1)
+                }}
+                style={{ width: '75px', margin: '0 8px' }}
+              />
+              <div className={dashboardStyle.locals.historyConfigText} style={{ fontWeight: 'bold' }}>
+                - {formatDate(this.props.planDate)}
+              </div>
+            </div>
             <div className={this.classes.inner}>
               <table className={this.classes.table}>
                 <thead>

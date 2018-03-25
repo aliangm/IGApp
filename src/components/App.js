@@ -620,12 +620,14 @@ class AppComponent extends Component {
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
     const deferred = q.defer();
+    this.setState({loaded: false});
     serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth, attributionModel: attributionModel}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
               this.setDataAsState(data);
+              this.setState({loaded: true, months: this.state.previousData.length - 1 - monthsExceptThisMonth});
               deferred.resolve();
             });
         }
