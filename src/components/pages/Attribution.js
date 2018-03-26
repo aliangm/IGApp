@@ -7,6 +7,7 @@ import Setup from 'components/pages/attribution/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
+import SiteStructure from 'components/pages/attribution/SiteStructure';
 import UploadOfflinePopup from 'components/pages/attribution/UploadOfflinePopup';
 import { FeatureToggle } from 'react-feature-toggles';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
@@ -33,7 +34,8 @@ export default class Attribution extends Component {
       "Setup": Setup,
       "Tracking Plan": TrackingPlan,
       "Campaign URLs": TrackingUrls,
-      "Offline": Offline
+      "Offline": Offline,
+      "Site Structure": SiteStructure
     };
 
     const tabNames = Object.keys(tabs);
