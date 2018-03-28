@@ -6,7 +6,7 @@ import { PieChart, Pie, Cell } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
-import { getIndicatorsWithNicknames } from 'components/utils/indicators';
+import { getIndicatorsWithProps } from 'components/utils/indicators';
 import { getMetadata } from 'components/utils/channels';
 import { formatBudget } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
@@ -147,28 +147,24 @@ export default class CMO extends Component {
         users: actualIndicators.users
       };
 
-    const indicatorsOptions = getIndicatorsWithNicknames();
+    const indicatorsProperties = getIndicatorsWithProps();
     const objectivesGauges = objectives.map((objective, index) => {
       if (!objective.isArchived) {
-        let title;
         const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
         const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
         const month = timeFrameToDate(objective.timeFrame).getMonth();
         const project = approvedBudgetsProjection[month] && approvedBudgetsProjection[month][objective.indicator];
-        indicatorsOptions.forEach((indicator) => {
-          if (indicator.value === objective.indicator) {
-            title = indicator.label;
-          }
-        });
         return <Objective
           target={target}
           value={actualIndicators[objective.indicator]}
-          title={title}
+          title={indicatorsProperties[objective.indicator].nickname}
           project={project}
           key={index}
           directionDown={objective.direction === "decrease"}
           timeFrame={objective.timeFrame}
           color={COLORS[index % COLORS.length]}
+          isDollar={indicatorsProperties[objective.indicator].isDollar}
+          isPercentage={indicatorsProperties[objective.indicator].isPercentage}
         />
       }
     });

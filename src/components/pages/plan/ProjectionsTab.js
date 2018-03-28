@@ -74,6 +74,8 @@ export default class ProjectionsTab extends Component {
             grow={ this.props.actualIndicators[item] ? Math.ceil(Math.abs(((this.props.approvedBudgetsProjection[this.monthMap[selectedTab]] ? this.props.approvedBudgetsProjection[this.monthMap[selectedTab]][item] : 0) - this.props.actualIndicators[item]) / this.props.actualIndicators[item]) * 100) : this.props.approvedBudgetsProjection[this.monthMap[selectedTab]] && this.props.approvedBudgetsProjection[this.monthMap[selectedTab]][item] * 100 }
             icon={ "indicator:" + item }
             title={ properties[item].title }
+            isDollar={ properties[item].isDollar }
+            isPercentage={ properties[item].isPercentage }
           />
           :
           <Item
@@ -84,6 +86,8 @@ export default class ProjectionsTab extends Component {
             grow={ this.props.actualIndicators[item] ? Math.ceil(Math.abs(((this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues ? this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item] : 0) - this.props.actualIndicators[item]) / this.props.actualIndicators[item]) * 100) : this.props.projectedPlan[this.monthMap[selectedTab]] && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues && this.props.projectedPlan[this.monthMap[selectedTab]].projectedIndicatorValues[item] * 100 }
             icon={ "indicator:" + item }
             title={ properties[item].title }
+            isDollar={ properties[item].isDollar }
+            isPercentage={ properties[item].isPercentage }
           />
       });
 

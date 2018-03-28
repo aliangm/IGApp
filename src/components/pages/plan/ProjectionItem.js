@@ -4,7 +4,7 @@ import names from 'classnames';
 
 import style from 'styles/plan/projection-item.css';
 import icons from 'styles/icons/indicators.css';
-
+import { formatBudget } from 'components/utils/budget';
 import Textfield from 'components/controls/Textfield';
 import Button from 'components/controls/Button';
 
@@ -65,10 +65,10 @@ export default class ProjectionItem extends Component {
     }
 
     if (isFinite(value)) {
-      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return (this.props.isDollar ? '$' : '') + formatBudget(value) + (this.props.isPercentage ? '%' : '');
     }
 
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (this.props.isDollar ? '$' : '') + formatBudget(value) + (this.props.isPercentage ? '%' : '');
   }
 
   getDiff() {
