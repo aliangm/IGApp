@@ -199,6 +199,7 @@ export default class UsersPopup extends Component {
         });
       }
       if (item.funnelStage && item.funnelStage.length > 1) {
+        item.funnelStage.sort((a, b) => stagesOrder[a] - stagesOrder[b]);
         events.push(<div className={this.classes.eventLine} key={events.length}>
           <div className={this.classes.iconCircleSmall} data-icon="event:status"/>
           <div className={this.classes.eventText}>
