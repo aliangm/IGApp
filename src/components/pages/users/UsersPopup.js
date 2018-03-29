@@ -6,6 +6,8 @@ import ReactCountryFlag from 'react-country-flag';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import Popup from 'components/Popup';
+import uniq from 'lodash/uniq';
+import ReactDOM from 'react-dom';
 
 export default class UsersPopup extends Component {
 
@@ -24,6 +26,32 @@ export default class UsersPopup extends Component {
       accountName: '',
       journey: [],
       countries: []
+    }
+  };
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.onOutsideClick, true);
+    document.addEventListener('touchstart', this.onOutsideClick, true);
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.onOutsideClick, true);
+    document.removeEventListener('touchstart', this.onOutsideClick, true);
+    document.removeEventListener('keydown', this.handleKeyPress);
+  }
+
+  onOutsideClick = (e) => {
+    const elem = ReactDOM.findDOMNode(this.refs.popup);
+
+    if (elem !== e.target && !elem.contains(e.target)) {
+      this.props.close();
+    }
+  };
+
+  handleKeyPress = (e) => {
+    if (e.key === 'Escape') {
+      this.props.close();
     }
   };
 
@@ -52,6 +80,27 @@ export default class UsersPopup extends Component {
     return Math.floor(seconds) + " seconds ago";
   }
 
+  mode(array) {
+    if(array.length === 0)
+      return null;
+    const modeMap = {};
+    let maxEl = array[0], maxCount = 1;
+    for(let i = 0; i < array.length; i++)
+    {
+      const el = array[i];
+      if(modeMap[el] == null)
+        modeMap[el] = 1;
+      else
+        modeMap[el]++;
+      if(modeMap[el] > maxCount)
+      {
+        maxEl = el;
+        maxCount = modeMap[el];
+      }
+    }
+    return maxEl;
+  }
+
   stringifyDate(dateString) {
     const date = new Date(dateString);
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -62,6 +111,33 @@ export default class UsersPopup extends Component {
     const {user, close} = this.props;
     const firstTouchPoint = user.journey && user.journey[0] && new Date(user.journey[0].startTime);
     const lastTouchPoint = user.journey && user.journey[user.journey.length-1] && new Date(user.journey[user.journey.length-1].endTime);
+    const emails = user.journey && uniq(user.journey.map(item => item.email));
+    const stagesOrder = {
+      MCL: 0,
+      MQL: 1,
+      SQL: 2,
+      opps: 3,
+      users: 4
+    };
+    const funnelStages = {};
+    emails && emails.forEach(email => {
+      const userFunnelStages = [];
+      user.journey
+        .filter(item => item.email === email)
+        .forEach(item => {
+          item.funnelStage.forEach(item => {
+            if (!userFunnelStages.includes(stagesOrder[item])) {
+              userFunnelStages.push(stagesOrder[item]);
+            }
+          })
+        });
+      funnelStages[email] = Object.keys(stagesOrder)[Math.max(... userFunnelStages)];
+    });
+
+    const domain = user.journey && this.mode(user.journey.map(item => {
+      const domain = item.email && item.email.match('(?<=@).+');
+      return domain && domain[0];
+    }));
     const channels = user.journey && user.journey.map((item, index) => <div key={index} className={this.classes.channelBox}>
       <div className={this.classes.icon} data-icon={"plan:" + item.channel} style={{ width: '40px', height: '40px', margin: '0 5px' }}/>
       <div>{item.channel === 'direct' ? 'Direct' : getChannelNickname(item.channel)}</div>
@@ -75,6 +151,7 @@ export default class UsersPopup extends Component {
             Visited website through <b>{getChannelNickname(item.channel)}</b>
             <div className={this.classes.eventTime}>
               {this.stringifyDate(item.startTime)}
+              {emails && emails.length > 1 ? ", " + item.email : null}
             </div>
           </div>
         </div>)
@@ -100,6 +177,7 @@ export default class UsersPopup extends Component {
               : null }
             <div className={this.classes.eventTime}>
               {this.stringifyDate(item.startTime)}
+              {emails.length > 1 ? ", " + item.email : null}
             </div>
           </div>
         </div>);
@@ -113,6 +191,7 @@ export default class UsersPopup extends Component {
                 Conversion Event - <b>{event}</b>
                 <div className={this.classes.eventTime}>
                   {this.stringifyDate(item.startTime)}
+                  {emails.length > 1 ? ", " + item.email : null}
                 </div>
               </div>
             </div>)
@@ -123,9 +202,10 @@ export default class UsersPopup extends Component {
         events.push(<div className={this.classes.eventLine} key={events.length}>
           <div className={this.classes.iconCircleSmall} data-icon="event:status"/>
           <div className={this.classes.eventText}>
-            Status change - <b>{getIndicatorNickname(item.funnelStage[0]) + " > " + getIndicatorNickname(item.funnelStage[item.funnelStage.length - 1])}</b>
+            Status change - <b>{getIndicatorNickname(item.funnelStage[0], true) + " > " + getIndicatorNickname(item.funnelStage[item.funnelStage.length - 1], true)}</b>
             <div className={this.classes.eventTime}>
               {this.stringifyDate(item.startTime)}
+              {emails.length > 1 ? ", " + item.email : null}
             </div>
           </div>
         </div>);
@@ -133,52 +213,65 @@ export default class UsersPopup extends Component {
     });
     return <div>
       <Page popup={true} width="934px" contentClassName={ this.classes.content } innerClassName={ this.classes.inner }>
-        <div style={{ position: 'relative' }}>
-          <div className={ this.classes.topRight }>
-            <div className={ this.classes.close } onClick={ close }/>
+        <span ref="popup">
+          <div style={{ position: 'relative' }}>
+            <div className={ this.classes.topRight }>
+              <div className={ this.classes.close } onClick={ close }/>
+            </div>
           </div>
-        </div>
-        <div className={this.classes.container}>
-          <div className={this.classes.icon} style={{ backgroundImage: user.user ? 'url(https://logo.clearbit.com/' + user.user.match('(?<=@).+') + ')' : 'none' }}/>
-          <div className={this.classes.headerBigText}>
-            { user.accountName ? user.accountName : user.user && user.user.match('(?<=@)[^.]+(?=\\.)') }
-            <div className={this.classes.headerSmallText}>{user.user}</div>
+          <div className={this.classes.container}>
+            <div className={this.classes.icon} style={{ backgroundImage: user.user ? 'url(https://logo.clearbit.com/' + user.user.match('(?<=@).+') + ')' : 'none' }}/>
+            <div className={this.classes.headerBigText}>
+              {user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0]}
+              <div className={this.classes.headerSmallText}>{emails && emails.length === 1 ? emails[0] :
+                <span>
+                <span className={this.classes.otherPages} onClick={()=>{ this.setState({showEmailsPopup: true}) }}>
+                  Users
+                </span>
+                <span hidden={!this.state.showEmailsPopup} style={{ position: 'relative' }}>
+                  <Popup className={this.classes.otherPagesPopup} onClose={() => { this.setState({showEmailsPopup: false}) }}>
+                    {emails && emails.map((item, index) => <div key={index}>{item} ({getIndicatorNickname(funnelStages[item], true)})</div>)}
+                  </Popup>
+                </span>
+              </span>
+              }</div>
+            </div>
+            <div className={this.classes.headerBigText}>
+              Stage
+              <div className={this.classes.headerSmallText}>{user.funnelStage && user.funnelStage.map(item => getIndicatorNickname(item, true)).join(', ')}</div>
+            </div>
+            <div className={this.classes.headerBigText}>
+              First Touch
+              <div className={this.classes.headerSmallText}>{this.timeSince(firstTouchPoint)}</div>
+            </div>
+            <div className={this.classes.headerBigText}>
+              Last Touch
+              <div className={this.classes.headerSmallText}>{this.timeSince(lastTouchPoint)}</div>
+            </div>
+            <div className={this.classes.headerBigText}>
+              Country
+              { user.countries && user.countries.map(item => <div key={item.code} className={this.classes.container} style={{ height: '20px', width: '45px', marginTop: '5px' }}><ReactCountryFlag code={item.code} svg/><div className={this.classes.headerSmallText} style={{ marginLeft: '5px' }}>{item.code}</div></div>) }
+            </div>
+            <div className={this.classes.headerBigText}>
+              Device
+              { user.devices && user.devices.map(item => <div key={item} className={this.classes.device} data-icon={"device:" + item}/>) }
+            </div>
           </div>
-          <div className={this.classes.headerBigText}>
-            Stage Name
-            <div className={this.classes.headerSmallText}>{user.funnelStage && getIndicatorNickname(user.funnelStage)}</div>
+          <div className={this.classes.channels}>
+            <div className={this.classes.channelsHeader}>
+              Marketing Channels
+            </div>
+            <div>
+              {channels}
+            </div>
           </div>
-          <div className={this.classes.headerBigText}>
-            First Touch
-            <div className={this.classes.headerSmallText}>{this.timeSince(firstTouchPoint)}</div>
+          <div className={this.classes.userJourney}>
+            <div className={this.classes.line}/>
+            <div className={this.classes.events}>
+              { events.reverse() }
+            </div>
           </div>
-          <div className={this.classes.headerBigText}>
-            Last Touch
-            <div className={this.classes.headerSmallText}>{this.timeSince(lastTouchPoint)}</div>
-          </div>
-          <div className={this.classes.headerBigText}>
-            Country
-            { user.countries && user.countries.map(item => <div key={item.code} className={this.classes.container} style={{ height: '20px', width: '45px', marginTop: '5px' }}><ReactCountryFlag code={item.code} svg/><div className={this.classes.headerSmallText} style={{ marginLeft: '5px' }}>{item.code}</div></div>) }
-          </div>
-          <div className={this.classes.headerBigText}>
-            Device
-            { user.devices && user.devices.map(item => <div key={item} className={this.classes.device} data-icon={"device:" + item}/>) }
-          </div>
-        </div>
-        <div className={this.classes.channels}>
-          <div className={this.classes.channelsHeader}>
-            Marketing Channels
-          </div>
-          <div>
-            {channels}
-          </div>
-        </div>
-        <div className={this.classes.userJourney}>
-          <div className={this.classes.line}/>
-          <div className={this.classes.events}>
-            { events.reverse() }
-          </div>
-        </div>
+        </span>
       </Page>
     </div>
   }
