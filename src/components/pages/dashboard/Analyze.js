@@ -39,8 +39,7 @@ export default class Analyze extends Component {
       showChannels: true,
       soryBy: 'webVisits',
       isDesc: 1,
-      isLoading: false,
-      attributionModel: false
+      isLoading: false
     };
   }
 
@@ -465,7 +464,7 @@ export default class Analyze extends Component {
             options: months
           }}
           onChange={(e) => {
-            this.props.calculateAttributionData(previousData.length - e.value - 1, this.state.attributionModel)
+            this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
           }}
           style={{ width: '75px', margin: '0 8px' }}
         />
@@ -549,12 +548,12 @@ export default class Analyze extends Component {
             <div style={{ display: 'flex' }}>
               <div>
                 <Select
-                  selected={this.state.attributionModel}
+                  selected={this.props.attributionModel ? this.props.attributionModel : false}
                   select={{
                     options: attributionModels
                   }}
                   onChange={(e) => {
-                    this.setState({attributionModel: e.value}, this.calculateAttributionData.bind(this))
+                    this.props.calculateAttributionData(this.props.months ? previousData.length - this.props.months - 1 : 0, e.value)
                   }}
                   style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
                 />

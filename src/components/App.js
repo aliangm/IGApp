@@ -627,7 +627,7 @@ class AppComponent extends Component {
           response.json()
             .then((data) => {
               this.setDataAsState(data);
-              this.setState({loaded: true, months: this.state.previousData.length - 1 - monthsExceptThisMonth});
+              this.setState({loaded: true, months: this.state.previousData.length - 1 - monthsExceptThisMonth, attributionModel: attributionModel});
               deferred.resolve();
             });
         }
