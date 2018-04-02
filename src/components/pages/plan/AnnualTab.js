@@ -449,7 +449,7 @@ export default class AnnualTab extends Component {
     });
 
     return <div>
-      <div className={ this.classes.wrap } data-loading={ this.props.isPlannerLoading ? true : null }>
+      <div className={ this.classes.wrap }>
         <div className={ planStyles.locals.title } style={{ padding: '0' }}>
           <div className={ planStyles.locals.titleMain }>
             <div className={ planStyles.locals.titleText }>

@@ -160,6 +160,7 @@ class AppComponent extends Component {
 
   getUserMonthPlan(region, planDate) {
     const deferred = q.defer();
+    this.setState({unsaved: false});
     serverCommunication.serverRequest('GET', 'usermonthplan', null, region, planDate)
       .then((response) => {
         if (response.ok) {
@@ -619,12 +620,14 @@ class AppComponent extends Component {
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
     const deferred = q.defer();
+    this.setState({loaded: false});
     serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth, attributionModel: attributionModel}), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
               this.setDataAsState(data);
+              this.setState({loaded: true, months: this.state.previousData.length - 1 - monthsExceptThisMonth, attributionModel: attributionModel});
               deferred.resolve();
             });
         }

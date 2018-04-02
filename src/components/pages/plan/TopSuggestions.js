@@ -5,12 +5,13 @@ import suggestionStyle from 'styles/plan/suggestion.css';
 import Suggestion from 'components/pages/plan/Suggestion';
 import { FeatureToggle } from 'react-feature-toggles';
 import Page from 'components/Page';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import { getNickname as getIndicatorNickname, getMetadata } from 'components/utils/indicators';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { formatBudget } from 'components/utils/budget';
 import { formatDate } from 'components/utils/date';
 import Loading from 'components/pages/plan/Loading';
 import cloneDeepWith  from 'lodash/cloneDeepWith';
+import merge from "lodash/merge";
 
 export default class TopSuggestions extends Component {
 
@@ -38,8 +39,10 @@ export default class TopSuggestions extends Component {
 
     const { active, showPopup, item, ifApprovedMetrics } = this.state;
     const { approvedBudgets, projectedPlan, approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection } = this.props;
-
-    const suggestionsOrdered = approvedBudgets[0] ? Object.keys(approvedBudgets[0])
+    const zeroBudgetSuggestions = {};
+    Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
+    const nextMonthBudgets = merge(zeroBudgetSuggestions, projectedPlan[0].plannedChannelBudgets);
+    const suggestionsOrdered = nextMonthBudgets ? Object.keys(nextMonthBudgets)
         .filter(item => (projectedPlan[0].plannedChannelBudgets[item] || 0) !== (approvedBudgets[0][item] || 0))
         .map(item => {
           return {
@@ -70,7 +73,7 @@ export default class TopSuggestions extends Component {
     });
 
     const rows = ifApprovedMetrics && Object.keys(ifApprovedMetrics)
-      .filter(metric => ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric] !== 0)
+      .filter(metric => ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric] !== 0 && getMetadata('isObjective', metric))
       .map(metric => {
         const diff = Math.round(ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric]);
         return this.getTableRow(null, [
@@ -81,7 +84,7 @@ export default class TopSuggestions extends Component {
           <div style={{display: 'flex'}}>
             <div className={this.classes.historyArrow} data-decline={diff < 0 ? true : null}/>
             <div className={this.classes.historyGrow} data-decline={diff < 0 ? true : null}>
-              {formatBudget(Math.abs(diff))}
+              {formatBudget(Math.abs(diff))} ({Math.round(((ifApprovedMetrics[metric]-actualIndicators[metric]) / (approvedBudgetsProjection[0][metric]-actualIndicators[metric]) - 1) * 100)}%)
             </div>
           </div>
         ], {

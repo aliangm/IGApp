@@ -389,6 +389,7 @@
 
 .father-channel-title {
     margin-left: 20px;
+    text-transform: capitalize;
 }
 
 .father-channel-value {

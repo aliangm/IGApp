@@ -5,7 +5,6 @@ import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
-import SaveButton from 'components/pages/profile/SaveButton';
 import Item from 'components/pages/indicators/Item';
 import style from 'styles/onboarding/onboarding.css';
 import indiStyle from 'styles/indicators/indicators.css';
@@ -191,6 +190,46 @@ export default class Indicators extends Component {
         automaticIndicators: this.isFunnelAuto('opps'),
         isFunnel: true
       },
+      leadToMQLVelocity: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MCL') && this.isFunnelAuto('MQL')
+      },
+      MQLToSQLVelocity: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MQL') && this.isFunnelAuto('SQL')
+      },
+      SQLToOppVelocity: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('SQL') && this.isFunnelAuto('opps')
+      },
+      oppToAccountVelocity: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('opps') && this.isFunnelAuto('users')
+      },
+      averageSalesCycle: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MCL') && this.isFunnelAuto('users')
+      },
+      leadToMQLConversionRate: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MCL') && this.isFunnelAuto('MQL')
+      },
+      MQLToSQLConversionRate: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MQL') && this.isFunnelAuto('SQL')
+      },
+      SQLToOppConversionRate: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('SQL') && this.isFunnelAuto('opps')
+      },
+      OppToAccountConversionRate: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('opps') && this.isFunnelAuto('users')
+      },
+      leadToAccountConversionRate: {
+        showAutomaticPopup: this.showCRMPopup.bind(this),
+        automaticIndicators: this.isFunnelAuto('MCL') && this.isFunnelAuto('users')
+      },
       LTV: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
         automaticIndicators: this.isFinanceAuto('LTV')
@@ -276,7 +315,7 @@ export default class Indicators extends Component {
       </div>
     });
     return <div>
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1051px'}>
+      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1052px'} innerClassName={indiStyle.locals.inner}>
         <Title title="Metrics" subTitle="Marketing is great, but without measuring the impact on your metrics, there is no real point in it." />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>

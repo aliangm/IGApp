@@ -34,7 +34,9 @@ export default class PlannedVsActual extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(nextProps);
+    if (!this.state.updating) {
+      this.setState(nextProps);
+    }
   }
 
   pagingUpdateState(data) {
@@ -152,78 +154,78 @@ export default class PlannedVsActual extends Component {
         options: [
           {
             label: 'Display Ads', options: [
-            {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
-            {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
-          ]
+              {label: 'Google AdWords', value: 'advertising_displayAds_googleAdwords'},
+              {label: 'Other (not Google Ads)', value: 'advertising_displayAds_other'},
+            ]
           },
           {
             label: 'Search Marketing', options: [
-            {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
-            {
-              label: 'SEM (PPC)', options: [
-              {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
-              {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
+              {label: 'SEO', value: 'advertising_searchMarketing_SEO'},
+              {
+                label: 'SEM (PPC)', options: [
+                  {label: 'Google AdWords', value: 'advertising_searchMarketing_SEM_googleAdwords'},
+                  {label: 'Other (not Google Ads)', value: 'advertising_searchMarketing_SEM_other'}
+                ]
+              },
             ]
-            },
-          ]
           },
           {
             label: 'Paid Social', options: [
-            {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
-            {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
-            {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
-            {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
-            {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
-            {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
-            {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
-          ]
+              {label: 'Facebook Advertising', value: 'advertising_socialAds_facebookAdvertising'},
+              {label: 'Twitter Advertising', value: 'advertising_socialAds_twitterAdvertising'},
+              {label: 'LinkedIn Advertising', value: 'advertising_socialAds_linkedinAdvertising'},
+              {label: 'Instagram Advertising', value: 'advertising_socialAds_instagramAdvertising'},
+              {label: 'Pinterest Advertising', value: 'advertising_socialAds_pinterestAdvertising'},
+              {label: 'Google+ Advertising', value: 'advertising_socialAds_GooglePlusAdvertising'},
+              {label: 'YouTube Advertising', value: 'advertising_socialAds_youtubeAdvertising'}
+            ]
           },
           {
             label: 'Offline Ads', options: [
-            {
-              label: 'TV', options: [
-              {label: 'Local', value: 'advertising_offlineAds_TV_local'},
-              {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
-              {label: 'International', value: 'advertising_offlineAds_TV_international'}
+              {
+                label: 'TV', options: [
+                  {label: 'Local', value: 'advertising_offlineAds_TV_local'},
+                  {label: 'Nationwide', value: 'advertising_offlineAds_TV_nationwide'},
+                  {label: 'International', value: 'advertising_offlineAds_TV_international'}
+                ]
+              },
+              {label: 'Radio', value: 'advertising_offlineAds_radio'},
+              {
+                label: 'Newspaper', options: [
+                  {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
+                  {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
+                  {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
+                ]
+              },
+              {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
+              {label: 'SMS', value: 'advertising_offlineAds_SMS'},
             ]
-            },
-            {label: 'Radio', value: 'advertising_offlineAds_radio'},
-            {
-              label: 'Newspaper', options: [
-              {label: 'Local', value: 'advertising_offlineAds_newspaper_local'},
-              {label: 'Nationwide', value: 'advertising_offlineAds_newspaper_nationwide'},
-              {label: 'International', value: 'advertising_offlineAds_newspaper_international'}
-            ]
-            },
-            {label: 'Billboard', value: 'advertising_offlineAds_billboard'},
-            {label: 'SMS', value: 'advertising_offlineAds_SMS'},
-          ]
           },
           {
             label: 'Mobile', options: [
-            {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
-            {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
-            {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
-            {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
-          ]
+              {label: 'Incentivized CPI', value: 'advertising_mobile_incentivizedCPI'},
+              {label: 'Non-Incentivized CPI', value: 'advertising_mobile_nonIncentivizedCPI'},
+              {label: 'ASO (App Store Optimization)', value: 'advertising_mobile_ASO'},
+              {label: 'In-app ads', value: 'advertising_mobile_inAppAds'}
+            ]
           },
           {
             label: 'Magazines', options: [
-            {
-              label: 'Consumers', options: [
-              {label: 'Local', value: 'advertising_magazines_consumers_local'},
-              {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
-              {label: 'International', value: 'advertising_magazines_consumers_international'},
+              {
+                label: 'Consumers', options: [
+                  {label: 'Local', value: 'advertising_magazines_consumers_local'},
+                  {label: 'Nationwide', value: 'advertising_magazines_consumers_nationwide'},
+                  {label: 'International', value: 'advertising_magazines_consumers_international'},
+                ]
+              },
+              {
+                label: 'Professional', options: [
+                  {label: 'Local', value: 'advertising_magazines_professional_local'},
+                  {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
+                  {label: 'International', value: 'advertising_magazines_professional_international'},
+                ]
+              },
             ]
-            },
-            {
-              label: 'Professional', options: [
-              {label: 'Local', value: 'advertising_magazines_professional_local'},
-              {label: 'Nationwide', value: 'advertising_magazines_professional_nationwide'},
-              {label: 'International', value: 'advertising_magazines_professional_international'},
-            ]
-            },
-          ]
           },
           {label: 'Paid Reviews', value: 'advertising_paidReviews'},
           {label: 'Celebrity Endorsements', value: 'advertising_celebrityEndorsements'},
@@ -231,135 +233,135 @@ export default class PlannedVsActual extends Component {
       },
       {
         label: 'Content', options: [
-        {
-          label: 'Content Promotion', options: [
-          {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
           {
-            label: 'Content Discovery', options: [
-            {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
-            {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
-            {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
-          ]
+            label: 'Content Promotion', options: [
+              {label: 'Targeting Blogs (guest)', value: 'content_contentPromotion_targetingBlogs'},
+              {
+                label: 'Content Discovery', options: [
+                  {label: 'Outbrain', value: 'content_contentPromotion_contentDiscovery_outbrain'},
+                  {label: 'Taboola', value: 'content_contentPromotion_contentDiscovery_taboola'},
+                  {label: 'General', value: 'content_contentPromotion_contentDiscovery_other'}
+                ]
+              },
+              {
+                label: 'Forums', options: [
+                  {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
+                  {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
+                  {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
+                ]
+              },
+            ]
           },
           {
-            label: 'Forums', options: [
-            {label: 'Reddit', value: 'content_contentPromotion_forums_reddit'},
-            {label: 'Quora', value: 'content_contentPromotion_forums_quora'},
-            {label: 'Niche Specific', value: 'content_contentPromotion_forums_other'}
-          ]
-          },
+            label: 'Content Creation', options: [
+              {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
+              {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
+              {label: 'Presentations', value: 'content_contentCreation_presentations'},
+              {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
+              {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
+              {label: 'E-book', value: 'content_contentCreation_eBook'},
+              {label: 'Videos', value: 'content_contentCreation_videos'},
+              {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
+            ]
+          }
         ]
-        },
-        {
-          label: 'Content Creation', options: [
-          {label: 'Blog Posts - Company Blog (on website)', value: 'content_contentCreation_companyBlog'},
-          {label: 'Images & Infographics', value: 'content_contentCreation_imagesAndInfographics'},
-          {label: 'Presentations', value: 'content_contentCreation_presentations'},
-          {label: 'Report Sponsorship', value: 'content_contentCreation_reportSponsorship'},
-          {label: 'Research Paper (Whitepaper)', value: 'content_contentCreation_researchPaper'},
-          {label: 'E-book', value: 'content_contentCreation_eBook'},
-          {label: 'Videos', value: 'content_contentCreation_videos'},
-          {label: 'Case Studies', value: 'content_contentCreation_caseStudies'}
-        ]
-        }
-      ]
       },
       {
         label: 'Email', options: [
-        {label: 'Marketing Email', value: 'email_marketingEmail'},
-        {label: 'Transactional Email', value: 'email_transactionalEmail'},
-      ]
+          {label: 'Marketing Email', value: 'email_marketingEmail'},
+          {label: 'Transactional Email', value: 'email_transactionalEmail'},
+        ]
       },
       {
         label: 'Engineering as Marketing', options: [
-        {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
-        {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
-        {label: 'Widget', value: 'engineeringAsMarketing_widget'},
-        {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
-        {label: 'Any', value: 'engineeringAsMarketing_other'}
-      ]
+          {label: 'Professional Tool', value: 'engineeringAsMarketing_professionalTool'},
+          {label: 'Calculator', value: 'engineeringAsMarketing_calculator'},
+          {label: 'Widget', value: 'engineeringAsMarketing_widget'},
+          {label: 'Educational Microsites', value: 'engineeringAsMarketing_educationalMicrosites'},
+          {label: 'Any', value: 'engineeringAsMarketing_other'}
+        ]
       },
       {
         label: 'Events', options: [
-        {
-          label: 'Offline Events', options: [
-          {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
-          {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
-          {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
-          {label: 'Organising', value: 'events_offlineEvents_running'}
+          {
+            label: 'Offline Events', options: [
+              {label: 'Sponsorship', value: 'events_offlineEvents_sponsorship'},
+              {label: 'Speaking Engagements (Conferences)', value: 'events_offlineEvents_speakingEngagements'},
+              {label: 'Showcase (Trade Shows, Exhibitions)', value: 'events_offlineEvents_showcase'},
+              {label: 'Organising', value: 'events_offlineEvents_running'}
+            ]
+          },
+          {
+            label: 'Online Events (Running)', options: [
+              {label: 'Webinar', value: 'events_onlineEvents_webinar'},
+              {label: 'Podcast', value: 'events_onlineEvents_podcast'},
+              {label: 'Workshop', value: 'events_onlineEvents_workshop'}
+            ]
+          },
         ]
-        },
-        {
-          label: 'Online Events (Running)', options: [
-          {label: 'Webinar', value: 'events_onlineEvents_webinar'},
-          {label: 'Podcast', value: 'events_onlineEvents_podcast'},
-          {label: 'Workshop', value: 'events_onlineEvents_workshop'}
-        ]
-        },
-      ]
       },
       {
         label: 'Mobile', options: [
-        {label: 'Mobile App', value: 'mobile_mobileApp'},
-        {label: 'Mobile Site', value: 'mobile_mobileSite'}
-      ]
+          {label: 'Mobile App', value: 'mobile_mobileApp'},
+          {label: 'Mobile Site', value: 'mobile_mobileSite'}
+        ]
       },
       {
         label: 'Partners', options: [
-        {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
-      ]
+          {label: 'Affiliate Programs', value: 'partners_affiliatePrograms'}
+        ]
       },
       {
         label: 'PR', options: [
-        {
-          label: 'Unconventional PR', options: [
-          {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
-          {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
-        ]
-        },
-        {
-          label: 'Publicity', options: [
           {
-            label: 'Press Releases', options: [
-            {label: 'Local', value: 'PR_publicity_pressReleases_local'},
-            {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
-            {label: 'International', value: 'PR_publicity_pressReleases_international'},
-          ]
+            label: 'Unconventional PR', options: [
+              {label: 'Publicity Stunts', value: 'PR_unconventionalPR_publicityStunts'},
+              {label: 'Customer Appreciation', value: 'PR_unconventionalPR_customerAppreciation'}
+            ]
+          },
+          {
+            label: 'Publicity', options: [
+              {
+                label: 'Press Releases', options: [
+                  {label: 'Local', value: 'PR_publicity_pressReleases_local'},
+                  {label: 'Nationwide', value: 'PR_publicity_pressReleases_nationwide'},
+                  {label: 'International', value: 'PR_publicity_pressReleases_international'},
+                ]
+              }
+            ]
           }
         ]
-        }
-      ]
       },
       {
         label: 'Social', options: [
-        {label: 'Facebook Page', value: 'social_facebookPage'},
-        {label: 'Twitter Account', value: 'social_twitterAccount'},
-        {label: 'Youtube Channel', value: 'social_youtubeChannel'},
-        {label: 'Instagram Account', value: 'social_instagramAccount'},
-        {label: 'Google+ Page', value: 'social_googlePlusPage'},
-        {label: 'Pinterest Page', value: 'social_pinterestPage'},
-        {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
-        {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
-        {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
-        {label: 'Community Building', value: 'social_communityBuilding'},
-        {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
-      ]
+          {label: 'Facebook Page', value: 'social_facebookPage'},
+          {label: 'Twitter Account', value: 'social_twitterAccount'},
+          {label: 'Youtube Channel', value: 'social_youtubeChannel'},
+          {label: 'Instagram Account', value: 'social_instagramAccount'},
+          {label: 'Google+ Page', value: 'social_googlePlusPage'},
+          {label: 'Pinterest Page', value: 'social_pinterestPage'},
+          {label: 'LinkedIn Company Profile', value: 'social_linkedinCompanyProfile'},
+          {label: 'LinkedIn Group', value: 'social_linkedinGroup'},
+          {label: 'Influencer Outreach', value: 'social_influencerOutreach'},
+          {label: 'Community Building', value: 'social_communityBuilding'},
+          {label: 'Product Hunt (Launch)', value: 'social_productHunt'}
+        ]
       },
       {label: 'Telemarketing', value: 'telemarketing'},
       {
         label: 'Viral', options: [
-        {
-          label: 'Recommend a Friend', options: [
-          {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
+          {
+            label: 'Recommend a Friend', options: [
+              {label: 'Referral Program (P2P)', value: 'viral_recommendAFriend_referralProgram'}
+            ]
+          }
         ]
-        }
-      ]
       },
       {
         label: 'Web', options: [
-        {label: 'Company’s Website', value: 'web_companyWebsite'},
-        {label: 'Landing Pages', value: 'web_landingPages'}
-      ]
+          {label: 'Company’s Website', value: 'web_companyWebsite'},
+          {label: 'Landing Pages', value: 'web_landingPages'}
+        ]
       },
       {
         label: 'Other?', value: 'OTHER'
@@ -443,12 +445,17 @@ export default class PlannedVsActual extends Component {
               : null }
             <div className={ this.classes.footer } style={{ marginTop: '150px' }}>
               <SaveButton onClick={() => {
-                this.setState({saveFail: false, saveSuccess: false});
-                this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
-                this.setState({saveSuccess: true});
-                if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
-                  this.props.updateUserAccount({'steps.plannedVsActual': true});
-                }
+                this.setState({saveFail: false, saveSuccess: false, updating: true}, () => {
+                  this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
+                    .then((data) => {
+                      this.setState({updating: false});
+                      this.pagingUpdateState(data);
+                    });
+                  this.setState({saveSuccess: true});
+                  if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
+                    this.props.updateUserAccount({'steps.plannedVsActual': true});
+                  }
+                });
               }} success={ this.state.saveSuccess} fail={ this.state.saveFail }/>
             </div>
           </div>

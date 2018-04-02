@@ -32,6 +32,15 @@ export function getNickname(channel) {
   }
 }
 
+export function getMetadata(type, channel) {
+  if (isInitialized && channel) {
+    return schema.properties[channel] && schema.properties[channel][type];
+  }
+  else {
+    console.log(channel);
+  }
+}
+
 export function getChannelsWithTitles() {
   if (isInitialized) {
     return Object.keys(schema.properties).map(item => {

@@ -68,6 +68,7 @@
     "react-mentions": "^1.2.1",
     "react-feature-toggles": "^2.0.3",
     "react-country-flag": "^0.1.12",
-    "xlsx": "^0.12.1"
+    "xlsx": "^0.12.1",
+    "react-tooltip": "^3.4.0"
   }
 }

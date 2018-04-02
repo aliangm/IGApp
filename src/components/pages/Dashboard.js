@@ -17,7 +17,7 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 0
+      selectedTab: 1
     };
   }
 

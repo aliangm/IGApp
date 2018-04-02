@@ -15,6 +15,7 @@ import Campaigns from './components/pages/Campaigns';
 import Attribution from './components/pages/Attribution';
 import Users from './components/pages/Users';
 import Insights from './components/pages/Insights';
+import Trustability from './components/pages/Trustability';
 // import Index from './components/pages/Index';
 import Plan from './components/pages/Plan';
 import AuthService from './components/utils/AuthService'
@@ -56,6 +57,7 @@ ReactDOM.render(
       <Route path="/attribution" component={ Attribution } onEnter={ requireAuth }/>
       <Route path="/audiences" component={ Users } onEnter={ requireAdminAuth }/>
       <Route path="/insights" component={ Insights } onEnter={ requireAdminAuth }/>
+      <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>
     </Route>
   </Router>,
   // <Profile />,

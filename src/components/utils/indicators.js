@@ -18,9 +18,21 @@ export function getTitle(indicator) {
   }
 }
 
-export function getNickname(indicator) {
+export function getNickname(indicator, isSingular = false) {
   if (isInitialized) {
-    return schema.properties[indicator].nickname;
+    const nickname = schema.properties[indicator].nickname;
+    if (isSingular && nickname.slice(-1) === 's') {
+      return nickname.slice(0,-1);
+    }
+    else {
+      return nickname;
+    }
+  }
+}
+
+export function getMetadata(type, indicator) {
+  if (isInitialized) {
+    return schema.properties[indicator][type];
   }
 }
 

@@ -20,6 +20,7 @@ export default class PlanCell extends Component {
     return <td className={ this.classes.valueCell }
                onMouseEnter={() => { this.setState({hoverCell: true}) }}
                onMouseLeave={() => { this.setState({hoverCell: false}) }}
+               style={{ backgroundColor: '#329ff136' }}
     >
       <div hidden={ !this.state.hoverCell }>
         <div className={ cellStyle.locals.hover }>
