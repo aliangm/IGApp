@@ -20,8 +20,9 @@ import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
 import AuthService from './components/utils/AuthService'
 import App from './components/App';
-
+import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
+import Analyze from './components/pages/Analyze';
 
 style.use();
 const auth = new AuthService();
@@ -51,13 +52,15 @@ ReactDOM.render(
       <Route path="/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
       <Route path="/indicators" component={ Indicators } onEnter={ requireAdminAuth }/>
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
-      <Route path="/welcome" component={ Welcome } onEnter={ requireAdminAuth }/>
+      <Route path="/settings" component={ Welcome } onEnter={ requireAdminAuth }/>
       <Route path="/plan" component={ Plan } onEnter={ requireAdminAuth }/>
       <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
       <Route path="/attribution" component={ Attribution } onEnter={ requireAuth }/>
       <Route path="/audiences" component={ Users } onEnter={ requireAdminAuth }/>
+      <Route path="/analyze" component={ Analyze } onEnter={ requireAdminAuth }/>
       <Route path="/insights" component={ Insights } onEnter={ requireAdminAuth }/>
       <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>
+      <Route path="/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAdminAuth }/>
     </Route>
   </Router>,
   // <Profile />,

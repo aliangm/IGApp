@@ -144,11 +144,6 @@ export default class Header extends Component {
           </div>
           : null }
         { hasUser ?
-          <a className={ this.classes.link } href="#welcome">
-            <div className={ this.classes.settings } data-icon="header:settings" />
-          </a>
-          : null }
-        { hasUser ?
           <div className={this.classes.item}>
             <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
           </div>

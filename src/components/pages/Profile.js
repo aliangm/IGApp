@@ -493,7 +493,7 @@ export default class Profile extends Component {
               this.calculatePricing(()=> {
                 this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
-                    history.push('/welcome');
+                    history.push('/settings');
                   });
               });
             }}/>

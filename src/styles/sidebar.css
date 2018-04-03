@@ -36,6 +36,7 @@
   position: relative;
   padding-right: 1px;
   z-index: 1;
+  height: 100%;
 }
 
 .menu-item {
@@ -146,6 +147,7 @@
 @mixin icon-nodpi sidebar:attribution, ../assets/sidebar-icons/filter;
 @mixin icon-nodpi sidebar:users, ../assets/sidebar-icons/users;
 @mixin icon-nodpi sidebar:insights, ../assets/sidebar-icons/insights;
+@mixin icon-nodpi sidebar:settings, ../assets/sidebar-icons/settings;
 
 .backface {
   position: fixed;

@@ -646,7 +646,7 @@ class AppComponent extends Component {
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header auth={ this.props.route.auth } {... this.state}/>
-        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount}/>
+        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
         { this.state.loaded ?
