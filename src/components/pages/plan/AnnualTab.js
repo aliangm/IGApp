@@ -471,13 +471,19 @@ export default class AnnualTab extends Component {
     projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
     const objectives = {};
-    this.props.objectives.forEach(objective => {
-      const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
-      const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
-      const date = timeFrameToDate(objective.timeFrame);
-      const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
-      objectives[objective.indicator] = {x: monthStr, y: target};
-    });
+    this.props.objectives
+      .filter(function (objective) {
+        const today = new Date();
+        const date = objective && objective.timeFrame ? timeFrameToDate(objective.timeFrame) : today;
+        return date >= today;
+      })
+      .forEach(objective => {
+        const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
+        const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
+        const date = timeFrameToDate(objective.timeFrame);
+        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+        objectives[objective.indicator] = {x: monthStr, y: target};
+      });
 
     return <div>
       <div className={ this.classes.wrap }>

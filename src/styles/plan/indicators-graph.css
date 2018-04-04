@@ -24,11 +24,20 @@
 .menu-title {
     font-size: 14px;
     font-weight: bold;
-    text-transform: uppercase;
+    text-transform: capitalize;
     white-space: nowrap;
     margin-bottom: 9px;
     margin-top: 6px;
     margin-left: 10px;
+    display: flex;
+}
+
+.settings {
+    margin-left: 25px;
+    font-size: 10px;
+    font-weight: 300;
+    cursor: pointer;
+    align-self: center;
 }
 
 .colored-circle {
