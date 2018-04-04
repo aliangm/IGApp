@@ -1,6 +1,51 @@
 import merge from 'lodash/merge';
 import channelDescriptions from 'data/channelDescriptions';
 import { getTitle } from 'components/utils/channels';
+import { getChannelsWithProps } from 'components/utils/channels';
+
+export function parseBudgets(approvedPlan, unknownChannels, inHouseChannels, projectedPlan) {
+  const returnJson = {};
+  const total = "__TOTAL__";
+  returnJson[total] = {
+    values : new Array(12).fill(0),
+    approvedValues : new Array(12).fill(0)
+  };
+  const inHouseMonth = {};
+  inHouseChannels && inHouseChannels.forEach(channel => { inHouseMonth[channel] = -1 });
+  const inHouseAnnual = new Array(12).fill(inHouseMonth);
+  const suggestedPlan = projectedPlan ? projectedPlan.map(month => month.plannedChannelBudgets) : new Array(12).fill({});
+  const budgets = merge([], inHouseAnnual, suggestedPlan);
+  const approvedBudgets = merge([], inHouseAnnual, approvedPlan);
+  const props = getChannelsWithProps();
+  const channels = approvedBudgets.reduce((total, month, index) => merge(total, month, budgets[index]), {});
+  Object.keys(channels).forEach(channel => {
+    const channelProps = props[channel];
+    const category = channelProps.category;
+    const approvedValues = approvedBudgets.map(month => month[channel] || 0);
+    const values = budgets.map(month => month[channel] || 0);
+    if (!returnJson[category]) {
+      returnJson[category] = {
+        icon: "plan:" + category,
+        disabled: true,
+        children: {},
+        values: new Array(12).fill(0),
+        approvedValues: new Array(12).fill(0)
+      }
+    }
+    returnJson[category].children[channelProps.nickname] = {
+      approvedValues: approvedValues,
+      values: values,
+      icon: "plan:" + channel,
+      channel: channel,
+      info: channelDescriptions[channel]
+    };
+    returnJson[category].values = returnJson[category].values.map((item, index) => item + values[index]);
+    returnJson[category].approvedValues = returnJson[category].approvedValues.map((item, index) => item + approvedValues[index]);
+    returnJson[total].values = returnJson[total].values.map((item, index) => item + values[index]);
+    returnJson[total].approvedValues = returnJson[total].approvedValues.map((item, index) => item + approvedValues[index]);
+  });
+  return returnJson;
+}
 
 export function parseAnnualPlan(projectedPlan, approvedBudgets, unknownChannels, inHouseChannels) {
   const sum = {

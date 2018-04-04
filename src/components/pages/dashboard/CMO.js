@@ -1,7 +1,6 @@
 import React from "react";
 import Component from "components/Component";
 import style from "styles/onboarding/onboarding.css";
-import { parseAnnualPlan } from "data/parseAnnualPlan";
 import { PieChart, Pie, Cell } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/dashboard/Objective';

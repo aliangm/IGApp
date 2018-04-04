@@ -13,7 +13,7 @@ import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import popupStyle from 'styles/plan/popup.css';
-import { parseAnnualPlan } from 'data/parseAnnualPlan';
+import { parseBudgets } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
@@ -26,6 +26,7 @@ import contextStyle from 'react-contextmenu/public/styles.css';
 import Toggle from 'components/controls/Toggle';
 import { timeFrameToDate } from 'components/utils/objective';
 import { FeatureToggle } from 'react-feature-toggles';
+import { formatBudget } from 'components/utils/budget';
 
 export default class AnnualTab extends Component {
 
@@ -276,10 +277,8 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
-    let budget = Object.keys(planJson)[0];
-    const data = planJson[budget];
-    budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
+    const data = parseBudgets(this.props.approvedBudgets, this.props.planUnknownChannels, null, this.props.projectedPlan);
+    const budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
     let rows = [];
 
     const handleRows = (data, parent, level) => {
@@ -416,10 +415,14 @@ export default class AnnualTab extends Component {
     });
 
     const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-      { 'TOTAL' }
-    </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
-      className: this.classes.footRow
-    });
+        { 'TOTAL' }
+      </div>,
+      this.state.approvedPlan ?
+        data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val))
+        :
+        data['__TOTAL__'].values.map(val => '$' + formatBudget(val)), {
+        className: this.classes.footRow
+      });
 
     const currentSuggested = {};
     const dates = this.getDates();

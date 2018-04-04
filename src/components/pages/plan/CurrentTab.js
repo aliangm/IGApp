@@ -10,7 +10,7 @@ import PlanPopup, {
 } from 'components/pages/plan/Popup';
 import Explanation from 'components/pages/plan/Explanation';
 import ChannelCube, { formatPrice } from 'components/pages/plan/ChannelCube';
-import { parseAnnualPlan } from 'data/parseAnnualPlan';
+import { parseBudgets } from 'data/parseAnnualPlan';
 
 import style from 'styles/plan/current-tab.css';
 import planStyles from 'styles/plan/plan.css';
@@ -60,11 +60,9 @@ export default class CurrentTab extends Component {
   }
 
   render() {
-    const { planDate, approvedBudgets, isPlannerLoading, region, planUnknownChannels, inHouseChannels } = this.state;
+    const { planDate, approvedBudgets, region, planUnknownChannels, inHouseChannels } = this.state;
 
-    const plan = approvedBudgets.map(item => {return { plannedChannelBudgets: item }});
-    const planJson = parseAnnualPlan(plan, null, planUnknownChannels, inHouseChannels);
-    const planData = planJson[Object.keys(planJson)[0]];
+    const planData = parseBudgets(approvedBudgets, planUnknownChannels, inHouseChannels);
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
 
