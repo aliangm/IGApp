@@ -42,8 +42,12 @@ class AppComponent extends Component {
       forecast: this.forecast.bind(this),
       approveAllBudgets: this.approveAllBudgets.bind(this),
       approveChannel: this.approveChannel.bind(this),
+      approveWholeChannel: this.approveWholeChannel.bind(this),
+      approveWholeMonth: this.approveWholeMonth.bind(this),
       declineAllBudgets: this.declineAllBudgets.bind(this),
       declineChannel: this.declineChannel.bind(this),
+      declineWholeChannel: this.declineWholeChannel.bind(this),
+      declineWholeMonth: this.declineWholeMonth.bind(this),
       calculateAttributionData: this.calculateAttributionData.bind(this)
     };
   }
@@ -530,6 +534,40 @@ class AppComponent extends Component {
       .then(() => {
         this.forecast();
       })
+  }
+
+  approveWholeChannel(channel) {
+    const approvedBudgets = this.state.approvedBudgets;
+    approvedBudgets.forEach((month, index) => {
+      month[channel] = this.state.projectedPlan[index].plannedChannelBudgets[channel] || 0;
+    });
+    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineWholeChannel(channel) {
+    const projectedPlan = this.state.projectedPlan;
+    projectedPlan.forEach((month, index) => {
+      month.plannedChannelBudgets[channel] = this.state.approvedBudgets[index][channel] || 0;
+    });
+    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
+  }
+
+  approveWholeMonth(month) {
+    const approvedBudgets = this.state.approvedBudgets;
+    approvedBudgets[month] = this.state.projectedPlan[month].plannedChannelBudgets;
+    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineWholeMonth(month) {
+    const projectedPlan = this.state.projectedPlan;
+    projectedPlan[month].plannedChannelBudgets = this.state.approvedBudgets[month];
+    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
   }
 
   declineChannel(month, channel, budget){
