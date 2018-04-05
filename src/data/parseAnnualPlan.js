@@ -39,10 +39,10 @@ export function parseBudgets(approvedPlan, unknownChannels, inHouseChannels, pro
       channel: channel,
       info: channelDescriptions[channel]
     };
-    returnJson[category].values = returnJson[category].values.map((item, index) => item + values[index]);
-    returnJson[category].approvedValues = returnJson[category].approvedValues.map((item, index) => item + approvedValues[index]);
-    returnJson[total].values = returnJson[total].values.map((item, index) => item + values[index]);
-    returnJson[total].approvedValues = returnJson[total].approvedValues.map((item, index) => item + approvedValues[index]);
+    returnJson[category].values = returnJson[category].values.map((item, index) => values[index] > 0 ? item + values[index] : item);
+    returnJson[category].approvedValues = returnJson[category].approvedValues.map((item, index) => approvedValues[index] > 0 ? item + approvedValues[index] : item);
+    returnJson[total].values = returnJson[total].values.map((item, index) => values[index] > 0 ? item + values[index] : item);
+    returnJson[total].approvedValues = returnJson[total].approvedValues.map((item, index) => approvedValues[index] > 0 ? item + approvedValues[index] : item);
   });
   return returnJson;
 }

@@ -649,7 +649,9 @@ export default class AnnualTab extends Component {
               key={ i }
               approveChannel={ () => { this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item) } }
               declineChannel={ () => { this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]) } }
-              isSecondGood={isSecondGood}/>
+              isSecondGood={isSecondGood}
+              style={{ backgroundColor: '#329ff136' }}
+            />
           }
           else return <td className={ this.classes.valueCell } key={ i }>{
               this.getCellItem(item)

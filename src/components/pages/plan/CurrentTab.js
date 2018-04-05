@@ -64,7 +64,7 @@ export default class CurrentTab extends Component {
 
     const planData = parseBudgets(approvedBudgets, planUnknownChannels, inHouseChannels);
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
-    const monthBudget = planDataChannels.reduce((res, key) => res + planData[key].values[0], 0);
+    const monthBudget = planData['__TOTAL__'].approvedValues[0];
 
     const events = this.state.events ?
       this.state.events
