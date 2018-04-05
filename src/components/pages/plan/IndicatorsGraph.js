@@ -152,9 +152,7 @@ export default class IndicatorsGraph extends Component {
           <div className={ this.classes.menuTitle }>
             Forecasting
             <div style={{ position: 'relative' }}>
-              <div className={ this.classes.settings } onClick={ ()=>{ this.refs.settingsPopup.open() } }>
-                Settings
-              </div>
+              <div className={ this.classes.settings } onClick={ ()=>{ this.refs.settingsPopup.open() } } />
               <PlanPopup ref="settingsPopup" style={{
                 top: '20px'
               }} title="Settings">

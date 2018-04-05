@@ -28,16 +28,17 @@
     white-space: nowrap;
     margin-bottom: 9px;
     margin-top: 6px;
-    margin-left: 10px;
+    margin-left: 7px;
     display: flex;
 }
 
 .settings {
     margin-left: 25px;
-    font-size: 10px;
-    font-weight: 300;
     cursor: pointer;
-    align-self: center;
+    background: url(../../assets/settings-work-tool.svg) center center no-repeat;
+    background-size: contain;
+    width: 15px;
+    height: 15px;
 }
 
 .colored-circle {
