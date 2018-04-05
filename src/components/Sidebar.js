@@ -91,9 +91,9 @@ export default class Sidebar extends Component {
               <MenuItem icon="sidebar:dashboard" link="/dashboard" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard}/>
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ profileSubMenu } isOpen={ this.state.subMenu === 'profile' } isHighlighted={this.isHighlighted(profileSubMenu)} toggleSubMenu={ this.toggleSubMenu.bind(this, 'profile') }/>
               <FeatureToggle featureName="attribution">
-                <CollapsedMenuItem icon="sidebar:analyze" text="Analyze" subMenu={ analyzeSubMenu } isOpen={ this.state.subMenu === 'analyze' } isHighlighted={this.isHighlighted(analyzeSubMenu)} toggleSubMenu={ this.toggleSubMenu.bind(this, 'analyze') }/>
+                <CollapsedMenuItem icon="sidebar:analyzeContainer" text="Analyze" subMenu={ analyzeSubMenu } isOpen={ this.state.subMenu === 'analyze' } isHighlighted={this.isHighlighted(analyzeSubMenu)} toggleSubMenu={ this.toggleSubMenu.bind(this, 'analyze') }/>
               </FeatureToggle>
-              <CollapsedMenuItem icon="sidebar:plan" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted(planSubMenu)} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
+              <CollapsedMenuItem icon="sidebar:planContainer" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted(planSubMenu)} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns" text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>

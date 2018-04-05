@@ -138,7 +138,7 @@
 @mixin icon-nodpi sidebar:preferences, ../assets/sidebar-icons/preferences;
 @mixin icon-nodpi sidebar:indicators, ../assets/sidebar-icons/indicators;
 @mixin icon-nodpi sidebar:company, ../assets/sidebar-icons/company;
-@mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/plan;
+@mixin icon-nodpi sidebar:planContainer, ../assets/sidebar-icons/plan;
 @mixin icon-nodpi sidebar:profile, ../assets/sidebar-icons/profile;
 @mixin icon-nodpi sidebar:target-audience, ../assets/sidebar-icons/target-audience;
 @mixin icon-nodpi sidebar:planned-vs-actual, ../assets/sidebar-icons/planned-vs-actual;
@@ -148,6 +148,9 @@
 @mixin icon-nodpi sidebar:users, ../assets/sidebar-icons/users;
 @mixin icon-nodpi sidebar:insights, ../assets/sidebar-icons/insights;
 @mixin icon-nodpi sidebar:settings, ../assets/sidebar-icons/settings;
+@mixin icon-nodpi sidebar:analyzeContainer, ../assets/sidebar-icons/analyze;
+@mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/chess;
+
 
 .backface {
   position: fixed;
