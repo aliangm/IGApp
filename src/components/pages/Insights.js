@@ -157,7 +157,7 @@ export default class Insights extends Component {
                               <span> removing <b>{getChannelNickname(balancingChannel)}</b> from your mix</span>
                           }
                           ,
-                          could {((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) > (nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0))) ? 'improve' : 'reduce'} your
+                          could {((nextMonthBudgets[suggestedChannel] + nextMonthBudgets[balancingChannel]) > ((approvedBudgets[0][suggestedChannel] || 0) + (approvedBudgets[0][balancingChannel] || 0))) ? 'improve' : 'reduce'} your
                           forecasted<br/>
                           {relevantObjectives.slice(0, 2).map((objective, index) => {
                             const ratio = Math.round((((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][objective]) + ((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][objective])) / currentBudgets * 100);
