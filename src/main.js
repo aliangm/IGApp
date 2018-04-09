@@ -22,7 +22,7 @@ import AuthService from './components/utils/AuthService'
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
-import Analyze from './components/pages/Analyze';
+import AnalyzePage from './components/pages/AnalyzePage';
 
 style.use();
 const auth = new AuthService();
@@ -57,7 +57,7 @@ ReactDOM.render(
       <Route path="/campaigns" component={ Campaigns } onEnter={ requireAuth }/>
       <Route path="/attribution" component={ Attribution } onEnter={ requireAuth }/>
       <Route path="/audiences" component={ Users } onEnter={ requireAdminAuth }/>
-      <Route path="/analyze" component={ Analyze } onEnter={ requireAdminAuth }/>
+      <Route path="/analyze" component={ AnalyzePage } onEnter={ requireAdminAuth }/>
       <Route path="/insights" component={ Insights } onEnter={ requireAdminAuth }/>
       <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>
       <Route path="/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAdminAuth }/>
