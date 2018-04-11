@@ -23,7 +23,7 @@ import { timeFrameToDate } from 'components/utils/objective';
 const tabs = {
   'By Channel': ByChannelTab,
   'By Status': ByStatusTab,
-  'Online Performence': OnlineTab,
+  'Online Performance': OnlineTab,
   'Ideas': IdeasTab
 };
 
