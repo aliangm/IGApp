@@ -28,7 +28,7 @@ export default class Dashboard extends Component {
 
   render() {
     let tabs = {
-      Snapshot: CMO
+      CMO: CMO
     };
 
     const tabNames = Object.keys(tabs);
