@@ -246,9 +246,8 @@ export default class Analyze extends Component {
       return json;
     }) ;
 
-    const campaignsWithData = attributionCampaigns.map(campaignObj => {
-      const campaignUTM = Object.keys(campaignObj)[0];
-      const campaign = campaignObj[campaignUTM];
+    const campaignsWithData = Object.keys(attributionCampaigns).map(campaignUTM => {
+      const campaign = attributionCampaigns[campaignUTM];
       let budget = 0;
       const platformCampaignIndex = campaigns.findIndex(campaign => (campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM)) && !campaign.isArchived);
       const platformCampaign = campaigns[platformCampaignIndex];
@@ -315,7 +314,7 @@ export default class Analyze extends Component {
         )
         .map(item => {
             const { label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX, channels, platformCampaignIndex } = item;
-            return (funnelIndicator || conversion || webVisits) ?
+            return (funnelIndicator || conversion || webVisits || revenueMetric) ?
               this.getTableRow(null,
                 [
                   <div className={dashboardStyle.locals.channelTable} data-link={ platformCampaignIndex !== -1 ? true : null} onClick={() => { if (platformCampaignIndex !== -1) {

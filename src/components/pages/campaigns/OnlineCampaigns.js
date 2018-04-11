@@ -95,7 +95,7 @@ export default class OnlineCampaigns extends Component {
     const campaignsWithAttribution = campaigns
       .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId)
       .map(campaign => {
-        let attributionData = attribution && attribution.campaigns && attribution.campaigns.find(item => (Object.keys(item)[0] === campaign.name || (item.tracking && item.tracking.campaignUTM === Object.keys(item)[0])));
+        let attributionData = attribution && attribution.campaigns && (attribution.campaigns[campaign.name] || (campaign.tracking && campaign.tracking.campaignUTM && attribution.campaigns[campaign.tracking.campaignUTM]));
         attributionData = attributionData ? attributionData[Object.keys(attributionData)[0]] : {};
         const user = campaign.owner && this.props.teamMembers.find(user => user.userId === campaign.owner);
         const clicksObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "clicks");
