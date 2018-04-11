@@ -69,7 +69,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels } = this.props;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
     const annualBudget = merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);
@@ -129,13 +129,13 @@ export default class CMO extends Component {
       .filter(item => item.value == minRatio)
       .map(item => item.name);
 
-    const funnelMetricsValues = this.state.onlyThisMonth && previousData.length > 1 ?
+    const funnelMetricsValues = this.state.onlyThisMonth ?
       {
-        MCL: actualIndicators.MCL - (previousData[previousData.length - 2].actualIndicators.MCL || 0),
-        MQL: actualIndicators.MQL - (previousData[previousData.length - 2].actualIndicators.MQL || 0),
-        SQL: actualIndicators.SQL - (previousData[previousData.length - 2].actualIndicators.SQL || 0),
-        opps: actualIndicators.opps - (previousData[previousData.length - 2].actualIndicators.opps || 0),
-        users: actualIndicators.users - (previousData[previousData.length - 2].actualIndicators.users || 0)
+        MCL: actualIndicators.newMCL,
+        MQL: actualIndicators.newMQL,
+        SQL: actualIndicators.newSQL,
+        opps: actualIndicators.newOpps,
+        users: actualIndicators.newUsers
       }
       :
       {
