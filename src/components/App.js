@@ -227,6 +227,7 @@ class AppComponent extends Component {
                   userFirstName: data.firstName,
                   userLastName: data.lastName,
                   userCompany: data.companyName,
+                  companyWebsite: data.companyWebsite,
                   logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
                   teamMembers: data.teamMembers,
                   permissions: data.permissions

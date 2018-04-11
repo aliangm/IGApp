@@ -22,59 +22,59 @@ export default class Setup extends Component {
   }
 
   render() {
-    const {attribution} = this.props;
+    const {attribution, companyWebsite} = this.props;
     const siteStructure = attribution.siteStructure || {};
     const {homepage, pricing, blog, caseStudies, contact, aboutUs} = siteStructure;
     return <div style={{ padding: '20px' }}>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Homepage</Label>
         <Textfield
-          value={homepage || '/'}
+          value={homepage || (companyWebsite + '/')}
           onChange={ this.handleChange.bind(this, 'homepage') }
-          style={{ width: '200px'}}
+          style={{ width: '300px'}}
         />
       </div>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Pricing</Label>
         <Textfield
-          value={pricing || '/pricing'}
+          value={pricing || (companyWebsite + '/pricing')}
           onChange={ this.handleChange.bind(this, 'pricing') }
-          style={{ width: '200px'}}
+          style={{ width: '300px'}}
         />
       </div>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Blog</Label>
         <Textfield
-          value={blog || '/blog'}
+          value={blog || (companyWebsite + '/blog')}
           onChange={ this.handleChange.bind(this, 'blog') }
-          style={{ width: '200px'}}
+          style={{ width: '300px'}}
         />
       </div>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Case-studies</Label>
         <Textfield
-          value={caseStudies || '/case-studies'}
+          value={caseStudies || (companyWebsite + '/case-studies')}
           onChange={ this.handleChange.bind(this, 'caseStudies') }
-          style={{ width: '200px'}}
+          style={{ width: '300px'}}
         />
       </div>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Contact us</Label>
         <Textfield
-          value={contact || '/contact'}
+          value={contact || (companyWebsite + '/contact')}
           onChange={ this.handleChange.bind(this, 'contact') }
-          style={{ width: '200px'}}
+          style={{ width: '300px'}}
         />
       </div>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>About us</Label>
         <Textfield
-          value={aboutUs || '/company'}
+          value={aboutUs || (companyWebsite + '/company')}
           onChange={ this.handleChange.bind(this, 'aboutUs') }
-          style={{ width: '200px'}}
+          style={{ width: '300px'}}
         />
       </div>
-      <div style={{ marginLeft: '172px', marginTop: '12px' }}>
+      <div style={{ marginLeft: '272px', marginTop: '12px' }}>
         <SaveButton onClick={() => {
           this.setState({saveFail: false, saveSuccess: false});
           this.props.updateUserMonthPlan({'attribution.siteStructure': attribution.siteStructure}, this.props.region, this.props.planDate);
