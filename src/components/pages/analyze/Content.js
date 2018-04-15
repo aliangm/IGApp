@@ -12,6 +12,7 @@ import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
 import { formatDate } from 'components/utils/date';
 import icons from 'styles/icons/plan.css';
+import ReactTooltip from 'react-tooltip';
 
 export default class Content extends Component {
 
@@ -70,7 +71,9 @@ export default class Content extends Component {
     ];
 
     const headRow = this.getTableRow(null, [
-      'Channels',
+      <div style={{ fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer' }}>
+        Channel
+      </div>,
       'Title',
       <div style={{display: 'inline-flex'}}>
         { this.state.editRevenueMetric ?
@@ -147,8 +150,8 @@ export default class Content extends Component {
         webVisits: item.webVisits,
         conversion: item.conversion,
         funnelIndicator: item[this.state.attributionTableIndicator],
-        readRatio: Math.round(item.totalRead / item.total * 100),
-        proceedRatio: Math.round(item.proceed / item.total * 100)
+        readRatio: item.total ? Math.round(item.totalRead / item.total * 100) : 0,
+        proceedRatio: item.webVisits ? Math.round(item.proceed / item.webVisits * 100) : 0
       };
     }) ;
 
@@ -167,7 +170,9 @@ export default class Content extends Component {
                   {getChannelNickname(channel)}
                 </div>
               </div>,
-              title,
+              <div className={dashboardStyle.locals.contentTitle} data-tip={title}>
+                {title}
+              </div>,
               '$' + formatBudget(revenueMetric),
               webVisits,
               conversion,
@@ -182,6 +187,7 @@ export default class Content extends Component {
       });
 
     return <div>
+      <ReactTooltip/>
       <div className={ this.classes.wrap }>
         <div className={dashboardStyle.locals.upperPanel}>
           <div className={dashboardStyle.locals.historyConfigText}>

@@ -72,7 +72,7 @@ export default class CMO extends Component {
     const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels } = this.props;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
-    const annualBudget = merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);
+    const annualBudget = annualBudgetArray.reduce((a, b) => a+b, 0);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
@@ -86,7 +86,7 @@ export default class CMO extends Component {
           alreadyExistItem.value += merged[0][channel];
         }
       });
-    const budgetLeftToPlan = annualBudgetArray.reduce((a, b) => a + b, 0) - annualBudget;
+    const budgetLeftToPlan = annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);;
 
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
@@ -197,7 +197,7 @@ export default class CMO extends Component {
               Annual Budget
             </div>
             <div className={ dashboardStyle.locals.number }>
-              ${formatBudget(annualBudget)}
+              ${formatBudget(Math.ceil(annualBudget/1000)*1000)}
             </div>
           </div>
         </div>

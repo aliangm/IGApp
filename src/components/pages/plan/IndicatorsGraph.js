@@ -44,7 +44,7 @@ export default class IndicatorsGraph extends Component {
   }
 
   get marginLeft() {
-    return this.props.dimensions.marginLeft - 92
+    return this.props.dimensions.marginLeft - 65
   }
 
   toggleCheckbox(indicator) {
