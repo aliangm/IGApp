@@ -101,8 +101,6 @@
   background: none center center no-repeat;
 }
 
-@mixin icon-nodpi header:settings, ../assets/settings-icon, png;
-
 .user-box {
   display: flex;
   align-items: center;

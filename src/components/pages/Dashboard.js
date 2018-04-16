@@ -4,7 +4,6 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import CMO from 'components/pages/dashboard/CMO';
-import Analyze from 'components/pages/dashboard/Analyze';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 
 export default class Dashboard extends Component {
@@ -17,7 +16,7 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 1
+      selectedTab: 0
     };
   }
 
@@ -29,8 +28,7 @@ export default class Dashboard extends Component {
 
   render() {
     let tabs = {
-      CMO: CMO,
-      Analyze: Analyze
+      CMO: CMO
     };
 
     const tabNames = Object.keys(tabs);

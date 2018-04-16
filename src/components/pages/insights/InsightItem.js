@@ -54,11 +54,11 @@ export default class InsightItem extends Component {
             <div className={this.classes.summaryTitleContainer}>
               <div className={this.classes.channelIcon} data-icon={"plan:" + channel}/>
               <div className={this.classes.summaryTitle}>
-                {objectivesRatio[0] && objectivesRatio[0].ratio}%
+                {Math.abs(objectivesRatio[0] && objectivesRatio[0].ratio)}%
               </div>
             </div>
             <div className={this.classes.summaryText}>
-              Improve in forecasted {objectivesRatio[0] && objectivesRatio[0].nickname}{rightSideObjectives}
+              {(objectivesRatio[0] && objectivesRatio[0].ratio) > 0 ? 'Improve' : 'Decline'} in forecasted {objectivesRatio[0] && objectivesRatio[0].nickname}{rightSideObjectives}
             </div>
           </div>
         </div>
@@ -97,11 +97,11 @@ export default class InsightItem extends Component {
             <div className={this.classes.summaryTitleContainer}>
               <div className={this.classes.channelIcon} data-icon={"plan:" + channel}/>
               <div className={this.classes.summaryTitle}>
-                {objectivesRatio[0] && objectivesRatio[0].ratio}%
+                {Math.abs(objectivesRatio[0] && objectivesRatio[0].ratio)}%
               </div>
             </div>
             <div className={this.classes.summaryText}>
-              Improve in forecasted {objectivesRatio[0] && objectivesRatio[0].nickname}{rightSideObjectives}
+              {(objectivesRatio[0] && objectivesRatio[0].ratio) > 0 ? 'Improve' : 'Decline'} in forecasted {objectivesRatio[0] && objectivesRatio[0].nickname}{rightSideObjectives}
             </div>
           </div>
         </div>

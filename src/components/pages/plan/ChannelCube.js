@@ -98,7 +98,7 @@ export default class ChannelCube extends Component {
 
   renderDeepLevel(name, data) {
     const { month } = this.props;
-    const price = data.values[month];
+    const price = data.approvedValues[month];
 
     if (price === 0) {
       return null;
@@ -129,7 +129,7 @@ export default class ChannelCube extends Component {
 
   renderFirstLevel(name, data) {
     const { month } = this.props;
-    const price = data.values[month];
+    const price = data.approvedValues[month];
 
     if (price === 0) {
       return null;
@@ -158,7 +158,7 @@ export default class ChannelCube extends Component {
   render() {
     const { title, data, month, monthBudget } = this.props;
     const { infoItem, expectationItem, popupStyle } = this.state;
-    const price = data.values[month];
+    const price = data.approvedValues[month];
 
     if (price === 0) {
       return null;

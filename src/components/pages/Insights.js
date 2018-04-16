@@ -45,7 +45,7 @@ export default class Insights extends Component {
   onOutsideClick = (e) => {
     const elem = ReactDOM.findDOMNode(this.refs.popup);
 
-    if (elem !== e.target && !elem.contains(e.target)) {
+    if (elem && elem !== e.target && !elem.contains(e.target)) {
       this.close();
     }
   };
@@ -157,12 +157,12 @@ export default class Insights extends Component {
                               <span> removing <b>{getChannelNickname(balancingChannel)}</b> from your mix</span>
                           }
                           ,
-                          could {((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) > (nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0))) ? 'improve' : 'reduce'} your
+                          could {((nextMonthBudgets[suggestedChannel] + nextMonthBudgets[balancingChannel]) > ((approvedBudgets[0][suggestedChannel] || 0) + (approvedBudgets[0][balancingChannel] || 0))) ? 'improve' : 'reduce'} your
                           forecasted<br/>
                           {relevantObjectives.slice(0, 2).map((objective, index) => {
                             const ratio = Math.round((((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][objective]) + ((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][objective])) / currentBudgets * 100);
                             return <div key={index}>
-                              - <b>{getIndicatorNickname(objective)}</b> {ratio >= 0 ? 'by' : 'only by'} <b>{ratio}%</b><br/>
+                              - <b>{getIndicatorNickname(objective)}</b> {ratio >= 0 ? 'by' : 'only by'} <b>{Math.abs(ratio)}%</b><br/>
                             </div>
                           })
                           }
@@ -219,9 +219,9 @@ export default class Insights extends Component {
                           </div>
                         </div>
                         <div className={this.classes.summaryText}>
-                          Improve in
+                          {Math.round((((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][relevantObjectives[0]]) + ((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][relevantObjectives[0]])) / currentBudgets * 100) > 0 ? 'Improve' : 'Decline'} in
                           forecasted {relevantObjectives[0] && getIndicatorNickname(relevantObjectives[0])}{relevantObjectives.slice(1, 2).map((objective, index) => {
-                          const ratio = Math.abs(Math.round((((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][objective]) + ((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][objective])) / currentBudgets * 100));
+                          const ratio = Math.round((((nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0)) * CIM[balancingChannel][objective]) + ((nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0)) * CIM[suggestedChannel][objective])) / currentBudgets * 100);
                           return <span key={index}>
                           , and {Math.abs(ratio)}% {ratio >= 0 ? 'improve' : 'decline'} in forecasted {getIndicatorNickname(objective)}
                         </span>

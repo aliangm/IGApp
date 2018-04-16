@@ -33,7 +33,7 @@ export function getNickname(channel) {
 }
 
 export function getMetadata(type, channel) {
-  if (isInitialized && channel) {
+  if (isInitialized && channel && type) {
     return schema.properties[channel] && schema.properties[channel][type];
   }
   else {

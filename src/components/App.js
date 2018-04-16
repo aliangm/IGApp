@@ -42,8 +42,12 @@ class AppComponent extends Component {
       forecast: this.forecast.bind(this),
       approveAllBudgets: this.approveAllBudgets.bind(this),
       approveChannel: this.approveChannel.bind(this),
+      approveWholeChannel: this.approveWholeChannel.bind(this),
+      approveWholeMonth: this.approveWholeMonth.bind(this),
       declineAllBudgets: this.declineAllBudgets.bind(this),
       declineChannel: this.declineChannel.bind(this),
+      declineWholeChannel: this.declineWholeChannel.bind(this),
+      declineWholeMonth: this.declineWholeMonth.bind(this),
       calculateAttributionData: this.calculateAttributionData.bind(this)
     };
   }
@@ -223,6 +227,7 @@ class AppComponent extends Component {
                   userFirstName: data.firstName,
                   userLastName: data.lastName,
                   userCompany: data.companyName,
+                  companyWebsite: data.companyWebsite,
                   logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
                   teamMembers: data.teamMembers,
                   permissions: data.permissions
@@ -532,6 +537,40 @@ class AppComponent extends Component {
       })
   }
 
+  approveWholeChannel(channel) {
+    const approvedBudgets = this.state.approvedBudgets;
+    approvedBudgets.forEach((month, index) => {
+      month[channel] = this.state.projectedPlan[index].plannedChannelBudgets[channel] || 0;
+    });
+    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineWholeChannel(channel) {
+    const projectedPlan = this.state.projectedPlan;
+    projectedPlan.forEach((month, index) => {
+      month.plannedChannelBudgets[channel] = this.state.approvedBudgets[index][channel] || 0;
+    });
+    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
+  }
+
+  approveWholeMonth(month) {
+    const approvedBudgets = this.state.approvedBudgets;
+    approvedBudgets[month] = this.state.projectedPlan[month].plannedChannelBudgets;
+    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
+      .then(() => {
+        this.forecast();
+      })
+  }
+
+  declineWholeMonth(month) {
+    const projectedPlan = this.state.projectedPlan;
+    projectedPlan[month].plannedChannelBudgets = this.state.approvedBudgets[month];
+    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
+  }
+
   declineChannel(month, channel, budget){
     let projectedPlan = this.state.projectedPlan;
     let projectedMonth = this.state.projectedPlan[month];
@@ -646,7 +685,7 @@ class AppComponent extends Component {
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header auth={ this.props.route.auth } {... this.state}/>
-        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount}/>
+        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
         { this.state.loaded ?

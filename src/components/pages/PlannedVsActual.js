@@ -1,5 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
+import Page from 'components/Page';
+import Title from 'components/onboarding/Title';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import SaveButton from 'components/pages/profile/SaveButton';
@@ -381,86 +383,89 @@ export default class PlannedVsActual extends Component {
     channelOptions.map(preventDuplicates);
 
     return <div>
-      <div className={ planStyles.locals.title }>
-        <Paging month={ this.state.planDate } pagingUpdateState={ this.pagingUpdateState } region={ this.state.region }/>
-      </div>
-      <div className={ planStyles.locals.innerBox }>
-        <div className={ this.classes.wrap } ref="wrap">
-          <div className={ this.classes.box }>
-            <table className={ this.classes.table }>
-              {/*<col style={{ width: '50%' }} />
+      <Page>
+        <Title title="Planned VS Actual" subTitle="It is very important to keep the data credibility. To optimize your marketing planning every step of the way, InfiniGrow needs to know exactly what your actual marketing investments were (even if they aren’t 1:1 as recommended)."/>
+        <div className={ planStyles.locals.title }>
+          <Paging month={ this.state.planDate } pagingUpdateState={ this.pagingUpdateState } region={ this.state.region }/>
+        </div>
+        <div className={ planStyles.locals.innerBox }>
+          <div className={ this.classes.wrap } ref="wrap">
+            <div className={ this.classes.box }>
+              <table className={ this.classes.table }>
+                {/*<col style={{ width: '50%' }} />
                  <col style={{ width: '25%' }} />
                  <col style={{ width: '25%' }} />*/}
-              <thead>
-              { headRow }
-              </thead>
-              <tbody className={ this.classes.tableBody }>
-              { rows }
-              </tbody>
-            </table>
-          </div>
-          <div className={ this.classes.bottom }>
-            <MultiRow numOfRows={1} maxNumOfRows={1} >
-              {({index, data, update, removeButton}) => {
-                return <div style={{
-                  paddingBottom: '25px',
-                  width: '460px'
-                }} className={ this.classes.channelsRow }>
-                  <Select
-                    className={ this.classes.channelsSelect }
-                    selected={ -1 }
-                    select={{
-                      menuTop: true,
-                      name: 'channels',
-                      onChange: (selected) => {
-                        update({
-                          selected: selected
-                        });
-                      },
-                      options: channelOptions
-                    }}
-                    onChange={ this.addChannel.bind(this) }
-                    label={ `Add a channel` }
-                    labelQuestion={ [''] }
-                    description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
-                  />
+                <thead>
+                { headRow }
+                </thead>
+                <tbody className={ this.classes.tableBody }>
+                { rows }
+                </tbody>
+              </table>
+            </div>
+            <div className={ this.classes.bottom }>
+              <MultiRow numOfRows={1} maxNumOfRows={1} >
+                {({index, data, update, removeButton}) => {
+                  return <div style={{
+                    paddingBottom: '25px',
+                    width: '460px'
+                  }} className={ this.classes.channelsRow }>
+                    <Select
+                      className={ this.classes.channelsSelect }
+                      selected={ -1 }
+                      select={{
+                        menuTop: true,
+                        name: 'channels',
+                        onChange: (selected) => {
+                          update({
+                            selected: selected
+                          });
+                        },
+                        options: channelOptions
+                      }}
+                      onChange={ this.addChannel.bind(this) }
+                      label={ `Add a channel` }
+                      labelQuestion={ [''] }
+                      description={ ['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
+                    />
+                  </div>
+                }}
+              </MultiRow>
+              { this.state.showText ?
+                <div className={ this.classes.channelsRow }>
+                  <Textfield style={{
+                    width: '292px'
+                  }}  onChange={(e) => {
+                    this.addOtherChannel(e);
+                  }}/>
+                  <Button type="primary2" style={{
+                    width: '72px',
+                    margin: '0 20px'
+                  }} onClick={() => {
+                    this.addChannel();
+                  }}> Enter
+                  </Button>
                 </div>
-              }}
-            </MultiRow>
-            { this.state.showText ?
-              <div className={ this.classes.channelsRow }>
-                <Textfield style={{
-                  width: '292px'
-                }}  onChange={(e) => {
-                  this.addOtherChannel(e);
-                }}/>
-                <Button type="primary2" style={{
-                  width: '72px',
-                  margin: '0 20px'
-                }} onClick={() => {
-                  this.addChannel();
-                }}> Enter
-                </Button>
+                : null }
+              <div className={ this.classes.footer } style={{ marginTop: '150px' }}>
+                <SaveButton onClick={() => {
+                  this.setState({saveFail: false, saveSuccess: false, updating: true}, () => {
+                    this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
+                      .then((data) => {
+                        this.setState({updating: false});
+                        this.pagingUpdateState(data);
+                      });
+                    this.setState({saveSuccess: true});
+                    if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
+                      this.props.updateUserAccount({'steps.plannedVsActual': true});
+                    }
+                  });
+                }} success={ this.state.saveSuccess} fail={ this.state.saveFail }/>
               </div>
-              : null }
-            <div className={ this.classes.footer } style={{ marginTop: '150px' }}>
-              <SaveButton onClick={() => {
-                this.setState({saveFail: false, saveSuccess: false, updating: true}, () => {
-                  this.state.updateUserMonthPlan({actualChannelBudgets: {knownChannels: this.state.knownChannels, unknownChannels: this.state.unknownChannels}}, this.state.region, this.state.planDate, true)
-                    .then((data) => {
-                      this.setState({updating: false});
-                      this.pagingUpdateState(data);
-                    });
-                  this.setState({saveSuccess: true});
-                  if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
-                    this.props.updateUserAccount({'steps.plannedVsActual': true});
-                  }
-                });
-              }} success={ this.state.saveSuccess} fail={ this.state.saveFail }/>
             </div>
           </div>
         </div>
-      </div>
+      </Page>
     </div>
   }
 

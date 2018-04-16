@@ -13,7 +13,7 @@ import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import popupStyle from 'styles/plan/popup.css';
-import { parseAnnualPlan } from 'data/parseAnnualPlan';
+import { parseBudgets } from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
@@ -26,6 +26,7 @@ import contextStyle from 'react-contextmenu/public/styles.css';
 import Toggle from 'components/controls/Toggle';
 import { timeFrameToDate } from 'components/utils/objective';
 import { FeatureToggle } from 'react-feature-toggles';
+import { formatBudget } from 'components/utils/budget';
 
 export default class AnnualTab extends Component {
 
@@ -58,7 +59,7 @@ export default class AnnualTab extends Component {
       pouppTop: 0,
       hoverRow: void 0,
       collapsed: {},
-      tableCollapsed: false,
+      tableCollapsed: 0,
       graphDimensions: {},
       approvedPlan: true,
       isSticky: false
@@ -262,6 +263,14 @@ export default class AnnualTab extends Component {
     }
   }
 
+  approveChannel(event, data) {
+    this.props.approveWholeChannel(data.channel);
+  }
+
+  declineChannel(event, data) {
+    this.props.declineWholeChannel(data.channel);
+  }
+
   editChannelName(longName, shortName, channel) {
     let namesMapping = this.props.namesMapping || {};
     if (!namesMapping.channels) {
@@ -276,10 +285,8 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const planJson = parseAnnualPlan(this.props.projectedPlan, this.props.approvedBudgets, this.props.planUnknownChannels);
-    let budget = Object.keys(planJson)[0];
-    const data = planJson[budget];
-    budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
+    const data = parseBudgets(this.props.approvedBudgets, this.props.planUnknownChannels, null, this.props.projectedPlan);
+    const budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
     let rows = [];
 
     const handleRows = (data, parent, level) => {
@@ -309,61 +316,64 @@ export default class AnnualTab extends Component {
               <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
             </div>
             : null }
-          <ContextMenuTrigger id="rightClick" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.props.editMode}>
-            <div
-              style={{
-                marginLeft: (level | 0) * 17 + 'px',
-                cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
-              }}
-              className={ this.classes.rowTitle }>
-              { params.children ?
-                <div
-                  className={ this.classes.rowArrow }
-                  data-collapsed={ collapsed || null }
-                  onClick={() => {
-                    this.state.collapsed[key] = !collapsed;
-                    this.forceUpdate();
-                  }}
-                />
-                :
-                this.props.editMode ?
-                  <div>
-                    <div
-                      className={ this.classes.rowDelete }
-                      onClick={ () => this.setState({deletePopup: params.channel}) }
-                    />
-                    <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                      <DeleteChannelPopup
-                        onNext={ this.deleteRow.bind(this, params.channel) }
-                        onBack={ () => this.setState({deletePopup: ''}) }
+          <ContextMenuTrigger id="rightClickNormal" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || this.props.editMode}>
+            <ContextMenuTrigger id="rightClickEdit" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.props.editMode}>
+              <div
+                style={{
+                  marginLeft: (level | 0) * 17 + 'px',
+                  cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
+                }}
+                className={ this.classes.rowTitle }>
+                { params.children ?
+                  <div
+                    hidden={this.state.tableCollapsed === 2}
+                    className={ this.classes.rowArrow }
+                    data-collapsed={ collapsed || null }
+                    onClick={() => {
+                      this.state.collapsed[key] = !collapsed;
+                      this.forceUpdate();
+                    }}
+                  />
+                  :
+                  this.props.editMode ?
+                    <div>
+                      <div
+                        className={ this.classes.rowDelete }
+                        onClick={ () => this.setState({deletePopup: params.channel}) }
                       />
-                    </Popup>
-                    <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
-                      <EditChannelNamePopup
-                        channel={ this.state.editChannelName }
-                        onNext={ this.editChannelName.bind(this) }
-                        onBack={ () => this.setState({editChannelName: ''}) }
-                      />
-                    </Popup>
-                  </div>
+                      <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                        <DeleteChannelPopup
+                          onNext={ this.deleteRow.bind(this, params.channel) }
+                          onBack={ () => this.setState({deletePopup: ''}) }
+                        />
+                      </Popup>
+                      <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                        <EditChannelNamePopup
+                          channel={ this.state.editChannelName }
+                          onNext={ this.editChannelName.bind(this) }
+                          onBack={ () => this.setState({editChannelName: ''}) }
+                        />
+                      </Popup>
+                    </div>
+                    : null }
+
+                { params.icon ?
+                  <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
                   : null }
 
-              { params.icon ?
-                <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-                : null }
-
-              { params.icon_mask ?
-                <div className={ this.classes.rowMaskIcon }>
-                  <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
-                </div>
-                : null }
-              {/**   { item.length > 13 ?
+                { params.icon_mask ?
+                  <div className={ this.classes.rowMaskIcon }>
+                    <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                  </div>
+                  : null }
+                {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
                 </div>
                 : item }**/}
-              {item}
-            </div>
+                {item}
+              </div>
+            </ContextMenuTrigger>
           </ContextMenuTrigger>
         </div>
 
@@ -389,13 +399,13 @@ export default class AnnualTab extends Component {
         const row = this.getTableRow(titleElem, values, rowProps, params.channel, hoverValues, isSecondGood);
         rows.push(row);
 
-        if (!collapsed && params.children) {
+        if (!collapsed && params.children && this.state.tableCollapsed !== 2) {
           handleRows(params.children, key, level + 1);
         }
       });
     }
 
-    if (data && !this.state.tableCollapsed) {
+    if (data && this.state.tableCollapsed !== 1) {
       handleRows(data);
     }
 
@@ -403,10 +413,11 @@ export default class AnnualTab extends Component {
 
     const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
       <div
+        style={{ borderColor: '#329ff1 transparent transparent transparent' }}
         className={ this.classes.rowArrow }
         data-collapsed={ this.state.tableCollapsed || null }
         onClick={() => {
-          this.state.tableCollapsed = !this.state.tableCollapsed;
+          this.state.tableCollapsed = (++this.state.tableCollapsed % 3);
           this.forceUpdate();
         }}
       />
@@ -414,12 +425,32 @@ export default class AnnualTab extends Component {
     </div>, this.getMonthHeaders(), {
       className: this.classes.headRow
     });
-
+    let values = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
+    let hoverValues = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
+    let isSecondGood = false;
+    if (this.state.approvedPlan) {
+      values = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val))
+      hoverValues = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
+      isSecondGood = true;
+    }
     const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-      { 'TOTAL' }
-    </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
-      className: this.classes.footRow
-    });
+        { 'TOTAL' }
+      </div>,
+      values.map((item, i) =>
+        item === hoverValues[i] ?
+          item
+          :
+          <PlanCell
+            item={ item }
+            hover={ hoverValues[i] }
+            key={ i }
+            approveChannel={ () => this.props.approveWholeMonth(i) }
+            declineChannel={ () => this.props.declineWholeMonth(i) }
+            isSecondGood={isSecondGood}/>
+      )
+      , {
+        className: this.classes.footRow
+      });
 
     const currentSuggested = {};
     const dates = this.getDates();
@@ -440,13 +471,19 @@ export default class AnnualTab extends Component {
     projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
 
     const objectives = {};
-    this.props.objectives.forEach(objective => {
-      const delta = objective.isPercentage ? objective.amount * this.props.actualIndicators[objective.indicator] / 100 : objective.amount;
-      const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + this.props.actualIndicators[objective.indicator] : this.props.actualIndicators[objective.indicator] - delta);
-      const date = timeFrameToDate(objective.timeFrame);
-      const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
-      objectives[objective.indicator] = {x: monthStr, y: target};
-    });
+    this.props.objectives
+      .filter(function (objective) {
+        const today = new Date();
+        const date = objective && objective.timeFrame ? timeFrameToDate(objective.timeFrame) : today;
+        return date >= today;
+      })
+      .forEach(objective => {
+        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
+        const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta);
+        const date = timeFrameToDate(objective.timeFrame);
+        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+        objectives[objective.indicator] = {x: monthStr, y: target};
+      });
 
     return <div>
       <div className={ this.classes.wrap }>
@@ -504,7 +541,7 @@ export default class AnnualTab extends Component {
           { headRow }
           </thead>
 
-          <ContextMenu id="rightClick">
+          <ContextMenu id="rightClickEdit">
             <SubMenu title="Increase by" hoverDelay={250}>
               <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
                 10%
@@ -539,6 +576,15 @@ export default class AnnualTab extends Component {
                 50%
               </MenuItem>
             </SubMenu>
+          </ContextMenu>
+
+          <ContextMenu id="rightClickNormal">
+            <MenuItem onClick={this.approveChannel.bind(this)}>
+              Approve all suggestions
+            </MenuItem>
+            <MenuItem onClick={this.declineChannel.bind(this)}>
+              Decline all suggestions
+            </MenuItem>
           </ContextMenu>
 
           <PlanPopup ref="headPopup" style={{
@@ -603,7 +649,9 @@ export default class AnnualTab extends Component {
               key={ i }
               approveChannel={ () => { this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item) } }
               declineChannel={ () => { this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]) } }
-              isSecondGood={isSecondGood}/>
+              isSecondGood={isSecondGood}
+              style={{ backgroundColor: '#329ff136' }}
+            />
           }
           else return <td className={ this.classes.valueCell } key={ i }>{
               this.getCellItem(item)

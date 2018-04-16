@@ -5,6 +5,10 @@ import style from "styles/plan/indicators-graph.css";
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
 import { getNickname, getIndicatorsWithProps } from 'components/utils/indicators';
+import PlanPopup, {
+  TextContent as PopupTextContent
+} from 'components/pages/plan/Popup';
+import { formatBudgetShortened } from 'components/utils/budget';
 
 export default class IndicatorsGraph extends Component {
 
@@ -25,12 +29,22 @@ export default class IndicatorsGraph extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.objectives !== this.props.objectives) {
+      const objectives = Object.keys(nextProps.objectives);
+      const objective = objectives && objectives[0];
+      if (objective) {
+        this.setState({checkedIndicators: [objective]});
+      }
+    }
+  }
+
   get width() {
     return this.props.dimensions.width - this.marginLeft + 5
   }
 
   get marginLeft() {
-    return this.props.dimensions.marginLeft - 92
+    return this.props.dimensions.marginLeft - 65
   }
 
   toggleCheckbox(indicator) {
@@ -67,20 +81,25 @@ export default class IndicatorsGraph extends Component {
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
-      .forEach((item, index) =>
-        indicatorsMapping[item] = {title: indicators[item].nickname, color: COLORS[index % COLORS.length] }
+      .forEach(item =>
+        indicatorsMapping[item] = indicators[item].nickname
       );
-    const menuItems = Object.keys(indicatorsMapping).map(indicator =>
+    const popupItems = Object.keys(indicatorsMapping).map(indicator =>
       <div className={ this.classes.menuItem } key={indicator}>
-        <Label checkbox={ this.state.checkedIndicators.indexOf(indicator) !== -1 } onChange={ this.toggleCheckbox.bind(this, indicator) } style={{ marginBottom: '3px', fontSize: '12px' }}>{indicatorsMapping[indicator].title}</Label>
-        <div className={ this.classes.coloredCircle } style={{ background:  indicatorsMapping[indicator].color}}/>
+        <Label checkbox={ this.state.checkedIndicators.indexOf(indicator) !== -1 } onChange={ this.toggleCheckbox.bind(this, indicator) } style={{ marginBottom: '3px', fontSize: '12px', textTransform: 'capitalize' }}>{indicatorsMapping[indicator]}</Label>
       </div>
     );
-    const lines = this.state.checkedIndicators.map(indicator =>
-      <Line key={indicator} type='monotone' dataKey={indicator} stroke={indicatorsMapping[indicator].color} fill={indicatorsMapping[indicator].color} strokeWidth={3}/>
+    const menuItems = this.state.checkedIndicators.map((indicator, index) =>
+      <div className={ this.classes.menuItem } key={indicator}>
+        <Label style={{ marginBottom: '3px', fontSize: '12px', textTransform: 'capitalize' }}>{indicatorsMapping[indicator]}</Label>
+        <div className={ this.classes.coloredCircle } style={{ background: COLORS[index % COLORS.length] }}/>
+      </div>
     );
-    const suggestedLines = this.state.checkedIndicators.map(indicator =>
-      <Line key={indicator+1} type='monotone' dataKey={indicator + 'Suggested'} stroke={indicatorsMapping[indicator].color} fill={indicatorsMapping[indicator].color} strokeWidth={3} strokeDasharray="7 11" dot={{ strokeDasharray:"initial", fill: 'white' }}/>
+    const lines = this.state.checkedIndicators.map((indicator, index) =>
+      <Line key={indicator} type='monotone' dataKey={indicator} stroke={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} strokeWidth={3}/>
+    );
+    const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
+      <Line key={indicator+1} type='monotone' dataKey={indicator + 'Suggested'} stroke={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} strokeWidth={3} strokeDasharray="7 11" dot={{ strokeDasharray:"initial", fill: 'white' }}/>
     );
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
@@ -98,7 +117,7 @@ export default class IndicatorsGraph extends Component {
             data.payload.map((item, index) => {
               if (item.value && !item.dataKey.includes('Suggested')) {
                 return <div key={index}>
-                  {indicatorsMapping[item.dataKey].title}: {item.value}
+                  {indicatorsMapping[item.dataKey]}: {item.value}
                   {prevIndex >= 0 ?
                     <div style={{ color: item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
                       {' (' + (item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
@@ -107,7 +126,7 @@ export default class IndicatorsGraph extends Component {
                   <div>
                     { prevIndex >= 0 && this.props.data[prevIndex][item.dataKey + 'Suggested'] ?
                       <div>
-                        {indicatorsMapping[item.dataKey].title + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
+                        {indicatorsMapping[item.dataKey] + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
                         <div style={{ color: this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
                           {' (' + (this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') + Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
                         </div>
@@ -116,7 +135,7 @@ export default class IndicatorsGraph extends Component {
                   </div>
                   {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
                     <div>
-                      {indicatorsMapping[item.dataKey].title} (objective): {this.props.objectives[item.dataKey].y}
+                      {indicatorsMapping[item.dataKey]} (objective): {this.props.objectives[item.dataKey].y}
                     </div>
                     : null}
                 </div>
@@ -132,6 +151,16 @@ export default class IndicatorsGraph extends Component {
         <div className={ this.classes.menu }>
           <div className={ this.classes.menuTitle }>
             Forecasting
+            <div style={{ position: 'relative' }}>
+              <div className={ this.classes.settings } onClick={ ()=>{ this.refs.settingsPopup.open() } } />
+              <PlanPopup ref="settingsPopup" style={{
+                top: '20px'
+              }} title="Settings">
+                <PopupTextContent>
+                  {popupItems}
+                </PopupTextContent>
+              </PlanPopup>
+            </div>
           </div>
           { menuItems }
         </div>
@@ -139,7 +168,7 @@ export default class IndicatorsGraph extends Component {
       <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft, marginTop: '30px' }}>
         <LineChart width={this.width} height={400} data={ this.props.data }>
           <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
-          <YAxis width={82} style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }} domain={['dataMin', 'dataMax']}/>
+          <YAxis tickFormatter={ (tick) => formatBudgetShortened(tick) } style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }} domain={['dataMin', 'dataMax']}/>
           <CartesianGrid vertical={ false }/>
           { dots }
           <Tooltip content={ tooltip.bind(this) }/>

@@ -52,7 +52,7 @@ export default class SignIn extends Component {
               // No user Account
               if (popup === null) {
                 history.push({
-                  pathname: '/welcome',
+                  pathname: '/settings',
                   query: { new: true, freePlan: !!profile.app_metadata.freePlan }
                 });
               }
@@ -61,7 +61,7 @@ export default class SignIn extends Component {
               }
               else {
                 if (popup) {
-                  history.push('/welcome');
+                  history.push('/settings');
                 }
                 else {
                   history.push('/dashboard')
@@ -105,7 +105,7 @@ export default class SignIn extends Component {
                       history.push('/plan');
                     }
                     else {
-                      history.push('/welcome');
+                      history.push('/settings');
                     }
                   });
               }
