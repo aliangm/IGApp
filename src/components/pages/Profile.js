@@ -1,17 +1,12 @@
 import React from 'react';
-
 import Component from 'components/Component';
 import Page from 'components/Page';
-
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
-import ProfileInsights from 'components/pages/profile/Insights';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 import ButtonsSet from 'components/pages/profile/ButtonsSet';
-import MarketFitPopup from 'components/pages/profile/MarketFitPopup';
-import ProductLaunchPopup from 'components/pages/profile/ProductLaunchPopup';
 import MultiRow from 'components/MultiRow';
 import Select from 'components/controls/Select';
 import Toggle from 'components/controls/Toggle';
@@ -65,17 +60,14 @@ export default class Profile extends Component {
   }
 
   validate() {
+    const fields = ['vertical', 'orientation', 'businessModel', 'seatsPerAccount', 'platform', 'lifeCycle', 'coverage', 'loyalty', 'differentiation'];
+    const errorField = fields.find(field => !this.props.userProfile[field]);
+    if (errorField) {
+      this.refs[errorField].validationError();
+      return false;
+    }
     return this.props.pricingTiers &&
-      this.props.pricingTiers.length > 0 &&
-      this.props.userProfile.vertical &&
-      this.props.userProfile.orientation &&
-      this.props.userProfile.businessModel &&
-      this.props.userProfile.seatsPerAccount &&
-      this.props.userProfile.platform &&
-      this.props.userProfile.lifeCycle &&
-      this.props.userProfile.coverage &&
-      this.props.userProfile.loyalty &&
-      this.props.userProfile.differentiation
+      this.props.pricingTiers.length > 0;
   }
 
   handleChangePricing(parameter, index, event) {
@@ -149,43 +141,6 @@ export default class Profile extends Component {
             {value: 'Martech', label: 'Martech'},
             {value: 'BI & Analytics', label: 'BI & Analytics'},
             {value: 'Sales', label: 'Sales'}
-          ]
-        }
-      },
-      category: {
-        label: 'Category',
-        //selected:   this.state.data.userProfile.category ,
-        select: {
-          name: 'category',
-          //onChange: () => { {this.handleChangeGoals} },
-          options: [
-            {value: 'Gaming', label: 'Gaming'},
-            {value: 'Business', label: 'Business'},
-            {value: 'Education', label: 'Education'},
-            {value: 'Lifestyle', label: 'Lifestyle'},
-            {value: 'Utilities', label: 'Utilities'},
-            {value: 'Bakery', label: 'Bakery'},
-            {value: 'Bar', label: 'Bar'},
-            {value: 'Coffee Shop', label: 'Coffee Shop'},
-            {value: 'Restaurant', label: 'Restaurant'},
-            {value: 'Ice Cream Shop', label: 'Ice Cream Shop'},
-            {value: 'Beauty Salon', label: 'Beauty Salon'},
-            {value: 'Hair Salon', label: 'Hair Salon'},
-            {value: 'Nail Salon', label: 'Nail Salon'},
-            {value: 'Hostel', label: 'Hostel'},
-            {value: 'Hotel', label: 'Hotel'},
-            {value: 'Motel', label: 'Motel'},
-            {value: 'Gym', label: 'Gym'},
-            {value: 'Golf Course', label: 'Golf Course'},
-            {value: 'Swimming Pool', label: 'Swimming Pool'},
-            {value: 'Ski Resort', label: 'Ski Resort'},
-            {value: 'Tennis Complex', label: 'Tennis Complex'},
-            {value: 'Electrician', label: 'Electrician'},
-            {value: 'House Painter', label: 'House Painter'},
-            {value: 'Locksmith', label: 'Locksmith'},
-            {value: 'Moving Company', label: 'Moving Company'},
-            {value: 'Test', label: 'Test'},
-            {value: 'Plumber', label: 'Plumber'}
           ]
         }
       },
@@ -296,20 +251,15 @@ export default class Profile extends Component {
                 {key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity'},
                 {key: 'Finance', text: 'Finance', icon: 'buttons:finance'},
               ]} selectedKey={ this.props.userProfile.vertical }
-                          onChange={this.handleChangeButton.bind(this, 'vertical')}/>
+                          onChange={this.handleChangeButton.bind(this, 'vertical')} ref='vertical'/>
             </div>
-            {/*<div className={ this.classes.row } style={{
-             width: '258px'
-             }}>
-             <Select { ... selects.category } selected={ this.props.userProfile.category } onChange= { this.handleChangeSelect.bind(this, 'category') }/>
-             </div> */}
             <div className={ this.classes.row }>
               <Label question={['']} description={['What is the orientation of your company?']}>Orientation</Label>
               <ButtonsSet buttons={[
                 {key: 'B2C', text: 'B2C', icon: 'buttons:b2c'},
                 {key: 'B2B', text: 'B2B', icon: 'buttons:b2b'},
               ]} selectedKey={ this.props.userProfile.orientation }
-                          onChange={this.fakeChange.bind(this, 'orientation', 'B2B')}/>
+                          onChange={this.fakeChange.bind(this, 'orientation', 'B2B')} ref='orientation'/>
             </div>
             <div className={ this.classes.row }>
               <Label question={['']}
@@ -321,13 +271,13 @@ export default class Profile extends Component {
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
                 {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'},
               ]} selectedKey={ this.props.userProfile.businessModel }
-                          onChange={this.fakeChange.bind(this, 'businessModel', 'SaaS')}/>
+                          onChange={this.fakeChange.bind(this, 'businessModel', 'SaaS')} ref='businessModel'/>
             </div>
             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
               <Select { ... selects.seatsPerAccount } selected={ this.props.userProfile.seatsPerAccount}
-                      onChange={ this.handleChangeSelect.bind(this, 'seatsPerAccount') }/>
+                      onChange={ this.handleChangeSelect.bind(this, 'seatsPerAccount') } ref='seatsPerAccount'/>
             </div>
             <div className={ this.classes.row }>
               <Label style={{ marginBottom: '12px', fontWeight: '600' }} question={['']} description={['What is your main pricing point? \n *In case of SaaS, which annual subscription option is the most popular?']}>
@@ -367,19 +317,19 @@ export default class Profile extends Component {
                 {key: 'Desktop', text: 'Desktop', icon: 'buttons:desktop'},
                 {key: 'Any', text: 'Any', icon: 'buttons:any'},
               ]} selectedKey={ this.props.userProfile.platform }
-                          onChange={this.handleChangeButton.bind(this, 'platform')}/>
+                          onChange={this.handleChangeButton.bind(this, 'platform')} ref='platform'/>
             </div>
             <div className={ this.classes.row }>
               <Label question={['', 'Intro', 'Growth', 'Mature', 'Decline']}
                      description={['Which stage of a company lifecycle currently fits your company?', 'pre-product/market fit.', 'reached product/market fit, sales begin to increase.', 'sales reached / are reaching their peak.', 'sales begin to decline as the product reaches its saturation point.']}>Life
                 Cycle</Label>
-              <ButtonsSet ref="lifeCycle" buttons={[
+              <ButtonsSet buttons={[
                 {key: 'Intro', text: 'Intro', icon: 'buttons:intro'},
                 {key: 'Growth', text: 'Growth', icon: 'buttons:growth'},
                 {key: 'Mature', text: 'Mature', icon: 'buttons:mature'},
                 {key: 'Decline', text: 'Decline', icon: 'buttons:decline'},
               ]} selectedKey={ this.props.userProfile.lifeCycle }
-                          onChange={this.handleChangeButton.bind(this, 'lifeCycle')}/>
+                          onChange={this.handleChangeButton.bind(this, 'lifeCycle')} ref='lifeCycle'/>
             </div>
             <div className={ this.classes.row }>
               <Label question={['']}
@@ -390,39 +340,20 @@ export default class Profile extends Component {
                 {key: 'Local', text: 'Local', icon: 'buttons:local'},
                 {key: 'Any', text: 'Any', icon: 'buttons:any2'},
               ]} selectedKey={ this.props.userProfile.coverage }
-                          onChange={this.handleChangeButton.bind(this, 'coverage')}/>
+                          onChange={this.handleChangeButton.bind(this, 'coverage')} ref='coverage'/>
             </div>
             <div className={ this.classes.row } style={{
               width: '258px'
             }}>
               <Select { ... selects.loyalty } selected={ this.props.userProfile.loyalty}
-                      onChange={ this.handleChangeSelect.bind(this, 'loyalty') }/>
+                      onChange={ this.handleChangeSelect.bind(this, 'loyalty') } ref='loyalty'/>
             </div>
-            {/*      <div className={ this.classes.row }>
-             <Label question>{ selects.loyalty.label }</Label>
-             <div className={ this.classes.cell }>
-             <Select { ... selects.loyalty } selected={ this.props.userProfile.loyalty} onchange= { this.handleChangeSelect.bind(this, 'loyalty') } label={ null } style={{
-             width: '258px'
-             }} />
-             </div>
-             </div> */}
-            {/*   <div className={ this.classes.row }>
-             <Label question={['Product', 'Service']}>Differentiation</Label>
-             <ButtonsSet buttons={[
-             { key: 'Technology', text: 'Technology', icon: 'buttons:intro' },
-             { key: 'High-End', text: 'High-End', icon: 'buttons:growth' },
-             { key: 'Low Price', text: 'Low Price', icon: 'buttons:mature' },
-             { key: 'Customized', text: 'Customized', icon: 'buttons:decline' },
-             { key: 'Low Touch', text: 'Low Touch', icon: 'buttons:decline' },
-             { key: 'Unique Value Offer', text: 'Unique Value Offer', icon: 'buttons:decline' },
-             ]} selectedKey={ this.props.userProfile.differentiation } onChange = {this.handleChangeButton.bind(this, 'differentiation')} />
-             </div> */}
             <div className={ this.classes.row } style={{
               marginBottom: '200px',
               width: '258px'
             }}>
               <Select { ... selects.differentiation } selected={ this.props.userProfile.differentiation}
-                      onChange={ this.handleChangeSelect.bind(this, 'differentiation') }/>
+                      onChange={ this.handleChangeSelect.bind(this, 'differentiation') } ref='differentiation'/>
             </div>
             {
               /*
@@ -440,24 +371,6 @@ export default class Profile extends Component {
                }} />
                </div>
 
-               <div className={ this.classes.row }>
-               <Label>Enter your main competitor’s website (up to 3)</Label>
-               <Textfield defaultValue="http://" style={{
-               maxWidth: '440px',
-               minWidth: '200px',
-               marginBottom: '16px'
-               }} />
-               <Textfield defaultValue="http://" style={{
-               maxWidth: '440px',
-               minWidth: '200px',
-               marginBottom: '16px'
-               }} />
-               <Textfield defaultValue="http://" style={{
-               maxWidth: '440px',
-               minWidth: '200px',
-               marginBottom: '16px'
-               }} />
-               </div>
                */
             }
 

@@ -1,30 +1,18 @@
 import React from 'react';
-
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
 import Page from 'components/Page';
-
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
-import Calendar from 'components/controls/Calendar';
 import Label from 'components/ControlsLabel';
-import Notice from 'components/Notice';
-import MultiRow from 'components/MultiRow';
 import ButtonsSet from 'components/pages/profile/ButtonsSet';
-
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
-import ProfileInsights from 'components/pages/profile/Insights';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
-import NotSure from 'components/onboarding/NotSure';
 import AudienceTabs from 'components/onboarding/AudienceTabs';
-
 import style from 'styles/onboarding/onboarding.css';
 import targeStyle from 'styles/target-audience/target-audience.css';
-
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 
@@ -49,23 +37,17 @@ export default class TargetAudience extends Component {
   }
 
   validate() {
-    return this.props.targetAudience.reduce((isValue, target) => {
+    const fields = ['companyType', 'annualRevenue', 'employees', 'role', 'managementLevel', 'teamSize', 'age', 'salary', 'gender', 'education', 'location', 'dailyOnlinePresence'];
+    return this.props.targetAudience.reduce((isValue, target, index) => {
+      const errorField = fields.find(field => !target.fields[field]);
+      if (errorField) {
+        this.refs.tabs.refs[errorField + index].validationError();
+        return false;
+      }
       return isValue &&
         target.fields &&
         //target.info.name &&
-        target.info.weight &&
-        target.fields.role &&
-        target.fields.managementLevel &&
-        target.fields.teamSize &&
-        target.fields.employees &&
-        target.fields.annualRevenue &&
-        target.fields.companyType &&
-        target.fields.age &&
-        target.fields.salary &&
-        target.fields.gender &&
-        target.fields.education &&
-        target.fields.location &&
-        target.fields.dailyOnlinePresence;
+        target.info.weight;
     }, true);
   }
 
@@ -293,17 +275,17 @@ export default class TargetAudience extends Component {
                       { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
                       { key: 'Healthcare', text: 'Healthcare', icon: 'buttons:healthcare' },
                       { key: 'Any', text: 'Any', icon: 'buttons:any' },
-                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.companyType } onChange = {this.handleChangeButton.bind(this, 'companyType', index)} />
+                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.companyType } onChange = {this.handleChangeButton.bind(this, 'companyType', index)} ref={'companyType' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.annualRevenue } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.annualRevenue } onChange= { this.handleChangeSelect.bind(this, 'annualRevenue', index) }/>
+                    <Select { ... selects.annualRevenue } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.annualRevenue } onChange= { this.handleChangeSelect.bind(this, 'annualRevenue', index) } ref={'annualRevenue' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.employees } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.employees } onChange= { this.handleChangeSelect.bind(this, 'employees', index) } />
+                    <Select { ... selects.employees } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.employees } onChange= { this.handleChangeSelect.bind(this, 'employees', index) }  ref={'employees' + index}/>
                   </div>
                   <div className={ this.classes.row }>
                     <Label>Role</Label>
@@ -319,7 +301,7 @@ export default class TargetAudience extends Component {
                       { key: 'Design', text: 'Design', icon: 'buttons:design' },
                       { key: 'BizDev', text: 'BizDev', icon: 'buttons:bizdev' },
                       { key: 'Other', text: 'Other', icon: 'buttons:any' },
-                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.role } onChange = {this.handleChangeButton.bind(this, 'role', index)} />
+                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.role } onChange = {this.handleChangeButton.bind(this, 'role', index)} ref={'role' + index}/>
                   </div>
                   <div className={ this.classes.row }>
                     <Label>Management Level</Label>
@@ -327,7 +309,7 @@ export default class TargetAudience extends Component {
                       { key: 'C-Level', text: 'C-Level', icon: 'buttons:cxo' },
                       { key: 'Management', text: 'Management', icon: 'buttons:manager' },
                       { key: 'Employee', text: 'Employee', icon: 'buttons:employee' },
-                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.managementLevel } onChange = {this.handleChangeButton.bind(this, 'managementLevel', index)} />
+                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.managementLevel } onChange = {this.handleChangeButton.bind(this, 'managementLevel', index)} ref={'managementLevel' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
@@ -337,17 +319,17 @@ export default class TargetAudience extends Component {
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.teamSize } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.teamSize } onChange= { this.handleChangeSelect.bind(this, 'teamSize', index) } />
+                    <Select { ... selects.teamSize } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.teamSize } onChange= { this.handleChangeSelect.bind(this, 'teamSize', index) } ref={'teamSize' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.age } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.age } onChange= { this.handleChangeSelect.bind(this, 'age', index) } />
+                    <Select { ... selects.age } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.age } onChange= { this.handleChangeSelect.bind(this, 'age', index) } ref={'age' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.salary } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.salary } onChange= { this.handleChangeSelect.bind(this, 'salary', index) } />
+                    <Select { ... selects.salary } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.salary } onChange= { this.handleChangeSelect.bind(this, 'salary', index) } ref={'salary' + index}/>
                   </div>
                   {/**	<div className={ this.classes.row }>
                    <Label question>{ selects.loyalty.label }</Label>
@@ -366,23 +348,23 @@ export default class TargetAudience extends Component {
                       { key: 'Male', text: 'Male', icon: 'buttons:male' },
                       { key: 'Female', text: 'Female', icon: 'buttons:female' },
                       { key: 'Any', text: 'Both', icon: 'buttons:both' },
-                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.gender } onChange = {this.handleChangeButton.bind(this, 'gender', index)} />
+                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.gender } onChange = {this.handleChangeButton.bind(this, 'gender', index)} ref={'gender' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.education } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.education } onChange= { this.handleChangeSelect.bind(this, 'education', index) } />
+                    <Select { ... selects.education } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.education } onChange= { this.handleChangeSelect.bind(this, 'education', index) } ref={'education' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.location } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.location } onChange= { this.handleChangeSelect.bind(this, 'location', index) } />
+                    <Select { ... selects.location } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.location } onChange= { this.handleChangeSelect.bind(this, 'location', index) } ref={'location' + index}/>
                   </div>
                   <div className={ this.classes.row } style={{
                     marginBottom: '200px',
                     width: '258px'
                   }}>
-                    <Select { ... selects.dailyOnlinePresence } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.dailyOnlinePresence } onChange= { this.handleChangeSelect.bind(this, 'dailyOnlinePresence', index) } />
+                    <Select { ... selects.dailyOnlinePresence } selected={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.dailyOnlinePresence } onChange= { this.handleChangeSelect.bind(this, 'dailyOnlinePresence', index) } ref={'dailyOnlinePresence' + index}/>
                   </div>
                 </div>
               }}
