@@ -315,7 +315,7 @@ export default class Indicators extends Component {
       </div>
     });
     return <div>
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1052px'} innerClassName={indiStyle.locals.inner}>
+      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1052px'} contentClassName={indiStyle.locals.content} innerClassName={indiStyle.locals.inner}>
         <Title title="Metrics" subTitle="Marketing is great, but without measuring the impact on your metrics, there is no real point in it." />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
