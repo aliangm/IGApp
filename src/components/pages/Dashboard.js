@@ -1,39 +1,22 @@
 import React from 'react';
-import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
-import CMO from 'components/pages/dashboard/CMO';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
+import { Link } from 'react-router';
 
 export default class Dashboard extends Component {
 
   style = style;
 
-  static defaultProps = {
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedTab: 0
-    };
-  }
-
-  selectTab(index) {
-    this.setState({
-      selectedTab: index
-    });
-  }
-
   render() {
-    let tabs = {
-      CMO: CMO
+    const tabs = {
+      CMO: '/dashboard/CMO'
     };
 
     const tabNames = Object.keys(tabs);
-    const selectedName = tabNames[this.state.selectedTab];
-    const selectedTab = tabs[selectedName];
+    const childrenWithProps = React.Children.map(this.props.children,
+      (child) => React.cloneElement(child, this.props));
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
@@ -41,27 +24,17 @@ export default class Dashboard extends Component {
           <div className={ this.classes.headTabs }>
             {
               tabNames.map((name, i) => {
-                let className;
-
-                if (i === this.state.selectedTab) {
-                  className = this.classes.headTabSelected;
-                } else {
-                  className = this.classes.headTab;
-                }
-
-                return <div className={ className } key={ i } onClick={() => {
-                  this.selectTab(i);
-                }}>{ name }</div>
+                const link = Object.values(tabs)[i];
+                return <Link to={ link } activeClassName={this.classes.headTabSelected} className={this.classes.headTab} key={ i }>
+                  { name }
+                </Link>
               })
             }
           </div>
         </div>
-        <div className={ this.classes.serverDown }>
-          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
-        </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.dashboard ?
           <div>
-            {selectedTab ? React.createElement(selectedTab, merge({}, this.props, this.state)) : null}
+            {childrenWithProps}
           </div>
           :
           <FirstPageVisit

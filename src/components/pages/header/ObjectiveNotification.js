@@ -12,7 +12,7 @@ export default class ObjectiveNotification extends Component {
   styles = [objectiveStyle, icons];
 
   render() {
-    return <div className={ this.classes.inner } data-unread={this.props.isRead ? null : true} onClick={ () => { history.push('/preferences') } }>
+    return <div className={ this.classes.inner } data-unread={this.props.isRead ? null : true} onClick={ () => { history.push('/profile/preferences') } }>
       <div>
         <div className={ this.classes.picture } data-icon={ 'indicator:' + this.props.notification.indicator }/>
         <div className={objectiveStyle.locals.objectiveIcon} data-fail={ this.props.notification.isSuccess ? null : true }/>

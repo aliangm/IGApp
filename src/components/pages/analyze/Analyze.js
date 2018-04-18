@@ -319,7 +319,7 @@ export default class Analyze extends Component {
                 [
                   <div className={dashboardStyle.locals.channelTable} data-link={ platformCampaignIndex !== -1 ? true : null} onClick={() => { if (platformCampaignIndex !== -1) {
                     history.push({
-                      pathname: '/campaigns',
+                      pathname: '/campaigns/by-channel',
                       query: { campaign: platformCampaignIndex }
                     });
                   } }}>

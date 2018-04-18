@@ -47,7 +47,7 @@ export default class Steps extends Component {
           text="Every plan starts with a first step. Take your first step by planning your first budget. Don’t take it too hard, it will adjust. A lot."
           action="Add a budget"
           done={plan}
-          onClick={()=> { history.push('/plan') }}
+          onClick={()=> { history.push('/plan/plan/annual') }}
         />
         <Step
           icon="step:attribution"
@@ -55,7 +55,7 @@ export default class Steps extends Component {
           text={"You can learn and improve a lot from actal data. " + (doesHaveAttribution ? 'Implement Attribution' : 'Upgrade')  + " to track leads’ and users’ actions and interactions with your brand."}
           action={doesHaveAttribution ? "Install script" : 'Upgrade'}
           done={attribution}
-          onClick={()=> { doesHaveAttribution ? history.push('/attribution') : window.open('mailto:support@infinigrow.com?Subject=InfiniGrow - request to upgrade - Attribution','email') }}
+          onClick={()=> { doesHaveAttribution ? history.push('/analyze/attribution/setup') : window.open('mailto:support@infinigrow.com?Subject=InfiniGrow - request to upgrade - Attribution','email') }}
         />
         <Step
           icon="step:campaign"
@@ -63,7 +63,7 @@ export default class Steps extends Component {
           text="Understood where and how you’re going to spend your budget? Now it’s time to create campaigns and activities under those budgets."
           action="Add a campaign"
           done={campaign}
-          onClick={()=> { history.push('/campaigns') }}
+          onClick={()=> { history.push('/campaigns/by-channel') }}
         />
         <Step
           icon="step:idea"
@@ -71,7 +71,7 @@ export default class Steps extends Component {
           text="Sometimes you’re not sure what campaigns you’re going to launch in the future. Add an initiative idea which you can later explore."
           action="Add an idea"
           done={idea}
-          onClick={()=> { history.push('/campaigns') }}
+          onClick={()=> { history.push('/campaigns/ideas') }}
         />
         <Step
           icon="step:plannedVsActual"
@@ -79,7 +79,7 @@ export default class Steps extends Component {
           text="You’ve planned to invest $X in Y channels. But sometimes planning is one thing, reallity is other. That’s fine, just upload your actual spend."
           action="Add actuals"
           done={plannedVsActual}
-          onClick={()=> { history.push('/plan') }}
+          onClick={()=> { history.push('/plan/planned-vs-actual') }}
         />
       </div>
       <div className={this.classes.text} style={{ marginBottom: '15px' }}>

@@ -1,17 +1,12 @@
 import React from 'react';
-import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
-import Setup from 'components/pages/attribution/Setup';
-import TrackingPlan from 'components/pages/attribution/TrackingPlan';
-import TrackingUrls from 'components/pages/attribution/TrackingUrls';
-import Offline from 'components/pages/attribution/Offline';
-import SiteStructure from 'components/pages/attribution/SiteStructure';
 import UploadOfflinePopup from 'components/pages/attribution/UploadOfflinePopup';
 import { FeatureToggle } from 'react-feature-toggles';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
+import { Link } from 'react-router';
 
 export default class Attribution extends Component {
   style = style;
@@ -19,7 +14,8 @@ export default class Attribution extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 0
+      selectedTab: 0,
+      showOfflinePopup: false
     };
   }
 
@@ -31,16 +27,18 @@ export default class Attribution extends Component {
 
   render() {
     const tabs = {
-      "Setup": Setup,
-      "Tracking Plan": TrackingPlan,
-      "Campaign URLs": TrackingUrls,
-      "Offline": Offline,
-      "Site Structure": SiteStructure
+      "Setup": '/analyze/attribution/setup',
+      "Tracking Plan": '/analyze/attribution/tracking-plan',
+      "Campaign URLs": '/analyze/attribution/tracking-urls',
+      "Offline": '/analyze/attribution/offline',
+      "Site Structure": '/analyze/attribution/site-structure'
     };
 
     const tabNames = Object.keys(tabs);
     const selectedName = tabNames[this.state.selectedTab];
     const selectedTab = tabs[selectedName];
+    const childrenWithProps = React.Children.map(this.props.children,
+      (child) => React.cloneElement(child, this.props));
     return <FeatureToggle featureName="attribution">
       <div>
         <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
@@ -49,17 +47,12 @@ export default class Attribution extends Component {
             <div className={ this.classes.headTabs }>
               {
                 tabNames.map((name, i) => {
-                  let className;
-
-                  if (i === this.state.selectedTab) {
-                    className = this.classes.headTabSelected;
-                  } else {
-                    className = this.classes.headTab;
-                  }
-
-                  return <div className={ className } key={ i } onClick={() => {
+                  const link = Object.values(tabs)[i];
+                  return <Link to={ link } activeClassName={this.classes.headTabSelected} className={ this.classes.headTab }key={ i } onClick={() => {
                     this.selectTab(i);
-                  }}>{ name }</div>
+                  }}>
+                    { name }
+                  </Link>
                 })
               }
             </div>
@@ -77,7 +70,7 @@ export default class Attribution extends Component {
           </div>
           { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
             <div style={{paddingTop: '90px'}}>
-              {selectedTab ? React.createElement(selectedTab, merge(this.props)) : null}
+              {childrenWithProps}
               <div hidden={!this.state.showOfflinePopup}>
                 <UploadOfflinePopup close={ () => { this.setState({showOfflinePopup: false}) } } setDataAsState={this.props.setDataAsState}/>
               </div>

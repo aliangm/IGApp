@@ -710,7 +710,7 @@ export default class Preferences extends Component {
                 planNeedsUpdate: true
               }, this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/indicators');
+                  history.push('/profile/indicators');
                 });
             }}/>
             <div style={{width: '30px'}}/>
@@ -729,7 +729,7 @@ export default class Preferences extends Component {
                   planNeedsUpdate: true
                 }, this.props.region, this.props.planDate)
                   .then(() => {
-                    history.push('/plan');
+                    history.push('/plan/plan/annual');
                   });
               }
               else {

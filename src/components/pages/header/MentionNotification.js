@@ -14,7 +14,7 @@ export default class MentionNotification extends Component {
     const member = this.props.teamMembers.find(item => item.userId === this.props.notification.tagger);
     return <div className={ this.classes.inner } data-unread={this.props.isRead ? null : true} onClick={ () => {
       history.push({
-        pathname: '/campaigns',
+        pathname: '/campaigns/by-channel',
         query: { campaign: this.props.notification.index }
       });
     } }>

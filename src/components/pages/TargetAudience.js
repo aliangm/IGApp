@@ -399,7 +399,7 @@ export default class TargetAudience extends Component {
               <BackButton onClick={() => {
                 this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
-                    history.push('/profile');
+                    history.push('/profile/product');
                   });
               }}/>
               < div style = {{width: '30px'}} />
@@ -407,7 +407,7 @@ export default class TargetAudience extends Component {
                 if (this.validate()) {
                   this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
-                      history.push('/indicators');
+                      history.push('/profile/indicators');
                     });
                 }
                 else {

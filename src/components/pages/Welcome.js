@@ -332,7 +332,7 @@ export default class Welcome extends Component {
                 width: '150px'
               }} onClick={() => {
                 if (this.props.region) {
-                  history.push('/profile')
+                  history.push('/profile/product')
                 }
                 else {
                   if (!this.props.userAccount.reasonForUse) {
@@ -350,7 +350,7 @@ export default class Welcome extends Component {
                 this.props.updateUserAccount(this.props.userAccount)
                   .then(() => {
                     if (this.props.region) {
-                      history.push('/profile')
+                      history.push('/profile/product')
                     }
                     else {
                       if (!this.props.userAccount.reasonForUse) {

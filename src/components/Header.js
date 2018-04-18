@@ -293,7 +293,7 @@ export default class Header extends Component {
   render() {
     return <div className={ this.classes.box }>
       <div className={ this.classes.logoMenu } onClick={ this.openSidebar } />
-      <div className={ this.classes.logo } onClick={ () => { history.push('/plan') } }/>
+      <div className={ this.classes.logo } onClick={ () => { history.push('/dashboard/CMO') } }/>
       { this.menuBig }
       { this.menuSmall }
       <RegionPopup hidden={ !this.state.createNewVisible } close={()=>{ this.setState({createNewVisible: false}) }} createUserMonthPlan={ this.props.createUserMonthPlan }/>

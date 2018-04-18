@@ -6,9 +6,6 @@ import Page from 'components/Page';
 import Popup from 'components/Popup';
 import style from 'styles/plan/plan.css';
 import Button from 'components/controls/Button';
-import CurrentTab from 'components/pages/plan/CurrentTab';
-import ProjectionsTab from 'components/pages/plan/ProjectionsTab';
-import AnnualTab from 'components/pages/plan/AnnualTab';
 import ReplanButton from 'components/pages/plan/ReplanButton';
 import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
 import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
@@ -22,6 +19,7 @@ import { output } from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { FeatureToggle } from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
+import { Link } from 'react-router';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -87,7 +85,7 @@ export default class Plan extends Component {
         this.props.plan(true, null, callback, this.props.region, false);
       }
       else {
-        history.push('/dashboard');
+        history.push('/dashboard/CMO');
       }
     }
   }
@@ -301,13 +299,13 @@ export default class Plan extends Component {
     );
     let tabs = {};
     let planDate = formatDate(this.props.planDate);
-    tabs[planDate] = CurrentTab;
-    tabs["Annual"] = AnnualTab;
-    tabs["Forecasting"] = ProjectionsTab;
+    tabs[planDate] = '/plan/plan/current';
+    tabs["Annual"] = '/plan/plan/annual';
+    tabs["Forecasting"] = '/plan/plan/projections';
 
     const tabNames = Object.keys(tabs);
-    const selectedName = tabNames[this.state.selectedTab];
-    const selectedTab = tabs[selectedName];
+    const childrenWithProps = React.Children.map(this.props.children,
+      (child) => React.cloneElement(child, merge({}, this.props, this.state)));
     return <div>
       <ReactTooltip/>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
@@ -316,17 +314,12 @@ export default class Plan extends Component {
           <div className={ this.classes.headTabs }>
             {
               tabNames.map((name, i) => {
-                let className;
-
-                if (i === this.state.selectedTab) {
-                  className = this.classes.headTabSelected;
-                } else {
-                  className = this.classes.headTab;
-                }
-
-                return <div className={ className } key={ i } onClick={() => {
+                const link = Object.values(tabs)[i];
+                return <Link to={ link } activeClassName={this.classes.headTabSelected} className={ this.classes.headTab } key={ i } onClick={() => {
                   this.selectTab(i);
-                }}>{ name }</div>
+                }}>
+                  { name }
+                </Link>
               })
             }
           </div>
@@ -555,7 +548,7 @@ export default class Plan extends Component {
               <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
                 :)</label>
             </div>
-            {selectedTab ? React.createElement(selectedTab, merge({}, this.props, this.state)) : null}
+            {childrenWithProps}
           </div>
           :
           <FirstPageVisit

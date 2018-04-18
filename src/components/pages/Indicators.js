@@ -357,11 +357,11 @@ export default class Indicators extends Component {
 
           <div className={ this.classes.footer }>
             <BackButton onClick={ () => {
-              history.push('/target-audience');
+              history.push('/profile/target-audience');
             } }/>
             <div style={{ width: '30px' }} />
             <NextButton onClick={ () => {
-              history.push('/preferences');
+              history.push('/profile/preferences');
             } }/>
           </div>
 

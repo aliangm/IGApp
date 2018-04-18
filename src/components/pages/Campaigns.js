@@ -2,10 +2,6 @@ import React from 'react';
 import merge from 'lodash/merge';
 import Component from 'components/Component';
 import Page from 'components/Page';
-import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
-import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
-import IdeasTab from 'components/pages/campaigns/Ideas';
-import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import { Search, UnorderedSearchIndex } from 'js-search';
 import CampaignPopup from 'components/pages/campaigns/CampaignPopup';
 import ChooseExistingTemplate from 'components/pages/campaigns/ChooseExistingTemplate';
@@ -19,12 +15,13 @@ import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import { formatBudget } from 'components/utils/budget';
 import { timeFrameToDate } from 'components/utils/objective';
+import { Link } from 'react-router';
 
 const tabs = {
-  'By Channel': ByChannelTab,
-  'By Status': ByStatusTab,
-  'Online Performance': OnlineTab,
-  'Ideas': IdeasTab
+  'By Channel': '/campaigns/by-channel',
+  'By Status': '/campaigns/by-status',
+  'Online Performance': '/campaigns/online-performance',
+  'Ideas': '/campaigns/ideas'
 };
 
 const tabNames = Object.keys(tabs);
@@ -147,8 +144,6 @@ export default class Campaigns extends Component {
   render() {
     const { selectedIndex, campaigns } = this.state;
     const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification } = this.props;
-    const selectedName = tabNames[selectedIndex];
-    const selectedTab = tabs[selectedName];
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
     const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0] ? approvedBudgets[0] : {};
@@ -231,6 +226,16 @@ export default class Campaigns extends Component {
       search.addDocuments(activeCampaigns);
       filteredCampaigns = search.search(this.state.search);
     }
+
+    const childrenWithProps = React.Children.map(this.props.children,
+      (child) => React.cloneElement(child, merge({}, this.props, {
+        processedChannels,
+        filteredCampaigns: filteredCampaigns,
+        updateCampaigns: this.updateCampaigns,
+        showCampaign: this.showCampaign,
+        addNewCampaign: this.addNewCampaign
+      })));
+
     return <div>
       <Page contentClassName={ planStyle.locals.content } width="100%">
         <div className={ planStyle.locals.head }>
@@ -238,15 +243,8 @@ export default class Campaigns extends Component {
           <div className={ planStyle.locals.headTabs }>
             {
               tabNames.map((name, i) => {
-                let className;
-
-                if (i === selectedIndex) {
-                  className = planStyle.locals.headTabSelected;
-                } else {
-                  className = planStyle.locals.headTab;
-                }
-
-                return <div className={className} key={i} data-id={i} onClick={this.handleTabSelect}>{name}</div>
+                const link = Object.values(tabs)[i];
+                return <Link to={ link } activeClassName={planStyle.locals.headTabSelected} className={planStyle.locals.headTab} key={i} data-id={i} onClick={this.handleTabSelect}>{name}</Link>
               })
             }
           </div>
@@ -294,15 +292,7 @@ export default class Campaigns extends Component {
                 </div>
               </div>
               : null}
-            {
-              selectedTab && React.createElement(selectedTab, merge({}, this.props, {
-                processedChannels,
-                filteredCampaigns: filteredCampaigns,
-                updateCampaigns: this.updateCampaigns,
-                showCampaign: this.showCampaign,
-                addNewCampaign: this.addNewCampaign
-              }))
-            }
+            {childrenWithProps}
             <div hidden={!this.state.showPopup}>
               <CampaignPopup
                 campaign={this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign}

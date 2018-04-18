@@ -67,6 +67,7 @@
   position: relative;
   white-space: nowrap;
   color: #354052;
+  text-decoration: none;
 }
 
 .head-tab:hover {
