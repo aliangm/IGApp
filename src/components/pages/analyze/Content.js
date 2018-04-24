@@ -55,12 +55,24 @@ export default class Content extends Component {
   }
 
   render() {
-    const { previousData, attribution } = this.props;
+    const { previousData, attribution, objectives } = this.props;
     const attributionPages = attribution.pages || [];
 
-    const months = previousData.map((item, index) => {
+    const sortedPreviousData = previousData.sort((a, b) => {
+      const planDate1 = a.planDate.split("/");
+      const planDate2 = b.planDate.split("/");
+      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
+      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
+      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    });
+
+    const months = sortedPreviousData.map((item, index) => {
       return {value: index, label: formatDate(item.planDate)}
     });
+
+    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
+
+    const actualIndicatorsArray = relevantData.map(item => item.actualIndicators);
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
@@ -69,6 +81,20 @@ export default class Content extends Component {
       {value: 'opps', label: getIndicatorNickname('opps')},
       {value: 'users', label: getIndicatorNickname('users')},
     ];
+
+    const newFunnelMapping = {
+      MCL: 'newMCL',
+      MQL: 'newMQL',
+      SQL: 'newSQL',
+      opps: 'newOpps',
+      users: 'newUsers'
+    };
+
+    const newFunnelIndicators = Object.values(newFunnelMapping);
+
+    const relevantObjective = objectives
+      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && (newFunnelMapping[item.indicator] || newFunnelIndicators.find(cell => cell === item.indicator)));
+    const objective = relevantObjective ? relevantObjective.indicator : 'MQL';
 
     const headRow = this.getTableRow(null, [
       <div style={{ fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer' }}>
@@ -155,6 +181,11 @@ export default class Content extends Component {
       };
     }) ;
 
+    const revenue = attributionPages.reduce((sum, item) => sum + item.revenue, 0);
+    const impact = attributionPages.reduce((sum, item) => sum + item[objective], 0) / actualIndicatorsArray.reduce((sum, item) => sum + (item[newFunnelMapping[objective]] || 0), 0);
+    const avgReadRatio = pagesData.reduce((sum, item) => sum + item.readRatio, 0) / attributionPages.length;
+    const avgProceedRatio = pagesData.reduce((sum, item) => sum + item.proceedRatio, 0) / attributionPages.length;
+
     const rows = pagesData
       .sort((item1, item2) =>
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
@@ -205,6 +236,48 @@ export default class Content extends Component {
           />
           <div className={dashboardStyle.locals.historyConfigText} style={{ fontWeight: 'bold' }}>
             - {formatDate(this.props.planDate)}
+          </div>
+        </div>
+        <div className={this.classes.cols} style={{width: '825px'}}>
+          <div className={this.classes.colLeft}>
+            <div className={dashboardStyle.locals.item}>
+              <div className={dashboardStyle.locals.text}>
+                Revenue
+              </div>
+              <div className={dashboardStyle.locals.number}>
+                ${formatBudgetShortened(revenue)}
+              </div>
+            </div>
+          </div>
+          <div className={this.classes.colCenter}>
+            <div className={dashboardStyle.locals.item}>
+              <div className={dashboardStyle.locals.text}>
+                Impact On {getIndicatorNickname(objective)}
+              </div>
+              <div className={dashboardStyle.locals.number}>
+                {isFinite(impact) ? Math.round(impact * 100) : 0}%
+              </div>
+            </div>
+          </div>
+          <div className={this.classes.colCenter}>
+            <div className={dashboardStyle.locals.item}>
+              <div className={dashboardStyle.locals.text}>
+                Avg. Read Ratio
+              </div>
+              <div className={dashboardStyle.locals.number}>
+                {Math.round(avgReadRatio)}%
+              </div>
+            </div>
+          </div>
+          <div className={this.classes.colRight}>
+            <div className={dashboardStyle.locals.item}>
+              <div className={dashboardStyle.locals.text}>
+                Avg. Proceed ratio
+              </div>
+              <div className={dashboardStyle.locals.number}>
+                {Math.round(avgProceedRatio)}%
+              </div>
+            </div>
           </div>
         </div>
         <div>
