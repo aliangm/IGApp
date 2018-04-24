@@ -59,9 +59,10 @@ export default class Insights extends Component {
   render() {
     const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel, approvedBudgetsProjection, actualIndicators} = this.props;
     const {showBalancerPopup, suggestedChannel, balancingChannel, findAlternative} = this.state;
-    const relevantObjectives = objectives
+    let relevantObjectives = objectives
       .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
       .map(item => item.indicator);
+    relevantObjectives = relevantObjectives.concat(['MQL', 'MCL', 'SQL', 'opps', 'users']);
     const firstObjective = (relevantObjectives && relevantObjectives[0]) || 'MQL';
     const zeroBudgetSuggestions = {};
     Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
