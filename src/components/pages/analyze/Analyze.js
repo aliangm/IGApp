@@ -87,9 +87,6 @@ export default class Analyze extends Component {
     const attributionCampaigns = attribution.campaigns || [];
     const indicatorsOptions = getIndicatorsWithNicknames();
 
-    const months = previousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
-    });
     let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
       const planDate1 = a.planDate.split("/");
@@ -108,8 +105,10 @@ export default class Analyze extends Component {
         indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
       })
     });
-
-    const relevantData = sortedPreviousData.slice(this.props.months);
+    const months = sortedPreviousData.map((item, index) => {
+      return {value: index, label: formatDate(item.planDate)}
+    });
+    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
     const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? merge(item.approvedBudgets[0], item.actualChannelBudgets && item.actualChannelBudgets.knownChannels ? item.actualChannelBudgets.knownChannels : {}) : {});
     const totalCost = budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0);
     let sumedBudgets = {};
