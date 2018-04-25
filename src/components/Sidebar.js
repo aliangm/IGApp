@@ -49,7 +49,11 @@ export default class Sidebar extends Component {
   }
 
   isHighlighted(menuPath) {
-    return menuPath === this.props.path.split('/')[1];
+    const menuSplit = menuPath.split('/');
+    const pathSplit = this.props.path.split('/');
+    const res = menuSplit.every((item, index) => item === pathSplit[index]);
+    console.log(menuSplit, pathSplit, res);
+    return res;
   }
 
   toggleSubMenu(type) {
@@ -68,10 +72,10 @@ export default class Sidebar extends Component {
       { icon: "sidebar:indicators", link: "/profile/indicators", text: "Metrics", notFirstTime: true },
       { icon: "sidebar:preferences", link: "/profile/preferences", text: "Preferences", notFirstTime: true },
     ];
-    const analyzeSubMenu = [
-      { icon: "sidebar:analyze", link: "/analyze/analyze/analyze", text: "Analyze", notFirstTime: true, isHighlighted: this.isHighlighted('/analyze/analyze') },
-      { icon: "sidebar:users", link: "/analyze/audiences", text: "Audiences", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.users },
-      { icon: "sidebar:attribution", link: "/analyze/attribution/setup", text: "Attribution", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.attribution, isHighlighted: this.isHighlighted('/analyze/attribution') },
+    const measureSubMenu = [
+      { icon: "sidebar:analyze", link: "/measure/analyze/overview", text: "Analyze", notFirstTime: true, isHighlighted: this.isHighlighted('/measure/analyze') },
+      { icon: "sidebar:users", link: "/measure/audiences", text: "Audiences", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.users },
+      { icon: "sidebar:attribution", link: "/measure/attribution/setup", text: "Attribution", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.attribution, isHighlighted: this.isHighlighted('/measure/attribution') },
     ];
     const planSubMenu =[
       { icon: "sidebar:plan", link: "/plan/plan/annual", text: "Plan", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.plan, isHighlighted: this.isHighlighted('/plan/plan') },
@@ -89,14 +93,14 @@ export default class Sidebar extends Component {
           {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
             <div>
               <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard}/>
-              <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ profileSubMenu } isOpen={ this.state.subMenu === 'profile' } isHighlighted={this.isHighlighted('profile')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'profile') }/>
+              <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ profileSubMenu } isOpen={ this.state.subMenu === 'profile' } isHighlighted={this.isHighlighted('/profile')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'profile') }/>
               <FeatureToggle featureName="attribution">
-                <CollapsedMenuItem icon="sidebar:analyzeContainer" text="Analyze" subMenu={ analyzeSubMenu } isOpen={ this.state.subMenu === 'analyze' } isHighlighted={this.isHighlighted('analyze')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'analyze') }/>
+                <CollapsedMenuItem icon="sidebar:measure" text="Measure" subMenu={ measureSubMenu } isOpen={ this.state.subMenu === 'measure' } isHighlighted={this.isHighlighted('/measure')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'measure') }/>
               </FeatureToggle>
-              <CollapsedMenuItem icon="sidebar:planContainer" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted('plan')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
+              <CollapsedMenuItem icon="sidebar:planContainer" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted('/plan')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
             </div>
             : null}
-          <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel" isHighlighted={this.isHighlighted('campaigns')} text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
+          <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel" isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
           <MenuItem icon="sidebar:settings" link="/settings" text="Settings" onClick={this.closeSubMenu} notFirstTime={true} style={{ position: 'absolute', width: '100%', bottom: '20px' }}/>
         </div>
 

@@ -148,7 +148,7 @@
 @mixin icon-nodpi sidebar:users, ../assets/sidebar-icons/users;
 @mixin icon-nodpi sidebar:insights, ../assets/sidebar-icons/insights;
 @mixin icon-nodpi sidebar:settings, ../assets/sidebar-icons/settings;
-@mixin icon-nodpi sidebar:analyzeContainer, ../assets/sidebar-icons/analyze;
+@mixin icon-nodpi sidebar:measure, ../assets/sidebar-icons/analyze;
 @mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/chess;
 
 
@@ -281,6 +281,10 @@
   border-style: solid;
   border-width: 12px 12px 12px 0;
   border-color: transparent #f5f6fb transparent transparent;
+}
+
+.sub-menu-item[data-selected] {
+  background: #329ff1;
 }
 
 .menu-item-first-time {

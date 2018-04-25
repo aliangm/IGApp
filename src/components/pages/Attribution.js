@@ -27,11 +27,11 @@ export default class Attribution extends Component {
 
   render() {
     const tabs = {
-      "Setup": '/analyze/attribution/setup',
-      "Tracking Plan": '/analyze/attribution/tracking-plan',
-      "Campaign URLs": '/analyze/attribution/tracking-urls',
-      "Offline": '/analyze/attribution/offline',
-      "Site Structure": '/analyze/attribution/site-structure'
+      "Setup": '/measure/attribution/setup',
+      "Tracking Plan": '/measure/attribution/tracking-plan',
+      "Campaign URLs": '/measure/attribution/tracking-urls',
+      "Offline": '/measure/attribution/offline',
+      "Site Structure": '/measure/attribution/site-structure'
     };
 
     const tabNames = Object.keys(tabs);

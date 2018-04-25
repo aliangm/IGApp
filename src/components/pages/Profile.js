@@ -66,8 +66,13 @@ export default class Profile extends Component {
       this.refs[errorField].validationError();
       return false;
     }
-    return this.props.pricingTiers &&
-      this.props.pricingTiers.length > 0;
+    if (this.props.pricingTiers && this.props.pricingTiers.length > 0 && this.props.pricingTiers[0] && this.props.pricingTiers[0].price) {
+     return true;
+    }
+    else {
+      this.refs.price0.focus();
+      return false;
+    }
   }
 
   handleChangePricing(parameter, index, event) {
@@ -283,7 +288,7 @@ export default class Profile extends Component {
               <Label style={{ marginBottom: '12px', fontWeight: '600' }} question={['']} description={['What is your main pricing point? \n *In case of SaaS, which annual subscription option is the most popular?']}>
                 Price
               </Label>
-              <MultiRow numOfRows={ this.props.pricingTiers.length } rowRemoved={ this.pricingTierRemove }>
+              <MultiRow numOfRows={ this.props.pricingTiers.length || 1 } rowRemoved={ this.pricingTierRemove }>
                 {({index, data, update, removeButton}) => {
                   return <div>
                     <div className={preferencesStyle.locals.channelsRow}>
@@ -295,7 +300,7 @@ export default class Profile extends Component {
                     <div style={{
                     }} className={ preferencesStyle.locals.channelsRow }>
                       <div className={ preferencesStyle.locals.objectiveText }>Price</div>
-                      <Textfield value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].price ? '$' + this.props.pricingTiers[index].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'price', index) } placeHolder="$"/>
+                      <Textfield ref={'price' + index} value={ this.props.pricingTiers[index] && this.props.pricingTiers[index].price ? '$' + this.props.pricingTiers[index].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '' } style={{width: '80px', marginLeft: '10px'}} onChange={ this.handleChangePricing.bind(this, 'price', index) } placeHolder="$"/>
                       <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Paid</div>
                       <Toggle leftText="Monthly" rightText="Annualy" leftActive={ this.props.pricingTiers[index] && this.props.pricingTiers[index].isMonthly } leftClick={ this.handleChangePricingPaid.bind(this, true, index) } rightClick={ this.handleChangePricingPaid.bind(this, false, index) } style={{ marginLeft: '10px' }}/>
                       <div className={ preferencesStyle.locals.objectiveText } style={{marginLeft: '20px'}}>Weight</div>

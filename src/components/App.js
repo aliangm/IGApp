@@ -99,10 +99,12 @@ class AppComponent extends Component {
   }
 
   handleCallback(userAnswer) {
-    if (userAnswer && this.state.unsaved) {
-      this.getUserMonthPlan(localStorage.getItem('region'), null);
+    if (this.state.showUnsavedPopup) {
+      if (userAnswer && this.state.unsaved) {
+        this.getUserMonthPlan(localStorage.getItem('region'), null);
+      }
+      this.setState({showUnsavedPopup: false});
     }
-    this.setState({showUnsavedPopup: false});
   }
 
   componentDidMount() {
@@ -474,7 +476,7 @@ class AppComponent extends Component {
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
       attribution: data.attribution || { events: [] },
-      pricingTiers: data.pricingTiers || [],
+      pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{price: '', isMonthly: false, weight: 100}],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
       CEVs: data.CEVs || {},

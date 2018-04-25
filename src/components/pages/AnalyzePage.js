@@ -11,8 +11,8 @@ export default class AnalyzePage extends Component {
 
   render() {
     const tabs = {
-      "Analyze": '/analyze/analyze/analyze',
-      "Content": '/analyze/analyze/content'
+      "Overview": '/measure/analyze/overview',
+      "Content": '/measure/analyze/content'
     };
 
     const tabNames = Object.keys(tabs);

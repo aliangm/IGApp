@@ -80,16 +80,16 @@ ReactDOM.render(
         <Route path="/campaigns/ideas" component={ IdeasTab } onEnter={ requireAuth }/>
       </Route>
       <Route component={ Attribution } onEnter={ requireAuth }>
-        <Route path="/analyze/attribution/setup" component={ Setup } onEnter={ requireAuth }/>
-        <Route path="/analyze/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth }/>
-        <Route path="/analyze/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth }/>
-        <Route path="/analyze/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
-        <Route path="/analyze/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
+        <Route path="/measure/attribution/setup" component={ Setup } onEnter={ requireAuth }/>
+        <Route path="/measure/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth }/>
+        <Route path="/measure/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth }/>
+        <Route path="/measure/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
+        <Route path="/measure/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
       </Route>
-      <Route path="/analyze/audiences" component={ Users } onEnter={ requireAdminAuth }/>
+      <Route path="/measure/audiences" component={ Users } onEnter={ requireAdminAuth }/>
       <Route component={ AnalyzePage } onEnter={ requireAdminAuth }>
-        <Route path="/analyze/analyze/analyze" component={ Analyze } onEnter={ requireAdminAuth }/>
-        <Route path="/analyze/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
+        <Route path="/measure/analyze/overview" component={ Analyze } onEnter={ requireAdminAuth }/>
+        <Route path="/measure/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
       </Route>
       <Route path="/plan/insights" component={ Insights } onEnter={ requireAdminAuth }/>
       <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>

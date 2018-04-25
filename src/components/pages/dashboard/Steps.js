@@ -55,7 +55,7 @@ export default class Steps extends Component {
           text={"You can learn and improve a lot from actal data. " + (doesHaveAttribution ? 'Implement Attribution' : 'Upgrade')  + " to track leads’ and users’ actions and interactions with your brand."}
           action={doesHaveAttribution ? "Install script" : 'Upgrade'}
           done={attribution}
-          onClick={()=> { doesHaveAttribution ? history.push('/analyze/attribution/setup') : window.open('mailto:support@infinigrow.com?Subject=InfiniGrow - request to upgrade - Attribution','email') }}
+          onClick={()=> { doesHaveAttribution ? history.push('/measure/attribution/setup') : window.open('mailto:support@infinigrow.com?Subject=InfiniGrow - request to upgrade - Attribution','email') }}
         />
         <Step
           icon="step:campaign"

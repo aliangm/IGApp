@@ -320,12 +320,14 @@
 
 .journey {
     background-color: #f1f4f8;
-    height: 40px;
+    min-height: 40px;
     border-radius: 3px;
     align-items: center;
     padding: 0 5px;
     margin: 5px 0;
-    display: inline-flex;
+    display: -webkit-inline-box;
+    width: 441px;
+    overflow: auto;
 }
 
 .channel-box {

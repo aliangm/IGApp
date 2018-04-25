@@ -146,7 +146,7 @@ export default class Insights extends Component {
                               :
                               <span>Removing <b>{getChannelNickname(suggestedChannel)}</b> from your mix</span>
                           }
-                          in <b>{getDates(planDate)[0]}</b> and instead
+                          <span> in <b>{getDates(planDate)[0]}</b> and instead</span>
                           {nextMonthBudgets[balancingChannel] && approvedBudgets[0][balancingChannel] ?
                             nextMonthBudgets[balancingChannel] > approvedBudgets[0][balancingChannel] ?
                               <span> raising <b>{getChannelNickname(balancingChannel)}</b> budget</span>
