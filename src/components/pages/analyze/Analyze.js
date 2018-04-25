@@ -33,7 +33,7 @@ export default class Analyze extends Component {
       historicalPerformanceIndicator: 'SQL',
       attributionTableIndicator: 'MCL',
       conversionIndicator: 'MCL',
-      attributionTableRevenueMetric: 'revenue',
+      attributionTableRevenueMetric: 'pipeline',
       showChannels: true,
       soryBy: 'webVisits',
       isDesc: 1,
@@ -130,7 +130,7 @@ export default class Analyze extends Component {
         else grow = Infinity;
       }
     }
-    const totalRevenue = (CEVs && CEVs.revenue ? Object.keys(CEVs.revenue).reduce((channelsSum, item) => channelsSum + CEVs.revenue[item], 0) : 0);
+    const totalRevenue = (CEVs && CEVs[this.state.attributionTableRevenueMetric] ? Object.keys(CEVs[this.state.attributionTableRevenueMetric]).reduce((channelsSum, item) => channelsSum + CEVs[this.state.attributionTableRevenueMetric][item], 0) : 0);
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
       {value: 'MQL', label: getIndicatorNickname('MQL')},
@@ -205,7 +205,7 @@ export default class Analyze extends Component {
           { this.state.editMetric ? 'Done' : 'Edit' }
         </div>
       </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }} data-tip={'Click per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
+      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }} data-tip={'Cost per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
         Efficiency
       </div>
     ];
@@ -336,7 +336,7 @@ export default class Analyze extends Component {
 
     const sumData = this.state.showChannels ? channelsWithData : campaignsWithData;
     const footData =[
-      'Sum',
+      'Total',
       '$' + formatBudget(sumData.reduce((sum, item) => sum + item.budget, 0)),
       '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
@@ -349,7 +349,8 @@ export default class Analyze extends Component {
       footData.push('');
     }
     const footRow = this.getTableRow(null, footData, {
-      className: dashboardStyle.locals.headRow
+      className: dashboardStyle.locals.headRow,
+      style: {backgroundColor: '#33cc3478'}
     });
 
     const objectivesHeadRow = this.getTableRow(null, [
@@ -502,7 +503,7 @@ export default class Analyze extends Component {
             <div className={this.classes.colCenter}>
               <div className={dashboardStyle.locals.item}>
                 <div className={dashboardStyle.locals.text}>
-                  Total Revenue
+                  Total {this.state.attributionTableRevenueMetric}
                 </div>
                 <div className={dashboardStyle.locals.number}>
                   ${formatBudgetShortened(totalRevenue)}
@@ -542,7 +543,7 @@ export default class Analyze extends Component {
                 <tbody className={dashboardStyle.locals.tableBody}>
                 {rows}
                 </tbody>
-                <tfoot className={dashboardStyle.locals.tableHead}>
+                <tfoot>
                 {footRow}
                 </tfoot>
               </table>
@@ -581,7 +582,7 @@ export default class Analyze extends Component {
                 </div>
               </div>
               <div style={{position: 'relative', display: 'flex', padding: '10px 0', height: '275px'}}>
-                <div>
+                <div style={{overflow: 'auto'}}>
                   {
                     fatherChannelsWithBudgets
                       .sort((a, b) => b.value - a.value)

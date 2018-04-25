@@ -196,7 +196,7 @@ export default class AnalyzeTable extends Component {
 
     return <div>
       <div className={ this.classes.innerBox }>
-        <div style={{ margin: '15px' }} ref="wrap">
+        <div style={{ margin: '15px', width: '1110px' }} ref="wrap">
           <div className={ this.classes.box }>
             <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
               <thead>
