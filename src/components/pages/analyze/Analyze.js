@@ -12,7 +12,6 @@ import { getNickname as getIndicatorNickname } from 'components/utils/indicators
 import AnalyzeTable from 'components/pages/analyze/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
 import Toggle from 'components/controls/Toggle';
-import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
 import history from 'history';
 import { formatDate } from 'components/utils/date';
@@ -180,13 +179,8 @@ export default class Analyze extends Component {
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{ cursor: 'pointer' }}>
         Web Visits
       </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer', display: 'flex' }}>
-        <Label
-          style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
-          question={['']}
-          description={['number of times the channel/campaign led to a direct online conversion event on your website or landing pages.']}>
-          Conv.
-        </Label>
+      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer', display: 'flex' }} data-tip="number of times the channel/campaign led to a direct online conversion event on your website or landing pages.">
+        Conv.
       </div>,
       <div style={{display: 'inline-flex'}}>
         { this.state.editMetric ?
@@ -211,13 +205,8 @@ export default class Analyze extends Component {
           { this.state.editMetric ? 'Done' : 'Edit' }
         </div>
       </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }}>
-        <Label
-          style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
-          question={['']}
-          description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)]}>
-          Efficiency
-        </Label>
+      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }} data-tip={'Click per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
+        Efficiency
       </div>
     ];
     if (!this.state.showChannels) {
@@ -529,7 +518,7 @@ export default class Analyze extends Component {
                 type="grey"
               />
               <table className={dashboardStyle.locals.table}>
-                <thead>
+                <thead className={dashboardStyle.locals.tableHead}>
                 {headRow}
                 </thead>
                 <tbody className={dashboardStyle.locals.tableBody}>
@@ -678,6 +667,7 @@ export default class Analyze extends Component {
           </div>
         </div>
       </div>
+      <ReactTooltip/>
     </div>
   }
 
