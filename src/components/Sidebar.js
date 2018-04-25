@@ -51,9 +51,7 @@ export default class Sidebar extends Component {
   isHighlighted(menuPath) {
     const menuSplit = menuPath.split('/');
     const pathSplit = this.props.path.split('/');
-    const res = menuSplit.every((item, index) => item === pathSplit[index]);
-    console.log(menuSplit, pathSplit, res);
-    return res;
+    return menuSplit.every((item, index) => item === pathSplit[index]);
   }
 
   toggleSubMenu(type) {
