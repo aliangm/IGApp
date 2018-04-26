@@ -61,9 +61,13 @@ export default class Profile extends Component {
 
   validate() {
     const fields = ['vertical', 'orientation', 'businessModel', 'seatsPerAccount', 'platform', 'lifeCycle', 'coverage', 'loyalty', 'differentiation'];
-    const errorField = fields.find(field => !this.props.userProfile[field]);
-    if (errorField) {
-      this.refs[errorField].validationError();
+    const errorFields = fields.filter(field => !this.props.userProfile[field]);
+    // has errors
+    if (errorFields && errorFields.length > 0) {
+      // change order so user will be focused on first error
+      errorFields.reverse().forEach(field =>
+        this.refs[field].validationError()
+      );
       return false;
     }
     if (this.props.pricingTiers && this.props.pricingTiers.length > 0 && this.props.pricingTiers[0] && this.props.pricingTiers[0].price) {

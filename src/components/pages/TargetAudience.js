@@ -39,9 +39,13 @@ export default class TargetAudience extends Component {
   validate() {
     const fields = ['companyType', 'annualRevenue', 'employees', 'role', 'managementLevel', 'teamSize', 'age', 'salary', 'gender', 'education', 'location', 'dailyOnlinePresence'];
     return this.props.targetAudience.reduce((isValue, target, index) => {
-      const errorField = fields.find(field => !target.fields[field]);
-      if (errorField) {
-        this.refs.tabs.refs[errorField + index].validationError();
+      const errorFields = fields.filter(field => !target.fields[field]);
+      // has errors
+      if (errorFields && errorFields.length > 0) {
+        // change order so user will be focused on first error
+        errorFields.reverse().forEach(field =>
+          this.refs.tabs.refs[field + index].validationError()
+        );
         return false;
       }
       return isValue &&
