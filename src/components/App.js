@@ -475,6 +475,7 @@ class AppComponent extends Component {
       adwordsapi: data.adwordsapi,
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
+      twitteradsapi: data.twitteradsapi,
       attribution: data.attribution || { events: [] },
       pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{price: '', isMonthly: false, weight: 100}],
       planNeedsUpdate: data.planNeedsUpdate,

@@ -9,8 +9,10 @@ function getParameterByName(name, url) {
 }
 $(document).ready(function () {
 
-  const code = getParameterByName('code');
-
+  let code = getParameterByName('code');
+  if (!code) {
+    code = getParameterByName('oauth_verifier');
+  }
   localStorage.setItem('code', code);
   window.close();
 });
