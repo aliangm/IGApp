@@ -271,14 +271,15 @@ export default class AnnualTab extends Component {
     this.props.declineWholeChannel(data.channel);
   }
 
-  editChannelName(longName, shortName, channel) {
+  editChannelName(longName, shortName, category, channel) {
     let namesMapping = this.props.namesMapping || {};
     if (!namesMapping.channels) {
       namesMapping.channels = {};
     }
     namesMapping.channels[channel] = {
       title: longName,
-      nickname: shortName
+      nickname: shortName,
+      category: category
     };
     this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
     this.setState({editChannelName: ''});

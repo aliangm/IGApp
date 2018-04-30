@@ -9,6 +9,7 @@ export function initialize(channelsSchema, userMapping) {
     Object.keys(userMapping).forEach(channel => {
       schema.properties[channel].title = userMapping[channel].title;
       schema.properties[channel].nickname = userMapping[channel].nickname;
+      schema.properties[channel].category = userMapping[channel].category;
     });
   }
   isInitialized = true;
@@ -67,56 +68,17 @@ export function getChannelsWithProps() {
 
 export function formatChannels() {
   let returnObject = [];
+  const categories = Object.keys(schema.properties).map(channel => schema.properties[channel].category);
+  categories.forEach(category =>
+    returnObject.push({label: category, options: []})
+  );
   Object.keys(schema.properties).forEach(channel => {
-    const titles = schema.properties[channel].title.split('/').map(item => item.trim());
     const nickname = schema.properties[channel].nickname;
-    breakTitles(titles, returnObject, nickname, channel);
+    const category = schema.properties[channel].category;
+    const categoryObject = returnObject.find(item => item.label === category);
+    categoryObject.options.push({label: nickname, value: channel});
   });
   return returnObject;
-}
-
-function breakTitles(titles, returnObject, nickname, channel) {
-  if (titles.length === 1) {
-    returnObject.push({label: nickname, value: channel});
-    return returnObject;
-  }
-  const isExists = returnObject.find(item => item.label === titles[0]);
-  const title = titles.splice(0, 1);
-  // Already exists
-  if (isExists) {
-    breakTitles(titles, isExists.options, nickname, channel);
-  }
-  else {
-    returnObject.push({label: title[0], options: breakTitles(titles, [], nickname, channel)});
-    return returnObject;
-  }
-}
-
-export function formatFatherChannels() {
-  let returnObject = [];
-  Object.keys(schema.properties).forEach(channel => {
-    const titles = schema.properties[channel].title.split('/').map(item => item.trim());
-    breakFatherTitles(titles, returnObject);
-  });
-  return returnObject;
-}
-
-function breakFatherTitles(titles, returnObject, hierarchy) {
-  if (titles.length === 1) {
-    return returnObject;
-  }
-  const title = titles.splice(0, 1);
-  const titleHierarchy = hierarchy ? hierarchy +' / ' + title[0] : title[0];
-  const isExists = returnObject.find(item => item.label === titleHierarchy);
-  // Already exists
-  if (isExists) {
-    breakFatherTitles(titles, returnObject, titleHierarchy);
-  }
-  else {
-    returnObject.push({label: titleHierarchy, value: titleHierarchy});
-    breakFatherTitles(titles, [], titleHierarchy);
-    return returnObject;
-  }
 }
 
 export function output() {
@@ -143,7 +105,7 @@ export function output() {
 
   Object.keys(channels).forEach((key) => {
     const channel = channels[key];
-    const pathTitles = channel.title
+    const pathTitles = (channel.category + ' / ' + channel.nickname)
       .split('/')
       .map(item => item.trim());
     const pathIds = pathTitles.map((item, index) => {
@@ -168,7 +130,7 @@ export function output() {
           channelId: id,
           level: index + 1,
           title: pathTitles[index],
-          path: isLeaf ? channel.title : null,
+          path: isLeaf ? channel.category + ' / ' + channel.nickname : null,
           isLeaf,
           id: isLeaf ? key : null,
           minBudget: isLeaf ? channel.minMonthBudget : 0,
