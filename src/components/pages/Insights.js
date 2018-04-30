@@ -7,7 +7,7 @@ import planStyle from 'styles/plan/plan.css';
 import { timeFrameToDate } from 'components/utils/objective';
 import InsightItem from 'components/pages/insights/InsightItem';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import { getIndicatorsWithProps, getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { getDates } from 'components/utils/date';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import merge from 'lodash/merge';
@@ -62,8 +62,11 @@ export default class Insights extends Component {
     let relevantObjectives = objectives
       .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
       .map(item => item.indicator);
-    relevantObjectives = relevantObjectives.concat(['MQL', 'MCL', 'SQL', 'opps', 'users']);
-    const firstObjective = (relevantObjectives && relevantObjectives[0]) || 'MQL';
+    const indicators = getIndicatorsWithProps();
+    const objectiveOptions = Object.keys(indicators)
+      .filter(item => indicators[item].isObjective);
+    relevantObjectives = relevantObjectives.concat(objectiveOptions);
+    const firstObjective = (relevantObjectives && relevantObjectives[0]) || 'newMQL';
     const zeroBudgetSuggestions = {};
     Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
     const nextMonthBudgets = merge(zeroBudgetSuggestions, projectedPlan[0].plannedChannelBudgets);

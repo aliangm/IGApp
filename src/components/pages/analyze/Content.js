@@ -83,18 +83,16 @@ export default class Content extends Component {
     ];
 
     const newFunnelMapping = {
-      MCL: 'newMCL',
-      MQL: 'newMQL',
-      SQL: 'newSQL',
-      opps: 'newOpps',
-      users: 'newUsers'
+      newMCL: 'MCL',
+      newMQL: 'MQL',
+      newSQL: 'SQL',
+      newOpps: 'opps',
+      newUsers: 'users'
     };
 
-    const newFunnelIndicators = Object.values(newFunnelMapping);
-
     const relevantObjective = objectives
-      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && (newFunnelMapping[item.indicator] || newFunnelIndicators.find(cell => cell === item.indicator)));
-    const objective = relevantObjective ? relevantObjective.indicator : 'MQL';
+      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && newFunnelMapping[item.indicator]);
+    const objective = relevantObjective ? relevantObjective.indicator : 'newMQL';
 
     const headRow = this.getTableRow(null, [
       <div style={{ fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer' }}>
@@ -182,7 +180,7 @@ export default class Content extends Component {
     }) ;
 
     const revenue = attributionPages.reduce((sum, item) => sum + item.revenue, 0);
-    const impact = attributionPages.reduce((sum, item) => sum + item[objective], 0) / actualIndicatorsArray.reduce((sum, item) => sum + (item[newFunnelMapping[objective]] || 0), 0);
+    const impact = attributionPages.reduce((sum, item) => sum + item[newFunnelMapping[objective]], 0) / actualIndicatorsArray.reduce((sum, item) => sum + (item[objective] || 0), 0);
     const avgReadRatio = pagesData.reduce((sum, item) => sum + item.readRatio, 0) / attributionPages.length;
     const avgProceedRatio = pagesData.reduce((sum, item) => sum + item.proceedRatio, 0) / attributionPages.length;
 
