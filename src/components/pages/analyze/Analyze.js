@@ -230,7 +230,7 @@ export default class Analyze extends Component {
         funnelIndicator: (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0),
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
-      json.CPX = json.funnelIndicator ? json.budget / json.funnelIndicator : 0;
+      json.CPX = json.budget / json.funnelIndicator;
       return json;
     }) ;
 
@@ -264,7 +264,7 @@ export default class Analyze extends Component {
         platformCampaignIndex: platformCampaignIndex
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
-      json.CPX = json.budget ? json.funnelIndicator / json.budget : 0;
+      json.CPX = json.budget / json.funnelIndicator;
       return json;
     });
 
@@ -291,7 +291,7 @@ export default class Analyze extends Component {
                 formatBudget(webVisits),
                 formatBudget(conversion),
                 Math.round(funnelIndicator * 100) / 100,
-                '$' + (CPX ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : CPX)
+                '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0)
               ], {
                 key: channel,
                 className: dashboardStyle.locals.tableRow
@@ -320,7 +320,7 @@ export default class Analyze extends Component {
                   formatBudget(webVisits),
                   formatBudget(conversion),
                   Math.round(funnelIndicator),
-                  '$' + formatBudget(Math.round(CPX)),
+                  '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0),
                   <div style={{ display: 'flex' }}>
                     <ReactTooltip/>
                     {channels.map(channel =>
@@ -343,7 +343,7 @@ export default class Analyze extends Component {
       formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
       formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => sum + item.CPX, 0) / sumData.length) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
+      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
     ];
     if (!this.state.showChannels) {
       footData.push('');
