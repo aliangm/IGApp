@@ -11,7 +11,8 @@ export default class Dashboard extends Component {
 
   render() {
     const tabs = {
-      CMO: '/dashboard/CMO'
+      CMO: '/dashboard/CMO',
+      Metrics: '/dashboard/metrics'
     };
 
     const tabNames = Object.keys(tabs);
