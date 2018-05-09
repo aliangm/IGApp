@@ -63,12 +63,12 @@ ReactDOM.render(
     <Route component={ App } auth={ auth } onEnter={ requireAuth }>
       <Route component={ Dashboard } onEnter={ requireAdminAuth }>
         <Route path="/dashboard/CMO" component={ CMO } onEnter={ requireAdminAuth }/>
+        <Route path="/dashboard/metrics" component={ Indicators } onEnter={ requireAdminAuth }/>
       </Route>
       <Route path="/profile/product" component={ Profile } onEnter={ requireAdminAuth }/>
       <Route path="/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
       <Route path="/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
       <Route path="/profile/technology-stack" component={ TechnologyStack } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/indicators" component={ Indicators } onEnter={ requireAdminAuth }/>
       <Route path="/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
       <Route path="/settings" component={ Welcome } onEnter={ requireAdminAuth }/>

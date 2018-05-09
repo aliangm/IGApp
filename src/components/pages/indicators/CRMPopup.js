@@ -4,24 +4,28 @@ import Page from 'components/Page';
 import style from 'styles/indicators/crm-popup.css';
 import HubspotAutomaticPopup from 'components/pages/indicators/HubspotAutomaticPopup';
 import SalesforceAutomaticPopup from 'components/pages/indicators/SalesforceAutomaticPopup';
+import CRMStyle from 'styles/indicators/crm-popup.css';
 
 export default class CRMPopup extends Component {
 
   style = style;
+  styles = [CRMStyle];
 
   render(){
     return <div hidden={ this.props.hidden }>
-        <Page popup={ true } width={'340px'}>
+      <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
+      <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.salesforceAuto} ref="salesforce"/>
+        <Page popup={ true } width={'340px'} style={{ zIndex: '9' }}>
           <div className={ this.classes.close } onClick={ this.props.close }/>
           <div className={ this.classes.title }>
             Choose your main CRM platform
           </div>
           <div className={ this.classes.inner }>
             <div className={ this.classes.row }>
-              <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.hubspotAuto} updateState={ this.props.updateState }/>
+              <div className={ CRMStyle.locals.hubspot } onClick={ () => { this.refs.hubspot.open() } }/>
             </div>
             <div  className={ this.classes.row }>
-              <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.salesforceAuto}/>
+              <div className={ CRMStyle.locals.salesforce } onClick={ () => { this.refs.salesforce.open() } }/>
             </div>
           </div>
         </Page>
