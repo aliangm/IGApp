@@ -688,7 +688,7 @@ class AppComponent extends Component {
       (child) => React.cloneElement(child, this.state));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header auth={ this.props.route.auth } {... this.state}/>
+        <Header auth={ this.props.route.auth } {... this.state} path={this.props.location.pathname}/>
         <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>

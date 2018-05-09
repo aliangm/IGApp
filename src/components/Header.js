@@ -85,6 +85,13 @@ export default class Header extends Component {
   };
 
   get menuBig() {
+    const paths = this.props.path.split('/').map((item, i) => {
+      if (item) {
+        return <div className={this.classes.pathItem} key={ i }>
+          { item }
+        </div>
+      }
+    });
     const hasUser = this.props.user;
 
     const regions = hasUser ?
@@ -99,6 +106,9 @@ export default class Header extends Component {
     return <div className={ this.classes.menuBig }>
       <div className={ this.classes.planDate }>
         { formatDate(this.props.planDate) }
+      </div>
+      <div className={ this.classes.path }>
+        {paths}
       </div>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
