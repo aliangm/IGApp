@@ -78,6 +78,10 @@ export default class SalesforceAutomaticPopup extends Component {
     }
   }
 
+  open() {
+    this.getAuthorization();
+  }
+
   getAuthorization() {
     if (!this.props.data) {
       const win = window.open(this.state.url);
@@ -205,7 +209,9 @@ export default class SalesforceAutomaticPopup extends Component {
 
   close() {
     this.setState({hidden: true});
-    this.props.close();
+    if (this.props.close) {
+      this.props.close();
+    }
   }
 
   render(){
@@ -256,9 +262,7 @@ export default class SalesforceAutomaticPopup extends Component {
         }
       },
     };
-    return <div style={{ width: '100%' }}>
-      <div className={ CRMStyle.locals.salesforce } onClick={ this.getAuthorization.bind(this) }/>
-      <div hidden={this.state.hidden}>
+    return <div hidden={this.state.hidden}>
         <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
           <Title title="SalesForce"
                  subTitle="Define your pipeline stages"/>
@@ -423,7 +427,6 @@ export default class SalesforceAutomaticPopup extends Component {
           </div>
         </Page>
       </div>
-    </div>
   }
 
 }

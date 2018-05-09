@@ -8,6 +8,8 @@ import Profile from './components/pages/Profile';
 import Welcome from './components/pages/Welcome';
 import Preferences from './components/pages/Preferences';
 import TargetAudience from './components/pages/TargetAudience';
+import Platforms from './components/pages/Platforms';
+import TechnologyStack from './components/pages/TechnologyStack';
 import Indicators from './components/pages/Indicators';
 import Manual from './components/pages/Manual';
 import SignIn from './components/pages/SignIn';
@@ -65,7 +67,9 @@ ReactDOM.render(
       <Route path="/profile/product" component={ Profile } onEnter={ requireAdminAuth }/>
       <Route path="/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
       <Route path="/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
+      <Route path="/profile/technology-stack" component={ TechnologyStack } onEnter={ requireAdminAuth }/>
       <Route path="/profile/indicators" component={ Indicators } onEnter={ requireAdminAuth }/>
+      <Route path="/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
       <Route path="/settings" component={ Welcome } onEnter={ requireAdminAuth }/>
       <Route component={ Plan } onEnter={ requireAdminAuth }>

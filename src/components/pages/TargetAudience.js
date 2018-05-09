@@ -411,7 +411,7 @@ export default class TargetAudience extends Component {
                 if (this.validate()) {
                   this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
-                      history.push('/profile/indicators');
+                      history.push('/profile/technology-stack');
                     });
                 }
                 else {

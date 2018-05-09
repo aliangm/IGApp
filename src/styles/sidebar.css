@@ -150,6 +150,7 @@
 @mixin icon-nodpi sidebar:settings, ../assets/sidebar-icons/settings;
 @mixin icon-nodpi sidebar:measure, ../assets/sidebar-icons/analyze;
 @mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/chess;
+@mixin icon-nodpi sidebar:integrations, ../assets/sidebar-icons/puzzle;
 
 
 .backface {

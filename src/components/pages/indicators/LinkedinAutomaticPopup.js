@@ -17,7 +17,8 @@ export default class LinkedinAutomaticPopup extends Component {
     this.state = {
       accounts: [],
       selectedAccount: null,
-      code: null
+      code: null,
+      hidden: true
     };
   }
 
@@ -39,6 +40,14 @@ export default class LinkedinAutomaticPopup extends Component {
       });
   }
 
+  open() {
+    this.getAuthorization();
+  }
+
+  close() {
+    this.setState({hidden: true});
+  }
+
   getAuthorization() {
     const win = window.open(this.state.url);
 
@@ -55,7 +64,7 @@ export default class LinkedinAutomaticPopup extends Component {
                 response.json()
                   .then((data) => {
                     if (data.values.length > 1) {
-                      this.setState({accounts: data.values});
+                      this.setState({accounts: data.values, hidden: false});
                     }
                     else {
                       this.setState({selectedAccount: data.values[0].id}, this.getUserData);
@@ -85,7 +94,7 @@ export default class LinkedinAutomaticPopup extends Component {
           response.json()
             .then((data) => {
               this.props.setDataAsState(data);
-              this.props.close();
+              this.close();
             });
         }
         else if (response.status == 401) {
@@ -111,25 +120,24 @@ export default class LinkedinAutomaticPopup extends Component {
       }
     };
     return <div style={{ width: '100%' }}>
-      { this.state.url ?
-        <div className={ CRMStyle.locals.linkedin } onClick={ this.getAuthorization.bind(this) }/>
-        : null }
-      { this.state.accounts.length > 0 ?
-        <Page popup={ true } width={'340px'}>
-          <div className={ this.classes.row }>
-            <Select { ... selects.account } selected={ this.state.selectedAccount}
-                    onChange={ this.handleChangeAccount.bind(this) }/>
-          </div>
-          <div className={ this.classes.footer }>
-            <div className={ this.classes.footerLeft }>
-              <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+      <div hidden={this.state.hidden}>
+        { this.state.accounts.length > 0 ?
+          <Page popup={ true } width={'340px'}>
+            <div className={ this.classes.row }>
+              <Select { ... selects.account } selected={ this.state.selectedAccount}
+                      onChange={ this.handleChangeAccount.bind(this) }/>
             </div>
-            <div className={ this.classes.footerRight }>
-              <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
+            <div className={ this.classes.footer }>
+              <div className={ this.classes.footerLeft }>
+                <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
+              </div>
+              <div className={ this.classes.footerRight }>
+                <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
+              </div>
             </div>
-          </div>
-        </Page>
-        : null }
+          </Page>
+          : null }
+      </div>
     </div>
   }
 

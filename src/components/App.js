@@ -481,7 +481,8 @@ class AppComponent extends Component {
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
       CEVs: data.CEVs || {},
-      CIM: data.CIM || {}
+      CIM: data.CIM || {},
+      technologyStack: data.technologyStack || [],
     });
   }
 
