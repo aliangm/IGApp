@@ -67,7 +67,7 @@ export default class Sidebar extends Component {
     const profileSubMenu = [
       { icon: "sidebar:company", link: "/profile/product", text: "Product", notFirstTime: true },
       { icon: "sidebar:target-audience", link: "/profile/target-audience", text: "Target Audience", notFirstTime: true },
-      { icon: "sidebar:indicators", link: "/profile/indicators", text: "Metrics", notFirstTime: true },
+      { icon: "sidebar:integrations", link: "/profile/integrations", text: "Integrations", notFirstTime: true },
       { icon: "sidebar:preferences", link: "/profile/preferences", text: "Preferences", notFirstTime: true },
     ];
     const measureSubMenu = [
