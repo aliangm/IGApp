@@ -1,11 +1,11 @@
-import { getTitle } from 'components/utils/channels';
+import { getNickname } from 'components/utils/channels';
 
 export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, knownChannels, unknownChannels) {
   let returnObj = [];
   Object.keys(approvedBudgets).forEach((channel) => {
     returnObj.push({
       key: channel,
-      channel: getTitle(channel),
+      channel: getNickname(channel),
       planned: approvedBudgets[channel],
       actual: knownChannels[channel] !== undefined  ? knownChannels[channel] : approvedBudgets[channel]
     });
@@ -24,7 +24,7 @@ export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, kn
     if (approvedBudgets[channel] === undefined) {
       returnObj.push({
         key: channel,
-        channel: getTitle(channel),
+        channel: getNickname(channel),
         planned: 0,
         actual: knownChannels[channel]
       });
