@@ -90,7 +90,7 @@ export default class Sidebar extends Component {
         <div className={ this.classes.menu }>
           {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
             <div>
-              <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard}/>
+              <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard} isHighlighted={this.isHighlighted('/dashboard')}/>
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ profileSubMenu } isOpen={ this.state.subMenu === 'profile' } isHighlighted={this.isHighlighted('/profile')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'profile') }/>
               <FeatureToggle featureName="attribution">
                 <CollapsedMenuItem icon="sidebar:measure" text="Measure" subMenu={ measureSubMenu } isOpen={ this.state.subMenu === 'measure' } isHighlighted={this.isHighlighted('/measure')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'measure') }/>
@@ -113,16 +113,15 @@ export class MenuItem extends Component {
   render() {
     let className = this.classes.menuItem;
 
-    /*if (this.props.selected) {
-     className = this.classes.menuItemSelected;
-     }*/
+    if (this.props.isHighlighted) {
+      className += ' ' + this.classes.menuItemSelected;
+    }
 
     return <Link to={ this.props.link || '/' }
                  activeClassName={ this.classes.menuItemSelected }
                  className={ className }
                  onClick={this.props.onClick}
                  style={this.props.style}
-                 data-selected={ this.props.isHighlighted ? this.props.isHighlighted : null }
     >
       <div className={ this.classes.menuItemIcon } data-icon={ this.props.icon } />
       <div className={ this.classes.menuItemText }>
@@ -139,10 +138,13 @@ export class SubMenuItem extends Component {
   render() {
     let className = this.classes.subMenuItem;
 
+    if (this.props.isHighlighted) {
+      className += ' ' + this.classes.subMenuItemSelected;
+    }
+
     return <Link to={ this.props.link || '/' }
                  activeClassName={ this.classes.subMenuItemSelected }
                  className={ className }
-                 data-selected={ this.props.isHighlighted ? this.props.isHighlighted : null }
     >
       <div className={ this.classes.subMenuItemIcon } data-icon={ this.props.icon } />
       <div className={ this.classes.menuItemText }>
@@ -163,12 +165,16 @@ export class CollapsedMenuItem extends Component {
   render() {
     let className = this.classes.collapsedMenuItem;
 
+    if (this.props.isHighlighted) {
+      className += ' ' + this.classes.collapsedMenuItemSelected;
+    }
+
     const submenu = this.props.subMenu.map((item, index) =>
       <SubMenuItem { ... item } key={ index }/>
     );
 
     return <div>
-      <Link className={ className } to={this.props.subMenu[0].link} data-selected={ this.props.isHighlighted ? this.props.isHighlighted : null } onClick={ this.props.toggleSubMenu }>
+      <Link className={ className } to={this.props.subMenu[0].link} onClick={ this.props.toggleSubMenu }>
         <div className={ this.classes.menuItemIcon } data-icon={ this.props.icon } />
         <div className={ this.classes.menuItemText }>
           { this.props.text }

@@ -59,6 +59,10 @@
   border-top: none !important;
 }
 
+.collapsed-menu-item-selected {
+  background: #329ff1;
+}
+
 .menu-item:hover {
   background: #329ff1;
 }
@@ -245,10 +249,6 @@
   transform: none;
 }
 
-.menu-item[data-selected] {
-  background: #329ff1;
-}
-
 .sub-menu-item {
   height: 54px;
   border-bottom: 1px solid #2975ac3b;
@@ -282,10 +282,6 @@
   border-style: solid;
   border-width: 12px 12px 12px 0;
   border-color: transparent #f5f6fb transparent transparent;
-}
-
-.sub-menu-item[data-selected] {
-  background: #329ff1;
 }
 
 .menu-item-first-time {
