@@ -417,6 +417,15 @@ export default class SalesforceAutomaticPopup extends Component {
               </div>
             </div>
           </div>
+          <div className={ this.classes.row }>
+            <Label checkbox={this.state.mapping.ARPA !== undefined} onChange={ this.toggleCheckboxObject.bind(this, 'ARPA') } className={ salesForceStyle.locals.label }>Calculate ARPA</Label>
+          </div>
+          <div className={ this.classes.row }>
+            <Label checkbox={this.state.mapping.churnRate !== undefined} onChange={ this.toggleCheckboxObject.bind(this, 'churnRate') } className={ salesForceStyle.locals.label }>Calculate Churn Rate</Label>
+          </div>
+          <div className={ this.classes.row }>
+            <Label checkbox={this.state.mapping.LTV !== undefined} onChange={ this.toggleCheckboxObject.bind(this, 'LTV') } className={ salesForceStyle.locals.label }>Calculate Lifetime Value</Label>
+          </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>
               <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
