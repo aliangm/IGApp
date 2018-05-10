@@ -292,7 +292,7 @@ export default class CMO extends Component {
           <text
             x={x}
             y={y}
-            dy={-5}
+            dy={-6}
             fontSize='11'
             fill='#ffffff'
             textAnchor="middle">
@@ -624,7 +624,7 @@ export default class CMO extends Component {
       { showAdvanced ?
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ height: '300px', width: '1110px', padding: '5px 15px' }} data-id="analysis">
+            <div className={ dashboardStyle.locals.item } style={{ height: '300px', width: '1110px', padding: '5px 15px', fontSize: '13px' }} data-id="analysis">
               <div className={ dashboardStyle.locals.columnHeader }>
                 <div className={ dashboardStyle.locals.timeText }>
                   {isPast ? 'Last' : 'Next'} {months} Months
@@ -642,7 +642,7 @@ export default class CMO extends Component {
                   {graphChannels}
                 </div>
                 <div className={ dashboardStyle.locals.text }>
-                  Spend & Impact
+                  {isPast ? 'Past' : 'Future'} Spend & Impact
                 </div>
                 <div style={{ position: 'relative' }}>
                   <div className={ dashboardStyle.locals.settings } onClick={ ()=>{ this.refs.advancedSettingsPopup.open() }}/>

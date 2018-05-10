@@ -539,6 +539,7 @@
 .mini-funnel-text {
     width: 60px;
     font-size: 14px;
+    align-self: center;
 }
 
 .mini-funnel-stage {
