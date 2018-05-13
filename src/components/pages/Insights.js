@@ -7,7 +7,7 @@ import planStyle from 'styles/plan/plan.css';
 import { timeFrameToDate } from 'components/utils/objective';
 import InsightItem from 'components/pages/insights/InsightItem';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import { getIndicatorsWithProps, getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { getDates } from 'components/utils/date';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import merge from 'lodash/merge';
@@ -59,10 +59,14 @@ export default class Insights extends Component {
   render() {
     const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel, approvedBudgetsProjection, actualIndicators} = this.props;
     const {showBalancerPopup, suggestedChannel, balancingChannel, findAlternative} = this.state;
-    const relevantObjectives = objectives
+    let relevantObjectives = objectives
       .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
       .map(item => item.indicator);
-    const firstObjective = (relevantObjectives && relevantObjectives[0]) || 'MQL';
+    const indicators = getIndicatorsWithProps();
+    const objectiveOptions = Object.keys(indicators)
+      .filter(item => indicators[item].isObjective);
+    relevantObjectives = relevantObjectives.concat(objectiveOptions);
+    const firstObjective = (relevantObjectives && relevantObjectives[0]) || 'newMQL';
     const zeroBudgetSuggestions = {};
     Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
     const nextMonthBudgets = merge(zeroBudgetSuggestions, projectedPlan[0].plannedChannelBudgets);
@@ -145,7 +149,7 @@ export default class Insights extends Component {
                               :
                               <span>Removing <b>{getChannelNickname(suggestedChannel)}</b> from your mix</span>
                           }
-                          in <b>{getDates(planDate)[0]}</b> and instead
+                          <span> in <b>{getDates(planDate)[0]}</b> and instead</span>
                           {nextMonthBudgets[balancingChannel] && approvedBudgets[0][balancingChannel] ?
                             nextMonthBudgets[balancingChannel] > approvedBudgets[0][balancingChannel] ?
                               <span> raising <b>{getChannelNickname(balancingChannel)}</b> budget</span>

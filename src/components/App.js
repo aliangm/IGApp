@@ -99,10 +99,12 @@ class AppComponent extends Component {
   }
 
   handleCallback(userAnswer) {
-    if (userAnswer && this.state.unsaved) {
-      this.getUserMonthPlan(localStorage.getItem('region'), null);
+    if (this.state.showUnsavedPopup) {
+      if (userAnswer && this.state.unsaved) {
+        this.getUserMonthPlan(localStorage.getItem('region'), null);
+      }
+      this.setState({showUnsavedPopup: false});
     }
-    this.setState({showUnsavedPopup: false});
   }
 
   componentDidMount() {
@@ -473,12 +475,14 @@ class AppComponent extends Component {
       adwordsapi: data.adwordsapi,
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
+      twitteradsapi: data.twitteradsapi,
       attribution: data.attribution || { events: [] },
-      pricingTiers: data.pricingTiers || [],
+      pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{price: '', isMonthly: false, weight: 100}],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
       CEVs: data.CEVs || {},
-      CIM: data.CIM || {}
+      CIM: data.CIM || {},
+      technologyStack: data.technologyStack || [],
     });
   }
 
@@ -684,7 +688,7 @@ class AppComponent extends Component {
       (child) => React.cloneElement(child, this.state));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header auth={ this.props.route.auth } {... this.state}/>
+        <Header auth={ this.props.route.auth } {... this.state} path={this.props.location.pathname}/>
         <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>

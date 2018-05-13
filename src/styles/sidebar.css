@@ -59,6 +59,10 @@
   border-top: none !important;
 }
 
+.collapsed-menu-item-selected {
+  background: #329ff1;
+}
+
 .menu-item:hover {
   background: #329ff1;
 }
@@ -148,8 +152,9 @@
 @mixin icon-nodpi sidebar:users, ../assets/sidebar-icons/users;
 @mixin icon-nodpi sidebar:insights, ../assets/sidebar-icons/insights;
 @mixin icon-nodpi sidebar:settings, ../assets/sidebar-icons/settings;
-@mixin icon-nodpi sidebar:analyzeContainer, ../assets/sidebar-icons/analyze;
+@mixin icon-nodpi sidebar:measure, ../assets/sidebar-icons/analyze;
 @mixin icon-nodpi sidebar:plan, ../assets/sidebar-icons/chess;
+@mixin icon-nodpi sidebar:integrations, ../assets/sidebar-icons/puzzle;
 
 
 .backface {
@@ -242,10 +247,6 @@
 
 .row-arrow[data-collapsed] {
   transform: none;
-}
-
-.menu-item[data-selected] {
-  background: #329ff1;
 }
 
 .sub-menu-item {

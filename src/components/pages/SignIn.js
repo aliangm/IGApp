@@ -1,29 +1,17 @@
 import React from 'react';
-
 import Component from 'components/Component';
-import Header from 'components/Header';
-import Sidebar from 'components/Sidebar';
-import Page from 'components/Page';
-
-import Select from 'components/controls/Select';
-import Textfield from 'components/controls/Textfield';
-import Button from 'components/controls/Button';
-import Label from 'components/ControlsLabel';
-
-import Title from 'components/onboarding/Title';
-
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import tagsStyle from 'styles/tags.css';
 import style from 'styles/signin/signin.css';
-
 import history from 'history';
 import serverCommunication from 'data/serverCommunication';
 import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
 import AuthService from 'components/utils/AuthService';
-
 export default class SignIn extends Component {
-  style = style
-  styles = [onboardingStyle, tagsStyle]
+
+  style = style;
+  styles = [onboardingStyle, tagsStyle];
+
   //passLength = 8
   pattern = '(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z]).{8,}';
   /*
@@ -57,14 +45,14 @@ export default class SignIn extends Component {
                 });
               }
               else if (profile.app_metadata && !profile.app_metadata.isAdmin) {
-                history.push('/campaigns');
+                history.push('/campaigns/by-channel');
               }
               else {
                 if (popup) {
                   history.push('/settings');
                 }
                 else {
-                  history.push('/dashboard')
+                  history.push('/dashboard/CMO')
                 }
               }
             })
@@ -102,7 +90,7 @@ export default class SignIn extends Component {
                 checkIfPopup()
                   .then(function (data) {
                     if (route == 'login' && !data) {
-                      history.push('/plan');
+                      history.push('/plan/plan/annual');
                     }
                     else {
                       history.push('/settings');

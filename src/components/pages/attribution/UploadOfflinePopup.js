@@ -115,7 +115,7 @@ export default class UploadOfflinePopup extends Component {
         <div className={this.classes.fileName}>
           {fileName}
         </div>
-        <div hidden={!worksheet}>
+        <div hidden={!worksheet || Object.keys(worksheet).length === 0}>
           <div className={this.classes.row}>
             <div className={this.classes.field}>
               Channel*
@@ -127,7 +127,8 @@ export default class UploadOfflinePopup extends Component {
               Date*
             </div>
             <input type="checkbox" onChange={ () => { this.setState({isDateGlobal: !isDateGlobal}) } } checked={ !isDateGlobal } style={{ marginLeft: '-23px', marginRight: '10px' }}/>
-g            <Textfield value={ worksheet && worksheet[dateCell] && worksheet[dateCell].v } style={{ width: '100px', marginLeft: '20px' }} readOnly={true} disabled={isDateGlobal}/>
+            <Textfield value={ dateCell } onChange={ (e) => { this.setState({dateCell: e.target.value.toUpperCase()}) } } style={{ width: '80px' }} disabled={isDateGlobal} placeHolder="A2"/>
+            <Textfield value={ worksheet && worksheet[dateCell] && worksheet[dateCell].v } style={{ width: '100px', marginLeft: '20px' }} readOnly={true} disabled={isDateGlobal}/>
             <input type="checkbox" onChange={ () => { this.setState({isDateGlobal: !this.state.isDateGlobal}) } } checked={ isDateGlobal } style={{ marginLeft: '20px' }}/>
             <div style={{ width: '125px' }}>
               <Calendar value={ globalDate } onChange={ (e) => { this.setState({globalDate: e}) } } disabled={!isDateGlobal}/>

@@ -16,8 +16,17 @@ export default class YoutubeAutomaticPopup extends Component {
     this.state = {
       id: '',
       fullIdentifier: '',
-      type: ''
+      type: '',
+      hidden: true
     };
+  }
+
+  open() {
+    this.setState({hidden: false});
+  }
+
+  close() {
+    this.setState({hidden: true});
   }
 
   handleChangeIdentifier(event) {
@@ -43,7 +52,7 @@ export default class YoutubeAutomaticPopup extends Component {
           response.json()
             .then((data) => {
               this.props.setDataAsState(data);
-              this.props.close();
+              this.close();
             });
         }
         else if (response.status == 401) {
@@ -56,7 +65,7 @@ export default class YoutubeAutomaticPopup extends Component {
   }
 
   render(){
-    return <div hidden={ this.props.hidden }>
+    return <div hidden={ this.state.hidden }>
       <Page popup={ true } width={'410px'}>
         <div className={ this.classes.row }>
           <Label>Please enter your youtube channel id/URL</Label>
@@ -66,7 +75,7 @@ export default class YoutubeAutomaticPopup extends Component {
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>
-            <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+            <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
           </div>
           <div className={ this.classes.footerRight }>
             <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>

@@ -12,7 +12,6 @@ import { getNickname as getIndicatorNickname } from 'components/utils/indicators
 import AnalyzeTable from 'components/pages/analyze/AnalyzeTable';
 import { FeatureToggle } from 'react-feature-toggles';
 import Toggle from 'components/controls/Toggle';
-import Label from 'components/ControlsLabel';
 import { timeFrameToDate } from 'components/utils/objective';
 import history from 'history';
 import { formatDate } from 'components/utils/date';
@@ -34,7 +33,7 @@ export default class Analyze extends Component {
       historicalPerformanceIndicator: 'SQL',
       attributionTableIndicator: 'MCL',
       conversionIndicator: 'MCL',
-      attributionTableRevenueMetric: 'revenue',
+      attributionTableRevenueMetric: 'pipeline',
       showChannels: true,
       soryBy: 'webVisits',
       isDesc: 1,
@@ -87,9 +86,6 @@ export default class Analyze extends Component {
     const attributionCampaigns = attribution.campaigns || [];
     const indicatorsOptions = getIndicatorsWithNicknames();
 
-    const months = previousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
-    });
     let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
       const planDate1 = a.planDate.split("/");
@@ -108,8 +104,10 @@ export default class Analyze extends Component {
         indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
       })
     });
-
-    const relevantData = sortedPreviousData.slice(this.props.months);
+    const months = sortedPreviousData.map((item, index) => {
+      return {value: index, label: formatDate(item.planDate)}
+    });
+    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
     const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? merge(item.approvedBudgets[0], item.actualChannelBudgets && item.actualChannelBudgets.knownChannels ? item.actualChannelBudgets.knownChannels : {}) : {});
     const totalCost = budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0);
     let sumedBudgets = {};
@@ -132,7 +130,7 @@ export default class Analyze extends Component {
         else grow = Infinity;
       }
     }
-    const totalRevenue = (CEVs && CEVs.revenue ? Object.keys(CEVs.revenue).reduce((channelsSum, item) => channelsSum + CEVs.revenue[item], 0) : 0);
+    const totalRevenue = (CEVs && CEVs[this.state.attributionTableRevenueMetric] ? Object.keys(CEVs[this.state.attributionTableRevenueMetric]).reduce((channelsSum, item) => channelsSum + CEVs[this.state.attributionTableRevenueMetric][item], 0) : 0);
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
       {value: 'MQL', label: getIndicatorNickname('MQL')},
@@ -181,13 +179,8 @@ export default class Analyze extends Component {
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{ cursor: 'pointer' }}>
         Web Visits
       </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer', display: 'flex' }}>
-        <Label
-          style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
-          question={['']}
-          description={['number of times the channel/campaign led to a direct online conversion event on your website or landing pages.']}>
-          Conv.
-        </Label>
+      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer', display: 'flex' }} data-tip="number of times the channel/campaign led to a direct online conversion event on your website or landing pages.">
+        Conv.
       </div>,
       <div style={{display: 'inline-flex'}}>
         { this.state.editMetric ?
@@ -212,13 +205,8 @@ export default class Analyze extends Component {
           { this.state.editMetric ? 'Done' : 'Edit' }
         </div>
       </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }}>
-        <Label
-          style={{ width: 'auto', marginBottom: 'initial', letterSpacing: 'initial', fontSize: '18px', fontWeight: '600', color: '#354052', justifyContent: 'center', textTransform: 'capitalize' }}
-          question={['']}
-          description={['Click per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)]}>
-          Efficiency
-        </Label>
+      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }} data-tip={'Cost per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
+        Efficiency
       </div>
     ];
     if (!this.state.showChannels) {
@@ -231,7 +219,7 @@ export default class Analyze extends Component {
     const channelsArray = getChannelsWithNicknames();
     channelsArray.push({value: 'direct', label: 'Direct'});
 
-    const channelsWithData = channelsArray.map(item => {
+    let channelsWithData = channelsArray.map(item => {
       const json =  {
         channel: item.value,
         label: item.label,
@@ -242,11 +230,13 @@ export default class Analyze extends Component {
         funnelIndicator: (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0),
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
-      json.CPX = json.funnelIndicator ? json.budget / json.funnelIndicator : 0;
+      json.CPX = json.budget / json.funnelIndicator;
       return json;
     }) ;
 
-    const campaignsWithData = Object.keys(attributionCampaigns).map(campaignUTM => {
+    channelsWithData = channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
+
+    let campaignsWithData = Object.keys(attributionCampaigns).map(campaignUTM => {
       const campaign = attributionCampaigns[campaignUTM];
       let budget = 0;
       const platformCampaignIndex = campaigns.findIndex(campaign => (campaign.name === campaignUTM || (campaign.tracking && campaign.tracking.campaignUTM === campaignUTM)) && !campaign.isArchived);
@@ -274,9 +264,11 @@ export default class Analyze extends Component {
         platformCampaignIndex: platformCampaignIndex
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
-      json.CPX = json.budget ? json.funnelIndicator / json.budget : 0;
+      json.CPX = json.budget / json.funnelIndicator;
       return json;
     });
+
+    campaignsWithData = campaignsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const rows = this.state.showChannels ?
       channelsWithData
@@ -285,8 +277,7 @@ export default class Analyze extends Component {
         )
         .map(item => {
           const { channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX } = item;
-          return (funnelIndicator || conversion || webVisits) ?
-            this.getTableRow(null,
+          return this.getTableRow(null,
               [
                 <div style={{ display: 'flex' }}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
@@ -297,15 +288,14 @@ export default class Analyze extends Component {
                 '$' + formatBudget(budget),
                 '$' + formatBudget(revenueMetric),
                 Math.round(ROI * 100) + '%',
-                webVisits,
-                conversion,
+                formatBudget(webVisits),
+                formatBudget(conversion),
                 Math.round(funnelIndicator * 100) / 100,
-                '$' + (CPX ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : CPX)
+                '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0)
               ], {
                 key: channel,
                 className: dashboardStyle.locals.tableRow
               })
-            : null
         })
       :
       campaignsWithData
@@ -314,12 +304,11 @@ export default class Analyze extends Component {
         )
         .map(item => {
             const { label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX, channels, platformCampaignIndex } = item;
-            return (funnelIndicator || conversion || webVisits || revenueMetric) ?
-              this.getTableRow(null,
+            return this.getTableRow(null,
                 [
                   <div className={dashboardStyle.locals.channelTable} data-link={ platformCampaignIndex !== -1 ? true : null} onClick={() => { if (platformCampaignIndex !== -1) {
                     history.push({
-                      pathname: '/campaigns',
+                      pathname: '/campaigns/by-channel',
                       query: { campaign: platformCampaignIndex }
                     });
                   } }}>
@@ -328,10 +317,10 @@ export default class Analyze extends Component {
                   '$' + formatBudget(budget),
                   '$' + formatBudget(revenueMetric),
                   Math.round(ROI * 100) + '%',
-                  webVisits,
-                  conversion,
+                  formatBudget(webVisits),
+                  formatBudget(conversion),
                   Math.round(funnelIndicator),
-                  '$' + formatBudget(Math.round(CPX)),
+                  '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0),
                   <div style={{ display: 'flex' }}>
                     <ReactTooltip/>
                     {channels.map(channel =>
@@ -342,9 +331,27 @@ export default class Analyze extends Component {
                   key: label,
                   className: dashboardStyle.locals.tableRow
                 })
-              : null;
           }
         );
+
+    const sumData = this.state.showChannels ? channelsWithData : campaignsWithData;
+    const footData =[
+      'Total',
+      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.budget, 0)),
+      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
+      Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
+      formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
+      formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
+      Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
+      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
+    ];
+    if (!this.state.showChannels) {
+      footData.push('');
+    }
+    const footRow = this.getTableRow(null, footData, {
+      className: dashboardStyle.locals.headRow,
+      style: {backgroundColor: '#33cc3478'}
+    });
 
     const objectivesHeadRow = this.getTableRow(null, [
       <div style={{ fontWeight: 'bold', fontSize: '22px' }}>
@@ -496,7 +503,7 @@ export default class Analyze extends Component {
             <div className={this.classes.colCenter}>
               <div className={dashboardStyle.locals.item}>
                 <div className={dashboardStyle.locals.text}>
-                  Total Revenue
+                  Total {this.state.attributionTableRevenueMetric}
                 </div>
                 <div className={dashboardStyle.locals.number}>
                   ${formatBudgetShortened(totalRevenue)}
@@ -530,12 +537,15 @@ export default class Analyze extends Component {
                 type="grey"
               />
               <table className={dashboardStyle.locals.table}>
-                <thead>
+                <thead className={dashboardStyle.locals.tableHead}>
                 {headRow}
                 </thead>
                 <tbody className={dashboardStyle.locals.tableBody}>
                 {rows}
                 </tbody>
+                <tfoot>
+                {footRow}
+                </tfoot>
               </table>
             </div>
           </FeatureToggle>
@@ -572,7 +582,7 @@ export default class Analyze extends Component {
                 </div>
               </div>
               <div style={{position: 'relative', display: 'flex', padding: '10px 0', height: '275px'}}>
-                <div>
+                <div style={{overflow: 'auto'}}>
                   {
                     fatherChannelsWithBudgets
                       .sort((a, b) => b.value - a.value)
@@ -679,6 +689,7 @@ export default class Analyze extends Component {
           </div>
         </div>
       </div>
+      <ReactTooltip/>
     </div>
   }
 

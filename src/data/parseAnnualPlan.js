@@ -4,16 +4,17 @@ import { getTitle } from 'components/utils/channels';
 import { getChannelsWithProps } from 'components/utils/channels';
 
 export function parseBudgets(approvedPlan, unknownChannels, inHouseChannels, projectedPlan) {
+  const length = approvedPlan.length;
   const returnJson = {};
   const total = "__TOTAL__";
   returnJson[total] = {
-    values : new Array(12).fill(0),
-    approvedValues : new Array(12).fill(0)
+    values : new Array(length).fill(0),
+    approvedValues : new Array(length).fill(0)
   };
   const inHouseMonth = {};
   inHouseChannels && inHouseChannels.forEach(channel => { inHouseMonth[channel] = -1 });
-  const inHouseAnnual = new Array(12).fill(inHouseMonth);
-  const suggestedPlan = projectedPlan ? projectedPlan.map(month => month.plannedChannelBudgets) : new Array(12).fill({});
+  const inHouseAnnual = new Array(length).fill(inHouseMonth);
+  const suggestedPlan = projectedPlan ? projectedPlan.map(month => month.plannedChannelBudgets) : new Array(length).fill({});
   const budgets = merge([], inHouseAnnual, suggestedPlan);
   const approvedBudgets = merge([], inHouseAnnual, approvedPlan);
   const props = getChannelsWithProps();
@@ -28,8 +29,8 @@ export function parseBudgets(approvedPlan, unknownChannels, inHouseChannels, pro
         icon: "plan:" + category,
         disabled: true,
         children: {},
-        values: new Array(12).fill(0),
-        approvedValues: new Array(12).fill(0)
+        values: new Array(length).fill(0),
+        approvedValues: new Array(length).fill(0)
       }
     }
     returnJson[category].children[channelProps.nickname] = {

@@ -59,6 +59,11 @@ export default class GoogleAutomaticPopup extends Component {
       }
     }
   }
+
+  open() {
+    this.getAuthorization();
+  }
+
   getAuthorization() {
     if (!this.props.data) {
       const win = window.open(this.state.url);
@@ -119,7 +124,9 @@ export default class GoogleAutomaticPopup extends Component {
 
   close() {
     this.setState({hidden: true});
-    this.props.close();
+    if (this.props.close) {
+      this.props.close();
+    }
   }
 
   render(){
@@ -162,7 +169,6 @@ export default class GoogleAutomaticPopup extends Component {
       }
     };
     return <div style={{ width: '100%' }}>
-      <div className={ CRMStyle.locals.googleAnalytics } onClick={ this.getAuthorization.bind(this) }/>
       <div hidden={this.state.hidden}>
         <Page popup={ true } width={'340px'}>
           <div className={ this.classes.row }>
@@ -193,7 +199,7 @@ export default class GoogleAutomaticPopup extends Component {
           </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>
-              <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+              <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
             </div>
             <div className={ this.classes.footerRight }>
               <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>

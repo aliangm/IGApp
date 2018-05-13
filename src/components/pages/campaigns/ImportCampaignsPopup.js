@@ -6,6 +6,7 @@ import SalesforceCampaignsPopup from 'components/pages/campaigns/SalesforceCampa
 import AdwordsCampaignsPopup from 'components/pages/campaigns/AdwordsCampaignsPopup';
 import FacebookCampaignsPopup from 'components/pages/campaigns/FacebookCampaignsPopup';
 import LinkedinCampaignsPopup from 'components/pages/campaigns/LinkedinCampaignsPopup';
+import TwitterCampaignsPopup from 'components/pages/campaigns/TwitterCampaignsPopup';
 
 export default class ImportCampaignsPopup extends Component {
 
@@ -13,44 +14,51 @@ export default class ImportCampaignsPopup extends Component {
 
   render(){
     return <div hidden={ this.props.hidden }>
-        <Page popup={ true } width={'340px'}>
-          <div className={ this.classes.close } onClick={ this.props.close }/>
-          <div className={ this.classes.title }>
-            Choose from where to import your campaigns
+      <Page popup={ true } width={'340px'}>
+        <div className={ this.classes.close } onClick={ this.props.close }/>
+        <div className={ this.classes.title }>
+          Choose from where to import your campaigns
+        </div>
+        <div className={ this.classes.inner }>
+          <div className={ this.classes.row }>
+            <SalesforceCampaignsPopup
+              setDataAsState={ this.props.setDataAsState }
+              close={ this.props.close }
+              data={this.props.salesforceAuto}
+              userAccount={this.props.userAccount}
+            />
           </div>
-          <div className={ this.classes.inner }>
-            <div className={ this.classes.row }>
-              <SalesforceCampaignsPopup
-                setDataAsState={ this.props.setDataAsState }
-                close={ this.props.close }
-                data={this.props.salesforceAuto}
-                userAccount={this.props.userAccount}
-              />
-            </div>
-            <div className={ this.classes.row }>
-              <AdwordsCampaignsPopup
-                setDataAsState={ this.props.setDataAsState }
-                close={ this.props.close }
-                data={this.props.adwordsapi}
-              />
-            </div>
-            <div className={ this.classes.row }>
-              <FacebookCampaignsPopup
-                setDataAsState={ this.props.setDataAsState }
-                close={ this.props.close }
-                data={this.props.facebookadsapi}
-                />
-            </div>
-            <div className={ this.classes.row }>
-              <LinkedinCampaignsPopup
-                setDataAsState={ this.props.setDataAsState }
-                close={ this.props.close }
-                data={this.props.linkedinadsapi}
-              />
-            </div>
+          <div className={ this.classes.row }>
+            <AdwordsCampaignsPopup
+              setDataAsState={ this.props.setDataAsState }
+              close={ this.props.close }
+              data={this.props.adwordsapi}
+            />
           </div>
-        </Page>
-      </div>
+          <div className={ this.classes.row }>
+            <FacebookCampaignsPopup
+              setDataAsState={ this.props.setDataAsState }
+              close={ this.props.close }
+              data={this.props.facebookadsapi}
+            />
+          </div>
+          <div className={ this.classes.row }>
+            <LinkedinCampaignsPopup
+              setDataAsState={ this.props.setDataAsState }
+              close={ this.props.close }
+              data={this.props.linkedinadsapi}
+            />
+          </div>
+          <div className={ this.classes.row }>
+            <TwitterCampaignsPopup
+              setDataAsState={ this.props.setDataAsState }
+              close={ this.props.close }
+              data={this.props.twitteradsapi}
+            />
+          </div>
+        </div>
+      </Page>
+    </div>
   }
 
 }

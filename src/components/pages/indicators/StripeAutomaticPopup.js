@@ -34,6 +34,14 @@ export default class StripeAutomaticPopup extends Component {
       });
   }
 
+  open() {
+    this.setState({hidden: false});
+  }
+
+  close() {
+    this.setState({hidden: true});
+  }
+
   getAuthorization() {
     const win = window.open(this.state.url);
     const timer = setInterval(() => {
@@ -49,7 +57,7 @@ export default class StripeAutomaticPopup extends Component {
                 response.json()
                   .then((data) => {
                     this.props.setDataAsState(data);
-                    this.props.close();
+                    this.close();
                   });
               }
               else if (response.status == 401) {
@@ -66,9 +74,8 @@ export default class StripeAutomaticPopup extends Component {
 
   render(){
     return <div style={{ width: '100%' }}>
-      { this.state.url ?
-        <div className={ CRMStyle.locals.stripe } onClick={ this.getAuthorization.bind(this) }/>
-        : null }
+      <div hidden={this.state.hidden}>
+      </div>
     </div>
   }
 

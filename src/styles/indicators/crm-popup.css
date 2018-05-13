@@ -64,6 +64,12 @@
     background-size: contain;
 }
 
+.twitterads {
+    composes: box;
+    background: url(../../assets/twitter-ads.png) center center no-repeat;
+    background-size: contain;
+}
+
 .title {
     font-weight: bold;
     font-size: 18px;

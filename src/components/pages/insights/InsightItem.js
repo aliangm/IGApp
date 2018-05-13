@@ -12,10 +12,16 @@ export default class InsightItem extends Component {
 
   render() {
     const {channel, channelNickname, objectivesRatio, dates, currentBudget, suggestedBudget, approveChannel, declineChannel, findBalancer} = this.props;
-    const leftSideObjectives = objectivesRatio.slice(0, 2).map((item, index) => <div key={index}>
+    const leftSideObjectives = objectivesRatio
+      .filter(item => item.ratio !== 0)
+      .slice(0, 2)
+      .map((item, index) => <div key={index}>
       - <b>{item.nickname}</b> {item.ratio >= 0 ? 'by' : 'only by'} <b>{Math.abs(item.ratio)}%</b> ({(item.projected < 0 ? '-' : '+') + formatBudget(Math.abs(item.projected))})<br/>
     </div>);
-    const rightSideObjectives = objectivesRatio.slice(1, 2).map((item, index) => <span key={index}>
+    const rightSideObjectives = objectivesRatio
+      .filter(item => item.ratio !== 0)
+      .slice(1, 2)
+      .map((item, index) => <span key={index}>
       , and {Math.abs(item.ratio)}% {item.ratio >= 0 ? 'improve' : 'decline'} in forecasted {item.nickname}
     </span>);
     return <div>
@@ -91,7 +97,7 @@ export default class InsightItem extends Component {
           <div className={this.classes.rightSide} data-green={true}>
             <div className={this.classes.end}>
               <div className={this.classes.investBox}>
-                Invest
+                {suggestedBudget > currentBudget ? 'Invest' : 'Save'}
               </div>
             </div>
             <div className={this.classes.summaryTitleContainer}>

@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-
-import Label from 'components/ControlsLabel';
+import ReactDOM from 'react-dom';
 import Popup from 'components/Popup';
 import ChooseButton from 'components/pages/profile/ChooseButton';
 import NotSure from 'components/onboarding/NotSure';
@@ -15,13 +14,15 @@ export default class ButtonsSet extends Component {
     super(props);
     this.state = {
       selectedButton: props.selectedKey || 0,
-      popupHidden: true
+      popupHidden: true,
+      validationError: false
     };
   }
   componentWillReceiveProps(nextProps){
     nextProps.buttons.map((params, i) => {
       if (nextProps.selectedKey == params.key){
         this.state.selectedButton = params.key;
+        this.setState({validationError: false});
       }
     });
   }
@@ -34,6 +35,15 @@ export default class ButtonsSet extends Component {
       icon={ params.icon }
       onClick={ onClick }
     />;
+  }
+
+  focus() {
+    ReactDOM.findDOMNode(this.refs.input).scrollIntoView({});
+  }
+
+  validationError() {
+    this.focus();
+    this.setState({validationError: true});
   }
 
   render() {
@@ -67,10 +77,11 @@ export default class ButtonsSet extends Component {
       </div>
     }
 
-    return <div className={ this.classes.box }>
+    return <div className={ this.classes.box } ref="input">
       <div className={ this.classes.inner }>
         { buttons }
         { help }
+        <div hidden={!this.state.validationError} className={this.classes.validationError}/>
       </div>
     </div>
   }

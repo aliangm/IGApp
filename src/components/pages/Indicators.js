@@ -314,61 +314,55 @@ export default class Indicators extends Component {
         { indicatorsItems }
       </div>
     });
-    return <div>
-      <Page popup={ isPopupMode() } width={isPopupMode() ? 'initial' : '1052px'} innerClassName={indiStyle.locals.inner}>
-        <Title title="Metrics" subTitle="Marketing is great, but without measuring the impact on your metrics, there is no real point in it." />
-        <div className={ this.classes.error }>
-          <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
-        </div>
-        <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
-        <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
-        <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
-        <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
-        <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
-        <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
-        <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
-        <YoutubeAutomaticPopup hidden={ !this.state.showYoutubePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showYoutubePopup: false}) }}/>
-        <Loading hidden={ !this.state.loading }/>
-        <div className={ this.classes.cols }>
-          <div className={ this.classes.colLeft }>
-            { page }
-          </div>
-
-          { isPopupMode() ?
-
-            <div className={ this.classes.colRight }>
-              <div className={ this.classes.row }>
-                <ProfileProgress progress={ 76 } image={
-                  require('assets/flower/4.png')
-                }
-                                 text="You rock! Hope you’re starting to get excited about planning the right way"/>
-              </div>
-              {/**
-               <div className={ this.classes.row }>
-               <ProfileInsights />
-               </div>
-               **/}
-            </div>
-
-            : null }
+    return <div className={indiStyle.locals.wrap}>
+      <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
+      <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
+      <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
+      <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
+      <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
+      <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
+      <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
+      <YoutubeAutomaticPopup hidden={ !this.state.showYoutubePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showYoutubePopup: false}) }}/>
+      <Loading hidden={ !this.state.loading }/>
+      <div className={ this.classes.cols }>
+        <div className={ this.classes.colLeft }>
+          { page }
         </div>
 
         { isPopupMode() ?
 
-          <div className={ this.classes.footer }>
-            <BackButton onClick={ () => {
-              history.push('/target-audience');
-            } }/>
-            <div style={{ width: '30px' }} />
-            <NextButton onClick={ () => {
-              history.push('/preferences');
-            } }/>
+          <div className={ this.classes.colRight }>
+            <div className={ this.classes.row }>
+              <ProfileProgress progress={ 76 } image={
+                require('assets/flower/4.png')
+              }
+                               text="You rock! Hope you’re starting to get excited about planning the right way"/>
+            </div>
+            {/**
+             <div className={ this.classes.row }>
+             <ProfileInsights />
+             </div>
+             **/}
           </div>
 
-          :
-          <div style={{ paddingBottom: '60px' }}/>
-        }
-      </Page>
+          : null }
+      </div>
+
+      { isPopupMode() ?
+
+        <div className={ this.classes.footer }>
+          <BackButton onClick={ () => {
+            history.push('/profile/target-audience');
+          } }/>
+          <div style={{ width: '30px' }} />
+          <NextButton onClick={ () => {
+            history.push('/profile/preferences');
+          } }/>
+        </div>
+
+        :
+        <div style={{ paddingBottom: '60px' }}/>
+      }
     </div>
   }
 }

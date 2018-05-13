@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/profile/product-launch-popup.css';
 import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
-import { getTitle, getNickname, formatFatherChannels } from 'components/utils/channels';
+import { getTitle, getNickname, getMetadata, getChannelsWithProps } from 'components/utils/channels';
 import Label from 'components/ControlsLabel';
 import Select from 'components/controls/Select';
 
@@ -18,7 +18,8 @@ export default class EditChannelNamePopup extends Component {
     super(props);
     this.state = {
       shortName: '',
-      longName: ''
+      longName: '',
+      category: ''
     };
   }
 
@@ -26,24 +27,16 @@ export default class EditChannelNamePopup extends Component {
     if ((nextProps.channel !== this.props.channel) && nextProps.channel) {
       this.setState({
         longName: getTitle(nextProps.channel),
-        shortName: getNickname(nextProps.channel)
+        shortName: getNickname(nextProps.channel),
+        category: getMetadata('category', nextProps.channel)
       });
     }
   }
 
-  handleChange(event) {
-    const newName = event.target.value;
-    const hierarchy = this.state.longName.substring(0, this.state.longName.lastIndexOf('/') - 1);
+  handleChangeCategory(event) {
+    const category = event.value;
     this.setState({
-      longName: hierarchy + ' / ' + newName
-    })
-  }
-
-  handleChangeHierarchy(event) {
-    const channel = this.state.longName.substring(this.state.longName.lastIndexOf('/') + 2);
-    const hierarchy = event.value;
-    this.setState({
-      longName: hierarchy + ' / ' + channel
+      category: category
     })
   }
 
@@ -54,6 +47,12 @@ export default class EditChannelNamePopup extends Component {
     if (this.props.hidden) {
       style = { display: 'none' };
     }
+    const channelsWithProps = getChannelsWithProps();
+    const categories = Object.keys(channelsWithProps)
+      .map(item => channelsWithProps[item].category);
+    const uniqCategories = categories
+      .filter((item, index, array) => array.indexOf(item) === index)
+      .map(item => { return {label: item, value: item} });
 
     return <div className={ $.box } style={ style }>
       <div className={ $.choose }>
@@ -63,8 +62,8 @@ export default class EditChannelNamePopup extends Component {
       <div className={ $.choose }>
         <Label style={{width: '100px', marginTop: '8px', marginRight: '20px' }}>Channel Name</Label>
         <Textfield
-          value={ this.state.longName.substring(this.state.longName.lastIndexOf('/')+2) }
-          onChange={ this.handleChange.bind(this) }
+          value={ this.state.longName }
+          onChange={ e => this.setState({longName: e.target.value}) }
           style={{ width: '230px' }}
         />
       </div>
@@ -80,11 +79,11 @@ export default class EditChannelNamePopup extends Component {
         <Label style={{width: '100px', marginTop: '8px', marginRight: '20px' }}>Category</Label>
         <Select
           style={{ width: '230px' }}
-          selected={ this.state.longName.substring(0, this.state.longName.lastIndexOf('/') -1) }
+          selected={ this.state.category }
           select={{
-            options: formatFatherChannels()
+            options: uniqCategories
           }}
-          onChange={ this.handleChangeHierarchy.bind(this) }
+          onChange={ this.handleChangeCategory.bind(this) }
         />
       </div>
       <div className={ $.nav }>
@@ -96,7 +95,7 @@ export default class EditChannelNamePopup extends Component {
         </Button>
         <Button type="accent" style={{
           width: '100px'
-        }} onClick={ ()=> {this.props.onNext(this.state.longName, this.state.shortName, this.props.channel) }}>
+        }} onClick={ ()=> {this.props.onNext(this.state.longName, this.state.shortName, this.state.category, this.props.channel) }}>
           Save
         </Button>
       </div>

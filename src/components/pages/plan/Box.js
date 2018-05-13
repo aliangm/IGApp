@@ -41,7 +41,7 @@ export default class Box extends Component {
              data-link={ this.props.channel ? true : null }
              onClick={ ()=> { if (this.props.channel) {
                history.push({
-                 pathname: `campaigns` ,
+                 pathname: '/campaigns/by-channel',
                  query: { hash: this.props.channel }
                })
              } } }>{ this.props.title }</div>
@@ -94,7 +94,7 @@ export class Row extends Component {
                        data-link={ this.props.channel ? true : null }
                        onClick={ ()=> { if (this.props.channel) {
                          history.push({
-                           pathname: `campaigns` ,
+                           pathname: '/campaigns/by-channel',
                            query: { hash: this.props.channel }
                          })
                        } } }>
@@ -171,7 +171,7 @@ export class Level extends Component {
              data-link={ this.props.channel ? true : null }
              onClick={ ()=> { if (this.props.channel) {
                history.push({
-                 pathname: `campaigns` ,
+                 pathname: '/campaigns/by-channel',
                  query: { hash: this.props.channel }
                })
              } } }>

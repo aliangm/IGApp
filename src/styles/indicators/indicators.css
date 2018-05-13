@@ -1,5 +1,6 @@
-.inner {
-  overflow: initial;
+.wrap {
+  max-width: 1162px;
+  padding: 110px 20px 0;
 }
 
 .row {

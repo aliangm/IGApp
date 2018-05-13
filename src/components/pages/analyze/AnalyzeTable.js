@@ -1,10 +1,11 @@
 import React from 'react';
 import Component from 'components/Component';
-import { parseAnnualPlan } from 'data/parseAnnualPlan';
+import { parseBudgets } from 'data/parseAnnualPlan';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import style from 'styles/plan/annual-tab.css';
 import icons from 'styles/icons/plan.css';
 import { timeFrameToDate } from 'components/utils/objective';
+import { formatDate } from 'components/utils/date';
 
 export default class AnalyzeTable extends Component {
 
@@ -54,8 +55,11 @@ export default class AnalyzeTable extends Component {
   }
 
   getDates = () => {
+    const length = this.props.previousData
+      .filter(item  => item.approvedBudgets && item.approvedBudgets[0] && Object.keys(item.approvedBudgets[0]).length > 0)
+      .length;
     const dates = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < length - (this.props.months || (length - 1)); i++) {
       const planDate = this.props.planDate.split("/");
       const date = new Date(planDate[1], planDate[0]-1);
       date.setMonth(date.getMonth() - i);
@@ -73,7 +77,6 @@ export default class AnalyzeTable extends Component {
 
   render() {
     const previousData = this.props.previousData.slice();
-    previousData.splice(0,1);
     previousData.forEach(item => {
       if (item.actualChannelBudgets && item.actualChannelBudgets.knownChannels) {
         Object.keys(item.actualChannelBudgets.knownChannels).forEach(channel => {
@@ -81,11 +84,13 @@ export default class AnalyzeTable extends Component {
         });
       }
     });
-    const previousPlan = previousData.map(item => item.approvedBudgets && item.approvedBudgets[0] ? { plannedChannelBudgets: item.approvedBudgets[0] } : {});
-    const unknownChannels = previousData.map(item => item.unknownChannels && item.unknownChannels[0] ? item.unknownChannels[0] : {});
-    const planJson = parseAnnualPlan(previousPlan, null, unknownChannels);
-    let budget = Object.keys(planJson)[0];
-    const data = planJson[budget];
+    const previousPlan = previousData
+      .filter(item  => item.approvedBudgets && item.approvedBudgets[0] && Object.keys(item.approvedBudgets[0]).length > 0)
+      .map(item => item.approvedBudgets[0]);
+    const unknownChannels = previousData
+      .filter(item  => item.approvedBudgets && item.approvedBudgets[0] && Object.keys(item.approvedBudgets[0]).length > 0)
+      .map(item => item.unknownChannels && item.unknownChannels[0] ? item.unknownChannels[0] : {});
+    const data = parseBudgets(previousPlan, unknownChannels);
     let rows = [];
 
     const handleRows = (data, parent, level) => {
@@ -97,7 +102,7 @@ export default class AnalyzeTable extends Component {
         let key = parent + ':' + item + '-' + i;
         let collapsed = !!this.state.collapsed[key];
         const params = data[item];
-        const values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        const values = params.approvedValues.slice(this.props.months || (params.approvedValues.length - 1)).map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
         const  titleElem = <div
           style={{
             marginLeft: (level | 0) * 17 + 'px'
@@ -170,14 +175,14 @@ export default class AnalyzeTable extends Component {
 
     const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
       { 'TOTAL' }
-    </div>, data['__TOTAL__'].values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
+    </div>, data['__TOTAL__'].approvedValues.slice(this.props.months || (data['__TOTAL__'].approvedValues.length - 1)).map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')), {
       className: this.classes.footRow
     });
 
     const dates = this.getDates();
-    dates.splice(0, dates.length - this.props.previousData.length);
-    const projections = this.props.previousData.map((item, index) => {
-      return {... item.actualIndicators, name: dates[index]}
+
+    const projections = this.props.previousData.slice((this.props.months || (this.props.previousData.length - 1)) - 1).map((item, index) => {
+      return {... item.actualIndicators, name: formatDate(item.planDate)}
     });
 
     const objectives = {};
@@ -191,7 +196,7 @@ export default class AnalyzeTable extends Component {
 
     return <div>
       <div className={ this.classes.innerBox }>
-        <div style={{ margin: '15px' }} ref="wrap">
+        <div style={{ margin: '15px', width: '1110px' }} ref="wrap">
           <div className={ this.classes.box }>
             <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
               <thead>

@@ -14,8 +14,17 @@ export default class MozAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      url: props.defaultUrl || ''
+      url: props.defaultUrl || '',
+      hidden: true
     };
+  }
+
+  open() {
+    this.setState({hidden: false});
+  }
+
+  close() {
+    this.setState({hidden: true});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -35,7 +44,7 @@ export default class MozAutomaticPopup extends Component {
           response.json()
             .then((data) => {
               this.props.setDataAsState(data);
-              this.props.close();
+              this.close();
             });
         }
         else if (response.status == 401) {
@@ -48,7 +57,7 @@ export default class MozAutomaticPopup extends Component {
   }
 
   render(){
-    return <div hidden={ this.props.hidden }>
+    return <div hidden={ this.state.hidden }>
       <Page popup={ true } width={'400px'}>
         <div className={ this.classes.row }>
           <Label>Please enter your website</Label>
@@ -58,7 +67,7 @@ export default class MozAutomaticPopup extends Component {
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>
-            <Button type="normal" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+            <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
           </div>
           <div className={ this.classes.footerRight }>
             <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>

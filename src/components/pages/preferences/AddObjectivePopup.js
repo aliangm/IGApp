@@ -8,7 +8,7 @@ import Textfield from 'components/controls/Textfield';
 import preferencesStyle from 'styles/preferences/preferences.css';
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
-import { getIndicatorsWithNicknames, getNickname } from 'components/utils/indicators';
+import { getIndicatorsWithProps, getNickname } from 'components/utils/indicators';
 import Calendar from 'components/controls/Calendar';
 import Toggle from 'components/controls/Toggle';
 import NotSure from 'components/onboarding/NotSure';
@@ -83,6 +83,12 @@ export default class AddObjectivePopup extends Component {
   }
 
   render() {
+    const indicators = getIndicatorsWithProps();
+    const indicatorOptions = Object.keys(indicators)
+      .filter(item => indicators[item].isObjective)
+      .map(item => {
+        return { value: item, label: indicators[item].nickname }
+      });
     const directionOptions = [
       {label: 'increase', value: 'increase'},
       {label: 'decrease', value: 'decrease'},
@@ -213,7 +219,7 @@ export default class AddObjectivePopup extends Component {
               selected={this.state.indicator}
               select={{
                 placeholder: 'KPI',
-                options: getIndicatorsWithNicknames()
+                options: indicatorOptions
               }}
               onChange={(e) => {
                 this.setState({indicator: e.value, currentValue: this.props.actualIndicators[e.value] || 0})
