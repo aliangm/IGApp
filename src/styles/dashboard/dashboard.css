@@ -508,7 +508,7 @@
 .quarter-number {
     composes: number;
     margin: 3px 0;
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 500;
 }
 
@@ -520,7 +520,7 @@
 
 .snapshot-number {
     composes: quarter-number;
-    font-size: 26px;
+    font-size: 22px;
     justify-content: flex-start;
 }
 

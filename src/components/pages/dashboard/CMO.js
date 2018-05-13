@@ -303,7 +303,7 @@ export default class CMO extends Component {
     });
 
     const bars = advancedChannels.map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]} label={<CustomizedLabel/>}/>
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]} label={index === 0 ? <CustomizedLabel/> : false}/>
     );
 
     const settingsIndicators = Object.keys(indicatorsProperties)
@@ -691,7 +691,7 @@ export default class CMO extends Component {
               <div className={ dashboardStyle.locals.text }>
                 Objectives
               </div>
-              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center', display: 'block' }}>
+              <div className={ dashboardStyle.locals.chart } style={{ justifyContent: 'center', display: 'block', marginTop: '0' }}>
                 {objectivesGauges}
               </div>
             </div>
