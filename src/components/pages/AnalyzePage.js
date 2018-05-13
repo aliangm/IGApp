@@ -12,6 +12,7 @@ export default class AnalyzePage extends Component {
   render() {
     const tabs = {
       "Overview": '/measure/analyze/overview',
+      "campaigns": '/measure/analyze/campaigns',
       "Content": '/measure/analyze/content'
     };
 

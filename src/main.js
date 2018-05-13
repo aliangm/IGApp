@@ -26,6 +26,7 @@ import style from 'styles/global/main.css';
 import AnalyzePage from './components/pages/AnalyzePage';
 import Analyze from 'components/pages/analyze/Analyze';
 import Content from 'components/pages/analyze/Content';
+import CampaignsMeasure from 'components/pages/analyze/Campaigns';
 import Setup from 'components/pages/attribution/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
@@ -93,6 +94,7 @@ ReactDOM.render(
       <Route path="/measure/audiences" component={ Users } onEnter={ requireAdminAuth }/>
       <Route component={ AnalyzePage } onEnter={ requireAdminAuth }>
         <Route path="/measure/analyze/overview" component={ Analyze } onEnter={ requireAdminAuth }/>
+        <Route path="/measure/analyze/campaigns" component={ CampaignsMeasure } onEnter={ requireAdminAuth }/>
         <Route path="/measure/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
       </Route>
       <Route path="/plan/insights" component={ Insights } onEnter={ requireAdminAuth }/>
