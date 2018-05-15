@@ -257,23 +257,6 @@ export default class Campaigns extends Component {
         style: {backgroundColor: '#33cc3478'}
       });
 
-    const CEV = CEVs && CEVs[this.state.conversionIndicator];
-    const fatherChannelsWithBudgets = [];
-    let fatherChannelsSum = 0;
-    Object.keys(CEV).forEach(channel => {
-      const channelCategory = getMetadata('category', channel);
-      if (channelCategory && CEV[channel]) {
-        fatherChannelsSum += CEV[channel];
-        const existsFather = fatherChannelsWithBudgets.find(item => item.name === channelCategory);
-        if (existsFather) {
-          existsFather.value += CEV[channel];
-        }
-        else {
-          fatherChannelsWithBudgets.push({name: channelCategory, value: CEV[channel]});
-        }
-      }
-    });
-
     const users = attribution && attribution.users;
     const journeys = [];
     let journeysSum = 0;

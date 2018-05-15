@@ -5,13 +5,14 @@ import style from 'styles/plan/plan.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { Link } from 'react-router';
 
-export default class AnalyzePage extends Component {
+export default class Analyze extends Component {
 
   style = style;
 
   render() {
     const tabs = {
       "Overview": '/measure/analyze/overview',
+      "Channels": '/measure/analyze/channels',
       "campaigns": '/measure/analyze/campaigns',
       "Content": '/measure/analyze/content'
     };

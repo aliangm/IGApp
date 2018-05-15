@@ -23,9 +23,10 @@ import AuthService from './components/utils/AuthService'
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
-import AnalyzePage from './components/pages/AnalyzePage';
-import Analyze from 'components/pages/analyze/Analyze';
+import Analyze from './components/pages/Analyze';
+import Overview from 'components/pages/analyze/Overview';
 import Content from 'components/pages/analyze/Content';
+import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
 import Setup from 'components/pages/attribution/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
@@ -92,8 +93,9 @@ ReactDOM.render(
         <Route path="/measure/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
       </Route>
       <Route path="/measure/audiences" component={ Users } onEnter={ requireAdminAuth }/>
-      <Route component={ AnalyzePage } onEnter={ requireAdminAuth }>
-        <Route path="/measure/analyze/overview" component={ Analyze } onEnter={ requireAdminAuth }/>
+      <Route component={ Analyze } onEnter={ requireAdminAuth }>
+        <Route path="/measure/analyze/overview" component={ Overview } onEnter={ requireAdminAuth }/>
+        <Route path="/measure/analyze/channels" component={ Channels } onEnter={ requireAdminAuth }/>
         <Route path="/measure/analyze/campaigns" component={ CampaignsMeasure } onEnter={ requireAdminAuth }/>
         <Route path="/measure/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
       </Route>

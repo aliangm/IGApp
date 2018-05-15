@@ -1,12 +1,12 @@
 import React from "react";
 import Component from "components/Component";
 import style from "styles/onboarding/onboarding.css";
-import { PieChart, Pie, Cell, ComposedChart, CartesianGrid, XAxis, YAxis, Line, Bar } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import { getIndicatorsWithProps, getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata } from 'components/utils/indicators';
-import { getChannelsWithProps, getNickname as getChannelNickname, getMetadata as getChannelMetadata } from 'components/utils/channels';
+import { getChannelsWithProps, getMetadata as getChannelMetadata } from 'components/utils/channels';
 import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import { timeFrameToDate } from 'components/utils/objective';
@@ -19,6 +19,7 @@ import PlanPopup, {
 } from 'components/pages/plan/Popup';
 import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
+import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 
 export default class CMO extends Component {
 
@@ -45,10 +46,8 @@ export default class CMO extends Component {
 
     this.state = {
       activeIndex: void 0,
-      indicator: 'SQL',
       onlyThisMonth: false,
-      advancedIndicator: 'SQL',
-      advancedChannels: ['total']
+      advancedIndicator: 'SQL'
     };
     this.onPieEnter = this.onPieEnter.bind(this);
   }
@@ -97,27 +96,9 @@ export default class CMO extends Component {
     return null;
   }
 
-  changeIndicatorsSettings(indicator) {
-    this.setState({advancedIndicator: indicator});
-  }
-
-  changeChannelsSettings(channel) {
-    const advancedChannels = this.state.advancedChannels.slice();
-    if (advancedChannels.includes('total')) {
-      this.setState({advancedChannels: [channel]});
-    }
-    else if (channel === 'total') {
-      this.setState({advancedChannels: ['total']});
-    }
-    else if (advancedChannels.length < 3) {
-      advancedChannels.push(channel);
-      this.setState({advancedChannels: advancedChannels});
-    }
-  }
-
   render() {
     const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData } = this.props;
-    const { months, isPast, advancedIndicator, advancedChannels, showAdvanced } = this.state;
+    const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
     const annualBudget = annualBudgetArray.reduce((a, b) => a+b, 0);
@@ -251,7 +232,7 @@ export default class CMO extends Component {
         });
 
         json['total'] = month.approvedBudgets && Object.keys(month.approvedBudgets[0]).reduce((sum, channel) =>
-          sum + approvedBudgets[0][channel], 0);
+          sum + month.approvedBudgets[0][channel], 0);
 
         Object.keys(month.actualIndicators).forEach(indicator => {
           json[indicator] = month.actualIndicators[indicator];
@@ -276,55 +257,6 @@ export default class CMO extends Component {
         });
         return json;
       });
-
-    const CustomizedLabel = React.createClass({
-
-      render () {
-        const {x, y, total} = this.props;
-        return <svg>
-          <rect
-            x={x-25}
-            y={y-20}
-            fill="#979797"
-            width={50}
-            height={20}
-          />
-          <text
-            x={x}
-            y={y}
-            dy={-6}
-            fontSize='11'
-            fill='#ffffff'
-            textAnchor="middle">
-            ${formatBudgetShortened(total)}
-          </text>
-        </svg>
-      }
-    });
-
-    const bars = advancedChannels.map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]} label={index === 0 ? <CustomizedLabel/> : false}/>
-    );
-
-    const settingsIndicators = Object.keys(indicatorsProperties)
-      .filter(indicator => !!data.find(month => month[indicator]))
-      .map(indicator => <div key={indicator}>
-        <input type="checkbox" onChange={ this.changeIndicatorsSettings.bind(this, indicator) } checked={ indicator === advancedIndicator } style={{  }}/>
-        {indicatorsProperties[indicator].nickname}
-      </div>);
-
-    const channelsProperties = getChannelsWithProps();
-    const settingsChannels = Object.keys(channelsProperties)
-      .filter(channel => !!data.find(month => month[channel]))
-      .map(channel => <div key={channel}>
-        <input type="checkbox" onChange={ this.changeChannelsSettings.bind(this, channel) } checked={ advancedChannels.includes(channel) } style={{  }}/>
-        {channelsProperties[channel].nickname}
-      </div>);
-
-    const graphChannels = advancedChannels.map((channel, index) =>
-      <div key={index} style={{ borderBottom: '6px solid ' + COLORS[index % COLORS.length], marginRight: '25px', paddingBottom: '3px' }}>
-        {channel === 'total' ? 'Total' : getChannelNickname(channel)}
-      </div>);
 
     return <div className={ dashboardStyle.locals.wrap }>
       <Steps {... this.props}/>
@@ -624,63 +556,7 @@ export default class CMO extends Component {
       { showAdvanced ?
         <div className={ this.classes.cols }>
           <div className={ this.classes.colLeft }>
-            <div className={ dashboardStyle.locals.item } style={{ height: '300px', width: '1110px', padding: '5px 15px', fontSize: '13px' }} data-id="analysis">
-              <div className={ dashboardStyle.locals.columnHeader }>
-                <div className={ dashboardStyle.locals.timeText }>
-                  {isPast ? 'Last' : 'Next'} {months} Months
-                </div>
-                <div className={ dashboardStyle.locals.graphMetricsTitle}>
-                  Metrics
-                </div>
-                <div className={ dashboardStyle.locals.graphIndicator}>
-                  {getIndicatorNickname(advancedIndicator)}
-                </div>
-                <div className={ dashboardStyle.locals.graphSpendTitle}>
-                  Spend
-                </div>
-                <div className={ dashboardStyle.locals.graphChannel}>
-                  {graphChannels}
-                </div>
-                <div className={ dashboardStyle.locals.text }>
-                  {isPast ? 'Past' : 'Future'} Spend & Impact
-                </div>
-                <div style={{ position: 'relative' }}>
-                  <div className={ dashboardStyle.locals.settings } onClick={ ()=>{ this.refs.advancedSettingsPopup.open() }}/>
-                  <PlanPopup ref="advancedSettingsPopup" style={{
-                    width: 'max-content',
-                    top: '20px',
-                    left: '-600px',
-                    height: '270px'
-                  }} title="Settings">
-                    <PopupTextContent>
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ width: '50%', height: '220px', overflowY: 'auto' }}>
-                          {settingsIndicators}
-                        </div>
-                        <div style={{ width: '50%', height: '220px', overflowY: 'auto' }}>
-                          <div>
-                            <input type="checkbox" onChange={ this.changeChannelsSettings.bind(this, 'total') } checked={ advancedChannels.includes('total') } style={{  }}/>
-                            Total
-                          </div>
-                          {settingsChannels}
-                        </div>
-                      </div>
-                    </PopupTextContent>
-                  </PlanPopup>
-                </div>
-              </div>
-              <div>
-                <ComposedChart width={1110} height={260} data={data} maxBarSize={85}
-                               margin={{top: 20, right: 30, left: 20, bottom: 5}}>
-                  <CartesianGrid vertical={false}/>
-                  <XAxis dataKey="name" tickLine={false}/>
-                  <YAxis yAxisId="left" axisLine={false} tickLine={false} tickFormatter={v => '$' + formatBudgetShortened(v)}/>
-                  <YAxis yAxisId="right" axisLine={false} tickLine={false} tickFormatter={formatBudgetShortened} orientation="right"/>
-                  {bars}
-                  <Line yAxisId="right" type='monotone' dataKey={advancedIndicator} stroke="#f5a623" fill="#f5a623" strokeWidth={3}/>
-                </ComposedChart>
-              </div>
-            </div>
+            <PerformanceGraph isPast={isPast} months={months} data={data} defaultIndicator={advancedIndicator}/>
           </div>
         </div>
         : null }
