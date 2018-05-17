@@ -8,6 +8,7 @@ import history from 'history';
 import RegionPopup from 'components/RegionPopup';
 import Notifications from 'components/pages/header/Notifications';
 import Avatar from 'components/Avatar';
+import InfiniGrowRobot from 'components/pages/header/InfiniGrowRobot';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -29,6 +30,7 @@ export default class Header extends Component {
       dropmenuVisible: false,
       dropmenuVisibleBig: false,
       regionsVisible: false,
+      suggestionsVisible: false,
       createNewVisible: false,
       regionsVisibleBig: false,
       regions: []
@@ -154,8 +156,25 @@ export default class Header extends Component {
           </div>
           : null }
         { hasUser ?
-          <div className={this.classes.item}>
-            <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} />
+          <div className={ this.classes.dropmenuButton }
+               data-selected={ this.state.suggestionsVisible ? true : null }
+               role="button"
+               onClick={ () => {
+                 this.setState({suggestionsVisible: !this.state.suggestionsVisible});
+               }}
+          >
+            <div className={ this.classes.userLogo } style={{ backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : '' }} >
+              <Popup className={ this.classes.dropmenuPopup }
+                     style={{ padding: '0' }}
+                     hidden={ !this.state.suggestionsVisible } onClose={() => {
+                this.setState({
+                  suggestionsVisible: false
+                });
+              }}
+              >
+                <InfiniGrowRobot company={this.props.userCompany} objectives={this.props.objectives} historyData={this.props.historyData} actualIndicators={this.props.actualIndicators}/>
+              </Popup>
+            </div>
           </div>
           : null }
         <div className={ this.classes.dropmenuButton }
