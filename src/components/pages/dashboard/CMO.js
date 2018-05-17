@@ -20,6 +20,7 @@ import PlanPopup, {
 import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
+import TopX from 'components/pages/dashboard/TopX';
 
 export default class CMO extends Component {
 
@@ -96,8 +97,19 @@ export default class CMO extends Component {
     return null;
   }
 
+  getChannel(page) {
+    const siteStructure = this.props.attribution.siteStructure || {};
+    if (page.includes(siteStructure.blog)) {
+      return 'content_contentCreation_companyBlog';
+    }
+    if (page.includes(siteStructure.caseStudies)) {
+      return 'content_contentCreation_caseStudies';
+    }
+    return 'web_companyWebsite';
+  }
+
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
@@ -197,10 +209,12 @@ export default class CMO extends Component {
       }
     });
 
-    let firstFunnelObjective = objectives
-      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && getIndicatorMetadata('isFunnel', item.indicator));
+    const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
+    const funnelObjectives = objectives
+      .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && funnelPossibleObjectives.includes(item.indicator))
+      .map(item => item.indicator);
 
-    firstFunnelObjective = firstFunnelObjective ? firstFunnelObjective.indicator : 'newMQL';
+    const firstFunnelObjective = funnelObjectives && funnelObjectives.length > 0 ? funnelObjectives[0] : 'newMQL';
 
     const futureBudget = approvedBudgets.slice(0, months).reduce((sum, month) => Object.keys(month).reduce((monthSum, channel) => month[channel] + monthSum, 0) + sum, 0);
     const futureLTV = approvedBudgetsProjection.slice(0, months).reduce((sum, item) => sum + item.LTV, 0);
@@ -221,6 +235,60 @@ export default class CMO extends Component {
     });
 
     const futureDates = getDates(this.props.planDate);
+
+    const weights = {
+      newMCL: 1,
+      newMQL: 1,
+      newSQL: 1,
+      newOpps: 1,
+      newUsers: 1
+    };
+
+    Object.keys(weights).forEach(indicator => {
+      const objectiveIndex = funnelObjectives.findIndex(function (objective) {
+        return objective === indicator;
+      });
+      switch (objectiveIndex) {
+        case 0:
+          weights[indicator] = 2;
+          break;
+        case 1:
+          weights[indicator] = 1.5;
+          break;
+        case 2:
+          weights[indicator] = 1.25;
+          break;
+      }
+    });
+
+    const channelsWithProps = getChannelsWithProps();
+    const topChannels = Object.keys(channelsWithProps).map(channel => {
+      const score = Math.round(CEVs.MCL[channel] * weights.newMCL
+        + CEVs.MQL[channel] * weights.newMQL
+        + CEVs.SQL[channel] * weights.newSQL
+        + CEVs.opps[channel] * weights.newOpps
+        + CEVs.users[channel] * weights.newUsers);
+      return {title: channelsWithProps[channel].nickname, score: score, icon: "plan:" + channel};
+    });
+
+    const topCampaigns = Object.keys(attribution.campaigns).map(campaign => {
+      const campaignData = attribution.campaigns[campaign];
+      const score = Math.round(campaignData.MCL * weights.newMCL
+        + campaignData.MQL * weights.newMQL
+        + campaignData.SQL * weights.newSQL
+        + campaignData.opps * weights.newOpps
+        + campaignData.users * weights.newUsers);
+      return {title: campaign, score: score, icon: campaignData.channels.length > 0 ? campaignData.channels.length === 1 ? 'plan:' + campaignData.channels[0] : 'plan:multiChannel' : null};
+    });
+
+    const topContent = attribution.pages.map(item => {
+      const score = Math.round(item.MCL * weights.newMCL
+        + item.MQL * weights.newMQL
+        + item.SQL * weights.newSQL
+        + item.opps * weights.newOpps
+        + item.users * weights.newUsers);
+      return {title: item.title, score: score, icon: 'plan:' + this.getChannel(item.page)};
+    });
 
     const data = isPast ?
       relevantPreviousData.map(month => {
@@ -737,6 +805,17 @@ export default class CMO extends Component {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className={ this.classes.cols } style={{ width: '1140px' }}>
+        <div className={ this.classes.colLeft }>
+          <TopX title='channel' data={topChannels}/>
+        </div>
+        <div className={ this.classes.colCenter }>
+          <TopX title='campaign' data={topCampaigns}/>
+        </div>
+        <div className={ this.classes.colRight }>
+          <TopX title='content' data={topContent}/>
         </div>
       </div>
     </div>
