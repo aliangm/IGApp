@@ -206,6 +206,12 @@
     composes: row;
 }
 
+.foot-row {
+    composes: head-row;
+    background-color: #33cc3478;
+    font-size: 16px;
+}
+
 .table-row {
     height: 30px;
     font-size: 16px;

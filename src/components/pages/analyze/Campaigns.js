@@ -253,8 +253,7 @@ export default class Campaigns extends Component {
         ''
       ]
       , {
-        className: dashboardStyle.locals.headRow,
-        style: {backgroundColor: '#33cc3478'}
+        className: dashboardStyle.locals.footRow
       });
 
     const users = attribution && attribution.users;

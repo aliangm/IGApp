@@ -275,8 +275,7 @@ export default class Channels extends Component {
       Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
       '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
     ], {
-      className: dashboardStyle.locals.headRow,
-      style: {backgroundColor: '#33cc3478'}
+      className: dashboardStyle.locals.footRow
     });
 
     const CEV = CEVs && CEVs[this.state.conversionIndicator];
