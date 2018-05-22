@@ -97,17 +97,6 @@ export default class CMO extends Component {
     return null;
   }
 
-  getChannel(page) {
-    const siteStructure = this.props.attribution.siteStructure || {};
-    if (page.includes(siteStructure.blog)) {
-      return 'content_contentCreation_companyBlog';
-    }
-    if (page.includes(siteStructure.caseStudies)) {
-      return 'content_contentCreation_caseStudies';
-    }
-    return 'web_companyWebsite';
-  }
-
   render() {
     const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
@@ -287,7 +276,7 @@ export default class CMO extends Component {
         + item.SQL * weights.newSQL
         + item.opps * weights.newOpps
         + item.users * weights.newUsers);
-      return {title: item.title, score: score, icon: 'plan:' + this.getChannel(item.page)};
+      return {title: item.title, score: score, icon: 'plan:' + item.channel};
     });
 
     const data = isPast ?
