@@ -130,7 +130,7 @@ export default class Insights extends Component {
             <div className={insightsStyle.locals.inner}>
               {cubes}
               {showBalancerPopup ?
-                <Page popup={true} width="825px" contentClassName={insightsStyle.locals.popupContent}>
+                <Page popup={true} width="825px" contentClassName={insightsStyle.locals.popupContent} innerClassName={insightsStyle.locals.popupInner}>
                   <span ref="popup">
                   {balancingChannel ?
                     <div className={this.classes.frame} style={{marginBottom: '0', height: '300px'}}>

@@ -16,8 +16,8 @@ export default class InsightItem extends Component {
       .filter(item => item.ratio !== 0)
       .slice(0, 2)
       .map((item, index) => <div key={index}>
-      - <b>{item.nickname}</b> {item.ratio >= 0 ? 'by' : 'only by'} <b>{Math.abs(item.ratio)}%</b> ({(item.projected < 0 ? '-' : '+') + formatBudget(Math.abs(item.projected))})<br/>
-    </div>);
+        - <b>{item.nickname}</b> {item.ratio >= 0 ? 'by' : 'only by'} <b>{Math.abs(item.ratio)}%</b> ({(item.projected < 0 ? '-' : '+') + formatBudget(Math.abs(item.projected))})<br/>
+      </div>);
     const rightSideObjectives = objectivesRatio
       .filter(item => item.ratio !== 0)
       .slice(1, 2)
@@ -45,10 +45,12 @@ export default class InsightItem extends Component {
                 <div className={this.classes.declineIcon}/>
                 Decline
               </Button>
-              <Button className={this.classes.balancerButton} onClick={findBalancer}>
-                <div className={this.classes.balancerIcon}/>
-                Find a balancer
-              </Button>
+              { findBalancer ?
+                <Button className={this.classes.balancerButton} onClick={findBalancer}>
+                  <div className={this.classes.balancerIcon}/>
+                  Find a balancer
+                </Button>
+                : null }
             </div>
           </div>
           <div className={this.classes.rightSide}>
@@ -88,10 +90,12 @@ export default class InsightItem extends Component {
                 <div className={this.classes.declineIcon}/>
                 Decline
               </Button>
-              <Button className={this.classes.balancerButton} onClick={findBalancer}>
-                <div className={this.classes.balancerIcon}/>
-                Find a balancer
-              </Button>
+              { findBalancer ?
+                <Button className={this.classes.balancerButton} onClick={findBalancer}>
+                  <div className={this.classes.balancerIcon}/>
+                  Find a balancer
+                </Button>
+                : null }
             </div>
           </div>
           <div className={this.classes.rightSide} data-green={true}>

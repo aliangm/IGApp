@@ -3,8 +3,12 @@
 }
 
 .popup-content {
-    padding: 0;
-    margin: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.popup-inner {
+    overflow: initial !important;
 }
 
 .channel-icons {
