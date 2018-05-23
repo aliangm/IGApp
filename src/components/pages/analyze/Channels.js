@@ -159,7 +159,7 @@ export default class Channels extends Component {
           <Select
             selected={this.state.attributionTableRevenueMetric}
             select={{
-              options: [{value: 'revenue', label: 'Revenue'}, {value: 'pipeline', label: 'Pipeline'}]
+              options: [{value: 'revenue', label: 'revenue'}, {value: 'pipeline', label: 'pipeline'}, {value: 'LTV', label: 'LTV'}]
             }}
             onChange={(e) => {
               this.setState({attributionTableRevenueMetric: e.value})
@@ -168,7 +168,7 @@ export default class Channels extends Component {
           />
           :
           <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }}>
-            {this.state.attributionTableRevenueMetric === 'revenue' ? 'Revenue' : 'Pipeline'}
+            {this.state.attributionTableRevenueMetric}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
