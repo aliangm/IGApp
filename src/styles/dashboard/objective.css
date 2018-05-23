@@ -1,5 +1,5 @@
 .inner {
-    padding: 20px 25px;
+    padding: 15px 25px;
     display: inline-block;
 }
 
@@ -13,7 +13,7 @@
     font-size: 12px;
     font-weight: bold;
     color: #4b515e;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .current {

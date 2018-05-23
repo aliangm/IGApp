@@ -319,13 +319,13 @@ export default class CMO extends Component {
       <Steps {... this.props}/>
       <div className={ this.classes.cols }>
         <div className={ this.classes.colLeft }>
-          <div className={ dashboardStyle.locals.item } style={{ height: '330px', width: '1110px', display: 'flex', padding: '12px', overflow: 'visible' }}>
+          <div className={ dashboardStyle.locals.item } style={{ height: '300px', width: '1110px', display: 'flex', padding: '12px', overflow: 'visible' }}>
             <div className={ dashboardStyle.locals.column } data-border={true} data-selected={(showAdvanced && isPast) ? true : null}>
               <div className={ dashboardStyle.locals.columnHeader }>
                 <div className={ dashboardStyle.locals.timeText }>
                   Last {months} Months
                 </div>
-                <div className={ dashboardStyle.locals.text }>
+                <div className={ dashboardStyle.locals.text } style={{ borderBottom: 'none' }}>
                   Past
                 </div>
                 <div className={ dashboardStyle.locals.advanced } onClick={ ()=>{ this.setState({showAdvanced: !showAdvanced, isPast: true }) }}/>
@@ -357,59 +357,59 @@ export default class CMO extends Component {
               </div>
               <div style={{ marginTop: '18px' }}>
                 <div className={dashboardStyle.locals.quarter1}>
+                  <div className={ dashboardStyle.locals.quarterNumber }>
+                    {Math.round(pastLTV / pastBudget * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && relativePastLTV && isFinite(relativePastLTV) && ((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget))) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget)) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget)) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) * 100)}%
+                      </div>
+                    </div>
+                  </div>
                   <div className={ dashboardStyle.locals.quarterText }>
                     ROI
                   </div>
-                  <div className={ dashboardStyle.locals.quarterNumber }>
-                    {Math.round(pastLTV / pastBudget * 100)}%
-                  </div>
-                  <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && relativePastLTV && isFinite(relativePastLTV) && ((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget))) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget)) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget)) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) * 100)}%
-                    </div>
-                  </div>
                 </div>
                 <div className={dashboardStyle.locals.quarter2}>
+                  <div className={ dashboardStyle.locals.quarterNumber }>
+                    ${formatBudgetShortened(pastBudget)}
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && (pastBudget / relativePastBudget)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastBudget / relativePastBudget) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastBudget / relativePastBudget) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round(pastBudget / relativePastBudget * 100)}%
+                      </div>
+                    </div>
+                  </div>
                   <div className={ dashboardStyle.locals.quarterText }>
                     Spend
                   </div>
-                  <div className={ dashboardStyle.locals.quarterNumber }>
-                    ${formatBudgetShortened(pastBudget)}
-                  </div>
-                  <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && (pastBudget / relativePastBudget)) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={(pastBudget / relativePastBudget) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={(pastBudget / relativePastBudget) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round(pastBudget / relativePastBudget * 100)}%
-                    </div>
-                  </div>
                 </div>
                 <div className={dashboardStyle.locals.quarter3}>
+                  <div className={ dashboardStyle.locals.quarterNumber }>
+                    ${formatBudgetShortened(pastLTV)}
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastLTV && isFinite(relativePastLTV) && (pastLTV / relativePastLTV)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastLTV / relativePastLTV) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastLTV / relativePastLTV) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round(pastLTV / relativePastLTV * 100)}%
+                      </div>
+                    </div>
+                  </div>
                   <div className={ dashboardStyle.locals.quarterText }>
                     LTV
                   </div>
-                  <div className={ dashboardStyle.locals.quarterNumber }>
-                    ${formatBudgetShortened(pastLTV)}
-                  </div>
-                  <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastLTV && isFinite(relativePastLTV) && (pastLTV / relativePastLTV)) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={(pastLTV / relativePastLTV) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={(pastLTV / relativePastLTV) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round(pastLTV / relativePastLTV * 100)}%
-                    </div>
-                  </div>
                 </div>
                 <div className={dashboardStyle.locals.quarter4}>
-                  <div className={ dashboardStyle.locals.quarterText }>
-                    {getIndicatorNickname(firstFunnelObjective)}
-                  </div>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {formatBudgetShortened(pastObjective)}
-                  </div>
-                  <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastObjective && isFinite(relativePastObjective) && (pastObjective / relativePastObjective)) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={(pastObjective / relativePastObjective) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={(pastObjective / relativePastObjective) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round(pastObjective / relativePastObjective * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastObjective && isFinite(relativePastObjective) && (pastObjective / relativePastObjective)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastObjective / relativePastObjective) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastObjective / relativePastObjective) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round(pastObjective / relativePastObjective * 100)}%
+                      </div>
                     </div>
+                  </div>
+                  <div className={ dashboardStyle.locals.quarterText }>
+                    {getIndicatorNickname(firstFunnelObjective)}
                   </div>
                 </div>
               </div>
@@ -418,7 +418,7 @@ export default class CMO extends Component {
               <div className={ dashboardStyle.locals.text }>
                 Snapshot
               </div>
-              <div style={{ padding: '22px 20px' }}>
+              <div style={{ padding: '15px' }}>
                 <div className={dashboardStyle.locals.miniFunnelRow}>
                   <div className={dashboardStyle.locals.miniFunnelText}>
                     {getIndicatorNickname('MCL')}
@@ -486,7 +486,7 @@ export default class CMO extends Component {
                   </div>
                 </div>
                 <div style={{ display: 'flex' }}>
-                  <div className={ dashboardStyle.locals.column } style={{ padding: '16px 20px 0 0', width: 'auto', marginRight: 'auto' }}>
+                  <div className={ dashboardStyle.locals.column } style={{ padding: '10px 20px 0 0', width: 'auto', marginRight: 'auto' }}>
                     <div className={ dashboardStyle.locals.snapshotNumber }>
                       {formatBudgetShortened(actualIndicators.sessions)}
                     </div>
@@ -494,7 +494,7 @@ export default class CMO extends Component {
                       Sessions
                     </div>
                   </div>
-                  <div className={ dashboardStyle.locals.column } style={{ padding: '16px 20px 0 0', width: 'auto', marginRight: 'auto' }}>
+                  <div className={ dashboardStyle.locals.column } style={{ padding: '10px 20px 0 0', width: 'auto', marginRight: 'auto' }}>
                     <div className={ dashboardStyle.locals.snapshotNumber }>
                       ${formatBudgetShortened(monthBudget)}
                     </div>
@@ -502,7 +502,7 @@ export default class CMO extends Component {
                       Budget
                     </div>
                   </div>
-                  <div className={ dashboardStyle.locals.column } style={{ padding: '16px 0 0 0', width: 'auto' }}>
+                  <div className={ dashboardStyle.locals.column } style={{ padding: '10px 0 0 0', width: 'auto' }}>
                     <div className={ dashboardStyle.locals.snapshotNumber }>
                       ${formatBudgetShortened(actualIndicators.MRR)}
                     </div>
@@ -518,7 +518,7 @@ export default class CMO extends Component {
                 <div className={ dashboardStyle.locals.timeText }>
                   Next {months} Months
                 </div>
-                <div className={ dashboardStyle.locals.text }>
+                <div className={ dashboardStyle.locals.text } style={{ borderBottom: 'none' }}>
                   Future
                 </div>
                 <div className={ dashboardStyle.locals.advanced } onClick={ ()=>{ this.setState({showAdvanced: !showAdvanced, isPast: false }) }}/>
@@ -550,59 +550,59 @@ export default class CMO extends Component {
               </div>
               <div style={{ marginTop: '18px' }}>
                 <div className={dashboardStyle.locals.quarter1}>
+                  <div className={ dashboardStyle.locals.quarterNumber }>
+                    {Math.round(futureLTV / futureBudget * 100)}%
+                    <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && pastLTV && isFinite(pastLTV) && ((futureLTV / futureBudget) / (pastLTV / pastBudget))) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget)) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget)) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((futureLTV / futureBudget) / (pastLTV / pastBudget) * 100)}%
+                      </div>
+                    </div>
+                  </div>
                   <div className={ dashboardStyle.locals.quarterText }>
                     ROI
                   </div>
-                  <div className={ dashboardStyle.locals.quarterNumber }>
-                    {Math.round(futureLTV / futureBudget * 100)}%
-                  </div>
-                  <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && pastLTV && isFinite(pastLTV) && ((futureLTV / futureBudget) / (pastLTV / pastBudget))) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget)) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget)) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round((futureLTV / futureBudget) / (pastLTV / pastBudget) * 100)}%
-                    </div>
-                  </div>
                 </div>
                 <div className={dashboardStyle.locals.quarter2}>
+                  <div className={ dashboardStyle.locals.quarterNumber }>
+                    ${formatBudgetShortened(futureBudget)}
+                    <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && (futureBudget / pastBudget)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(futureBudget / pastBudget) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(futureBudget / pastBudget) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((futureBudget / pastBudget) * 100)}%
+                      </div>
+                    </div>
+                  </div>
                   <div className={ dashboardStyle.locals.quarterText }>
                     Budget
                   </div>
-                  <div className={ dashboardStyle.locals.quarterNumber }>
-                    ${formatBudgetShortened(futureBudget)}
-                  </div>
-                  <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && (futureBudget / pastBudget)) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={(futureBudget / pastBudget) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={(futureBudget / pastBudget) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round((futureBudget / pastBudget) * 100)}%
-                    </div>
-                  </div>
                 </div>
                 <div className={dashboardStyle.locals.quarter3}>
+                  <div className={ dashboardStyle.locals.quarterNumber }>
+                    {formatBudgetShortened(futureLTV)}
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(futureLTV / pastLTV) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(futureLTV / pastLTV) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((futureLTV / pastLTV) * 100)}%
+                      </div>
+                    </div>
+                  </div>
                   <div className={ dashboardStyle.locals.quarterText }>
                     LTV
                   </div>
-                  <div className={ dashboardStyle.locals.quarterNumber }>
-                    {formatBudgetShortened(futureLTV)}
-                  </div>
-                  <div className={dashboardStyle.locals.center} style={{ visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV)) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={(futureLTV / pastLTV) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={(futureLTV / pastLTV) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round((futureLTV / pastLTV) * 100)}%
-                    </div>
-                  </div>
                 </div>
                 <div className={dashboardStyle.locals.quarter4}>
-                  <div className={ dashboardStyle.locals.quarterText }>
-                    {getIndicatorNickname(firstFunnelObjective)}
-                  </div>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {formatBudgetShortened(furureObjective)}
-                  </div>
-                  <div className={dashboardStyle.locals.center} style={{ visibility: (pastObjective && isFinite(pastObjective) && (furureObjective / pastObjective)) ? 'visible' : 'hidden'}}>
-                    <div className={dashboardStyle.locals.historyArrow} data-decline={(furureObjective / pastObjective) < 0 ? true : null}/>
-                    <div className={dashboardStyle.locals.historyGrow} data-decline={(furureObjective / pastObjective) < 0 ? true : null} style={{marginRight: '0'}}>
-                      {Math.round((furureObjective / pastObjective) * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (pastObjective && isFinite(pastObjective) && (furureObjective / pastObjective)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(furureObjective / pastObjective) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(furureObjective / pastObjective) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((furureObjective / pastObjective) * 100)}%
+                      </div>
                     </div>
+                  </div>
+                  <div className={ dashboardStyle.locals.quarterText }>
+                    {getIndicatorNickname(firstFunnelObjective)}
                   </div>
                 </div>
               </div>
