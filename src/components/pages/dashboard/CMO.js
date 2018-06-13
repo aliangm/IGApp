@@ -362,10 +362,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter1}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {Math.round(pastLTV / pastBudget * 100)}%
-                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && relativePastLTV && isFinite(relativePastLTV) && ((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget))) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget)) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget)) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && relativePastLTV && isFinite(relativePastLTV) && ((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round(((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -376,10 +376,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter2}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     ${formatBudgetShortened(pastBudget)}
-                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && (pastBudget / relativePastBudget)) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastBudget / relativePastBudget) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastBudget / relativePastBudget) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round(pastBudget / relativePastBudget * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastBudget && isFinite(relativePastBudget) && (pastBudget / relativePastBudget - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastBudget / relativePastBudget - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastBudget / relativePastBudget - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((pastBudget / relativePastBudget - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -390,10 +390,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter3}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     ${formatBudgetShortened(pastLTV)}
-                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastLTV && isFinite(relativePastLTV) && (pastLTV / relativePastLTV)) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastLTV / relativePastLTV) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastLTV / relativePastLTV) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round(pastLTV / relativePastLTV * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastLTV && isFinite(relativePastLTV) && (pastLTV / relativePastLTV - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastLTV / relativePastLTV - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastLTV / relativePastLTV - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((pastLTV / relativePastLTV - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -404,10 +404,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter4}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {formatBudgetShortened(pastObjective)}
-                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastObjective && isFinite(relativePastObjective) && (pastObjective / relativePastObjective)) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastObjective / relativePastObjective) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastObjective / relativePastObjective) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round(pastObjective / relativePastObjective * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (relativePastObjective && isFinite(relativePastObjective) && (pastObjective / relativePastObjective - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(pastObjective / relativePastObjective - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(pastObjective / relativePastObjective - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((pastObjective / relativePastObjective - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -555,10 +555,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter1}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {Math.round(futureLTV / futureBudget * 100)}%
-                    <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && pastLTV && isFinite(pastLTV) && ((futureLTV / futureBudget) / (pastLTV / pastBudget))) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget)) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget)) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round((futureLTV / futureBudget) / (pastLTV / pastBudget) * 100)}%
+                    <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && pastLTV && isFinite(pastLTV) && ((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round(((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -569,10 +569,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter2}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     ${formatBudgetShortened(futureBudget)}
-                    <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && (futureBudget / pastBudget)) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={(futureBudget / pastBudget) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={(futureBudget / pastBudget) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round((futureBudget / pastBudget) * 100)}%
+                    <div className={dashboardStyle.locals.center}  style={{ visibility: (pastBudget && isFinite(pastBudget) && (futureBudget / pastBudget - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(futureBudget / pastBudget - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(futureBudget / pastBudget - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((futureBudget / pastBudget - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -583,10 +583,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter3}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {formatBudgetShortened(futureLTV)}
-                    <div className={dashboardStyle.locals.center} style={{ visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV)) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={(futureLTV / pastLTV) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={(futureLTV / pastLTV) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round((futureLTV / pastLTV) * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(futureLTV / pastLTV - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(futureLTV / pastLTV - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((futureLTV / pastLTV - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -597,10 +597,10 @@ export default class CMO extends Component {
                 <div className={dashboardStyle.locals.quarter4}>
                   <div className={ dashboardStyle.locals.quarterNumber }>
                     {formatBudgetShortened(furureObjective)}
-                    <div className={dashboardStyle.locals.center} style={{ visibility: (pastObjective && isFinite(pastObjective) && (furureObjective / pastObjective)) ? 'visible' : 'hidden'}}>
-                      <div className={dashboardStyle.locals.historyArrow} data-decline={(furureObjective / pastObjective) < 0 ? true : null}/>
-                      <div className={dashboardStyle.locals.historyGrow} data-decline={(furureObjective / pastObjective) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round((furureObjective / pastObjective) * 100)}%
+                    <div className={dashboardStyle.locals.center} style={{ visibility: (pastObjective && isFinite(pastObjective) && (furureObjective / pastObjective - 1)) ? 'visible' : 'hidden'}}>
+                      <div className={dashboardStyle.locals.historyArrow} data-decline={(furureObjective / pastObjective - 1) < 0 ? true : null}/>
+                      <div className={dashboardStyle.locals.historyGrow} data-decline={(furureObjective / pastObjective - 1) < 0 ? true : null} style={{marginRight: '0'}}>
+                        {Math.round((furureObjective / pastObjective - 1) * 100)}%
                       </div>
                     </div>
                   </div>
