@@ -123,7 +123,7 @@ export default class Insights extends Component {
     return <div>
       <Page contentClassName={ planStyle.locals.content } innerClassName={ planStyle.locals.pageInner } width="100%">
         <div className={ planStyle.locals.head }>
-          <div className={ planStyle.locals.headTitle }>Insights & Recommendations</div>
+          <div className={ planStyle.locals.headTitle }>Insights & Suggestions</div>
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.insights ?
           <div className={ planStyle.locals.wrap }>
