@@ -64,16 +64,19 @@ export default class IndicatorsGraph extends Component {
 
   render () {
     const COLORS = [
-      '#289df5',
+      '#189aca',
+      '#3cca3f',
+      '#a8daec',
+      '#70d972',
+      '#56b5d9',
+      '#8338EC',
       '#40557d',
       '#f0b499',
       '#ffd400',
       '#3373b4',
       '#72c4b9',
-      '#04E762',
       '#FB5607',
       '#FF006E',
-      '#8338EC',
       '#76E5FC',
       '#036D19'
     ];

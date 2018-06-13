@@ -188,8 +188,11 @@ export default class Overview extends Component {
     });
 
     const COLORS = [
-      '#289df5',
-      '#04E762',
+      '#189aca',
+      '#3cca3f',
+      '#a8daec',
+      '#70d972',
+      '#56b5d9',
       '#8338EC',
       '#40557d',
       '#f0b499',
