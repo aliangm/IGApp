@@ -120,22 +120,10 @@ export default class PerformanceGraph extends Component {
       </div>);
 
     return <div className={dashboardStyle.locals.item}
-                style={{height: '300px', width: '1110px', padding: '5px 15px', fontSize: '13px'}} data-id="analysis">
+                style={{height: '350px', width: '1110px', padding: '5px 15px', fontSize: '13px'}} data-id="analysis">
       <div className={dashboardStyle.locals.columnHeader}>
         <div className={dashboardStyle.locals.timeText}>
           {isPast ? 'Last' : 'Next'} {months} Months
-        </div>
-        <div className={dashboardStyle.locals.graphMetricsTitle}>
-          Metrics
-        </div>
-        <div className={dashboardStyle.locals.graphIndicator}>
-          {getIndicatorNickname(advancedIndicator)}
-        </div>
-        <div className={dashboardStyle.locals.graphSpendTitle}>
-          Spend
-        </div>
-        <div className={dashboardStyle.locals.graphChannel}>
-          {graphChannels}
         </div>
         <div className={dashboardStyle.locals.text}>
           {isPast ? 'Past' : 'Future'} Spend & Impact
@@ -180,6 +168,24 @@ export default class PerformanceGraph extends Component {
           <Line yAxisId="right" type='monotone' dataKey={advancedIndicator} stroke="#f5a623" fill="#f5a623"
                 strokeWidth={3}/>
         </ComposedChart>
+      </div>
+      <div style={{ position: 'relative', marginTop: '-5px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ marginRight: '50px' }}>
+          <div className={dashboardStyle.locals.graphMetricsTitle}>
+            Metrics
+          </div>
+          <div className={dashboardStyle.locals.graphIndicator}>
+            {getIndicatorNickname(advancedIndicator)}
+          </div>
+        </div>
+        <div>
+          <div className={dashboardStyle.locals.graphSpendTitle}>
+            Spend
+          </div>
+          <div className={dashboardStyle.locals.graphChannel}>
+            {graphChannels}
+          </div>
+        </div>
       </div>
     </div>
   }
