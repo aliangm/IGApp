@@ -755,7 +755,7 @@ export default class CMO extends Component {
         <div className={ this.classes.colRight }>
           <div className={ dashboardStyle.locals.item } style={{ display: 'inline-block', height: '350px', width: '540px'}}>
             <div className={ dashboardStyle.locals.text }>
-              Marketing Mix Summary
+              Monthly Marketing Mix Summary
             </div>
             <div className={ dashboardStyle.locals.chart }>
               <div className={ this.classes.footerLeft }>
