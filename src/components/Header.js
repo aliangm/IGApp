@@ -96,7 +96,9 @@ export default class Header extends Component {
     const paths = this.props.path.split('/').map((item, i) => {
       if (item) {
         return <div className={this.classes.pathItem} key={ i }>
-          { item }
+          <div className={this.classes.pathItemText}>
+            { item }
+          </div>
         </div>
       }
     });
@@ -112,9 +114,6 @@ export default class Header extends Component {
     const userNotifications = this.props.notifications.filter(notification => notification.UID === this.props.auth.getProfile().user_id);
     const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
     return <div className={ this.classes.menuBig }>
-      <div className={ this.classes.planDate }>
-        { formatDate(this.props.planDate) }
-      </div>
       <div className={ this.classes.path }>
         {paths}
       </div>
