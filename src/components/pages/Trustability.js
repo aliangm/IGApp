@@ -8,7 +8,7 @@ import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import merge from 'lodash/merge';
 import style from 'styles/users/users.css';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import { getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata } from 'components/utils/indicators';
 
 export default class Trustability extends Component {
 
@@ -59,24 +59,33 @@ export default class Trustability extends Component {
 
     const headRow = this.getTableRow(null, [
       'Indicator',
-      'Actual',
+      'Beginning',
       'Projected',
-      'Diff'
+      'Actual',
+      'Diff',
+      'Deviation'
     ], {
       className: this.classes.headRow
     });
 
     const rows = this.state.indicatorsProjection && Object.keys(previousData[this.state.month].actualIndicators)
-      .map(indicator =>
-        this.getTableRow(null, [
-          getIndicatorNickname(indicator),
-          previousData[this.state.month].actualIndicators[indicator],
-          this.state.indicatorsProjection[indicator],
-          this.state.indicatorsProjection[indicator] - previousData[this.state.month].actualIndicators[indicator]
-        ], {
-          key: indicator,
-          className: this.classes.tableRow
-        })
+      .map(indicator => {
+          const beginning = getIndicatorMetadata('isRefreshed', indicator) ? 0 : previousData[this.state.month - 1].actualIndicators[indicator];
+          const projected = this.state.indicatorsProjection[indicator];
+          const actual = previousData[this.state.month].actualIndicators[indicator];
+          const dev = Math.round(((projected > actual ? (projected - beginning) / (actual - beginning) : (actual - beginning) / (projected - beginning)) - 1) * 100);
+          return this.getTableRow(null, [
+            getIndicatorNickname(indicator),
+            beginning,
+            projected,
+            actual,
+            Math.abs(projected - actual),
+            (isFinite(dev) ? dev + '%' : '-')
+          ], {
+            key: indicator,
+            className: this.classes.tableRow
+          })
+        }
       );
 
     return <div>
