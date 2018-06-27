@@ -273,7 +273,7 @@ export default class Channels extends Component {
       formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
       formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
+      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.CPX : sum, 0) / sumData.filter(item => isFinite(item.CPX)).length)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)
     ], {
       className: dashboardStyle.locals.footRow
     });
