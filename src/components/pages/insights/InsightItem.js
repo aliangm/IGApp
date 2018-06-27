@@ -33,7 +33,7 @@ export default class InsightItem extends Component {
         :
         <div>
           {suggestedBudget ? 'Adding' : 'Removing'}
-          <b>{channelNickname}</b> {suggestedBudget ? 'to' : 'from'} your mix
+          <b> {channelNickname}</b> {suggestedBudget ? 'to' : 'from'} your mix
           in <b>{dates}</b>, {this.textForForecastObjectives(leftSideObjectives,objectivesRatio, suggestedBudget, currentBudget)}
         </div>
       }
