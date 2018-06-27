@@ -60,7 +60,7 @@ const requireAuth = (nextState, replace) => {
 };
 
 ReactDOM.render(
-  <Router history={ history }>
+  <Router onUpdate={() => window.scrollTo(0, 0)} history={ history }>
     <Route path="/" component={ SignIn } />
     <Route component={ App } auth={ auth } onEnter={ requireAuth }>
       <Route component={ Dashboard } onEnter={ requireAdminAuth }>
