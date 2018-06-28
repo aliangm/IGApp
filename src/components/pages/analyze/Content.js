@@ -80,7 +80,7 @@ export default class Content extends Component {
     };
 
     const relevantObjective = objectives
-      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && newFunnelMapping[item.indicator]);
+      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date() && newFunnelMapping[item.indicator]);
     const objective = relevantObjective ? relevantObjective.indicator : 'newMQL';
 
     const headRow = this.getTableRow(null, [
