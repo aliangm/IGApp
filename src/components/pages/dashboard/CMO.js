@@ -60,7 +60,7 @@ export default class CMO extends Component {
 
     //set objective
     const firstObjective = props.objectives
-      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date());
+      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date());
     if (firstObjective){
       this.setState({advancedIndicator: firstObjective.indicator});
     }
@@ -203,7 +203,7 @@ export default class CMO extends Component {
 
     const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
     const funnelObjectives = objectives
-      .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && funnelPossibleObjectives.includes(item.indicator))
+      .filter(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date() && funnelPossibleObjectives.includes(item.indicator))
       .map(item => item.indicator);
 
     const firstFunnelObjective = funnelObjectives && funnelObjectives.length > 0 ? funnelObjectives[0] : 'newMQL';
