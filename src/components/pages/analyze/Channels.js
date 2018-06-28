@@ -265,15 +265,17 @@ export default class Channels extends Component {
 
     const sumData = channelsWithData;
 
+    const totalBudget = sumData.reduce((sum, item) => sum + item.budget, 0);
+    const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100;
     const footRow = this.getTableRow(null, [
       'Total',
-      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.budget, 0)),
+      '$' + formatBudget(totalBudget),
       '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
       formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
       formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-      Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.CPX : sum, 0) / sumData.filter(item => isFinite(item.CPX)).length)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)
+      totalIndicatorGenerated,
+      '$' + formatBudget(totalBudget / totalIndicatorGenerated) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)
     ], {
       className: dashboardStyle.locals.footRow
     });
