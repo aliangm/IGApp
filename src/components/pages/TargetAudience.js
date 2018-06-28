@@ -318,7 +318,7 @@ export default class TargetAudience extends Component {
                   <div className={ this.classes.row } style={{
                     width: '258px'
                   }}>
-                    <Select { ... selects.reportsTo } selected="Coming Soon"/>
+                    <Select { ... selects.reportsTo } selected="Coming Soon" onChange={ () => {} }/>
                   </div>
                   <div className={ this.classes.row } style={{
                     width: '258px'
