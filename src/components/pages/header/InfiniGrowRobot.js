@@ -20,7 +20,7 @@ export default class InfiniGrowRobot extends Component {
 
     const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
     let firstObjective = objectives
-      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && funnelPossibleObjectives.includes(item.indicator));
+      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date() && funnelPossibleObjectives.includes(item.indicator));
 
     firstObjective = firstObjective ? firstObjective.indicator : 'newSQL';
     const historyValue = historyData && historyData.indicators && historyData.indicators[firstObjective] && historyData.indicators[firstObjective][0];

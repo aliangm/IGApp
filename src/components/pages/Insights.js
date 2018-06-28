@@ -60,7 +60,7 @@ export default class Insights extends Component {
     const {projectedPlan, objectives, approvedBudgets, CIM, planDate, approveChannel, declineChannel, approvedBudgetsProjection, actualIndicators} = this.props;
     const {showBalancerPopup, suggestedChannel, balancingChannel, findAlternative} = this.state;
     let relevantObjectives = objectives
-      .filter(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date())
+      .filter(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date())
       .map(item => item.indicator);
     const indicators = getIndicatorsWithProps();
     const objectiveOptions = Object.keys(indicators)
