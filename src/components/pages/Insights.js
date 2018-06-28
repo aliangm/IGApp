@@ -78,7 +78,7 @@ export default class Insights extends Component {
         const budget2 = (nextMonthBudgets[channel2] - (approvedBudgets[0][channel2] || 0)) * CIM[channel2][firstObjective];
         return budget2 - budget1;
       });
-    let cubesData = orderedSuggestions.map(channel => {
+    const cubesData = orderedSuggestions.map(channel => {
       const objectivesRatio = relevantObjectives.map(objective => {
         const ratio = ((nextMonthBudgets[channel] - (approvedBudgets[0][channel] || 0)) * CIM[channel][objective]) / currentBudgets;
         return {
