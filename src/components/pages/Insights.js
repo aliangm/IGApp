@@ -78,7 +78,7 @@ export default class Insights extends Component {
         const budget2 = (nextMonthBudgets[channel2] - (approvedBudgets[0][channel2] || 0)) * CIM[channel2][firstObjective];
         return budget2 - budget1;
       });
-    const cubes = orderedSuggestions.map(channel => {
+    let cubesData = orderedSuggestions.map(channel => {
       const objectivesRatio = relevantObjectives.map(objective => {
         const ratio = ((nextMonthBudgets[channel] - (approvedBudgets[0][channel] || 0)) * CIM[channel][objective]) / currentBudgets;
         return {
@@ -100,23 +100,49 @@ export default class Insights extends Component {
               :
               (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) < lowerRange && (approvedBudgets[0][item] || 0) - (nextMonthBudgets[item] || 0) > higherRange));
         if (alternatives && alternatives.length > 0) {
-          this.setState({suggestedChannel: channel, balancingChannel: alternatives[skip % alternatives.length], showBalancerPopup: true, findAlternative: alternatives.length > 1 ? () => { findBalancer(channel, ++skip)} : null });
+          this.setState({
+            suggestedChannel: channel,
+            balancingChannel: alternatives[skip % alternatives.length],
+            showBalancerPopup: true,
+            findAlternative: alternatives.length > 1 ? () => {
+              findBalancer(channel, ++skip)
+            } : null
+          });
         }
         else {
           this.setState({showBalancerPopup: true});
         }
       };
+
+      return {
+        channel: channel,
+        channelNickname: getChannelNickname(channel),
+        objectivesRatio: objectivesRatio,
+        dates: dates[0],
+        currentBudget: (approvedBudgets[0][channel] || 0),
+        suggestedBudget: nextMonthBudgets[channel],
+        approveChannel: (() => {
+          approveChannel(0, channel, nextMonthBudgets[channel])
+        }),
+        declineChannel: (() => {
+          declineChannel(0, channel, (approvedBudgets[0][channel] || 0))
+        }),
+        findBalancer: (() => {
+          findBalancer(channel)
+        })
+      };
+    })
+      // Filter all 'invest' insights that no effected indicators
+      .filter(data=>
+        !((data.suggestedBudget > data.currentBudget) &&
+          data.objectivesRatio.every(objectiveRatio=>objectiveRatio.ratio==0)
+        )
+      );
+
+    const cubes = cubesData.map((data)=>{
       return <InsightItem
-        key={channel}
-        channel={channel}
-        channelNickname={getChannelNickname(channel)}
-        objectivesRatio={objectivesRatio}
-        dates={dates[0]}
-        currentBudget={approvedBudgets[0][channel] || 0}
-        suggestedBudget={nextMonthBudgets[channel]}
-        approveChannel={() => { approveChannel(0, channel, nextMonthBudgets[channel]) }}
-        declineChannel={() => { declineChannel(0, channel, (approvedBudgets[0][channel] || 0)) }}
-        findBalancer={() => { findBalancer(channel) }}
+        key={data.channel}
+        {... data}
       />
     });
 

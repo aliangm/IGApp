@@ -28,17 +28,15 @@
 }
 
 .right-side {
-    width: 235px;
-    border-radius: 2px;
-    background-color: #0099cc;
-    border: solid 2px #e3e6f4;
-    padding: 15px;
-    position: relative;
-}
+     width: 235px;
+     background-color: #0099cc;
+     border-left: solid 2px #e3e6f4;
+     padding: 15px;
+     position: relative;
+ }
 
-.right-side[data-green] {
+.right-side[data-green="true"] {
     background-color: #2fb023;
-    border: solid 2px #e3e6f4;
 }
 
 .end {
