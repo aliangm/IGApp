@@ -256,7 +256,7 @@ export default class Channels extends Component {
             formatBudget(webVisits),
             formatBudget(conversion),
             Math.round(funnelIndicator * 100) / 100,
-            '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0)
+            isFinite(CPX) ? ('$' + formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))) : '-'
           ], {
             key: channel,
             className: dashboardStyle.locals.tableRow
@@ -267,6 +267,7 @@ export default class Channels extends Component {
 
     const totalBudget = sumData.reduce((sum, item) => sum + item.budget, 0);
     const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100;
+    const totalEfficiency = Math.round(totalBudget / totalIndicatorGenerated);
     const footRow = this.getTableRow(null, [
       'Total',
       '$' + formatBudget(totalBudget),
@@ -275,7 +276,7 @@ export default class Channels extends Component {
       formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
       formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
       totalIndicatorGenerated,
-      '$' + formatBudget(Math.round(totalBudget / totalIndicatorGenerated)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)
+      isFinite(totalEfficiency) ? ('$' + formatBudget(totalEfficiency) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : '-'
     ], {
       className: dashboardStyle.locals.footRow
     });
