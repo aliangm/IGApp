@@ -236,15 +236,17 @@ export default class Users extends Component {
     });
 
     return <div>
-      <Toggle
-        leftText={"Users"}
-        rightText={"Accounts"}
-        leftClick={() => this.toggleUsersAccount(GROUP_BY.USERS)}
-        rightClick={() => this.toggleUsersAccount(GROUP_BY.ACCOUNT)}
-        leftActive={this.state.groupBy === GROUP_BY.USERS}
-      />
+      <div className={this.classes.toggle}>
+        <Toggle
+          leftText={"Users"}
+          rightText={"Accounts"}
+          leftClick={() => this.toggleUsersAccount(GROUP_BY.USERS)}
+          rightClick={() => this.toggleUsersAccount(GROUP_BY.ACCOUNT)}
+          leftActive={this.state.groupBy === GROUP_BY.USERS}
+        />
+      </div>
       {this.props.userAccount.pages && this.props.userAccount.pages.users ?
-        <div className={planStyle.locals.wrap}>
+        <div>
           <div className={dashboardStyle.locals.upperPanel}>
             <div className={dashboardStyle.locals.historyConfigText}>
               Date range:

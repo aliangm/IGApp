@@ -4,6 +4,10 @@
     margin: 38px 15px;
 }
 
+.toggle{
+    margin: 12px 15px 5px
+}
+
 .table {
     width: 100%;
     table-layout: auto;
