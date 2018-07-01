@@ -72,7 +72,6 @@ export default class Sidebar extends Component {
     ];
     const measureSubMenu = [
       { icon: "sidebar:analyze", link: "/measure/analyze/overview", text: "Analyze", notFirstTime: true, isHighlighted: this.isHighlighted('/measure/analyze') },
-      { icon: "sidebar:users", link: "/measure/audiences", text: "Audiences", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.users },
       { icon: "sidebar:attribution", link: "/measure/attribution/setup", text: "Attribution", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.attribution, isHighlighted: this.isHighlighted('/measure/attribution') },
     ];
     const planSubMenu =[

@@ -14,7 +14,8 @@ export default class Analyze extends Component {
       "Overview": '/measure/analyze/overview',
       "Channels": '/measure/analyze/channels',
       "campaigns": '/measure/analyze/campaigns',
-      "Content": '/measure/analyze/content'
+      "Content": '/measure/analyze/content',
+      "Audiences": '/measure/analyze/audiences'
     };
 
     const tabNames = Object.keys(tabs);
