@@ -99,7 +99,7 @@ ReactDOM.render(
         <Route path="/measure/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
         <Route path="/measure/analyze/audiences" component={ Users } onEnter={ requireAdminAuth }/>
       </Route>
-      <Route path="/plan/insights" component={ Insights } onEnter={ requireAdminAuth }/>
+      <Route path="/insights" component={ Insights } onEnter={ requireAdminAuth }/>
       <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>
       <Route path="/plan/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAdminAuth }/>
     </Route>

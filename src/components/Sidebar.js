@@ -76,7 +76,6 @@ export default class Sidebar extends Component {
     ];
     const planSubMenu =[
       { icon: "sidebar:plan", link: "/plan/plan/annual", text: "Plan", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.plan, isHighlighted: this.isHighlighted('/plan/plan') },
-      { icon: "sidebar:insights", link: "/plan/insights", text: "Insights", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.insights },
       { icon: "sidebar:planned-vs-actual", link: "/plan/planned-vs-actual", text: "Planned VS Actual", notFirstTime: true },
     ];
     return <div>
@@ -98,6 +97,7 @@ export default class Sidebar extends Component {
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel" isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
+          <MenuItem icon="sidebar:insights" link="/insights" isHighlighted={this.isHighlighted('/insights')} text="Insights" notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.insights} />
           <MenuItem icon="sidebar:settings" link="/settings" text="Settings" onClick={this.closeSubMenu} notFirstTime={true} style={{ position: 'absolute', width: '100%', bottom: '20px' }}/>
         </div>
 
