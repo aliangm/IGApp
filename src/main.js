@@ -92,7 +92,6 @@ ReactDOM.render(
         <Route path="/measure/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
         <Route path="/measure/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
       </Route>
-      <Route path="/measure/audiences" component={ Users } onEnter={ requireAdminAuth }/>
       <Route component={ Analyze } onEnter={ requireAdminAuth }>
         <Route path="/measure/analyze/overview" component={ Overview } onEnter={ requireAdminAuth }/>
         <Route path="/measure/analyze/channels" component={ Channels } onEnter={ requireAdminAuth }/>
