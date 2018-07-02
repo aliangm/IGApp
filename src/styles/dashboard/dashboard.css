@@ -61,6 +61,7 @@
     padding: 0 12px;
     overflow: hidden;
     display: block;
+    position: relative;
 }
 
 .text {
@@ -107,7 +108,7 @@
 }
 
 .history-grow {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 500;
     color: #24b10e;
     margin-right: 10px;
@@ -124,7 +125,7 @@
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 8px 11px 8px;
+    border-width: 0 6px 9px 6px;
     border-color: transparent transparent #24b10e transparent;
     align-self: center;
 }
@@ -144,6 +145,7 @@
 .center {
     display: flex;
     justify-content: center;
+    margin-left: 6px;
 }
 
 .sad-icon {
@@ -203,6 +205,13 @@
     height: 40px;
     color: #354052;
     composes: row;
+    text-transform: capitalize;
+}
+
+.foot-row {
+    composes: head-row;
+    background-color: #33cc3478;
+    font-size: 16px;
 }
 
 .table-row {
@@ -416,7 +425,7 @@
     float: left;
     width: 33.33%;
     height: 100%;
-    padding: 0 20px;
+    padding: 0 35px;
     position: relative;
 }
 
@@ -463,8 +472,8 @@
 .quarter {
     position:relative;
     width: 50%;
-    height: 50%;
-    padding-bottom: 20px;
+    height: 107px;
+    padding: 27px 0;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -475,6 +484,7 @@
     float:right;
     border-left: solid 1px #f2f2f2;
     border-bottom: solid 1px #f2f2f2;
+    padding-left: 47px;
 }
 
 .quarter2 {
@@ -496,31 +506,34 @@
     float:right;
     border-left: solid 1px #f2f2f2;
     border-top: solid 1px #f2f2f2;
+    padding-left: 47px;
 }
 
 .quarter-text {
     composes: text;
     border-bottom: none;
-    padding-top: 8px;
+    padding-top: 0;
     font-weight: 500;
+    justify-content: flex-start;
+    font-size: 14px;
 }
 
 .quarter-number {
     composes: number;
     margin: 3px 0;
-    font-size: 32px;
+    font-size: 22px;
     font-weight: 500;
+    justify-content: flex-start;
 }
 
 .snapshot-text {
     composes: quarter-text;
-    padding-top: 3px;
+    padding-top: 0;
     justify-content: flex-start;
 }
 
 .snapshot-number {
     composes: quarter-number;
-    font-size: 26px;
     justify-content: flex-start;
 }
 
@@ -630,13 +643,9 @@
 }
 
 .graph-metrics-title {
-    align-self: center;
-    position: absolute;
     font-size: 11px;
     font-weight: bold;
     color: #4b515e;
-    left: 110px;
-    top: 0;
 }
 
 .graph-spend-title {
@@ -645,19 +654,14 @@
 }
 
 .graph-indicator {
-    align-self: center;
-    position: absolute;
     color: #4b515e;
-    left: 110px;
     font-size: 12px;
     padding-bottom: 3px;
     border-bottom: 3px solid #f5a623;
-    top: 15px;
 }
 
 .graph-channel {
     composes: graph-indicator;
-    left: 660px;
     border-bottom: none;
     display: flex;
 }
@@ -665,4 +669,5 @@
 .column-header {
     display: flex;
     position: relative;
+    border-bottom: 1px solid #f2f2f2;
 }

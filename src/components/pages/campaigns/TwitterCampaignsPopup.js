@@ -121,7 +121,7 @@ export default class TwitterCampaignsPopup extends Component {
       <div className={ CRMStyle.locals.twitterads } onClick={ this.getAuthorization.bind(this) }/>
       <div hidden={this.state.hidden}>
         <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
-          <Title title="Choose Facebook Account"/>
+          <Title title="Choose Twitter Account"/>
           <div className={ this.classes.row }>
             <Select { ... selects.accounts } selected={ this.state.selectedAccount} onChange={ (e)=> { this.setState({selectedAccount: e.value}); } }/>
           </div>

@@ -24,7 +24,7 @@ export default class Setup extends Component {
   render() {
     const {attribution, companyWebsite} = this.props;
     const siteStructure = attribution.siteStructure || {};
-    const {homepage, pricing, blog, caseStudies, contact, aboutUs} = siteStructure;
+    const {homepage, pricing, blog, caseStudies, contact, aboutUs, presentations, eBooks, whitepapers, videos} = siteStructure;
     return <div style={{ padding: '20px' }}>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Homepage</Label>
@@ -71,6 +71,38 @@ export default class Setup extends Component {
         <Textfield
           value={aboutUs || (companyWebsite + '/company')}
           onChange={ this.handleChange.bind(this, 'aboutUs') }
+          style={{ width: '300px'}}
+        />
+      </div>
+      <div className={ this.classes.cell }>
+        <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Presentations</Label>
+        <Textfield
+          value={presentations || (companyWebsite + '/presentations')}
+          onChange={ this.handleChange.bind(this, 'presentations') }
+          style={{ width: '300px'}}
+        />
+      </div>
+      <div className={ this.classes.cell }>
+        <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>E-books</Label>
+        <Textfield
+          value={eBooks || (companyWebsite + '/e-books')}
+          onChange={ this.handleChange.bind(this, 'eBooks') }
+          style={{ width: '300px'}}
+        />
+      </div>
+      <div className={ this.classes.cell }>
+        <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Whitepapers</Label>
+        <Textfield
+          value={whitepapers || (companyWebsite + '/whitepapers')}
+          onChange={ this.handleChange.bind(this, 'whitepapers') }
+          style={{ width: '300px'}}
+        />
+      </div>
+      <div className={ this.classes.cell }>
+        <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Videos</Label>
+        <Textfield
+          value={videos || (companyWebsite + '/videos')}
+          onChange={ this.handleChange.bind(this, 'videos') }
           style={{ width: '300px'}}
         />
       </div>

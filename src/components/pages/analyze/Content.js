@@ -43,17 +43,6 @@ export default class Content extends Component {
     }
   }
 
-  getChannel(page) {
-    const siteStructure = this.props.attribution.siteStructure || {};
-    if (page.includes(siteStructure.blog)) {
-      return 'content_contentCreation_companyBlog';
-    }
-    if (page.includes(siteStructure.caseStudies)) {
-      return 'content_contentCreation_caseStudies';
-    }
-    return 'web_companyWebsite';
-  }
-
   render() {
     const { previousData, attribution, objectives } = this.props;
     const attributionPages = attribution.pages || [];
@@ -91,7 +80,7 @@ export default class Content extends Component {
     };
 
     const relevantObjective = objectives
-      .find(item => item.archived !== true && timeFrameToDate(item.timeFrame) >= new Date() && newFunnelMapping[item.indicator]);
+      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date() && newFunnelMapping[item.indicator]);
     const objective = relevantObjective ? relevantObjective.indicator : 'newMQL';
 
     const headRow = this.getTableRow(null, [
@@ -168,7 +157,7 @@ export default class Content extends Component {
 
     const pagesData = attributionPages.map(item => {
       return {
-        channel: this.getChannel(item.page),
+        channel: item.channel,
         title: item.title,
         revenueMetric: item[this.state.attributionTableRevenueMetric],
         webVisits: item.webVisits,
