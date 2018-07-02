@@ -119,7 +119,7 @@ export default class Campaigns extends Component {
             style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }} data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
             {this.state.attributionTableRevenueMetric}
           </div>
         }
@@ -151,7 +151,7 @@ export default class Campaigns extends Component {
             style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{ cursor: 'pointer' }} data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
             {getIndicatorNickname(this.state.attributionTableIndicator)}
           </div>
         }
