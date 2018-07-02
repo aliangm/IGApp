@@ -4,7 +4,7 @@ import { Router, Route } from 'react-router';
 import history from 'history';
 import CMO from 'components/pages/dashboard/CMO';
 import Dashboard from './components/pages/Dashboard';
-import Profile from './components/pages/Profile';
+import Product from './components/pages/Product';
 import Welcome from './components/pages/Welcome';
 import Preferences from './components/pages/Preferences';
 import TargetAudience from './components/pages/TargetAudience';
@@ -40,6 +40,8 @@ import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
+import Settings from 'components/pages/Settings';
+import Profile from 'components/pages/Profile';
 
 style.use();
 const auth = new AuthService();
@@ -67,13 +69,8 @@ ReactDOM.render(
         <Route path="/dashboard/CMO" component={ CMO } onEnter={ requireAdminAuth }/>
         <Route path="/dashboard/metrics" component={ Indicators } onEnter={ requireAdminAuth }/>
       </Route>
-      <Route path="/profile/product" component={ Profile } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
       <Route path="/profile/technology-stack" component={ TechnologyStack } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
-      <Route path="/settings" component={ Welcome } onEnter={ requireAdminAuth }/>
       <Route component={ Plan } onEnter={ requireAdminAuth }>
         <Route path="/plan/plan/current" component={ CurrentTab } onEnter={ requireAdminAuth }/>
         <Route path="/plan/plan/annual" component={ AnnualTab } onEnter={ requireAdminAuth }/>
@@ -85,12 +82,21 @@ ReactDOM.render(
         <Route path="/campaigns/online-performance" component={ OnlineTab } onEnter={ requireAuth }/>
         <Route path="/campaigns/ideas" component={ IdeasTab } onEnter={ requireAuth }/>
       </Route>
-      <Route component={ Attribution } onEnter={ requireAuth }>
-        <Route path="/measure/attribution/setup" component={ Setup } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
+      <Route component={Settings} onEnter={requireAuth}>
+        <Route path="/settings/account" component={ Welcome } onEnter={ requireAuth }/>
+        <Route component={ Attribution } onEnter={ requireAuth }>
+          <Route path="/settings/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth }/>
+          <Route path="/settings/attribution/setup" component={ Setup } onEnter={ requireAuth }/>
+          <Route path="/settings/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth }/>
+          <Route path="/settings/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
+          <Route path="/settings/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
+        </Route>
+        <Route component={ Profile } onEnter={ requireAuth }>
+          <Route exact path="/settings/profile/product" component={ Product } onEnter={ requireAdminAuth }/>
+          <Route exact path="/settings/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
+          <Route exact path="/settings/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
+          <Route exact path="/settings/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
+        </Route>
       </Route>
       <Route component={ Analyze } onEnter={ requireAdminAuth }>
         <Route path="/measure/analyze/overview" component={ Overview } onEnter={ requireAdminAuth }/>

@@ -232,8 +232,6 @@ export default class TargetAudience extends Component {
     };
     const defaultTabs = this.props.targetAudience.map(target => target.info.name || null);
     return <div>
-      <Page popup={ isPopupMode() }>
-        <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
@@ -432,7 +430,6 @@ export default class TargetAudience extends Component {
             }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
           }
         </div>
-      </Page>
     </div>
   }
 }

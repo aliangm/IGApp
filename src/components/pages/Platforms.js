@@ -61,8 +61,6 @@ export default class Platforms extends Component {
 
   render() {
     return <div>
-      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } width="100%">
-        <Title title="Integrations"/>
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
           <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
@@ -148,7 +146,6 @@ export default class Platforms extends Component {
           :
           <div style={{ paddingBottom: '60px' }}/>
         }
-      </Page>
     </div>
   }
 }

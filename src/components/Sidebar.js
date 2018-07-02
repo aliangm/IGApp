@@ -98,7 +98,7 @@ export default class Sidebar extends Component {
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel" isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
           <MenuItem icon="sidebar:insights" link="/insights" isHighlighted={this.isHighlighted('/insights')} text="Insights" notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.insights} />
-          <MenuItem icon="sidebar:settings" link="/settings" text="Settings" onClick={this.closeSubMenu} notFirstTime={true} style={{ position: 'absolute', width: '100%', bottom: '20px' }}/>
+          <MenuItem icon="sidebar:settings" link="/settings/account" text="Settings" onClick={this.closeSubMenu} notFirstTime={true} style={{ position: 'absolute', width: '100%', bottom: '20px' }} isHighlighted={this.isHighlighted('/settings')}/>
         </div>
 
       </div>
