@@ -79,12 +79,12 @@ export default class Channels extends Component {
     }
   }
 
-  formatEffciency(divident, divsor, indicatorName){
-    const efficiency =  Math.round(divident/divsor);
+  formatEffciency(dividend, divisor, indicatorName){
+    const efficiency =  Math.round(dividend/divisor);
     if(isFinite(efficiency)){
       return '$' + formatBudget(efficiency) + "/" + indicatorName;
     }
-    if(divident == 0){
+    if(dividend == 0){
       return '0';
     }
     return '-';
@@ -267,7 +267,7 @@ export default class Channels extends Component {
             formatBudget(webVisits),
             formatBudget(conversion),
             Math.round(funnelIndicator * 100) / 100,
-            this.formatEffciency(budget,funnelIndicator,getIndicatorNickname(this.state.attributionTableIndicator, true))
+            this.formatEffciency(budget, funnelIndicator, getIndicatorNickname(this.state.attributionTableIndicator, true))
           ], {
             key: channel,
             className: dashboardStyle.locals.tableRow
@@ -286,7 +286,7 @@ export default class Channels extends Component {
       formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
       formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
       totalIndicatorGenerated,
-      this.formatEffciency(totalBudget,totalIndicatorGenerated,getIndicatorNickname(this.state.attributionTableIndicator, true))
+      this.formatEffciency(totalBudget, totalIndicatorGenerated, getIndicatorNickname(this.state.attributionTableIndicator, true))
     ], {
       className: dashboardStyle.locals.footRow
     });
