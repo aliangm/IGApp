@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import Page from 'components/Page';
-import { Link } from 'react-router';
+import NavLink from 'components/controls/NavLink';
 import style from 'styles/settings/settings-side-bar.css';
 
 export default class SettingsSideBar extends Component {
@@ -9,20 +8,28 @@ export default class SettingsSideBar extends Component {
   style = style;
 
   render() {
-    const tabs = {
-      Account: '/settings/account',
-      Profile: '/settings/profile/product',
-      Attribution: '/settings/attribution/setup'
-    };
-    const tabNames = Object.keys(tabs);
+    const tabs = [{
+        name: 'Account',
+        path: '/settings/account',
+        representivePath: '/settings/account'
+      },
+      {
+        name: 'Profile',
+        path: '/settings/profile/product',
+        representivePath: '/settings/profile'
+      },
+      {
+        name: 'Attribution',
+        path: '/settings/attribution/setup',
+        representivePath: '/settings/attribution'
+      }];
 
     return <div className={this.classes.wrapper}>
       {
-        tabNames.map((name, i) => {
-          const link = Object.values(tabs)[i];
-          return <Link to={ link } activeClassName={this.classes.headTabSelected} className={this.classes.headTab} key={ i }>
+        tabs.map(({name, path, representivePath}) => {
+          return <NavLink pathToCheck={representivePath} currentPath={this.props.currentPath} to={ path } activeClassName={this.classes.headTabSelected} className={this.classes.headTab} key={ name }>
             { name }
-          </Link>
+          </NavLink>
         })
       }
     </div>

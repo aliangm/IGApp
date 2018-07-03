@@ -92,10 +92,10 @@ ReactDOM.render(
           <Route path="/settings/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
         </Route>
         <Route component={ Profile } onEnter={ requireAuth }>
-          <Route exact path="/settings/profile/product" component={ Product } onEnter={ requireAdminAuth }/>
-          <Route exact path="/settings/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
-          <Route exact path="/settings/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
-          <Route exact path="/settings/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
+          <Route path="/settings/profile/product" component={ Product } onEnter={ requireAdminAuth }/>
+          <Route path="/settings/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
+          <Route path="/settings/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
+          <Route path="/settings/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
         </Route>
       </Route>
       <Route component={ Analyze } onEnter={ requireAdminAuth }>

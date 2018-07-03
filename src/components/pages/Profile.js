@@ -23,7 +23,6 @@ export default class Profile extends Component {
     const childrenWithProps = React.Children.map(children,
       (child) => React.cloneElement(child, otherProps));
 
-
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner} className={profileStyle.locals.static} width="100%">
         <div className={ this.classes.head }>

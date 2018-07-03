@@ -18,7 +18,7 @@ export default class Settings extends Component {
 
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
-        <SettingsSideBar />
+        <SettingsSideBar currentPath={this.props.location.pathname}/>
           <div style={{flex:'1'}}>
             {childrenWithProps}
           </div>
