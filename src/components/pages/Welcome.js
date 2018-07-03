@@ -289,7 +289,7 @@ export default class Welcome extends Component {
     </div>;
 
     return <div>
-      <Page popup={ isPopupMode() }>
+      <Page popup={ isPopupMode()} className={welcomeStyle.locals.static} innerClassName={welcomeStyle.locals.innerPage}>
         <Title title={ title } subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
         {isPopupMode() ?
