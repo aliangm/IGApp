@@ -493,6 +493,9 @@ export default class Preferences extends Component {
     });
 
     return <div>
+      <Page popup={ isPopupMode() } className={!isPopupMode() ? preferencesStyle.locals.static :''}>
+        {isPopupMode() ? <Title title="Preferences"
+               subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : ''}
         <div className={ this.classes.error }>
           <label hidden={ !this.props.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
@@ -761,6 +764,7 @@ export default class Preferences extends Component {
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }
+      </Page>
     </div>
   }
 }

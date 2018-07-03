@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/onboarding/onboarding.css';
 import platformsStyle from 'styles/indicators/platforms.css';
+import preferencesStyle from 'styles/preferences/preferences.css';
 import BackButton from 'components/pages/profile/BackButton';
 import NextButton from 'components/pages/profile/NextButton';
 import history from 'history';
@@ -25,7 +26,7 @@ import Button from 'components/controls/Button';
 export default class Platforms extends Component {
 
   style = style;
-  styles = [platformsStyle];
+  styles = [platformsStyle,preferencesStyle];
 
   constructor(props) {
     super(props);
@@ -61,6 +62,8 @@ export default class Platforms extends Component {
 
   render() {
     return <div>
+      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? preferencesStyle.locals.static :''} width="100%">
+        {isPopupMode() ? <Title title="Integrations"/> : ''}
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
           <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
@@ -140,12 +143,13 @@ export default class Platforms extends Component {
             } }/>
             <div style={{ width: '30px' }} />
             <NextButton onClick={ () => {
-              history.push('/profile/preferences');
+              history.push('/settings/profile/preferences');
             } }/>
           </div>
           :
           <div style={{ paddingBottom: '60px' }}/>
         }
+      </Page>
     </div>
   }
 }

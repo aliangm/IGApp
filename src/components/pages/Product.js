@@ -235,7 +235,11 @@ export default class Product extends Component {
 
 
     return <div>
-      {/*<Page popup={ isPopupMode() }> */}
+      <Page popup={ isPopupMode() } className={!isPopupMode() ? preferencesStyle.locals.static :''}>
+        {
+          isPopupMode() ? <Title title="Product"
+                                subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/> : ''
+        }
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
@@ -413,7 +417,7 @@ export default class Product extends Component {
               this.calculatePricing(()=> {
                 this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
-                    history.push('/settings');
+                    history.push('/settings/account');
                   });
               });
             }}/>
@@ -423,7 +427,7 @@ export default class Product extends Component {
                 this.calculatePricing(() => {
                   this.props.updateUserMonthPlan({userProfile: this.props.userProfile, pricingTiers: this.props.pricingTiers, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                     .then(() => {
-                      history.push('/profile/target-audience');
+                      history.push('/settings/profile/target-audience');
                     });
                 });
               }
@@ -443,7 +447,7 @@ export default class Product extends Component {
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>
         }
-      {/*</Page>*/}
+      </Page>
     </div>
   }
 }
