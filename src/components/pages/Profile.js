@@ -12,10 +12,10 @@ export default class Profile extends Component {
 
   render() {
     const tabs = {
-      Product: '/settings/profile/product',
-      TargetAudience: '/settings/profile/target-audience',
-      Integrations: '/settings/profile/integrations',
-      Preferences: '/settings/profile/preferences',
+      "Product": '/settings/profile/product',
+      "Target Audience": '/settings/profile/target-audience',
+      "Integrations": '/settings/profile/integrations',
+      "Preferences": '/settings/profile/preferences',
     };
 
     const tabNames = Object.keys(tabs);

@@ -18,9 +18,6 @@ export default class Dashboard extends Component {
     const tabNames = Object.keys(tabs);
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.props));
-
-    console.log(childrenWithProps);
-
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>

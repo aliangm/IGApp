@@ -18,7 +18,6 @@ const GROUP_BY ={
   USERS : 0,
   ACCOUNT: 1
 };
-const ACCOUNT = 1;
 
 export default class Users extends Component {
 
