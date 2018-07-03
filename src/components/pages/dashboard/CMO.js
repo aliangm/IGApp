@@ -47,7 +47,7 @@ export default class CMO extends Component {
 
     this.state = {
       activeIndex: void 0,
-      onlyThisMonth: false,
+      onlyThisMonth: true,
       advancedIndicator: 'SQL'
     };
     this.onPieEnter = this.onPieEnter.bind(this);
@@ -685,11 +685,11 @@ export default class CMO extends Component {
           <div className={ dashboardStyle.locals.item } style={{ height: '412px', width: '825px' }}>
             <div style={{ display: 'flex', position: 'relative' }}>
               <Label
-                checkbox={this.state.onlyThisMonth}
+                checkbox={!this.state.onlyThisMonth}
                 onChange={ () => { this.setState({onlyThisMonth: !this.state.onlyThisMonth}) } }
                 style={{ margin: '0', alignSelf: 'center', textTransform: 'capitalize', fontSize: '12px', position: 'absolute' }}
               >
-                Show only this month results
+                show all-time
               </Label>
               <div className={ dashboardStyle.locals.text }>
                 Funnel

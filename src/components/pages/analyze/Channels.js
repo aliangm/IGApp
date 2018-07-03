@@ -79,6 +79,17 @@ export default class Channels extends Component {
     }
   }
 
+  formatEffciency(dividend, divisor, indicatorName){
+    const efficiency =  Math.round(dividend/divisor);
+    if(isFinite(efficiency)){
+      return '$' + formatBudget(efficiency) + "/" + indicatorName;
+    }
+    if(dividend == 0){
+      return '0';
+    }
+    return '-';
+  }
+
   render() {
     const { previousData, attribution, CEVs } = this.props;
     const { firstObjective } = this.state;
@@ -167,7 +178,7 @@ export default class Channels extends Component {
             style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }} data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
             {this.state.attributionTableRevenueMetric}
           </div>
         }
@@ -199,7 +210,7 @@ export default class Channels extends Component {
             style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
           />
           :
-          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{ cursor: 'pointer' }} data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
             {getIndicatorNickname(this.state.attributionTableIndicator)}
           </div>
         }
@@ -256,7 +267,7 @@ export default class Channels extends Component {
             formatBudget(webVisits),
             formatBudget(conversion),
             Math.round(funnelIndicator * 100) / 100,
-            '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0)
+            this.formatEffciency(budget, funnelIndicator, getIndicatorNickname(this.state.attributionTableIndicator, true))
           ], {
             key: channel,
             className: dashboardStyle.locals.tableRow
@@ -265,15 +276,17 @@ export default class Channels extends Component {
 
     const sumData = channelsWithData;
 
+    const totalBudget = sumData.reduce((sum, item) => sum + item.budget, 0);
+    const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100;
     const footRow = this.getTableRow(null, [
       'Total',
-      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.budget, 0)),
+      '$' + formatBudget(totalBudget),
       '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
       formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
       formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-      Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
+      totalIndicatorGenerated,
+      this.formatEffciency(totalBudget, totalIndicatorGenerated, getIndicatorNickname(this.state.attributionTableIndicator, true))
     ], {
       className: dashboardStyle.locals.footRow
     });
