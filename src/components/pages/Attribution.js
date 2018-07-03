@@ -1,7 +1,8 @@
 import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
-import style from 'styles/profile/profile.css';
+import profileStyle from 'styles/profile/profile.css';
+import style from 'styles/plan/plan.css';
 import UploadOfflinePopup from 'components/pages/attribution/UploadOfflinePopup';
 import { FeatureToggle } from 'react-feature-toggles';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
@@ -10,6 +11,7 @@ import { Link } from 'react-router';
 
 export default class Attribution extends Component {
   style = style;
+  styles = [profileStyle];
 
   constructor(props) {
     super(props);
@@ -41,7 +43,7 @@ export default class Attribution extends Component {
       (child) => React.cloneElement(child, this.props));
     return <FeatureToggle featureName="attribution">
       <div>
-        <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } className={this.classes.static} width="100%">
+        <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } className={profileStyle.locals.static} width="100%">
           <div className={ this.classes.head }>
             <div className={ this.classes.headTitle }>Attribution</div>
             <div className={ this.classes.headTabs }>
@@ -69,7 +71,7 @@ export default class Attribution extends Component {
             </div>
           </div>
           { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
-            <div style={{paddingTop: '90px'}}>
+            <div style={{paddingTop: '90px'}} className={ this.classes.wrap }>
               {childrenWithProps}
               <div hidden={!this.state.showOfflinePopup}>
                 <UploadOfflinePopup close={ () => { this.setState({showOfflinePopup: false}) } } setDataAsState={this.props.setDataAsState}/>

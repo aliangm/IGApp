@@ -1,13 +1,14 @@
 import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
-import style from 'styles/profile/profile.css';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
+import profileStyle from 'styles/profile/profile.css';
+import style from 'styles/plan/plan.css';
 import { Link } from 'react-router';
 
 export default class Profile extends Component {
 
   style = style;
+  styles = [profileStyle];
 
   render() {
     const tabs = {
@@ -24,7 +25,7 @@ export default class Profile extends Component {
 
 
     return <div>
-      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner} className={this.classes.static} width="100%">
+      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner} className={profileStyle.locals.static} width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Profile</div>
           <div className={ this.classes.headTabs }>
@@ -38,7 +39,7 @@ export default class Profile extends Component {
             }
           </div>
         </div>
-          <div>
+          <div className={ this.classes.wrap }>
             {childrenWithProps}
           </div>
       </Page>

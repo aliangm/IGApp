@@ -15,17 +15,14 @@
 }
 
 .head-tab {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 200;
     display: flex;
     justify-content: left;
     cursor: pointer;
     position: relative;
-    color: #354052;
     text-decoration: none;
-    margin-left: 9px;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin: 15px 0 15px 5px;
     height: 35px;
     align-items: center;
     padding-left: 4px;
