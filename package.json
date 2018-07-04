@@ -71,5 +71,8 @@
     "react-country-flag": "^0.1.12",
     "xlsx": "^0.12.1",
     "react-tooltip": "^3.4.0"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.2"
   }
 }

@@ -21,6 +21,7 @@ import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
+import DashboardNumberWithContext from "./DashboardNumberWithContext";
 
 export default class CMO extends Component {
 
@@ -655,16 +656,14 @@ export default class CMO extends Component {
             </div>
           </div>
         </div>
-        <div className={ this.classes.colCenter }>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Annual Budget
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              ${formatBudget(Math.ceil(annualBudget/1000)*1000)}
-            </div>
-          </div>
-        </div>
+        <DashboardNumberWithContext
+          title="Annual Budget"
+          stat={'$'+formatBudget(Math.ceil(annualBudget/1000)*1000)}
+          contextStat="context"
+          contextText="context text"
+          isPositive={true}
+          tooltipText={'what a tooltip!'}
+        />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
           <div className={ dashboardStyle.locals.item }>
             <div className={ dashboardStyle.locals.text }>
