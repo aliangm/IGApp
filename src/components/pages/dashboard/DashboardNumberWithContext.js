@@ -32,7 +32,7 @@ class DashboardNumberWithContext extends Component {
 
 DashboardNumberWithContext.propTypes = {
   title:PropTypes.string.isRequired,
-  stat:PropTypes.string.isRequired,
+  stat:PropTypes.node,
   contextStat:PropTypes.string.isRequired,
   statWithArrow: PropTypes.bool,
   contextText: PropTypes.string.isRequired,

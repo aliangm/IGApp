@@ -99,11 +99,10 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs,annualBudget,annualBudgetLeftToPlan } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
-    const annualBudget = annualBudgetArray.reduce((a, b) => a+b, 0);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
@@ -117,7 +116,6 @@ export default class CMO extends Component {
           alreadyExistItem.value += merged[0][channel];
         }
       });
-    const budgetLeftToPlan = annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);;
 
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
@@ -656,10 +654,10 @@ export default class CMO extends Component {
         />
         <DashboardNumberWithContext
           title="Annual Budget"
-          stat={'$'+formatBudget(Math.ceil(annualBudget/1000)*1000)}
-          contextStat="context"
-          contextText="context text"
-          isPositive={true}
+          stat={'$'+formatBudgetShortened(annualBudget)}
+          contextStat={'$'+formatBudgetShortened(annualBudgetLeftToPlan)}
+          contextText="left to plan"
+          isPositive={annualBudgetLeftToPlan > 0}
           tooltipText={'what a tooltip!'}
         />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
@@ -669,8 +667,8 @@ export default class CMO extends Component {
             </div>
             <div className={ dashboardStyle.locals.number }>
               {
-                Math.abs(budgetLeftToPlan) >= 100 ?
-                  '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                Math.abs(annualBudgetLeftToPlan) >= 100 ?
+                  '$' + annualBudgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   : <div className={ dashboardStyle.locals.budgetLeftToPlanOk }/>
               }
             </div>
