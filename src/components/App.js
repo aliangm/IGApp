@@ -18,6 +18,7 @@ import style from 'styles/app.css';
 import { FeatureToggleProvider } from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
 import {budgetExtend} from 'dataExtenders/budgetExtender.js';
+import {campaignsExtend} from 'dataExtenders/campaignExtender.js';
 
 class AppComponent extends Component {
 
@@ -487,9 +488,10 @@ class AppComponent extends Component {
       historyData: data.historyData || {},
     }
 
-    let dataWithDefault = budgetExtend(initialData);
+    let extendedData = budgetExtend(initialData);
+    extendedData = campaignsExtend(extendedData);
 
-    this.setState(dataWithDefault);
+    this.setState(extendedData);
   }
 
   addNotification(userId, type, notification, isSendEmail) {

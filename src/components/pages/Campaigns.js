@@ -143,7 +143,7 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex, campaigns } = this.state;
-    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification } = this.props;
+    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification,activeCampaigns,campaignsWithIndex, monthlyBudget } = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
     const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0] ? approvedBudgets[0] : {};
@@ -180,11 +180,6 @@ export default class Campaigns extends Component {
       }
     });
 
-    const campaignsWithIndex = campaigns.map((campaign, index) => { return { ... campaign, index: index} });
-
-    const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
-
-    const budget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
     let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
       if (!campaign.isArchived) {
         if (campaign.isOneTime) {
@@ -199,7 +194,7 @@ export default class Campaigns extends Component {
         }
       }
       return res;
-    }, budget);
+    }, monthlyBudget);
 
     let filteredCampaigns = activeCampaigns;
 
@@ -287,7 +282,7 @@ export default class Campaigns extends Component {
                     ${budgetLeftToSpend ? formatBudget(budgetLeftToSpend) : 0}
                   </div>
                   <div>
-                    {' / $' + formatBudget(budget)}
+                    {' / $' + formatBudget(monthlyBudget)}
                   </div>
                 </div>
               </div>

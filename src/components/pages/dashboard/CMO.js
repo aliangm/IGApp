@@ -99,10 +99,9 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs,annualBudget,annualBudgetLeftToPlan } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs,annualBudget,annualBudgetLeftToPlan,monthlyBudget } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
-    const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
@@ -498,7 +497,7 @@ export default class CMO extends Component {
                   </div>
                   <div className={ dashboardStyle.locals.column } style={{ padding: '10px 20px 0 0', width: 'auto', marginRight: 'auto' }}>
                     <div className={ dashboardStyle.locals.snapshotNumber }>
-                      ${formatBudgetShortened(monthBudget)}
+                      ${formatBudgetShortened(monthlyBudget)}
                     </div>
                     <div className={ dashboardStyle.locals.snapshotText }>
                       Budget
@@ -636,7 +635,7 @@ export default class CMO extends Component {
       <div className={ this.classes.cols } style={{ width: '825px' }}>
         <DashboardNumberWithContext
           title="Monthly Budget"
-          stat={'$'+monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          stat={'$'+formatBudgetShortened(monthlyBudget)}
           contextStat="context"
           contextText="context text"
           isPositive={false}
@@ -766,7 +765,7 @@ export default class CMO extends Component {
                           ${formatBudget(element.value)}
                         </div>
                         <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
-                          ({Math.round(element.value/monthBudget*100)}%)
+                          ({Math.round(element.value/monthlyBudget*100)}%)
                         </div>
                       </div>
                     ))
