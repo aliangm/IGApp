@@ -17,14 +17,27 @@ class DashboardNumberWithContext extends Component {
       <ReactTooltip place='bottom' effect='solid' id={this.uniqueID}/>
       <div className={ this.classes.item }>
         <div className={ this.classes.text }>{this.props.title}</div>
-        <div className={ this.classes.number }>{this.props.stat}</div>
-        <div className={this.classes.context} data-tip={this.props.tooltipText} data-for={this.uniqueID}>
-          <div className={this.classes.contextStat +' ' +this.classes.contextText} data-positive={this.props.isPositive ? 'positive': 'not-positive'}>
-            {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={this.props.isPositive ? 'incline' : 'decline'}></div> : ''}
-            {this.props.contextStat}
+        { this.props.showEmptyStat ?
+          <div>
+            <div className={ this.classes.center }>
+              <div className={ this.classes.sadIcon }/>
+            </div>
+            <div className={ this.classes.noMetrics }>
+              {this.props.emptyStatMessage}
+            </div>
           </div>
-          {' '+this.props.contextText}
-        </div>
+          :
+          <div>
+            <div className={ this.classes.number }>{this.props.stat}</div>
+            <div className={this.classes.context} data-tip={this.props.tooltipText} data-for={this.uniqueID}>
+              {this.props.contextStat ? <div className={this.classes.contextStat +' ' +this.classes.contextText} data-positive={this.props.isPositive ? 'positive': 'not-positive'}>
+                  {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={this.props.isPositive ? 'incline' : 'decline'}></div> : ''}
+                  {this.props.contextStat}
+                </div> : ''}
+              {' '+this.props.contextText}
+            </div>
+          </div>
+        }
       </div>
     </div>
   }
@@ -32,17 +45,21 @@ class DashboardNumberWithContext extends Component {
 
 DashboardNumberWithContext.propTypes = {
   title:PropTypes.string.isRequired,
-  stat:PropTypes.node,
-  contextStat:PropTypes.string.isRequired,
+  stat:PropTypes.node.isRequired,
+  contextStat:PropTypes.node,
   statWithArrow: PropTypes.bool,
-  contextText: PropTypes.string.isRequired,
-  isPositive: PropTypes.bool.isRequired,
-  tooltipText: PropTypes.string
+  contextText: PropTypes.string,
+  isPositive: PropTypes.bool,
+  tooltipText: PropTypes.string,
+  showEmptyStat : PropTypes.bool,
+  emptyStatMessage: PropTypes.string
 };
 
 DashboardNumberWithContext.defaultProps = {
   tooltipText: '',
-  statWithArrow: false
+  statWithArrow: false,
+  showEmptyStat: false,
+  contextText: '',
 }
 
 export default DashboardNumberWithContext

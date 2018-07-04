@@ -119,7 +119,15 @@ export default class CMO extends Component {
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
 
-    const ratio = (actualIndicators.LTV/actualIndicators.CAC).toFixed(2) || 0;
+    const ratioCalc = (LTV, CAC) => (LTV/CAC).toFixed(2) || 0;
+    const ratio = ratioCalc(actualIndicators.LTV,actualIndicators.CAC);
+    const previousMonthData = (previousData && previousData.length > 1) ? previousData[previousData.length-2] : undefined;
+    let lastMonthRatio = previousMonthData ? ratioCalc(previousMonthData.actualIndicators.LTV,previousMonthData.actualIndicators.CAC) : undefined;
+    console.log(lastMonthRatio);
+    console.log(ratio/lastMonthRatio);
+    console.log(Math.round((ratio/lastMonthRatio)));
+    const ratioContextStat = Math.round((ratio/lastMonthRatio) * 100) - 100;
+
     const COLORS = [
       '#189aca',
       '#3cca3f',
@@ -660,18 +668,15 @@ export default class CMO extends Component {
           tooltipText={'what a tooltip!'}
         />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Annual Budget Left To Plan
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              {
-                Math.abs(annualBudgetLeftToPlan) >= 100 ?
-                  '$' + annualBudgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  : <div className={ dashboardStyle.locals.budgetLeftToPlanOk }/>
-              }
-            </div>
-          </div>
+          <DashboardNumberWithContext
+            title="LTV:CAC Ratio"
+            stat={ratio}
+            contextStat={isFinite(ratioContextStat) && !isNaN(ratioContextStat) && lastMonthRatio != 0 ? ratioContextStat+'%' : undefined}
+            isPositive={isFinite(ratioContextStat) && !isNaN(ratioContextStat) ? ratioContextStat > 0 : undefined}
+            emptyStatMessage={'Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.'}
+            showEmptyStat={!(ratio && isFinite(ratio))}
+            statWithArrow={true}
+          />
         </div>
       </div>
       <div className={ this.classes.cols } style={{ width: '825px' }}>
