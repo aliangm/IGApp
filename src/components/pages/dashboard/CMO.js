@@ -99,7 +99,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs,annualBudget,annualBudgetLeftToPlan,monthlyBudget } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, annualBudgetLeftToPlan, monthlyBudget } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
@@ -645,11 +645,11 @@ export default class CMO extends Component {
         <DashboardNumberWithContext
           title="Active Campaigns"
           stat={numberOfActiveCampaigns}
-          contextStat="context"
-          contextText="context text"
-          isPositive={true}
+          contextStat={'$'+formatBudgetShortened(this.props.monthlyBudgetLeftToInvest)}
+          contextText="left to invest"
+          isPositive={this.props.monthlyBudgetLeftToInvest > 0}
           tooltipText={'what a tooltip!'}
-          statWithArrow={true}
+          statWithArrow={false}
         />
         <DashboardNumberWithContext
           title="Annual Budget"

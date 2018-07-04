@@ -488,8 +488,8 @@ class AppComponent extends Component {
       historyData: data.historyData || {},
     }
 
-    let extendedData = budgetExtend(initialData);
-    extendedData = campaignsExtend(extendedData);
+    let extendedData = campaignsExtend(initialData);
+    extendedData = budgetExtend(extendedData);
 
     this.setState(extendedData);
   }

@@ -1,4 +1,5 @@
 import merge from "lodash/merge";
+import { timeFrameToDate } from '../components/utils/objective';
 
 export function budgetExtend(data){
   const merged = merge(data.approvedBudgets, data.planUnknownChannels);
@@ -10,6 +11,21 @@ export function budgetExtend(data){
   return {
     annualBudgetLeftToPlan: data.annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
     monthlyBudget: monthlyBudget,
+    monthlyBudgetLeftToInvest: data.activeCampaigns.reduce((res, campaign) => {
+      if (!campaign.isArchived) {
+        if (campaign.isOneTime) {
+          if (campaign.dueDate && timeFrameToDate(campaign.dueDate).getMonth() === new Date().getMonth()) {
+            res -= campaign.actualSpent || campaign.budget || 0;
+          }
+        }
+        else {
+          if (!campaign.dueDate || (campaign.dueDate &&  new Date() <= timeFrameToDate(campaign.dueDate))) {
+            res -= campaign.actualSpent || campaign.budget || 0;
+          }
+        }
+      }
+      return res;
+    }, monthlyBudget),
     ...data
   };
 }

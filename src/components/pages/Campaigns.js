@@ -14,7 +14,6 @@ import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import { formatBudget } from 'components/utils/budget';
-import { timeFrameToDate } from 'components/utils/objective';
 import { Link } from 'react-router';
 
 const tabs = {
@@ -143,7 +142,7 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex, campaigns } = this.state;
-    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification,activeCampaigns,campaignsWithIndex, monthlyBudget } = this.props;
+    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification,activeCampaigns,campaignsWithIndex, monthlyBudget, monthlyBudgetLeftToInvest } = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
     const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0] ? approvedBudgets[0] : {};
@@ -179,22 +178,6 @@ export default class Campaigns extends Component {
         processedChannels.icons[channel] = "plan:other";
       }
     });
-
-    let budgetLeftToSpend = activeCampaigns.reduce((res, campaign) => {
-      if (!campaign.isArchived) {
-        if (campaign.isOneTime) {
-          if (campaign.dueDate && timeFrameToDate(campaign.dueDate).getMonth() === new Date().getMonth()) {
-            res -= campaign.actualSpent || campaign.budget || 0;
-          }
-        }
-        else {
-          if (!campaign.dueDate || (campaign.dueDate &&  new Date() <= timeFrameToDate(campaign.dueDate))) {
-            res -= campaign.actualSpent || campaign.budget || 0;
-          }
-        }
-      }
-      return res;
-    }, monthlyBudget);
 
     let filteredCampaigns = activeCampaigns;
 
@@ -278,8 +261,8 @@ export default class Campaigns extends Component {
                 <div className={this.classes.campaignsTitleBudget}>
                   Budget left to invest
                   <div className={this.classes.campaignsTitleArrow}
-                       style={{color: budgetLeftToSpend >= 0 ? '#2ecc71' : '#ce352d'}}>
-                    ${budgetLeftToSpend ? formatBudget(budgetLeftToSpend) : 0}
+                       style={{color: monthlyBudgetLeftToInvest >= 0 ? '#2ecc71' : '#ce352d'}}>
+                    ${monthlyBudgetLeftToInvest ? formatBudget(monthlyBudgetLeftToInvest) : 0}
                   </div>
                   <div>
                     {' / $' + formatBudget(monthlyBudget)}
