@@ -13,24 +13,17 @@ class DashboardNumberWithContext extends Component {
   style=style;
 
   render() {
-    return <div className={ this.classes.colCenter }>
+    return <div className={ this.classes.col}>
       <ReactTooltip place='bottom' effect='solid' id={this.uniqueID}/>
       <div className={ this.classes.item }>
-        <div className={ this.classes.text }>
-          {this.props.title}
-        </div>
-        <div className={ this.classes.number }>
-          {this.props.stat}
-        </div>
+        <div className={ this.classes.text }>{this.props.title}</div>
+        <div className={ this.classes.number }>{this.props.stat}</div>
         <div className={this.classes.context} data-tip={this.props.tooltipText} data-for={this.uniqueID}>
-
           <div className={this.classes.contextStat +' ' +this.classes.contextText} data-positive={this.props.isPositive ? 'positive': 'not-positive'}>
             {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={this.props.isPositive ? 'incline' : 'decline'}></div> : ''}
             {this.props.contextStat}
           </div>
-          {/*<div className={this.classes.contextText} content=" " />*/}
           {' '+this.props.contextText}
-          {/*<div className={this.classes.contextText}></div>*/}
         </div>
       </div>
     </div>
@@ -49,7 +42,7 @@ DashboardNumberWithContext.propTypes = {
 
 DashboardNumberWithContext.defaultProps = {
   tooltipText: '',
-  statWithArrow: true
+  statWithArrow: false
 }
 
 export default DashboardNumberWithContext

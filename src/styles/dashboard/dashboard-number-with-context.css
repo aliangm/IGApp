@@ -38,9 +38,7 @@
     justify-content: center;
 }
 
-.col-center {
-    max-width: 600px;
-    margin: 0 auto;
+.col{
     flex-grow: 1;
 }
 

@@ -636,26 +636,24 @@ export default class CMO extends Component {
         </div>
         : null }
       <div className={ this.classes.cols } style={{ width: '825px' }}>
-        <div className={ this.classes.colLeft }>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Monthly Budget
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              ${monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            </div>
-          </div>
-        </div>
-        <div className={ this.classes.colCenter }>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Active Campaigns
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              {numberOfActiveCampaigns}
-            </div>
-          </div>
-        </div>
+        <DashboardNumberWithContext
+          title="Monthly Budget"
+          stat={'$'+monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          contextStat="context"
+          contextText="context text"
+          isPositive={false}
+          tooltipText={'what a tooltip!'}
+          statWithArrow={true}
+        />
+        <DashboardNumberWithContext
+          title="Active Campaigns"
+          stat={numberOfActiveCampaigns}
+          contextStat="context"
+          contextText="context text"
+          isPositive={true}
+          tooltipText={'what a tooltip!'}
+          statWithArrow={true}
+        />
         <DashboardNumberWithContext
           title="Annual Budget"
           stat={'$'+formatBudget(Math.ceil(annualBudget/1000)*1000)}
