@@ -1,6 +1,8 @@
 import merge from "lodash/merge";
 import { timeFrameToDate } from '../components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
+import { getExtarpolateRatio } from '../utils.js';
+import sumBy from 'lodash/sumBy';
 
 export function budgetExtend(data){
   const merged = merge(data.approvedBudgets, data.planUnknownChannels);
@@ -8,14 +10,17 @@ export function budgetExtend(data){
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0] ? data.planUnknownChannels[0] : {};
   const approvedChannels = data.approvedBudgets && data.approvedBudgets.length > 0 && data.approvedBudgets[0] ? data.approvedBudgets[0] : {};
   const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
-  const plannedVsActual = parsePlannedVsActual(data.approvedBudgets[0] || {}, data.planUnknownChannels[0] || {}, data.knownChannels, data.unknownChannels);
+
+  const plannedVsActual = parsePlannedVsActual(data.approvedBudgets[0] || {}, data.planUnknownChannels[0] || {}, data.knownChannels, data.unknownChannels,data.planDate);
+  const plannedVsActualWithActualSpent = calculateActualSpent(plannedVsActual, data.planDate);
 
   return {
     budgetCalculatedData:
       {
         annualBudgetLeftToPlan: data.annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
         monthlyBudget: monthlyBudget,
-        plannedVsActual: plannedVsActual,
+        plannedVsActual: plannedVsActualWithActualSpent,
+        monthlyExtarpolatedMoneySpent: sumBy(plannedVsActualWithActualSpent,(item)=>item.actualSpent),
         monthlyBudgetLeftToInvest: data.activeCampaigns.reduce((res, campaign) => {
           if (!campaign.isArchived) {
             if (campaign.isOneTime) {
@@ -34,4 +39,19 @@ export function budgetExtend(data){
       },
     ...data
     }
+}
+
+function calculateActualSpent(plannedVsActual, planDateString){
+
+  const extarpolateRatio = getExtarpolateRatio(new Date(),planDateString);
+
+  return plannedVsActual.map(({planned,updatedSpent,isUpdatedByUser,...other}) => {
+      return {
+        planned:planned,
+        updatedSpent: updatedSpent,
+        isUpdatedByUser:isUpdatedByUser,
+        actualSpent: isUpdatedByUser ? updatedSpent : planned * extarpolateRatio,
+      ...other
+      };
+  });
 }

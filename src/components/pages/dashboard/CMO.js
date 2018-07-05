@@ -22,6 +22,7 @@ import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardNumberWithContext from "./DashboardNumberWithContext";
+import { getExtarpolateRatio } from '../../../utils.js';
 
 export default class CMO extends Component {
 
@@ -99,7 +100,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData:{annualBudgetLeftToPlan, monthlyBudget,monthlyBudgetLeftToInvest} } = this.props;
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData:{annualBudgetLeftToPlan, monthlyBudget,monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent} } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
@@ -118,6 +119,9 @@ export default class CMO extends Component {
 
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
+
+    const monthlyOnTrackSpending =  monthlyBudget*getExtarpolateRatio(new Date(),planDate);
+    const isOnTrack = Math.abs(monthlyOnTrackSpending - monthlyExtarpolatedMoneySpent) < monthlyOnTrackSpending*0.07
 
     const ratioCalc = (LTV, CAC) => (LTV/CAC).toFixed(2) || 0;
     const ratioCanBeCalculated = (actualIndicators) => (actualIndicators && actualIndicators.LTV != 0 && actualIndicators.CAC != 0);
@@ -650,11 +654,11 @@ export default class CMO extends Component {
         <DashboardNumberWithContext
           title="Monthly Budget"
           stat={'$'+formatBudgetShortened(monthlyBudget)}
-          contextStat="context"
-          contextText="context text"
-          isPositive={false}
+          contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
+          contextText=''
+          isPositive={isOnTrack}
           tooltipText={'what a tooltip!'}
-          statWithArrow={true}
+          statWithArrow={false}
         />
         <DashboardNumberWithContext
           title="Active Campaigns"
