@@ -1,3 +1,23 @@
+.automatic-label{
+  width: 76px;
+  height: 26px;
+  border-radius: 3px;
+  background-color: #c9d8f2;
+  color: #0082e6;
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500
+}
+
+.channel-name{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .wrap {
   margin: 0 25px;
   padding: 0 6px;
@@ -87,6 +107,8 @@
   box-sizing: border-box;
   /*height: 50px;*/
   white-space: pre-wrap;
+  display: inline-flex;
+  width: 100%;
 }
 
 .table-button {

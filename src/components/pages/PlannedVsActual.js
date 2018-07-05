@@ -127,11 +127,14 @@ export default class PlannedVsActual extends Component {
     if (data) {
       rows = data.map((item, i) => {
         return this.getTableRow(null, [
-          item.channel,
+          <div className={ this.classes.cellItem }>
+            <div className={this.classes.channelName}>{item.channel}</div>
+            <div className={this.classes.automaticLabel}>Automatic</div>
+          </div>,
           '$' + item.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
           <div className={ this.classes.cellItem }>
             <Textfield style={{
-              minWidth: '72px'
+              minWidth: '72px',
             }} value={ '$' + item.actual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } onChange={(e) => {
               let value = parseInt(e.target.value.replace(/^\$/, '').replace(',','')) || '';
               this.updateActual(item.key, value);
