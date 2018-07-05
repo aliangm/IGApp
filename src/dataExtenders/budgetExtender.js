@@ -13,6 +13,8 @@ export function budgetExtend(data){
 
   const plannedVsActual = parsePlannedVsActual(data.approvedBudgets[0] || {}, data.planUnknownChannels[0] || {}, data.knownChannels, data.unknownChannels,data.planDate);
   const plannedVsActualWithActualSpent = calculateActualSpent(plannedVsActual, data.planDate);
+  const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
+  const monthlyExtarpolatedMoneySpent = sumBy(plannedVsActualWithActualSpent,(item)=>item.actualSpent);
 
   return {
     budgetCalculatedData:
@@ -20,7 +22,8 @@ export function budgetExtend(data){
         annualBudgetLeftToPlan: data.annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
         monthlyBudget: monthlyBudget,
         plannedVsActual: plannedVsActualWithActualSpent,
-        monthlyExtarpolatedMoneySpent: sumBy(plannedVsActualWithActualSpent,(item)=>item.actualSpent),
+        monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
+        monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
         monthlyBudgetLeftToInvest: data.activeCampaigns.reduce((res, campaign) => {
           if (!campaign.isArchived) {
             if (campaign.isOneTime) {

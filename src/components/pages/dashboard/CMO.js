@@ -100,7 +100,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData:{annualBudgetLeftToPlan, monthlyBudget,monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent} } = this.props;
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData:{annualBudgetLeftToPlan, monthlyBudget,monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent,monthlyExtapolatedTotalSpending} } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
@@ -657,7 +657,7 @@ export default class CMO extends Component {
           contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
           contextText=''
           isPositive={isOnTrack}
-          tooltipText={'what a tooltip!'}
+          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Forecasted end of month spending '+'$'+formatBudgetShortened(monthlyExtapolatedTotalSpending)}
           statWithArrow={false}
         />
         <DashboardNumberWithContext
