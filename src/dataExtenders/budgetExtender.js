@@ -3,6 +3,7 @@ import { timeFrameToDate } from '../components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from '../utils.js';
 import sumBy from 'lodash/sumBy';
+import unionWith from 'lodash/unionWith';
 
 export function budgetExtend(data){
   const merged = merge(data.approvedBudgets, data.planUnknownChannels);
@@ -10,18 +11,14 @@ export function budgetExtend(data){
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0] ? data.planUnknownChannels[0] : {};
   const approvedChannels = data.approvedBudgets && data.approvedBudgets.length > 0 && data.approvedBudgets[0] ? data.approvedBudgets[0] : {};
   const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
-
-  const plannedVsActual = parsePlannedVsActual(data.approvedBudgets[0] || {}, data.planUnknownChannels[0] || {}, data.knownChannels, data.unknownChannels,data.planDate);
-  const plannedVsActualWithActualSpent = calculateActualSpent(plannedVsActual, data.planDate);
+  const monthlyExtarpolatedMoneySpent = calculateActualSpent(data.approvedBudgets[0],data.planUnknownChannels[0] ,data.knownChannels, data.unknownChannels, data.planDate);
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
-  const monthlyExtarpolatedMoneySpent = sumBy(plannedVsActualWithActualSpent,(item)=>item.actualSpent);
 
   return {
     budgetCalculatedData:
       {
         annualBudgetLeftToPlan: data.annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
         monthlyBudget: monthlyBudget,
-        plannedVsActual: plannedVsActualWithActualSpent,
         monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
         monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
         monthlyBudgetLeftToInvest: data.activeCampaigns.reduce((res, campaign) => {
@@ -44,17 +41,21 @@ export function budgetExtend(data){
     }
 }
 
-function calculateActualSpent(plannedVsActual, planDateString){
+function calculateActualSpent(approvedBudgets, planUnknownChannels, knownChannels, unknownChannels, planDate){
 
-  const extarpolateRatio = getExtarpolateRatio(new Date(),planDateString);
+  const extarpolateRatio = getExtarpolateRatio(new Date(),planDate);
+  const approvedExtarpolate = {...approvedBudgets};
+  const planUnknownExtarpolate = {...planUnknownChannels};
+  Object.keys(approvedExtarpolate).map((key) => { approvedExtarpolate[key] *= extarpolateRatio; });
+  Object.keys(planUnknownExtarpolate).map((key) => { planUnknownExtarpolate[key] *= extarpolateRatio; });
 
-  return plannedVsActual.map(({planned,updatedSpent,isUpdatedByUser,...other}) => {
-      return {
-        planned:planned,
-        updatedSpent: updatedSpent,
-        isUpdatedByUser:isUpdatedByUser,
-        actualSpent: isUpdatedByUser ? updatedSpent : planned * extarpolateRatio,
-      ...other
-      };
-  });
+  if(knownChannels) {
+    Object.keys(knownChannels).map((key) => approvedExtarpolate[key] = knownChannels[key]);
+  }
+
+  if(unknownChannels){
+    Object.keys(unknownChannels).map((key) => planUnknownExtarpolate[key] = unknownChannels[key]);
+  }
+
+  return sumBy(Object.keys(approvedExtarpolate), (key) => approvedExtarpolate[key]) + sumBy(Object.keys(planUnknownExtarpolate), (key) => planUnknownExtarpolate[key]);
 }

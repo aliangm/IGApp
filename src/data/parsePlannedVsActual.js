@@ -2,15 +2,12 @@ import { getNickname } from 'components/utils/channels';
 
 export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, knownChannels, unknownChannels) {
   let returnObj = [];
-
   Object.keys(approvedBudgets).forEach((channel) => {
-
     returnObj.push({
       key: channel,
       channel: getNickname(channel),
       planned: approvedBudgets[channel],
-      updatedSpent: knownChannels[channel] !== undefined  ? knownChannels[channel] : approvedBudgets[channel],
-      isUpdatedByUser: knownChannels[channel] !== undefined
+      actual: knownChannels[channel] !== undefined  ? knownChannels[channel] : approvedBudgets[channel]
     });
   });
   if (plannedUnknownChannels) {
@@ -19,8 +16,7 @@ export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, kn
         key: channel,
         channel: channel,
         planned: plannedUnknownChannels[channel],
-        updatedSpent: unknownChannels[channel] !== undefined ? unknownChannels[channel] : plannedUnknownChannels[channel],
-        isUpdatedByUser: knownChannels[channel] !== undefined,
+        actual: unknownChannels[channel] !== undefined ? unknownChannels[channel] : plannedUnknownChannels[channel]
       });
     });
   }
@@ -30,8 +26,7 @@ export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, kn
         key: channel,
         channel: getNickname(channel),
         planned: 0,
-        updatedSpent: knownChannels[channel],
-        isUpdatedByUser: true
+        actual: knownChannels[channel]
       });
     }
   });
@@ -41,8 +36,7 @@ export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, kn
         key: channel,
         channel: channel,
         planned: 0,
-        updatedSpent: unknownChannels[channel],
-        isUpdatedByUser: true
+        actual: unknownChannels[channel]
       });
     }
   });
