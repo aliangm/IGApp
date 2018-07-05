@@ -142,7 +142,7 @@ export default class Campaigns extends Component {
 
   render() {
     const { selectedIndex, campaigns } = this.state;
-    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification,activeCampaigns,campaignsWithIndex, budgetCalculatedData: {monthlyBudget, monthlyBudgetLeftToInvest} } = this.props;
+    const { approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification, activeCampaigns, campaignsWithIndex, budgetCalculatedData: {monthlyBudget, monthlyBudgetLeftToInvest}} = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0] ? planUnknownChannels[0] : {};
     const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0] ? approvedBudgets[0] : {};

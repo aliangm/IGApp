@@ -1,10 +1,10 @@
 import React from "react";
 import Component from "components/Component";
-import style from "styles/dashboard/dashboard-number-with-context.css";
+import style from "styles/dashboard/dashboard-stat-with-context.css";
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 
-class DashboardNumberWithContext extends Component {
+class DashboardStatWithContext extends Component {
 
   constructor(props){
     super(props);
@@ -30,11 +30,11 @@ class DashboardNumberWithContext extends Component {
           <div>
             <div className={ this.classes.number }>{this.props.stat}</div>
             <div className={this.classes.context} data-tip={this.props.tooltipText} data-for={this.uniqueID}>
-              {this.props.contextStat ? <div className={this.classes.contextStat +' ' +this.classes.contextText} data-positive={this.props.isPositive ? 'positive': 'not-positive'}>
-                  {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={this.props.isPositive ? 'incline' : 'decline'}></div> : ''}
+              {this.props.contextStat ? <div className={this.classes.contextStat + ' ' + this.classes.contextText} data-positive={this.props.isPositive ? 'positive': 'not-positive'}>
+                  {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={this.props.isPositive ? 'incline' : 'decline'} /> : ''}
                   {this.props.contextStat}
                 </div> : ''}
-              {' '+this.props.contextText}
+              {' '+ this.props.contextText}
             </div>
           </div>
         }
@@ -43,7 +43,7 @@ class DashboardNumberWithContext extends Component {
   }
 }
 
-DashboardNumberWithContext.propTypes = {
+DashboardStatWithContext.propTypes = {
   title:PropTypes.string.isRequired,
   stat:PropTypes.node,
   contextStat:PropTypes.node,
@@ -55,11 +55,11 @@ DashboardNumberWithContext.propTypes = {
   emptyStatMessage: PropTypes.string
 };
 
-DashboardNumberWithContext.defaultProps = {
+DashboardStatWithContext.defaultProps = {
   tooltipText: '',
   statWithArrow: false,
   showEmptyStat: false,
-  contextText: '',
+  contextText: ''
 }
 
-export default DashboardNumberWithContext
+export default DashboardStatWithContext

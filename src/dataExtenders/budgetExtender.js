@@ -3,11 +3,10 @@ import { timeFrameToDate } from '../components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from '../utils.js';
 import sumBy from 'lodash/sumBy';
-import unionWith from 'lodash/unionWith';
 
 export function budgetExtend(data){
-  const merged = merge(data.approvedBudgets, data.planUnknownChannels);
 
+  const merged = merge(data.approvedBudgets, data.planUnknownChannels);
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0] ? data.planUnknownChannels[0] : {};
   const approvedChannels = data.approvedBudgets && data.approvedBudgets.length > 0 && data.approvedBudgets[0] ? data.approvedBudgets[0] : {};
   const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
@@ -15,8 +14,7 @@ export function budgetExtend(data){
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
 
   return {
-    budgetCalculatedData:
-      {
+    budgetCalculatedData: {
         annualBudgetLeftToPlan: data.annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
         monthlyBudget: monthlyBudget,
         monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
@@ -37,7 +35,7 @@ export function budgetExtend(data){
           return res;
         }, monthlyBudget),
       },
-    ...data
+      ...data
     }
 }
 

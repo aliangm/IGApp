@@ -413,7 +413,6 @@ export default class AnnualTab extends Component {
     }
 
 
-
     const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
       <div
         style={{ borderColor: '#329ff1 transparent transparent transparent' }}

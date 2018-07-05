@@ -21,7 +21,7 @@ import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
-import DashboardNumberWithContext from "./DashboardNumberWithContext";
+import DashboardStatWithContext from "./DashboardNumberWithContext";
 import { getExtarpolateRatio } from '../../../utils.js';
 
 export default class CMO extends Component {
@@ -100,7 +100,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData:{annualBudgetLeftToPlan, monthlyBudget,monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent,monthlyExtapolatedTotalSpending} } = this.props;
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData: {annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
@@ -120,15 +120,15 @@ export default class CMO extends Component {
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
 
-    const monthlyOnTrackSpending =  monthlyBudget*getExtarpolateRatio(new Date(),planDate);
+    const monthlyOnTrackSpending =  monthlyBudget * getExtarpolateRatio(new Date(), planDate);
     const isOnTrack = Math.abs(monthlyOnTrackSpending - monthlyExtarpolatedMoneySpent) < monthlyOnTrackSpending*0.07
 
     const ratioCalc = (LTV, CAC) => (LTV/CAC).toFixed(2) || 0;
     const ratioCanBeCalculated = (actualIndicators) => (actualIndicators && actualIndicators.LTV != 0 && actualIndicators.CAC != 0);
-    const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV,actualIndicators.CAC) : undefined;
+    const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV, actualIndicators.CAC) : undefined;
     const previousMonthData = (previousData && previousData.length > 1) ? previousData[previousData.length-2] : {actualIndicators: {LTV: 0, CAC: 0}};
-    const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators) ? ratioCalc(previousMonthData.actualIndicators.LTV,previousMonthData.actualIndicators.CAC) : undefined;
-    const ratioContextStat = (ratio && lastMonthRatio) ? Math.round((ratio/lastMonthRatio) * 100) - 100 : undefined;
+    const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators) ? ratioCalc(previousMonthData.actualIndicators.LTV, previousMonthData.actualIndicators.CAC) : undefined;
+    const ratioContextStat = (ratio && lastMonthRatio) ? Math.round((ratio / lastMonthRatio) * 100) - 100 : undefined;
 
     const COLORS = [
       '#189aca',
@@ -643,37 +643,37 @@ export default class CMO extends Component {
         </div>
         : null }
       <div className={ this.classes.cols } style={{ width: '825px' }}>
-        <DashboardNumberWithContext
+        <DashboardStatWithContext
           title="Annual Budget"
-          stat={'$'+formatBudgetShortened(annualBudget)}
-          contextStat={'$'+formatBudgetShortened(annualBudgetLeftToPlan)}
+          stat={'$'+ formatBudgetShortened(annualBudget)}
+          contextStat={'$' + formatBudgetShortened(annualBudgetLeftToPlan)}
           contextText="left to plan"
           isPositive={annualBudgetLeftToPlan > 0}
           tooltipText={'what a tooltip!'}
         />
-        <DashboardNumberWithContext
+        <DashboardStatWithContext
           title="Monthly Budget"
-          stat={'$'+formatBudgetShortened(monthlyBudget)}
+          stat={'$' + formatBudgetShortened(monthlyBudget)}
           contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
           contextText=''
           isPositive={isOnTrack}
-          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Forecasted end of month spending '+'$'+formatBudgetShortened(monthlyExtapolatedTotalSpending)}
+          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Forecasted end of month spending ' + '$' + formatBudgetShortened(monthlyExtapolatedTotalSpending)}
           statWithArrow={false}
         />
-        <DashboardNumberWithContext
+        <DashboardStatWithContext
           title="Active Campaigns"
           stat={numberOfActiveCampaigns}
-          contextStat={'$'+formatBudgetShortened(monthlyBudgetLeftToInvest)}
+          contextStat={'$' + formatBudgetShortened(monthlyBudgetLeftToInvest)}
           contextText="left to invest"
           isPositive={monthlyBudgetLeftToInvest > 0}
           tooltipText={'what a tooltip!'}
           statWithArrow={false}
         />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-          <DashboardNumberWithContext
+          <DashboardStatWithContext
             title="LTV:CAC Ratio"
             stat={ratio}
-            contextStat={ratioContextStat ? ratioContextStat+'%' : undefined}
+            contextStat={ratioContextStat ? ratioContextStat + '%' : undefined}
             isPositive={ratioContextStat ? ratioContextStat > 0 : undefined}
             emptyStatMessage={'Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.'}
             showEmptyStat={ratio == undefined}
@@ -753,7 +753,7 @@ export default class CMO extends Component {
                           ${formatBudget(element.value)}
                         </div>
                         <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
-                          ({Math.round(element.value/monthlyBudget*100)}%)
+                          ({Math.round(element.value / monthlyBudget * 100)}%)
                         </div>
                       </div>
                     ))
