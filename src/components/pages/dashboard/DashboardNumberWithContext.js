@@ -60,7 +60,6 @@ DashboardNumberWithContext.defaultProps = {
   statWithArrow: false,
   showEmptyStat: false,
   contextText: '',
-  stat: ''
 }
 
 export default DashboardNumberWithContext

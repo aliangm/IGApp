@@ -99,7 +99,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, annualBudgetLeftToPlan, monthlyBudget } = this.props;
+    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData:{annualBudgetLeftToPlan, monthlyBudget,monthlyBudgetLeftToInvest} } = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
@@ -640,6 +640,14 @@ export default class CMO extends Component {
         : null }
       <div className={ this.classes.cols } style={{ width: '825px' }}>
         <DashboardNumberWithContext
+          title="Annual Budget"
+          stat={'$'+formatBudgetShortened(annualBudget)}
+          contextStat={'$'+formatBudgetShortened(annualBudgetLeftToPlan)}
+          contextText="left to plan"
+          isPositive={annualBudgetLeftToPlan > 0}
+          tooltipText={'what a tooltip!'}
+        />
+        <DashboardNumberWithContext
           title="Monthly Budget"
           stat={'$'+formatBudgetShortened(monthlyBudget)}
           contextStat="context"
@@ -651,19 +659,11 @@ export default class CMO extends Component {
         <DashboardNumberWithContext
           title="Active Campaigns"
           stat={numberOfActiveCampaigns}
-          contextStat={'$'+formatBudgetShortened(this.props.monthlyBudgetLeftToInvest)}
+          contextStat={'$'+formatBudgetShortened(monthlyBudgetLeftToInvest)}
           contextText="left to invest"
-          isPositive={this.props.monthlyBudgetLeftToInvest > 0}
+          isPositive={monthlyBudgetLeftToInvest > 0}
           tooltipText={'what a tooltip!'}
           statWithArrow={false}
-        />
-        <DashboardNumberWithContext
-          title="Annual Budget"
-          stat={'$'+formatBudgetShortened(annualBudget)}
-          contextStat={'$'+formatBudgetShortened(annualBudgetLeftToPlan)}
-          contextText="left to plan"
-          isPositive={annualBudgetLeftToPlan > 0}
-          tooltipText={'what a tooltip!'}
         />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
           <DashboardNumberWithContext
@@ -698,25 +698,6 @@ export default class CMO extends Component {
           </div>
         </div>
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              LTV:CAC Ratio
-            </div>
-            { ratio && isFinite(ratio) ?
-              <div className={dashboardStyle.locals.number}>
-                {ratio}
-              </div>
-              :
-              <div>
-                <div className={ dashboardStyle.locals.center }>
-                  <div className={ dashboardStyle.locals.sadIcon }/>
-                </div>
-                <div className={ dashboardStyle.locals.noMetrics }>
-                  Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.
-                </div>
-              </div>
-            }
-          </div>
           <div className={ dashboardStyle.locals.item } style={{ marginTop: '30px' }}>
             <div className={ dashboardStyle.locals.text }>
               {(minRatioTitle.length > 0 ? minRatioTitle : "Funnel") + ' Ratio'}
