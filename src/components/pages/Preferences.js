@@ -22,7 +22,7 @@ import PlanFromExcel from 'components/PlanFromExcel';
 import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
-import {getNickname} from 'components/utils/indicators';
+import {getNickname, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
@@ -57,7 +57,6 @@ export default class Preferences extends Component {
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.budgetConstraintRemove = this.budgetConstraintRemove.bind(this);
-    this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleBudgetsCheck = this.toggleBudgetsCheck.bind(this);
     this.calculateBudgets = this.calculateBudgets.bind(this);
   }
@@ -166,30 +165,60 @@ export default class Preferences extends Component {
     this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
-  objectiveRemove(index) {
-    let update = this.props.objectives || [];
-    update.splice(index, 1);
-    this.props.updateState({objectives: update});
-  }
+  objectiveRemove = (objective, monthIndex) => {
+    let objectives = [...this.props.objectives];
+    if (objectives[monthIndex][objective]) {
+      delete objectives[monthIndex][objective];
+    }
+    this.props.updateState({objectives: objectives});
+  };
 
   createOrUpdateObjective = (objectiveData) => {
     let monthIndex = objectiveData.monthIndex;
     const objective = objectiveData.indicator;
+    const isDirectionUp = getMetadata('isDirectionUp', objective);
     let objectives = [...this.props.objectives];
+    let recurrentArray = [];
 
     if (objectiveData.isRecurrent) {
       const now = new Date();
       if (objectiveData.isMonthly) {
         monthIndex = 0;
+        for (let i = 0; i < 12; i++) {
+          let targetValue = -1;
+          const value = i ? recurrentArray[i - 1] : this.props.actualIndicators[objective];
+          if (objectiveData.isPercentage) {
+            targetValue = (1 + (objectiveData.amount / 100 * (isDirectionUp ? 1 : -1))) * value;
+          }
+          else {
+            targetValue = value + objectiveData.amount * (isDirectionUp ? 1 : -1);
+          }
+          recurrentArray.push(Math.round(targetValue));
+        }
       }
       else {
         const quarter = Math.floor((now.getMonth() / 3));
         const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
         const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
         monthIndex = endDate.getMonth() - now.getMonth();
+        recurrentArray = new Array(12).fill(-1);
+        for (let i = 0; i < 4; i++) {
+          const index = (monthIndex + (i * 3)) % 12;
+          let targetValue = -1;
+          const value = i ? recurrentArray[(monthIndex + ((i - 1) * 3)) % 12] : this.props.actualIndicators[objective];
+          if (objectiveData.isPercentage) {
+            targetValue = (objectiveData.amount / 100 + 1) * value;
+          }
+          else {
+            targetValue = objectiveData.amount + value;
+          }
+          recurrentArray[index] = targetValue;
+        }
       }
     }
 
+    // TODO: handle priority change
+    //TODO: edit objective
     let newObjective = {};
     if (objectives[monthIndex][objective]) {
       newObjective = objectives[monthIndex][objective];
@@ -206,7 +235,9 @@ export default class Preferences extends Component {
           isPercentage: objectiveData.isPercentage,
           isTarget: objectiveData.isTarget,
           amount: objectiveData.amount,
-          nickname: getNickname(objective)
+          isMonthly: objectiveData.isMonthly,
+          nickname: getNickname(objective),
+          recurrentArray: recurrentArray
         }
       };
     }
@@ -267,44 +298,6 @@ export default class Preferences extends Component {
   render() {
     const {budgetConstraints, annualBudgetArray} = this.props;
 
-    const selects = {
-      /**     plan: {
-        label: 'Plan Resolution',
-        select: {
-          name: 'plan',
-          onChange: () => {},
-          options: [
-            { val: 'days', label: 'Days' },
-            { val: 'months', label: 'Months' },
-            { val: 'years', label: 'Years' }
-          ]
-        }
-      }, **/
-      months: {
-        label: '',
-        select: {
-          name: 'months',
-          onChange: () => {
-          },
-          placeholder: 'Choose specific months',
-          options: [
-            {label: 'Jan', value: 0},
-            {label: 'Feb', value: 1},
-            {label: 'Mar', value: 2},
-            {label: 'Apr', value: 3},
-            {label: 'May', value: 4},
-            {label: 'Jun', value: 5},
-            {label: 'Jul', value: 6},
-            {label: 'Aug', value: 7},
-            {label: 'Sep', value: 8},
-            {label: 'Oct', value: 9},
-            {label: 'Nov', value: 10},
-            {label: 'Dec', value: 11}
-          ]
-        }
-      }
-    };
-
     const channels = {
       select: {
         name: 'channels',
@@ -339,35 +332,39 @@ export default class Preferences extends Component {
       blockedChannels.select.options.map(maxChannels);
     }
 
-    const objectivesOrder = this.props.objectives.map((item, index) => {
-      return {value: index, label: '#' + (index + 1)};
-    });
-
     const dates = getDates(this.props.planDate);
-    const objectiveViews = [];
+    const objectiveData = [];
     this.props.objectives.forEach((month, index) => {
       Object.keys(month).forEach(objective => {
-        objectiveViews.push(
-          <ObjectiveView key={objectiveViews.length}
-                         index={objectiveViews.length}
-                         dueDate={getEndOfMonthDate(dates[index])}
-                         indicator={objective}
-                         value={this.props.actualIndicators[objective]}
-                         target={month[objective].target.value}
-                         {...month[objective].userInput}
-                         editObjective={() => {
-                           this.setState({
-                             showObjectivesPopup: true,
-                             objectiveMonth: index,
-                             objective: objective,
-                             objectiveEdit: true
-                           });
-                         }}
-                         deleteObjective={() => {
-                           this.objectiveRemove(index);
-                         }}/>);
+        objectiveData.push({
+          monthIndex: index,
+          dueDate: getEndOfMonthDate(dates[index]),
+          indicator: objective,
+          value: this.props.actualIndicators[objective],
+          target: month[objective].target.value,
+          priority: month[objective].target.priority,
+          ...month[objective].userInput
+        });
       });
     });
+
+    const objectiveViews = objectiveData
+      .sort((item1, item2) => item1.priority - item2.priority)
+      .map((item, index) =>
+        <ObjectiveView key={index}
+                       index={index}
+                       {...item}
+                       editObjective={() => {
+                         this.setState({
+                           showObjectivesPopup: true,
+                           objectiveMonth: item.monthIndex,
+                           objective: item.indicator,
+                           objectiveEdit: true
+                         });
+                       }}
+                       deleteObjective={() => {
+                         this.objectiveRemove(item.indicator, item.monthIndex);
+                       }}/>);
 
     const budgetConstraintsChannels = Object.keys(budgetConstraints);
 
@@ -435,6 +432,7 @@ export default class Preferences extends Component {
                                  objectiveMonth={this.state.objectiveMonth}
                                  objective={this.state.objective}
                                  objectives={this.props.objectives}
+                                 numOfObjectives={objectiveData.length}
                                  objectiveEdit={this.state.objectiveEdit}
                                  close={() => {
                                    this.setState({showObjectivesPopup: false});

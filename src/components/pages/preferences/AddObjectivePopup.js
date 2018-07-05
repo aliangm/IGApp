@@ -7,7 +7,7 @@ import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
-import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
+import {getIndicatorsWithProps, getNickname, getMetadata} from 'components/utils/indicators';
 import Calendar from 'components/controls/Calendar';
 import Toggle from 'components/controls/Toggle';
 import NotSure from 'components/onboarding/NotSure';
@@ -26,10 +26,10 @@ export default class AddObjectivePopup extends Component {
   defaultData = {
     indicator: '',
     isRecurrent: false,
+    isMonthly: true,
     recurrentType: 'Monthly',
-    isPercentage: '',
+    isPercentage: false,
     isTarget: true,
-    priority: 0,
     amount: ''
   };
 
@@ -37,7 +37,8 @@ export default class AddObjectivePopup extends Component {
     super(props);
     this.state = {
       ...this.defaultData,
-      notSure: 0
+      notSure: 0,
+      priority: 0
     };
   }
 
@@ -48,15 +49,18 @@ export default class AddObjectivePopup extends Component {
         this.setState({
           indicator: nextProps.objective,
           isRecurrent: objective.userInput.isRecurrent,
+          isMonthly: objective.userInput.isMonthly,
           recurrentType: objective.userInput.recurrentType,
           isPercentage: objective.userInput.isPercentage,
           isTarget: objective.userInput.isTarget,
-          priority: objective.target.priority
-        });
+          priority: objective.target.priority,
+          amount: objective.userInput.amount
+        }, this.calculateTargetValue);
       }
       else {
         this.setState({
           ...this.defaultData,
+          priority: nextProps.numOfObjectives,
           notSure: 0
         });
       }
@@ -86,15 +90,16 @@ export default class AddObjectivePopup extends Component {
   }
 
   calculateTargetValue() {
+    const isDirectionUp = getMetadata('isDirectionUp', this.state.indicator);
     let targetValue;
     if (this.state.isTarget) {
       targetValue = this.state.amount;
     }
     else if (this.state.isPercentage) {
-      targetValue = (this.state.amount / 100 + 1) * this.props.actualIndicators[this.state.indicator];
+      targetValue = (1 + (this.state.amount / 100 * (isDirectionUp ? 1 : -1))) * this.props.actualIndicators[this.state.indicator];
     }
     else {
-      targetValue = this.state.amount + this.props.actualIndicators[this.state.indicator];
+      targetValue = this.props.actualIndicators[this.state.indicator] + (this.state.amount * (isDirectionUp ? 1 : -1));
     }
 
     if (targetValue) {
@@ -110,10 +115,10 @@ export default class AddObjectivePopup extends Component {
         return {value: item, label: indicators[item].nickname};
       });
     const directionText = (this.state.indicator && indicators[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
-    const objectivesOrder = this.props.objectives.map((item, index) => {
-      return {value: index, label: '#' + (index + 1)};
-    });
-    objectivesOrder.push({value: this.props.objectives.length, label: '#' + (this.props.objectives.length + 1)});
+    const objectivesPriority = [];
+    for (let i = 0; i <= this.props.numOfObjectives; i++) {
+      objectivesPriority.push({value: i, label: '#' + (i + 1)});
+    }
     const datesOptions = this.props.dates.map((item, index) => {
       return {label: item, value: index};
     });
@@ -277,10 +282,10 @@ export default class AddObjectivePopup extends Component {
             <Select
               selected={this.state.priority}
               select={{
-                options: objectivesOrder
+                options: objectivesPriority
               }}
               onChange={(e) => {
-                this.setState({order: parseInt(e.value)});
+                this.setState({priority: parseInt(e.value)});
               }}
               style={{width: '75px'}}
             />

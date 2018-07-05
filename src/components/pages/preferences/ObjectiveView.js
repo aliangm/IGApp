@@ -24,7 +24,7 @@ export default class ObjectiveView extends Component {
       <div className={this.classes.row}>
         <div className={this.classes.start}>
           <div className={this.classes.index}>
-            {'#' + (this.props.index + 1)}
+            {'#' + (this.props.priority + 1)}
           </div>
           <div className={this.classes.nickname}>
             {getNickname(this.props.indicator)}
