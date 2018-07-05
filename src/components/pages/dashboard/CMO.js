@@ -21,7 +21,7 @@ import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
-import DashboardStatWithContext from "./DashboardNumberWithContext";
+import DashboardStatWithContext from "./DashboardStatWithContext";
 import { getExtarpolateRatio } from '../../../utils.js';
 
 export default class CMO extends Component {
@@ -649,7 +649,6 @@ export default class CMO extends Component {
           contextStat={'$' + formatBudgetShortened(annualBudgetLeftToPlan)}
           contextText="left to plan"
           isPositive={annualBudgetLeftToPlan > 0}
-          tooltipText={'what a tooltip!'}
         />
         <DashboardStatWithContext
           title="Monthly Budget"
@@ -657,7 +656,7 @@ export default class CMO extends Component {
           contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
           contextText=''
           isPositive={isOnTrack}
-          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Forecasted end of month spending ' + '$' + formatBudgetShortened(monthlyExtapolatedTotalSpending)}
+          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Actual spend off-track. Forecasted: ' + '$' + formatBudgetShortened(monthlyExtapolatedTotalSpending)}
           statWithArrow={false}
         />
         <DashboardStatWithContext
@@ -666,7 +665,6 @@ export default class CMO extends Component {
           contextStat={'$' + formatBudgetShortened(monthlyBudgetLeftToInvest)}
           contextText="left to invest"
           isPositive={monthlyBudgetLeftToInvest > 0}
-          tooltipText={'what a tooltip!'}
           statWithArrow={false}
         />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
@@ -674,6 +672,7 @@ export default class CMO extends Component {
             title="LTV:CAC Ratio"
             stat={ratio}
             contextStat={ratioContextStat ? ratioContextStat + '%' : undefined}
+            contextText={ratioContextStat ? 'from last month' : undefined}
             isPositive={ratioContextStat ? ratioContextStat > 0 : undefined}
             emptyStatMessage={'Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.'}
             showEmptyStat={ratio == undefined}
