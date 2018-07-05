@@ -135,6 +135,7 @@ export default class PlannedVsActual extends Component {
           <div className={ this.classes.cellItem }>
             <Textfield style={{
               minWidth: '72px',
+              width: '100%'
             }} value={ '$' + item.actual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } onChange={(e) => {
               let value = parseInt(e.target.value.replace(/^\$/, '').replace(',','')) || '';
               this.updateActual(item.key, value);
