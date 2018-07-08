@@ -126,7 +126,9 @@ export default class PlannedVsActual extends Component {
     const data = parsePlannedVsActual(this.state.approvedBudgets[0] || {}, this.state.planUnknownChannels[0] || {}, this.state.knownChannels, this.state.unknownChannels,
       {
         facebookadsapi: this.state.facebookadsapi,
-        googleAuto: this.state.googleAuto
+        adwordsapi: this.state.adwordsapi,
+        linkedinapi: this.state.linkedinapi,
+        twitterapi: this.state.twitterapi
       }
   );
     if (data) {
