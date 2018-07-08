@@ -34,10 +34,9 @@ export default class Users extends Component {
       showPopup: false,
       groupBy: GROUP_BY.USERS
     }
-    this.toggleUsersAccount = this.toggleUsersAccount.bind(this);
   }
 
-  toggleUsersAccount(newValue){
+  toggleUsersAccount = (newValue) => {
     this.setState({
       groupBy: newValue
     });
