@@ -432,7 +432,8 @@ class AppComponent extends Component {
   }
 
   setDataAsState(data) {
-    const initialData = {
+    this.setState({
+      dataUpdated: true,
       userProfile: data.userProfile,
       targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
       annualBudget: data.annualBudget,
@@ -485,13 +486,8 @@ class AppComponent extends Component {
       CEVs: data.CEVs || {},
       CIM: data.CIM || {},
       technologyStack: data.technologyStack || [],
-      historyData: data.historyData || {},
-    }
-
-    let extendedData = campaignsExtend(initialData);
-    extendedData = budgetExtend(extendedData);
-
-    this.setState(extendedData);
+      historyData: data.historyData || {}
+    });
   }
 
   addNotification(userId, type, notification, isSendEmail) {
@@ -691,9 +687,15 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  getExtendedState(state){
+    const extendedData = campaignsExtend(state);
+    return budgetExtend(extendedData);
+  }
+
   render() {
+    const extendedData = this.state.dataUpdated ?  this.getExtendedState(this.state) : this.state;
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, this.state));
+      (child) => React.cloneElement(child, extendedData));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header auth={ this.props.route.auth } {... this.state} path={this.props.location.pathname}/>
