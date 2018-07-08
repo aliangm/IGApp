@@ -18,7 +18,7 @@ export default class EditableCell extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.isDragging === false) {
       if(nextProps.draggableValue && this.state.dragged && !this.state.firstOfDrag && this.state.previousValue === null){
-        this.setState({ previousValue: this.props.value});
+        this.setState({ previousValue: this.props.value });
       }
 
       this.setState({
@@ -43,7 +43,7 @@ export default class EditableCell extends Component {
 
   dragEnter(event) {
     event.preventDefault();
-    this.setState({dragged: true});
+    this.setState({ dragged: true });
     this.props.dragEnter(this.props.i, this.props.channel);
   }
 
@@ -58,8 +58,8 @@ export default class EditableCell extends Component {
   }
 
   onChange = (value) => {
-    if(this.state.previousValue == null){
-      this.setState({previousValue: this.props.value});
+    if(this.state.previousValue === null){
+      this.setState({ previousValue: this.props.value });
     }
 
     this.props.onChange(value);
@@ -80,7 +80,7 @@ export default class EditableCell extends Component {
         onDrop={ this.drop.bind(this) }
         onDragEnter={ this.dragEnter.bind(this) }/>
 
-      { this.state.previousValue != null ? <div onClick={ this.returnToPreviousValue } className={ this.classes.undoButton } /> : null }
+      { this.state.previousValue !== null ? <div onClick={ this.returnToPreviousValue } className={ this.classes.undoButton } /> : null }
     </div>
   }
 
