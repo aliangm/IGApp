@@ -52,11 +52,11 @@ function calculateActualSpent(approvedBudgets, planUnknownChannels, knownChannel
   Object.keys(planUnknownExtarpolate).map((key) => { planUnknownExtarpolate[key] *= extarpolateRatio; });
 
   if(knownChannels) {
-    Object.keys(knownChannels).map((key) => approvedExtarpolate[key] = knownChannels[key]);
+    Object.keys(knownChannels).forEach((key) => approvedExtarpolate[key] = knownChannels[key]);
   }
 
   if(unknownChannels){
-    Object.keys(unknownChannels).map((key) => planUnknownExtarpolate[key] = unknownChannels[key]);
+    Object.keys(unknownChannels).forEach((key) => planUnknownExtarpolate[key] = unknownChannels[key]);
   }
 
   return sumBy(Object.keys(approvedExtarpolate), (key) => approvedExtarpolate[key]) + sumBy(Object.keys(planUnknownExtarpolate), (key) => planUnknownExtarpolate[key]);
