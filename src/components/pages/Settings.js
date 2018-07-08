@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import { Link } from 'react-router';
-import style from 'styles/settings/settings.css';
+import style from 'styles/plan/plan.css';
 import SettingsSideBar from 'components/pages/settings/SettingsSideBar';
 
 export default class Settings extends Component {
