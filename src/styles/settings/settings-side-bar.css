@@ -45,7 +45,7 @@
     border-bottom-left-radius : 4px;
 }
 
-.head-tab-selected::after{
+.head-tab-selected::after {
     content: '';
     display: block;
     position: absolute;
