@@ -26,7 +26,7 @@ import Button from 'components/controls/Button';
 export default class Platforms extends Component {
 
   style = style;
-  styles = [platformsStyle,preferencesStyle];
+  styles = [platformsStyle, preferencesStyle];
 
   constructor(props) {
     super(props);
@@ -62,8 +62,8 @@ export default class Platforms extends Component {
 
   render() {
     return <div>
-      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? preferencesStyle.locals.static :''} width="100%">
-        {isPopupMode() ? <Title title="Integrations"/> : ''}
+      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? preferencesStyle.locals.static : null} width="100%">
+        {isPopupMode() ? <Title title="Integrations"/> : null}
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
           <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
