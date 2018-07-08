@@ -4,8 +4,10 @@ import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from '../utils.js';
 import sumBy from 'lodash/sumBy';
 
-export function budgetExtend(data){
+export function calculatedDataExtender(data){
 
+  const campaignsWithIndex = data.campaigns.map((campaign, index) => { return { ... campaign, index: index} });
+  const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
   const merged = merge(data.approvedBudgets, data.planUnknownChannels);
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0] ? data.planUnknownChannels[0] : {};
   const approvedChannels = data.approvedBudgets && data.approvedBudgets.length > 0 && data.approvedBudgets[0] ? data.approvedBudgets[0] : {};
@@ -14,12 +16,14 @@ export function budgetExtend(data){
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
 
   return {
-    budgetCalculatedData: {
+    calculatedData: {
+        campaignsWithIndex: campaignsWithIndex,
+        activeCampaigns: activeCampaigns,
         annualBudgetLeftToPlan: data.annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
         monthlyBudget: monthlyBudget,
         monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
         monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
-        monthlyBudgetLeftToInvest: data.activeCampaigns.reduce((res, campaign) => {
+        monthlyBudgetLeftToInvest: activeCampaigns.reduce((res, campaign) => {
           if (!campaign.isArchived) {
             if (campaign.isOneTime) {
               if (campaign.dueDate && timeFrameToDate(campaign.dueDate).getMonth() === new Date().getMonth()) {

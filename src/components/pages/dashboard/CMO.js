@@ -100,7 +100,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, budgetCalculatedData: {annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];

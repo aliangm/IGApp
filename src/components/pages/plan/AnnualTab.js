@@ -288,7 +288,7 @@ export default class AnnualTab extends Component {
   render() {
     const data = parseBudgets(this.props.approvedBudgets, this.props.planUnknownChannels, null, this.props.projectedPlan);
     const budget = this.props.annualBudget;
-    const budgetLeftToPlan = this.props.budgetCalculatedData.annualBudgetLeftToPlan;
+    const budgetLeftToPlan = this.props.calculatedData.annualBudgetLeftToPlan;
 
     let rows = [];
 
