@@ -9,7 +9,8 @@ export default class EditableCell extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dragged: null
+      dragged: null,
+      previousValue: null
     }
   }
 
@@ -39,6 +40,19 @@ export default class EditableCell extends Component {
     this.props.drop();
   }
 
+  returnToPreviousValue = () => {
+    this.props.onChange(this.state.previousValue);
+    this.setState({ previousValue: null })
+  }
+
+  onChange = (value) => {
+    if(this.state.previousValue == null){
+      this.setState({previousValue: this.props.value});
+    }
+
+    this.props.onChange(value);
+  }
+
   render() {
 
     return <div style={{ height: '100%', cursor: 'grabbing' }}>
@@ -48,13 +62,13 @@ export default class EditableCell extends Component {
         value={ this.props.value }
         className={ this.classes.edit }
         data-dragged={ this.state.dragged }
-        onChange={ this.props.onChange }
+        onChange={ (event) => this.onChange(event.target.value) }
         onFocus={ this.handleFocus.bind(this) }
         onDragStart={ this.dragStart.bind(this) }
         onDrop={ this.drop.bind(this) }
         onDragEnter={ this.dragEnter.bind(this) }/>
 
-      <div onClick={()=>console.log('clicked')} className={ this.classes.undoButton } />
+      { this.state.previousValue != null ? <div onClick={ this.returnToPreviousValue } className={ this.classes.undoButton } /> : null }
     </div>
   }
 
