@@ -13,7 +13,7 @@ export default class NavLink extends Component {
     const {activeClassName, currentPath, pathToCheck, className, ...otherProps} = this.props;
 
     let classNameForLink = className;
-    if(currentPath.startsWith(pathToCheck)){
+    if(currentPath.startsWith(pathToCheck)) {
       classNameForLink += ' ' + activeClassName;
     }
 
