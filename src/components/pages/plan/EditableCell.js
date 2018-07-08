@@ -10,13 +10,21 @@ export default class EditableCell extends Component {
     super(props);
     this.state = {
       dragged: null,
-      previousValue: null
+      previousValue: null,
+      firstOfDrag: false
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.isDragging === false) {
-      this.setState({dragged: null});
+      if(nextProps.draggableValue && this.state.dragged && !this.state.firstOfDrag && this.state.previousValue === null){
+        this.setState({ previousValue: this.props.value});
+      }
+
+      this.setState({
+        dragged: null,
+        firstOfDrag: false
+      });
     }
   }
 
@@ -25,7 +33,11 @@ export default class EditableCell extends Component {
   }
 
   dragStart(event) {
-    this.setState({dragged: true});
+    this.setState({
+      dragged: true,
+      firstOfDrag: true
+    });
+
     this.props.dragStart(event.target.value);
   }
 
