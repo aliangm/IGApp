@@ -71,7 +71,7 @@ export default class Attribution extends Component {
             </div>
           </div>
           { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
-            <div style={{paddingTop: '90px'}} className={ this.classes.wrap }>
+            <div className={ this.classes.wrap }>
               {childrenWithProps}
               <div hidden={!this.state.showOfflinePopup}>
                 <UploadOfflinePopup close={ () => { this.setState({showOfflinePopup: false}) } } setDataAsState={this.props.setDataAsState}/>
