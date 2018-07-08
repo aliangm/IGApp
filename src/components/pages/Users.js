@@ -23,7 +23,6 @@ export default class Users extends Component {
 
   style = style;
   styles = [planStyle, icons, dashboardStyle];
-  
 
   constructor(props) {
     super(props);
