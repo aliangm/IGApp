@@ -90,7 +90,7 @@ export default class Sidebar extends Component {
             <div>
               <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard} isHighlighted={this.isHighlighted('/dashboard')}/>
               <FeatureToggle featureName="attribution">
-                <MenuItem icon="sidebar:analyze" text="Analyze" link='/measure/analyze/overview'  isHighlighted={this.isHighlighted('/measure/analyze')} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
+                <MenuItem icon="sidebar:analyze" text="Analyze" link='analyze/overview'  isHighlighted={this.isHighlighted('analyze')} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
               </FeatureToggle>
               <CollapsedMenuItem icon="sidebar:planContainer" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted('/plan')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
             </div>
