@@ -53,6 +53,8 @@ export default class EditableCell extends Component {
         onDragStart={ this.dragStart.bind(this) }
         onDrop={ this.drop.bind(this) }
         onDragEnter={ this.dragEnter.bind(this) }/>
+
+      <div onClick={()=>console.log('clicked')} className={ this.classes.undoButton } />
     </div>
   }
 
