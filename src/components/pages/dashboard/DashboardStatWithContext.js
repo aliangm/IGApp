@@ -1,7 +1,6 @@
-import React from "react";
+import React, { PropTypes } from "react";
 import Component from "components/Component";
 import style from "styles/dashboard/dashboard-stat-with-context.css";
-import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 
 class DashboardStatWithContext extends Component {
