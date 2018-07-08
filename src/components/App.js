@@ -17,7 +17,7 @@ import Popup from 'components/Popup';
 import style from 'styles/app.css';
 import { FeatureToggleProvider } from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
-import {calculatedDataExtender} from 'dataExtenders/calculatedDataExtender.js';
+import { calculatedDataExtender } from 'dataExtenders/calculatedDataExtender.js';
 
 class AppComponent extends Component {
 
