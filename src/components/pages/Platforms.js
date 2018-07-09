@@ -21,6 +21,7 @@ import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheets
 import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
 import ReactDOM from "react-dom";
 import Button from 'components/controls/Button';
+import ReactTooltip from 'react-tooltip';
 
 export default class Platforms extends Component {
 
@@ -62,6 +63,7 @@ export default class Platforms extends Component {
   render() {
     return <div>
       <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } width="100%">
+        <ReactTooltip place='bottom' effect='solid' id='platforms' data-multiline='true' />
         <Title title="Integrations"/>
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
