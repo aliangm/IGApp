@@ -63,7 +63,7 @@
     flex-grow: 1;
 }
 
-.context{
+.context {
     margin-top: 20px;
     width: 100%;
     display: flex;
@@ -73,20 +73,17 @@
     font-weight: 500;
 }
 
-.context-stat{
+.context-stat {
     display: flex;
-    justify-content: center
-}
-
-.context-stat[data-positive='positive']{
+    justify-content: center;
     color: #00D305;
 }
 
-.context-stat[data-positive='not-positive']{
+.context-stat[data-positive='not-positive'] {
     color: red;
 }
 
-.arrow[data-arrow-type='decline']{
+.arrow[data-arrow-type='decline'] {
     transform: rotate(180deg);
     border-color: transparent transparent red transparent;
 }
