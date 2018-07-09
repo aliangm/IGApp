@@ -17,6 +17,7 @@ import Popup from 'components/Popup';
 import style from 'styles/app.css';
 import { FeatureToggleProvider } from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
+import { calculatedDataExtender } from 'dataExtenders/calculatedDataExtender.js';
 
 class AppComponent extends Component {
 
@@ -431,6 +432,7 @@ class AppComponent extends Component {
 
   setDataAsState(data) {
     this.setState({
+      dataUpdated: true,
       userProfile: data.userProfile,
       targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
       annualBudget: data.annualBudget,
@@ -684,9 +686,14 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  getExtendedState(state){
+    return calculatedDataExtender(state);
+  }
+
   render() {
+    const extendedData = this.state.dataUpdated ?  this.getExtendedState(this.state) : this.state;
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, this.state));
+      (child) => React.cloneElement(child, extendedData));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header auth={ this.props.route.auth } {... this.state} path={this.props.location.pathname}/>

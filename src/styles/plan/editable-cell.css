@@ -21,3 +21,15 @@
     cursor: grabbing;
     cursor: -webkit-grabbing;
 }
+
+.undo-button {
+    background: url(../../assets/undo-button.svg) center center no-repeat;
+    background-size: contain;
+    height: 14px;
+    width: 12px;
+    z-index: 10;
+    position: absolute;
+    cursor: pointer;
+    top: 5px;
+    right: 5px;
+}
