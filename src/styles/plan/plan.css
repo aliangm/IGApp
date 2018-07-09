@@ -1,3 +1,9 @@
+.static {
+  margin-left: 145px;
+  margin-top: 0;
+  position: relative;
+}
+
 .head {
   height: 90px;
   border-bottom: 2px solid #e7e9ed;
