@@ -21,6 +21,8 @@ import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
+import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
+import { getExtarpolateRatio } from 'utils';
 
 export default class CMO extends Component {
 
@@ -98,11 +100,9 @@ export default class CMO extends Component {
   }
 
   render() {
-    const { approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs } = this.props;
+    const { planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
     const { months, isPast, advancedIndicator, showAdvanced } = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
-    const monthBudget = Object.keys(merged && merged[0]).reduce((sum, channel) => sum + merged[0][channel], 0);
-    const annualBudget = annualBudgetArray.reduce((a, b) => a+b, 0);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
@@ -116,12 +116,20 @@ export default class CMO extends Component {
           alreadyExistItem.value += merged[0][channel];
         }
       });
-    const budgetLeftToPlan = annualBudget - merged.reduce((annualSum, month) => Object.keys(month).reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);;
 
     const numberOfActiveCampaigns = campaigns
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
 
-    const ratio = (actualIndicators.LTV/actualIndicators.CAC).toFixed(2) || 0;
+    const monthlyOnTrackSpending =  monthlyBudget * getExtarpolateRatio(new Date(), planDate);
+    const isOnTrack = Math.abs(monthlyOnTrackSpending - monthlyExtarpolatedMoneySpent) < monthlyOnTrackSpending * 0.07;
+
+    const ratioCalc = (LTV, CAC) => (LTV/CAC).toFixed(2) || 0;
+    const ratioCanBeCalculated = (actualIndicators) => (actualIndicators && actualIndicators.LTV !== 0 && actualIndicators.CAC !== 0);
+    const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV, actualIndicators.CAC) : null;
+    const previousMonthData = (previousData && previousData.length > 1) ? previousData[previousData.length-2] : {actualIndicators: {LTV: 0, CAC: 0}};
+    const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators) ? ratioCalc(previousMonthData.actualIndicators.LTV, previousMonthData.actualIndicators.CAC) : null;
+    const ratioContextStat = (ratio && lastMonthRatio) ? Math.round((ratio / lastMonthRatio) * 100) - 100 : null;
+
     const COLORS = [
       '#189aca',
       '#3cca3f',
@@ -499,7 +507,7 @@ export default class CMO extends Component {
                   </div>
                   <div className={ dashboardStyle.locals.column } style={{ padding: '10px 20px 0 0', width: 'auto', marginRight: 'auto' }}>
                     <div className={ dashboardStyle.locals.snapshotNumber }>
-                      ${formatBudgetShortened(monthBudget)}
+                      ${formatBudgetShortened(monthlyBudget)}
                     </div>
                     <div className={ dashboardStyle.locals.snapshotText }>
                       Budget
@@ -635,49 +643,41 @@ export default class CMO extends Component {
         </div>
         : null }
       <div className={ this.classes.cols } style={{ width: '825px' }}>
-        <div className={ this.classes.colLeft }>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Monthly Budget
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              ${monthBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            </div>
-          </div>
-        </div>
-        <div className={ this.classes.colCenter }>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Active Campaigns
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              {numberOfActiveCampaigns}
-            </div>
-          </div>
-        </div>
-        <div className={ this.classes.colCenter }>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Annual Budget
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              ${formatBudget(Math.ceil(annualBudget/1000)*1000)}
-            </div>
-          </div>
-        </div>
+        <DashboardStatWithContext
+          title="Annual Budget"
+          stat={'$'+ formatBudgetShortened(annualBudget)}
+          contextStat={'$' + formatBudgetShortened(annualBudgetLeftToPlan)}
+          contextText="left to plan"
+          isPositive={annualBudgetLeftToPlan > 0}
+        />
+        <DashboardStatWithContext
+          title="Monthly Budget"
+          stat={'$' + formatBudgetShortened(monthlyBudget)}
+          contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
+          contextText=''
+          isPositive={isOnTrack}
+          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Actual spend off-track. Forecasted: ' + '$' + formatBudgetShortened(monthlyExtapolatedTotalSpending)}
+          statWithArrow={false}
+        />
+        <DashboardStatWithContext
+          title="Active Campaigns"
+          stat={numberOfActiveCampaigns}
+          contextStat={'$' + formatBudgetShortened(monthlyBudgetLeftToInvest)}
+          contextText="left to invest"
+          isPositive={monthlyBudgetLeftToInvest > 0}
+          statWithArrow={false}
+        />
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              Annual Budget Left To Plan
-            </div>
-            <div className={ dashboardStyle.locals.number }>
-              {
-                Math.abs(budgetLeftToPlan) >= 100 ?
-                  '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  : <div className={ dashboardStyle.locals.budgetLeftToPlanOk }/>
-              }
-            </div>
-          </div>
+          <DashboardStatWithContext
+            title="LTV:CAC Ratio"
+            stat={ratio}
+            contextStat={ratioContextStat ? ratioContextStat + '%' : undefined}
+            contextText={ratioContextStat ? 'from last month' : undefined}
+            isPositive={ratioContextStat ? ratioContextStat > 0 : undefined}
+            emptyStatMessage={'Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.'}
+            showEmptyStat={ratio === null}
+            statWithArrow={true}
+          />
         </div>
       </div>
       <div className={ this.classes.cols } style={{ width: '825px' }}>
@@ -701,25 +701,6 @@ export default class CMO extends Component {
           </div>
         </div>
         <div className={ this.classes.colRight } style={{ paddingLeft: 0 }}>
-          <div className={ dashboardStyle.locals.item }>
-            <div className={ dashboardStyle.locals.text }>
-              LTV:CAC Ratio
-            </div>
-            { ratio && isFinite(ratio) ?
-              <div className={dashboardStyle.locals.number}>
-                {ratio}
-              </div>
-              :
-              <div>
-                <div className={ dashboardStyle.locals.center }>
-                  <div className={ dashboardStyle.locals.sadIcon }/>
-                </div>
-                <div className={ dashboardStyle.locals.noMetrics }>
-                  Oh… It seems that the relevant metrics (LTV + CAC) are missing. Please update your data.
-                </div>
-              </div>
-            }
-          </div>
           <div className={ dashboardStyle.locals.item } style={{ marginTop: '30px' }}>
             <div className={ dashboardStyle.locals.text }>
               {(minRatioTitle.length > 0 ? minRatioTitle : "Funnel") + ' Ratio'}
@@ -771,7 +752,7 @@ export default class CMO extends Component {
                           ${formatBudget(element.value)}
                         </div>
                         <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
-                          ({Math.round(element.value/monthBudget*100)}%)
+                          ({Math.round(element.value / monthlyBudget * 100)}%)
                         </div>
                       </div>
                     ))

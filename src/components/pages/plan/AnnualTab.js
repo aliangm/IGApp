@@ -287,7 +287,9 @@ export default class AnnualTab extends Component {
 
   render() {
     const data = parseBudgets(this.props.approvedBudgets, this.props.planUnknownChannels, null, this.props.projectedPlan);
-    const budget = this.props.annualBudgetArray.reduce((a, b) => a+b, 0);
+    const budget = this.props.annualBudget;
+    const budgetLeftToPlan = this.props.calculatedData.annualBudgetLeftToPlan;
+
     let rows = [];
 
     const handleRows = (data, parent, level) => {
@@ -410,7 +412,6 @@ export default class AnnualTab extends Component {
       handleRows(data);
     }
 
-    const budgetLeftToPlan = budget - data['__TOTAL__'].values.reduce((a, b) => a + b, 0);
 
     const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
       <div
