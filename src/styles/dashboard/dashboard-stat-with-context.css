@@ -79,7 +79,7 @@
     color: #00D305;
 }
 
-.context-stat[data-positive='not-positive'] {
+.context-stat[data-negative='negative'] {
     color: red;
 }
 

@@ -49,7 +49,7 @@ export default class DashboardStatWithContext extends Component {
           <div>
             <div className={ this.classes.number }>{this.props.stat}</div>
             <div className={this.classes.context} data-tip={this.props.tooltipText} data-for={this.uniqueID}>
-              {this.props.contextStat ? <div className={this.classes.contextStat + ' ' + this.classes.contextText} data-positive={ this.props.isPositive ? null : 'not-positive' }>
+              {this.props.contextStat ? <div className={this.classes.contextStat + ' ' + this.classes.contextText} data-negative={ this.props.isPositive ? null : 'negative' }>
                   {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={ !this.props.isPositive ? 'decline' : null } /> : ''}
                   {this.props.contextStat}
                 </div> : ''
