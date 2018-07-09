@@ -6,7 +6,6 @@ const channelPlatformMapping = {
   'advertising_searchMarketing_SEM_googleAdwords': 'adwordsapi',
   'advertising_socialAds_linkedinAdvertising': 'linkedinapi',
   'advertising_socialAds_twitterAdvertising': 'twitterapi',
-
 };
 
 export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, knownChannels, unknownChannels, apis) {

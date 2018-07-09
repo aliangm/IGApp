@@ -136,7 +136,7 @@ export default class PlannedVsActual extends Component {
         return this.getTableRow(null, [
           <div className={ this.classes.cellItem }>
             <div className={this.classes.channelName}>{item.channel}</div>
-            { item.isAutomatic ? <div className={this.classes.automaticLabel}>Automatic</div> : null}
+            { item.isAutomatic ? <div className={ this.classes.automaticLabel }>Automatic</div> : null }
           </div>,
           '$' + item.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
           <div className={ this.classes.cellItem }>
@@ -147,7 +147,7 @@ export default class PlannedVsActual extends Component {
               let value = parseInt(e.target.value.replace(/^\$/, '').replace(',','')) || '';
               this.updateActual(item.key, value);
             }}
-            disabled = {item.isAutomatic}/>
+            disabled = { item.isAutomatic }/>
           </div>
         ], {
           key: month + i
