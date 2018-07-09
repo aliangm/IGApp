@@ -1,0 +1,60 @@
+
+.wrapper {
+    display: inline-table;
+    width: 126px;
+    position: fixed;
+    background-color: #475973;
+    height: 100%;
+}
+
+.head-tabs {
+    margin-left: 30px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    height: 100%;
+    display: flex;
+}
+
+.head-tab {
+    font-size: 14px;
+    font-weight: 200;
+    display: flex;
+    justify-content: left;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    margin: 15px 0 15px 5px;
+    height: 35px;
+    align-items: center;
+    padding-left: 4px;
+    color:#f5f6fb;
+}
+
+.head-tab:hover {
+    background-color: #283240;
+    color: #3AA0ED;
+    border-top-left-radius : 4px;
+    border-bottom-left-radius : 4px;
+}
+
+.head-tab-selected {
+    composes: head-tab;
+    background-color: #283240;
+    color: #3AA0ED;
+    border-top-left-radius : 4px;
+    border-bottom-left-radius : 4px;
+}
+
+.head-tab-selected::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    margin-top: -12px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 12px 0 12px 12px;
+    border-color: transparent transparent transparent #283240
+}

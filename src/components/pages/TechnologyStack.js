@@ -142,13 +142,13 @@ export default class TechnologyStack extends Component {
 
           <div className={ this.classes.footer }>
             <BackButton onClick={ () => {
-              history.push('/profile/target-audience');
+              history.push('/settings/profile/target-audience');
             } }/>
             <div style={{ width: '30px' }} />
             <NextButton onClick={ () => {
               this.props.updateUserMonthPlan({technologyStack: this.props.technologyStack}, this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/profile/integrations');
+                  history.push('/settings/profile/integrations');
                 });
             } }/>
           </div>
@@ -158,13 +158,13 @@ export default class TechnologyStack extends Component {
               width: '128',
               marginRight: 'auto'
             }} onClick={() => {
-              history.push('/profile/integrations');
+              history.push('/settings/profile/integrations');
             }}> Cancel
             </Button>
             <SaveButton onClick={() => {
               this.props.updateUserMonthPlan({technologyStack: this.props.technologyStack}, this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/profile/integrations');
+                  history.push('/settings/profile/integrations');
                 });
             }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
           </div>

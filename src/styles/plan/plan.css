@@ -1,3 +1,9 @@
+.static {
+  margin-left: 145px;
+  margin-top: 0;
+  position: relative;
+}
+
 .head {
   height: 90px;
   border-bottom: 2px solid #e7e9ed;
@@ -7,7 +13,7 @@
   position: fixed;
   top: 70px;
   width: calc(100% - 240px);
-  z-index: 9;
+  z-index: 8;
 }
 
 @media (max-width: 1440px) {
@@ -90,7 +96,7 @@
 }
 
 .wrap {
-  padding-top: 90px;
+  padding-top: 110px;
 }
 
 .pageInner {

@@ -9,6 +9,7 @@ import Button from 'components/controls/Button';
 import { Link } from 'react-router';
 
 export default class Attribution extends Component {
+
   style = style;
 
   constructor(props) {
@@ -27,11 +28,11 @@ export default class Attribution extends Component {
 
   render() {
     const tabs = {
-      "Setup": '/measure/attribution/setup',
-      "Tracking Plan": '/measure/attribution/tracking-plan',
-      "Campaign URLs": '/measure/attribution/tracking-urls',
-      "Offline": '/measure/attribution/offline',
-      "Site Structure": '/measure/attribution/site-structure'
+      "Setup": '/settings/attribution/setup',
+      "Tracking Plan": '/settings/attribution/tracking-plan',
+      "Campaign URLs": '/settings/attribution/tracking-urls',
+      "Offline": '/settings/attribution/offline',
+      "Site Structure": '/settings/attribution/site-structure'
     };
 
     const tabNames = Object.keys(tabs);
@@ -41,7 +42,7 @@ export default class Attribution extends Component {
       (child) => React.cloneElement(child, this.props));
     return <FeatureToggle featureName="attribution">
       <div>
-        <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
+        <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } className={this.classes.static} width="100%">
           <div className={ this.classes.head }>
             <div className={ this.classes.headTitle }>Attribution</div>
             <div className={ this.classes.headTabs }>
@@ -69,7 +70,7 @@ export default class Attribution extends Component {
             </div>
           </div>
           { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
-            <div style={{paddingTop: '90px'}}>
+            <div className={ this.classes.wrap }>
               {childrenWithProps}
               <div hidden={!this.state.showOfflinePopup}>
                 <UploadOfflinePopup close={ () => { this.setState({showOfflinePopup: false}) } } setDataAsState={this.props.setDataAsState}/>

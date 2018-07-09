@@ -62,9 +62,9 @@ export default class Platforms extends Component {
 
   render() {
     return <div>
-      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } width="100%">
+      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? this.classes.static : null} width="100%">
         <ReactTooltip place='bottom' effect='solid' id='platforms' data-multiline='true' />
-        <Title title="Integrations"/>
+        {isPopupMode() ? <Title title="Integrations"/> : null}
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
           <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
@@ -144,7 +144,7 @@ export default class Platforms extends Component {
             } }/>
             <div style={{ width: '30px' }} />
             <NextButton onClick={ () => {
-              history.push('/profile/preferences');
+              history.push('/settings/profile/preferences');
             } }/>
           </div>
           :

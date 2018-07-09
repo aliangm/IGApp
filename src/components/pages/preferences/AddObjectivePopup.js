@@ -5,7 +5,6 @@ import Button from 'components/controls/Button';
 import Page from 'components/Page';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
-import preferencesStyle from 'styles/preferences/preferences.css';
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
 import { getIndicatorsWithProps, getNickname } from 'components/utils/indicators';
@@ -21,7 +20,7 @@ import { formatBudget } from 'components/utils/budget';
 export default class AddObjectivePopup extends Component {
 
   style = style;
-  styles = [popupStyle, preferencesStyle, navStyle];
+  styles = [popupStyle, navStyle];
 
   constructor(props) {
     super(props);
