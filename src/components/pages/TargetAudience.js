@@ -232,8 +232,8 @@ export default class TargetAudience extends Component {
     };
     const defaultTabs = this.props.targetAudience.map(target => target.info.name || null);
     return <div>
-      <Page popup={ isPopupMode() }>
-        <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" />
+      <Page popup={ isPopupMode() } className={!isPopupMode() ? this.classes.static : null}>
+        {isPopupMode() ? <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" /> : null}
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
@@ -403,7 +403,7 @@ export default class TargetAudience extends Component {
               <BackButton onClick={() => {
                 this.props.updateUserMonthPlan({targetAudience: this.props.targetAudience, planNeedsUpdate: true}, this.props.region, this.props.planDate)
                   .then(() => {
-                    history.push('/profile/product');
+                    history.push('/settings/profile/product');
                   });
               }}/>
               < div style = {{width: '30px'}} />
