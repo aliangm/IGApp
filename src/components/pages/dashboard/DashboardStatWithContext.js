@@ -52,8 +52,10 @@ export default class DashboardStatWithContext extends Component {
               {this.props.contextStat ? <div className={this.classes.contextStat + ' ' + this.classes.contextText} data-positive={this.props.isPositive ? 'positive': 'not-positive'}>
                   {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={ !this.props.isPositive ? 'decline' : null } /> : ''}
                   {this.props.contextStat}
-                </div> : ''}
-              {' '+ this.props.contextText}
+                </div> : ''
+              }
+
+              { ' '+ this.props.contextText }
             </div>
           </div>
         }
