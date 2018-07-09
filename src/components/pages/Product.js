@@ -13,6 +13,7 @@ import Toggle from 'components/controls/Toggle';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/onboarding/onboarding.css';
+import preferencesStyle from 'styles/preferences/preferences.css';
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 
@@ -20,6 +21,7 @@ export default class Product extends Component {
 
 
   style = style;
+  styles = [preferencesStyle];
   /*
    state = {
    highlightInsights: false,
