@@ -74,13 +74,15 @@ export default class EditableCell extends Component {
         value={ this.props.value }
         className={ this.classes.edit }
         data-dragged={ this.state.dragged }
-        onChange={ (event) => this.onChange(event.target.value) }
+        onChange={ event => this.onChange(event.target.value) }
         onFocus={ this.handleFocus.bind(this) }
         onDragStart={ this.dragStart.bind(this) }
         onDrop={ this.drop.bind(this) }
         onDragEnter={ this.dragEnter.bind(this) }/>
 
-      { this.state.previousValue !== null ? <div onClick={ this.returnToPreviousValue } className={ this.classes.undoButton } /> : null }
+      { this.state.previousValue !== null ? <div onClick={ this.returnToPreviousValue }
+                                                 className={ this.classes.undoButton } /> : null }
+
     </div>
   }
 
