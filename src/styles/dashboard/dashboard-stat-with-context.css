@@ -91,7 +91,7 @@
     border-color: transparent transparent red transparent;
 }
 
-.arrow{
+.arrow {
     content: '';
     width: 0;
     height: 0;
@@ -99,13 +99,10 @@
     border-width: 0 6px 9px 6px;
     align-self: center;
     margin: 2px 2px 0 0;
-}
-
-.arrow[data-arrow-type='incline']{
     border-color: transparent transparent #24b10e transparent;
 }
 
-.arrow[data-arrow-type='decline']{
+.arrow[data-arrow-type='decline'] {
     transform: rotate(180deg);
     border-color: transparent transparent red transparent;
 }
