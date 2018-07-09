@@ -9,13 +9,22 @@ export default class EditableCell extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dragged: null
+      dragged: null,
+      previousValue: null,
+      firstOfDrag: false
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.isDragging === false) {
-      this.setState({dragged: null});
+      if(nextProps.draggableValue && this.state.dragged && !this.state.firstOfDrag && this.state.previousValue === null){
+        this.setState({ previousValue: this.props.value });
+      }
+
+      this.setState({
+        dragged: null,
+        firstOfDrag: false
+      });
     }
   }
 
@@ -24,19 +33,36 @@ export default class EditableCell extends Component {
   }
 
   dragStart(event) {
-    this.setState({dragged: true});
+    this.setState({
+      dragged: true,
+      firstOfDrag: true
+    });
+
     this.props.dragStart(event.target.value);
   }
 
   dragEnter(event) {
     event.preventDefault();
-    this.setState({dragged: true});
+    this.setState({ dragged: true });
     this.props.dragEnter(this.props.i, this.props.channel);
   }
 
   drop(event) {
     event.preventDefault();
     this.props.drop();
+  }
+
+  returnToPreviousValue = () => {
+    this.props.onChange(this.state.previousValue);
+    this.setState({ previousValue: null })
+  }
+
+  onChange = (value) => {
+    if(this.state.previousValue === null){
+      this.setState({ previousValue: this.props.value });
+    }
+
+    this.props.onChange(value);
   }
 
   render() {
@@ -48,11 +74,15 @@ export default class EditableCell extends Component {
         value={ this.props.value }
         className={ this.classes.edit }
         data-dragged={ this.state.dragged }
-        onChange={ this.props.onChange }
+        onChange={ event => this.onChange(event.target.value) }
         onFocus={ this.handleFocus.bind(this) }
         onDragStart={ this.dragStart.bind(this) }
         onDrop={ this.drop.bind(this) }
         onDragEnter={ this.dragEnter.bind(this) }/>
+
+      { this.state.previousValue !== null ? <div onClick={ this.returnToPreviousValue }
+                                                 className={ this.classes.undoButton } /> : null }
+
     </div>
   }
 
