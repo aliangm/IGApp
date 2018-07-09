@@ -13,7 +13,6 @@ import Toggle from 'components/controls/Toggle';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/onboarding/onboarding.css';
-import preferencesStyle from 'styles/preferences/preferences.css';
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 
@@ -21,7 +20,6 @@ export default class Product extends Component {
 
 
   style = style;
-  styles = [preferencesStyle];
   /*
    state = {
    highlightInsights: false,
@@ -71,7 +69,7 @@ export default class Product extends Component {
       return false;
     }
     if (this.props.pricingTiers && this.props.pricingTiers.length > 0 && this.props.pricingTiers[0] && this.props.pricingTiers[0].price) {
-     return true;
+      return true;
     }
     else {
       this.refs.price0.focus();
@@ -235,10 +233,10 @@ export default class Product extends Component {
 
 
     return <div>
-      <Page popup={ isPopupMode() } className={!isPopupMode() ? preferencesStyle.locals.static :''}>
+      <Page popup={ isPopupMode() } className={ !isPopupMode() ? this.classes.static : null }>
         {
           isPopupMode() ? <Title title="Product"
-                                subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/> : ''
+                                 subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/> : ''
         }
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>

@@ -13,13 +13,12 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import AudienceTabs from 'components/onboarding/AudienceTabs';
 import style from 'styles/onboarding/onboarding.css';
 import targeStyle from 'styles/target-audience/target-audience.css';
-import preferencesStyle from 'styles/preferences/preferences.css';
 import { isPopupMode } from 'modules/popup-mode';
 import history from 'history';
 
 export default class TargetAudience extends Component {
   style = style;
-  styles = [targeStyle, preferencesStyle];
+  styles = [targeStyle];
 
   static defaultProps = {
     targetAudience: [{
@@ -233,7 +232,7 @@ export default class TargetAudience extends Component {
     };
     const defaultTabs = this.props.targetAudience.map(target => target.info.name || null);
     return <div>
-      <Page popup={ isPopupMode() } className={!isPopupMode() ? preferencesStyle.locals.static : null}>
+      <Page popup={ isPopupMode() } className={!isPopupMode() ? this.classes.static : null}>
         {isPopupMode() ? <Title title="Target Audience" subTitle="Who is your target audience? Who is your buyer persona? The best marketing strategies are always based on the people you want to reach" /> : null}
         <div className={ this.classes.error }>
           <label hidden={ !this.state.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>

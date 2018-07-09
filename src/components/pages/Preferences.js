@@ -493,7 +493,7 @@ export default class Preferences extends Component {
     });
 
     return <div>
-      <Page popup={ isPopupMode() } className={!isPopupMode() ? preferencesStyle.locals.static : null}>
+      <Page popup={ isPopupMode() } className={!isPopupMode() ? this.classes.static : null}>
         {isPopupMode() ? <Title title="Preferences"
                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : null}
         <div className={ this.classes.error }>
