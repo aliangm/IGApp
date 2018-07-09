@@ -21,8 +21,8 @@ import Select from 'components/controls/Select';
 import { getDates } from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
-import DashboardStatWithContext from "./DashboardStatWithContext";
-import { getExtarpolateRatio } from '../../../utils.js';
+import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
+import { getExtarpolateRatio } from 'utils';
 
 export default class CMO extends Component {
 
