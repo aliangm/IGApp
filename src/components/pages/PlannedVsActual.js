@@ -123,19 +123,31 @@ export default class PlannedVsActual extends Component {
     let channelOptions = [];
     this.keys = this.getDates();
     month = this.keys[this.state.month];
-    const data = parsePlannedVsActual(this.state.approvedBudgets[0] || {}, this.state.planUnknownChannels[0] || {}, this.state.knownChannels, this.state.unknownChannels);
+    const data = parsePlannedVsActual(this.state.approvedBudgets[0] || {}, this.state.planUnknownChannels[0] || {}, this.state.knownChannels, this.state.unknownChannels,
+      {
+        facebookadsapi: this.state.facebookadsapi,
+        adwordsapi: this.state.adwordsapi,
+        linkedinapi: this.state.linkedinapi,
+        twitterapi: this.state.twitterapi
+      }
+  );
     if (data) {
       rows = data.map((item, i) => {
         return this.getTableRow(null, [
-          item.channel,
+          <div className={ this.classes.cellItem }>
+            <div className={this.classes.channelName}>{item.channel}</div>
+            { item.isAutomatic ? <div className={ this.classes.automaticLabel }>Automatic</div> : null }
+          </div>,
           '$' + item.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
           <div className={ this.classes.cellItem }>
             <Textfield style={{
-              minWidth: '72px'
+              minWidth: '72px',
+              width: '100%'
             }} value={ '$' + item.actual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } onChange={(e) => {
               let value = parseInt(e.target.value.replace(/^\$/, '').replace(',','')) || '';
               this.updateActual(item.key, value);
-            }}/>
+            }}
+            disabled = { item.isAutomatic }/>
           </div>
         ], {
           key: month + i
