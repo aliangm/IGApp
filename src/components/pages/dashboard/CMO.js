@@ -121,14 +121,14 @@ export default class CMO extends Component {
       .filter(campaign => campaign.isArchived !== true && campaign.status !== 'Completed').length;
 
     const monthlyOnTrackSpending =  monthlyBudget * getExtarpolateRatio(new Date(), planDate);
-    const isOnTrack = Math.abs(monthlyOnTrackSpending - monthlyExtarpolatedMoneySpent) < monthlyOnTrackSpending*0.07;
+    const isOnTrack = Math.abs(monthlyOnTrackSpending - monthlyExtarpolatedMoneySpent) < monthlyOnTrackSpending * 0.07;
 
     const ratioCalc = (LTV, CAC) => (LTV/CAC).toFixed(2) || 0;
     const ratioCanBeCalculated = (actualIndicators) => (actualIndicators && actualIndicators.LTV !== 0 && actualIndicators.CAC !== 0);
     const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV, actualIndicators.CAC) : null;
     const previousMonthData = (previousData && previousData.length > 1) ? previousData[previousData.length-2] : {actualIndicators: {LTV: 0, CAC: 0}};
-    const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators) ? ratioCalc(previousMonthData.actualIndicators.LTV, previousMonthData.actualIndicators.CAC) : undefined;
-    const ratioContextStat = (ratio && lastMonthRatio) ? Math.round((ratio / lastMonthRatio) * 100) - 100 : undefined;
+    const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators) ? ratioCalc(previousMonthData.actualIndicators.LTV, previousMonthData.actualIndicators.CAC) : null;
+    const ratioContextStat = (ratio && lastMonthRatio) ? Math.round((ratio / lastMonthRatio) * 100) - 100 : null;
 
     const COLORS = [
       '#189aca',
