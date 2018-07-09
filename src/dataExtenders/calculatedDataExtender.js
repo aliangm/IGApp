@@ -1,7 +1,7 @@
 import merge from "lodash/merge";
-import { timeFrameToDate } from '../components/utils/objective';
+import { timeFrameToDate } from 'components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
-import { getExtarpolateRatio } from '../utils.js';
+import { getExtarpolateRatio } from 'utils.js';
 import sumBy from 'lodash/sumBy';
 
 export function calculatedDataExtender(data){
