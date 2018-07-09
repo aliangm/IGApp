@@ -3,13 +3,33 @@ import Component from "components/Component";
 import style from "styles/dashboard/dashboard-stat-with-context.css";
 import ReactTooltip from 'react-tooltip';
 
-class DashboardStatWithContext extends Component {
+export default class DashboardStatWithContext extends Component {
+
+  static propTypes = {
+    title:PropTypes.string.isRequired,
+    stat:PropTypes.node,
+    contextStat:PropTypes.node,
+    statWithArrow: PropTypes.bool,
+    contextText: PropTypes.string,
+    isPositive: PropTypes.bool,
+    tooltipText: PropTypes.string,
+    showEmptyStat : PropTypes.bool,
+    emptyStatMessage: PropTypes.string
+  };
+
+  static defaultProps = {
+    tooltipText: '',
+    statWithArrow: false,
+    showEmptyStat: false,
+    contextText: ''
+  };
 
   constructor(props){
     super(props);
     this.uniqueID = Math.random().toString(36).substr(2, 9);
   }
-  style=style;
+
+  style = style;
 
   render() {
     return <div className={ this.classes.col}>
@@ -41,24 +61,3 @@ class DashboardStatWithContext extends Component {
     </div>
   }
 }
-
-DashboardStatWithContext.propTypes = {
-  title:PropTypes.string.isRequired,
-  stat:PropTypes.node,
-  contextStat:PropTypes.node,
-  statWithArrow: PropTypes.bool,
-  contextText: PropTypes.string,
-  isPositive: PropTypes.bool,
-  tooltipText: PropTypes.string,
-  showEmptyStat : PropTypes.bool,
-  emptyStatMessage: PropTypes.string
-};
-
-DashboardStatWithContext.defaultProps = {
-  tooltipText: '',
-  statWithArrow: false,
-  showEmptyStat: false,
-  contextText: ''
-}
-
-export default DashboardStatWithContext
