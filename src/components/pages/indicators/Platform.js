@@ -2,20 +2,22 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/indicators/platform.css';
 import Button from 'components/controls/Button';
-import join from 'lodash/join';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+
+const platfromIndicatorsMapping = {
+  'Hubspot': ['users'],
+  'Salesforce': ['users'],
+  'Google Sheets': []
+}
 
 export default class Platform extends Component {
 
   style = style;
 
   getTooltipComponent = () => {
-    if( this.props.connected.mapping ){
-      const indicatorsCollection = Object.keys(this.props.connected.mapping).map(getIndicatorNickname);
-      return 'Relevant metrics:<br/>' + indicatorsCollection .join('<br/>')
-    }
-
-     return null;
+    return platfromIndicatorsMapping[this.props.title] ?
+      'Relevant metrics:<br/>' + platfromIndicatorsMapping[this.props.title].map(getIndicatorNickname).join('<br/>')
+      : null;
   };
 
   render(){
