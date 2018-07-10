@@ -3,14 +3,19 @@ import Component from 'components/Component';
 import style from 'styles/indicators/platform.css';
 import Button from 'components/controls/Button';
 import join from 'lodash/join';
+import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 
 export default class Platform extends Component {
 
   style = style;
 
   getTooltipComponent = () => {
-    return this.props.connected.mapping ?
-      'Relevant metrics:<br/>' + Object.keys(this.props.connected.mapping).join('<br/>') : null;
+    if( this.props.connected.mapping ){
+      const indicatorsCollection = Object.keys(this.props.connected.mapping).map(getIndicatorNickname);
+      return 'Relevant metrics:<br/>' + indicatorsCollection .join('<br/>')
+    }
+
+     return null;
   };
 
   render(){
