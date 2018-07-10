@@ -4,12 +4,32 @@ import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { Link } from 'react-router';
+import Select from 'components/controls/Select';
+import { formatDate } from 'components/utils/date';
+
 
 export default class Analyze extends Component {
 
   style = style;
 
+  static defaultProps = {
+    previousData: []
+  };
+
   render() {
+
+    const { previousData } = this.props;
+    const sortedPreviousData = previousData.sort((a, b) => {
+      const planDate1 = a.planDate.split("/");
+      const planDate2 = b.planDate.split("/");
+      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
+      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
+      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    });
+    const months = sortedPreviousData.map((item, index) => {
+      return {value: index, label: formatDate(item.planDate)}
+    });
+
     const tabs = {
       "Overview": 'analyze/overview',
       "Channels": '/analyze/channels',
@@ -35,6 +55,16 @@ export default class Analyze extends Component {
               })
             }
           </div>
+          <Select
+            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+            select={{
+              options: months
+            }}
+            onChange={(e) => {
+              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
+            }}
+            style={{ width: '75px', margin: '0 8px' }}
+          />
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
           <div style={{paddingTop: '90px'}}>
