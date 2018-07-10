@@ -5,9 +5,16 @@ import Button from 'components/controls/Button';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 
 const platfromIndicatorsMapping = {
-  'Hubspot': ['users'],
-  'Salesforce': ['users'],
-  'Google Sheets': []
+  'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
+  'Salesforce': ['users', 'opps', 'SQL', 'MQL', 'MCL', 'CAC', 'MRR', 'ARPA'],
+  'Google Analytics': ['sessions', 'bounceRate', 'averageSessionDuration', 'blogVisits'],
+  'LinkedIn': ['linkedinEngagement', 'linkedinFollowers'],
+  'Facebook': ['facebookEngagement', 'facebookLikes'],
+  'Twitter': ['twitterFollowers', 'twitterEngagement'],
+  'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
+  'Stripe': ['MRR', 'LTV', 'churnRate'],
+  'Google Sheets': [],
+  'Moz': ['domainAuthority']
 }
 
 export default class Platform extends Component {
