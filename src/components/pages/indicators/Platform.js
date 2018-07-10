@@ -21,7 +21,7 @@ export default class Platform extends Component {
 
   style = style;
 
-  getTooltipComponent = () => {
+  getTooltipHtml = () => {
     return platfromIndicatorsMapping[this.props.title] ?
       'Relevant metrics:<br/>' + platfromIndicatorsMapping[this.props.title].map(getIndicatorNickname).join('<br/>')
       : null;
@@ -29,7 +29,7 @@ export default class Platform extends Component {
 
   render(){
     return <div className={this.classes.square} hidden={this.props.hidden} data-connected={this.props.connected ? true : null}>
-      <div className={this.classes.platformIcon} data-tip={ this.getTooltipComponent() } data-for='platforms' data-icon={this.props.icon}/>
+      <div className={this.classes.platformIcon} data-tip={ this.getTooltipHtml() } data-for='platforms' data-icon={this.props.icon}/>
       <div className={this.classes.platformText}>
         {this.props.title}
       </div>
