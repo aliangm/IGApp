@@ -63,7 +63,7 @@ export default class Platforms extends Component {
   render() {
     return <div>
       <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? this.classes.static : null} width="100%">
-        <ReactTooltip place='bottom' effect='solid' id='platforms' data-multiline='true' />
+        <ReactTooltip place='right' effect='solid' id='platforms' html='true' />
         {isPopupMode() ? <Title title="Integrations"/> : null}
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>

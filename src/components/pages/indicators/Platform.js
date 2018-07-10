@@ -8,13 +8,14 @@ export default class Platform extends Component {
 
   style = style;
 
+  getTooltipComponent = () => {
+    return this.props.connected.mapping ?
+      'Relevant metrics:<br/>' + Object.keys(this.props.connected.mapping).join('<br/>') : null;
+  };
+
   render(){
-    return <div className = { this.classes.square }
-                hidden = { this.props.hidden }
-                data-connected = { this.props.connected ? true : null }
-                data-tip = { this.props.connected.mapping ? join(Object.keys(this.props.connected.mapping), '<br/>') : 'no metrics connected' }
-                data-for = 'platforms' >
-      <div className={this.classes.platformIcon} data-icon={this.props.icon}/>
+    return <div className={this.classes.square} hidden={this.props.hidden} data-connected={this.props.connected ? true : null}>
+      <div className={this.classes.platformIcon} data-tip={ this.getTooltipComponent() } data-for='platforms' data-icon={this.props.icon}/>
       <div className={this.classes.platformText}>
         {this.props.title}
       </div>
