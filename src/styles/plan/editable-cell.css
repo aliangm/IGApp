@@ -27,7 +27,7 @@
     background-size: contain;
     height: 14px;
     width: 12px;
-    z-index: 10;
+    z-index: 5;
     position: absolute;
     cursor: pointer;
     top: 5px;
