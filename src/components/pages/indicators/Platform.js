@@ -13,9 +13,9 @@ const platfromIndicatorsMapping = {
   'Twitter': ['twitterFollowers', 'twitterEngagement'],
   'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
   'Stripe': ['MRR', 'LTV', 'churnRate'],
-  'Google Sheets': [],
+  'Google Sheets': ['MRR', 'LTV', 'CAC', 'churnRate'],
   'Moz': ['domainAuthority']
-}
+};
 
 export default class Platform extends Component {
 
