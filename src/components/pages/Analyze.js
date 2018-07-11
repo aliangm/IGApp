@@ -28,8 +28,9 @@ export default class Analyze extends Component {
       const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
       return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
     });
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
+    const selectOptions = sortedPreviousData.map((item, index) => {
+      const lastXMonth = sortedPreviousData.length - index - 1;
+      return {value: index, label: lastXMonth ? `Last ${lastXMonth + 1} months` : "This month" }
     });
 
     const tabs = {
@@ -57,24 +58,16 @@ export default class Analyze extends Component {
               })
             }
           </div>
-          <div className={ analyzeStyle.locals.dateRange }>
-            <div className={ analyzeStyle.locals.historyConfigText }>
-              Date range:
-            </div>
-            <Select
-              selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
-              select={{
-                options: months
-              }}
-              onChange={(e) => {
-                this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
-              }}
-              className={ analyzeStyle.locals.dateSelect }
-            />
-            <div className={ analyzeStyle.locals.historyConfigText } style={{fontWeight: 'bold'}}>
-              - {formatDate(this.props.planDate)}
-            </div>
-          </div>
+          <Select
+            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+            select={{
+              options: selectOptions
+            }}
+            onChange={(e) => {
+              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
+            }}
+            className={ analyzeStyle.locals.dateSelect }
+          />
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
           <div style={{paddingTop: '90px'}}>

@@ -1,24 +1,5 @@
-.date-range {
-    width: 200px;
-    height: 35px;
-    border-radius: 2px;
-    background-color: #ffffff;
-    border: solid 1px #dfe2e5;
-    margin: 12px 15px 5px;
-    display: inline-flex;
-    font-size: 12px;
-    font-weight: 500;
-    color: #9b9b9b;
-    padding: 0 7px;
-}
-
 .date-select {
-    width: 75px;
+    width: 120px;
     margin: 0 8px;
     font-size: 12px !important;
-}
-
-.history-config-text {
-    align-self: center;
-    fontWeight: bold;
 }
