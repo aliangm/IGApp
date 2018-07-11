@@ -75,7 +75,7 @@ export default class Range extends Component {
         }}
         maxValue={ maxValue }
         disabled={ disabled }
-        formatLabel={ ()=>{ return null; } }
+        formatLabel={ () => { return null; } }
         onChange={ this.handleChangeSlider }
         { ...otherProps }
       />
