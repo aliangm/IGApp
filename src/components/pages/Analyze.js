@@ -2,6 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
+import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { Link } from 'react-router';
 import Select from 'components/controls/Select';
@@ -11,6 +12,7 @@ import { formatDate } from 'components/utils/date';
 export default class Analyze extends Component {
 
   style = style;
+  styles = [analyzeStyle];
 
   static defaultProps = {
     previousData: []
@@ -63,13 +65,7 @@ export default class Analyze extends Component {
             onChange={(e) => {
               this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
             }}
-            style={{
-              'width': '75px',
-              'margin': '0 8px',
-              'font-size': '12px',
-              'font-weight': '500',
-              'color': '#9b9b9'
-            }}
+            className = { analyzeStyle.locals.dateRange }
           />
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
