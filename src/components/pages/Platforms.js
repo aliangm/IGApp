@@ -21,6 +21,20 @@ import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheets
 import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
 import ReactDOM from "react-dom";
 import Button from 'components/controls/Button';
+import ReactTooltip from 'react-tooltip';
+
+const PLATFORM_INDICATORS_MAPPING = {
+  'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
+  'Salesforce': ['users', 'opps', 'SQL', 'MQL', 'MCL', 'CAC', 'MRR', 'ARPA'],
+  'Google Analytics': ['sessions', 'bounceRate', 'averageSessionDuration', 'blogVisits'],
+  'LinkedIn': ['linkedinEngagement', 'linkedinFollowers'],
+  'Facebook': ['facebookEngagement', 'facebookLikes'],
+  'Twitter': ['twitterFollowers', 'twitterEngagement'],
+  'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
+  'Stripe': ['MRR', 'LTV', 'churnRate'],
+  'Google Sheets': ['MRR', 'LTV', 'CAC', 'churnRate'],
+  'Moz': ['domainAuthority']
+};
 
 export default class Platforms extends Component {
 
@@ -62,6 +76,7 @@ export default class Platforms extends Component {
   render() {
     return <div>
       <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? this.classes.static : null} width="100%">
+        <ReactTooltip place='right' effect='solid' id='platforms' html={ true } />
         {isPopupMode() ? <Title title="Integrations"/> : null}
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
@@ -87,8 +102,8 @@ export default class Platforms extends Component {
               CRM
             </div>
             <div style={{ display: 'flex' }} ref="crm">
-              <Platform connected={this.props.salesforceAuto} title="Salesforce" icon="platform:salesforce" open={() => {this.refs.salesforce.open()}} hidden={this.isHidden('salesforce')}/>
-              <Platform connected={this.props.hubspotAuto} title="Hubspot" icon="platform:hubspot" open={() => {this.refs.hubspot.open()}} hidden={this.isHidden('hubspot')}/>
+              <Platform connected={this.props.salesforceAuto} title="Salesforce" indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {this.refs.salesforce.open()}} hidden={this.isHidden('salesforce')}/>
+              <Platform connected={this.props.hubspotAuto} title="Hubspot" indicators={PLATFORM_INDICATORS_MAPPING['Hubspot']} icon="platform:hubspot" open={() => {this.refs.hubspot.open()}} hidden={this.isHidden('hubspot')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.webAnalytics}>
@@ -96,7 +111,7 @@ export default class Platforms extends Component {
               Web Analytics
             </div>
             <div style={{ display: 'flex' }} ref="webAnalytics">
-              <Platform connected={this.props.googleAuto} title="Google Analytics" icon="platform:googleAnalytics" open={() => {this.refs.googleAnalytics.open()}} hidden={this.isHidden('googleAnalytics')}/>
+              <Platform connected={this.props.googleAuto} title="Google Analytics" indicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']} icon="platform:googleAnalytics" open={() => {this.refs.googleAnalytics.open()}} hidden={this.isHidden('googleAnalytics')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.social}>
@@ -104,10 +119,10 @@ export default class Platforms extends Component {
               Social
             </div>
             <div style={{ display: 'flex' }} ref="social">
-              <Platform connected={this.props.isLinkedinAuto} title="LinkedIn" icon="platform:linkedin" open={() => {this.refs.linkedin.open()}} hidden={this.isHidden('linkedin')}/>
-              <Platform connected={this.props.isFacebookAuto} title="Facebook" icon="platform:facebook" open={() => {this.refs.facebook.open()}} hidden={this.isHidden('facebook')}/>
-              <Platform connected={this.props.isTwitterAuto} title="Twitter" icon="platform:twitter" open={() => {this.refs.twitter.open()}} hidden={this.isHidden('twitter')}/>
-              <Platform connected={this.props.isYoutubeAuto} title="Youtube" icon="platform:youtube" open={() => {this.refs.youtube.open()}} hidden={this.isHidden('youtube')}/>
+              <Platform connected={this.props.isLinkedinAuto} title="LinkedIn" indicators={PLATFORM_INDICATORS_MAPPING['LinkedIn']} icon="platform:linkedin" open={() => {this.refs.linkedin.open()}} hidden={this.isHidden('linkedin')}/>
+              <Platform connected={this.props.isFacebookAuto} title="Facebook" indicators={PLATFORM_INDICATORS_MAPPING['Facebook']} icon="platform:facebook" open={() => {this.refs.facebook.open()}} hidden={this.isHidden('facebook')}/>
+              <Platform connected={this.props.isTwitterAuto} title="Twitter" indicators={PLATFORM_INDICATORS_MAPPING['Twitter']} icon="platform:twitter" open={() => {this.refs.twitter.open()}} hidden={this.isHidden('twitter')}/>
+              <Platform connected={this.props.isYoutubeAuto} title="Youtube" indicators={PLATFORM_INDICATORS_MAPPING['Youtube']} icon="platform:youtube" open={() => {this.refs.youtube.open()}} hidden={this.isHidden('youtube')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.payment}>
@@ -115,7 +130,7 @@ export default class Platforms extends Component {
               Payment Providers
             </div>
             <div style={{ display: 'flex' }} ref="payment">
-              <Platform connected={this.props.isStripeAuto} title="Stripe" icon="platform:stripe" open={() => {this.refs.stripe.open()}} hidden={this.isHidden('stripe')}/>
+              <Platform connected={this.props.isStripeAuto} title="Stripe" indicators={PLATFORM_INDICATORS_MAPPING['Stripe']} icon="platform:stripe" open={() => {this.refs.stripe.open()}} hidden={this.isHidden('stripe')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.productivity}>
@@ -123,7 +138,7 @@ export default class Platforms extends Component {
               Productivity
             </div>
             <div style={{ display: 'flex' }} ref="productivity">
-              <Platform connected={this.props.googleSheetsAuto} title="Google Sheets" icon="platform:googleSheets" open={() => {this.refs.googleSheets.open()}} hidden={this.isHidden('googleSheets')}/>
+              <Platform connected={this.props.googleSheetsAuto} title="Google Sheets" indicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']} icon="platform:googleSheets" open={() => {this.refs.googleSheets.open()}} hidden={this.isHidden('googleSheets')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.seo}>
@@ -131,7 +146,7 @@ export default class Platforms extends Component {
               SEO
             </div>
             <div style={{ display: 'flex' }} ref="seo">
-              <Platform connected={this.props.mozapi} title="Moz" icon="platform:moz" open={() => {this.refs.moz.open()}} hidden={this.isHidden('moz')}/>
+              <Platform connected={this.props.mozapi} title="Moz" indicators={PLATFORM_INDICATORS_MAPPING['Moz']} icon="platform:moz" open={() => {this.refs.moz.open()}} hidden={this.isHidden('moz')}/>
             </div>
           </div>
         </div>
