@@ -63,7 +63,13 @@ export default class Analyze extends Component {
             onChange={(e) => {
               this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
             }}
-            style={{ width: '75px', margin: '0 8px' }}
+            style={{
+              'width': '75px',
+              'margin': '0 8px',
+              'font-size': '12px',
+              'font-weight': '500',
+              'color': '#9b9b9'
+            }}
           />
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
