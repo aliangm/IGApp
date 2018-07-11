@@ -36,28 +36,31 @@ export default class Range extends Component {
     }
   };
 
-  handleChangeSlider({min, max}) {
+  handleChangeSlider = ({min, max}) => {
     if (max === this.props.maxValue) {
       max = -1;
     }
     this.props.onChange({min, max});
-  }
+  };
 
-  handleChangeText(prop, event) {
+  handleChangeText = (prop, event) => {
     const { value } = this.props;
     value[prop] = parseInt(event.target.value.toString().replace(/\D+/g, '')) || 0;
     this.props.onChange(value);
-  }
+  };
 
   render() {
-    const { outerStyle, outerClassName, value: {min, max}, maxValue, disabled, onChange, style, ...otherProps } = this.props;
+    const { outerStyle, outerClassName, value: {min, max}, maxValue, disabled, onChange, ...otherProps } = this.props;
 
     return <div style={ outerStyle } className={ outerClassName }>
       <Textfield
-        value={"$" + formatBudget(min)}
-        onChange={this.handleChangeText.bind(this, 'min')}
-        style={{width: '150px', marginRight: '15px'}}
-        disabled={disabled}
+        value={ "$" + formatBudget(min) }
+        onChange={ (e) => this.handleChangeText('min', e) }
+        disabled={ disabled }
+        style={{
+          width: '150px',
+          marginRight: '15px'
+        }}
       />
       <InputRange
         classNames={{
@@ -65,20 +68,25 @@ export default class Range extends Component {
           activeTrack: 'input-range__track ' + rangeStyle.locals.activeTrack.toString(),
           slider: 'input-range__slider ' + rangeStyle.locals.slider.toString()
         }}
-        slider={rangeStyle.locals.slider}
-        value={{min: min, max: max === -1 ? maxValue : max}}
-        maxValue={maxValue}
-        disabled={disabled}
+        slider={ rangeStyle.locals.slider }
+        value={{
+          min: min,
+          max: max === -1 ? maxValue : max
+        }}
+        maxValue={ maxValue }
+        disabled={ disabled }
         formatLabel={ ()=>{ return null; } }
-        onChange={this.handleChangeSlider.bind(this)}
-        style={style}
-        {...otherProps}
+        onChange={ this.handleChangeSlider }
+        { ...otherProps }
       />
       <Textfield
-        value={"$" + (max === -1 ? 'Inf' : formatBudget(max))}
-        onChange={this.handleChangeText.bind(this, 'max')}
-        style={{width: '150px', marginLeft: '15px'}}
-        disabled={disabled}
+        value={ "$" + (max === -1 ? 'Inf' : formatBudget(max)) }
+        onChange={ (e) => this.handleChangeText('max', e) }
+        disabled={ disabled }
+        style={{
+          width: '150px',
+          marginLeft: '15px'
+        }}
       />
     </div>
   }
