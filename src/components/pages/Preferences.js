@@ -147,14 +147,14 @@ export default class Preferences extends Component {
   }
 
   budgetConstraintRemove(index) {
-    const budgetConstraints = [...this.props.budgetConstraints];
+    const budgetConstraints = {...this.props.budgetConstraints};
     const channel = Object.keys(budgetConstraints)[index];
     delete budgetConstraints[channel];
     this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
   addBudgetConstraintChannel(index, event) {
-    const budgetConstraints = [...this.props.budgetConstraints];
+    const budgetConstraints = {...this.props.budgetConstraints};
     const channel = event.value;
     const existingChannels = Object.keys(budgetConstraints);
     const numOfConstrains = existingChannels.length;
@@ -179,7 +179,7 @@ export default class Preferences extends Component {
   }
 
   handleRangeChange(index, event) {
-    const budgetConstraints = [...this.props.budgetConstraints];
+    const budgetConstraints = {...this.props.budgetConstraints};
     const channel = Object.keys(budgetConstraints)[index];
     budgetConstraints[channel].range = event;
     this.props.updateState({budgetConstraints: budgetConstraints});
