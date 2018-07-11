@@ -57,16 +57,24 @@ export default class Analyze extends Component {
               })
             }
           </div>
-          <Select
-            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
-            select={{
-              options: months
-            }}
-            onChange={(e) => {
-              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
-            }}
-            className = { analyzeStyle.locals.dateRange }
-          />
+          <div className={ analyzeStyle.locals.dateRange }>
+            <div className={ analyzeStyle.locals.historyConfigText }>
+              Date range:
+            </div>
+            <Select
+              selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+              select={{
+                options: months
+              }}
+              onChange={(e) => {
+                this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
+              }}
+              className={ analyzeStyle.locals.dateSelect }
+            />
+            <div className={ analyzeStyle.locals.historyConfigText } style={{fontWeight: 'bold'}}>
+              - {formatDate(this.props.planDate)}
+            </div>
+          </div>
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
           <div style={{paddingTop: '90px'}}>
