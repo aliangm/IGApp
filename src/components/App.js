@@ -485,7 +485,8 @@ class AppComponent extends Component {
       CEVs: data.CEVs || {},
       CIM: data.CIM || {},
       technologyStack: data.technologyStack || [],
-      historyData: data.historyData || {}
+      historyData: data.historyData || {},
+      budgetConstraints: data.budgetConstraints || {}
     });
   }
 
