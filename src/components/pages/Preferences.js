@@ -29,6 +29,7 @@ import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
 import { getNickname } from 'components/utils/indicators';
 import { FeatureToggle } from 'react-feature-toggles';
+import Range from 'components/controls/Range';
 
 export default class Preferences extends Component {
   style = style;
@@ -44,7 +45,6 @@ export default class Preferences extends Component {
     objectives: [],
     isCheckAnnual: true,
     maxChannels: -1,
-    userMinMonthBudgets: [],
     blockedChannels: [],
     inHouseChannels: [],
     planDate: null,
@@ -56,7 +56,6 @@ export default class Preferences extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userMinMonthBudgetsLines: [],
       isCheckAnnual: props.annualBudget !== null,
       isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]}),
       showAdvancedFields: false
@@ -64,58 +63,19 @@ export default class Preferences extends Component {
     this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
-    this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
+    this.budgetConstraintRemove = this.budgetConstraintRemove.bind(this);
     this.objectiveRemove = this.objectiveRemove.bind(this);
     this.toggleBudgetsCheck = this.toggleBudgetsCheck.bind(this);
     this.calculateBudgets = this.calculateBudgets.bind(this);
   }
 
   componentDidMount() {
-    this.getUserMinMonthBudgetsLines(this.props.userMinMonthBudgets, this.props.planDate);
     // Advanced toggle open?
     if (this.props.maxChannels !== -1 ||
-      this.state.userMinMonthBudgetsLines.length > 0 ||
+      Object.keys(this.props.budgetConstraints).length > 0 ||
       this.props.inHouseChannels.length > 0 ||
       this.props.blockedChannels.length > 0) {
       this.setState({showAdvancedFields: true});
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.userMinMonthBudgets.length == 0 && nextProps.userMinMonthBudgets.length > 0) {
-      this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
-    }
-    /**
-     if (nextProps.annualBudget != this.props.annualBudget) {
-      this.setState({isCheckAnnual: nextProps.annualBudget !== null,
-        isDivideEqually: nextProps.annualBudget !== null && nextProps.annualBudgetArray.every((budget)=> {return budget === nextProps.annualBudgetArray[0]})});
-    }
-     **/
-  }
-
-  getUserMinMonthBudgetsLines(userMinMonthBudgets, planDate) {
-    if (planDate) {
-      let planDateArray = planDate.split("/");
-      let firstMonth = parseInt(planDateArray[0]) - 1;
-      let userMinMonthBudgetsLines = [];
-      userMinMonthBudgets.forEach((month, index) => {
-        if (month) {
-          const normalizedMonth = (index + firstMonth) % 12;
-          Object.keys(month).forEach((channel) => {
-            let isExist = false;
-            userMinMonthBudgetsLines.forEach((line) => {
-              if (line.channel == channel) {
-                line.months.push(normalizedMonth);
-                isExist = true;
-              }
-            });
-            if (!isExist) {
-              userMinMonthBudgetsLines.push({channel: channel, budget: month[channel], months: [normalizedMonth]})
-            }
-          });
-        }
-      });
-      this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
     }
   }
 
@@ -186,36 +146,43 @@ export default class Preferences extends Component {
     this.props.updateState({blockedChannels: update});
   }
 
-  minimumBudgetRemove(index) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    userMinMonthBudgetsLines.splice(index, 1);
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
+  budgetConstraintRemove(index) {
+    const { budgetConstraints } = this.props;
+    const channel = Object.keys(budgetConstraints)[index];
+    delete budgetConstraints[channel];
+    this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
-  handleChangeMinChannel(index, event) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    if (!userMinMonthBudgetsLines[index]) {
-      userMinMonthBudgetsLines[index] = {
-        budget: 0
-      };
+  addBudgetConstraintChannel(index, event) {
+    const { budgetConstraints } = this.props;
+    const channel = event.value;
+    const existingChannels = Object.keys(budgetConstraints);
+    const numOfConstrains = existingChannels.length;
+    // New line
+    if (index === numOfConstrains) {
+      if (!budgetConstraints[channel]) {
+        budgetConstraints[channel] = {
+          range: {
+            min: 0,
+            max: -1
+          }
+        };
+      }
     }
-    userMinMonthBudgetsLines[index].channel = event.value;
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
-  }
-
-  handleChangeMinBudget(index, event) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    if (!userMinMonthBudgetsLines[index]) {
-      userMinMonthBudgetsLines[index] = {};
+    else {
+      // Existing line
+      const oldChannel = existingChannels[index];
+      budgetConstraints[channel] = budgetConstraints[oldChannel];
+      delete budgetConstraints[oldChannel];
     }
-    userMinMonthBudgetsLines[index].budget = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
+    this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
-  handleChangeMinMonths(index, event) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    userMinMonthBudgetsLines[index].months = event.map((month) => { return month.value });
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
+  handleRangeChange(index, event) {
+    const { budgetConstraints } = this.props;
+    const channel = Object.keys(budgetConstraints)[index];
+    budgetConstraints[channel].range = event;
+    this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
   objectiveRemove(index) {
@@ -262,22 +229,6 @@ export default class Preferences extends Component {
     }
     this.props.updateState({objectives: objectives});
     this.setState({showObjectivesPopup: false, objectiveIndex: undefined});
-  }
-
-  createUserMinMonthBudgetJson(){
-    let userMinMonthBudgets = new Array(12).fill(null);
-    const planDate = this.props.planDate.split("/");
-    const firstMonth = parseInt(planDate[0]) - 1;
-    this.state.userMinMonthBudgetsLines.forEach((line) => {
-      line.months.forEach((month) => {
-        const index = (month + 12 - firstMonth) % 12;
-        if (!userMinMonthBudgets[index]) {
-          userMinMonthBudgets[index] = {};
-        }
-        userMinMonthBudgets[index][line.channel] = line.budget;
-      });
-    });
-    return userMinMonthBudgets;
   }
 
   getDates = () => {
@@ -350,6 +301,8 @@ export default class Preferences extends Component {
   }
 
   render() {
+    const { budgetConstraints, annualBudgetArray } = this.props;
+
     const selects = {
       /**     plan: {
         label: 'Plan Resolution',
@@ -445,7 +398,7 @@ export default class Preferences extends Component {
       if (value.options) {
         value.options.map(preventDuplicates);
       }
-      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || this.state.userMinMonthBudgetsLines.map(line => line.channel).includes(value.value);
+      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || Object.keys(budgetConstraints).includes(value.value);
       return value;
     };
 
@@ -492,10 +445,12 @@ export default class Preferences extends Component {
       }
     });
 
+    const budgetConstraintsChannels = Object.keys(budgetConstraints);
+
     return <div>
       <Page popup={ isPopupMode() } className={!isPopupMode() ? this.classes.static : null}>
         {isPopupMode() ? <Title title="Preferences"
-               subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : null}
+                                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : null}
         <div className={ this.classes.error }>
           <label hidden={ !this.props.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
         </div>
@@ -601,22 +556,16 @@ export default class Preferences extends Component {
                 }} /> **/}
                     </div>
                   </div>
-                  <div className={this.classes.row} style={{}}>
-                    <Label style={{
-                      marginBottom: '12px',
-                      fontWeight: '600'
-                    }} question={['']}
-                           description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum
-                      Budgets</Label>
-                    <MultiRow numOfRows={this.state.userMinMonthBudgetsLines.length}
-                              rowRemoved={this.minimumBudgetRemove}>
+                  <div className={this.classes.row}>
+                    <Label question={['']} description={['Are there any channels that you’re going to use in any case? Please provide their min/max budgets.']}>
+                      Budget Constraints
+                    </Label>
+                    <MultiRow numOfRows={budgetConstraintsChannels.length} rowRemoved={this.budgetConstraintRemove}>
                       {({index, data, update, removeButton}) => {
-                        return <div style={{
-                          width: '700px'
-                        }} className={preferencesStyle.locals.channelsRow}>
+                        return <div className={preferencesStyle.locals.channelsRow}>
                           <Select
-                            className={preferencesStyle.locals.channelsSelect}
-                            selected={this.state.userMinMonthBudgetsLines[index] != undefined && this.state.userMinMonthBudgetsLines[index].channel}
+                            style={{width: '230px'}}
+                            selected={budgetConstraintsChannels[index]}
                             select={{
                               menuTop: true,
                               name: 'channels',
@@ -627,22 +576,18 @@ export default class Preferences extends Component {
                               },
                               options: channels.select.options
                             }}
-                            onChange={this.handleChangeMinChannel.bind(this, index)}
-                            label={`#${ index + 1 } (optional)`}
+                            onChange={this.addBudgetConstraintChannel.bind(this, index)}
                           />
-                          <Textfield className={preferencesStyle.locals.channelsBudget}
-                                     value={"$" + (this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].budget ? this.state.userMinMonthBudgetsLines[index].budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                                     onChange={this.handleChangeMinBudget.bind(this, index)} style={{
-                            width: '82px'
-                          }}
-                                     disabled={!this.state.userMinMonthBudgetsLines[index] || this.state.userMinMonthBudgetsLines[index].budget == undefined}/>
-                          <div style={{marginTop: '32px'}}>
-                            <MultiSelect {...selects.months}
-                                         selected={this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].months}
-                                         onChange={this.handleChangeMinMonths.bind(this, index)}
-                                         style={{width: '240px'}}/>
-                          </div>
-                          <div className={preferencesStyle.locals.channelsRemove}>
+                          <Range
+                            disabled={!budgetConstraintsChannels[index]}
+                            step={50}
+                            allowSameValues={true}
+                            minValue={0}
+                            maxValue={Math.max(...annualBudgetArray)}
+                            value={budgetConstraints[budgetConstraintsChannels[index]] ? budgetConstraints[budgetConstraintsChannels[index]].range : {min: 0, max: -1}}
+                            onChange={this.handleRangeChange.bind(this, index)}
+                          />
+                          <div style={{marginLeft: '25px', alignSelf: 'center'}}>
                             {removeButton}
                           </div>
                         </div>
@@ -704,9 +649,9 @@ export default class Preferences extends Component {
                 objectives: this.props.objectives,
                 blockedChannels: this.props.blockedChannels,
                 inHouseChannels: this.props.inHouseChannels,
-                userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                 maxChannels: this.props.maxChannels,
                 approvedBudgets: this.props.approvedBudgets,
+                budgetConstraints: budgetConstraints,
                 planNeedsUpdate: true
               }, this.props.region, this.props.planDate)
                 .then(() => {
@@ -723,9 +668,9 @@ export default class Preferences extends Component {
                   objectives: this.props.objectives,
                   blockedChannels: this.props.blockedChannels,
                   inHouseChannels: this.props.inHouseChannels,
-                  userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
                   approvedBudgets: this.props.approvedBudgets,
+                  budgetConstraints: budgetConstraints,
                   planNeedsUpdate: true
                 }, this.props.region, this.props.planDate)
                   .then(() => {
@@ -751,9 +696,9 @@ export default class Preferences extends Component {
                   objectives: this.props.objectives,
                   blockedChannels: this.props.blockedChannels,
                   inHouseChannels: this.props.inHouseChannels,
-                  userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
                   maxChannels: this.props.maxChannels,
                   approvedBudgets: this.props.approvedBudgets,
+                  budgetConstraints: budgetConstraints,
                   planNeedsUpdate: true
                 }, this.props.region, this.props.planDate);
                 this.setState({saveSuccess: true});
