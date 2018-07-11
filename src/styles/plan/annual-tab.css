@@ -26,7 +26,7 @@
 .sticky-header {
     position: fixed;
     top: 160px;
-    z-index: 1;
+    z-index: 6;
     width: calc(100% - 281px);
     display: inline-table;
     table-layout: fixed;

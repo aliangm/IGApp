@@ -25,6 +25,7 @@ export default class SettingsSideBar extends Component {
       }];
 
     return <div className={this.classes.wrapper}>
+      <div className={ this.classes.sideBarTitle } >Settings</div>
       {
         tabs.map(({name, path, representivePath}) => {
           return <NavLink pathToCheck={representivePath} currentPath={this.props.currentPath} to={ path } activeClassName={this.classes.headTabSelected} className={this.classes.headTab} key={ name }>
