@@ -4,26 +4,13 @@ import style from 'styles/indicators/platform.css';
 import Button from 'components/controls/Button';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 
-const platfromIndicatorsMapping = {
-  'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
-  'Salesforce': ['users', 'opps', 'SQL', 'MQL', 'MCL', 'CAC', 'MRR', 'ARPA'],
-  'Google Analytics': ['sessions', 'bounceRate', 'averageSessionDuration', 'blogVisits'],
-  'LinkedIn': ['linkedinEngagement', 'linkedinFollowers'],
-  'Facebook': ['facebookEngagement', 'facebookLikes'],
-  'Twitter': ['twitterFollowers', 'twitterEngagement'],
-  'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
-  'Stripe': ['MRR', 'LTV', 'churnRate'],
-  'Google Sheets': ['MRR', 'LTV', 'CAC', 'churnRate'],
-  'Moz': ['domainAuthority']
-};
-
 export default class Platform extends Component {
 
   style = style;
 
   getTooltipHtml = () => {
-    return platfromIndicatorsMapping[this.props.title] ?
-      'Relevant metrics:<br/>' + platfromIndicatorsMapping[this.props.title].map(getIndicatorNickname).join('<br/>')
+    return this.props.indicators ?
+      'Relevant metrics:<br/>' + this.props.indicators.map(getIndicatorNickname).join('<br/>')
       : null;
   };
 
