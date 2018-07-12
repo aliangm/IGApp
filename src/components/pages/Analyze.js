@@ -2,14 +2,37 @@ import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
+import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { Link } from 'react-router';
+import Select from 'components/controls/Select';
+import { formatDate } from 'components/utils/date';
+
 
 export default class Analyze extends Component {
 
   style = style;
+  styles = [analyzeStyle];
+
+  static defaultProps = {
+    previousData: []
+  };
 
   render() {
+
+    const { previousData } = this.props;
+    const sortedPreviousData = previousData.sort((a, b) => {
+      const planDate1 = a.planDate.split("/");
+      const planDate2 = b.planDate.split("/");
+      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
+      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
+      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    });
+    const selectOptions = sortedPreviousData.map((item, index) => {
+      const lastXMonth = sortedPreviousData.length - index - 1;
+      return {value: index, label: lastXMonth ? `Last ${lastXMonth + 1} months` : "This month" }
+    });
+
     const tabs = {
       "Overview": 'analyze/overview',
       "Channels": '/analyze/channels',
@@ -35,6 +58,16 @@ export default class Analyze extends Component {
               })
             }
           </div>
+          <Select
+            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+            select={{
+              options: selectOptions
+            }}
+            onChange={(e) => {
+              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
+            }}
+            className={ analyzeStyle.locals.dateSelect }
+          />
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
           <div style={{paddingTop: '90px'}}>

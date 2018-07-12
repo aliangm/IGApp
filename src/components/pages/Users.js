@@ -240,35 +240,15 @@ export default class Users extends Component {
         />
       </div>
       {this.props.userAccount.pages && this.props.userAccount.pages.users ?
-        <div>
-          <div className={dashboardStyle.locals.upperPanel}>
-            <div className={dashboardStyle.locals.historyConfigText}>
-              Date range:
-            </div>
-            <Select
-              selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
-              select={{
-                options: months
-              }}
-              onChange={(e) => {
-                this.props.calculateAttributionData(months.length - e.value - 1)
-              }}
-              style={{width: '75px', margin: '0 8px'}}
-            />
-            <div className={dashboardStyle.locals.historyConfigText} style={{fontWeight: 'bold'}}>
-              - {formatDate(this.props.planDate)}
-            </div>
-          </div>
-          <div className={this.classes.inner}>
-            <table className={this.classes.table}>
-              <thead>
-              {headRow}
-              </thead>
-              <tbody>
-              {rows}
-              </tbody>
-            </table>
-          </div>
+        <div className={this.classes.inner}>
+          <table className={this.classes.table}>
+            <thead>
+            {headRow}
+            </thead>
+            <tbody>
+            {rows}
+            </tbody>
+          </table>
         </div>
         :
         <FirstPageVisit
