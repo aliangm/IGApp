@@ -309,7 +309,7 @@ export default class Overview extends Component {
           <div className={this.classes.cols}>
             <div className={this.classes.colLeft}>
               <div className={dashboardStyle.locals.item} style={{ height: '387px', width: '1110px' }}>
-                <div className={ dashboardStyle.locals.text } data-tip="Total (estimated) business impact generated across funnel. Sum of volumes of each funnel stage the possibility to convert to a paying account LTV.">
+                <div className={ dashboardStyle.locals.text } data-tip="Total (estimated) business impact generated across funnel. Sum of volumes of each funnel stage X the possibility to convert to a paying account X estimated LTV.">
                   Business Impact across funnel
                 </div>
                 <div style={{ display: 'flex' }}>
