@@ -72,9 +72,9 @@ ReactDOM.render(
       <Route path="/profile/technology-stack" component={ TechnologyStack } onEnter={ requireAdminAuth }/>
       <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
       <Route component={ Plan } onEnter={ requireAdminAuth }>
-        <Route path="/plan/plan/current" component={ CurrentTab } onEnter={ requireAdminAuth }/>
-        <Route path="/plan/plan/annual" component={ AnnualTab } onEnter={ requireAdminAuth }/>
-        <Route path="/plan/plan/projections" component={ ProjectionsTab } onEnter={ requireAdminAuth }/>
+        <Route path="/plan/plan/current" component={ CurrentTab } onEnter={ requireAdminAuth } tabName='current' />
+        <Route path="/plan/plan/annual" component={ AnnualTab } onEnter={ requireAdminAuth } tabName='Annual' />
+        <Route path="/plan/plan/projections" component={ ProjectionsTab } onEnter={ requireAdminAuth } tabName='Forecasting' />
       </Route>
       <Route component={ Campaigns } onEnter={ requireAuth }>
         <Route path="/campaigns/by-channel" component={ ByChannelTab } onEnter={ requireAuth }/>

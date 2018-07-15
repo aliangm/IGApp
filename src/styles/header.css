@@ -1,5 +1,48 @@
 @import "./global/mixins.css";
 
+.head-tabs {
+  flex-shrink: 0;
+  flex-grow: 0;
+  height: 100%;
+  display: flex;
+}
+
+.head-tab {
+  height: 100%;
+  padding: 0 16px 0 15px;
+  text-transform: capitalize;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  color: #354052;
+  text-decoration: none;
+}
+
+.head-tab:hover {
+  background-color: #f2f9fc;
+}
+
+.head-tab-selected {
+  composes: head-tab;
+}
+
+.head-tab-selected::after {
+  content: '';
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: #1889dd;
+}
+
 .box {
   display: flex;
   align-items: center;
@@ -41,6 +84,8 @@
   border-bottom: 1px solid #e6eaee;
   padding: 0 30px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
 }
 
 .menu-small {

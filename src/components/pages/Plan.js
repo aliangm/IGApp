@@ -19,7 +19,6 @@ import { output } from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import { FeatureToggle } from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
-import { Link } from 'react-router';
 
 function formatDate(dateStr) {
   if (dateStr) {
@@ -297,13 +296,7 @@ export default class Plan extends Component {
         }
         , {}))
     );
-    let tabs = {};
-    let planDate = formatDate(this.props.planDate);
-    tabs[planDate] = '/plan/plan/current';
-    tabs["Annual"] = '/plan/plan/annual';
-    tabs["Forecasting"] = '/plan/plan/projections';
 
-    const tabNames = Object.keys(tabs);
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, merge({}, this.props, this.state)));
     return <div>
@@ -311,18 +304,6 @@ export default class Plan extends Component {
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Plan</div>
-          <div className={ this.classes.headTabs }>
-            {
-              tabNames.map((name, i) => {
-                const link = Object.values(tabs)[i];
-                return <Link to={ link } activeClassName={this.classes.headTabSelected} className={ this.classes.headTab } key={ i } onClick={() => {
-                  this.selectTab(i);
-                }}>
-                  { name }
-                </Link>
-              })
-            }
-          </div>
           <div className={this.classes.headPlan}>
             <FeatureToggle featureName="plannerAI">
               <div style={{ display: 'flex' }}>

@@ -17,6 +17,7 @@ import merge from "lodash/merge";
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { formatDate } from 'components/utils/date';
 import insightsStyle from 'styles/insights/insights.css';
+import { Link } from 'react-router';
 
 export default class Header extends Component {
 
@@ -93,15 +94,12 @@ export default class Header extends Component {
   };
 
   get menuBig() {
-    const paths = this.props.path.split('/').map((item, i) => {
-      if (item) {
-        return <div className={this.classes.pathItem} key={ i }>
-          <div className={this.classes.pathItemText}>
-            { item }
-          </div>
-        </div>
-      }
+    const tabs = this.props.tabs.map( ({ name, path }) => {
+      return <Link to={ path } activeClassName={this.classes.headTabSelected} className={this.classes.headTab} key={ name }>
+        { name }
+      </Link>
     });
+
     const hasUser = this.props.user;
 
     const regions = hasUser ?
@@ -114,8 +112,8 @@ export default class Header extends Component {
     const userNotifications = this.props.notifications.filter(notification => notification.UID === this.props.auth.getProfile().user_id);
     const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
     return <div className={ this.classes.menuBig }>
-      <div className={ this.classes.path }>
-        {paths}
+      <div className={ this.classes.headTabs }>
+        {tabs}
       </div>
       <div className={ this.classes.itemsBox }>
         { hasUser ?
