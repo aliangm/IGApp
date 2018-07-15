@@ -694,9 +694,9 @@ class AppComponent extends Component {
   getTabsToRender = () => {
     const fatherPageComponentName = this.props.children.type.name;
     const childRoute = this.props.route.childRoutes.find(item => item.component.name === fatherPageComponentName);
-    return childRoute.childRoutes.map((item) => {
+    return childRoute.childRoutes ? childRoute.childRoutes.map((item) => {
       return {name: item.tabName, path: item.path}
-    });
+    }) : [];
   }
 
   render() {

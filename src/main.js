@@ -77,10 +77,10 @@ ReactDOM.render(
         <Route path="/plan/plan/projections" component={ ProjectionsTab } onEnter={ requireAdminAuth } tabName='Forecasting' />
       </Route>
       <Route component={ Campaigns } onEnter={ requireAuth }>
-        <Route path="/campaigns/by-channel" component={ ByChannelTab } onEnter={ requireAuth }/>
-        <Route path="/campaigns/by-status" component={ ByStatusTab } onEnter={ requireAuth }/>
-        <Route path="/campaigns/online-performance" component={ OnlineTab } onEnter={ requireAuth }/>
-        <Route path="/campaigns/ideas" component={ IdeasTab } onEnter={ requireAuth }/>
+        <Route path="/campaigns/by-channel" component={ ByChannelTab } onEnter={ requireAuth } tabName='By Channel' />
+        <Route path="/campaigns/by-status" component={ ByStatusTab } onEnter={ requireAuth } tabName='By Status' />
+        <Route path="/campaigns/online-performance" component={ OnlineTab } onEnter={ requireAuth } tabName='Online Performance' />
+        <Route path="/campaigns/ideas" component={ IdeasTab } onEnter={ requireAuth } tabName='Ideas' />
       </Route>
       <Route component={Settings} onEnter={requireAuth}>
         <Route path="/settings/account" component={ Welcome } onEnter={ requireAuth }/>
@@ -99,11 +99,11 @@ ReactDOM.render(
         </Route>
       </Route>
       <Route component={ Analyze } onEnter={ requireAdminAuth }>
-        <Route path="/analyze/overview" component={ Overview } onEnter={ requireAdminAuth }/>
-        <Route path="/analyze/channels" component={ Channels } onEnter={ requireAdminAuth }/>
-        <Route path="/analyze/campaigns" component={ CampaignsMeasure } onEnter={ requireAdminAuth }/>
-        <Route path="/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
-        <Route path="/analyze/audiences" component={ Users } onEnter={ requireAdminAuth }/>
+        <Route path="/analyze/overview" component={ Overview } onEnter={ requireAdminAuth } tabName='Overview' />
+        <Route path="/analyze/channels" component={ Channels } onEnter={ requireAdminAuth } tabName='Channels' />
+        <Route path="/analyze/campaigns" component={ CampaignsMeasure } onEnter={ requireAdminAuth } tabName='campaigns' />
+        <Route path="/analyze/content" component={ Content } onEnter={ requireAdminAuth } tabName='Content' />
+        <Route path="/analyze/audiences" component={ Users } onEnter={ requireAdminAuth } tabName='Audiences' />
       </Route>
       <Route path="/insights" component={ Insights } onEnter={ requireAdminAuth }/>
       <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>

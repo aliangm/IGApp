@@ -14,16 +14,6 @@ import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import { formatBudget } from 'components/utils/budget';
-import { Link } from 'react-router';
-
-const tabs = {
-  'By Channel': '/campaigns/by-channel',
-  'By Status': '/campaigns/by-status',
-  'Online Performance': '/campaigns/online-performance',
-  'Ideas': '/campaigns/ideas'
-};
-
-const tabNames = Object.keys(tabs);
 
 function getDateString(stringDate) {
   if (stringDate) {
@@ -218,14 +208,6 @@ export default class Campaigns extends Component {
       <Page contentClassName={ planStyle.locals.content } width="100%">
         <div className={ planStyle.locals.head }>
           <div className={ planStyle.locals.headTitle }>Campaigns & Activities</div>
-          <div className={ planStyle.locals.headTabs }>
-            {
-              tabNames.map((name, i) => {
-                const link = Object.values(tabs)[i];
-                return <Link to={ link } activeClassName={planStyle.locals.headTabSelected} className={planStyle.locals.headTab} key={i} data-id={i} onClick={this.handleTabSelect}>{name}</Link>
-              })
-            }
-          </div>
           <div className={ planStyle.locals.headPlan }>
             <Button type="reverse" style={{
               width: '102px'

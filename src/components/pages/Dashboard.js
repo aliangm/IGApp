@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
-import { Link } from 'react-router';
 
 export default class Dashboard extends Component {
 

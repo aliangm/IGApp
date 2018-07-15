@@ -4,7 +4,6 @@ import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
-import { Link } from 'react-router';
 import Select from 'components/controls/Select';
 import { formatDate } from 'components/utils/date';
 
@@ -33,31 +32,12 @@ export default class Analyze extends Component {
       return {value: index, label: lastXMonth ? `Last ${lastXMonth + 1} months` : "This month" }
     });
 
-    const tabs = {
-      "Overview": 'analyze/overview',
-      "Channels": '/analyze/channels',
-      "campaigns": '/analyze/campaigns',
-      "Content": '/analyze/content',
-      "Audiences": '/analyze/audiences'
-    };
-
-    const tabNames = Object.keys(tabs);
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.props));
     return <div>
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Analyze</div>
-          <div className={ this.classes.headTabs }>
-            {
-              tabNames.map((name, i) => {
-                const link = Object.values(tabs)[i];
-                return <Link to={ link } activeClassName={this.classes.headTabSelected} className={ this.classes.headTab } key={ i }>
-                  { name }
-                </Link>
-              })
-            }
-          </div>
           <Select
             selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
             select={{
