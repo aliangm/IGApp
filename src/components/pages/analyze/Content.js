@@ -207,24 +207,6 @@ export default class Content extends Component {
     return <div>
       <ReactTooltip/>
       <div className={ this.classes.wrap }>
-        <div className={dashboardStyle.locals.upperPanel}>
-          <div className={dashboardStyle.locals.historyConfigText}>
-            Date range:
-          </div>
-          <Select
-            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
-            select={{
-              options: months
-            }}
-            onChange={(e) => {
-              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
-            }}
-            style={{ width: '75px', margin: '0 8px' }}
-          />
-          <div className={dashboardStyle.locals.historyConfigText} style={{ fontWeight: 'bold' }}>
-            - {formatDate(this.props.planDate)}
-          </div>
-        </div>
         <div className={this.classes.cols} style={{width: '825px'}}>
           <div className={this.classes.colLeft}>
             <div className={dashboardStyle.locals.item}>
