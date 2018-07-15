@@ -80,7 +80,7 @@ export default class Range extends Component {
         { ...otherProps }
       />
       <Textfield
-        value={ "$" + (max === -1 ? 'Inf' : formatBudget(max)) }
+        value={ "$" + (max === -1 ? '∞' : formatBudget(max)) }
         onChange={ (e) => this.handleChangeText('max', e) }
         disabled={ disabled }
         style={{

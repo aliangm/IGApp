@@ -558,7 +558,7 @@ export default class Preferences extends Component {
                   </div>
                   <div className={this.classes.row}>
                     <Label question={['']} description={['Are there any channels that you’re going to use in any case? Please provide their min/max budgets.']}>
-                      Budget Constraints
+                      Monthly Budget Constraints
                     </Label>
                     <MultiRow numOfRows={budgetConstraintsChannels.length} rowRemoved={this.budgetConstraintRemove}>
                       {({index, data, update, removeButton}) => {
