@@ -38,16 +38,18 @@ export default class Analyze extends Component {
       <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
         <div className={ this.classes.head }>
           <div className={ this.classes.headTitle }>Analyze</div>
-          <Select
-            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
-            select={{
-              options: selectOptions
-            }}
-            onChange={(e) => {
-              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
-            }}
-            className={ analyzeStyle.locals.dateSelect }
-          />
+          <div className={this.classes.headPlan}>
+            <Select
+              selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+              select={{
+                options: selectOptions
+              }}
+              onChange={(e) => {
+                this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
+              }}
+              className={ analyzeStyle.locals.dateSelect }
+            />
+          </div>
         </div>
         { this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
           <div style={{paddingTop: '90px'}}>
