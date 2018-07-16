@@ -716,7 +716,7 @@ class AppComponent extends Component {
   }
 
   isSettingsOpen = () => {
-    return this.props.children.type.name.toLowerCase() === 'Settings'.toLowerCase();
+    return this.props.children.type.name.toLowerCase() === 'settings';
   };
 
   getTabsToRender = () => {
@@ -740,28 +740,28 @@ class AppComponent extends Component {
     const extendedData = this.state.dataUpdated ? this.getExtendedState(this.state) : this.state;
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, extendedData));
-    return <FeatureToggleProvider featureToggleList={ this.state.permissions || {} }>
+    return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header auth={ this.props.route.auth } { ...this.state } tabs={ tabs } isSettingsOpen={ this.isSettingsOpen }/>
-        <Sidebar auth={ this.props.route.auth }
-                 userAccount={ this.state.userAccount }
-                 path={ this.props.location.pathname }/>
-        <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-        <PlanLoading showPopup={ this.state.isPlannerLoading }
-                     close={ () => {
+        <Header auth={this.props.route.auth} {...this.state} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
+        <Sidebar auth={this.props.route.auth}
+                 userAccount={this.state.userAccount}
+                 path={this.props.location.pathname}/>
+        <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
+        <PlanLoading showPopup={this.state.isPlannerLoading}
+                     close={() => {
                        this.setState({isPlannerLoading: false});
-                     } }/>
-        { this.state.loaded ?
-          <div className={ this.classes.wrap } data-loading={ this.state.isPlannerLoading ? true : null }>
-            { childrenWithProps }
+                     }}/>
+        {this.state.loaded ?
+          <div className={this.classes.wrap} data-loading={this.state.isPlannerLoading ? true : null}>
+            {childrenWithProps}
           </div>
-          : <div className={ this.classes.loading }>
-            <Popup className={ this.classes.popup }>
+          : <div className={this.classes.loading}>
+            <Popup className={this.classes.popup}>
               <div>
                 <Loading/>
               </div>
             </Popup>
-          </div> }
+          </div>}
       </div>
     </FeatureToggleProvider>;
   }

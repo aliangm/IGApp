@@ -118,7 +118,7 @@ export default class Header extends Component {
     const userNotifications = this.props.notifications.filter(notification => notification.UID ===
       this.props.auth.getProfile().user_id);
     const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
-    return <div className={this.classes.menuBig} data-settings-open={this.props.isSettingsOpen()}>
+    return <div className={this.classes.menuBig} data-settings-open={this.props.isSettingsOpen}>
       <div className={this.classes.headTabs}>
         {tabs}
       </div>
