@@ -692,8 +692,15 @@ class AppComponent extends Component {
   }
 
   getTabsToRender = () => {
-    const fatherPageComponentName = this.props.children.type.name;
-    const childRoute = this.props.route.childRoutes.find(item => item.component.name === fatherPageComponentName);
+    let fatherPageComponentName = this.props.children.type.name;
+    let childRoutes = this.props.route.childRoutes;
+
+    if(fatherPageComponentName.toLowerCase() === 'Settings'.toLowerCase()){
+      childRoutes = childRoutes.find(item => item.component.name === fatherPageComponentName).childRoutes;
+      fatherPageComponentName = this.props.children.props.children.type.name;
+    }
+
+    const childRoute = childRoutes.find(item => item.component.name === fatherPageComponentName);
     return childRoute.childRoutes ? childRoute.childRoutes.map((item) => {
       return {name: item.tabName, path: item.path}
     }) : [];

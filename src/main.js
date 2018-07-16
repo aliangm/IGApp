@@ -85,17 +85,17 @@ ReactDOM.render(
       <Route component={Settings} onEnter={requireAuth}>
         <Route path="/settings/account" component={ Welcome } onEnter={ requireAuth }/>
         <Route component={ Attribution } onEnter={ requireAuth }>
-          <Route path="/settings/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth }/>
-          <Route path="/settings/attribution/setup" component={ Setup } onEnter={ requireAuth }/>
-          <Route path="/settings/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth }/>
-          <Route path="/settings/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
-          <Route path="/settings/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
+          <Route path="/settings/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth } tabName='Tracking Plan' />
+          <Route path="/settings/attribution/setup" component={ Setup } onEnter={ requireAuth } tabName='Setup' />
+          <Route path="/settings/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth } tabName='Campaign URLs'/>
+          <Route path="/settings/attribution/offline" component={ Offline } onEnter={ requireAuth } tabName='Offline' />
+          <Route path="/settings/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth } tabName='Site Structure' />
         </Route>
         <Route component={ Profile } onEnter={ requireAuth }>
-          <Route path="/settings/profile/product" component={ Product } onEnter={ requireAdminAuth }/>
-          <Route path="/settings/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
-          <Route path="/settings/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
-          <Route path="/settings/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
+          <Route path="/settings/profile/product" component={ Product } onEnter={ requireAdminAuth } tabName='Product' />
+          <Route path="/settings/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth } tabName='Preferences' />
+          <Route path="/settings/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth } tabName='Target Audience' />
+          <Route path="/settings/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth } tabName='Integrations' />
         </Route>
       </Route>
       <Route component={ Analyze } onEnter={ requireAdminAuth }>
