@@ -42,6 +42,7 @@ import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
 import Profile from 'components/pages/Profile';
+import {formatDate} from 'components/utils/date';
 
 style.use();
 const auth = new AuthService();
@@ -72,7 +73,10 @@ ReactDOM.render(
       <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
       <Route component={Plan} onEnter={requireAdminAuth}>
-        <Route path="/plan/plan/current" component={CurrentTab} onEnter={requireAdminAuth} tabName='current'/>
+        <Route path="/plan/plan/current"
+               component={CurrentTab}
+               onEnter={requireAdminAuth}
+               tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/plan/annual" component={AnnualTab} onEnter={requireAdminAuth} tabName='Annual'/>
         <Route path="/plan/plan/projections"
                component={ProjectionsTab}

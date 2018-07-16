@@ -719,6 +719,18 @@ class AppComponent extends Component {
     return this.props.children.type.name.toLowerCase() === 'settings';
   };
 
+  getTabNameFromRoute = (routeElementTabName) => {
+    if (typeof routeElementTabName === 'string') {
+      return routeElementTabName;
+    }
+    else if (this.state[routeElementTabName.fromProp]) {
+      return routeElementTabName.formatter(this.state[routeElementTabName.fromProp]);
+    }
+    else {
+      return routeElementTabName.defaultName;
+    }
+  };
+
   getTabsToRender = () => {
     let fatherPageComponentName = this.props.children.type.name;
     let childRoutes = this.props.route.childRoutes;
@@ -730,8 +742,9 @@ class AppComponent extends Component {
 
     const childRoute = childRoutes.find(item => item.component.name === fatherPageComponentName);
     return childRoute.childRoutes ? childRoute.childRoutes.map((item) => {
-      return {name: item.tabName, path: item.path};
-    }) : [];
+        return {name: this.getTabNameFromRoute(item.tabName), path: item.path};
+      })
+      : [];
   };
 
   render() {
