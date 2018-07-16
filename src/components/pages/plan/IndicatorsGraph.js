@@ -1,14 +1,15 @@
-import React from "react";
-import Component from "components/Component";
-import { XAxis, Tooltip, LineChart , Line, YAxis, CartesianGrid, ReferenceDot  } from "recharts";
-import style from "styles/plan/indicators-graph.css";
+import React from 'react';
+import Component from 'components/Component';
+import {XAxis, Tooltip, LineChart, Line, YAxis, CartesianGrid, ReferenceDot} from 'recharts';
+import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
-import { getNickname, getIndicatorsWithProps } from 'components/utils/indicators';
+import {getNickname, getIndicatorsWithProps} from 'components/utils/indicators';
 import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
-import { formatBudgetShortened } from 'components/utils/budget';
+import {formatBudgetShortened} from 'components/utils/budget';
+import isEqual from 'lodash/isEqual';
 
 export default class IndicatorsGraph extends Component {
 
@@ -18,7 +19,7 @@ export default class IndicatorsGraph extends Component {
   static defaultProps = {
     dimensions: {
       width: 0,
-      marginLeft: 0,
+      marginLeft: 0
     }
   };
 
@@ -30,7 +31,7 @@ export default class IndicatorsGraph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.objectives !== this.props.objectives) {
+    if (!isEqual(nextProps.objectives, this.props.objectives)) {
       const objectives = Object.keys(nextProps.objectives);
       const objective = objectives && objectives[0];
       if (objective) {
@@ -40,11 +41,11 @@ export default class IndicatorsGraph extends Component {
   }
 
   get width() {
-    return this.props.dimensions.width - this.marginLeft + 5
+    return this.props.dimensions.width - this.marginLeft + 5;
   }
 
   get marginLeft() {
-    return this.props.dimensions.marginLeft - 65
+    return this.props.dimensions.marginLeft - 65;
   }
 
   toggleCheckbox(indicator) {
@@ -62,7 +63,7 @@ export default class IndicatorsGraph extends Component {
   getTooltipContent() {
   }
 
-  render () {
+  render() {
     const COLORS = [
       '#189aca',
       '#3cca3f',
@@ -88,32 +89,62 @@ export default class IndicatorsGraph extends Component {
         indicatorsMapping[item] = indicators[item].nickname
       );
     const popupItems = Object.keys(indicatorsMapping).map(indicator =>
-      <div className={ this.classes.menuItem } key={indicator}>
-        <Label checkbox={ this.state.checkedIndicators.indexOf(indicator) !== -1 } onChange={ this.toggleCheckbox.bind(this, indicator) } style={{ marginBottom: '3px', fontSize: '12px', textTransform: 'capitalize' }}>{indicatorsMapping[indicator]}</Label>
+      <div className={this.classes.menuItem} key={indicator}>
+        <Label checkbox={this.state.checkedIndicators.indexOf(indicator) !== -1}
+               onChange={this.toggleCheckbox.bind(this, indicator)}
+               style={{
+                  marginBottom: '3px',
+                  fontSize: '12px',
+                  textTransform: 'capitalize'
+                }}>{indicatorsMapping[indicator]}</Label>
       </div>
     );
     const menuItems = this.state.checkedIndicators.map((indicator, index) =>
-      <div className={ this.classes.menuItem } key={indicator}>
-        <Label style={{ marginBottom: '3px', fontSize: '12px', textTransform: 'capitalize' }}>{indicatorsMapping[indicator]}</Label>
-        <div className={ this.classes.coloredCircle } style={{ background: COLORS[index % COLORS.length] }}/>
+      <div className={this.classes.menuItem} key={indicator}>
+        <Label style={{
+          marginBottom: '3px',
+          fontSize: '12px',
+          textTransform: 'capitalize'
+        }}>{indicatorsMapping[indicator]}</Label>
+        <div className={this.classes.coloredCircle} style={{background: COLORS[index % COLORS.length]}}/>
       </div>
     );
     const lines = this.state.checkedIndicators.map((indicator, index) =>
-      <Line key={indicator} type='monotone' dataKey={indicator} stroke={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} strokeWidth={3}/>
+      <Line key={indicator}
+            type='monotone'
+            dataKey={indicator}
+            stroke={COLORS[index % COLORS.length]}
+            fill={COLORS[index % COLORS.length]}
+            strokeWidth={3}/>
     );
     const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
-      <Line key={indicator+1} type='monotone' dataKey={indicator + 'Suggested'} stroke={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} strokeWidth={3} strokeDasharray="7 11" dot={{ strokeDasharray:"initial", fill: 'white' }}/>
+      <Line key={indicator + 1}
+            type='monotone'
+            dataKey={indicator + 'Suggested'}
+            stroke={COLORS[index % COLORS.length]}
+            fill={COLORS[index % COLORS.length]}
+            strokeWidth={3}
+            strokeDasharray="7 11"
+            dot={{strokeDasharray: 'initial', fill: 'white'}}/>
     );
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
-      this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="#e60000" stroke="white" stroke-width={2} key={index} label="O" alwaysShow={true}/>
+      this.props.objectives[indicator] &&
+      <ReferenceDot {... this.props.objectives[indicator]}
+                    r={10}
+                    fill="#e60000"
+                    stroke="white"
+                    stroke-width={2}
+                    key={index}
+                    label="O"
+                    alwaysShow={true}/>
     );
     const tooltip = (data) => {
       const currentIndex = this.props.data.findIndex(month => month.name === data.label);
       const prevIndex = currentIndex - 1;
       if (data.active && data.payload && data.payload.length > 0) {
         return <div className={this.classes.customTooltip}>
-          <div style={{ fontWeight: 'bold' }}>
+          <div style={{fontWeight: 'bold'}}>
             {data.label}
           </div>
           {
@@ -122,40 +153,58 @@ export default class IndicatorsGraph extends Component {
                 return <div key={index}>
                   {indicatorsMapping[item.dataKey]}: {item.value}
                   {prevIndex >= 0 ?
-                    <div style={{ color: item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
+                    <div style={{
+                      color: item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '#30b024' : '#d50a2e',
+                      display: 'inline',
+                      fontWeight: 'bold'
+                    }}>
+                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '+' : '-') +
+                      Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
                     </div>
                     : null}
                   <div>
-                    { prevIndex >= 0 && this.props.data[prevIndex][item.dataKey + 'Suggested'] ?
+                    {prevIndex >= 0 && this.props.data[prevIndex][item.dataKey + 'Suggested'] ?
                       <div>
-                        {indicatorsMapping[item.dataKey] + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
-                        <div style={{ color: this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                          {' (' + (this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') + Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
+                        {indicatorsMapping[item.dataKey] +
+                        ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
+                        <div style={{
+                          color: this.props.data[currentIndex][item.dataKey + 'Suggested'] -
+                          this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e',
+                          display: 'inline',
+                          fontWeight: 'bold'
+                        }}>
+                          {' (' +
+                          (this.props.data[currentIndex][item.dataKey + 'Suggested'] -
+                          this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') +
+                          Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] -
+                            this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
                         </div>
                       </div>
-                      : null }
+                      : null}
                   </div>
-                  {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
+                  {this.props.objectives[item.dataKey] !== undefined &&
+                  this.props.objectives[item.dataKey].x === data.label ?
                     <div>
                       {indicatorsMapping[item.dataKey]} (objective): {this.props.objectives[item.dataKey].y}
                     </div>
                     : null}
-                </div>
+                </div>;
               }
             })
           }
-        </div>
+        </div>;
       }
       return null;
     };
-    return <div className={ this.classes.inner }>
-      <div className={ this.classes.menuPosition }>
-        <div className={ this.classes.menu }>
-          <div className={ this.classes.menuTitle }>
+    return <div className={this.classes.inner}>
+      <div className={this.classes.menuPosition}>
+        <div className={this.classes.menu}>
+          <div className={this.classes.menuTitle}>
             Forecasting
-            <div style={{ position: 'relative' }}>
-              <div className={ this.classes.settings } onClick={ ()=>{ this.refs.settingsPopup.open() } } />
+            <div style={{position: 'relative'}}>
+              <div className={this.classes.settings} onClick={() => {
+                this.refs.settingsPopup.open();
+              }}/>
               <PlanPopup ref="settingsPopup" style={{
                 top: '20px'
               }} title="Settings">
@@ -165,21 +214,23 @@ export default class IndicatorsGraph extends Component {
               </PlanPopup>
             </div>
           </div>
-          { menuItems }
+          {menuItems}
         </div>
       </div>
-      <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft, marginTop: '30px' }}>
-        <LineChart width={this.width} height={400} data={ this.props.data }>
-          <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
-          <YAxis tickFormatter={ (tick) => formatBudgetShortened(tick) } style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }} domain={['dataMin', 'dataMax']}/>
-          <CartesianGrid vertical={ false }/>
-          { dots }
-          <Tooltip content={ tooltip.bind(this) }/>
-          { lines }
-          { suggestedLines }
-        </LineChart >
+      <div className={this.classes.chart} style={{width: this.width, marginLeft: this.marginLeft, marginTop: '30px'}}>
+        <LineChart width={this.width} height={400} data={this.props.data}>
+          <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
+          <YAxis tickFormatter={(tick) => formatBudgetShortened(tick)}
+                 style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
+                 domain={['dataMin', 'dataMax']}/>
+          <CartesianGrid vertical={false}/>
+          {dots}
+          <Tooltip content={tooltip.bind(this)}/>
+          {lines}
+          {suggestedLines}
+        </LineChart>
       </div>
-    </div>
+    </div>;
   }
 
 }
