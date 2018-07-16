@@ -691,11 +691,15 @@ class AppComponent extends Component {
     return calculatedDataExtender(state);
   }
 
+  isSettingsOpen = () => {
+    return this.props.children.type.name.toLowerCase() === 'Settings'.toLowerCase();
+  }
+
   getTabsToRender = () => {
     let fatherPageComponentName = this.props.children.type.name;
     let childRoutes = this.props.route.childRoutes;
 
-    if(fatherPageComponentName.toLowerCase() === 'Settings'.toLowerCase()){
+    if(this.isSettingsOpen()){
       childRoutes = childRoutes.find(item => item.component.name === fatherPageComponentName).childRoutes;
       fatherPageComponentName = this.props.children.props.children.type.name;
     }
@@ -714,7 +718,7 @@ class AppComponent extends Component {
       (child) => React.cloneElement(child, extendedData));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header auth={ this.props.route.auth } {... this.state} tabs={tabs}/>
+        <Header auth={ this.props.route.auth } {... this.state} tabs={tabs} isSettingsOpen={this.isSettingsOpen}/>
         <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>

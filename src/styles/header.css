@@ -97,6 +97,10 @@
   composes: menu;
 }
 
+.menu-big[data-settings-open='true'] {
+  margin-left: 126px;
+}
+
 .items-box {
   float: right;
   height: 100%;
