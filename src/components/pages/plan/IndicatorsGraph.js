@@ -25,20 +25,29 @@ export default class IndicatorsGraph extends Component {
 
   constructor(props) {
     super(props);
+
+    const initialIndicators = this.getInitialeIndicators(this.props);
     this.state = {
-      checkedIndicators: []
+      checkedIndicators: initialIndicators ? initialIndicators : []
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.objectives, this.props.objectives)) {
-      const objectives = Object.keys(nextProps.objectives);
-      const objective = objectives && objectives[0];
-      if (objective) {
-        this.setState({checkedIndicators: [objective]});
+      const objectives = this.getInitialeIndicators(nextProps);
+      if (objectives) {
+        this.setState({
+          checkedIndicators: objectives
+        });
       }
     }
   }
+
+  getInitialeIndicators = (props) => {
+    const objectives = Object.keys(props.objectives);
+    const objective = objectives && objectives[0];
+    return objective ? [objective] : null;
+  };
 
   get width() {
     return this.props.dimensions.width - this.marginLeft + 5;
@@ -93,10 +102,10 @@ export default class IndicatorsGraph extends Component {
         <Label checkbox={this.state.checkedIndicators.indexOf(indicator) !== -1}
                onChange={this.toggleCheckbox.bind(this, indicator)}
                style={{
-                  marginBottom: '3px',
-                  fontSize: '12px',
-                  textTransform: 'capitalize'
-                }}>{indicatorsMapping[indicator]}</Label>
+                 marginBottom: '3px',
+                 fontSize: '12px',
+                 textTransform: 'capitalize'
+               }}>{indicatorsMapping[indicator]}</Label>
       </div>
     );
     const menuItems = this.state.checkedIndicators.map((indicator, index) =>
