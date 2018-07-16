@@ -13,11 +13,11 @@ export default class Dashboard extends Component {
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.props));
     return <div>
-      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
-        <div className={ this.classes.head }>
-          <div className={ this.classes.headTitle }>Dashboard</div>
+      <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
+        <div className={this.classes.head}>
+          <div className={this.classes.headTitle}>Dashboard</div>
         </div>
-        { this.props.userAccount.pages && this.props.userAccount.pages.dashboard ?
+        {this.props.userAccount.pages && this.props.userAccount.pages.dashboard ?
           <div>
             {childrenWithProps}
           </div>
@@ -28,11 +28,11 @@ export default class Dashboard extends Component {
             action="Show me the data >"
             icon="step:dashboard"
             onClick={() => {
-              this.props.updateUserAccount({'pages.dashboard': true})
+              this.props.updateUserAccount({'pages.dashboard': true});
             }}
           />
         }
       </Page>
-    </div>
+    </div>;
   }
 }
