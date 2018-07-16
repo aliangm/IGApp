@@ -56,7 +56,6 @@ export default class Plan extends Component {
     super(props);
     this.popup = this.popup.bind(this);
     this.state = {
-      selectedTab: 1,
       numberOfPlanUpdates: 0,
       whatIf: this.props.plan,
       editMode: false,
@@ -296,11 +295,7 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
-  selectTab(index) {
-    this.setState({
-      selectedTab: index
-    });
-  }
+  isAnnualTabActive = () => this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
 
   render() {
     const planChannels = merge([],
@@ -357,7 +352,7 @@ export default class Plan extends Component {
                 </div>
               </div>
             </FeatureToggle>
-            {this.state.selectedTab !== 1 ? null :
+            {!this.isAnnualTabActive() ? null :
               <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
@@ -365,7 +360,7 @@ export default class Plan extends Component {
                 }
               }}/>
             }
-            {this.state.selectedTab !== 1 ? null :
+            {!this.isAnnualTabActive() ? null :
               <FeatureToggle featureName="plannerAI">
                 <div style={{display: 'flex', position: 'relative'}}>
                   <div data-selected={this.state.dropmenuVisible ? true : null}>
@@ -421,12 +416,12 @@ export default class Plan extends Component {
                     <div style={{position: 'relative'}}>
                       <PlanPopup ref="whatIfPopup"
                                  style={{
-                                    width: '367px',
-                                    left: '-252px',
-                                    top: '10px',
-                                    textAlign: 'initial',
-                                    cursor: 'initial'
-                                  }}
+                                   width: '367px',
+                                   left: '-252px',
+                                   top: '10px',
+                                   textAlign: 'initial',
+                                   cursor: 'initial'
+                                 }}
                                  hideClose={true}
                                  title="What If - Scenarios Management">
                         <div className={this.classes.budgetChangeBox} style={{paddingTop: '12px'}}>
@@ -506,7 +501,7 @@ export default class Plan extends Component {
                 </div>
               </FeatureToggle>
             }
-            {this.state.selectedTab === 1 ?
+            {this.isAnnualTabActive() ?
               <div style={{position: 'relative'}}>
                 <Button type="primary2"
                         style={{
@@ -538,15 +533,15 @@ export default class Plan extends Component {
                   <div>
                     <div className={this.classes.dropmenuItemAdd}
                          onClick={() => {
-                            this.setState({addChannelPopup: true});
-                          }}>
+                           this.setState({addChannelPopup: true});
+                         }}>
                       Add Channel
                     </div>
                     <div className={this.classes.dropmenuItemCancel}
                          onClick={() => {
-                            this.setState({editMode: false});
-                            this.props.getUserMonthPlan(this.props.region);
-                          }}>
+                           this.setState({editMode: false});
+                           this.props.getUserMonthPlan(this.props.region);
+                         }}>
                       Cancel
                     </div>
                   </div>
@@ -587,6 +582,6 @@ export default class Plan extends Component {
           />
         }
       </Page>
-    </div>
+    </div>;
   }
 }
