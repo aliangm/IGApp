@@ -1,32 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Component from 'components/Component';
-
 import Popup from 'components/Popup';
-import Loading from 'components/pages/plan/Loading';
-import Button from 'components/controls/Button';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
-import Explanation from 'components/pages/plan/Explanation';
+import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import popupStyle from 'styles/plan/popup.css';
-import { parseBudgets } from 'data/parseAnnualPlan';
+import {parseBudgets} from 'data/parseAnnualPlan';
 import PlanCell from 'components/pages/plan/PlanCell';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 import EditableCell from 'components/pages/plan/EditableCell';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-import { formatChannels, output } from 'components/utils/channels';
 import buttonsStyle from 'styles/onboarding/buttons.css';
-import { ContextMenu, ContextMenuTrigger, SubMenu, MenuItem } from 'react-contextmenu';
+import {ContextMenu, ContextMenuTrigger, SubMenu, MenuItem} from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
 import Toggle from 'components/controls/Toggle';
-import { timeFrameToDate } from 'components/utils/objective';
-import { FeatureToggle } from 'react-feature-toggles';
-import { formatBudget } from 'components/utils/budget';
+import {timeFrameToDate} from 'components/utils/objective';
+import {FeatureToggle} from 'react-feature-toggles';
+import {formatBudget} from 'components/utils/budget';
 
 export default class AnnualTab extends Component {
 
@@ -34,10 +26,10 @@ export default class AnnualTab extends Component {
   styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
 
   monthNames = [
-    "Jan", "Feb", "Mar",
-    "Apr", "May", "Jun", "Jul",
-    "Aug", "Sep", "Oct",
-    "Nov", "Dec"
+    'Jan', 'Feb', 'Mar',
+    'Apr', 'May', 'Jun', 'Jul',
+    'Aug', 'Sep', 'Oct',
+    'Nov', 'Dec'
   ];
 
   static defaultProps = {
@@ -54,9 +46,6 @@ export default class AnnualTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      popupShown: false,
-      popupLeft: 0,
-      pouppTop: 0,
       hoverRow: void 0,
       collapsed: {},
       tableCollapsed: 0,
@@ -77,14 +66,8 @@ export default class AnnualTab extends Component {
   }
 
   handleScroll = () => {
-    this.setState({isSticky: window.pageYOffset >= (this.planTable && this.planTable.offsetTop)})
+    this.setState({isSticky: window.pageYOffset >= (this.planTable && this.planTable.offsetTop)});
   };
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ budgetField: nextProps.budget });
-    this.setState({ budgetArrayField: nextProps.budgetArray });
-    this.setState({maxChannelsField: nextProps.maxChannels});
-  }
 
   calculateGraphDimensions() {
     if (this.planTable && this.firstColumnCell) {
@@ -94,10 +77,10 @@ export default class AnnualTab extends Component {
         this.setState({
           graphDimensions: {
             width: planTableOffsetWidth,
-            marginLeft: firstColumnOffsetWidth,
+            marginLeft: firstColumnOffsetWidth
           }
-        })
-      })
+        });
+      });
     }
   }
 
@@ -121,13 +104,13 @@ export default class AnnualTab extends Component {
   getDates = () => {
     var dates = [];
     for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate.split("/");
-      var date = new Date(planDate[1], planDate[0]-1);
+      var planDate = this.props.planDate.split('/');
+      var date = new Date(planDate[1], planDate[0] - 1);
       date.setMonth(date.getMonth() + i);
-      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
+      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
     }
     return dates;
-  }
+  };
 
   getMonthHeaders = () => {
     const dates = this.getDates();
@@ -140,24 +123,34 @@ export default class AnnualTab extends Component {
             return (currentMonth + index) % 12 === eventMonth % 12;
           })
           .map((event, index) => {
-            return <p key={ index }>
-              {event.link ? <a href={event.link} target="_blank">{event.eventName}</a> : event.eventName } {event.startDate} {event.location}
-            </p>
+            return <p key={index}>
+              {event.link ? <a href={event.link}
+                               target="_blank">{event.eventName}</a> : event.eventName} {event.startDate} {event.location}
+            </p>;
           })
         : null;
-      return events.length > 0 ? <div style={{ position: 'relative' }}>
-          <div className={ this.classes.tableButton } onClick={ () => { this.setState({monthPopup: month}) }}
-               onMouseEnter={ ()=> { this.setState({monthPopupHover: month}) }}
-               onMouseLeave={ ()=> { this.setState({monthPopupHover: ''}) } }>
-            { month }</div>
-          <Popup hidden={ month !== this.state.monthPopup && month !== this.state.monthPopupHover } className={ this.classes.eventPopup }>
-            <div className={ popupStyle.locals.header }>
-              <div className={ popupStyle.locals.title }>
-                {"Events - " + month}
+      return events.length > 0 ? <div style={{position: 'relative'}}>
+          <div className={this.classes.tableButton} onClick={() => {
+            this.setState({monthPopup: month});
+          }}
+               onMouseEnter={() => {
+                 this.setState({monthPopupHover: month});
+               }}
+               onMouseLeave={() => {
+                 this.setState({monthPopupHover: ''});
+               }}>
+            {month}</div>
+          <Popup hidden={month !== this.state.monthPopup && month !== this.state.monthPopupHover}
+                 className={this.classes.eventPopup}>
+            <div className={popupStyle.locals.header}>
+              <div className={popupStyle.locals.title}>
+                {'Events - ' + month}
               </div>
-              <div className={ popupStyle.locals.close }
+              <div className={popupStyle.locals.close}
                    role="button"
-                   onClick={ () => { this.setState({monthPopup: ''}) }}
+                   onClick={() => {
+                     this.setState({monthPopup: ''});
+                   }}
               />
             </div>
             <PopupTextContent>
@@ -166,7 +159,7 @@ export default class AnnualTab extends Component {
           </Popup>
         </div>
         :
-        <div className={ this.classes.cellItem }>{ month }</div>
+        <div className={this.classes.cellItem}>{month}</div>;
     });
     return headers;
   };
@@ -211,7 +204,11 @@ export default class AnnualTab extends Component {
         approvedBudgets[cell.i][cell.channel] = value;
       }
     });
-    this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
+    this.props.updateState({
+      projectedPlan: projectedPlan,
+      approvedBudgets: approvedBudgets,
+      planUnknownChannels: planUnknownChannels
+    });
     this.setState({isDragging: false, draggableValues: []});
   }
 
@@ -227,7 +224,7 @@ export default class AnnualTab extends Component {
     let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
-    for (let i=0; i<12; i++) {
+    for (let i = 0; i < 12; i++) {
       if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
         delete planUnknownChannels[i][channel];
       }
@@ -238,7 +235,11 @@ export default class AnnualTab extends Component {
         }
       }
     }
-    this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
+    this.props.updateState({
+      projectedPlan: projectedPlan,
+      approvedBudgets: approvedBudgets,
+      planUnknownChannels: planUnknownChannels
+    });
   }
 
   handleChangeContextMenu(event, data) {
@@ -247,7 +248,7 @@ export default class AnnualTab extends Component {
     let planUnknownChannels = this.props.planUnknownChannels;
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
-    for (let i=0; i< 12; i++) {
+    for (let i = 0; i < 12; i++) {
       if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
         planUnknownChannels[i][channel] = Math.round(planUnknownChannels[i][channel] * percent);
       }
@@ -259,7 +260,11 @@ export default class AnnualTab extends Component {
         }
         approvedBudgets[i][channel] = newBudget;
       }
-      this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets, planUnknownChannels: planUnknownChannels});
+      this.props.updateState({
+        projectedPlan: projectedPlan,
+        approvedBudgets: approvedBudgets,
+        planUnknownChannels: planUnknownChannels
+      });
     }
   }
 
@@ -305,33 +310,51 @@ export default class AnnualTab extends Component {
         let hoverValues;
         let isSecondGood = false;
         if (this.state.approvedPlan) {
-          values = params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}});
+          values = params.approvedValues.map(val => {
+            if (val) {
+              return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            } else {
+              return '$0';
+            }
+          });
           hoverValues = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
           isSecondGood = true;
         }
         else {
           values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-          hoverValues = params.approvedValues ? params.approvedValues.map(val => {if (val) {return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} else { return "$0"}}) : undefined;
+          hoverValues = params.approvedValues ? params.approvedValues.map(val => {
+            if (val) {
+              return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            } else {
+              return '$0';
+            }
+          }) : undefined;
         }
-        const  titleElem = <div ref={ params.channel ? this.props.setRef.bind(this, params.channel) : null }>
-          { this.props.editMode && params.channel && !params.isOtherChannel ?
-            <div className={ this.classes.editChannelNameWrapper }>
-              <div className={ this.classes.editChannelName } onClick={ ()=>{ this.setState({editChannelName: params.channel}) } }/>
+        const titleElem = <div ref={params.channel ? this.props.setRef.bind(this, params.channel) : null}>
+          {this.props.editMode && params.channel && !params.isOtherChannel ?
+            <div className={this.classes.editChannelNameWrapper}>
+              <div className={this.classes.editChannelName} onClick={() => {
+                this.setState({editChannelName: params.channel});
+              }}/>
             </div>
-            : null }
-          <ContextMenuTrigger id="rightClickNormal" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || this.props.editMode}>
-            <ContextMenuTrigger id="rightClickEdit" collect={()=>{ return {channel: params.channel} }} disable={!params.channel || !this.props.editMode}>
+            : null}
+          <ContextMenuTrigger id="rightClickNormal" collect={() => {
+            return {channel: params.channel};
+          }} disable={!params.channel || this.props.editMode}>
+            <ContextMenuTrigger id="rightClickEdit" collect={() => {
+              return {channel: params.channel};
+            }} disable={!params.channel || !this.props.editMode}>
               <div
                 style={{
                   marginLeft: (level | 0) * 17 + 'px',
                   cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
                 }}
-                className={ this.classes.rowTitle }>
-                { params.children ?
+                className={this.classes.rowTitle}>
+                {params.children ?
                   <div
                     hidden={this.state.tableCollapsed === 2}
-                    className={ this.classes.rowArrow }
-                    data-collapsed={ collapsed || null }
+                    className={this.classes.rowArrow}
+                    data-collapsed={collapsed || null}
                     onClick={() => {
                       this.state.collapsed[key] = !collapsed;
                       this.forceUpdate();
@@ -341,34 +364,36 @@ export default class AnnualTab extends Component {
                   this.props.editMode ?
                     <div>
                       <div
-                        className={ this.classes.rowDelete }
-                        onClick={ () => this.setState({deletePopup: params.channel}) }
+                        className={this.classes.rowDelete}
+                        onClick={() => this.setState({deletePopup: params.channel})}
                       />
-                      <Popup hidden={ params.channel !== this.state.deletePopup } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <Popup hidden={params.channel !== this.state.deletePopup}
+                             style={{top: '-72px', left: '130px', cursor: 'initial'}}>
                         <DeleteChannelPopup
-                          onNext={ this.deleteRow.bind(this, params.channel) }
-                          onBack={ () => this.setState({deletePopup: ''}) }
+                          onNext={this.deleteRow.bind(this, params.channel)}
+                          onBack={() => this.setState({deletePopup: ''})}
                         />
                       </Popup>
-                      <Popup hidden={ params.channel !== this.state.editChannelName } style={{ top: '-72px', left: '130px', cursor: 'initial' }}>
+                      <Popup hidden={params.channel !== this.state.editChannelName}
+                             style={{top: '-72px', left: '130px', cursor: 'initial'}}>
                         <EditChannelNamePopup
-                          channel={ this.state.editChannelName }
-                          onNext={ this.editChannelName.bind(this) }
-                          onBack={ () => this.setState({editChannelName: ''}) }
+                          channel={this.state.editChannelName}
+                          onNext={this.editChannelName.bind(this)}
+                          onBack={() => this.setState({editChannelName: ''})}
                         />
                       </Popup>
                     </div>
-                    : null }
+                    : null}
 
-                { params.icon ?
-                  <div className={ this.classes.rowIcon } data-icon={ params.icon }/>
-                  : null }
+                {params.icon ?
+                  <div className={this.classes.rowIcon} data-icon={params.icon}/>
+                  : null}
 
-                { params.icon_mask ?
-                  <div className={ this.classes.rowMaskIcon }>
-                    <div className={ this.classes.rowMaskIconInside } data-icon={ params.icon_mask }/>
+                {params.icon_mask ?
+                  <div className={this.classes.rowMaskIcon}>
+                    <div className={this.classes.rowMaskIconInside} data-icon={params.icon_mask}/>
                   </div>
-                  : null }
+                  : null}
                 {/**   { item.length > 13 ?
                 <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
                   <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
@@ -378,10 +403,10 @@ export default class AnnualTab extends Component {
               </div>
             </ContextMenuTrigger>
           </ContextMenuTrigger>
-        </div>
+        </div>;
 
         const rowProps = {
-          className: this.props.editMode ? null :this.classes.tableRow,
+          className: this.props.editMode ? null : this.classes.tableRow,
           key: key,
           onMouseEnter: () => {
             this.setState({
@@ -406,24 +431,24 @@ export default class AnnualTab extends Component {
           handleRows(params.children, key, level + 1);
         }
       });
-    }
+    };
 
     if (data && this.state.tableCollapsed !== 1) {
       handleRows(data);
     }
 
 
-    const headRow = this.getTableRow(<div className={ this.classes.headTitleCell }>
+    const headRow = this.getTableRow(<div className={this.classes.headTitleCell}>
       <div
-        style={{ borderColor: '#329ff1 transparent transparent transparent' }}
-        className={ this.classes.rowArrow }
-        data-collapsed={ this.state.tableCollapsed || null }
+        style={{borderColor: '#329ff1 transparent transparent transparent'}}
+        className={this.classes.rowArrow}
+        data-collapsed={this.state.tableCollapsed || null}
         onClick={() => {
           this.state.tableCollapsed = (++this.state.tableCollapsed % 3);
           this.forceUpdate();
         }}
       />
-      { 'Marketing Channel' }
+      {'Marketing Channel'}
     </div>, this.getMonthHeaders(), {
       className: this.classes.headRow
     });
@@ -431,23 +456,23 @@ export default class AnnualTab extends Component {
     let hoverValues = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
     let isSecondGood = false;
     if (this.state.approvedPlan) {
-      values = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val))
+      values = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
       hoverValues = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
       isSecondGood = true;
     }
-    const footRow = data && this.getTableRow(<div className={ this.classes.footTitleCell }>
-        { 'TOTAL' }
+    const footRow = data && this.getTableRow(<div className={this.classes.footTitleCell}>
+        {'TOTAL'}
       </div>,
       values.map((item, i) =>
         item === hoverValues[i] ?
           item
           :
           <PlanCell
-            item={ item }
-            hover={ hoverValues[i] }
-            key={ i }
-            approveChannel={ () => this.props.approveWholeMonth(i) }
-            declineChannel={ () => this.props.declineWholeMonth(i) }
+            item={item}
+            hover={hoverValues[i]}
+            key={i}
+            approveChannel={() => this.props.approveWholeMonth(i)}
+            declineChannel={() => this.props.declineWholeMonth(i)}
             isSecondGood={isSecondGood}/>
       )
       , {
@@ -466,11 +491,11 @@ export default class AnnualTab extends Component {
           currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
         });
       }
-      return {... json, name: dates[index], ... this.props.approvedBudgetsProjection[index]}
+      return {...json, name: dates[index], ... this.props.approvedBudgetsProjection[index]};
     });
 
     // Current indicators values to first cell
-    projections.splice(0,0,{... this.props.actualIndicators, name: 'today', ... currentSuggested});
+    projections.splice(0, 0, {...this.props.actualIndicators, name: 'today', ...currentSuggested});
 
     const objectives = {};
     this.props.objectives
@@ -481,66 +506,71 @@ export default class AnnualTab extends Component {
       })
       .forEach(objective => {
         const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-        const target = objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta);
+        const target = objective.direction === 'equals' ? objective.amount : (objective.direction === 'increase' ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta);
         const date = timeFrameToDate(objective.timeFrame);
-        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2);
+        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
         objectives[objective.indicator] = {x: monthStr, y: target};
       });
 
     return <div>
-      <div className={ this.classes.wrap }>
-        <div className={ planStyles.locals.title } style={{ padding: '0' }}>
-          <div className={ planStyles.locals.titleMain }>
-            <div className={ planStyles.locals.titleText }>
+      <div className={this.classes.wrap}>
+        <div className={planStyles.locals.title} style={{padding: '0'}}>
+          <div className={planStyles.locals.titleMain}>
+            <div className={planStyles.locals.titleText}>
               Annual Budget
             </div>
-            <div className={ planStyles.locals.titlePrice } ref="budgetRef" style={{ color: this.state.isTemp ? '#1991eb' : 'Inherit' }}>
-              ${ (Math.ceil(budget/1000)*1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
+            <div className={planStyles.locals.titlePrice} ref="budgetRef"
+                 style={{color: this.state.isTemp ? '#1991eb' : 'Inherit'}}>
+              ${(Math.ceil(budget / 1000) * 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp ? '*' : ''}
             </div>
           </div>
         </div>
-        <div className={ planStyles.locals.title } style={{ padding: '0', height: '35px' }}>
-          <div className={ planStyles.locals.titleMain }>
-            <div className={ this.classes.titleBudget }>
+        <div className={planStyles.locals.title} style={{padding: '0', height: '35px'}}>
+          <div className={planStyles.locals.titleMain}>
+            <div className={this.classes.titleBudget}>
               Budget left to plan
             </div>
-            <div className={ this.classes.titleArrow } style={{ color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d' }}>
+            <div className={this.classes.titleArrow} style={{color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d'}}>
               {
                 Math.abs(budgetLeftToPlan) >= 100 ?
                   '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  : <div className={ planStyles.locals.budgetLeftToPlanOk }/>
+                  : <div className={planStyles.locals.budgetLeftToPlanOk}/>
               }
             </div>
           </div>
           <FeatureToggle featureName="plannerAI">
-            <div className={ planStyles.locals.titleToggle } style={{ width: '69%' }}>
+            <div className={planStyles.locals.titleToggle} style={{width: '69%'}}>
               <Toggle
                 leftText="Current"
                 rightText="Suggested"
-                leftActive={ this.state.approvedPlan }
-                leftClick={ ()=>{ this.setState({approvedPlan: true}) } }
-                rightClick={ ()=>{ this.setState({approvedPlan: false}) } }
+                leftActive={this.state.approvedPlan}
+                leftClick={() => {
+                  this.setState({approvedPlan: true});
+                }}
+                rightClick={() => {
+                  this.setState({approvedPlan: false});
+                }}
               />
             </div>
           </FeatureToggle>
         </div>
-        <div className={ this.classes.innerBox }>
-          <div className={ this.classes.box }>
-            <table className={ this.classes.table } ref={(ref) => this.planTable = ref}>
+        <div className={this.classes.innerBox}>
+          <div className={this.classes.box}>
+            <table className={this.classes.table} ref={(ref) => this.planTable = ref}>
               <thead>
-              { headRow }
+              {headRow}
               </thead>
-              <tbody className={ this.classes.tableBody }>
-              { rows }
+              <tbody className={this.classes.tableBody}>
+              {rows}
               </tbody>
               <tfoot>
-              { footRow }
+              {footRow}
               </tfoot>
             </table>
           </div>
 
           <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-          { headRow }
+          {headRow}
           </thead>
 
           <ContextMenu id="rightClickEdit">
@@ -589,86 +619,63 @@ export default class AnnualTab extends Component {
             </MenuItem>
           </ContextMenu>
 
-          <PlanPopup ref="headPopup" style={{
-            width: '350px',
-            left: this.state.popupLeft + 'px',
-            top: this.state.popupTop + 'px',
-            marginTop: '5px'
-          }} title="Events: Mar/16"
-                     onClose={() => {
-                       this.setState({
-                         popupShown: false,
-                         popupLeft: 0,
-                         popupTop: 0
-                       });
-                     }}
-          >
-            <PopupTextContent>
-              <strong>User Events</strong>
-              <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
-                Louis
-                Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-              <strong>Global Events</strong>
-              <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
-                do
-                not</p>
-            </PopupTextContent>
-          </PlanPopup>
-          <div className={ this.classes.indicatorsGraph } style={{ width: this.state.graphDimensions.width }} ref={this.props.forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph data={ projections } objectives={ objectives } dimensions={this.state.graphDimensions}/>
+          <div className={this.classes.indicatorsGraph} style={{width: this.state.graphDimensions.width}}
+               ref={this.props.forecastingGraphRef.bind(this)}>
+            <IndicatorsGraph data={projections} objectives={objectives} dimensions={this.state.graphDimensions}/>
           </div>
         </div>
       </div>
-    </div>
+    </div>;
   }
 
-  getTableRow(title, items, props, channel, hoverValues, isSecondGood)
-  {
-    return <tr {... props}>
-      <td className={ this.classes.titleCell } ref={(ref) => this.firstColumnCell = ref}>{ this.getCellItem(title) }</td>
+  getTableRow(title, items, props, channel, hoverValues, isSecondGood) {
+    return <tr {...props}>
+      <td className={this.classes.titleCell} ref={(ref) => this.firstColumnCell = ref}>{this.getCellItem(title)}</td>
       {
         items.map((item, i) => {
           if (channel && this.props.editMode) {
-            return <td className={ this.classes.valueCell } key={ i }>{
+            return <td className={this.classes.valueCell} key={i}>{
               <EditableCell
-                title={ (hoverValues && item !== hoverValues[i]) ? "previous: " + hoverValues[i] : null }
-                value={ item }
-                onChange={ this.editChannel.bind(this, i, channel) }
-                i={ i }
-                channel={ channel }
-                draggableValue={ this.state.draggableValue }
-                dragStart={ this.dragStart.bind(this) }
-                dragEnter={ this.dragEnter.bind(this, i, channel) }
-                drop={ this.commitDrag.bind(this) }
-                isDragging={ this.state.isDragging }/>
-            }</td>
+                title={(hoverValues && item !== hoverValues[i]) ? 'previous: ' + hoverValues[i] : null}
+                value={item}
+                onChange={this.editChannel.bind(this, i, channel)}
+                i={i}
+                channel={channel}
+                draggableValue={this.state.draggableValue}
+                dragStart={this.dragStart.bind(this)}
+                dragEnter={this.dragEnter.bind(this, i, channel)}
+                drop={this.commitDrag.bind(this)}
+                isDragging={this.state.isDragging}/>
+            }</td>;
           }
           else if (channel && hoverValues && item !== hoverValues[i]) {
             return <PlanCell
-              item={ item }
-              hover={ hoverValues[i] }
-              key={ i }
-              approveChannel={ () => { this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item) } }
-              declineChannel={ () => { this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]) } }
+              item={item}
+              hover={hoverValues[i]}
+              key={i}
+              approveChannel={() => {
+                this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item);
+              }}
+              declineChannel={() => {
+                this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]);
+              }}
               isSecondGood={isSecondGood}
-              style={{ backgroundColor: '#329ff136' }}
-            />
+              style={{backgroundColor: '#329ff136'}}
+            />;
           }
-          else return <td className={ this.classes.valueCell } key={ i }>{
+          else return <td className={this.classes.valueCell} key={i}>{
               this.getCellItem(item)
-            }</td>
+            }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
-  getCellItem(item)
-  {
+  getCellItem(item) {
     let elem;
 
     if (typeof item !== 'object') {
-      elem = <div className={ this.classes.cellItem }>{ item }</div>
+      elem = <div className={this.classes.cellItem}>{item}</div>;
     } else {
       elem = item;
     }
