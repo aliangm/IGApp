@@ -295,8 +295,6 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
-  isAnnualTabActive = () => this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
-
   render() {
     const planChannels = merge([],
       Object.keys(this.props.approvedBudgets.reduce((object, item) => {
@@ -311,6 +309,9 @@ export default class Plan extends Component {
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, merge({}, this.props, this.state)));
+
+    const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
+
     return <div>
       <ReactTooltip/>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
@@ -352,7 +353,7 @@ export default class Plan extends Component {
                 </div>
               </div>
             </FeatureToggle>
-            {!this.isAnnualTabActive() ? null :
+            {!annualTabActive ? null :
               <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
@@ -360,7 +361,7 @@ export default class Plan extends Component {
                 }
               }}/>
             }
-            {!this.isAnnualTabActive() ? null :
+            {!annualTabActive ? null :
               <FeatureToggle featureName="plannerAI">
                 <div style={{display: 'flex', position: 'relative'}}>
                   <div data-selected={this.state.dropmenuVisible ? true : null}>
@@ -501,7 +502,7 @@ export default class Plan extends Component {
                 </div>
               </FeatureToggle>
             }
-            {this.isAnnualTabActive() ?
+            {annualTabActive ?
               <div style={{position: 'relative'}}>
                 <Button type="primary2"
                         style={{

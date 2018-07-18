@@ -76,6 +76,8 @@ ReactDOM.render(
         <Route path="/plan/plan/current"
                component={CurrentTab}
                onEnter={requireAdminAuth}
+               {/* Special treatment for state derived tab name. The state is saved at App.js level therefore
+                can't render the name here. DefaultName is for situation where the property is still loading*/}
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/plan/annual" component={AnnualTab} onEnter={requireAdminAuth} tabName='Annual'/>
         <Route path="/plan/plan/projections"
