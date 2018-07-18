@@ -5,6 +5,7 @@ import {parseBudgets} from 'data/parseAnnualPlan';
 import {formatBudget} from 'components/utils/budget';
 import {ContextMenuTrigger} from 'react-contextmenu';
 import PlanCell from 'components/pages/plan/PlanCell';
+import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
@@ -37,7 +38,7 @@ export default class BudgetTable extends Component {
     isEditMode: false,
     isShowSecondaryEnabled: false,
     isConstraitsEnabled: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -98,19 +99,6 @@ export default class BudgetTable extends Component {
         <div className={this.classes.cellItem}>{month}</div>;
     });
     return headers;
-  };
-
-  getCellItem = (item) => {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    }
-    else {
-      elem = item;
-    }
-
-    return elem;
   };
 
   dragStart = (value) => {
@@ -178,7 +166,7 @@ export default class BudgetTable extends Component {
 
   getTableRow = (title, items, props, channel, hoverValues, isSecondGood) => {
     return <tr {...props}>
-      <td className={this.classes.titleCell} ref={this.props.firstColumnCell}>{this.getCellItem(title)}</td>
+      <td className={this.classes.titleCell} ref={this.props.firstColumnCell}><TableCell primaryValue={title}/></td>
       {
         items.map((item, i) => {
           if (channel && this.props.isEditMode) {
@@ -196,7 +184,7 @@ export default class BudgetTable extends Component {
                 isDragging={this.state.isDragging}/>
             }</td>;
           }
-          else if (channel && hoverValues && item !== hoverValues[i]) {
+          else if (this.props.isShowSecondaryEnabled && channel && hoverValues && item !== hoverValues[i]) {
             return <PlanCell
               item={item}
               hover={hoverValues[i]}
@@ -213,7 +201,7 @@ export default class BudgetTable extends Component {
           }
           else {
             return <td className={this.classes.valueCell} key={i}>{
-              this.getCellItem(item)
+              <TableCell primaryValue={item}/>
             }</td>;
           }
         })
@@ -474,18 +462,23 @@ export default class BudgetTable extends Component {
     const footRow = data && this.getTableRow(<div className={this.classes.footTitleCell}>
         {'TOTAL'}
       </div>,
-      values.map((item, i) =>
-        item === hoverValues[i] ?
-          item
-          :
-          <PlanCell
-            item={item}
-            hover={hoverValues[i]}
-            key={i}
-            approveChannel={() => this.props.approveWholeMonth(i)}
-            declineChannel={() => this.props.declineWholeMonth(i)}
-            isSecondGood={isSecondGood}/>
-      )
+      values.map((item, i) => {
+        if (!this.props.isShowSecondaryEnabled) {
+          return <TableCell primaryValue={item}/>;
+        }
+        else {
+          return item === hoverValues[i] ?
+            item
+            :
+            <PlanCell
+              item={item}
+              hover={hoverValues[i]}
+              key={i}
+              approveChannel={() => this.props.approveWholeMonth(i)}
+              declineChannel={() => this.props.declineWholeMonth(i)}
+              isSecondGood={isSecondGood}/>;
+        }
+      })
       , {
         className: this.classes.footRow
       });
