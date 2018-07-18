@@ -1,20 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Component from 'components/Component';
-
-import Loading from 'components/pages/plan/Loading';
-import Button from 'components/controls/Button';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
-import Explanation from 'components/pages/plan/Explanation';
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import popupStyle from 'styles/plan/popup.css';
-import {parseBudgets} from 'data/parseAnnualPlan';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-import {formatChannels, output} from 'components/utils/channels';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import contextStyle from 'react-contextmenu/public/styles.css';
 import Toggle from 'components/controls/Toggle';
@@ -49,9 +39,6 @@ export default class AnnualTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      popupShown: false,
-      popupLeft: 0,
-      pouppTop: 0,
       hoverRow: void 0,
       graphDimensions: {},
       approvedPlan: true,
@@ -71,12 +58,6 @@ export default class AnnualTab extends Component {
   handleScroll = () => {
     this.setState({isSticky: window.pageYOffset >= (this.planTable && this.planTable.offsetTop)});
   };
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({budgetField: nextProps.budget});
-    this.setState({budgetArrayField: nextProps.budgetArray});
-    this.setState({maxChannelsField: nextProps.maxChannels});
-  }
 
   calculateGraphDimensions() {
     if (this.planTable && this.firstColumnCell) {
@@ -213,32 +194,6 @@ export default class AnnualTab extends Component {
                        approvedPlan={this.state.approvedPlan}
                        {...this.props}/>
 
-          <PlanPopup ref="headPopup" style={{
-            width: '350px',
-            left: this.state.popupLeft + 'px',
-            top: this.state.popupTop + 'px',
-            marginTop: '5px'
-          }} title="Events: Mar/16"
-                     onClose={() => {
-                       this.setState({
-                         popupShown: false,
-                         popupLeft: 0,
-                         popupTop: 0
-                       });
-                     }}
-          >
-            <PopupTextContent>
-              <strong>User Events</strong>
-              <p>With the exception of Nietzsche, no other madman has contributed so much to human sanity as has
-                Louis
-                Althusser. He is mentioned twice in the Encyclopaedia Britannica as someone’s teacher.</p>
-              <strong>Global Events</strong>
-              <p>Thought experiments (Gedankenexperimenten) are “facts” in the sense that they have a “real life”
-                correlate in the form of electrochemical activity in the brain. But it is quite obvious that they
-                do
-                not</p>
-            </PopupTextContent>
-          </PlanPopup>
           <div className={this.classes.indicatorsGraph} style={{width: this.state.graphDimensions.width}}
                ref={this.props.forecastingGraphRef.bind(this)}>
             <IndicatorsGraph data={projections} objectives={objectives} dimensions={this.state.graphDimensions}/>

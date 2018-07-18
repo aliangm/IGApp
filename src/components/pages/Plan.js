@@ -8,29 +8,13 @@ import style from 'styles/plan/plan.css';
 import Button from 'components/controls/Button';
 import ReplanButton from 'components/pages/plan/ReplanButton';
 import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
-import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
 import events from 'data/events';
-import PlanPopup from 'components/pages/plan/Popup';
-import Label from 'components/ControlsLabel';
-import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import {output} from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
-
-function formatDate(dateStr) {
-  if (dateStr) {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const [monthNum, yearNum] = dateStr.split('/');
-
-    return `${monthNames[monthNum - 1]}/${yearNum.substr(2, 2)}`;
-  }
-  else {
-    return null;
-  }
-}
 
 export default class Plan extends Component {
 
@@ -54,19 +38,9 @@ export default class Plan extends Component {
 
   constructor(props) {
     super(props);
-    this.popup = this.popup.bind(this);
     this.state = {
-      numberOfPlanUpdates: 0,
-      whatIf: this.props.plan,
-      editMode: false,
-      dropmenuVisible: false,
-      budgetField: props.budget || '',
-      budgetArrayField: props.budgetArray || [],
-      maxChannelsField: props.maxChannels || '',
-      isCheckAnnual: !!props.budget,
-      setRef: this.setRef.bind(this),
-      forecastingGraphRef: this.forecastingGraphRef.bind(this),
-      whatIfSelected: false
+      addChannelPopup: false,
+      editMode: false
     };
   }
 
@@ -94,153 +68,22 @@ export default class Plan extends Component {
     this.getRelevantEvents(nextProps);
   }
 
-  getRelevantEvents(props) {
+  getRelevantEvents = props => {
     this.setState({
       events: events.filter(
-        event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)
+        event => event.vertical === props.userProfile.vertical || event.companyType === props.targetAudience.companyType)
     });
-  }
-
-  popup() {
-    this.setState({popup: true});
-  }
-
-  toggleCheck() {
-    if (this.state.isCheckAnnual) {
-      let prevBudget = this.state.budgetField;
-      let planDate = this.props.planDate.split('/');
-      let firstMonth = parseInt(planDate[0]) - 1;
-
-      let budget = [];
-      this.budgetWeights.forEach((element, index) => {
-        budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
-      });
-
-      this.setState({budgetField: null, budgetArrayField: budget});
-    }
-    else {
-      let sum = this.state.budgetArrayField.reduce((a, b) => a + b, 0);
-      this.setState({budgetField: sum});
-    }
-    this.setState({isCheckAnnual: !this.state.isCheckAnnual});
-  }
-
-  handleChangeBudget(event) {
-    let update = {};
-    update.budgetField = parseInt(event.target.value.replace(/[-$,]/g, ''));
-
-    let planDate = this.props.planDate.split('/');
-    let firstMonth = parseInt(planDate[0]) - 1;
-
-    let budget = [];
-    this.budgetWeights.forEach((element, index) => {
-      budget[(index + 12 - firstMonth) % 12] = Math.round(element * update.budgetField);
-    });
-    update.budgetArrayField = budget;
-
-    this.setState(update);
-  }
-
-  getDates = () => {
-    var dates = [];
-    for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate.split('/');
-      var date = new Date(planDate[1], planDate[0] - 1);
-      date.setMonth(date.getMonth() + i);
-      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
-    }
-    return dates;
   };
 
-  monthBudgets() {
-    const datesArray = this.getDates();
-    return datesArray.map((month, index) => {
-      return <div className={this.classes.budgetChangeBox}
-                  key={index}
-                  style={{marginLeft: '8px', paddingBottom: '0px', paddingTop: '0px'}}>
-        <div className={this.classes.left}>
-          <Label style={{width: '70px', marginTop: '8px'}}>{month}</Label>
-        </div>
-        <div className={this.classes.right}>
-          <Textfield
-            value={'$' +
-            (this.state.budgetArrayField && this.state.budgetArrayField[index]
-              ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              : '')}
-            onChange={this.handleChangeBudgetArray.bind(this, index)}
-            style={{
-              width: '110px'
-            }}/>
-        </div>
-      </div>;
-    });
-  }
-
-  whatIf = (isCommitted, callback) => {
-    this.setState({whatIfSelected: false});
-    let preferences = {};
-
-    preferences.annualBudgetArray = this.state.budgetArrayField;
-    preferences.annualBudget = this.state.budgetField;
-    const maxChannels = parseInt(this.state.maxChannelsField);
-    if (isNaN(maxChannels)) {
-      preferences.maxChannels = -1;
-    }
-    else {
-      preferences.maxChannels = maxChannels;
-    }
-    let filterNanArray = preferences.annualBudgetArray.filter((value) => {
-      return !!value;
-    });
-    if (filterNanArray.length == 12 && preferences.maxChannels) {
-      this.props.plan(isCommitted, preferences, callback, this.props.region, false);
-    }
-    /**
-     this.setState({
-      budget: budget,
-      budgetField: '$'
-    });**/
-  };
-
-  whatIfCommit = () => {
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      this.refs.whatIfPopup.close();
-      this.setState({whatIfSelected: false, isTemp: false});
-    };
-    this.whatIf(true, callback);
-  };
-
-  whatIfTry = () => {
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      this.refs.whatIfPopup.open();
-      this.setState({whatIfSelected: true, isTemp: true});
-    };
-    this.whatIf(false, callback);
-  };
-
-  whatIfCancel = () => {
-    this.refs.whatIfPopup.close();
-    this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.getUserMonthPlan(this.props.region);
-  };
-
-  handleChangeBudgetArray(index, event) {
-    let update = this.state.budgetArrayField || [];
-    update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
-    this.setState({budgetArrayField: update});
-  }
-
-  editUpdate() {
+  editUpdate = () => {
     return this.props.updateUserMonthPlan({
       projectedPlan: this.props.projectedPlan,
       approvedBudgets: this.props.approvedBudgets,
       unknownChannels: this.props.planUnknownChannels
     }, this.props.region, this.props.planDate);
-  }
+  };
 
-  addChannel(newChannel) {
+  addChannel = (newChannel) => {
     let projectedPlan = this.props.projectedPlan;
     let approvedBudgets = this.props.approvedBudgets;
     for (let i = 0; i < 12; i++) {
@@ -264,9 +107,9 @@ export default class Plan extends Component {
           domElement.scrollIntoView({});
         }
       });
-  }
+  };
 
-  addUnknownChannel(otherChannel, otherChannelHierarchy) {
+  addUnknownChannel = (otherChannel, otherChannelHierarchy) => {
     const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel;
     let planUnknownChannels = this.props.planUnknownChannels;
     for (let i = 0; i < 12; i++) {
@@ -285,7 +128,7 @@ export default class Plan extends Component {
           domElement.scrollIntoView({});
         }
       });
-  }
+  };
 
   setRef = (channel, ref) => {
     this[channel] = ref;
@@ -308,7 +151,11 @@ export default class Plan extends Component {
     );
 
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, merge({}, this.props, this.state)));
+      (child) => React.cloneElement(child, merge({}, this.props, this.state, {
+        whatIf: this.props.plan,
+        setRef: this.setRef.bind(this),
+        forecastingGraphRef: this.forecastingGraphRef.bind(this)
+      })));
 
     const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
 
@@ -326,31 +173,13 @@ export default class Plan extends Component {
                              target='_blank'>here</a>
                   </label>
                 </div>
-                <div style={{position: 'relative'}}>
-                  <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}
-                                planNeedsUpdate={this.props.planNeedsUpdate}/>
-                  <Popup style={{
-                    width: '265px',
-                    top: '130px',
-                    left: '-137px',
-                    transform: 'translate(0, -50%)'
-                  }} hidden={!this.state.popup} onClose={() => {
-                    this.setState({
-                      popup: false
-                    });
-                  }}>
-                    <PlanNextMonthPopup hidden={!this.state.popup} onNext={() => {
-                      this.setState({popup: false});
-                      this.props.plan(true, false, (data) => {
-                        this.props.setDataAsState(data);
-                      }, this.props.region, false);
-                    }} onBack={() => {
-                      this.setState({
-                        popup: false
-                      });
-                    }}/>
-                  </Popup>
-                </div>
+                <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                              onClick={() => {
+                                this.props.plan(true, false, (data) => {
+                                  this.props.setDataAsState(data);
+                                }, this.props.region, false);
+                              }}
+                              planNeedsUpdate={this.props.planNeedsUpdate}/>
               </div>
             </FeatureToggle>
             {!annualTabActive ? null :
@@ -360,147 +189,6 @@ export default class Plan extends Component {
                   domElement.scrollIntoView({});
                 }
               }}/>
-            }
-            {!annualTabActive ? null :
-              <FeatureToggle featureName="plannerAI">
-                <div style={{display: 'flex', position: 'relative'}}>
-                  <div data-selected={this.state.dropmenuVisible ? true : null}>
-                    <Button type="reverse" contClassName={this.classes.dropButton}
-                            style={{
-                              width: '102px',
-                              marginLeft: '15px'
-                            }}
-                            onClick={() => {
-                              this.setState({dropmenuVisible: !this.state.dropmenuVisible});
-                            }}>
-                      Apply All
-                      <div className={this.classes.buttonTriangle}/>
-                    </Button>
-                    <Popup
-                      className={this.classes.dropmenu}
-                      hidden={!this.state.dropmenuVisible}
-                      onClose={() => {
-                        this.setState({
-                          dropmenuVisible: false
-                        });
-                      }}>
-                      <div>
-                        <div className={this.classes.dropmenuItem} onClick={() => {
-                          this.props.approveAllBudgets();
-                          this.setState({dropmenuVisible: false});
-                        }}>
-                          Approve all
-                        </div>
-                        <div className={this.classes.dropmenuItem} onClick={() => {
-                          this.props.declineAllBudgets();
-                          this.setState({dropmenuVisible: false});
-                        }}>
-                          Decline all
-                        </div>
-                      </div>
-                    </Popup>
-                  </div>
-                  <div>
-                    <Button type="reverse"
-                            style={{
-                              marginLeft: '15px',
-                              width: '102px'
-                            }}
-                            selected={this.state.whatIfSelected ? true : null}
-                            onClick={() => {
-                              this.setState({
-                                whatIfSelected: true
-                              });
-
-                              this.refs.whatIfPopup.open();
-                            }}>What if</Button>
-                    <div style={{position: 'relative'}}>
-                      <PlanPopup ref="whatIfPopup"
-                                 style={{
-                                   width: '367px',
-                                   left: '-252px',
-                                   top: '10px',
-                                   textAlign: 'initial',
-                                   cursor: 'initial'
-                                 }}
-                                 hideClose={true}
-                                 title="What If - Scenarios Management">
-                        <div className={this.classes.budgetChangeBox} style={{paddingTop: '12px'}}>
-                          <div className={this.classes.left}>
-                            <Label checkbox={this.state.isCheckAnnual}
-                                   toggleCheck={this.toggleCheck.bind(this)}
-                                   style={{paddingTop: '7px'}}>Plan Annual Budget ($)</Label>
-                          </div>
-                          <div className={this.classes.right}>
-                            <Textfield style={{maxWidth: '110px'}}
-                                       value={'$' +
-                                       (this.state.budgetField ? this.state.budgetField.toString()
-                                         .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                                       className={this.classes.budgetChangeField}
-                                       onChange={this.handleChangeBudget.bind(this)}
-                                       onKeyDown={(e) => {
-                                         if (e.keyCode === 13) {
-                                           this.whatIf();
-                                         }
-                                       }}
-                                       disabled={!this.state.isCheckAnnual}
-                            />
-                          </div>
-                        </div>
-                        <div className={this.classes.budgetChangeBox} style={{display: 'inline-block'}}>
-                          <div className={this.classes.left}>
-                            <div className={this.classes.left}>
-                              <Label checkbox={!this.state.isCheckAnnual} toggleCheck={this.toggleCheck.bind(this)}
-                                     style={{paddingTop: '7px'}}>Plan Monthly Budget ($)</Label>
-                            </div>
-                          </div>
-                          {this.state.isCheckAnnual ? null : this.monthBudgets()}
-                        </div>
-                        <div className={this.classes.budgetChangeBox}>
-                          <div className={this.classes.left}>
-                            <Label style={{paddingTop: '7px'}}>max number of Channels</Label>
-                          </div>
-                          <div className={this.classes.right}>
-                            <Textfield style={{
-                              maxWidth: '110px'
-                            }}
-                                       value={this.state.maxChannelsField != -1 ? this.state.maxChannelsField : ''}
-                                       className={this.classes.budgetChangeField}
-                                       onChange={(e) => {
-                                         this.setState({
-                                           maxChannelsField: e.target.value
-                                         });
-                                       }}
-                                       onKeyDown={(e) => {
-                                         if (e.keyCode === 13) {
-                                           this.whatIf();
-                                         }
-                                       }}
-                            />
-                          </div>
-                        </div>
-                        <div className={this.classes.budgetChangeBox}>
-                          <Button type="primary2" style={{
-                            width: '110px'
-                          }} onClick={this.whatIfTry}>Try</Button>
-                        </div>
-                        <div className={this.classes.budgetChangeBox} style={{paddingBottom: '12px'}}>
-                          <div className={this.classes.left}>
-                            <Button type="normal" style={{
-                              width: '110px'
-                            }} onClick={this.whatIfCancel}>Cancel</Button>
-                          </div>
-                          <div className={this.classes.right}>
-                            <Button type="accent2" style={{
-                              width: '110px'
-                            }} onClick={this.whatIfCommit}>Commit</Button>
-                          </div>
-                        </div>
-                      </PlanPopup>
-                    </div>
-                  </div>
-                </div>
-              </FeatureToggle>
             }
             {annualTabActive ?
               <div style={{position: 'relative'}}>
@@ -549,7 +237,7 @@ export default class Plan extends Component {
                 </Popup>
                 <AddChannelPopup
                   hidden={!this.state.addChannelPopup}
-                  onChannelChoose={this.addChannel.bind(this)}
+                  onChannelChoose={this.addChannel}
                   channels={output()}
                   planChannels={planChannels.map(item => {
                     return {id: item};
@@ -557,7 +245,7 @@ export default class Plan extends Component {
                   close={() => {
                     this.setState({addChannelPopup: false});
                   }}
-                  addUnknownChannel={this.addUnknownChannel.bind(this)}
+                  addUnknownChannel={this.addUnknownChannel}
                 />
               </div>
               : null}

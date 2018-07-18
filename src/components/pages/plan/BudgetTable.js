@@ -10,6 +10,7 @@ import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 import EditableCell from 'components/pages/plan/EditableCell';
 import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
+import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 
 export default class BudgetTable extends Component {
 
