@@ -14,14 +14,7 @@ import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 
 export default class BudgetTable extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      tableCollapsed: 0,
-      collapsed: {}
-    };
-  }
+  style = style;
 
   static propTypes = {
     tableRef: PropTypes.func,
@@ -33,10 +26,27 @@ export default class BudgetTable extends Component {
     updateState: PropTypes.func,
     approveWholeChannel: PropTypes.func,
     declineWholeMonth: PropTypes.func,
-    approvedPlan: PropTypes.bool
+    approvedPlan: PropTypes.bool,
+    isEditMode: PropTypes.bool,
+    isShowSecondaryEnabled: PropTypes.bool,
+    isConstraitsEnabled: PropTypes.bool,
+    data: PropTypes.array
   };
 
-  style = style;
+  static defaultProps = {
+    isEditMode: false,
+    isShowSecondaryEnabled: false,
+    isConstraitsEnabled: false
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tableCollapsed: 0,
+      collapsed: {}
+    };
+  }
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
@@ -171,7 +181,7 @@ export default class BudgetTable extends Component {
       <td className={this.classes.titleCell} ref={this.props.firstColumnCell}>{this.getCellItem(title)}</td>
       {
         items.map((item, i) => {
-          if (channel && this.props.editMode) {
+          if (channel && this.props.isEditMode) {
             return <td className={this.classes.valueCell} key={i}>{
               <EditableCell
                 title={(hoverValues && item !== hoverValues[i]) ? 'previous: ' + hoverValues[i] : null}
@@ -251,7 +261,7 @@ export default class BudgetTable extends Component {
         }) : undefined;
       }
       const titleElem = <div ref={params.channel ? this.props.setRef.bind(this, params.channel) : null}>
-        {this.props.editMode && params.channel && !params.isOtherChannel ?
+        {this.props.isEditMode && params.channel && !params.isOtherChannel ?
           <div className={this.classes.editChannelNameWrapper}>
             <div className={this.classes.editChannelName} onClick={() => {
               this.setState({editChannelName: params.channel});
@@ -260,14 +270,14 @@ export default class BudgetTable extends Component {
           : null}
         <ContextMenuTrigger id="rightClickNormal" collect={() => {
           return {channel: params.channel};
-        }} disable={!params.channel || this.props.editMode}>
+        }} disable={!params.channel || this.props.isEditMode}>
           <ContextMenuTrigger id="rightClickEdit" collect={() => {
             return {channel: params.channel};
-          }} disable={!params.channel || !this.props.editMode}>
+          }} disable={!params.channel || !this.props.isEditMode}>
             <div
               style={{
                 marginLeft: (level | 0) * 17 + 'px',
-                cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
+                cursor: (params.channel && !this.props.isEditMode) ? 'pointer' : 'initial'
               }}
               className={this.classes.rowTitle}>
               {params.children ?
@@ -286,7 +296,7 @@ export default class BudgetTable extends Component {
                   }}
                 />
                 :
-                this.props.editMode ?
+                this.props.isEditMode ?
                   <div>
                     <div
                       className={this.classes.rowDelete}
@@ -331,7 +341,7 @@ export default class BudgetTable extends Component {
       </div>;
 
       const rowProps = {
-        className: this.props.editMode ? null : this.classes.tableRow,
+        className: this.props.isEditMode ? null : this.classes.tableRow,
         key: key,
         onMouseEnter: () => {
           this.setState({
