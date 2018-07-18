@@ -24,7 +24,7 @@ export default class TableCell extends Component {
         item={this.props.primaryValue}
         hover={this.props.secondaryValue}
         key={this.props.key}
-        approveSecondary = {this.props.approveChannel}
+        approveChannel={this.props.approveSecondary}
         isSecondGood={true}/>
       :
       <td className={this.classes.valueCell} key={this.props.key}>
