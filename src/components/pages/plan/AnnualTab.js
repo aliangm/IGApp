@@ -3,27 +3,16 @@ import Component from 'components/Component';
 import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
-import popupStyle from 'styles/plan/popup.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-import buttonsStyle from 'styles/onboarding/buttons.css';
-import contextStyle from 'react-contextmenu/public/styles.css';
-import Toggle from 'components/controls/Toggle';
 import {timeFrameToDate} from 'components/utils/objective';
-import {FeatureToggle} from 'react-feature-toggles';
 import {formatBudget} from 'components/utils/budget';
 import BudgetTable from 'components/pages/plan/BudgetTable';
+import {monthNames, getDates} from 'components/utils/date';
 
 export default class AnnualTab extends Component {
 
   style = style;
-  styles = [planStyles, icons, popupStyle, buttonsStyle, contextStyle];
-
-  monthNames = [
-    'Jan', 'Feb', 'Mar',
-    'Apr', 'May', 'Jun', 'Jul',
-    'Aug', 'Sep', 'Oct',
-    'Nov', 'Dec'
-  ];
+  styles = [planStyles, icons];
 
   static defaultProps = {
     projectedPlan: [],
@@ -91,23 +80,11 @@ export default class AnnualTab extends Component {
   }
    **/
 
-  getDates = () => {
-    var dates = [];
-    for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate.split('/');
-      var date = new Date(planDate[1], planDate[0] - 1);
-      date.setMonth(date.getMonth() + i);
-      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
-    }
-    return dates;
-  };
-
   render() {
-    const budget = this.props.annualBudget;
-    const budgetLeftToPlan = this.props.calculatedData.annualBudgetLeftToPlan;
+    const {planDate, annualBudget, calculatedData: {annualBudgetLeftToPlan}, editMode} = this.props;
 
     const currentSuggested = {};
-    const dates = this.getDates();
+    const dates = getDates(planDate);
     const projections = this.props.projectedPlan.map((item, index) => {
       const json = {};
       if (item.projectedIndicatorValues) {
@@ -139,7 +116,7 @@ export default class AnnualTab extends Component {
           ? delta + (objective.currentValue || 0)
           : (objective.currentValue || 0) - delta);
         const date = timeFrameToDate(objective.timeFrame);
-        const monthStr = this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
+        const monthStr = monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
         objectives[objective.indicator] = {x: monthStr, y: target};
       });
 
@@ -152,7 +129,7 @@ export default class AnnualTab extends Component {
             </div>
             <div className={planStyles.locals.titlePrice} ref="budgetRef"
                  style={{color: this.state.isTemp ? '#1991eb' : 'Inherit'}}>
-              ${(Math.ceil(budget / 1000) * 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp
+              ${(Math.ceil(annualBudget / 1000) * 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp
               ? '*'
               : ''}
             </div>
@@ -163,32 +140,19 @@ export default class AnnualTab extends Component {
             <div className={this.classes.titleBudget}>
               Budget left to plan
             </div>
-            <div className={this.classes.titleArrow} style={{color: budgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d'}}>
+            <div className={this.classes.titleArrow}
+                 style={{color: annualBudgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d'}}>
               {
-                Math.abs(budgetLeftToPlan) >= 100 ?
-                  '$' + budgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                Math.abs(annualBudgetLeftToPlan) >= 100 ?
+                  '$' + annualBudgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   : <div className={planStyles.locals.budgetLeftToPlanOk}/>
               }
             </div>
           </div>
-          <FeatureToggle featureName="plannerAI">
-            <div className={planStyles.locals.titleToggle} style={{width: '69%'}}>
-              <Toggle
-                leftText="Current"
-                rightText="Suggested"
-                leftActive={this.state.approvedPlan}
-                leftClick={() => {
-                  this.setState({approvedPlan: true});
-                }}
-                rightClick={() => {
-                  this.setState({approvedPlan: false});
-                }}
-              />
-            </div>
-          </FeatureToggle>
         </div>
         <div className={this.classes.innerBox}>
-          <BudgetTable tableRef={(ref) => this.planTable = ref}
+          <BudgetTable isEditMode={editMode}
+                       tableRef={(ref) => this.planTable = ref}
                        firstColumnCell={(ref) => this.firstColumnCell = ref}
                        dates={dates}
                        approvedPlan={this.state.approvedPlan}

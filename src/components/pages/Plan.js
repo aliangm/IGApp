@@ -20,14 +20,6 @@ export default class Plan extends Component {
 
   style = style;
 
-  budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
-  monthNames = [
-    'Jan', 'Feb', 'Mar',
-    'Apr', 'May', 'Jun', 'Jul',
-    'Aug', 'Sep', 'Oct',
-    'Nov', 'Dec'
-  ];
-
   static defaultProps = {
     userProfile: {},
     targetAudience: {},
@@ -192,7 +184,7 @@ export default class Plan extends Component {
             }
             {annualTabActive ?
               <div style={{position: 'relative'}}>
-                <Button type="primary2"
+                <Button type="primary"
                         style={{
                           marginLeft: '15px',
                           width: '102px'
@@ -213,7 +205,7 @@ export default class Plan extends Component {
                           });
                         }}
                         icon={this.state.editMode ? 'buttons:plan' : 'buttons:edit'}>
-                  {this.state.editMode ? 'Done' : 'Edit'}
+                  {this.state.editMode ? 'Commit' : 'Edit'}
                 </Button>
                 <Popup
                   className={this.classes.dropmenuEdit}
