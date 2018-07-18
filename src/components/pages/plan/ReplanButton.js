@@ -10,21 +10,21 @@ export default class NextButton extends Component {
   styles = [planStyle];
 
   render() {
-    return <div style={{ display: 'flex' }}>
+    return <div style={{display: 'flex', position: 'relative'}}>
       <Button type="reverse2"
-              onClick={ this.props.onClick }
-              className={ this.classes.planButton }
+              onClick={this.props.onClick}
+              className={this.classes.planButton}
               style={{
                 width: '130px'
               }}
       >
-        Update Plan ({ this.props.numberOfPlanUpdates})
+        Update Plan ({this.props.numberOfPlanUpdates})
         {
           this.props.planNeedsUpdate ?
             <div className={planStyle.locals.planCircle}/>
             : null
         }
       </Button>
-    </div>
+    </div>;
   }
 }
