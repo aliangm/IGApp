@@ -11,8 +11,7 @@ export default class TableCell extends Component {
     primaryValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     secondaryValue: PropTypes.string,
     key: PropTypes.number,
-    approveChannel: PropTypes.func,
-    declineChannel: PropTypes.func
+    approveSecondary: PropTypes.func,
   };
 
   constructor(props) {
@@ -25,8 +24,7 @@ export default class TableCell extends Component {
         item={this.props.primaryValue}
         hover={this.props.secondaryValue}
         key={this.props.key}
-        approveChannel = {this.props.approveChannel}
-        declineChannel = {this.props.declineChannel}
+        approveSecondary = {this.props.approveChannel}
         isSecondGood={true}/>
       :
       <td className={this.classes.valueCell} key={this.props.key}>

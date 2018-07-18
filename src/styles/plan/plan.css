@@ -276,13 +276,6 @@
   justify-content: flex-end;
 }
 
-.left {
-  width: 50%;
-  display: flex;
-  justify-content: flex-start;
-  -webkit-box-pack: start;
-}
-
 .right {
   width: 50%;
   display: flex;

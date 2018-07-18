@@ -190,11 +190,8 @@ export default class BudgetTable extends Component {
               primaryValue={item}
               secondaryValue={shouldShowSecondValue ? hoverValues[i] : null}
               key={i}
-              approveChannel={shouldShowSecondValue ? () => {
+              approveSecondary={shouldShowSecondValue ? () => {
                 this.props.approveChannel(i, channel, hoverValues[i]);
-              } : null}
-              declineChannel={shouldShowSecondValue ?() => {
-                this.props.declineChannel(i, channel, item);
               } : null}
               style={shouldShowSecondValue ? {backgroundColor: '#329ff136'} : null}
             />;
