@@ -1,23 +1,23 @@
 import React from 'react';
-import { DragDropContext } from 'react-dnd';
+import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Component from 'components/Component';
 import Header from 'components/Header';
 import Sidebar from 'components/Sidebar';
-import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
+import {isPopupMode, disablePopupMode, checkIfPopup} from 'modules/popup-mode';
 import serverCommunication from 'data/serverCommunication';
 import q from 'q';
 import history from 'history';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
-import { initialize as initializeIndicators } from 'components/utils/indicators';
-import { initialize as initializeChannels } from 'components/utils/channels';
+import {initialize as initializeIndicators} from 'components/utils/indicators';
+import {initialize as initializeChannels} from 'components/utils/channels';
 import Loading from 'components/pages/plan/Loading';
 import Popup from 'components/Popup';
 import style from 'styles/app.css';
-import { FeatureToggleProvider } from 'react-feature-toggles';
+import {FeatureToggleProvider} from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
-import { calculatedDataExtender } from 'dataExtenders/calculatedDataExtender.js';
+import {calculatedDataExtender} from 'dataExtenders/calculatedDataExtender.js';
 
 class AppComponent extends Component {
 
@@ -54,8 +54,8 @@ class AppComponent extends Component {
   }
 
   // Asynchronous version of `setRouteLeaveHook`.
-// Instead of synchronously returning a result, the hook is expected to
-// return a promise.
+  // Instead of synchronously returning a result, the hook is expected to
+  // return a promise.
   setAsyncRouteLeaveHook(router, hook) {
     let withinHook = false;
     let finalResult = undefined;
@@ -69,24 +69,25 @@ class AppComponent extends Component {
           finalResultSet = true;
           if (!withinHook && nextLocation) {
             // Re-schedule the navigation
-            router.push(nextLocation)
+            router.push(nextLocation);
           }
-        })
+        });
       }
       let result = finalResultSet ? finalResult : false;
       withinHook = false;
       finalResult = undefined;
       finalResultSet = false;
-      return result
-    })
+      return result;
+    });
   }
 
   routerWillLeave() {
     return new Promise((resolve, reject) => {
       if (!this.state.unsaved) {
         // No unsaved changes -- leave
-        resolve(true)
-      } else {
+        resolve(true);
+      }
+      else {
         // Unsaved changes -- ask for confirmation
         /**
          vex.dialog.confirm({
@@ -96,7 +97,7 @@ class AppComponent extends Component {
          **/
         this.setState({showUnsavedPopup: true, callback: resolve});
       }
-    })
+    });
   }
 
   handleCallback(userAnswer) {
@@ -119,17 +120,19 @@ class AppComponent extends Component {
     ];
 
     Promise.all(tasks)
-      .then( () => {
-        setTimeout(() => { this.setState({loaded: true}); }, 1000);
+      .then(() => {
+        setTimeout(() => {
+          this.setState({loaded: true});
+        }, 1000);
       })
-      .catch( (err) => {
+      .catch((err) => {
           console.log(err);
         }
-      )
+      );
 
   }
 
-  updateState(newState, callback){
+  updateState(newState, callback) {
     this.setState(newState, callback);
     this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
   }
@@ -149,9 +152,9 @@ class AppComponent extends Component {
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
               deferred.resolve(data);
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -180,9 +183,9 @@ class AppComponent extends Component {
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
               deferred.resolve();
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -206,9 +209,9 @@ class AppComponent extends Component {
                   previousData: data
                 });
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
         }
       })
@@ -231,15 +234,15 @@ class AppComponent extends Component {
                   userLastName: data.lastName,
                   userCompany: data.companyName,
                   companyWebsite: data.companyWebsite,
-                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                  logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                   teamMembers: data.teamMembers,
                   permissions: data.permissions
                 });
               }
               deferred.resolve();
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -265,14 +268,14 @@ class AppComponent extends Component {
                 userFirstName: data.firstName,
                 userLastName: data.lastName,
                 userCompany: data.companyName,
-                logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
                 permissions: data.permissions
               });
               deferred.resolve();
             });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -297,7 +300,7 @@ class AppComponent extends Component {
                 userFirstName: data.firstName,
                 userLastName: data.lastName,
                 userCompany: data.companyName,
-                logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
                 permissions: data.permissions,
                 unsaved: false
@@ -305,7 +308,7 @@ class AppComponent extends Component {
               deferred.resolve();
             });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -329,9 +332,9 @@ class AppComponent extends Component {
                 this.setDataAsState(data);
                 deferred.resolve();
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -358,9 +361,9 @@ class AppComponent extends Component {
                 initializeChannels(data);
                 deferred.resolve();
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -387,9 +390,9 @@ class AppComponent extends Component {
                 initializeIndicators(data);
                 deferred.resolve();
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -415,9 +418,9 @@ class AppComponent extends Component {
                 });
               }
               deferred.resolve();
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -434,7 +437,10 @@ class AppComponent extends Component {
     this.setState({
       dataUpdated: true,
       userProfile: data.userProfile,
-      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
+      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{
+        fields: {},
+        info: {weight: 100}
+      }],
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
@@ -449,10 +455,12 @@ class AppComponent extends Component {
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
       actualIndicators: data.actualIndicators || {},
-      plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].plannedChannelBudgets : {},
+      plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length > 0 ?
+        data.projectedPlan[0].plannedChannelBudgets :
+        {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
+      monthBudget: data.projectedPlan && data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
       campaignIdeas: data.campaignIdeas || [],
@@ -478,8 +486,12 @@ class AppComponent extends Component {
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
       twitteradsapi: data.twitteradsapi,
-      attribution: data.attribution || { events: [] },
-      pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{price: '', isMonthly: false, weight: 100}],
+      attribution: data.attribution || {events: []},
+      pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{
+        price: '',
+        isMonthly: false,
+        weight: 100
+      }],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
       CEVs: data.CEVs || {},
@@ -515,14 +527,17 @@ class AppComponent extends Component {
   }
 
   approveAllBudgets(withProjections) {
-    const json = {approvedBudgets: this.state.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)};
+    const json = {
+      approvedBudgets: this.state.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)
+    };
     if (withProjections) {
-      json.approvedBudgetsProjection = this.state.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
+      json.approvedBudgetsProjection =
+        this.state.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
     }
     return this.state.updateUserMonthPlan(json, this.state.region, this.state.planDate)
       .then(() => {
         this.forecast();
-      })
+      });
   }
 
   declineAllBudgets() {
@@ -534,7 +549,7 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
   }
 
-  approveChannel(month, channel, budget){
+  approveChannel(month, channel, budget) {
     let approvedBudgets = this.state.approvedBudgets;
     let approvedMonth = this.state.approvedBudgets[month] || {};
     approvedMonth[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
@@ -542,7 +557,7 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
       .then(() => {
         this.forecast();
-      })
+      });
   }
 
   approveWholeChannel(channel) {
@@ -553,7 +568,7 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
       .then(() => {
         this.forecast();
-      })
+      });
   }
 
   declineWholeChannel(channel) {
@@ -570,7 +585,7 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
       .then(() => {
         this.forecast();
-      })
+      });
   }
 
   declineWholeMonth(month) {
@@ -579,7 +594,7 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
   }
 
-  declineChannel(month, channel, budget){
+  declineChannel(month, channel, budget) {
     let projectedPlan = this.state.projectedPlan;
     let projectedMonth = this.state.projectedPlan[month];
     projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
@@ -587,7 +602,7 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
   }
 
-  plan(isCommitted, preferences, callback, region, silent){
+  plan(isCommitted, preferences, callback, region, silent) {
     let body = preferences ? JSON.stringify(preferences) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     if (!silent) {
@@ -620,15 +635,15 @@ class AppComponent extends Component {
               }
               else {
               }
-            })
+            });
         }
         else {
-          if (response.status == 401){
+          if (response.status == 401) {
             if (!silent) {
               history.push('/');
             }
           }
-          if (response.status == 400){
+          if (response.status == 400) {
             if (!silent) {
               this.setState({isPlannerError: true, isPlannerLoading: false});
             }
@@ -660,7 +675,9 @@ class AppComponent extends Component {
         }
         approvedBudgetsProjection[index] = month.projectedIndicatorValues;
       });
-      this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.state.region, this.state.planDate);
+      this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection},
+        this.state.region,
+        this.state.planDate);
     };
     this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
   }
@@ -668,13 +685,20 @@ class AppComponent extends Component {
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
     const deferred = q.defer();
     this.setState({loaded: false});
-    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth, attributionModel: attributionModel}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({
+      monthsExceptThisMonth: monthsExceptThisMonth,
+      attributionModel: attributionModel
+    }), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
               this.setDataAsState(data);
-              this.setState({loaded: true, months: this.state.previousData.length - 1 - monthsExceptThisMonth, attributionModel: attributionModel});
+              this.setState({
+                loaded: true,
+                months: this.state.previousData.length - 1 - monthsExceptThisMonth,
+                attributionModel: attributionModel
+              });
               deferred.resolve();
             });
         }
@@ -687,34 +711,73 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  getExtendedState(state){
+  getExtendedState(state) {
     return calculatedDataExtender(state);
   }
 
+  isSettingsOpen = () => {
+    return this.props.children.type.name.toLowerCase() === 'settings';
+  };
+
+  getTabNameFromRoute = (routeElementTabName) => {
+    if (typeof routeElementTabName === 'string') {
+      return routeElementTabName;
+    }
+    else if (this.state[routeElementTabName.fromProp]) {
+      return routeElementTabName.formatter(this.state[routeElementTabName.fromProp]);
+    }
+    else {
+      return routeElementTabName.defaultName;
+    }
+  };
+
+  getTabsToRender = () => {
+    let fatherPageComponentName = this.props.children.type.name;
+    let childRoutes = this.props.route.childRoutes;
+
+    if (this.isSettingsOpen()) {
+      childRoutes = childRoutes.find(item => item.component.name === fatherPageComponentName).childRoutes;
+      fatherPageComponentName = this.props.children.props.children.type.name;
+    }
+
+    const childRoute = childRoutes.find(item => item.component.name === fatherPageComponentName);
+    return childRoute.childRoutes ? childRoute.childRoutes.map((item) => {
+        return {name: this.getTabNameFromRoute(item.tabName), path: item.path};
+      })
+      : [];
+  };
+
   render() {
-    const extendedData = this.state.dataUpdated ?  this.getExtendedState(this.state) : this.state;
+    const tabs = this.getTabsToRender();
+
+    const extendedData = this.state.dataUpdated ? this.getExtendedState(this.state) : this.state;
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, extendedData));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header auth={ this.props.route.auth } {... this.state} path={this.props.location.pathname}/>
-        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
-        <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-        <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
-        { this.state.loaded ?
+        <Header auth={this.props.route.auth} {...this.state} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
+        <Sidebar auth={this.props.route.auth}
+                 userAccount={this.state.userAccount}
+                 path={this.props.location.pathname}/>
+        <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
+        <PlanLoading showPopup={this.state.isPlannerLoading}
+                     close={() => {
+                       this.setState({isPlannerLoading: false});
+                     }}/>
+        {this.state.loaded ?
           <div className={this.classes.wrap} data-loading={this.state.isPlannerLoading ? true : null}>
             {childrenWithProps}
           </div>
-          : <div className={ this.classes.loading }>
-            <Popup className={ this.classes.popup }>
+          : <div className={this.classes.loading}>
+            <Popup className={this.classes.popup}>
               <div>
-                <Loading />
+                <Loading/>
               </div>
             </Popup>
-          </div> }
+          </div>}
       </div>
-    </FeatureToggleProvider>
+    </FeatureToggleProvider>;
   }
 }
 
-export default withRouter(DragDropContext(HTML5Backend)(AppComponent))
+export default withRouter(DragDropContext(HTML5Backend)(AppComponent));
