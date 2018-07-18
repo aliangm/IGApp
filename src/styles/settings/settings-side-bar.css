@@ -2,6 +2,8 @@
     display: inline-table;
     width: 126px;
     position: fixed;
+    top: 0;
+    z-index: 11;
     background-color: #475973;
     height: 100%;
 }

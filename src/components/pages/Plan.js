@@ -7,7 +7,7 @@ import Popup from 'components/Popup';
 import style from 'styles/plan/plan.css';
 import Button from 'components/controls/Button';
 import ReplanButton from 'components/pages/plan/ReplanButton';
-import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
+import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
 import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
 import history from 'history';
 import events from 'data/events';
@@ -15,20 +15,21 @@ import PlanPopup from 'components/pages/plan/Popup';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
-import { output } from 'components/utils/channels';
+import {output} from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
-import { FeatureToggle } from 'react-feature-toggles';
+import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
-import { Link } from 'react-router';
 
 function formatDate(dateStr) {
   if (dateStr) {
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const [monthNum, yearNum] = dateStr.split("/");
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [monthNum, yearNum] = dateStr.split('/');
 
-    return `${monthNames[monthNum - 1]}/${yearNum.substr(2,2)}`;
+    return `${monthNames[monthNum - 1]}/${yearNum.substr(2, 2)}`;
   }
-  else return null;
+  else {
+    return null;
+  }
 }
 
 export default class Plan extends Component {
@@ -37,10 +38,10 @@ export default class Plan extends Component {
 
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
   monthNames = [
-    "Jan", "Feb", "Mar",
-    "Apr", "May", "Jun", "Jul",
-    "Aug", "Sep", "Oct",
-    "Nov", "Dec"
+    'Jan', 'Feb', 'Mar',
+    'Apr', 'May', 'Jun', 'Jul',
+    'Aug', 'Sep', 'Oct',
+    'Nov', 'Dec'
   ];
 
   static defaultProps = {
@@ -55,7 +56,6 @@ export default class Plan extends Component {
     super(props);
     this.popup = this.popup.bind(this);
     this.state = {
-      selectedTab: 1,
       numberOfPlanUpdates: 0,
       whatIf: this.props.plan,
       editMode: false,
@@ -95,7 +95,10 @@ export default class Plan extends Component {
   }
 
   getRelevantEvents(props) {
-    this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
+    this.setState({
+      events: events.filter(
+        event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)
+    });
   }
 
   popup() {
@@ -105,7 +108,7 @@ export default class Plan extends Component {
   toggleCheck() {
     if (this.state.isCheckAnnual) {
       let prevBudget = this.state.budgetField;
-      let planDate = this.props.planDate.split("/");
+      let planDate = this.props.planDate.split('/');
       let firstMonth = parseInt(planDate[0]) - 1;
 
       let budget = [];
@@ -126,7 +129,7 @@ export default class Plan extends Component {
     let update = {};
     update.budgetField = parseInt(event.target.value.replace(/[-$,]/g, ''));
 
-    let planDate = this.props.planDate.split("/");
+    let planDate = this.props.planDate.split('/');
     let firstMonth = parseInt(planDate[0]) - 1;
 
     let budget = [];
@@ -141,29 +144,35 @@ export default class Plan extends Component {
   getDates = () => {
     var dates = [];
     for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate.split("/");
-      var date = new Date(planDate[1], planDate[0]-1);
+      var planDate = this.props.planDate.split('/');
+      var date = new Date(planDate[1], planDate[0] - 1);
       date.setMonth(date.getMonth() + i);
-      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
+      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
     }
     return dates;
-  }
+  };
 
   monthBudgets() {
     const datesArray = this.getDates();
     return datesArray.map((month, index) => {
-      return <div className={ this.classes.budgetChangeBox } key={index} style={{ marginLeft: '8px', paddingBottom: '0px', paddingTop: '0px' }}>
-        <div className={ this.classes.left }>
+      return <div className={this.classes.budgetChangeBox}
+                  key={index}
+                  style={{marginLeft: '8px', paddingBottom: '0px', paddingTop: '0px'}}>
+        <div className={this.classes.left}>
           <Label style={{width: '70px', marginTop: '8px'}}>{month}</Label>
         </div>
-        <div className={ this.classes.right }>
+        <div className={this.classes.right}>
           <Textfield
-            value={"$" + (this.state.budgetArrayField && this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-            onChange={ this.handleChangeBudgetArray.bind(this, index) } style={{
-            width: '110px'
-          }}/>
+            value={'$' +
+            (this.state.budgetArrayField && this.state.budgetArrayField[index]
+              ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : '')}
+            onChange={this.handleChangeBudgetArray.bind(this, index)}
+            style={{
+              width: '110px'
+            }}/>
         </div>
-      </div>
+      </div>;
     });
   }
 
@@ -180,7 +189,9 @@ export default class Plan extends Component {
     else {
       preferences.maxChannels = maxChannels;
     }
-    let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
+    let filterNanArray = preferences.annualBudgetArray.filter((value) => {
+      return !!value;
+    });
     if (filterNanArray.length == 12 && preferences.maxChannels) {
       this.props.plan(isCommitted, preferences, callback, this.props.region, false);
     }
@@ -222,7 +233,11 @@ export default class Plan extends Component {
   }
 
   editUpdate() {
-    return this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
+    return this.props.updateUserMonthPlan({
+      projectedPlan: this.props.projectedPlan,
+      approvedBudgets: this.props.approvedBudgets,
+      unknownChannels: this.props.planUnknownChannels
+    }, this.props.region, this.props.planDate);
   }
 
   addChannel(newChannel) {
@@ -233,7 +248,7 @@ export default class Plan extends Component {
         approvedBudgets[i] = {};
       }
       if (!projectedPlan[i] || Object.keys(projectedPlan[i]).length === 0) {
-        projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
+        projectedPlan[i] = {plannedChannelBudgets: {}, projectedIndicatorValues: {}};
       }
       projectedPlan[i].plannedChannelBudgets[newChannel] = 0;
       approvedBudgets[i][newChannel] = 0;
@@ -252,7 +267,7 @@ export default class Plan extends Component {
   }
 
   addUnknownChannel(otherChannel, otherChannelHierarchy) {
-    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel
+    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel;
     let planUnknownChannels = this.props.planUnknownChannels;
     for (let i = 0; i < 12; i++) {
       if (!planUnknownChannels[i]) {
@@ -280,12 +295,6 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
-  selectTab(index) {
-    this.setState({
-      selectedTab: index
-    });
-  }
-
   render() {
     const planChannels = merge([],
       Object.keys(this.props.approvedBudgets.reduce((object, item) => {
@@ -293,44 +302,31 @@ export default class Plan extends Component {
         }
         , {})),
       Object.keys(this.props.projectedPlan.reduce((object, item) => {
-          return merge(object, item.plannedChannelBudgets)
+          return merge(object, item.plannedChannelBudgets);
         }
         , {}))
     );
-    let tabs = {};
-    let planDate = formatDate(this.props.planDate);
-    tabs[planDate] = '/plan/plan/current';
-    tabs["Annual"] = '/plan/plan/annual';
-    tabs["Forecasting"] = '/plan/plan/projections';
 
-    const tabNames = Object.keys(tabs);
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, merge({}, this.props, this.state)));
+
+    const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
+
     return <div>
       <ReactTooltip/>
-      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
-        <div className={ this.classes.head }>
-          <div className={ this.classes.headTitle }>Plan</div>
-          <div className={ this.classes.headTabs }>
-            {
-              tabNames.map((name, i) => {
-                const link = Object.values(tabs)[i];
-                return <Link to={ link } activeClassName={this.classes.headTabSelected} className={ this.classes.headTab } key={ i } onClick={() => {
-                  this.selectTab(i);
-                }}>
-                  { name }
-                </Link>
-              })
-            }
-          </div>
+      <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
+        <div className={this.classes.head}>
+          <div className={this.classes.headTitle}>Plan</div>
           <div className={this.classes.headPlan}>
             <FeatureToggle featureName="plannerAI">
-              <div style={{ display: 'flex' }}>
+              <div style={{display: 'flex'}}>
                 <div className={this.classes.error}>
-                  <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade, click <a
-                    href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
+                  <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade,
+                    click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
+                             target='_blank'>here</a>
+                  </label>
                 </div>
-                <div style={{ position: 'relative' }}>
+                <div style={{position: 'relative'}}>
                   <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}
                                 planNeedsUpdate={this.props.planNeedsUpdate}/>
                   <Popup style={{
@@ -344,55 +340,58 @@ export default class Plan extends Component {
                     });
                   }}>
                     <PlanNextMonthPopup hidden={!this.state.popup} onNext={() => {
-                      this.setState({popup: false})
+                      this.setState({popup: false});
                       this.props.plan(true, false, (data) => {
                         this.props.setDataAsState(data);
-                      }, this.props.region, false)}} onBack={() => {
+                      }, this.props.region, false);
+                    }} onBack={() => {
                       this.setState({
                         popup: false
-                      })
+                      });
                     }}/>
                   </Popup>
                 </div>
               </div>
             </FeatureToggle>
-            { this.state.selectedTab !== 1 ? null :
-              <div className={this.classes.forecastButton} data-tip="forecasting" onClick={ () => {
+            {!annualTabActive ? null :
+              <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
                   domElement.scrollIntoView({});
                 }
               }}/>
             }
-            { this.state.selectedTab !== 1 ? null :
+            {!annualTabActive ? null :
               <FeatureToggle featureName="plannerAI">
-                <div style={{ display: 'flex', position: 'relative' }}>
-                  <div data-selected={ this.state.dropmenuVisible ? true : null }>
-                    <Button type="reverse" contClassName={ this.classes.dropButton } style={{
-                      width: '102px',
-                      marginLeft: '15px'
-                    }} onClick={() => {
-                      this.setState({dropmenuVisible: !this.state.dropmenuVisible})
-                    }}>
+                <div style={{display: 'flex', position: 'relative'}}>
+                  <div data-selected={this.state.dropmenuVisible ? true : null}>
+                    <Button type="reverse" contClassName={this.classes.dropButton}
+                            style={{
+                              width: '102px',
+                              marginLeft: '15px'
+                            }}
+                            onClick={() => {
+                              this.setState({dropmenuVisible: !this.state.dropmenuVisible});
+                            }}>
                       Apply All
                       <div className={this.classes.buttonTriangle}/>
                     </Button>
                     <Popup
-                      className={ this.classes.dropmenu }
-                      hidden={ !this.state.dropmenuVisible } onClose={() => {
-                      this.setState({
-                        dropmenuVisible: false
-                      });
-                    }}
-                    >
+                      className={this.classes.dropmenu}
+                      hidden={!this.state.dropmenuVisible}
+                      onClose={() => {
+                        this.setState({
+                          dropmenuVisible: false
+                        });
+                      }}>
                       <div>
-                        <div className={ this.classes.dropmenuItem } onClick={ () => {
+                        <div className={this.classes.dropmenuItem} onClick={() => {
                           this.props.approveAllBudgets();
                           this.setState({dropmenuVisible: false});
                         }}>
                           Approve all
                         </div>
-                        <div className={ this.classes.dropmenuItem } onClick={ () => {
+                        <div className={this.classes.dropmenuItem} onClick={() => {
                           this.props.declineAllBudgets();
                           this.setState({dropmenuVisible: false});
                         }}>
@@ -402,59 +401,71 @@ export default class Plan extends Component {
                     </Popup>
                   </div>
                   <div>
-                    <Button type="reverse" style={{
-                      marginLeft: '15px',
-                      width: '102px'
-                    }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                      this.setState({
-                        whatIfSelected: true
-                      });
+                    <Button type="reverse"
+                            style={{
+                              marginLeft: '15px',
+                              width: '102px'
+                            }}
+                            selected={this.state.whatIfSelected ? true : null}
+                            onClick={() => {
+                              this.setState({
+                                whatIfSelected: true
+                              });
 
-                      this.refs.whatIfPopup.open();
-                    }}>What if</Button>
-                    <div style={{ position: 'relative' }}>
-                      <PlanPopup ref="whatIfPopup" style={{
-                        width: '367px',
-                        left: '-252px',
-                        top: '10px',
-                        textAlign: 'initial',
-                        cursor: 'initial'
-                      }} hideClose={ true } title="What If - Scenarios Management">
-                        <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                          <div className={ this.classes.left }>
-                            <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
+                              this.refs.whatIfPopup.open();
+                            }}>What if</Button>
+                    <div style={{position: 'relative'}}>
+                      <PlanPopup ref="whatIfPopup"
+                                 style={{
+                                   width: '367px',
+                                   left: '-252px',
+                                   top: '10px',
+                                   textAlign: 'initial',
+                                   cursor: 'initial'
+                                 }}
+                                 hideClose={true}
+                                 title="What If - Scenarios Management">
+                        <div className={this.classes.budgetChangeBox} style={{paddingTop: '12px'}}>
+                          <div className={this.classes.left}>
+                            <Label checkbox={this.state.isCheckAnnual}
+                                   toggleCheck={this.toggleCheck.bind(this)}
+                                   style={{paddingTop: '7px'}}>Plan Annual Budget ($)</Label>
                           </div>
-                          <div className={ this.classes.right }>
-                            <Textfield style={{ maxWidth: '110px' }}
-                                       value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                       className={ this.classes.budgetChangeField }
-                                       onChange={ this.handleChangeBudget.bind(this) }
+                          <div className={this.classes.right}>
+                            <Textfield style={{maxWidth: '110px'}}
+                                       value={'$' +
+                                       (this.state.budgetField ? this.state.budgetField.toString()
+                                         .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                                       className={this.classes.budgetChangeField}
+                                       onChange={this.handleChangeBudget.bind(this)}
                                        onKeyDown={(e) => {
                                          if (e.keyCode === 13) {
                                            this.whatIf();
                                          }
                                        }}
-                                       disabled={ !this.state.isCheckAnnual }
+                                       disabled={!this.state.isCheckAnnual}
                             />
                           </div>
                         </div>
-                        <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                          <div className={ this.classes.left }>
-                            <div className={ this.classes.left }>
-                              <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
+                        <div className={this.classes.budgetChangeBox} style={{display: 'inline-block'}}>
+                          <div className={this.classes.left}>
+                            <div className={this.classes.left}>
+                              <Label checkbox={!this.state.isCheckAnnual} toggleCheck={this.toggleCheck.bind(this)}
+                                     style={{paddingTop: '7px'}}>Plan Monthly Budget ($)</Label>
                             </div>
                           </div>
-                          { this.state.isCheckAnnual ? null : this.monthBudgets() }
+                          {this.state.isCheckAnnual ? null : this.monthBudgets()}
                         </div>
-                        <div className={ this.classes.budgetChangeBox }>
-                          <div className={ this.classes.left }>
-                            <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
+                        <div className={this.classes.budgetChangeBox}>
+                          <div className={this.classes.left}>
+                            <Label style={{paddingTop: '7px'}}>max number of Channels</Label>
                           </div>
-                          <div className={ this.classes.right }>
+                          <div className={this.classes.right}>
                             <Textfield style={{
-                              maxWidth: '110px' }}
-                                       value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                       className={ this.classes.budgetChangeField }
+                              maxWidth: '110px'
+                            }}
+                                       value={this.state.maxChannelsField != -1 ? this.state.maxChannelsField : ''}
+                                       className={this.classes.budgetChangeField}
                                        onChange={(e) => {
                                          this.setState({
                                            maxChannelsField: e.target.value
@@ -468,21 +479,21 @@ export default class Plan extends Component {
                             />
                           </div>
                         </div>
-                        <div className={ this.classes.budgetChangeBox }>
+                        <div className={this.classes.budgetChangeBox}>
                           <Button type="primary2" style={{
                             width: '110px'
-                          }} onClick={ this.whatIfTry }>Try</Button>
+                          }} onClick={this.whatIfTry}>Try</Button>
                         </div>
-                        <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                          <div className={ this.classes.left }>
+                        <div className={this.classes.budgetChangeBox} style={{paddingBottom: '12px'}}>
+                          <div className={this.classes.left}>
                             <Button type="normal" style={{
                               width: '110px'
-                            }} onClick={ this.whatIfCancel }>Cancel</Button>
+                            }} onClick={this.whatIfCancel}>Cancel</Button>
                           </div>
-                          <div className={ this.classes.right }>
+                          <div className={this.classes.right}>
                             <Button type="accent2" style={{
                               width: '110px'
-                            }} onClick={ this.whatIfCommit }>Commit</Button>
+                            }} onClick={this.whatIfCommit}>Commit</Button>
                           </div>
                         </div>
                       </PlanPopup>
@@ -491,58 +502,68 @@ export default class Plan extends Component {
                 </div>
               </FeatureToggle>
             }
-            { this.state.selectedTab === 1 ?
-              <div style={{ position: 'relative' }}>
-                <Button type="primary2" style={{
-                  marginLeft: '15px',
-                  width: '102px'
-                }} selected={ this.state.editMode ? true : null } onClick={() => {
-                  if (this.state.editMode) {
-                    this.editUpdate()
-                      .then( () => {
-                        this.props.forecast();
-                        if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
-                          this.props.updateUserAccount({'steps.plan': true});
-                        }
-                      });
-                  }
-                  this.setState({
-                    editMode: !this.state.editMode
-                  });
-                }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
-                  { this.state.editMode ? "Done" : "Edit" }
+            {annualTabActive ?
+              <div style={{position: 'relative'}}>
+                <Button type="primary2"
+                        style={{
+                          marginLeft: '15px',
+                          width: '102px'
+                        }}
+                        selected={this.state.editMode ? true : null}
+                        onClick={() => {
+                          if (this.state.editMode) {
+                            this.editUpdate()
+                              .then(() => {
+                                this.props.forecast();
+                                if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
+                                  this.props.updateUserAccount({'steps.plan': true});
+                                }
+                              });
+                          }
+                          this.setState({
+                            editMode: !this.state.editMode
+                          });
+                        }}
+                        icon={this.state.editMode ? 'buttons:plan' : 'buttons:edit'}>
+                  {this.state.editMode ? 'Done' : 'Edit'}
                 </Button>
                 <Popup
-                  className={ this.classes.dropmenuEdit }
-                  hidden={ !this.state.editMode }
+                  className={this.classes.dropmenuEdit}
+                  hidden={!this.state.editMode}
                 >
                   <div>
-                    <div className={ this.classes.dropmenuItemAdd } onClick={ () => {
-                      this.setState({addChannelPopup: true});
-                    }}>
+                    <div className={this.classes.dropmenuItemAdd}
+                         onClick={() => {
+                           this.setState({addChannelPopup: true});
+                         }}>
                       Add Channel
                     </div>
-                    <div className={ this.classes.dropmenuItemCancel } onClick={ () => {
-                      this.setState({editMode: false});
-                      this.props.getUserMonthPlan(this.props.region);
-                    } }>
+                    <div className={this.classes.dropmenuItemCancel}
+                         onClick={() => {
+                           this.setState({editMode: false});
+                           this.props.getUserMonthPlan(this.props.region);
+                         }}>
                       Cancel
                     </div>
                   </div>
                 </Popup>
                 <AddChannelPopup
-                  hidden={ !this.state.addChannelPopup }
-                  onChannelChoose={ this.addChannel.bind(this) }
-                  channels={ output() }
-                  planChannels={ planChannels.map(item => { return { id: item } }) }
-                  close={ () => { this.setState({addChannelPopup: false}) } }
-                  addUnknownChannel={ this.addUnknownChannel.bind(this) }
+                  hidden={!this.state.addChannelPopup}
+                  onChannelChoose={this.addChannel.bind(this)}
+                  channels={output()}
+                  planChannels={planChannels.map(item => {
+                    return {id: item};
+                  })}
+                  close={() => {
+                    this.setState({addChannelPopup: false});
+                  }}
+                  addUnknownChannel={this.addUnknownChannel.bind(this)}
                 />
               </div>
-              : null }
+              : null}
           </div>
         </div>
-        { this.props.userAccount.pages && this.props.userAccount.pages.plan ?
+        {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
           <div className={this.classes.wrap}>
             <div className={this.classes.serverDown}>
               <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
@@ -557,11 +578,11 @@ export default class Plan extends Component {
             action="Let's plan some budgets >"
             icon="step:plan"
             onClick={() => {
-              this.props.updateUserAccount({'pages.plan': true})
+              this.props.updateUserAccount({'pages.plan': true});
             }}
           />
         }
       </Page>
-    </div>
+    </div>;
   }
 }
