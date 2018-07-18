@@ -4,7 +4,6 @@ import style from 'styles/plan/annual-tab.css';
 import {parseBudgets} from 'data/parseAnnualPlan';
 import {formatBudget} from 'components/utils/budget';
 import {ContextMenuTrigger} from 'react-contextmenu';
-import PlanCell from 'components/pages/plan/PlanCell';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
@@ -462,13 +461,11 @@ export default class BudgetTable extends Component {
           return item === hoverValues[i] ?
             item
             :
-            <PlanCell
-              item={item}
-              hover={hoverValues[i]}
+            <TableCell
+              primaryValue={item}
+              secondaryValue={hoverValues[i]}
               key={i}
-              approveChannel={() => this.props.approveWholeMonth(i)}
-              declineChannel={() => this.props.declineWholeMonth(i)}
-              isSecondGood={isSecondGood}/>;
+              approveSecondary={() => this.props.approveWholeMonth(i)}/>;
         }
       })
       , {
