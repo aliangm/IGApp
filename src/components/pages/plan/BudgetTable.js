@@ -184,25 +184,20 @@ export default class BudgetTable extends Component {
                 isDragging={this.state.isDragging}/>
             }</td>;
           }
-          else if (this.props.isShowSecondaryEnabled && channel && hoverValues && item !== hoverValues[i]) {
-            return <PlanCell
-              item={item}
-              hover={hoverValues[i]}
-              key={i}
-              approveChannel={() => {
-                this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item);
-              }}
-              declineChannel={() => {
-                this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]);
-              }}
-              isSecondGood={isSecondGood}
-              style={{backgroundColor: '#329ff136'}}
-            />;
-          }
           else {
-            return <td className={this.classes.valueCell} key={i}>{
-              <TableCell primaryValue={item}/>
-            }</td>;
+            const shouldShowSecondValue = this.props.isShowSecondaryEnabled && channel && hoverValues && item !== hoverValues[i];
+            return <TableCell
+              primaryValue={item}
+              secondaryValue={shouldShowSecondValue ? hoverValues[i] : null}
+              key={i}
+              approveChannel={shouldShowSecondValue ? () => {
+                this.props.approveChannel(i, channel, hoverValues[i]);
+              } : null}
+              declineChannel={shouldShowSecondValue ?() => {
+                this.props.declineChannel(i, channel, item);
+              } : null}
+              style={shouldShowSecondValue ? {backgroundColor: '#329ff136'} : null}
+            />;
           }
         })
       }
