@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/annual-tab.css';
 import PlanCell from 'components/pages/plan/PlanCell';
+import EditableCell from 'components/pages/plan/EditableCell';
 
 export default class TableCell extends Component {
 
@@ -12,7 +13,9 @@ export default class TableCell extends Component {
     secondaryValue: PropTypes.string,
     key: PropTypes.number,
     approveSecondary: PropTypes.func,
-    className: PropTypes.string
+    className: PropTypes.string,
+    isEditMode: PropTypes.bool,
+    onChange: PropTypes.func,
   };
 
   constructor(props) {
@@ -20,7 +23,14 @@ export default class TableCell extends Component {
   }
 
   render() {
-    return this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue) ?
+    return  this.props.isEditMode ?
+      <td className={this.classes.valueCell} key={this.props.key}>
+        <EditableCell
+        value={this.props.primaryValue}
+        onChange={this.props.onChange}
+        />
+      </td>
+    : this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue) ?
       <PlanCell
         item={this.props.primaryValue}
         hover={this.props.secondaryValue}
