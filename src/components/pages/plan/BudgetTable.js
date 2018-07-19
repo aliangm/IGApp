@@ -192,7 +192,7 @@ export default class BudgetTable extends Component {
   };
 
   getTableRow = (data, rowType) => {
-    const titleCellKey = (rowType === ROW_TYPE.CATEGORY) ? 'category' : '' + data.channel;
+    const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
     return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
       <div className={this.classes.rowTitle}>
@@ -354,7 +354,6 @@ export default class BudgetTable extends Component {
 
   render() {
     const props = getChannelsWithProps();
-    console.log(this.props.data);
     const parsedData = this.parseData(this.props.data);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
