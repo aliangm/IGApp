@@ -220,7 +220,7 @@ export default class BudgetTable extends Component {
       };
     });
 
-    const categoryRow = this.GetTableRowNew({channel: category, values: categoryData}, true);
+    const categoryRow = this.GetTableRowNew({channel: category, nickname: category, values: categoryData}, true);
 
     return !this.state.collapsed[category] ?
       [categoryRow, ...channels.map((channel) => this.GetTableRowNew(channel, false))]
@@ -244,7 +244,7 @@ export default class BudgetTable extends Component {
             }}
           /> : null}
         <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
-        <TableCell primaryValue={data.channel}/>
+        <TableCell primaryValue={data.nickname}/>
       </div>
 
       {data.values.map((monthData) => {
@@ -473,6 +473,8 @@ export default class BudgetTable extends Component {
   };
 
   getDataWithCategories = (data) => {
+    const props = getChannelsWithProps();
+
     const channelsArray = union(...data.map(month => Object.keys(month)))
       .map(channel => {
         const channelArray = Array(12).fill(
@@ -484,11 +486,9 @@ export default class BudgetTable extends Component {
           }
         });
 
-        return {channel: channel, values: channelArray};
+        return {channel: channel, nickname: props[channel].nickname, values: channelArray};
       });
 
-
-    const props = getChannelsWithProps();
     return groupBy(channelsArray, (channel) => props[channel.channel].category);
   };
 
