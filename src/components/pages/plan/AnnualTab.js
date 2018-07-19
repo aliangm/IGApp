@@ -64,18 +64,7 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {planBudgets, planDate, annualBudget, calculatedData: {annualBudgetLeftToPlan}, editMode, interactiveMode} = this.props;
-
-    const budgetsData = planBudgets.map(month =>
-      Object.keys(month).reduce((object, channelKey) => {
-        object[channelKey] = {
-          primaryBudget: month[channelKey].committedBudget,
-          secondaryBudget: month[channelKey].plannerBudget,
-          isSoft: month[channelKey].isSoft
-        };
-        return object;
-      }, {})
-    );
+    const {budgetsData, planDate, annualBudget, calculatedData: {annualBudgetLeftToPlan}, editMode, interactiveMode} = this.props;
 
     const currentSuggested = {};
     const dates = getDates(planDate);

@@ -57,7 +57,23 @@ export default class Plan extends Component {
         history.push('/dashboard/CMO');
       }
     }
+    this.setBudgetsData();
   }
+
+  setBudgetsData = (isPlannerPrimary = false) => {
+    const budgetsData = this.props.planBudgets.map(month =>
+      Object.keys(month).reduce((object, channelKey) => {
+        const {committedBudget, plannerBudget, isSoft} = month[channelKey];
+        object[channelKey] = {
+          primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
+          secondaryBudget: isPlannerPrimary ? committedBudget : plannerBudget,
+          isSoft: isSoft
+        };
+        return object;
+      }, {})
+    );
+    this.setState({budgetsData: budgetsData});
+  };
 
   componentWillReceiveProps(nextProps) {
     this.getRelevantEvents(nextProps);
@@ -190,13 +206,27 @@ export default class Plan extends Component {
               : null
             }
             {annualTabActive ?
+              interactiveMode ?
+                <Button type="primary"
+                        style={{
+                          marginLeft: '15px',
+                          width: '102px'
+                        }}
+                        onClick={() => {
+                          this.setState({
+                            interactiveMode: false
+                          });
+                        }}>
+                  Commit
+                </Button>
+                :
               <div>
                 <Button type="primary"
                         style={{
                           marginLeft: '15px',
                           width: '102px'
                         }}
-                        selected={interactiveMode ? true : null}
+                        selected={showNewScenarioPopup ? true : null}
                         onClick={() => {
                           this.setState({
                             showNewScenarioPopup: true
@@ -205,7 +235,15 @@ export default class Plan extends Component {
                   New Scenario
                 </Button>
                 <NewScenarioPopup hidden={!showNewScenarioPopup}
-                                  close={() => {
+                                  onCommittedClick={() => {
+                                    this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                  }}
+                                  onScratchClick={() => {
+                                    this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                    this.props.plan(true, false, (data) => {
+                                      this.props.setDataAsState(data);
+                                      this.setBudgetsData(true);
+                                    }, this.props.region, false);
                                   }}/>
               </div>
               : null
@@ -233,7 +271,7 @@ export default class Plan extends Component {
                           });
                         }}
                         icon={editMode ? 'buttons:plan' : 'buttons:edit'}>
-                  {editMode ? 'Commit' : 'Edit'}
+                  {editMode ? (interactiveMode ? 'Done' : 'Commit') : 'Edit'}
                 </Button>
                 <Popup
                   className={this.classes.dropmenuEdit}
