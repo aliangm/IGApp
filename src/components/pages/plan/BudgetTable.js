@@ -213,17 +213,11 @@ export default class BudgetTable extends Component {
   };
 
   getCategoryRows = (category, channels) => {
-    const categoryData = Array(12).fill(0).map((value, index) => {
-      return {
-        primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
-        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
-      };
-    });
-
-    const categoryRow = this.GetTableRowNew({channel: category, nickname: category, values: categoryData}, true);
+    const categoryData = this.sumChannels(channels);
+    const categoryRow = this.getTableRowNew({channel: category, nickname: category, values: categoryData}, true);
 
     return !this.state.collapsed[category] ?
-      [categoryRow, ...channels.map((channel) => this.GetTableRowNew(channel, false))]
+      [categoryRow, ...channels.map((channel) => this.getTableRowNew(channel, false))]
       : categoryRow;
   };
 
@@ -231,7 +225,7 @@ export default class BudgetTable extends Component {
     console.log(`month ${month} + channel ${channel} + newValue ${newValue}`);
   };
 
-  GetTableRowNew = (data, isCategoryRow) => {
+  getTableRowNew = (data, isCategoryRow) => {
     return <tr key={data.channel} data-category-row={isCategoryRow}>
       <div className={this.classes.rowTitle}>
         {isCategoryRow ?
@@ -480,10 +474,10 @@ export default class BudgetTable extends Component {
     this.props.declineWholeChannel(data.channel);
   };
 
-  getDataWithCategories = (data) => {
+  parseData = (data) => {
     const props = getChannelsWithProps();
 
-    const channelsArray = union(...data.map(month => Object.keys(month)))
+    return union(...data.map(month => Object.keys(month)))
       .map(channel => {
         const channelArray = Array(12).fill(
           {'primaryBudget': 0, 'secondaryBudget': 0});
@@ -496,8 +490,15 @@ export default class BudgetTable extends Component {
 
         return {channel: channel, nickname: props[channel].nickname, values: channelArray};
       });
+  };
 
-    return groupBy(channelsArray, (channel) => props[channel.channel].category);
+  sumChannels = (channels) => {
+    return Array(12).fill(0).map((value, index) => {
+      return {
+        primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
+        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
+      };
+    });
   };
 
   render() {
@@ -506,7 +507,9 @@ export default class BudgetTable extends Component {
       null,
       this.props.projectedPlan);
 
-    const dataWithCategories = this.getDataWithCategories(this.props.data);
+    const props = getChannelsWithProps();
+    const parsedData = this.parseData(this.props.data);
+    const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
     let values = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
     let hoverValues = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
@@ -536,28 +539,13 @@ export default class BudgetTable extends Component {
 
     const rows = data && this.state.tableCollapsed !== 1 ? this.getRowsNew(dataWithCategories) : [];
 
-    const footRow = data && this.getTableRow(<div className={this.classes.footTitleCell}>
-        {'TOTAL'}
-      </div>,
-      values.map((item, i) => {
-        if (!this.props.isShowSecondaryEnabled) {
-          return <TableCell primaryValue={item}/>;
-        }
-        else {
-          return item === hoverValues[i] ?
-            item
-            :
-            <TableCell
-              primaryValue={item}
-              secondaryValue={hoverValues[i]}
-              key={i}
-              approveSecondary={() => this.props.approveWholeMonth(i)}/>;
-        }
-      })
-      , {
-        className: this.classes.footRow
-      });
+    const footRowData = {
+      channel: 'Total',
+      nickname: 'Total',
+      values: this.sumChannels(parsedData)
+    };
 
+    const footRow = data && this.getTableRowNew(footRowData, false);
 
     return <div>
       <div className={this.classes.box}>
