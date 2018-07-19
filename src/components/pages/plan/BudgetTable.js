@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import style from 'styles/plan/annual-tab.css';
 import {parseBudgets} from 'data/parseAnnualPlan';
 import {formatBudget} from 'components/utils/budget';
-import {ContextMenuTrigger} from 'react-contextmenu';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
@@ -106,7 +105,7 @@ export default class BudgetTable extends Component {
           </Popup>
         </div>
         :
-        <TableCell primaryValue={month}/>;
+        <TableCell key={`head:${index}`} primaryValue={month}/>;
     });
     return headers;
   };
@@ -193,7 +192,9 @@ export default class BudgetTable extends Component {
   };
 
   getTableRow = (data, rowType) => {
-    return <tr key={data.channel} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+    const titleCellKey = (rowType === ROW_TYPE.CATEGORY) ? 'category' : '' + data.channel;
+
+    return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
       <div className={this.classes.rowTitle}>
         {rowType === ROW_TYPE.CATEGORY ?
           <div
