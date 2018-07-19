@@ -39,7 +39,7 @@ export default class BudgetTable extends Component {
 
   static defaultProps = {
     isEditMode: false,
-    isShowSecondaryEnabled: false,
+    isShowSecondaryEnabled: true,
     isConstraitsEnabled: false
   };
 
@@ -227,6 +227,10 @@ export default class BudgetTable extends Component {
       : categoryRow;
   };
 
+  updateBudget = (month, channel, newValue) => {
+    console.log(`month ${month} + channel ${channel} + newValue ${newValue}`)
+  }
+
   GetTableRowNew = (data, isCategoryRow) => {
     return <tr data-category-row={isCategoryRow}>
       <div className={this.classes.rowTitle}>
@@ -247,10 +251,11 @@ export default class BudgetTable extends Component {
         <TableCell primaryValue={data.nickname}/>
       </div>
 
-      {data.values.map((monthData) => {
+      {data.values.map((monthData, key) => {
         return <TableCell
           primaryValue={monthData.primaryBudget}
           secondaryValue={!isCategoryRow && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
+          approveSecondary={() => this.updateBudget(key, data.channel, monthData.secondaryBudget)}
         />;
       })}
     </tr>;
