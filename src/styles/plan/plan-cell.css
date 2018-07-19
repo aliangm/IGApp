@@ -10,11 +10,18 @@
 .accept {
     /**margin-right: 5px;**/
     composes: icon;
+    background-color: white;
+    background-size: 14px;
+}
+
+.like {
+    /**margin-right: 5px;**/
+    composes: icon;
     background: url(../../assets/success.svg) center center no-repeat;
     background-size: 14px;
 }
 
-.reject {
+.lock {
     composes: icon;
     background: url(../../assets/error.svg) center center no-repeat;
     background-size: 14px;
