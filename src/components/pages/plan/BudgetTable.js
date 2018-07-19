@@ -15,6 +15,7 @@ import {getChannelsWithProps} from 'components/utils/channels';
 import groupBy from 'lodash/groupBy';
 import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
+import sortBy from 'lodash/sortBy';
 
 const ROW_TYPE = {
   BOTTOM: 1,
@@ -179,11 +180,11 @@ export default class BudgetTable extends Component {
 
   getCategoryRows = (category, channels) => {
     const categoryData = this.sumChannels(channels);
-    const categoryRow = this.getTableRowNew({channel: category, nickname: category, values: categoryData},
+    const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
       ROW_TYPE.CATEGORY);
 
     return !this.state.collapsed[category] ?
-      [categoryRow, ...channels.map((channel) => this.getTableRowNew(channel, ROW_TYPE.REGULAR))]
+      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, ROW_TYPE.REGULAR))]
       : categoryRow;
   };
 
@@ -191,7 +192,7 @@ export default class BudgetTable extends Component {
     console.log(`month ${month} + channel ${channel} + newValue ${newValue.toString()}`);
   };
 
-  getTableRowNew = (data, rowType) => {
+  getTableRow = (data, rowType) => {
     return <tr key={data.channel} data-category-row={rowType === ROW_TYPE.CATEGORY}>
       <div className={this.classes.rowTitle}>
         {rowType === ROW_TYPE.CATEGORY ?
@@ -299,7 +300,7 @@ export default class BudgetTable extends Component {
   parseData = (data) => {
     const props = getChannelsWithProps();
 
-    return union(...data.map(month => Object.keys(month)))
+    const notSorted =  union(...data.map(month => Object.keys(month)))
       .map(channel => {
         const channelArray = Array(12).fill(
           {'primaryBudget': 0, 'secondaryBudget': 0});
@@ -315,6 +316,8 @@ export default class BudgetTable extends Component {
 
         return {channel: channel, nickname: props[channel].nickname, values: channelArray};
       });
+
+    return sortBy(notSorted, item => item.nickname);
   };
 
   sumChannels = (channels) => {
@@ -363,7 +366,7 @@ export default class BudgetTable extends Component {
     };
 
     const headRow = this.getHeadRow();
-    const footRow = parsedData && this.getTableRowNew(footRowData, ROW_TYPE.BOTTOM);
+    const footRow = parsedData && this.getTableRow(footRowData, ROW_TYPE.BOTTOM);
 
     return <div>
       <div className={this.classes.box}>
