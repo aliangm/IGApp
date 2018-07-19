@@ -20,7 +20,7 @@ export default class TableCell extends Component {
   }
 
   render() {
-    return this.props.secondaryValue ?
+    return this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue) ?
       <PlanCell
         item={this.props.primaryValue}
         hover={this.props.secondaryValue}

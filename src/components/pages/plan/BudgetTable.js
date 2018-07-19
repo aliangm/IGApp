@@ -250,7 +250,7 @@ export default class BudgetTable extends Component {
       {data.values.map((monthData) => {
         return <TableCell
           primaryValue={monthData.primaryBudget}
-          secondaryValue={this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
+          secondaryValue={!isCategoryRow && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
         />;
       })}
     </tr>;
