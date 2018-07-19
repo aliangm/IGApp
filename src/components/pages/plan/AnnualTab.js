@@ -63,25 +63,21 @@ export default class AnnualTab extends Component {
     }
   }
 
-  /**
-   onHeadClick = (e) => {
-    const elem = e.currentTarget;
-    const rect = elem.getBoundingClientRect();
-    const wrapRect = ReactDOM.findDOMNode(this.refs.wrap).getBoundingClientRect();
-
-
-    this.refs.headPopup.open();
-
-    this.setState({
-      popupShown: true,
-      popupLeft: rect.left - wrapRect.left,
-      popupTop: rect.top - wrapRect.top + rect.height
-    });
-  }
-   **/
-
   render() {
-    const {planDate, annualBudget, calculatedData: {annualBudgetLeftToPlan}, editMode} = this.props;
+    const {planBudgets, planDate, annualBudget, calculatedData: {annualBudgetLeftToPlan}, editMode, interactiveMode} = this.props;
+
+    const budgetsData = planBudgets.map(month =>
+      Object.keys(month).reduce((object, channelKey) => {
+        object[channelKey] = {
+          primaryBudget: month[channelKey].committedBudget,
+          secondaryBudget: month[channelKey].plannerBudget,
+          isSoft: month[channelKey].isSoft
+        };
+        return object;
+      }, {})
+    );
+
+    console.log('budgetsData', budgetsData);
 
     const currentSuggested = {};
     const dates = getDates(planDate);
@@ -152,6 +148,9 @@ export default class AnnualTab extends Component {
         </div>
         <div className={this.classes.innerBox}>
           <BudgetTable isEditMode={editMode}
+                       isShowSecondaryEnabled={interactiveMode}
+                       isConstraitsEnabled={interactiveMode}
+                       data={budgetsData}
                        tableRef={(ref) => this.planTable = ref}
                        firstColumnCell={(ref) => this.firstColumnCell = ref}
                        dates={dates}

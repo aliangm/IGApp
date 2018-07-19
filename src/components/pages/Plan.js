@@ -15,6 +15,7 @@ import {output} from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
+import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 
 export default class Plan extends Component {
 
@@ -32,7 +33,9 @@ export default class Plan extends Component {
     super(props);
     this.state = {
       addChannelPopup: false,
-      editMode: false
+      editMode: false,
+      interactiveMode: false,
+      showNewScenarioPopup: false
     };
   }
 
@@ -131,6 +134,8 @@ export default class Plan extends Component {
   };
 
   render() {
+    const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
+
     const planChannels = merge([],
       Object.keys(this.props.approvedBudgets.reduce((object, item) => {
           return merge(object, item);
@@ -153,7 +158,8 @@ export default class Plan extends Component {
 
     return <div>
       <ReactTooltip/>
-      <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
+      <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
+            width="100%">
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Plan</div>
           <div className={this.classes.headPlan}>
@@ -174,13 +180,35 @@ export default class Plan extends Component {
                               planNeedsUpdate={this.props.planNeedsUpdate}/>
               </div>
             </FeatureToggle>
-            {!annualTabActive ? null :
+            {annualTabActive ?
               <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
                 if (domElement) {
                   domElement.scrollIntoView({});
                 }
               }}/>
+              : null
+            }
+            {annualTabActive ?
+              <div>
+                <Button type="primary"
+                        style={{
+                          marginLeft: '15px',
+                          width: '102px'
+                        }}
+                        selected={interactiveMode ? true : null}
+                        onClick={() => {
+                          this.setState({
+                            showNewScenarioPopup: true
+                          });
+                        }}>
+                  New Scenario
+                </Button>
+                <NewScenarioPopup hidden={!showNewScenarioPopup}
+                                  close={() => {
+                                  }}/>
+              </div>
+              : null
             }
             {annualTabActive ?
               <div style={{position: 'relative'}}>
@@ -189,9 +217,9 @@ export default class Plan extends Component {
                           marginLeft: '15px',
                           width: '102px'
                         }}
-                        selected={this.state.editMode ? true : null}
+                        selected={editMode ? true : null}
                         onClick={() => {
-                          if (this.state.editMode) {
+                          if (editMode) {
                             this.editUpdate()
                               .then(() => {
                                 this.props.forecast();
@@ -201,15 +229,15 @@ export default class Plan extends Component {
                               });
                           }
                           this.setState({
-                            editMode: !this.state.editMode
+                            editMode: !editMode
                           });
                         }}
-                        icon={this.state.editMode ? 'buttons:plan' : 'buttons:edit'}>
-                  {this.state.editMode ? 'Commit' : 'Edit'}
+                        icon={editMode ? 'buttons:plan' : 'buttons:edit'}>
+                  {editMode ? 'Commit' : 'Edit'}
                 </Button>
                 <Popup
                   className={this.classes.dropmenuEdit}
-                  hidden={!this.state.editMode}
+                  hidden={!editMode}
                 >
                   <div>
                     <div className={this.classes.dropmenuItemAdd}
@@ -228,7 +256,7 @@ export default class Plan extends Component {
                   </div>
                 </Popup>
                 <AddChannelPopup
-                  hidden={!this.state.addChannelPopup}
+                  hidden={!addChannelPopup}
                   onChannelChoose={this.addChannel}
                   channels={output()}
                   planChannels={planChannels.map(item => {
