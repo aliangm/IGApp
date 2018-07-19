@@ -12,6 +12,7 @@ export default class TableCell extends Component {
     secondaryValue: PropTypes.string,
     key: PropTypes.number,
     approveSecondary: PropTypes.func,
+    className: PropTypes.string
   };
 
   constructor(props) {
@@ -28,7 +29,7 @@ export default class TableCell extends Component {
         isSecondGood={true}/>
       :
       <td className={this.classes.valueCell} key={this.props.key}>
-        <div className={this.classes.cellItem}>{this.props.primaryValue}</div>
+        <div className={this.classes.cellItem + ' '+ this.props.className}>{this.props.primaryValue}</div>
       </td>;
   }
 }
