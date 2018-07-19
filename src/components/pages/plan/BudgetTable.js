@@ -225,7 +225,7 @@ export default class BudgetTable extends Component {
     console.log(`month ${month} + channel ${channel} + newValue ${newValue}`);
   };
 
-  getTableRowNew = (data, isCategoryRow) => {
+  getTableRowNew = (data, isCategoryRow, isBottomRow = false) => {
     return <tr key={data.channel} data-category-row={isCategoryRow}>
       <div className={this.classes.rowTitle}>
         {isCategoryRow ?
@@ -251,7 +251,7 @@ export default class BudgetTable extends Component {
           primaryValue={monthData.primaryBudget}
           secondaryValue={!isCategoryRow && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
           approveSecondary={() => this.updateBudget(key, data.channel, monthData.secondaryBudget)}
-          isEditMode={!isCategoryRow && this.props.isEditMode}
+          isEditMode={!isCategoryRow && !isBottomRow && this.props.isEditMode}
           onChange={(newValue) => this.updateBudget(key, data.channel, newValue)}
         />;
       })}
@@ -545,7 +545,7 @@ export default class BudgetTable extends Component {
       values: this.sumChannels(parsedData)
     };
 
-    const footRow = data && this.getTableRowNew(footRowData, false);
+    const footRow = data && this.getTableRowNew(footRowData, false, true);
 
     return <div>
       <div className={this.classes.box}>
