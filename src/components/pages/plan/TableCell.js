@@ -12,10 +12,12 @@ export default class TableCell extends Component {
     primaryValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     secondaryValue: PropTypes.string,
     key: PropTypes.number,
-    approveSecondary: PropTypes.func,
+    lockChannel: PropTypes.func,
+    likeChannel: PropTypes.func,
     className: PropTypes.string,
     isEditMode: PropTypes.bool,
     onChange: PropTypes.func,
+    acceptSuggestion: PropTypes.func
   };
 
   constructor(props) {
@@ -35,8 +37,9 @@ export default class TableCell extends Component {
         item={this.props.primaryValue}
         hover={this.props.secondaryValue}
         key={this.props.key}
-        approveChannel={this.props.approveSecondary}
-        isSecondGood={true}/>
+        lockChannel={this.props.lockChannel}
+        likeChannel={this.props.likeChannel}
+        acceptSuggestion={this.props.acceptSuggestion}/>
       :
       <td className={this.classes.valueCell} key={this.props.key}>
         <div className={this.classes.cellItem + ' '+ this.props.className}>{this.props.primaryValue}</div>

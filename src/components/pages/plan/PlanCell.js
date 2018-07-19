@@ -24,14 +24,20 @@ export default class PlanCell extends Component {
     >
       <div hidden={ !this.state.hoverCell }>
         <div className={ cellStyle.locals.hover }>
+          <div className={ planStyle.locals.left }>
+            <div className={ cellStyle.locals.lock } onClick={ this.props.lockChannel }/>
+          </div>
           <div className={ planStyle.locals.right }>
-            <div className={ cellStyle.locals.accept } onClick={ this.props.approveChannel }/>
+            <div className={ cellStyle.locals.like } onClick={ this.props.likeChannel }/>
+          </div>
+          <div className={ planStyle.locals.right }>
+            <div className={ cellStyle.locals.accept } onClick={ this.props.acceptSuggestion }/>
           </div>
         </div>
       </div>
-      <div className={ this.classes.cellItem } style={{ color: this.state.hoverCell ? (this.props.isSecondGood ? '#D75A4A' : '#25AE88') : '#1991eb' }}>
+      <div className={ this.classes.cellItem } style={{ color: this.state.hoverCell ? '#D75A4A' : '#1991eb' }}>
         { this.state.hoverCell ? '' : '*' }{this.props.item}
-        <div hidden={ !this.state.hoverCell } className={ cellStyle.locals.budget } style={{ color: this.props.isSecondGood ? '#25AE88' : '#D75A4A' }}>
+        <div hidden={ !this.state.hoverCell } className={ cellStyle.locals.budget } style={{ color: '#25AE88'}}>
           ({ this.props.hover })
         </div>
       </div>

@@ -208,7 +208,7 @@ export default class BudgetTable extends Component {
     </tr>;
   };
 
-  getRowsNew = (data) => {
+  getRows = (data) => {
     return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category])));
   };
 
@@ -222,7 +222,7 @@ export default class BudgetTable extends Component {
   };
 
   updateBudget = (month, channel, newValue) => {
-    console.log(`month ${month} + channel ${channel} + newValue ${newValue}`);
+    console.log(`month ${month} + channel ${channel} + newValue ${newValue.toString()}`);
   };
 
   getTableRowNew = (data, isCategoryRow, isBottomRow = false) => {
@@ -250,161 +250,14 @@ export default class BudgetTable extends Component {
           key={`${data.channel}:${key}`}
           primaryValue={monthData.primaryBudget}
           secondaryValue={!isCategoryRow && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
-          approveSecondary={() => this.updateBudget(key, data.channel, monthData.secondaryBudget)}
+          likeChannel={() => this.updateBudget(key, data.channel, {lockType: 'like'})}
+          lockChannel={() => this.updateBudget(key, data.channel, {lockType: 'lock'})}
+          acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
           isEditMode={!isCategoryRow && !isBottomRow && this.props.isEditMode}
-          onChange={(newValue) => this.updateBudget(key, data.channel, newValue)}
+          onChange={(newValue) => this.updateBudget(key, data.channel, {primaryBudget: newValue})}
         />;
       })}
     </tr>;
-  };
-
-  getRows = (data, parent, level) => {
-    let rows = [];
-
-    level = level | 0;
-
-    Object.keys(data).sort().forEach((item, i) => {
-      if (item === '__TOTAL__') {
-        return null;
-      }
-
-      let key = parent + ':' + item + '-' + i;
-      let collapsed = !!this.state.collapsed[key];
-      const params = data[item];
-      let values;
-      let hoverValues;
-      let isSecondGood = false;
-      if (this.props.approvedPlan) {
-        values = params.approvedValues.map(val => {
-          if (val) {
-            return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-          }
-          else {
-            return '$0';
-          }
-        });
-        hoverValues = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-        isSecondGood = true;
-      }
-      else {
-        values = params.values.map(val => '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-        hoverValues = params.approvedValues ? params.approvedValues.map(val => {
-          if (val) {
-            return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-          }
-          else {
-            return '$0';
-          }
-        }) : undefined;
-      }
-      const titleElem = <div ref={params.channel ? this.props.setRef.bind(this, params.channel) : null}>
-        {this.props.isEditMode && params.channel && !params.isOtherChannel ?
-          <div className={this.classes.editChannelNameWrapper}>
-            <div className={this.classes.editChannelName} onClick={() => {
-              this.setState({editChannelName: params.channel});
-            }}/>
-          </div>
-          : null}
-        <ContextMenuTrigger id="rightClickNormal" collect={() => {
-          return {channel: params.channel};
-        }} disable={!params.channel || this.props.isEditMode}>
-          <ContextMenuTrigger id="rightClickEdit" collect={() => {
-            return {channel: params.channel};
-          }} disable={!params.channel || !this.props.isEditMode}>
-            <div
-              style={{
-                marginLeft: (level | 0) * 17 + 'px',
-                cursor: (params.channel && !this.props.isEditMode) ? 'pointer' : 'initial'
-              }}
-              className={this.classes.rowTitle}>
-              {params.children ?
-                <div
-                  hidden={this.state.tableCollapsed === 2}
-                  className={this.classes.rowArrow}
-                  data-collapsed={collapsed || null}
-                  onClick={() => {
-                    const newArray = [...this.state.collapsed];
-                    newArray[key] = !collapsed;
-                    this.setState({
-                      collapsed: newArray
-                    });
-
-                    this.forceUpdate();
-                  }}
-                />
-                :
-                this.props.isEditMode ?
-                  <div>
-                    <div
-                      className={this.classes.rowDelete}
-                      onClick={() => this.setState({deletePopup: params.channel})}
-                    />
-                    <Popup hidden={params.channel !== this.state.deletePopup}
-                           style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-                      <DeleteChannelPopup
-                        onNext={(e) => this.deleteRow(params.channel, e)}
-                        onBack={() => this.setState({deletePopup: ''})}
-                      />
-                    </Popup>
-                    <Popup hidden={params.channel !== this.state.editChannelName}
-                           style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-                      <EditChannelNamePopup
-                        channel={this.state.editChannelName}
-                        onNext={this.editChannelName}
-                        onBack={() => this.setState({editChannelName: ''})}
-                      />
-                    </Popup>
-                  </div>
-                  : null}
-
-              {params.icon ?
-                <div className={this.classes.rowIcon} data-icon={params.icon}/>
-                : null}
-
-              {params.icon_mask ?
-                <div className={this.classes.rowMaskIcon}>
-                  <div className={this.classes.rowMaskIconInside} data-icon={params.icon_mask}/>
-                </div>
-                : null}
-              {/**   { item.length > 13 ?
-                <div>{ item.substr(0, item.lastIndexOf(' ', 13)) }
-                  <br/> { item.substr(item.lastIndexOf(' ', 13) + 1, item.length) }
-                </div>
-                : item }**/}
-              {item}
-            </div>
-          </ContextMenuTrigger>
-        </ContextMenuTrigger>
-      </div>;
-
-      const rowProps = {
-        className: this.props.isEditMode ? null : this.classes.tableRow,
-        key: key,
-        onMouseEnter: () => {
-          this.setState({
-            hoverRow: key
-          });
-        },
-        onMouseLeave: () => {
-          this.setState({
-            hoverRow: void 0
-          });
-        }
-      };
-
-      if (params.disabled) {
-        rowProps['data-disabled'] = true;
-      }
-
-      const row = this.getTableRow(titleElem, values, rowProps, params.channel, hoverValues, isSecondGood);
-      rows.push(row);
-
-      if (!collapsed && params.children && this.state.tableCollapsed !== 2) {
-        rows = [...rows, this.getRows(params.children, key, level + 1)];
-      }
-    });
-
-    return rows;
   };
 
   editChannelName = (longName, shortName, category, channel) => {
@@ -511,15 +364,6 @@ export default class BudgetTable extends Component {
     const parsedData = this.parseData(this.props.data);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
-    let values = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
-    let hoverValues = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
-    let isSecondGood = false;
-    if (this.props.approvedPlan) {
-      values = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
-      hoverValues = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
-      isSecondGood = true;
-    }
-
     const headRow = this.getTableRow(<div className={this.classes.headTitleCell}>
       <div
         style={{borderColor: '#329ff1 transparent transparent transparent'}}
@@ -537,7 +381,7 @@ export default class BudgetTable extends Component {
       className: this.classes.headRow
     });
 
-    const rows = data && this.state.tableCollapsed !== 1 ? this.getRowsNew(dataWithCategories) : [];
+    const rows = data && this.state.tableCollapsed !== 1 ? this.getRows(dataWithCategories) : [];
 
     const footRowData = {
       channel: 'Total',
