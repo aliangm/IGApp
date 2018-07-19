@@ -243,15 +243,16 @@ export default class BudgetTable extends Component {
               });
             }}
           /> : null}
+        <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
         <TableCell primaryValue={data.channel}/>
       </div>
 
       {data.values.map((monthData) => {
-          return <TableCell
-            primaryValue={monthData.primaryBudget}
-            secondaryValue={this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
-          />;
-        })}
+        return <TableCell
+          primaryValue={monthData.primaryBudget}
+          secondaryValue={this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
+        />;
+      })}
     </tr>;
   };
 
@@ -488,7 +489,7 @@ export default class BudgetTable extends Component {
 
 
     const props = getChannelsWithProps();
-    return groupBy(, (channel) => props[channel.channel].category);
+    return groupBy(channelsArray, (channel) => props[channel.channel].category);
   };
 
   render() {
@@ -616,7 +617,6 @@ export default class BudgetTable extends Component {
       </ContextMenu>
     </div>;
   }
-
 }
 
 const dataMock = [{
