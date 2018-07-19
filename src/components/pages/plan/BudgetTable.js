@@ -8,7 +8,6 @@ import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
-import EditableCell from 'components/pages/plan/EditableCell';
 import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
 import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 import {getChannelsWithProps} from 'components/utils/channels';
@@ -47,7 +46,8 @@ export default class BudgetTable extends Component {
   static defaultProps = {
     isEditMode: false,
     isShowSecondaryEnabled: true,
-    isConstraitsEnabled: false
+    isConstraitsEnabled: false,
+    data: []
   };
 
   constructor(props) {
@@ -216,7 +216,7 @@ export default class BudgetTable extends Component {
         return <TableCell
           key={`${data.channel}:${key}`}
           primaryValue={monthData.primaryBudget}
-          secondaryValue={!rowType === ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
+          secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
             ? monthData.secondaryBudget
             : null}
           likeChannel={() => this.updateBudget(key, data.channel, {lockType: 'like'})}
@@ -224,7 +224,7 @@ export default class BudgetTable extends Component {
           acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
           isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
           onChange={(newValue) => this.updateBudget(key, data.channel, {primaryBudget: newValue})}
-          isConstraitsEnabled={!rowType === ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+          isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
         />;
       })}
     </tr>;
