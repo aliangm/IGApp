@@ -306,7 +306,10 @@ export default class BudgetTable extends Component {
 
         data.forEach((month, index) => {
           if (month[channel]) {
-            channelArray[index] = month[channel];
+            channelArray[index] = {
+              ...month[channel],
+              primaryBudget: month[channel].primaryBudget ? month[channel].primaryBudget : 0
+            };
           }
         });
 
@@ -347,6 +350,7 @@ export default class BudgetTable extends Component {
 
   render() {
     const props = getChannelsWithProps();
+    console.log(this.props.data);
     const parsedData = this.parseData(this.props.data);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
