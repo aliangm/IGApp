@@ -232,7 +232,7 @@ export default class BudgetTable extends Component {
   }
 
   GetTableRowNew = (data, isCategoryRow) => {
-    return <tr data-category-row={isCategoryRow}>
+    return <tr key={data.channel} data-category-row={isCategoryRow}>
       <div className={this.classes.rowTitle}>
         {isCategoryRow ?
           <div
@@ -253,6 +253,7 @@ export default class BudgetTable extends Component {
 
       {data.values.map((monthData, key) => {
         return <TableCell
+          key={`${data.channel}:${key}`}
           primaryValue={monthData.primaryBudget}
           secondaryValue={!isCategoryRow && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
           approveSecondary={() => this.updateBudget(key, data.channel, monthData.secondaryBudget)}
@@ -503,7 +504,7 @@ export default class BudgetTable extends Component {
       null,
       this.props.projectedPlan);
 
-    const dataMockWithCategories = this.getDataWithCategories(this.props.data);
+    const dataWithCategories = this.getDataWithCategories(this.props.data);
 
     let values = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
     let hoverValues = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
@@ -531,7 +532,7 @@ export default class BudgetTable extends Component {
       className: this.classes.headRow
     });
 
-    const rows = data && this.state.tableCollapsed !== 1 ? this.getRowsNew(dataMockWithCategories) : [];
+    const rows = data && this.state.tableCollapsed !== 1 ? this.getRowsNew(dataWithCategories) : [];
 
     const footRow = data && this.getTableRow(<div className={this.classes.footTitleCell}>
         {'TOTAL'}
