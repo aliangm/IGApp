@@ -77,8 +77,6 @@ export default class AnnualTab extends Component {
       }, {})
     );
 
-    console.log('budgetsData', budgetsData);
-
     const currentSuggested = {};
     const dates = getDates(planDate);
     const projections = this.props.projectedPlan.map((item, index) => {
