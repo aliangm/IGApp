@@ -4,24 +4,21 @@ import style from 'styles/plan/annual-tab.css';
 import {parseBudgets} from 'data/parseAnnualPlan';
 import {formatBudget} from 'components/utils/budget';
 import {ContextMenuTrigger} from 'react-contextmenu';
-import PlanCell from 'components/pages/plan/PlanCell';
+import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 import EditableCell from 'components/pages/plan/EditableCell';
 import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
 import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
+import {getChannelsWithProps} from 'components/utils/channels';
+import groupBy from 'lodash/groupBy';
+import union from 'lodash/union';
+import sumBy from 'lodash/sumBy';
 
 export default class BudgetTable extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      tableCollapsed: 0,
-      collapsed: {}
-    };
-  }
+  style = style;
 
   static propTypes = {
     tableRef: PropTypes.func,
@@ -33,10 +30,27 @@ export default class BudgetTable extends Component {
     updateState: PropTypes.func,
     approveWholeChannel: PropTypes.func,
     declineWholeMonth: PropTypes.func,
-    approvedPlan: PropTypes.bool
+    approvedPlan: PropTypes.bool,
+    isEditMode: PropTypes.bool,
+    isShowSecondaryEnabled: PropTypes.bool,
+    isConstraitsEnabled: PropTypes.bool,
+    data: PropTypes.array
   };
 
-  style = style;
+  static defaultProps = {
+    isEditMode: false,
+    isShowSecondaryEnabled: false,
+    isConstraitsEnabled: false
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tableCollapsed: 0,
+      collapsed: {}
+    };
+  }
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
@@ -88,19 +102,6 @@ export default class BudgetTable extends Component {
         <div className={this.classes.cellItem}>{month}</div>;
     });
     return headers;
-  };
-
-  getCellItem = (item) => {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    }
-    else {
-      elem = item;
-    }
-
-    return elem;
   };
 
   dragStart = (value) => {
@@ -168,10 +169,10 @@ export default class BudgetTable extends Component {
 
   getTableRow = (title, items, props, channel, hoverValues, isSecondGood) => {
     return <tr {...props}>
-      <td className={this.classes.titleCell} ref={this.props.firstColumnCell}>{this.getCellItem(title)}</td>
+      <td className={this.classes.titleCell} ref={this.props.firstColumnCell}><TableCell primaryValue={title}/></td>
       {
         items.map((item, i) => {
-          if (channel && this.props.editMode) {
+          if (channel && this.props.isEditMode) {
             return <td className={this.classes.valueCell} key={i}>{
               <EditableCell
                 title={(hoverValues && item !== hoverValues[i]) ? 'previous: ' + hoverValues[i] : null}
@@ -186,28 +187,72 @@ export default class BudgetTable extends Component {
                 isDragging={this.state.isDragging}/>
             }</td>;
           }
-          else if (channel && hoverValues && item !== hoverValues[i]) {
-            return <PlanCell
-              item={item}
-              hover={hoverValues[i]}
-              key={i}
-              approveChannel={() => {
-                this.props.approveChannel(i, channel, isSecondGood ? hoverValues[i] : item);
-              }}
-              declineChannel={() => {
-                this.props.declineChannel(i, channel, isSecondGood ? item : hoverValues[i]);
-              }}
-              isSecondGood={isSecondGood}
-              style={{backgroundColor: '#329ff136'}}
-            />;
-          }
           else {
-            return <td className={this.classes.valueCell} key={i}>{
-              this.getCellItem(item)
-            }</td>;
+            const shouldShowSecondValue = this.props.isShowSecondaryEnabled &&
+              channel &&
+              hoverValues &&
+              item !==
+              hoverValues[i];
+            return <TableCell
+              primaryValue={item}
+              secondaryValue={shouldShowSecondValue ? hoverValues[i] : null}
+              key={i}
+              approveSecondary={shouldShowSecondValue ? () => {
+                this.props.approveChannel(i, channel, hoverValues[i]);
+              } : null}
+              style={shouldShowSecondValue ? {backgroundColor: '#329ff136'} : null}
+            />;
           }
         })
       }
+    </tr>;
+  };
+
+  getRowsNew = (data) => {
+    return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category])));
+  };
+
+  getCategoryRows = (category, channels) => {
+    const categoryData = Array(12).fill(0).map((value, index) => {
+      return {
+        primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
+        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
+      };
+    });
+
+    const categoryRow = this.GetTableRowNew({channel: category, nickname: category, values: categoryData}, true);
+
+    return !this.state.collapsed[category] ?
+      [categoryRow, ...channels.map((channel) => this.GetTableRowNew(channel, false))]
+      : categoryRow;
+  };
+
+  GetTableRowNew = (data, isCategoryRow) => {
+    return <tr data-category-row={isCategoryRow}>
+      <div className={this.classes.rowTitle}>
+        {isCategoryRow ?
+          <div
+            className={this.classes.rowArrow}
+            data-collapsed={this.state.collapsed[data.channel] ? true : null}
+            onClick={() => {
+              this.setState({
+                collapsed: {
+                  ...this.state.collapsed,
+                  [data.channel]: !this.state.collapsed[data.channel]
+                }
+              });
+            }}
+          /> : null}
+        <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
+        <TableCell primaryValue={data.nickname}/>
+      </div>
+
+      {data.values.map((monthData) => {
+        return <TableCell
+          primaryValue={monthData.primaryBudget}
+          secondaryValue={this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
+        />;
+      })}
     </tr>;
   };
 
@@ -251,7 +296,7 @@ export default class BudgetTable extends Component {
         }) : undefined;
       }
       const titleElem = <div ref={params.channel ? this.props.setRef.bind(this, params.channel) : null}>
-        {this.props.editMode && params.channel && !params.isOtherChannel ?
+        {this.props.isEditMode && params.channel && !params.isOtherChannel ?
           <div className={this.classes.editChannelNameWrapper}>
             <div className={this.classes.editChannelName} onClick={() => {
               this.setState({editChannelName: params.channel});
@@ -260,14 +305,14 @@ export default class BudgetTable extends Component {
           : null}
         <ContextMenuTrigger id="rightClickNormal" collect={() => {
           return {channel: params.channel};
-        }} disable={!params.channel || this.props.editMode}>
+        }} disable={!params.channel || this.props.isEditMode}>
           <ContextMenuTrigger id="rightClickEdit" collect={() => {
             return {channel: params.channel};
-          }} disable={!params.channel || !this.props.editMode}>
+          }} disable={!params.channel || !this.props.isEditMode}>
             <div
               style={{
                 marginLeft: (level | 0) * 17 + 'px',
-                cursor: (params.channel && !this.props.editMode) ? 'pointer' : 'initial'
+                cursor: (params.channel && !this.props.isEditMode) ? 'pointer' : 'initial'
               }}
               className={this.classes.rowTitle}>
               {params.children ?
@@ -286,7 +331,7 @@ export default class BudgetTable extends Component {
                   }}
                 />
                 :
-                this.props.editMode ?
+                this.props.isEditMode ?
                   <div>
                     <div
                       className={this.classes.rowDelete}
@@ -331,7 +376,7 @@ export default class BudgetTable extends Component {
       </div>;
 
       const rowProps = {
-        className: this.props.editMode ? null : this.classes.tableRow,
+        className: this.props.isEditMode ? null : this.classes.tableRow,
         key: key,
         onMouseEnter: () => {
           this.setState({
@@ -427,11 +472,33 @@ export default class BudgetTable extends Component {
     this.props.declineWholeChannel(data.channel);
   };
 
+  getDataWithCategories = (data) => {
+    const props = getChannelsWithProps();
+
+    const channelsArray = union(...data.map(month => Object.keys(month)))
+      .map(channel => {
+        const channelArray = Array(12).fill(
+          {'primaryBudget': 0, 'secondaryBudget': 0});
+
+        data.forEach((month, index) => {
+          if (month[channel]) {
+            channelArray[index] = month[channel];
+          }
+        });
+
+        return {channel: channel, nickname: props[channel].nickname, values: channelArray};
+      });
+
+    return groupBy(channelsArray, (channel) => props[channel.channel].category);
+  };
+
   render() {
     const data = parseBudgets(this.props.approvedBudgets,
       this.props.planUnknownChannels,
       null,
       this.props.projectedPlan);
+
+    const dataMockWithCategories = this.getDataWithCategories(dataMock);
 
     let values = data['__TOTAL__'].values.map(val => '$' + formatBudget(val));
     let hoverValues = data['__TOTAL__'].approvedValues.map(val => '$' + formatBudget(val));
@@ -459,23 +526,26 @@ export default class BudgetTable extends Component {
       className: this.classes.headRow
     });
 
-    const rows = data && this.state.tableCollapsed !== 1 ? this.getRows(data) : [];
+    const rows = data && this.state.tableCollapsed !== 1 ? this.getRowsNew(dataMockWithCategories) : [];
 
     const footRow = data && this.getTableRow(<div className={this.classes.footTitleCell}>
         {'TOTAL'}
       </div>,
-      values.map((item, i) =>
-        item === hoverValues[i] ?
-          item
-          :
-          <PlanCell
-            item={item}
-            hover={hoverValues[i]}
-            key={i}
-            approveChannel={() => this.props.approveWholeMonth(i)}
-            declineChannel={() => this.props.declineWholeMonth(i)}
-            isSecondGood={isSecondGood}/>
-      )
+      values.map((item, i) => {
+        if (!this.props.isShowSecondaryEnabled) {
+          return <TableCell primaryValue={item}/>;
+        }
+        else {
+          return item === hoverValues[i] ?
+            item
+            :
+            <TableCell
+              primaryValue={item}
+              secondaryValue={hoverValues[i]}
+              key={i}
+              approveSecondary={() => this.props.approveWholeMonth(i)}/>;
+        }
+      })
       , {
         className: this.classes.footRow
       });
@@ -548,3 +618,256 @@ export default class BudgetTable extends Component {
     </div>;
   }
 }
+
+const dataMock = [{
+  'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+  'web_companyWebsite': {'primaryBudget': 3000, 'secondaryBudget': 7000, 'isSoft': false},
+  'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+  'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 2000, 'isSoft': false},
+  'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+  'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+  'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+  'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+  'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+  'content_contentPromotion_contentDiscovery_outbrain': {
+    'primaryBudget': 5600,
+    'secondaryBudget': 5600,
+    'isSoft': false
+  },
+  'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+  'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+  'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+  'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+  'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+},
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  },
+  {
+    'web_landingPages': {'primaryBudget': 26000, 'secondaryBudget': 26000, 'isSoft': false},
+    'web_companyWebsite': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'viral_recommendAFriend_referralProgram': {'primaryBudget': 8200, 'secondaryBudget': 8200, 'isSoft': false},
+    'telemarketing': {'primaryBudget': 21000, 'secondaryBudget': 21000, 'isSoft': false},
+    'social_communityBuilding': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'events_onlineEvents_webinar': {'primaryBudget': 9100, 'secondaryBudget': 9100, 'isSoft': false},
+    'events_offlineEvents_showcase': {'primaryBudget': 12200, 'secondaryBudget': 12200, 'isSoft': false},
+    'engineeringAsMarketing': {'primaryBudget': 15700, 'secondaryBudget': 15700, 'isSoft': false},
+    'content_contentPromotion_targetingBlogs': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false},
+    'content_contentPromotion_contentDiscovery_outbrain': {
+      'primaryBudget': 5600,
+      'secondaryBudget': 5600,
+      'isSoft': false
+    },
+    'content_contentCreation_videos': {'primaryBudget': 4500, 'secondaryBudget': 4500, 'isSoft': false},
+    'content_contentCreation_caseStudies': {'primaryBudget': 12000, 'secondaryBudget': 12000, 'isSoft': false},
+    'advertising_socialAds_linkedinAdvertising': {'primaryBudget': 5700, 'secondaryBudget': 5700, 'isSoft': false},
+    'advertising_socialAds_facebookAdvertising': {'primaryBudget': 16000, 'secondaryBudget': 16000, 'isSoft': false},
+    'PR_unconventionalPR_customerAppreciation': {'primaryBudget': 7000, 'secondaryBudget': 7000, 'isSoft': false}
+  }];

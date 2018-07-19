@@ -24,9 +24,6 @@ export default class PlanCell extends Component {
     >
       <div hidden={ !this.state.hoverCell }>
         <div className={ cellStyle.locals.hover }>
-          <div className={ planStyle.locals.left }>
-            <div className={ cellStyle.locals.reject } onClick={ this.props.declineChannel }/>
-          </div>
           <div className={ planStyle.locals.right }>
             <div className={ cellStyle.locals.accept } onClick={ this.props.approveChannel }/>
           </div>

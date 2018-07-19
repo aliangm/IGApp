@@ -55,13 +55,13 @@
     font-weight: bold;
 }
 
-.table :global(tr[data-disabled]) {
+.table :global(tr[data-category-row='true']) {
     color: white;
     font-weight: 600;
     background-color: #273142b3;
 }
 
-.table :global(tr:not([data-disabled])):hover {
+.table :global(tr:not([data-category-row='true'])):hover {
     /**
     BUG: border changes table size
 
