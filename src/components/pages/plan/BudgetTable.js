@@ -16,6 +16,13 @@ import groupBy from 'lodash/groupBy';
 import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
 
+const ROW_TYPE = {
+  HEAD: 0,
+  BOTTOM: 1,
+  REGULAR: 2,
+  CATEGORY: 3
+};
+
 export default class BudgetTable extends Component {
 
   style = style;
@@ -214,10 +221,10 @@ export default class BudgetTable extends Component {
 
   getCategoryRows = (category, channels) => {
     const categoryData = this.sumChannels(channels);
-    const categoryRow = this.getTableRowNew({channel: category, nickname: category, values: categoryData}, true);
+    const categoryRow = this.getTableRowNew({channel: category, nickname: category, values: categoryData}, ROW_TYPE.CATEGORY);
 
     return !this.state.collapsed[category] ?
-      [categoryRow, ...channels.map((channel) => this.getTableRowNew(channel, false))]
+      [categoryRow, ...channels.map((channel) => this.getTableRowNew(channel, ROW_TYPE.REGULAR))]
       : categoryRow;
   };
 
@@ -225,10 +232,10 @@ export default class BudgetTable extends Component {
     console.log(`month ${month} + channel ${channel} + newValue ${newValue.toString()}`);
   };
 
-  getTableRowNew = (data, isCategoryRow, isBottomRow = false) => {
-    return <tr key={data.channel} data-category-row={isCategoryRow}>
+  getTableRowNew = (data, rowType) => {
+    return <tr key={data.channel} data-category-row={rowType === ROW_TYPE.CATEGORY}>
       <div className={this.classes.rowTitle}>
-        {isCategoryRow ?
+        {rowType === ROW_TYPE.CATEGORY ?
           <div
             className={this.classes.rowArrow}
             data-collapsed={this.state.collapsed[data.channel] ? true : null}
@@ -249,13 +256,13 @@ export default class BudgetTable extends Component {
         return <TableCell
           key={`${data.channel}:${key}`}
           primaryValue={monthData.primaryBudget}
-          secondaryValue={!isCategoryRow && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
+          secondaryValue={!rowType === ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled ? monthData.secondaryBudget : null}
           likeChannel={() => this.updateBudget(key, data.channel, {lockType: 'like'})}
           lockChannel={() => this.updateBudget(key, data.channel, {lockType: 'lock'})}
           acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
-          isEditMode={!isCategoryRow && !isBottomRow && this.props.isEditMode}
+          isEditMode={!rowType === ROW_TYPE.CATEGORY && !rowType === ROW_TYPE.BOTTOM && this.props.isEditMode}
           onChange={(newValue) => this.updateBudget(key, data.channel, {primaryBudget: newValue})}
-          isConstraitsEnabled = {!isCategoryRow && this.props.isConstraitsEnabled}
+          isConstraitsEnabled = {!rowType === ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
         />;
       })}
     </tr>;
@@ -390,7 +397,7 @@ export default class BudgetTable extends Component {
       values: this.sumChannels(parsedData)
     };
 
-    const footRow = data && this.getTableRowNew(footRowData, false, true);
+    const footRow = data && this.getTableRowNew(footRowData, ROW_TYPE.BOTTOM);
 
     return <div>
       <div className={this.classes.box}>
