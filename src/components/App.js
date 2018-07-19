@@ -498,7 +498,8 @@ class AppComponent extends Component {
       CIM: data.CIM || {},
       technologyStack: data.technologyStack || [],
       historyData: data.historyData || {},
-      budgetConstraints: data.budgetConstraints || {}
+      budgetConstraints: data.budgetConstraints || {},
+      planBudgets: data.planBudgets || []
     });
   }
 

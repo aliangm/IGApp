@@ -2,7 +2,7 @@
   height: 36px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   cursor: pointer;
   border-radius: 4px;
   user-select: none;
@@ -20,16 +20,14 @@
   align-items: center;
   justify-content: center;
   padding: 0 7px;
-  flex-grow: 1;
 }
 
 .icon {
-  height: 36px;
-  width: 36px;
+  height: 16px;
+  width: 16px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 19px;
-  border-right: 1px solid white;
+  background-size: contain;
   flex-shrink: 0;
   flex-grow: 0;
 }
@@ -76,6 +74,22 @@
 .uppercase {
   text-transform: uppercase;
   letter-spacing: 0.075;
+}
+
+.primary {
+  composes: box;
+  color: white;
+  background-color: #4d91fc;
+  box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
+}
+
+.primary[data-selected] {
+  background-color: #3168c1;
+}
+
+.primary:hover {
+  background-color: #3e7de3;
+  box-shadow: 0 6px 6px 0 rgba(27, 35, 56, 0.08);
 }
 
 .primary2 {
