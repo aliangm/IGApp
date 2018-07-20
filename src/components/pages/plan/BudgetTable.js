@@ -337,7 +337,7 @@ export default class BudgetTable extends Component {
         return {channel: channel, nickname: props[channel].nickname, values: channelArray};
       });
 
-    return sortBy(notSorted, item => item.nickname);
+    return sortBy(notSorted, item => [props[item.channel].category.toLowerCase(), item.nickname.toLowerCase()]);
   };
 
   sumChannels = (channels) => {
