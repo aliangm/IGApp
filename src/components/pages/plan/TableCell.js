@@ -43,6 +43,15 @@ export default class TableCell extends Component {
       this.props.isSoft ? CONSTRAINT_MAPPING.SOFT : CONSTRAINT_MAPPING.HARD;
   };
 
+  changeConstraint = () => {
+    const current = this.getConstraint();
+    const newConstraint = current === CONSTRAINT_MAPPING.NONE ? CONSTRAINT_MAPPING.SOFT
+      : current === CONSTRAINT_MAPPING.SOFT ? CONSTRAINT_MAPPING.HARD
+        : CONSTRAINT_MAPPING.NONE;
+
+    this.props.constraintChange(newConstraint.isConstraint, newConstraint.isSoft);
+  }
+
   render() {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
 
