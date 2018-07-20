@@ -49,8 +49,12 @@ export default class BudgetTable extends Component {
     isShowSecondaryEnabled: true,
     isConstraitsEnabled: false,
     data: [],
-    editCommitedBudget: (month, channel, newBudget) => {console.log(`edited month ${month} for channel ${channel} with value ${newBudget}`)},
-    changeBudgetConstraint: (month, channelKey, isConstraint, isSoft) => {console.log(`edited month ${month} for channel ${channelKey} with value isConstraint ${isConstraint} and isSoft ${isSoft}`)}
+    editCommitedBudget: (month, channel, newBudget) => {
+      console.log(`edited month ${month} for channel ${channel} with value ${newBudget}`);
+    },
+    changeBudgetConstraint: (month, channelKey, isConstraint, isSoft) => {
+      console.log(`edited month ${month} for channel ${channelKey} with value isConstraint ${isConstraint} and isSoft ${isSoft}`);
+    }
   };
 
   constructor(props) {
@@ -191,49 +195,50 @@ export default class BudgetTable extends Component {
       : categoryRow;
   };
 
-  updateBudget = (month, channel, newValue) => {
-    console.log(`month ${month} + channel ${channel} + newValue ${newValue.toString()}`);
-  };
+    getTableRow = (data, rowType) => {
+      const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
-  getTableRow = (data, rowType) => {
-    const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
+      return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+        <div className={this.classes.rowTitle}>
+          {rowType === ROW_TYPE.CATEGORY ?
+            <div
+              className={this.classes.rowArrow}
+              data-collapsed={this.state.collapsed[data.channel] ? true : null}
+              onClick={() => {
+                this.setState({
+                  collapsed: {
+                    ...this.state.collapsed,
+                    [data.channel]: !this.state.collapsed[data.channel]
+                  }
+                });
+              }}
+            /> : null}
+          <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
+          <TableCell primaryValue={data.nickname}/>
+        </div>
 
-    return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
-      <div className={this.classes.rowTitle}>
-        {rowType === ROW_TYPE.CATEGORY ?
-          <div
-            className={this.classes.rowArrow}
-            data-collapsed={this.state.collapsed[data.channel] ? true : null}
-            onClick={() => {
-              this.setState({
-                collapsed: {
-                  ...this.state.collapsed,
-                  [data.channel]: !this.state.collapsed[data.channel]
-                }
-              });
-            }}
-          /> : null}
-        <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
-        <TableCell primaryValue={data.nickname}/>
-      </div>
-
-      {data.values.map((monthData, key) => {
-        return <TableCell
-          key={`${data.channel}:${key}`}
-          primaryValue={monthData.primaryBudget}
-          secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
-            ? monthData.secondaryBudget
-            : null}
-          likeChannel={() => this.updateBudget(key, data.channel, {lockType: 'like'})}
-          lockChannel={() => this.updateBudget(key, data.channel, {lockType: 'lock'})}
-          acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
-          isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommitedBudget(key, data.channel, newValue)}
-          isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
-        />;
-      })}
-    </tr>;
-  };
+        {data.values.map((monthData, key) => {
+          return <TableCell
+            key={`${data.channel}:${key}`}
+            primaryValue={monthData.primaryBudget}
+            secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
+              ? monthData.secondaryBudget
+              : null}
+            isConstraint={monthData.isConstraint}
+            isSoft={monthData.isSoft}
+            constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+              key,
+              data.channel,
+              isConstraint,
+              isSoft)}
+            acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
+            isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
+            onChange={(newValue) => this.props.editCommitedBudget(key, data.channel, newValue)}
+            isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+          />;
+        })}
+      </tr>;
+    };
 
   editChannelName = (longName, shortName, category, channel) => {
     let namesMapping = this.props.namesMapping || {};
@@ -305,15 +310,16 @@ export default class BudgetTable extends Component {
   parseData = (data) => {
     const props = getChannelsWithProps();
 
-    const notSorted =  union(...data.map(month => Object.keys(month)))
+    const notSorted = union(...data.map(month => Object.keys(month)))
       .map(channel => {
         const channelArray = Array(12).fill(
-          {'primaryBudget': 0, 'secondaryBudget': 0});
+          {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
         data.forEach((month, index) => {
           if (month[channel]) {
             channelArray[index] = {
               ...month[channel],
+              isConstraint: month[channel].isConstraint ? month[channel].isConstraint : false,
               primaryBudget: month[channel].primaryBudget ? month[channel].primaryBudget : 0
             };
           }

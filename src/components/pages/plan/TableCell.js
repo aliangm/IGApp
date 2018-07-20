@@ -3,7 +3,13 @@ import Component from 'components/Component';
 import style from 'styles/plan/annual-tab.css';
 import EditableCell from 'components/pages/plan/EditableCell';
 import planStyle from 'styles/plan/plan.css';
-import cellStyle from 'styles/plan/plan-cell.css'
+import cellStyle from 'styles/plan/plan-cell.css';
+
+const CONSTRAINT_MAPPING = {
+  NONE: {isConstraint: false, text: 'none'},
+  SOFT: {isConstraint: true, isSoft: true, text: 'soft'},
+  HARD: {isConstraint: true, isSoft: false, text: 'hard'}
+};
 
 export default class TableCell extends Component {
 
@@ -15,8 +21,9 @@ export default class TableCell extends Component {
     secondaryValue: PropTypes.string,
     isConstraitsEnabled: PropTypes.bool,
     key: PropTypes.number,
-    lockChannel: PropTypes.func,
-    likeChannel: PropTypes.func,
+    constraintChange: PropTypes.func,
+    isConstraint: PropTypes.bool,
+    isSoft: PropTypes.bool,
     className: PropTypes.string,
     isEditMode: PropTypes.bool,
     onChange: PropTypes.func,
@@ -28,53 +35,51 @@ export default class TableCell extends Component {
 
     this.state = {
       hoverCell: false
-    }
+    };
   }
 
-  //
+  getConstraint = () => {
+    return !this.props.isConstraint ? CONSTRAINT_MAPPING.NONE :
+      this.props.isSoft ? CONSTRAINT_MAPPING.SOFT : CONSTRAINT_MAPPING.HARD;
+  };
 
   render() {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
 
-    return  this.props.isEditMode ?
+    return this.props.isEditMode ?
       <td className={this.classes.valueCell} key={this.props.key}>
-        <EditableCell
-        value={this.props.primaryValue}
-        onChange={this.props.onChange}
+        <EditableCell value={this.props.primaryValue}
+                      onChange={this.props.onChange}
         />
       </td>
-    : <td
-        className={ this.classes.valueCell }
-        onMouseEnter={() => { this.setState({hoverCell: true}) }}
-        onMouseLeave={() => { this.setState({hoverCell: false}) }}
-        style={ this.props.style }
-        key={this.props.key}>
+      : <td className={this.classes.valueCell}
+            onMouseEnter={() => {
+              this.setState({hoverCell: true});
+            }}
+            onMouseLeave={() => {
+              this.setState({hoverCell: false});
+            }}
+            style={this.props.style}
+            key={this.props.key}>
 
-          <div hidden={ !this.state.hoverCell }>
-            {this.props.isConstraitsEnabled ?
-              <div>
-                <div className={ cellStyle.locals.hover }>
-                  <div className={ planStyle.locals.left }>
-                    <div className={ cellStyle.locals.lock } onClick={ this.props.lockChannel }/>
-                  </div>
-                  <div className={ planStyle.locals.right }>
-                    <div className={ cellStyle.locals.like } onClick={ this.props.likeChannel }/>
-                  </div>
-                </div>
-              </div> : null }
-          </div>
-          <div className={ this.classes.cellItem } style={{ color: this.state.hoverCell ? '#D75A4A' : '#1991eb' }}>
-            { !this.state.hoverCell && showSuggestion ? '*' : '' }{this.props.primaryValue}
-            {showSuggestion ?
-              <div>
-                <div hidden={ !this.state.hoverCell } className={ cellStyle.locals.budget } style={{ color: '#25AE88'}}>
-                  ({ this.props.secondaryValue })
-                </div>
-                <div className={ planStyle.locals.right }>
-                  <div className={ cellStyle.locals.accept } onClick={ this.props.acceptSuggestion }/>
-                </div>
-              </div> : null }
-          </div>
-        </td>
+        <div hidden={!this.state.hoverCell}>
+          {this.props.isConstraitsEnabled ?
+            <div onClick={this.changeConstraint}>
+              {this.getConstraint().text}
+            </div> : null}
+        </div>
+        <div className={this.classes.cellItem} style={{color: this.state.hoverCell ? '#D75A4A' : '#1991eb'}}>
+          {!this.state.hoverCell && showSuggestion ? '*' : ''}{this.props.primaryValue}
+          {showSuggestion ?
+            <div>
+              <div hidden={!this.state.hoverCell} className={cellStyle.locals.budget} style={{color: '#25AE88'}}>
+                ({this.props.secondaryValue})
+              </div>
+              <div className={planStyle.locals.right}>
+                <div className={cellStyle.locals.accept} onClick={this.props.acceptSuggestion}/>
+              </div>
+            </div> : null}
+        </div>
+      </td>;
   }
 }
