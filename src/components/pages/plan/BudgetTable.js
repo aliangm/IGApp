@@ -35,7 +35,6 @@ export default class BudgetTable extends Component {
     updateState: PropTypes.func,
     approveWholeChannel: PropTypes.func,
     declineWholeMonth: PropTypes.func,
-    approvedPlan: PropTypes.bool,
     isEditMode: PropTypes.bool,
     isShowSecondaryEnabled: PropTypes.bool,
     isConstraitsEnabled: PropTypes.bool,
