@@ -40,7 +40,8 @@ export default class BudgetTable extends Component {
     isConstraitsEnabled: PropTypes.bool,
     data: PropTypes.array,
     editCommitedBudget: PropTypes.func,
-    changeBudgetConstraint: PropTypes.func
+    changeBudgetConstraint: PropTypes.func,
+    deleteChannel: PropTypes.func
   };
 
   static defaultProps = {
@@ -53,6 +54,9 @@ export default class BudgetTable extends Component {
     },
     changeBudgetConstraint: (month, channelKey, isConstraint, isSoft) => {
       console.log(`edited month ${month} for channel ${channelKey} with value isConstraint ${isConstraint} and isSoft ${isSoft}`);
+    },
+    deleteChannel: (channelKey) => {
+      console.log(`channel deleted ${channelKey}`);
     }
   };
 
@@ -156,30 +160,6 @@ export default class BudgetTable extends Component {
     this.setState({draggableValues: update});
   };
 
-  deleteRow = (channel, event) => {
-    this.setState({deletePopup: ''});
-    event.preventDefault();
-    let planUnknownChannels = this.props.planUnknownChannels;
-    let projectedPlan = this.props.projectedPlan;
-    let approvedBudgets = this.props.approvedBudgets;
-    for (let i = 0; i < 12; i++) {
-      if (planUnknownChannels.length > 0 && planUnknownChannels[i][channel] !== undefined) {
-        delete planUnknownChannels[i][channel];
-      }
-      else {
-        delete projectedPlan[i].plannedChannelBudgets[channel];
-        if (approvedBudgets[i]) {
-          delete approvedBudgets[i][channel];
-        }
-      }
-    }
-    this.props.updateState({
-      projectedPlan: projectedPlan,
-      approvedBudgets: approvedBudgets,
-      planUnknownChannels: planUnknownChannels
-    });
-  };
-
   getRows = (data) => {
     return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category])));
   };
@@ -194,50 +174,80 @@ export default class BudgetTable extends Component {
       : categoryRow;
   };
 
-    getTableRow = (data, rowType) => {
-      const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
+  getTableRow = (data, rowType) => {
+    const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
-      return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
-        <div className={this.classes.rowTitle}>
-          {rowType === ROW_TYPE.CATEGORY ?
-            <div
-              className={this.classes.rowArrow}
-              data-collapsed={this.state.collapsed[data.channel] ? true : null}
-              onClick={() => {
-                this.setState({
-                  collapsed: {
-                    ...this.state.collapsed,
-                    [data.channel]: !this.state.collapsed[data.channel]
-                  }
-                });
+    return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+      {this.getTitleCell(rowType, data)}
+
+      {data.values.map((monthData, key) => {
+        return <TableCell
+          key={`${data.channel}:${key}`}
+          primaryValue={monthData.primaryBudget}
+          secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
+            ? monthData.secondaryBudget
+            : null}
+          isConstraint={monthData.isConstraint}
+          isSoft={monthData.isSoft}
+          constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+            key,
+            data.channel,
+            isConstraint,
+            isSoft)}
+          acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
+          isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
+          onChange={(newValue) => this.props.editCommitedBudget(key, data.channel, newValue)}
+          isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+        />;
+      })}
+    </tr>;
+  };
+
+  getTitleCell = (rowType, data) => {
+    return <div className={this.classes.rowTitle}>
+      {rowType === ROW_TYPE.CATEGORY ?
+        <div
+          className={this.classes.rowArrow}
+          data-collapsed={this.state.collapsed[data.channel] ? true : null}
+          onClick={() => {
+            this.setState({
+              collapsed: {
+                ...this.state.collapsed,
+                [data.channel]: !this.state.collapsed[data.channel]
+              }
+            });
+          }}
+        /> : null}
+      {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
+        <div>
+          <div
+            className={this.classes.rowDelete}
+            onClick={() => this.setState({deletePopup: data.channel})}
+          />
+          <Popup hidden={data.channel !== this.state.deletePopup}
+                 style={{top: '-72px', left: '130px', cursor: 'initial'}}>
+            <DeleteChannelPopup
+              onNext={() => {
+                this.props.deleteChannel(data.channel);
+                this.setState({deletePopup: ''});
               }}
-            /> : null}
-          <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
-          <TableCell primaryValue={data.nickname}/>
+              onBack={() => this.setState({deletePopup: ''})}
+            />
+          </Popup>
+          <Popup hidden={data.channel !== this.state.editChannelName}
+                 style={{top: '-72px', left: '130px', cursor: 'initial'}}>
+            <EditChannelNamePopup
+              channel={this.state.editChannelName}
+              onNext={this.editChannelName}
+              onBack={() => this.setState({editChannelName: ''})}
+            />
+          </Popup>
         </div>
-
-        {data.values.map((monthData, key) => {
-          return <TableCell
-            key={`${data.channel}:${key}`}
-            primaryValue={monthData.primaryBudget}
-            secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
-              ? monthData.secondaryBudget
-              : null}
-            isConstraint={monthData.isConstraint}
-            isSoft={monthData.isSoft}
-            constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-              key,
-              data.channel,
-              isConstraint,
-              isSoft)}
-            acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
-            isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
-            onChange={(newValue) => this.props.editCommitedBudget(key, data.channel, newValue)}
-            isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
-          />;
-        })}
-      </tr>;
-    };
+        : null}
+      <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
+      <TableCell primaryValue={data.nickname}/>
+    </div>;
+  };
 
   editChannelName = (longName, shortName, category, channel) => {
     let namesMapping = this.props.namesMapping || {};
@@ -443,4 +453,4 @@ export default class BudgetTable extends Component {
       </ContextMenu>
     </div>;
   }
-}
+};
