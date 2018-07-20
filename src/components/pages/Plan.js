@@ -179,23 +179,26 @@ export default class Plan extends Component {
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Plan</div>
           <div className={this.classes.headPlan}>
-            <FeatureToggle featureName="plannerAI">
-              <div style={{display: 'flex'}}>
-                <div className={this.classes.error}>
-                  <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade,
-                    click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
-                             target='_blank'>here</a>
-                  </label>
+            {annualTabActive && interactiveMode ?
+              <FeatureToggle featureName="plannerAI">
+                <div style={{display: 'flex'}}>
+                  <div className={this.classes.error}>
+                    <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade,
+                      click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
+                               target='_blank'>here</a>
+                    </label>
+                  </div>
+                  <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                                onClick={() => {
+                                  this.props.plan(true, false, (data) => {
+                                    this.props.setDataAsState(data);
+                                  }, this.props.region, false);
+                                }}
+                                planNeedsUpdate={this.props.planNeedsUpdate}/>
                 </div>
-                <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
-                              onClick={() => {
-                                this.props.plan(true, false, (data) => {
-                                  this.props.setDataAsState(data);
-                                }, this.props.region, false);
-                              }}
-                              planNeedsUpdate={this.props.planNeedsUpdate}/>
-              </div>
-            </FeatureToggle>
+              </FeatureToggle>
+              : null
+            }
             {annualTabActive ?
               <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
                 const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
@@ -220,32 +223,32 @@ export default class Plan extends Component {
                   Commit
                 </Button>
                 :
-              <div>
-                <Button type="primary"
-                        style={{
-                          marginLeft: '15px',
-                          width: '102px'
-                        }}
-                        selected={showNewScenarioPopup ? true : null}
-                        onClick={() => {
-                          this.setState({
-                            showNewScenarioPopup: true
-                          });
-                        }}>
-                  New Scenario
-                </Button>
-                <NewScenarioPopup hidden={!showNewScenarioPopup}
-                                  onCommittedClick={() => {
-                                    this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                  }}
-                                  onScratchClick={() => {
-                                    this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                    this.props.plan(true, false, (data) => {
-                                      this.props.setDataAsState(data);
-                                      this.setBudgetsData(true);
-                                    }, this.props.region, false);
-                                  }}/>
-              </div>
+                <div>
+                  <Button type="primary"
+                          style={{
+                            marginLeft: '15px',
+                            width: '102px'
+                          }}
+                          selected={showNewScenarioPopup ? true : null}
+                          onClick={() => {
+                            this.setState({
+                              showNewScenarioPopup: true
+                            });
+                          }}>
+                    New Scenario
+                  </Button>
+                  <NewScenarioPopup hidden={!showNewScenarioPopup}
+                                    onCommittedClick={() => {
+                                      this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                    }}
+                                    onScratchClick={() => {
+                                      this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                      this.props.plan(true, false, (data) => {
+                                        this.props.setDataAsState(data);
+                                        this.setBudgetsData(true);
+                                      }, this.props.region, false);
+                                    }}/>
+                </div>
               : null
             }
             {annualTabActive ?
