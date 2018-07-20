@@ -39,14 +39,18 @@ export default class BudgetTable extends Component {
     isEditMode: PropTypes.bool,
     isShowSecondaryEnabled: PropTypes.bool,
     isConstraitsEnabled: PropTypes.bool,
-    data: PropTypes.array
+    data: PropTypes.array,
+    editCommitedBudget: PropTypes.func,
+    changeBudgetConstraint: PropTypes.func
   };
 
   static defaultProps = {
     isEditMode: false,
     isShowSecondaryEnabled: true,
     isConstraitsEnabled: false,
-    data: []
+    data: [],
+    editCommitedBudget: (month, channel, newBudget) => {console.log(`edited month ${month} for channel ${channel} with value ${newBudget}`)},
+    changeBudgetConstraint: (month, channelKey, isConstraint, isSoft) => {console.log(`edited month ${month} for channel ${channelKey} with value isConstraint ${isConstraint} and isSoft ${isSoft}`)}
   };
 
   constructor(props) {
@@ -224,7 +228,7 @@ export default class BudgetTable extends Component {
           lockChannel={() => this.updateBudget(key, data.channel, {lockType: 'lock'})}
           acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
           isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
-          onChange={(newValue) => this.updateBudget(key, data.channel, {primaryBudget: newValue})}
+          onChange={(newValue) => this.props.editCommitedBudget(key, data.channel, newValue)}
           isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
         />;
       })}
