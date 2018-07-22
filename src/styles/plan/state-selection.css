@@ -1,0 +1,34 @@
+.stateSelectionBox {
+    position: relative;
+    width: fit-content;
+    height: 55px;
+    background: #F0C674;
+    border-radius: 28px;
+    left: -25px; bottom: 25px;
+    padding: 2px;
+}
+
+.reaction-icon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    background: #8959A8;
+    border-radius: 20px;
+    margin: 8px -1px 0 8px;
+    text-align: center;
+}
+
+.reaction-icon:hover {
+    transform: scale(1.4);
+        transform-origin: bottom;
+}
+
+.reaction-label {
+    padding: 3px 5px 3px 5px;
+    position: relative;
+    top: -24px;
+    border-radius: 10px;
+    font-size: 11px;
+    color: #FFF;
+    background: #333;
+}

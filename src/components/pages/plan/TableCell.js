@@ -4,11 +4,12 @@ import style from 'styles/plan/annual-tab.css';
 import EditableCell from 'components/pages/plan/EditableCell';
 import planStyle from 'styles/plan/plan.css';
 import cellStyle from 'styles/plan/plan-cell.css';
+import StateSelection from 'components/pages/plan/StateSelection';
 
 const CONSTRAINT_MAPPING = {
-  NONE: {isConstraint: false, text: 'none'},
-  SOFT: {isConstraint: true, isSoft: true, text: 'soft'},
-  HARD: {isConstraint: true, isSoft: false, text: 'hard'}
+  'none': {isConstraint: false, text: 'None'},
+  'soft': {isConstraint: true, isSoft: true, text: 'Soft'},
+  'hard': {isConstraint: true, isSoft: false, text: 'Hard'}
 };
 
 export default class TableCell extends Component {
@@ -43,17 +44,13 @@ export default class TableCell extends Component {
   }
 
   getConstraint = () => {
-    return !this.props.isConstraint ? CONSTRAINT_MAPPING.NONE :
-      this.props.isSoft ? CONSTRAINT_MAPPING.SOFT : CONSTRAINT_MAPPING.HARD;
+    return !this.props.isConstraint ? 'none' :
+      this.props.isSoft ? 'soft' : 'hard';
   };
 
-  changeConstraint = () => {
-    const current = this.getConstraint();
-    const newConstraint = current === CONSTRAINT_MAPPING.NONE ? CONSTRAINT_MAPPING.SOFT
-      : current === CONSTRAINT_MAPPING.SOFT ? CONSTRAINT_MAPPING.HARD
-        : CONSTRAINT_MAPPING.NONE;
-
-    this.props.constraintChange(newConstraint.isConstraint, newConstraint.isSoft);
+  changeConstraint = (changeTo) => {
+    const typeOptions = CONSTRAINT_MAPPING[changeTo];
+    this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
   };
 
   render() {
@@ -81,9 +78,13 @@ export default class TableCell extends Component {
 
         <div hidden={!this.state.hoverCell}>
           {this.props.isConstraitsEnabled ?
-            <div onClick={this.changeConstraint}>
-              {this.getConstraint().text}
-            </div> : null}
+            <StateSelection currentConstraint={this.getConstraint()}
+                            constraintOptions={Object.keys(CONSTRAINT_MAPPING).map(key => {
+                              return {key: key, text: CONSTRAINT_MAPPING[key].text};
+                            })}
+                            changeConstraint={this.changeConstraint}
+            />
+            : null}
         </div>
         <div className={this.classes.cellItem} style={{color: this.state.hoverCell ? '#D75A4A' : '#1991eb'}}>
           {!this.state.hoverCell && showSuggestion ? '*' : ''}{this.props.primaryValue}
