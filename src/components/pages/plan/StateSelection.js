@@ -23,32 +23,52 @@ export default class StateSelection extends Component {
     };
   }
 
-  changeReaction = (text) => {
-    this.props.changeConstraint(text);
+  componentDidMount() {
+    document.addEventListener('mousedown', this.onOutsideClick, true);
+  }
 
-    this.props.changeSuggestionBoxOpen(false);
-    this.setState({
-      showBox: false
-    });
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.onOutsideClick, true);
+  }
+
+  onOutsideClick = (e) => {
+    if (this.state.showBox) {
+      if (e.target !== this.stateSelectionBox && !this.stateSelectionBox.contains(e.target)){
+        this.changeBoxShowing(false);
+      }
+    }
   };
 
-  getReactionIcon({key, text}) {
-    return <div className={this.classes.reactionIcon} onClick={() => this.changeReaction(key)}>
+  changeBoxShowing = (shouldShow) => {
+    this.props.changeSuggestionBoxOpen(shouldShow);
+    this.setState({
+      showBox: shouldShow
+    });
+  }
+
+  changeReaction = (text) => {
+    this.props.changeConstraint(text);
+    this.changeBoxShowing(false);
+  };
+
+  getReactionIcon = ({key, text}) => {
+    return <div
+      key={key}
+      className={this.classes.reactionIcon}
+      onClick={() => this.changeReaction(key)}>
+
       <label className={this.classes.reactionLabel}>{text}</label>
     </div>;
   }
 
   render() {
     return <div>
-      {this.state.showBox ? <div className={this.classes.stateSelectionBox}>
+      {this.state.showBox ? <div className={this.classes.stateSelectionBox} ref={(ref) => this.stateSelectionBox = ref}>
         {this.props.constraintOptions.map(item => {
           return this.getReactionIcon(item);
         })}
       </div> : null}
-      <div onClick={() => {
-        this.props.changeSuggestionBoxOpen(true);
-        this.setState({showBox: true})
-      }}>
+      <div onClick={() => this.changeBoxShowing(true)}>
         {this.props.currentConstraint};
       </div>
     </div>;
