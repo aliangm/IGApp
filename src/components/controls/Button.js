@@ -1,10 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
-
 import style from 'styles/controls/button.css';
+import icons from 'styles/onboarding/buttons.css';
 
 export default class Button extends Component {
+
   style = style;
+  styles = [icons];
+
   static defaultProps = {
     type: 'normal'
   };
@@ -22,17 +25,17 @@ export default class Button extends Component {
       contClassName += ' ' + this.props.contClassName;
     }
 
-    return <div className={ className.join(' ') }
-      role="button"
-      tabIndex={ 0 }
-      style={ this.props.style }
-      onClick={ this.props.onClick }
-      data-selected={ this.props.selected || null }
+    return <div className={className.join(' ')}
+                role="button"
+                tabIndex={0}
+                style={this.props.style}
+                onClick={this.props.onClick}
+                data-selected={this.props.selected || null}
     >
-      { this.props.icon ?
-        <div className={ this.classes.icon } data-icon={ this.props.icon } />
-      : null }
-      <div className={ contClassName }>{ this.props.children }</div>
-    </div>
+      {this.props.icon ?
+        <div className={this.classes.icon} data-icon={this.props.icon}/>
+        : null}
+      <div className={contClassName}>{this.props.children}</div>
+    </div>;
   }
 }

@@ -63,10 +63,11 @@ export default class Plan extends Component {
   setBudgetsData = (isPlannerPrimary = false) => {
     const budgetsData = this.props.planBudgets.map(month =>
       Object.keys(month).reduce((object, channelKey) => {
-        const {committedBudget, plannerBudget, isSoft} = month[channelKey];
+        const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
         object[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: isPlannerPrimary ? committedBudget : plannerBudget,
+          isConstraint: userBudgetConstraint,
           isSoft: isSoft
         };
         return object;
@@ -78,6 +79,42 @@ export default class Plan extends Component {
   componentWillReceiveProps(nextProps) {
     this.getRelevantEvents(nextProps);
   }
+
+  commitChanges = () => {
+    const planBudgets = this.state.budgetsData.map(month =>
+      Object.keys(month).reduce((object, channelKey) => {
+        const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
+        object[channelKey] = {
+          committedBudget: primaryBudget,
+          userBudgetConstraint: isConstraint ? budgetConstraint : null,
+          isSoft: isConstraint ? isSoft : null
+        };
+        return object;
+      }, {})
+    );
+    this.props.updateUserMonthPlan({planBudgets: planBudgets}, this.props.region, this.props.planDate);
+    this.setState({planBudgets: planBudgets});
+  };
+
+  removeChannel = channelKey => {
+
+  };
+
+  editCommittedBudget = (month, channelKey, newBudget) => {
+    const budgetsData = [...this.state.budgetsData];
+    budgetsData[month][channelKey].primaryBudget = parseInt(newBudget.toString().replace(/\D+/g, '')) || 0;
+    this.setState({budgetsData: budgetsData});
+  };
+
+  changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = null) => {
+    const budgetsData = [...this.state.budgetsData];
+    budgetsData[month][channelKey].isConstraint = isConstraint;
+    budgetsData[month][channelKey].isSoft = isSoft;
+    if (isConstraint) {
+      budgetsData[month][channelKey].budgetConstraint = this.props.planBudgets[month][channelKey].committedBudget;
+    }
+    this.setState({budgetsData: budgetsData});
+  };
 
   getRelevantEvents = props => {
     this.setState({
@@ -167,7 +204,9 @@ export default class Plan extends Component {
       (child) => React.cloneElement(child, merge({}, this.props, this.state, {
         whatIf: this.props.plan,
         setRef: this.setRef.bind(this),
-        forecastingGraphRef: this.forecastingGraphRef.bind(this)
+        forecastingGraphRef: this.forecastingGraphRef.bind(this),
+        editCommittedBudget: this.editCommittedBudget,
+        changeBudgetConstraint: this.changeBudgetConstraint
       })));
 
     const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
@@ -216,6 +255,7 @@ export default class Plan extends Component {
                           width: '102px'
                         }}
                         onClick={() => {
+                          this.commitChanges();
                           this.setState({
                             interactiveMode: false
                           });
