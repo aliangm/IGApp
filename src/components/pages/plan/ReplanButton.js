@@ -11,12 +11,13 @@ export default class NextButton extends Component {
 
   render() {
     return <div style={{display: 'flex', position: 'relative'}}>
-      <Button type="reverse2"
+      <Button type='primary'
               onClick={this.props.onClick}
               className={this.classes.planButton}
               style={{
-                width: '130px'
+                width: '160px'
               }}
+              icon='buttons:plan'
       >
         Optimize Plan ({this.props.numberOfPlanUpdates})
         {
