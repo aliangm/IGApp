@@ -19,7 +19,7 @@
     width: 22px;
     height: 22px;
 
-    background-size: 14px;
+    background-size: 22px;
     background-color: white;
     cursor: pointer;
     background-position: center center;
@@ -29,6 +29,10 @@
 .accept-suggestion {
     composes: icon;
     background: url(../../assets/plan_icons/redo.svg) center center no-repeat;
+}
+
+.buttons {
+    display: flex;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;

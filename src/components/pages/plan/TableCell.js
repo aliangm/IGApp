@@ -73,7 +73,7 @@ export default class TableCell extends Component {
   };
 
   getActionButtons = (showSuggestion) => {
-    return <div>
+    return <div className={this.classes.buttons}>
       {showSuggestion && this.showExtraInfo()
         ?
         <div onClick={() => this.props.onChange(this.props.secondaryValue)} className={this.classes.acceptSuggestion}/>
