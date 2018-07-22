@@ -65,7 +65,8 @@ export default class BudgetTable extends Component {
 
     this.state = {
       tableCollapsed: 0,
-      collapsed: {}
+      collapsed: {},
+      draggableValues: []
     };
   }
 
@@ -127,37 +128,23 @@ export default class BudgetTable extends Component {
 
   commitDrag = () => {
     let value = parseInt(this.state.draggableValue.replace(/[-$,]/g, ''));
-    let planUnknownChannels = this.props.planUnknownChannels;
-    let projectedPlan = this.props.projectedPlan;
-    let approvedBudgets = this.props.approvedBudgets;
-    this.state.draggableValues.forEach(cell => {
-      if (planUnknownChannels.length >
-        0 &&
-        planUnknownChannels[cell.i] &&
-        planUnknownChannels[cell.i][cell.channel] !==
-        undefined) {
-        planUnknownChannels[cell.i][cell.channel] = value || 0;
-      }
-      else {
-        projectedPlan[cell.i].plannedChannelBudgets[cell.channel] = value || 0;
-        if (!approvedBudgets[cell.i]) {
-          approvedBudgets[cell.i] = {};
-        }
-        approvedBudgets[cell.i][cell.channel] = value;
-      }
+
+    this.state.draggableValues.forEach(({month, channel}) => {
+      this.props.editCommitedBudget(month, channel, value);
     });
-    this.props.updateState({
-      projectedPlan: projectedPlan,
-      approvedBudgets: approvedBudgets,
-      planUnknownChannels: planUnknownChannels
+
+    this.setState({
+      draggableValues: [],
+      draggableValue: null,
+      isDragging: false
     });
-    this.setState({isDragging: false, draggableValues: []});
   };
 
-  dragEnter = (i, channel) => {
-    const update = this.state.draggableValues || [];
-    update.push({channel: channel, i: i});
-    this.setState({draggableValues: update});
+  dragEnter = (month, channel) => {
+    this.setState({
+      draggableValues: [...this.state.draggableValues,
+        {channel: channel, month: month}]
+    });
   };
 
   getRows = (data) => {
@@ -198,6 +185,10 @@ export default class BudgetTable extends Component {
           isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
           onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
           isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+          dragEnter={() => this.dragEnter(key, data.channel)}
+          commitDrag={this.commitDrag}
+          dragStart={this.dragStart}
+          isDragging={this.state.isDragging}
         />;
       })}
     </tr>;
@@ -220,6 +211,11 @@ export default class BudgetTable extends Component {
         /> : null}
       {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
         <div>
+          <div className={this.classes.editChannelNameWrapper}>
+            <div className={this.classes.editChannelName} onClick={() => {
+              this.setState({editChannelName: data.channel});
+            }}/>
+          </div>
           <div
             className={this.classes.rowDelete}
             onClick={() => this.setState({deletePopup: data.channel})}
@@ -261,25 +257,6 @@ export default class BudgetTable extends Component {
     };
     this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
     this.setState({editChannelName: ''});
-  };
-
-  editChannel = (i, channel, newValue) => {
-    let value = parseInt(newValue.replace(/[-$,]/g, '')) || 0;
-    let planUnknownChannels = this.props.planUnknownChannels || [];
-    if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
-      planUnknownChannels[i][channel] = value;
-      this.props.updateState({planUnknownChannels: planUnknownChannels});
-    }
-    else {
-      let projectedPlan = this.props.projectedPlan;
-      let approvedBudgets = this.props.approvedBudgets;
-      projectedPlan[i].plannedChannelBudgets[channel] = value;
-      if (!approvedBudgets[i]) {
-        approvedBudgets[i] = {};
-      }
-      approvedBudgets[i][channel] = value;
-      this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets});
-    }
   };
 
   handleChangeContextMenu = (event, data) => {

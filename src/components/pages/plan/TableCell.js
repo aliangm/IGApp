@@ -27,7 +27,11 @@ export default class TableCell extends Component {
     className: PropTypes.string,
     isEditMode: PropTypes.bool,
     onChange: PropTypes.func,
-    acceptSuggestion: PropTypes.func
+    acceptSuggestion: PropTypes.func,
+    dragEnter: PropTypes.func,
+    commitDrag: PropTypes.func,
+    dragStart: PropTypes.func,
+    isDragging: PropTypes.bool
   };
 
   constructor(props) {
@@ -50,7 +54,7 @@ export default class TableCell extends Component {
         : CONSTRAINT_MAPPING.NONE;
 
     this.props.constraintChange(newConstraint.isConstraint, newConstraint.isSoft);
-  }
+  };
 
   render() {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
@@ -59,6 +63,10 @@ export default class TableCell extends Component {
       <td className={this.classes.valueCell} key={this.props.key}>
         <EditableCell value={this.props.primaryValue}
                       onChange={this.props.onChange}
+                      drop={this.props.commitDrag}
+                      dragStart={this.props.dragStart}
+                      dragEnter={this.props.dragEnter}
+                      isDragging={this.props.isDragging}
         />
       </td>
       : <td className={this.classes.valueCell}
