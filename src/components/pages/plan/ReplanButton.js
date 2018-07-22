@@ -18,7 +18,7 @@ export default class NextButton extends Component {
                 width: '130px'
               }}
       >
-        Update Plan ({this.props.numberOfPlanUpdates})
+        Optimize Plan ({this.props.numberOfPlanUpdates})
         {
           this.props.planNeedsUpdate ?
             <div className={planStyle.locals.planCircle}/>
