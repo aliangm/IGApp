@@ -9,7 +9,8 @@ export default class StateSelection extends Component {
   static propTypes = {
     currentConstraint: PropTypes.string.isRequired,
     changeConstraint: PropTypes.func.isRequired,
-    constraintOptions: PropTypes.arrayOf(PropTypes.object).isRequired
+    constraintOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+    changeSuggestionBoxOpen: PropTypes.func
   };
 
   static defaultProps = {};
@@ -24,6 +25,8 @@ export default class StateSelection extends Component {
 
   changeReaction = (text) => {
     this.props.changeConstraint(text);
+
+    this.props.changeSuggestionBoxOpen(false);
     this.setState({
       showBox: false
     });
@@ -42,7 +45,10 @@ export default class StateSelection extends Component {
           return this.getReactionIcon(item);
         })}
       </div> : null}
-      <div onClick={() => this.setState({showBox: true})}>
+      <div onClick={() => {
+        this.props.changeSuggestionBoxOpen(true);
+        this.setState({showBox: true})
+      }}>
         {this.props.currentConstraint};
       </div>
     </div>;

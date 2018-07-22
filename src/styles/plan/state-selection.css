@@ -1,11 +1,13 @@
 .stateSelectionBox {
-    position: relative;
+    position: absolute;
     width: fit-content;
     height: 55px;
     background: #F0C674;
     border-radius: 28px;
-    left: -25px; bottom: 25px;
+    left: -25px;
+    top: -50px;
     padding: 2px;
+    z-index: 11;
 }
 
 .reaction-icon {

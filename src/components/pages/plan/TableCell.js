@@ -39,6 +39,7 @@ export default class TableCell extends Component {
     super(props);
 
     this.state = {
+      suggestionBoxOpen: false,
       hoverCell: false
     };
   }
@@ -52,6 +53,14 @@ export default class TableCell extends Component {
     const typeOptions = CONSTRAINT_MAPPING[changeTo];
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
   };
+
+  changeSuggestionBoxOpen = (isOpen) => {
+    this.setState({suggestionBoxOpen: isOpen});
+  }
+
+  showExtraInfo = () => {
+    return this.state.hoverCell || this.state.suggestionBoxOpen;
+  }
 
   render() {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
@@ -76,21 +85,22 @@ export default class TableCell extends Component {
             style={this.props.style}
             key={this.props.key}>
 
-        <div hidden={!this.state.hoverCell}>
+        <div hidden={!this.showExtraInfo()}>
           {this.props.isConstraitsEnabled ?
             <StateSelection currentConstraint={this.getConstraint()}
                             constraintOptions={Object.keys(CONSTRAINT_MAPPING).map(key => {
                               return {key: key, text: CONSTRAINT_MAPPING[key].text};
                             })}
                             changeConstraint={this.changeConstraint}
+                            changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
             />
             : null}
         </div>
-        <div className={this.classes.cellItem} style={{color: this.state.hoverCell ? '#D75A4A' : '#1991eb'}}>
-          {!this.state.hoverCell && showSuggestion ? '*' : ''}{this.props.primaryValue}
+        <div className={this.classes.cellItem} style={{color: this.showExtraInfo() ? '#D75A4A' : '#1991eb'}}>
+          {!this.showExtraInfo() && showSuggestion ? '*' : ''}{this.props.primaryValue}
           {showSuggestion ?
             <div>
-              <div hidden={!this.state.hoverCell} className={cellStyle.locals.budget} style={{color: '#25AE88'}}>
+              <div hidden={!this.showExtraInfo()} className={cellStyle.locals.budget} style={{color: '#25AE88'}}>
                 ({this.props.secondaryValue})
               </div>
               <div className={planStyle.locals.right}>
