@@ -1,0 +1,14 @@
+.value-cell {
+    height: 14px;
+}
+
+.secondary-value {
+    font-size: 10px;
+    font-weight: 500;
+    color: #b2bbd5;
+}
+
+.cell-item {
+    align-items: center;
+    display: flex;
+}

@@ -1,10 +1,11 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
-import style from 'styles/plan/annual-tab.css';
+import style from 'styles/plan/table-cell.css';
 import EditableCell from 'components/pages/plan/EditableCell';
 import planStyle from 'styles/plan/plan.css';
 import cellStyle from 'styles/plan/plan-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
+import { formatBudget } from 'components/utils/budget';
 
 const CONSTRAINT_MAPPING = {
   'none': {isConstraint: false, text: 'None'},
@@ -32,7 +33,8 @@ export default class TableCell extends Component {
     dragEnter: PropTypes.func,
     commitDrag: PropTypes.func,
     dragStart: PropTypes.func,
-    isDragging: PropTypes.bool
+    isDragging: PropTypes.bool,
+    style: PropTypes.object
   };
 
   constructor(props) {
@@ -66,7 +68,7 @@ export default class TableCell extends Component {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
 
     return this.props.isEditMode ?
-      <td className={this.classes.valueCell} key={this.props.key}>
+      <td className={this.classes.valueCell} key={this.props.key} style={this.props.style}>
         <EditableCell value={this.props.primaryValue}
                       onChange={this.props.onChange}
                       drop={this.props.commitDrag}
@@ -96,17 +98,17 @@ export default class TableCell extends Component {
             />
             : null}
         </div>
-        <div className={this.classes.cellItem} style={{color: this.showExtraInfo() ? '#D75A4A' : '#1991eb'}}>
-          {!this.showExtraInfo() && showSuggestion ? '*' : ''}{this.props.primaryValue}
-          {showSuggestion ?
-            <div>
-              <div hidden={!this.showExtraInfo()} className={cellStyle.locals.budget} style={{color: '#25AE88'}}>
-                ({this.props.secondaryValue})
-              </div>
-              <div className={planStyle.locals.right}>
-                <div className={cellStyle.locals.accept} onClick={this.props.acceptSuggestion}/>
-              </div>
-            </div> : null}
+        <div className={this.classes.cellItem}>
+          <div>
+            ${formatBudget(this.props.primaryValue)}
+            {showSuggestion && this.showExtraInfo() ?
+              <div className={this.classes.secondaryValue}>
+                ${formatBudget(this.props.secondaryValue)}
+              </div> : null}
+          </div>
+          <div className={planStyle.locals.right}>
+            <div className={cellStyle.locals.accept} onClick={this.props.acceptSuggestion}/>
+          </div>
         </div>
       </td>;
   }

@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
-import style from 'styles/plan/annual-tab.css';
+import style from 'styles/plan/budget-table.css';
 import {parseBudgets} from 'data/parseAnnualPlan';
 import {formatBudget} from 'components/utils/budget';
 import TableCell from 'components/pages/plan/TableCell';
@@ -117,7 +117,7 @@ export default class BudgetTable extends Component {
           </Popup>
         </div>
         :
-        <TableCell key={`head:${index}`} primaryValue={month}/>;
+        <td key={`head:${index}`} primaryValue={month}>{month}</td>;
     });
     return headers;
   };
@@ -164,7 +164,7 @@ export default class BudgetTable extends Component {
   getTableRow = (data, rowType) => {
     const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
-    return <tr key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+    return <tr className={this.classes.tableRow} key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
       {this.getTitleCell(rowType, data)}
 
       {data.values.map((monthData, key) => {
@@ -189,60 +189,64 @@ export default class BudgetTable extends Component {
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
           isDragging={this.state.isDragging}
+          style={rowType === ROW_TYPE.CATEGORY ? {'border-bottom': '1px solid rgba(106, 154, 230, 0.19)'} : null}
         />;
       })}
     </tr>;
   };
 
   getTitleCell = (rowType, data) => {
-    return <div className={this.classes.rowTitle}>
-      {rowType === ROW_TYPE.CATEGORY ?
-        <div
-          className={this.classes.rowArrow}
-          data-collapsed={this.state.collapsed[data.channel] ? true : null}
-          onClick={() => {
-            this.setState({
-              collapsed: {
-                ...this.state.collapsed,
-                [data.channel]: !this.state.collapsed[data.channel]
-              }
-            });
-          }}
-        /> : null}
-      {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
-        <div>
-          <div className={this.classes.editChannelNameWrapper}>
-            <div className={this.classes.editChannelName} onClick={() => {
-              this.setState({editChannelName: data.channel});
-            }}/>
-          </div>
+    return <td className={this.classes.titleCell} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+      <div className={this.classes.rowTitle}>
+        {rowType === ROW_TYPE.CATEGORY ?
           <div
-            className={this.classes.rowDelete}
-            onClick={() => this.setState({deletePopup: data.channel})}
-          />
-          <Popup hidden={data.channel !== this.state.deletePopup}
-                 style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-            <DeleteChannelPopup
-              onNext={() => {
-                this.props.deleteChannel(data.channel);
-                this.setState({deletePopup: ''});
-              }}
-              onBack={() => this.setState({deletePopup: ''})}
+            className={this.classes.rowArrowWrap}
+            data-collapsed={this.state.collapsed[data.channel] ? true : null}
+            onClick={() => {
+              this.setState({
+                collapsed: {
+                  ...this.state.collapsed,
+                  [data.channel]: !this.state.collapsed[data.channel]
+                }
+              });
+            }}>
+            <div className={this.classes.rowArrow}/>
+          </div> : null}
+        {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
+          <div>
+            <div className={this.classes.editChannelNameWrapper}>
+              <div className={this.classes.editChannelName} onClick={() => {
+                this.setState({editChannelName: data.channel});
+              }}/>
+            </div>
+            <div
+              className={this.classes.rowDelete}
+              onClick={() => this.setState({deletePopup: data.channel})}
             />
-          </Popup>
-          <Popup hidden={data.channel !== this.state.editChannelName}
-                 style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-            <EditChannelNamePopup
-              channel={this.state.editChannelName}
-              onNext={this.editChannelName}
-              onBack={() => this.setState({editChannelName: ''})}
-            />
-          </Popup>
-        </div>
-        : null}
-      <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
-      <TableCell primaryValue={data.nickname}/>
-    </div>;
+            <Popup hidden={data.channel !== this.state.deletePopup}
+                   style={{top: '-72px', left: '130px', cursor: 'initial'}}>
+              <DeleteChannelPopup
+                onNext={() => {
+                  this.props.deleteChannel(data.channel);
+                  this.setState({deletePopup: ''});
+                }}
+                onBack={() => this.setState({deletePopup: ''})}
+              />
+            </Popup>
+            <Popup hidden={data.channel !== this.state.editChannelName}
+                   style={{top: '-72px', left: '130px', cursor: 'initial'}}>
+              <EditChannelNamePopup
+                channel={this.state.editChannelName}
+                onNext={this.editChannelName}
+                onBack={() => this.setState({editChannelName: ''})}
+              />
+            </Popup>
+          </div>
+          : null}
+        <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
+        {data.nickname}
+      </div>
+    </td>;
   };
 
   editChannelName = (longName, shortName, category, channel) => {
@@ -328,22 +332,24 @@ export default class BudgetTable extends Component {
 
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
-      <td className={this.classes.titleCell} ref={this.props.firstColumnCell}>
-        <div className={this.classes.headTitleCell}>
-          <div
-            style={{borderColor: '#329ff1 transparent transparent transparent'}}
-            className={this.classes.rowArrow}
-            data-collapsed={this.state.tableCollapsed || null}
-            onClick={() => {
-              this.setState({
-                tableCollapsed: ++this.state.tableCollapsed % 3
-              });
-              this.forceUpdate();
-            }}
-          />
-          {'Marketing Channel'}
+      <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
+        <div
+          style={{borderColor: '#329ff1 transparent transparent transparent'}}
+          className={this.classes.rowArrowWrap}
+          data-collapsed={this.state.tableCollapsed || null}
+          data-headline
+          onClick={() => {
+            this.setState({
+              tableCollapsed: ++this.state.tableCollapsed % 3
+            });
+            this.forceUpdate();
+          }}>
+          <div className={this.classes.rowArrow} data-headline/>
         </div>
-      </td>
+        <td>
+          {'Marketing Channel'}
+        </td>
+      </div>
       {this.getMonthHeaders()}
     </tr>;
   };
