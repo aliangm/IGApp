@@ -44,4 +44,4 @@
 @mixin icon-nodpi plan:lock, ../../assets/plan_icons/lock;
 @mixin icon-nodpi plan:acceptSuggestion , ../../assets/plan_icons/redo;
 @mixin icon-nodpi plan:edit , ../../assets/plan_icons/edit-per-cell;
-@mixin icon-nodpi plan:approveEdit , ../../assets/success;
+@mixin icon-nodpi plan:approveEdit , ../../assets/plan_icons/accept;
