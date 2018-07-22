@@ -1,136 +1,153 @@
 .box {
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 4px;
-  user-select: none;
-  flex-shrink: 0;
-  flex-grow: 0;
-  text-transform: capitalize;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    user-select: none;
+    flex-shrink: 0;
+    flex-grow: 0;
+    text-transform: capitalize;
 }
 
 .cont {
-  height: 36px;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 7px;
+    height: 36px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 7px;
+    white-space: nowrap;
 }
 
 .icon {
-  height: 16px;
-  width: 16px;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  flex-shrink: 0;
-  flex-grow: 0;
+    height: 16px;
+    width: 16px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 @define-mixin selected {
-  box-shadow: 0 0 0 1px #5893be;
-  background: linear-gradient(to bottom, #ffffff 0%, #dfe3e7 100%);
+    box-shadow: 0 0 0 1px #5893be;
+    background: linear-gradient(to bottom, #ffffff 0%, #dfe3e7 100%);
 }
 
 .pure {
-  composes: box;
+    composes: box;
 }
 
 .normal {
-  composes: box;
+    composes: box;
 
-  box-shadow: 0 0 0 1px #ced0da;
-  background: linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%);
-  color: #354052;
+    box-shadow: 0 0 0 1px #ced0da;
+    background: linear-gradient(to bottom, #ffffff 0%, #f1f3f7 100%);
+    color: #354052;
 }
 
 .normal[data-selected] {
-  @mixin selected;
+@mixin selected;
 }
 
 .normal-accent {
-  composes: normal;
+    composes: normal;
 
-  color: #1165a3;
+    color: #1165a3;
 }
 
 .normal-accent[data-selected] {
-  @mixin selected;
+@mixin selected;
 }
 
 .accent {
-  composes: box;
+    composes: box;
 
-  color: white;
-  box-shadow: 0 0 0 1px #249533;
-  background: linear-gradient(to bottom, #39b54a 0%, #33aa44 100%);
+    color: white;
+    box-shadow: 0 0 0 1px #249533;
+    background: linear-gradient(to bottom, #39b54a 0%, #33aa44 100%);
 }
 
 .uppercase {
-  text-transform: uppercase;
-  letter-spacing: 0.075;
+    text-transform: uppercase;
+    letter-spacing: 0.075;
 }
 
 .primary {
-  composes: box;
-  color: white;
-  background-color: #4d91fc;
-  box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
+    composes: box;
+    color: white;
+    background-color: #4d91fc;
+    box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
 }
 
 .primary[data-selected] {
-  background-color: #3168c1;
+    background-color: #3168c1;
 }
 
 .primary:hover {
-  background-color: #3e7de3;
-  box-shadow: 0 6px 6px 0 rgba(27, 35, 56, 0.08);
+    background-color: #3e7de3;
+    box-shadow: 0 6px 6px 0 rgba(27, 35, 56, 0.08);
+}
+
+.secondary {
+    composes: box;
+    color: #99a4c2;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
+}
+
+.secondary[data-selected] {
+    background-color: #fcfdff;
+    box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
+}
+
+.secondary:hover {
+    box-shadow: 0 6px 6px 0 rgba(27, 35, 56, 0.04);
 }
 
 .primary2 {
-  composes: box;
-  color: white;
-  background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
+    composes: box;
+    color: white;
+    background: linear-gradient(to top, #1991eb 0%, #2ea1f8 100%);
 }
 
 .reverse {
-  composes: box;
-  box-shadow: inset 0 0 0 2px #2ea1f8;
-  color: #2ea1f8;
-  background: white;
+    composes: box;
+    box-shadow: inset 0 0 0 2px #2ea1f8;
+    color: #2ea1f8;
+    background: white;
 }
 
 .reverse2 {
-  composes: box;
-  box-shadow: inset 0 0 0 2px #249533;
-  color: #33aa44;
-  background: #f5f6fb;
+    composes: box;
+    box-shadow: inset 0 0 0 2px #249533;
+    color: #33aa44;
+    background: #f5f6fb;
 }
 
 .warning {
-  composes: box;
-  box-shadow: inset 0 0 0 2px #C82831;
-  color: #C82831;
-  background: white;
+    composes: box;
+    box-shadow: inset 0 0 0 2px #C82831;
+    color: #C82831;
+    background: white;
 }
 
 .primary2[data-selected] {
-  background: #0e568b;
+    background: #0e568b;
 }
 
 .accent2 {
-  composes: box;
-  color: white;
-  letter-spacing: 0.075;
-  background: linear-gradient(to top, #24b00d 0%, #27b210 100%);
+    composes: box;
+    color: white;
+    letter-spacing: 0.075;
+    background: linear-gradient(to top, #24b00d 0%, #27b210 100%);
 }
 
 .normal-accent2 {
-  composes: normal;
-  color: #24b10e;
+    composes: normal;
+    color: #24b10e;
 }

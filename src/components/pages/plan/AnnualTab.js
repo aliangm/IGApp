@@ -64,7 +64,7 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {budgetsData, planDate, annualBudget, calculatedData: {annualBudgetLeftToPlan}, editMode, interactiveMode} = this.props;
+    const {budgetsData, planDate, editMode, interactiveMode} = this.props;
 
     const currentSuggested = {};
     const dates = getDates(planDate);
@@ -105,34 +105,6 @@ export default class AnnualTab extends Component {
 
     return <div>
       <div className={this.classes.wrap}>
-        <div className={planStyles.locals.title} style={{padding: '0'}}>
-          <div className={planStyles.locals.titleMain}>
-            <div className={planStyles.locals.titleText}>
-              Annual Budget
-            </div>
-            <div className={planStyles.locals.titlePrice} ref="budgetRef"
-                 style={{color: this.state.isTemp ? '#1991eb' : 'Inherit'}}>
-              ${(Math.ceil(annualBudget / 1000) * 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{this.state.isTemp
-              ? '*'
-              : ''}
-            </div>
-          </div>
-        </div>
-        <div className={planStyles.locals.title} style={{padding: '0', height: '35px'}}>
-          <div className={planStyles.locals.titleMain}>
-            <div className={this.classes.titleBudget}>
-              Budget left to plan
-            </div>
-            <div className={this.classes.titleArrow}
-                 style={{color: annualBudgetLeftToPlan >= 0 ? '#2ecc71' : '#ce352d'}}>
-              {
-                Math.abs(annualBudgetLeftToPlan) >= 100 ?
-                  '$' + annualBudgetLeftToPlan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  : <div className={planStyles.locals.budgetLeftToPlanOk}/>
-              }
-            </div>
-          </div>
-        </div>
         <div className={this.classes.innerBox}>
           <BudgetTable isEditMode={editMode}
                        isShowSecondaryEnabled={interactiveMode}

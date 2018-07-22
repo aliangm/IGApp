@@ -16,6 +16,7 @@ import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
+import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 
 export default class Plan extends Component {
 
@@ -188,6 +189,7 @@ export default class Plan extends Component {
 
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
+    const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = merge([],
       Object.keys(this.props.approvedBudgets.reduce((object, item) => {
@@ -216,8 +218,8 @@ export default class Plan extends Component {
       <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
             width="100%">
         <div className={this.classes.head}>
-          <div className={this.classes.headTitle}>Plan</div>
-          <div className={this.classes.headPlan}>
+          <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
+            <div className={this.classes.headTitle}>Plan</div>
             {annualTabActive && interactiveMode ?
               <FeatureToggle featureName="plannerAI">
                 <div style={{display: 'flex'}}>
@@ -238,118 +240,138 @@ export default class Plan extends Component {
               </FeatureToggle>
               : null
             }
-            {annualTabActive ?
-              <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
-                const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
-                if (domElement) {
-                  domElement.scrollIntoView({});
-                }
-              }}/>
-              : null
-            }
-            {annualTabActive ?
-              interactiveMode ?
-                <Button type="primary"
-                        style={{
-                          marginLeft: '15px',
-                          width: '102px'
-                        }}
-                        onClick={() => {
-                          this.commitChanges();
-                          this.setState({
-                            interactiveMode: false
-                          });
-                        }}>
-                  Commit
-                </Button>
-                :
-                <div>
+          </div>
+          <div className={this.classes.column} style={{justifyContent: 'center'}}>
+            <BudgetLeftToPlan annualBudget={annualBudget} annualBudgetLeftToPlan={annualBudgetLeftToPlan}/>
+          </div>
+          <div className={this.classes.column} style={{justifyContent: 'flex-end'}}>
+            <div className={this.classes.headPlan}>
+              {annualTabActive ?
+                <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
+                  const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
+                  if (domElement) {
+                    domElement.scrollIntoView({});
+                  }
+                }}/>
+                : null
+              }
+              {annualTabActive ?
+                interactiveMode ?
+                  <div style={{display: 'flex'}}>
+                    <Button type="secondary"
+                            style={{
+                              marginLeft: '15px',
+                              width: '102px'
+                            }}
+                            onClick={() => {
+                              this.setState({interactiveMode: false});
+                              this.setBudgetsData();
+                            }}>
+                      Cancel
+                    </Button>
+                    <Button type="secondary"
+                            style={{
+                              marginLeft: '15px',
+                              width: '102px'
+                            }}
+                            onClick={() => {
+                              this.commitChanges();
+                              this.setState({
+                                interactiveMode: false
+                              });
+                            }}>
+                      Commit
+                    </Button>
+                  </div>
+                  :
+                  <div>
+                    <Button type="primary"
+                            style={{
+                              marginLeft: '15px',
+                              width: '102px'
+                            }}
+                            selected={showNewScenarioPopup ? true : null}
+                            onClick={() => {
+                              this.setState({
+                                showNewScenarioPopup: true
+                              });
+                            }}>
+                      New Scenario
+                    </Button>
+                    <NewScenarioPopup hidden={!showNewScenarioPopup}
+                                      onCommittedClick={() => {
+                                        this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                      }}
+                                      onScratchClick={() => {
+                                        this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                        this.props.plan(true, false, (data) => {
+                                          this.props.setDataAsState(data);
+                                          this.setBudgetsData(true);
+                                        }, this.props.region, false);
+                                      }}/>
+                  </div>
+                : null
+              }
+              {annualTabActive ?
+                <div style={{position: 'relative'}}>
                   <Button type="primary"
                           style={{
                             marginLeft: '15px',
                             width: '102px'
                           }}
-                          selected={showNewScenarioPopup ? true : null}
+                          selected={editMode ? true : null}
                           onClick={() => {
+                            if (editMode) {
+                              this.editUpdate()
+                                .then(() => {
+                                  this.props.forecast();
+                                  if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
+                                    this.props.updateUserAccount({'steps.plan': true});
+                                  }
+                                });
+                            }
                             this.setState({
-                              showNewScenarioPopup: true
+                              editMode: !editMode
                             });
-                          }}>
-                    New Scenario
+                          }}
+                          icon={editMode ? 'buttons:plan' : 'buttons:edit'}>
+                    {editMode ? (interactiveMode ? 'Done' : 'Commit') : 'Edit'}
                   </Button>
-                  <NewScenarioPopup hidden={!showNewScenarioPopup}
-                                    onCommittedClick={() => {
-                                      this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                    }}
-                                    onScratchClick={() => {
-                                      this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                      this.props.plan(true, false, (data) => {
-                                        this.props.setDataAsState(data);
-                                        this.setBudgetsData(true);
-                                      }, this.props.region, false);
-                                    }}/>
+                  <Popup
+                    className={this.classes.dropmenuEdit}
+                    hidden={!editMode}
+                  >
+                    <div>
+                      <div className={this.classes.dropmenuItemAdd}
+                           onClick={() => {
+                             this.setState({addChannelPopup: true});
+                           }}>
+                        Add Channel
+                      </div>
+                      <div className={this.classes.dropmenuItemCancel}
+                           onClick={() => {
+                             this.setState({editMode: false});
+                             this.props.getUserMonthPlan(this.props.region);
+                           }}>
+                        Cancel
+                      </div>
+                    </div>
+                  </Popup>
+                  <AddChannelPopup
+                    hidden={!addChannelPopup}
+                    onChannelChoose={this.addChannel}
+                    channels={output()}
+                    planChannels={planChannels.map(item => {
+                      return {id: item};
+                    })}
+                    close={() => {
+                      this.setState({addChannelPopup: false});
+                    }}
+                    addUnknownChannel={this.addUnknownChannel}
+                  />
                 </div>
-              : null
-            }
-            {annualTabActive ?
-              <div style={{position: 'relative'}}>
-                <Button type="primary"
-                        style={{
-                          marginLeft: '15px',
-                          width: '102px'
-                        }}
-                        selected={editMode ? true : null}
-                        onClick={() => {
-                          if (editMode) {
-                            this.editUpdate()
-                              .then(() => {
-                                this.props.forecast();
-                                if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
-                                  this.props.updateUserAccount({'steps.plan': true});
-                                }
-                              });
-                          }
-                          this.setState({
-                            editMode: !editMode
-                          });
-                        }}
-                        icon={editMode ? 'buttons:plan' : 'buttons:edit'}>
-                  {editMode ? (interactiveMode ? 'Done' : 'Commit') : 'Edit'}
-                </Button>
-                <Popup
-                  className={this.classes.dropmenuEdit}
-                  hidden={!editMode}
-                >
-                  <div>
-                    <div className={this.classes.dropmenuItemAdd}
-                         onClick={() => {
-                           this.setState({addChannelPopup: true});
-                         }}>
-                      Add Channel
-                    </div>
-                    <div className={this.classes.dropmenuItemCancel}
-                         onClick={() => {
-                           this.setState({editMode: false});
-                           this.props.getUserMonthPlan(this.props.region);
-                         }}>
-                      Cancel
-                    </div>
-                  </div>
-                </Popup>
-                <AddChannelPopup
-                  hidden={!addChannelPopup}
-                  onChannelChoose={this.addChannel}
-                  channels={output()}
-                  planChannels={planChannels.map(item => {
-                    return {id: item};
-                  })}
-                  close={() => {
-                    this.setState({addChannelPopup: false});
-                  }}
-                  addUnknownChannel={this.addUnknownChannel}
-                />
-              </div>
-              : null}
+                : null}
+            </div>
           </div>
         </div>
         {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
