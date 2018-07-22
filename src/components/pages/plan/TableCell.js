@@ -3,20 +3,19 @@ import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import EditableCell from 'components/pages/plan/EditableCell';
 import planStyle from 'styles/plan/plan.css';
-import cellStyle from 'styles/plan/plan-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
 import {formatBudget} from 'components/utils/budget';
 
 const CONSTRAINT_MAPPING = {
-  'none': {isConstraint: false, text: 'None'},
-  'soft': {isConstraint: true, isSoft: true, text: 'Soft'},
-  'hard': {isConstraint: true, isSoft: false, text: 'Hard'}
+  'none': {isConstraint: false, text: 'None', icon: 'plan:none'},
+  'soft': {isConstraint: true, isSoft: true, text: 'Soft', icon: 'plan:like'},
+  'hard': {isConstraint: true, isSoft: false, text: 'Hard', icon: 'plan:lock'}
 };
 
 export default class TableCell extends Component {
 
   style = style;
-  styles = [cellStyle, planStyle];
+  styles = [planStyle];
 
   static propTypes = {
     primaryValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
@@ -63,6 +62,16 @@ export default class TableCell extends Component {
     return this.state.hoverCell || this.state.suggestionBoxOpen;
   };
 
+  getConstraintsDisplayInfo = () => {
+    const displayInfo = {};
+
+    Object.keys(CONSTRAINT_MAPPING).forEach(key => {
+      displayInfo[key] = {...CONSTRAINT_MAPPING[key], isConstraint: undefined, isSoft: undefined}
+    });
+
+    return displayInfo;
+  };
+
   getActionButtons = (showSuggestion) => {
     return <div>
       {showSuggestion && this.showExtraInfo()
@@ -71,9 +80,7 @@ export default class TableCell extends Component {
         : null}
       {this.props.isConstraitsEnabled ?
         <StateSelection currentConstraint={this.getConstraint()}
-                        constraintOptions={Object.keys(CONSTRAINT_MAPPING).map(key => {
-                          return {key: key, text: CONSTRAINT_MAPPING[key].text};
-                        })}
+                        constraintOptions={this.getConstraintsDisplayInfo()}
                         changeConstraint={this.changeConstraint}
                         changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
         />

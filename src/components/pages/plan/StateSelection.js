@@ -1,13 +1,15 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/state-selection.css';
+import cellStyle from 'styles/plan/table-cell.css';
 
 export default class StateSelection extends Component {
 
   style = style;
+  styles = [cellStyle];
 
   static propTypes = {
-    currentConstraint: PropTypes.string.isRequired,
+    currentConstraint: PropTypes.object.isRequired,
     changeConstraint: PropTypes.func.isRequired,
     constraintOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
     changeSuggestionBoxOpen: PropTypes.func
@@ -33,7 +35,7 @@ export default class StateSelection extends Component {
 
   onOutsideClick = (e) => {
     if (this.state.showBox) {
-      if (e.target !== this.stateSelectionBox && !this.stateSelectionBox.contains(e.target)){
+      if (e.target !== this.stateSelectionBox && !this.stateSelectionBox.contains(e.target)) {
         this.changeBoxShowing(false);
       }
     }
@@ -44,10 +46,10 @@ export default class StateSelection extends Component {
     this.setState({
       showBox: shouldShow
     });
-  }
+  };
 
-  changeReaction = (text) => {
-    this.props.changeConstraint(text);
+  changeReaction = (key) => {
+    this.props.changeConstraint(key);
     this.changeBoxShowing(false);
   };
 
@@ -59,18 +61,18 @@ export default class StateSelection extends Component {
 
       <label className={this.classes.reactionLabel}>{text}</label>
     </div>;
-  }
+  };
 
   render() {
     return <div>
       {this.state.showBox ? <div className={this.classes.stateSelectionBox} ref={(ref) => this.stateSelectionBox = ref}>
-        {this.props.constraintOptions.map(item => {
-          return this.getReactionIcon(item);
+        {Object.keys(this.props.constraintOptions).map(key => {
+          return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
         })}
       </div> : null}
-      <div onClick={() => this.changeBoxShowing(true)}>
-        {this.props.currentConstraint};
-      </div>
+      <div className={cellStyle.locals.icon}
+           onClick={() => this.changeBoxShowing(true)}
+           data-icon={this.props.constraintOptions[this.props.currentConstraint].icon}/>
     </div>;
   }
 }

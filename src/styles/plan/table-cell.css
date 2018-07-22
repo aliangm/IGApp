@@ -1,3 +1,5 @@
+@import "../global/mixins.css";
+
 .value-cell {
     height: 14px;
 }
@@ -17,13 +19,18 @@
     width: 22px;
     height: 22px;
 
-    background-size: 10px;
-    background-color: gray;
+    background-size: 14px;
+    background-color: white;
     cursor: pointer;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .accept-suggestion {
     composes: icon;
-    background-size: 14px;
     background: url(../../assets/plan_icons/redo.svg) center center no-repeat;
 }
+
+@mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;
+@mixin icon-nodpi plan:like, ../../assets/plan_icons/like;
+@mixin icon-nodpi plan:lock, ../../assets/plan_icons/lock;
