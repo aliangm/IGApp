@@ -40,7 +40,8 @@ export default class TableCell extends Component {
 
     this.state = {
       suggestionBoxOpen: false,
-      hoverCell: false
+      hoverCell: false,
+      isEditing: false
     };
   }
 
@@ -66,7 +67,7 @@ export default class TableCell extends Component {
     const displayInfo = {};
 
     Object.keys(CONSTRAINT_MAPPING).forEach(key => {
-      displayInfo[key] = {...CONSTRAINT_MAPPING[key], isConstraint: undefined, isSoft: undefined}
+      displayInfo[key] = {...CONSTRAINT_MAPPING[key], isConstraint: undefined, isSoft: undefined};
     });
 
     return displayInfo;
@@ -74,9 +75,15 @@ export default class TableCell extends Component {
 
   getActionButtons = (showSuggestion) => {
     return <div className={this.classes.buttons}>
+      {this.state.isEditing ?
+        <div className={this.classes.icon}
+             data-icon="plan:approveEdit"
+             onClick={this.finishEdit} /> : null}
       {showSuggestion && this.showExtraInfo()
         ?
-        <div onClick={() => this.props.onChange(this.props.secondaryValue)} className={this.classes.acceptSuggestion}/>
+        <div onClick={() => this.props.onChange(this.props.secondaryValue)}
+             className={this.classes.icon}
+             data-icon='plan:acceptSuggestion'/>
         : null}
       {this.props.isConstraitsEnabled ?
         <StateSelection currentConstraint={this.getConstraint()}
@@ -85,41 +92,48 @@ export default class TableCell extends Component {
                         changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
         />
         : null}
+      {this.showExtraInfo() && !this.state.isEditing ? <div onClick={() => this.setState({isEditing: true, editValue: this.props.primaryValue})}
+                                   className={this.classes.icon}
+                                   data-icon="plan:edit"/> : null}
     </div>;
+  };
+
+  finishEdit = () => {
+    this.props.onChange(this.state.editValue);
+
+    this.setState({editValue: null, isEditing: false});
+  }
+
+  onInputValueChange = (e) => {
+    this.setState({editValue: e.target.value});
   };
 
   render() {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
-
-    return this.props.isEditMode ?
-      <td className={this.classes.valueCell} key={this.props.key} style={this.props.style}>
-        <EditableCell value={this.props.primaryValue}
-                      onChange={this.props.onChange}
-                      drop={this.props.commitDrag}
-                      dragStart={this.props.dragStart}
-                      dragEnter={this.props.dragEnter}
-                      isDragging={this.props.isDragging}
-        />
-      </td>
-      : <td className={this.classes.valueCell}
-            onMouseEnter={() => {
-              this.setState({hoverCell: true});
-            }}
-            onMouseLeave={() => {
-              this.setState({hoverCell: false});
-            }}
-            style={this.props.style}
-            key={this.props.key}>
-        <div className={this.classes.cellItem}>
-          <div>
-            ${formatBudget(this.props.primaryValue)}
-            {showSuggestion && this.showExtraInfo() ?
-              <div className={this.classes.secondaryValue}>
-                ${formatBudget(this.props.secondaryValue)}
-              </div> : null}
-          </div>
-          {this.getActionButtons(showSuggestion)}
+    return <td className={this.classes.valueCell}
+               onMouseEnter={() => {
+                 this.setState({hoverCell: true});
+               }}
+               onMouseLeave={() => {
+                 this.setState({hoverCell: false});
+               }}
+               style={this.props.style}
+               key={this.props.key}>
+      <div className={this.classes.cellItem}>
+        <div>
+          {this.props.isEditMode || this.state.isEditing ?
+            <input className={this.classes.editCell}
+                   type="text"
+                   value={this.state.editValue}
+                   onChange={this.onInputValueChange}/>
+            : <div>${formatBudget(this.props.primaryValue)}</div>}
+          {showSuggestion && this.showExtraInfo() ?
+            <div className={this.classes.secondaryValue}>
+              ${formatBudget(this.props.secondaryValue)}
+            </div> : null}
         </div>
-      </td>;
+        {this.getActionButtons(showSuggestion)}
+      </div>
+    </td>;
   }
-}
+};

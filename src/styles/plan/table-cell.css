@@ -26,15 +26,22 @@
     background-repeat: no-repeat;
 }
 
-.accept-suggestion {
-    composes: icon;
-    background: url(../../assets/plan_icons/redo.svg) center center no-repeat;
-}
-
 .buttons {
     display: flex;
+}
+
+.edit-cell {
+    width: 74px;
+    border-radius: 3px;
+    box-shadow: 0 0 3px 0 #e6e8f0;
+    border: solid 1px #e6e8f0;
+    color: inherit;
+    padding: 3px;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;
 @mixin icon-nodpi plan:like, ../../assets/plan_icons/like;
 @mixin icon-nodpi plan:lock, ../../assets/plan_icons/lock;
+@mixin icon-nodpi plan:acceptSuggestion , ../../assets/plan_icons/redo;
+@mixin icon-nodpi plan:edit , ../../assets/plan_icons/edit-per-cell;
+@mixin icon-nodpi plan:approveEdit , ../../assets/success;
