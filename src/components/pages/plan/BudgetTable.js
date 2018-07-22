@@ -181,7 +181,6 @@ export default class BudgetTable extends Component {
             data.channel,
             isConstraint,
             isSoft)}
-          acceptSuggestion={() => this.updateBudget(key, data.channel, {primaryBudget: monthData.secondaryBudget})}
           isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
           onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
           isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}

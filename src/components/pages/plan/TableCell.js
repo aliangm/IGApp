@@ -5,7 +5,7 @@ import EditableCell from 'components/pages/plan/EditableCell';
 import planStyle from 'styles/plan/plan.css';
 import cellStyle from 'styles/plan/plan-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
-import { formatBudget } from 'components/utils/budget';
+import {formatBudget} from 'components/utils/budget';
 
 const CONSTRAINT_MAPPING = {
   'none': {isConstraint: false, text: 'None'},
@@ -29,7 +29,6 @@ export default class TableCell extends Component {
     className: PropTypes.string,
     isEditMode: PropTypes.bool,
     onChange: PropTypes.func,
-    acceptSuggestion: PropTypes.func,
     dragEnter: PropTypes.func,
     commitDrag: PropTypes.func,
     dragStart: PropTypes.func,
@@ -58,11 +57,29 @@ export default class TableCell extends Component {
 
   changeSuggestionBoxOpen = (isOpen) => {
     this.setState({suggestionBoxOpen: isOpen});
-  }
+  };
 
   showExtraInfo = () => {
     return this.state.hoverCell || this.state.suggestionBoxOpen;
-  }
+  };
+
+  getActionButtons = (showSuggestion) => {
+    return <div>
+      {showSuggestion && this.showExtraInfo()
+        ?
+        <div onClick={() => this.props.onChange(this.props.secondaryValue)} className={this.classes.acceptSuggestion}/>
+        : null}
+      {this.props.isConstraitsEnabled ?
+        <StateSelection currentConstraint={this.getConstraint()}
+                        constraintOptions={Object.keys(CONSTRAINT_MAPPING).map(key => {
+                          return {key: key, text: CONSTRAINT_MAPPING[key].text};
+                        })}
+                        changeConstraint={this.changeConstraint}
+                        changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
+        />
+        : null}
+    </div>;
+  };
 
   render() {
     const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
@@ -86,18 +103,6 @@ export default class TableCell extends Component {
             }}
             style={this.props.style}
             key={this.props.key}>
-
-        <div hidden={!this.showExtraInfo()}>
-          {this.props.isConstraitsEnabled ?
-            <StateSelection currentConstraint={this.getConstraint()}
-                            constraintOptions={Object.keys(CONSTRAINT_MAPPING).map(key => {
-                              return {key: key, text: CONSTRAINT_MAPPING[key].text};
-                            })}
-                            changeConstraint={this.changeConstraint}
-                            changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
-            />
-            : null}
-        </div>
         <div className={this.classes.cellItem}>
           <div>
             ${formatBudget(this.props.primaryValue)}
@@ -106,9 +111,7 @@ export default class TableCell extends Component {
                 ${formatBudget(this.props.secondaryValue)}
               </div> : null}
           </div>
-          <div className={planStyle.locals.right}>
-            <div className={cellStyle.locals.accept} onClick={this.props.acceptSuggestion}/>
-          </div>
+          {this.getActionButtons(showSuggestion)}
         </div>
       </td>;
   }
