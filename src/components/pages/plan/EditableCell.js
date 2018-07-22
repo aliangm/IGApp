@@ -44,7 +44,7 @@ export default class EditableCell extends Component {
   dragEnter(event) {
     event.preventDefault();
     this.setState({ dragged: true });
-    this.props.dragEnter(this.props.i, this.props.channel);
+    this.props.dragEnter();
   }
 
   drop(event) {
