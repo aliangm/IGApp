@@ -45,6 +45,14 @@ export default class TableCell extends Component {
     };
   }
 
+  componentWillReceiveProps(newProps) {
+    if (newProps.primaryValue && this.state.isEditing) {
+      this.setState({
+        editValue: newProps.primaryValue
+      });
+    }
+  }
+
   getConstraint = () => {
     return !this.props.isConstraint ? 'none' :
       this.props.isSoft ? 'soft' : 'hard';
@@ -78,7 +86,7 @@ export default class TableCell extends Component {
       {this.state.isEditing ?
         <div className={this.classes.icon}
              data-icon="plan:approveEdit"
-             onClick={this.finishEdit} /> : null}
+             onClick={this.finishEdit}/> : null}
       {showSuggestion && this.showExtraInfo()
         ?
         <div onClick={() => this.props.onChange(this.props.secondaryValue)}
@@ -92,9 +100,10 @@ export default class TableCell extends Component {
                         changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
         />
         : null}
-      {this.showExtraInfo() && !this.state.isEditing ? <div onClick={() => this.setState({isEditing: true, editValue: this.props.primaryValue})}
-                                   className={this.classes.icon}
-                                   data-icon="plan:edit"/> : null}
+      {this.showExtraInfo() && !this.state.isEditing ? <div
+        onClick={() => this.setState({isEditing: true, editValue: this.props.primaryValue})}
+        className={this.classes.icon}
+        data-icon="plan:edit"/> : null}
     </div>;
   };
 
@@ -102,7 +111,7 @@ export default class TableCell extends Component {
     this.props.onChange(this.state.editValue);
 
     this.setState({editValue: null, isEditing: false});
-  }
+  };
 
   onInputValueChange = (e) => {
     this.setState({editValue: e.target.value});
