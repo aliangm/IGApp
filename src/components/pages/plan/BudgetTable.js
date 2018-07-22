@@ -66,7 +66,7 @@ export default class BudgetTable extends Component {
     this.state = {
       tableCollapsed: 0,
       collapsed: {},
-      draggableValues : []
+      draggableValues: []
     };
   }
 
@@ -211,6 +211,11 @@ export default class BudgetTable extends Component {
         /> : null}
       {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
         <div>
+          <div className={this.classes.editChannelNameWrapper}>
+            <div className={this.classes.editChannelName} onClick={() => {
+              this.setState({editChannelName: data.channel});
+            }}/>
+          </div>
           <div
             className={this.classes.rowDelete}
             onClick={() => this.setState({deletePopup: data.channel})}
@@ -252,25 +257,6 @@ export default class BudgetTable extends Component {
     };
     this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
     this.setState({editChannelName: ''});
-  };
-
-  editChannel = (i, channel, newValue) => {
-    let value = parseInt(newValue.replace(/[-$,]/g, '')) || 0;
-    let planUnknownChannels = this.props.planUnknownChannels || [];
-    if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
-      planUnknownChannels[i][channel] = value;
-      this.props.updateState({planUnknownChannels: planUnknownChannels});
-    }
-    else {
-      let projectedPlan = this.props.projectedPlan;
-      let approvedBudgets = this.props.approvedBudgets;
-      projectedPlan[i].plannedChannelBudgets[channel] = value;
-      if (!approvedBudgets[i]) {
-        approvedBudgets[i] = {};
-      }
-      approvedBudgets[i][channel] = value;
-      this.props.updateState({projectedPlan: projectedPlan, approvedBudgets: approvedBudgets});
-    }
   };
 
   handleChangeContextMenu = (event, data) => {
