@@ -34,8 +34,11 @@
     border-radius: 3px;
     box-shadow: 0 0 3px 0 #e6e8f0;
     border: solid 1px #e6e8f0;
-    color: inherit;
+    color: #4d91fc;;
     padding: 3px;
+    font-size: inherit;
+    font-weight: inherit;
+    height: 32px;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;
