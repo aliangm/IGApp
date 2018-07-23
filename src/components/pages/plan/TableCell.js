@@ -44,7 +44,7 @@ export default class TableCell extends Component {
       suggestionBoxOpen: false,
       hoverCell: false,
       isEditing: false,
-      editValue: 0
+      editValue: this.props.primaryValue
     };
   }
 
