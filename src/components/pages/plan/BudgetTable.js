@@ -372,24 +372,24 @@ export default class BudgetTable extends Component {
 
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
-      <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
-        <div
-          style={{borderColor: '#329ff1 transparent transparent transparent'}}
-          className={this.classes.rowArrowWrap}
-          data-collapsed={this.state.tableCollapsed}
-          data-headline
-          onClick={() => {
-            this.setState({
-              tableCollapsed: !this.state.tableCollapsed
-            });
-            this.forceUpdate();
-          }}>
-          <div className={this.classes.rowArrow} data-headline/>
+      <td>
+        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
+          <div
+            style={{borderColor: '#329ff1 transparent transparent transparent'}}
+            className={this.classes.rowArrowWrap}
+            data-collapsed={this.state.tableCollapsed}
+            data-headline
+            onClick={() => {
+              this.setState({
+                tableCollapsed: !this.state.tableCollapsed
+              });
+              this.forceUpdate();
+            }}>
+            <div className={this.classes.rowArrow} data-headline/>
+          </div>
+            {'Marketing Channel'}
         </div>
-        <td>
-          {'Marketing Channel'}
-        </td>
-      </div>
+      </td>
       {this.getMonthHeaders()}
     </tr>;
   };
