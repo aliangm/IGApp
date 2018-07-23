@@ -207,7 +207,7 @@ export default class BudgetTable extends Component {
             />;
           }
           case(ROW_TYPE.CATEGORY): {
-            return <td className={this.classes.categoryCell}>{monthData.primaryBudget}</td>;
+            return <td className={this.classes.categoryCell}>${formatBudget(monthData.primaryBudget)}</td>;
           }
           case(ROW_TYPE.BOTTOM): {
             return <TableCell
