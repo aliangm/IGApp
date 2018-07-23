@@ -23,10 +23,15 @@
     cursor: pointer;
     background-position: center center;
     background-repeat: no-repeat;
-    padding: 2px;
+    padding-left: 5px;
 }
 
 .buttons {
+    display: flex;
+    margin-left: 3.5px;
+}
+
+.inner-buttons {
     display: flex;
 }
 

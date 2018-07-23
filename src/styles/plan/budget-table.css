@@ -89,6 +89,11 @@
 
 .title-text {
     width: 90px;
+    color: #222a41;
+}
+
+.title-text[data-bottom-row] {
+    color: white;
 }
 
 .head-row {
