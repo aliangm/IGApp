@@ -168,27 +168,32 @@ export default class BudgetTable extends Component {
       {this.getTitleCell(rowType, data)}
 
       {data.values.map((monthData, key) => {
-        return <TableCell
-          key={`${data.channel}:${key}`}
-          primaryValue={monthData.primaryBudget}
-          secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
-            ? monthData.secondaryBudget
-            : null}
-          isConstraint={monthData.isConstraint}
-          isSoft={monthData.isSoft}
-          constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-            key,
-            data.channel,
-            isConstraint,
-            isSoft)}
-          isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-          isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
-          dragEnter={() => this.dragEnter(key, data.channel)}
-          commitDrag={this.commitDrag}
-          dragStart={this.dragStart}
-          isDragging={this.state.isDragging}
-        />;
+        if (rowType === ROW_TYPE.REGULAR) {
+          return <TableCell
+            key={`${data.channel}:${key}`}
+            primaryValue={monthData.primaryBudget}
+            secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
+              ? monthData.secondaryBudget
+              : null}
+            isConstraint={monthData.isConstraint}
+            isSoft={monthData.isSoft}
+            constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+              key,
+              data.channel,
+              isConstraint,
+              isSoft)}
+            isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
+            onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
+            isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+            dragEnter={() => this.dragEnter(key, data.channel)}
+            commitDrag={this.commitDrag}
+            dragStart={this.dragStart}
+            isDragging={this.state.isDragging}
+          />;
+        }
+        else {
+          return <td className={this.classes.categoryCell}>{monthData.primaryBudget}</td>;
+        }
       })}
     </tr>;
   };

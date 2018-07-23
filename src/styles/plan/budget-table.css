@@ -104,4 +104,8 @@
     margin: auto;
 }
 
+.category-cell {
+    border-bottom: 1px solid rgba(106, 154, 230, 0.19);
+}
+
 @mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;
