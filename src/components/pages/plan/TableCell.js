@@ -102,7 +102,7 @@ export default class TableCell extends Component {
              className={this.classes.icon}
              data-icon='plan:acceptSuggestion'/>
         : null}
-      {this.props.isConstraitsEnabled && (this.getConstraint() !== 'none' || this.showExtraInfo()) ?
+      {this.props.isConstraitsEnabled && !this.state.isEditing (this.getConstraint() !== 'none' || this.showExtraInfo()) ?
         <StateSelection currentConstraint={this.getConstraint()}
                         constraintOptions={this.getConstraintsDisplayInfo()}
                         changeConstraint={this.changeConstraint}

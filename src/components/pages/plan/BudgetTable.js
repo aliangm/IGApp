@@ -21,6 +21,12 @@ const ROW_TYPE = {
   CATEGORY: 'category'
 };
 
+const COLLAPSE_OPTIONS = {
+  COLLAPSE_ALL: 0,
+  ONLY_CATEGORIES: 1,
+  SHOW_ALL: 2
+};
+
 const MONTHS_TO_SHOW = 8;
 
 export default class BudgetTable extends Component {
@@ -30,9 +36,6 @@ export default class BudgetTable extends Component {
   static propTypes = {
     tableRef: PropTypes.func,
     firstColumnCell: PropTypes.func,
-    approvedBudgets: PropTypes.array,
-    planUnknownChannels: PropTypes.array,
-    projectedPlan: PropTypes.array,
     dates: PropTypes.array,
     updateState: PropTypes.func,
     approveWholeChannel: PropTypes.func,
@@ -50,23 +53,14 @@ export default class BudgetTable extends Component {
     isEditMode: false,
     isShowSecondaryEnabled: true,
     isConstraitsEnabled: false,
-    data: [],
-    editCommitedBudget: (month, channel, newBudget) => {
-      console.log(`edited month ${month} for channel ${channel} with value ${newBudget}`);
-    },
-    changeBudgetConstraint: (month, channelKey, isConstraint, isSoft) => {
-      console.log(`edited month ${month} for channel ${channelKey} with value isConstraint ${isConstraint} and isSoft ${isSoft}`);
-    },
-    deleteChannel: (channelKey) => {
-      console.log(`channel deleted ${channelKey}`);
-    }
+    data: []
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      tableCollapsed: false,
+      tableCollapsed: COLLAPSE_OPTIONS.SHOW_ALL,
       collapsed: {},
       draggableValues: []
     };
@@ -74,7 +68,7 @@ export default class BudgetTable extends Component {
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
-    const headers = this.props.dates.slice(0,MONTHS_TO_SHOW).map((month, index) => {
+    const headers = this.props.dates.slice(0, MONTHS_TO_SHOW).map((month, index) => {
       const events = this.props.events ?
         this.props.events
           .filter(event => {
@@ -158,7 +152,7 @@ export default class BudgetTable extends Component {
     const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
       ROW_TYPE.CATEGORY);
 
-    return !this.state.collapsed[category] ?
+    return !this.state.collapsed[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
       [categoryRow, ...channels.map((channel) => this.getTableRow(channel, ROW_TYPE.REGULAR))]
       : categoryRow;
   };
@@ -372,6 +366,12 @@ export default class BudgetTable extends Component {
     });
   };
 
+  nextCollapseOption = () => {
+    this.setState({
+      tableCollapsed: (this.state.tableCollapsed + 1) % 3
+    });
+  };
+
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
       <td className={this.classes.titleCell}>
@@ -379,17 +379,15 @@ export default class BudgetTable extends Component {
           <div
             style={{borderColor: '#329ff1 transparent transparent transparent'}}
             className={this.classes.rowArrowWrap}
-            data-collapsed={this.state.tableCollapsed}
+            data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
             data-headline
             onClick={() => {
-              this.setState({
-                tableCollapsed: !this.state.tableCollapsed
-              });
+              this.nextCollapseOption();
               this.forceUpdate();
             }}>
             <div className={this.classes.rowArrow} data-headline/>
           </div>
-            {'Marketing Channel'}
+          {'Marketing Channel'}
         </div>
       </td>
       {this.getMonthHeaders()}
@@ -398,11 +396,12 @@ export default class BudgetTable extends Component {
 
   render() {
     const props = getChannelsWithProps();
-    const slicedData = this.props.data.slice(0,MONTHS_TO_SHOW);
+    const slicedData = this.props.data.slice(0, MONTHS_TO_SHOW);
     const parsedData = this.parseData(slicedData);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
-    const rows = this.props.data && !this.state.tableCollapsed ? this.getRows(dataWithCategories) : [];
+    const rows = this.props.data && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL ? this.getRows(
+      dataWithCategories) : [];
 
     const footRowData = {
       channel: 'Total',
