@@ -2,6 +2,7 @@
 
 .value-cell {
     height: 14px;
+    width: 120px;
 }
 
 .secondary-value {
@@ -12,7 +13,7 @@
 
 .cell-item {
     align-items: center;
-    display: flex;
+    display: inline-flex;
 }
 
 .icon {
@@ -22,7 +23,7 @@
     cursor: pointer;
     background-position: center center;
     background-repeat: no-repeat;
-    padding: 4px;
+    padding: 2px;
 }
 
 .buttons {

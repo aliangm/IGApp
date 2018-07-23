@@ -21,6 +21,8 @@ const ROW_TYPE = {
   CATEGORY: 'category'
 };
 
+const MONTHS_TO_SHOW = 9;
+
 export default class BudgetTable extends Component {
 
   style = style;
@@ -72,7 +74,7 @@ export default class BudgetTable extends Component {
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
-    const headers = this.props.dates.map((month, index) => {
+    const headers = this.props.dates.slice(0,MONTHS_TO_SHOW).map((month, index) => {
       const events = this.props.events ?
         this.props.events
           .filter(event => {
@@ -342,7 +344,7 @@ export default class BudgetTable extends Component {
 
     const notSorted = union(...data.map(month => Object.keys(month)))
       .map(channel => {
-        const channelArray = Array(12).fill(
+        const channelArray = Array(MONTHS_TO_SHOW).fill(
           {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
         data.forEach((month, index) => {
@@ -362,7 +364,7 @@ export default class BudgetTable extends Component {
   };
 
   sumChannels = (channels) => {
-    return Array(12).fill(0).map((value, index) => {
+    return Array(MONTHS_TO_SHOW).fill(0).map((value, index) => {
       return {
         primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
         secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
@@ -372,7 +374,7 @@ export default class BudgetTable extends Component {
 
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
-      <td>
+      <td className={this.classes.headRowCell}>
         <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
           <div
             style={{borderColor: '#329ff1 transparent transparent transparent'}}
@@ -396,7 +398,8 @@ export default class BudgetTable extends Component {
 
   render() {
     const props = getChannelsWithProps();
-    const parsedData = this.parseData(this.props.data);
+    const slicedData = this.props.data.slice(0,MONTHS_TO_SHOW);
+    const parsedData = this.parseData(slicedData);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
     const rows = this.props.data && !this.state.tableCollapsed ? this.getRows(dataWithCategories) : [];
