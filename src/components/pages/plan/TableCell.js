@@ -116,7 +116,13 @@ export default class TableCell extends Component {
   };
 
   onInputValueChange = (e) => {
-    this.setState({editValue: e.target.value});
+    const editedValue = e.target.value;
+    const newValue = (editedValue === '' || editedValue === '$') ? '0' : editedValue;
+    const value = parseInt(newValue.replace(/[-$,]/g, ''));
+
+    if (value != null) {
+      this.setState({editValue: value});
+    }
   };
 
   render() {
@@ -135,7 +141,7 @@ export default class TableCell extends Component {
           {this.props.isEditMode || this.state.isEditing ?
             <input className={this.classes.editCell}
                    type="text"
-                   value={this.state.editValue}
+                   value={'$' + formatBudget(this.state.editValue)}
                    onChange={this.onInputValueChange}/>
             : <div>${formatBudget(this.props.primaryValue)}</div>}
           {showSuggestion && this.showExtraInfo() ?
