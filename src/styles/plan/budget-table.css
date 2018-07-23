@@ -4,6 +4,7 @@
     border-spacing: 0;
     width: 100%;
     table-layout: fixed;
+    padding: 0 20px;
 }
 
 .row-arrow {
