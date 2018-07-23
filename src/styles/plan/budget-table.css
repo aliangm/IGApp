@@ -123,3 +123,4 @@
 }
 
 @mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;
+@mixin icon-nodpi plan:removeChannel , ../../assets/cancel-button;
