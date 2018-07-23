@@ -21,7 +21,7 @@ const ROW_TYPE = {
   CATEGORY: 'category'
 };
 
-const MONTHS_TO_SHOW = 9;
+const MONTHS_TO_SHOW = 8;
 
 export default class BudgetTable extends Component {
 
@@ -374,7 +374,7 @@ export default class BudgetTable extends Component {
 
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
-      <td className={this.classes.headRowCell}>
+      <td className={this.classes.titleCell}>
         <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
           <div
             style={{borderColor: '#329ff1 transparent transparent transparent'}}

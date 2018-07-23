@@ -23,10 +23,6 @@
     border-width: 0 1px 1px 0;
 }
 
-.head-row-cell {
-    width: 120px;
-}
-
 .row-arrow-wrap {
     position: absolute;
     left: -11px;
@@ -48,7 +44,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    margin: auto 6px 0 auto;
+    margin-right: 6px;
 }
 
 .channel-action-icon {
@@ -57,7 +53,7 @@
 }
 
 .title {
-    display: inline-flex;
+    display: -webkit-inline-box;
 }
 
 .row-arrow-wrap[data-headline] {
@@ -86,7 +82,12 @@
 .row-title {
     vertical-align: middle;
     position: relative;
-    padding: 20px;
+    padding-left: 20px;
+    width: 130px;
+}
+
+.title-text {
+    width: 90px;
 }
 
 .head-row {
@@ -99,6 +100,7 @@
 
 .title-cell {
     height: 14px;
+    width: 200px;
 }
 
 .title-cell[data-category-row="true"] {
@@ -107,11 +109,7 @@
 
 .channel-edit-icons {
     display: inline-flex;
-    margin-left: 16px;
-}
-
-.title-text {
-    margin: auto;
+    margin-left: 6px;
 }
 
 .category-cell {
