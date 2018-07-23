@@ -35,6 +35,20 @@
     transform: rotate(-180deg);
 }
 
+.row-icon {
+    width: 20px;
+    height: 20px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: white;
+    margin: auto 6px 0 auto;
+}
+
+.title {
+    display: inline-flex;
+}
+
 .row-arrow-wrap[data-headline] {
     border: none;
     background-color: #4d91fc;

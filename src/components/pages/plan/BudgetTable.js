@@ -242,8 +242,11 @@ export default class BudgetTable extends Component {
             </Popup>
           </div>
           : null}
-        <div className={this.classes.rowIcon} data-icon={'plan:' + data.channel}/>
-        {data.nickname}
+          <div className={this.classes.title}>
+            {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
+              : null }
+            <div>{data.nickname}</div>
+          </div>
       </div>
     </td>;
   };
