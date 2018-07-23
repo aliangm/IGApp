@@ -33,6 +33,7 @@ export default class TableCell extends Component {
     dragStart: PropTypes.func,
     isDragging: PropTypes.bool,
     approveSuggestion: PropTypes.func,
+    enableActionButtons: PropTypes.bool,
     style: PropTypes.object
   };
 
@@ -94,7 +95,7 @@ export default class TableCell extends Component {
              className={this.classes.icon}
              data-icon='plan:acceptSuggestion'/>
         : null}
-      {this.props.isConstraitsEnabled && !(this.getConstraint()==='none' && !this.state.hoverCell) ?
+      {this.props.isConstraitsEnabled && !(this.getConstraint() === 'none' && !this.state.hoverCell) ?
         <StateSelection currentConstraint={this.getConstraint()}
                         constraintOptions={this.getConstraintsDisplayInfo()}
                         changeConstraint={this.changeConstraint}
@@ -142,7 +143,7 @@ export default class TableCell extends Component {
               ${formatBudget(this.props.secondaryValue)}
             </div> : null}
         </div>
-        {this.getActionButtons(showSuggestion)}
+        {this.props.enableActionButtons ? this.getActionButtons(showSuggestion) : null}
       </div>
     </td>;
   }

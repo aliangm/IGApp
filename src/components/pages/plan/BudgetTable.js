@@ -16,9 +16,9 @@ import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 
 const ROW_TYPE = {
-  BOTTOM: 1,
-  REGULAR: 2,
-  CATEGORY: 3
+  BOTTOM: 'bottom',
+  REGULAR: 'regular',
+  CATEGORY: 'category'
 };
 
 export default class BudgetTable extends Component {
@@ -174,7 +174,7 @@ export default class BudgetTable extends Component {
   getTableRow = (data, rowType) => {
     const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
-    return <tr className={this.classes.tableRow} key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+    return <tr className={this.classes.tableRow} key={titleCellKey} data-row-type={rowType}>
       {this.getTitleCell(rowType, data)}
 
       {data.values.map((monthData, key) => {
@@ -201,6 +201,7 @@ export default class BudgetTable extends Component {
               dragStart={this.dragStart}
               isDragging={this.state.isDragging}
               approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+              enableActionButtons={true}
             />;
           }
           case(ROW_TYPE.CATEGORY): {
@@ -215,6 +216,7 @@ export default class BudgetTable extends Component {
                 : null}
               isConstraitsEnabled={false}
               approveSuggestion={() => this.approveMonthSuggestions(key)}
+              enableActionButtons={false}
             />;
           }
         }

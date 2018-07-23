@@ -68,9 +68,14 @@
     background-color: white;
 }
 
-.table-row[data-category-row='true'] {
+.table-row[data-row-type='category'] {
     background-color: rgba(222, 235, 255, 0.32);
     color: #222a41;
+}
+
+.table-row[data-row-type='bottom'] {
+    background-color: #4d91fc;
+    color: #ffffff;
 }
 
 .row-title {
