@@ -86,7 +86,7 @@ export default class TableCell extends Component {
 
   getActionButtons = (showSuggestion) => {
     return <div className={this.classes.buttons}>
-      {this.state.isEditing ?
+      {this.state.isEditing && !this.props.isEditMode ?
         <div className={this.classes.buttons}>
           <div className={this.classes.icon}
                data-icon="plan:approveEdit"
@@ -109,7 +109,7 @@ export default class TableCell extends Component {
                         changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
         />
         : null}
-      {this.showExtraInfo() && !this.state.isEditing ? <div
+      {this.showExtraInfo() && !(this.state.isEditing || this.props.isEditMode) ? <div
         onClick={() => this.setState({isEditing: true, editValue: this.props.primaryValue})}
         className={this.classes.icon}
         data-icon="plan:edit"/> : null}
