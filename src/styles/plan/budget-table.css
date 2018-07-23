@@ -1,3 +1,5 @@
+@import "../global/mixins.css";
+
 .table {
     border-spacing: 0;
     width: 100%;
@@ -45,6 +47,11 @@
     margin: auto 6px 0 auto;
 }
 
+.channel-action-icon {
+    composes: row-icon;
+    cursor: pointer;
+}
+
 .title {
     display: inline-flex;
 }
@@ -88,3 +95,14 @@
 .title-cell[data-category-row="true"] {
     border-bottom: 1px solid rgba(106, 154, 230, 0.19);
 }
+
+.channel-edit-icons {
+    display: inline-flex;
+    margin-left: 16px;
+}
+
+.title-text {
+    margin: auto;
+}
+
+@mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;

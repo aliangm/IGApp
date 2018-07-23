@@ -242,11 +242,19 @@ export default class BudgetTable extends Component {
             </Popup>
           </div>
           : null}
-          <div className={this.classes.title}>
-            {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
-              : null }
-            <div>{data.nickname}</div>
-          </div>
+        <div className={this.classes.title}>
+          {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
+            : null}
+
+          <div className={this.classes.titleText}>{data.nickname}</div>
+          
+          {rowType === ROW_TYPE.REGULAR && this.props.isEditMode ? <div className={this.classes.channelEditIcons}>
+            <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
+                 onClick={() => this.setState({editChannelName: data.channel})}/>
+            <div className={this.classes.channelActionIcon} data-icon={'plan:deleteChannel'}
+                 onClick={() => this.setState({deletePopup: data.channel})}/>
+          </div> : null}
+        </div>
       </div>
     </td>;
   };
