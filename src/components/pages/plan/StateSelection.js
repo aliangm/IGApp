@@ -9,7 +9,7 @@ export default class StateSelection extends Component {
   styles = [cellStyle];
 
   static propTypes = {
-    currentConstraint: PropTypes.object.isRequired,
+    currentConstraint: PropTypes.string.isRequired,
     changeConstraint: PropTypes.func.isRequired,
     constraintOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
     changeSuggestionBoxOpen: PropTypes.func
