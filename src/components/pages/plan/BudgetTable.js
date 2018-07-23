@@ -113,7 +113,7 @@ export default class BudgetTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} primaryValue={month}>{month}</td>;
+        <td key={`head:${index}`}>{month}</td>;
     });
     return headers;
   };

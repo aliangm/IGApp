@@ -1,31 +1,43 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
-import EditableCell from 'components/pages/plan/EditableCell';
-import planStyle from 'styles/plan/plan.css';
 import StateSelection from 'components/pages/plan/StateSelection';
-import {formatBudget} from 'components/utils/budget';
+import {formatBudgetWithDollar} from 'components/utils/budget';
 
 const CONSTRAINT_MAPPING = {
-  'none': {isConstraint: false, text: 'None', icon: 'plan:none'},
-  'soft': {isConstraint: true, isSoft: true, text: 'Soft', icon: 'plan:like'},
-  'hard': {isConstraint: true, isSoft: false, text: 'Hard', icon: 'plan:lock'}
+  'none': {
+    constraintData: {isConstraint: false},
+    displayOptions: {text: 'None', icon: 'plan:none'}
+  },
+  'soft': {
+    constraintData: {isConstraint: true, isSoft: true},
+    displayOptions: {text: 'Soft', icon: 'plan:like'}
+  },
+  'hard': {
+    constraintData: {isConstraint: true, isSoft: false},
+    displayOptions: {text: 'Hard', icon: 'plan:lock'}
+  }
+};
+
+const EDIT_MODE = {
+  ANY: 0,
+  NONE: 1,
+  TEMP_STATE: 2,
+  FROM_PROP: 3
 };
 
 export default class TableCell extends Component {
 
   style = style;
-  styles = [planStyle];
 
   static propTypes = {
-    primaryValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+    primaryValue: PropTypes.string.isRequired,
     secondaryValue: PropTypes.string,
     isConstraitsEnabled: PropTypes.bool,
     key: PropTypes.number,
     constraintChange: PropTypes.func,
     isConstraint: PropTypes.bool,
     isSoft: PropTypes.bool,
-    className: PropTypes.string,
     isEditMode: PropTypes.bool,
     onChange: PropTypes.func,
     dragEnter: PropTypes.func,
@@ -33,8 +45,7 @@ export default class TableCell extends Component {
     dragStart: PropTypes.func,
     isDragging: PropTypes.bool,
     approveSuggestion: PropTypes.func,
-    enableActionButtons: PropTypes.bool,
-    style: PropTypes.object
+    enableActionButtons: PropTypes.bool
   };
 
   constructor(props) {
@@ -49,7 +60,7 @@ export default class TableCell extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.primaryValue && this.state.isEditing) {
+    if (newProps.primaryValue) {
       this.setState({
         editValue: newProps.primaryValue
       });
@@ -62,7 +73,7 @@ export default class TableCell extends Component {
   };
 
   changeConstraint = (changeTo) => {
-    const typeOptions = CONSTRAINT_MAPPING[changeTo];
+    const typeOptions = CONSTRAINT_MAPPING[changeTo].constraintData;
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
   };
 
@@ -70,23 +81,57 @@ export default class TableCell extends Component {
     this.setState({suggestionBoxOpen: isOpen});
   };
 
-  showExtraInfo = () => {
-    return this.state.hoverCell || this.state.suggestionBoxOpen;
-  };
-
   getConstraintsDisplayInfo = () => {
     const displayInfo = {};
 
     Object.keys(CONSTRAINT_MAPPING).forEach(key => {
-      displayInfo[key] = {...CONSTRAINT_MAPPING[key], isConstraint: undefined, isSoft: undefined};
+      displayInfo[key] = CONSTRAINT_MAPPING[key].displayOptions;
     });
 
     return displayInfo;
   };
 
-  getActionButtons = (showSuggestion) => {
+  isCellActive = () => {
+    return this.state.hoverCell || this.state.suggestionBoxOpen;
+  };
+
+  isEditModeType = (editModeType) => {
+    switch(editModeType){
+      case(EDIT_MODE.ANY): return this.state.isEditing || this.props.isEditMode;
+      case(EDIT_MODE.TEMP_STATE): return this.state.isEditing;
+      case(EDIT_MODE.FROM_PROP): return this.props.isEditMode;
+      case(EDIT_MODE.NONE): return !this.state.isEditing && !this.props.isEditMode;
+    }
+  };
+
+  showSuggestion = () => {
+    return this.props.secondaryValue
+      && (this.props.secondaryValue !== this.props.primaryValue)
+      && this.isCellActive();
+  };
+
+  approveEdit = () => {
+    this.props.onChange(this.state.editValue);
+    this.setState({editValue: null, isEditing: false});
+  };
+
+  declineEdit = () => {
+    this.setState({editValue: null, isEditing: false});
+  };
+
+  onInputValueChange = (e) => {
+    const editedValue = e.target.value;
+    const newValueString = (editedValue === '' || editedValue === '$') ? '0' : editedValue;
+    const value = parseInt(newValueString.replace(/[-$,]/g, ''));
+
+    if (value != null) {
+      this.setState({editValue: value});
+    }
+  };
+
+  getActionButtons = () => {
     return <div className={this.classes.buttons}>
-      {this.state.isEditing && !this.props.isEditMode ?
+      {this.isEditModeType(EDIT_MODE.TEMP_STATE) ?
         <div className={this.classes.innerButtons}>
           <div className={this.classes.icon}
                data-icon="plan:approveEdit"
@@ -96,47 +141,28 @@ export default class TableCell extends Component {
                onClick={this.declineEdit}/>
         </div> : null}
 
-      {showSuggestion && this.showExtraInfo()
-        ?
+      {this.showSuggestion() ?
         <div onClick={this.props.approveSuggestion}
              className={this.classes.icon}
              data-icon='plan:acceptSuggestion'/>
         : null}
-      {this.props.isConstraitsEnabled && !this.state.isEditing (this.getConstraint() !== 'none' || this.showExtraInfo()) ?
-        <StateSelection currentConstraint={this.getConstraint()}
+      {(this.props.isConstraitsEnabled
+        && !this.isEditModeType(EDIT_MODE.TEMP_STATE)
+        && (this.getConstraint() !== 'none' || this.isCellActive()))
+        ? <StateSelection currentConstraint={this.getConstraint()}
                         constraintOptions={this.getConstraintsDisplayInfo()}
                         changeConstraint={this.changeConstraint}
                         changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
         />
         : null}
-      {this.showExtraInfo() && !(this.state.isEditing || this.props.isEditMode) ? <div
+      {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
         onClick={() => this.setState({isEditing: true, editValue: this.props.primaryValue})}
         className={this.classes.icon}
         data-icon="plan:edit"/> : null}
     </div>;
   };
 
-  approveEdit = () => {
-    this.props.onChange(this.state.editValue);
-    this.setState({editValue: 0, isEditing: false});
-  };
-
-  declineEdit = () => {
-    this.setState({editValue: 0, isEditing: false});
-  };
-
-  onInputValueChange = (e) => {
-    const editedValue = e.target.value;
-    const newValue = (editedValue === '' || editedValue === '$') ? '0' : editedValue;
-    const value = parseInt(newValue.replace(/[-$,]/g, ''));
-
-    if (value != null) {
-      this.setState({editValue: value});
-    }
-  };
-
   render() {
-    const showSuggestion = this.props.secondaryValue && (this.props.secondaryValue !== this.props.primaryValue);
     return <td className={this.classes.valueCell}
                onMouseEnter={() => {
                  this.setState({hoverCell: true});
@@ -144,22 +170,21 @@ export default class TableCell extends Component {
                onMouseLeave={() => {
                  this.setState({hoverCell: false});
                }}
-               style={this.props.style}
                key={this.props.key}>
       <div className={this.classes.cellItem}>
         <div>
-          {this.props.isEditMode || this.state.isEditing ?
+          {this.isEditModeType(EDIT_MODE.ANY) ?
             <input className={this.classes.editCell}
                    type="text"
-                   value={'$' + formatBudget(this.state.editValue)}
+                   value={formatBudgetWithDollar(this.state.editValue)}
                    onChange={this.onInputValueChange}/>
-            : <div>${formatBudget(this.props.primaryValue)}</div>}
-          {showSuggestion && this.showExtraInfo() ?
+            : <div>{formatBudgetWithDollar(this.props.primaryValue)}</div>}
+          {this.showSuggestion() ?
             <div className={this.classes.secondaryValue}>
-              ${formatBudget(this.props.secondaryValue)}
+              {formatBudgetWithDollar(this.props.secondaryValue)}
             </div> : null}
         </div>
-        {this.props.enableActionButtons ? this.getActionButtons(showSuggestion) : null}
+        {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
     </td>;
   }
