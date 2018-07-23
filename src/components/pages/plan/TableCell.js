@@ -43,7 +43,8 @@ export default class TableCell extends Component {
     this.state = {
       suggestionBoxOpen: false,
       hoverCell: false,
-      isEditing: false
+      isEditing: false,
+      editValue: 0
     };
   }
 
@@ -86,9 +87,15 @@ export default class TableCell extends Component {
   getActionButtons = (showSuggestion) => {
     return <div className={this.classes.buttons}>
       {this.state.isEditing ?
-        <div className={this.classes.icon}
-             data-icon="plan:approveEdit"
-             onClick={this.finishEdit}/> : null}
+        <div className={this.classes.buttons}>
+          <div className={this.classes.icon}
+               data-icon="plan:approveEdit"
+               onClick={this.approveEdit}/>
+          <div className={this.classes.icon}
+               data-icon="plan:declineEdit"
+               onClick={this.declineEdit}/>
+        </div> : null}
+
       {showSuggestion && this.showExtraInfo()
         ?
         <div onClick={this.props.approveSuggestion}
@@ -109,10 +116,13 @@ export default class TableCell extends Component {
     </div>;
   };
 
-  finishEdit = () => {
+  approveEdit = () => {
     this.props.onChange(this.state.editValue);
+    this.setState({editValue: 0, isEditing: false});
+  };
 
-    this.setState({editValue: null, isEditing: false});
+  declineEdit = () => {
+    this.setState({editValue: 0, isEditing: false});
   };
 
   onInputValueChange = (e) => {
