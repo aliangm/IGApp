@@ -64,7 +64,7 @@ export default class BudgetTable extends Component {
     super(props);
 
     this.state = {
-      tableCollapsed: 0,
+      tableCollapsed: false,
       collapsed: {},
       draggableValues: []
     };
@@ -188,7 +188,6 @@ export default class BudgetTable extends Component {
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
           isDragging={this.state.isDragging}
-          style={rowType === ROW_TYPE.CATEGORY ? {'border-bottom': '1px solid rgba(106, 154, 230, 0.19)'} : null}
         />;
       })}
     </tr>;
@@ -247,7 +246,7 @@ export default class BudgetTable extends Component {
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>
-          
+
           {rowType === ROW_TYPE.REGULAR && this.props.isEditMode ? <div className={this.classes.channelEditIcons}>
             <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
                  onClick={() => this.setState({editChannelName: data.channel})}/>
@@ -346,11 +345,11 @@ export default class BudgetTable extends Component {
         <div
           style={{borderColor: '#329ff1 transparent transparent transparent'}}
           className={this.classes.rowArrowWrap}
-          data-collapsed={this.state.tableCollapsed || null}
+          data-collapsed={this.state.tableCollapsed}
           data-headline
           onClick={() => {
             this.setState({
-              tableCollapsed: ++this.state.tableCollapsed % 3
+              tableCollapsed: !this.state.tableCollapsed
             });
             this.forceUpdate();
           }}>
@@ -369,7 +368,7 @@ export default class BudgetTable extends Component {
     const parsedData = this.parseData(this.props.data);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
-    const rows = this.props.data && this.state.tableCollapsed !== 1 ? this.getRows(dataWithCategories) : [];
+    const rows = this.props.data && !this.state.tableCollapsed ? this.getRows(dataWithCategories) : [];
 
     const footRowData = {
       channel: 'Total',

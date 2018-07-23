@@ -33,7 +33,7 @@
     cursor: pointer;
 }
 
-.row-arrow-wrap[data-collapsed] {
+.row-arrow-wrap[data-collapsed='true'] {
     transform: rotate(-180deg);
 }
 
