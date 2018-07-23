@@ -161,6 +161,16 @@ export default class BudgetTable extends Component {
       : categoryRow;
   };
 
+  approveMonthSuggestions = month => {
+    const monthData = this.props.data[month];
+    Object.keys(monthData).forEach(key => {
+      //if undefined or null don't enter, any other option should enter
+      if (monthData[key].secondaryBudget != null) {
+        this.props.editCommittedBudget(month, key, monthData[key].secondaryBudget);
+      }
+    });
+  };
+
   getTableRow = (data, rowType) => {
     const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
@@ -168,31 +178,45 @@ export default class BudgetTable extends Component {
       {this.getTitleCell(rowType, data)}
 
       {data.values.map((monthData, key) => {
-        if (rowType === ROW_TYPE.REGULAR) {
-          return <TableCell
-            key={`${data.channel}:${key}`}
-            primaryValue={monthData.primaryBudget}
-            secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
-              ? monthData.secondaryBudget
-              : null}
-            isConstraint={monthData.isConstraint}
-            isSoft={monthData.isSoft}
-            constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-              key,
-              data.channel,
-              isConstraint,
-              isSoft)}
-            isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
-            onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-            isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
-            dragEnter={() => this.dragEnter(key, data.channel)}
-            commitDrag={this.commitDrag}
-            dragStart={this.dragStart}
-            isDragging={this.state.isDragging}
-          />;
-        }
-        else {
-          return <td className={this.classes.categoryCell}>{monthData.primaryBudget}</td>;
+        switch (rowType) {
+          case(ROW_TYPE.REGULAR): {
+            return <TableCell
+              key={`${data.channel}:${key}`}
+              primaryValue={monthData.primaryBudget}
+              secondaryValue={this.props.isShowSecondaryEnabled
+                ? monthData.secondaryBudget
+                : null}
+              isConstraint={monthData.isConstraint}
+              isSoft={monthData.isSoft}
+              constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+                key,
+                data.channel,
+                isConstraint,
+                isSoft)}
+              isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
+              onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
+              isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+              dragEnter={() => this.dragEnter(key, data.channel)}
+              commitDrag={this.commitDrag}
+              dragStart={this.dragStart}
+              isDragging={this.state.isDragging}
+              approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+            />;
+          }
+          case(ROW_TYPE.CATEGORY): {
+            return <td className={this.classes.categoryCell}>{monthData.primaryBudget}</td>;
+          }
+          case(ROW_TYPE.BOTTOM): {
+            return <TableCell
+              key={`${data.channel}:${key}`}
+              primaryValue={monthData.primaryBudget}
+              secondaryValue={this.props.isShowSecondaryEnabled
+                ? monthData.secondaryBudget
+                : null}
+              isConstraitsEnabled={false}
+              approveSuggestion={() => this.approveMonthSuggestions(key)}
+            />;
+          }
         }
       })}
     </tr>;

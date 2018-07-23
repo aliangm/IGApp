@@ -32,6 +32,7 @@ export default class TableCell extends Component {
     commitDrag: PropTypes.func,
     dragStart: PropTypes.func,
     isDragging: PropTypes.bool,
+    approveSuggestion: PropTypes.func,
     style: PropTypes.object
   };
 
@@ -89,7 +90,7 @@ export default class TableCell extends Component {
              onClick={this.finishEdit}/> : null}
       {showSuggestion && this.showExtraInfo()
         ?
-        <div onClick={() => this.props.onChange(this.props.secondaryValue)}
+        <div onClick={this.props.approveSuggestion}
              className={this.classes.icon}
              data-icon='plan:acceptSuggestion'/>
         : null}
