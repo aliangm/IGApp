@@ -58,7 +58,7 @@ export default class StateSelection extends Component {
       key={key}
       className={this.classes.reactionIcon}
       onClick={() => this.changeReaction(key)}
-    data-icon={icon}>
+      data-icon={icon}>
 
       <label className={this.classes.reactionLabel}>{text}</label>
     </div>;
@@ -66,7 +66,8 @@ export default class StateSelection extends Component {
 
   render() {
     return <div className={this.classes.stateSelectionWrap}>
-      {this.state.showBox ? <div className={this.classes.stateSelectionBox} ref={(ref) => this.stateSelectionBox = ref}>
+      {this.state.showBox ? <div className={this.classes.stateSelectionBox}
+                                 ref={(ref) => this.stateSelectionBox = ref}>
         {Object.keys(this.props.constraintOptions).map(key => {
           return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
         })}
