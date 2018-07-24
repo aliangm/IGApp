@@ -124,8 +124,14 @@ export default class TableCell extends Component {
 
   onInputValueChange = (e) => {
     const value = stripNumberFromBudget(e.target.value);
+
     if (value != null) {
-      this.setState({editValue: value});
+      if (this.isEditModeType(EDIT_MODE.FROM_PROP)) {
+        this.props.onChange(value);
+      }
+      else {
+        this.setState({editValue: value});
+      }
     }
   };
 
