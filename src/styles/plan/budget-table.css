@@ -40,21 +40,23 @@
 }
 
 .row-icon {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    margin-right: 6px;
+    margin-right: 16px;
 }
 
 .channel-action-icon {
+    width: 12px;
+    height: 12px;
     composes: row-icon;
     cursor: pointer;
 }
 
 .title {
-    display: -webkit-inline-box;
+    display: table;
 }
 
 .row-arrow-wrap[data-headline] {
@@ -84,12 +86,14 @@
     vertical-align: middle;
     position: relative;
     padding-left: 20px;
-    width: 130px;
+    width: 100%;
 }
 
 .title-text {
-    width: 90px;
+    width: 200px;
     color: #222a41;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .title-text[data-bottom-row] {
@@ -106,7 +110,7 @@
 
 .title-cell {
     height: 14px;
-    width: 200px;
+    width: 309px;
 }
 
 .title-cell[data-category-row="true"] {
