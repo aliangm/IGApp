@@ -16,10 +16,18 @@ import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 
 const ROW_TYPE = {
-  BOTTOM: 1,
-  REGULAR: 2,
-  CATEGORY: 3
+  BOTTOM: 'bottom',
+  REGULAR: 'regular',
+  CATEGORY: 'category'
 };
+
+const COLLAPSE_OPTIONS = {
+  COLLAPSE_ALL: 0,
+  ONLY_CATEGORIES: 1,
+  SHOW_ALL: 2
+};
+
+const MONTHS_TO_SHOW = 8;
 
 export default class BudgetTable extends Component {
 
@@ -28,9 +36,6 @@ export default class BudgetTable extends Component {
   static propTypes = {
     tableRef: PropTypes.func,
     firstColumnCell: PropTypes.func,
-    approvedBudgets: PropTypes.array,
-    planUnknownChannels: PropTypes.array,
-    projectedPlan: PropTypes.array,
     dates: PropTypes.array,
     updateState: PropTypes.func,
     approveWholeChannel: PropTypes.func,
@@ -48,23 +53,14 @@ export default class BudgetTable extends Component {
     isEditMode: false,
     isShowSecondaryEnabled: true,
     isConstraitsEnabled: false,
-    data: [],
-    editCommitedBudget: (month, channel, newBudget) => {
-      console.log(`edited month ${month} for channel ${channel} with value ${newBudget}`);
-    },
-    changeBudgetConstraint: (month, channelKey, isConstraint, isSoft) => {
-      console.log(`edited month ${month} for channel ${channelKey} with value isConstraint ${isConstraint} and isSoft ${isSoft}`);
-    },
-    deleteChannel: (channelKey) => {
-      console.log(`channel deleted ${channelKey}`);
-    }
+    data: []
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      tableCollapsed: 0,
+      tableCollapsed: COLLAPSE_OPTIONS.SHOW_ALL,
       collapsed: {},
       draggableValues: []
     };
@@ -72,7 +68,7 @@ export default class BudgetTable extends Component {
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
-    const headers = this.props.dates.map((month, index) => {
+    const headers = this.props.dates.slice(0, MONTHS_TO_SHOW).map((month, index) => {
       const events = this.props.events ?
         this.props.events
           .filter(event => {
@@ -117,7 +113,7 @@ export default class BudgetTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} primaryValue={month}>{month}</td>;
+        <td key={`head:${index}`}>{month}</td>;
     });
     return headers;
   };
@@ -156,40 +152,70 @@ export default class BudgetTable extends Component {
     const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
       ROW_TYPE.CATEGORY);
 
-    return !this.state.collapsed[category] ?
+    return !this.state.collapsed[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
       [categoryRow, ...channels.map((channel) => this.getTableRow(channel, ROW_TYPE.REGULAR))]
       : categoryRow;
+  };
+
+  approveMonthSuggestions = month => {
+    const monthData = this.props.data[month];
+    Object.keys(monthData).forEach(key => {
+      //if undefined or null don't enter, any other option should enter
+      if (monthData[key].secondaryBudget != null) {
+        this.props.editCommittedBudget(month, key, monthData[key].secondaryBudget);
+      }
+    });
   };
 
   getTableRow = (data, rowType) => {
     const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
 
-    return <tr className={this.classes.tableRow} key={titleCellKey} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+    return <tr className={this.classes.tableRow} key={titleCellKey} data-row-type={rowType}>
       {this.getTitleCell(rowType, data)}
 
       {data.values.map((monthData, key) => {
-        return <TableCell
-          key={`${data.channel}:${key}`}
-          primaryValue={monthData.primaryBudget}
-          secondaryValue={rowType !== ROW_TYPE.CATEGORY && this.props.isShowSecondaryEnabled
-            ? monthData.secondaryBudget
-            : null}
-          isConstraint={monthData.isConstraint}
-          isSoft={monthData.isSoft}
-          constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-            key,
-            data.channel,
-            isConstraint,
-            isSoft)}
-          isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-          isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
-          dragEnter={() => this.dragEnter(key, data.channel)}
-          commitDrag={this.commitDrag}
-          dragStart={this.dragStart}
-          isDragging={this.state.isDragging}
-          style={rowType === ROW_TYPE.CATEGORY ? {'border-bottom': '1px solid rgba(106, 154, 230, 0.19)'} : null}
-        />;
+        switch (rowType) {
+          case(ROW_TYPE.REGULAR): {
+            return <TableCell
+              key={`${data.channel}:${key}`}
+              primaryValue={monthData.primaryBudget}
+              secondaryValue={this.props.isShowSecondaryEnabled
+                ? monthData.secondaryBudget
+                : null}
+              isConstraint={monthData.isConstraint}
+              isSoft={monthData.isSoft}
+              constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+                key,
+                data.channel,
+                isConstraint,
+                isSoft)}
+              isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
+              onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
+              isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+              dragEnter={() => this.dragEnter(key, data.channel)}
+              commitDrag={this.commitDrag}
+              dragStart={this.dragStart}
+              isDragging={this.state.isDragging}
+              approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+              enableActionButtons={true}
+            />;
+          }
+          case(ROW_TYPE.CATEGORY): {
+            return <td className={this.classes.categoryCell}>${formatBudget(monthData.primaryBudget)}</td>;
+          }
+          case(ROW_TYPE.BOTTOM): {
+            return <TableCell
+              key={`${data.channel}:${key}`}
+              primaryValue={monthData.primaryBudget}
+              secondaryValue={this.props.isShowSecondaryEnabled
+                ? monthData.secondaryBudget
+                : null}
+              isConstraitsEnabled={false}
+              approveSuggestion={() => this.approveMonthSuggestions(key)}
+              enableActionButtons={false}
+            />;
+          }
+        }
       })}
     </tr>;
   };
@@ -247,11 +273,11 @@ export default class BudgetTable extends Component {
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>
-          
+
           {rowType === ROW_TYPE.REGULAR && this.props.isEditMode ? <div className={this.classes.channelEditIcons}>
             <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
                  onClick={() => this.setState({editChannelName: data.channel})}/>
-            <div className={this.classes.channelActionIcon} data-icon={'plan:deleteChannel'}
+            <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
                  onClick={() => this.setState({deletePopup: data.channel})}/>
           </div> : null}
         </div>
@@ -312,7 +338,7 @@ export default class BudgetTable extends Component {
 
     const notSorted = union(...data.map(month => Object.keys(month)))
       .map(channel => {
-        const channelArray = Array(12).fill(
+        const channelArray = Array(MONTHS_TO_SHOW).fill(
           {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
         data.forEach((month, index) => {
@@ -332,7 +358,7 @@ export default class BudgetTable extends Component {
   };
 
   sumChannels = (channels) => {
-    return Array(12).fill(0).map((value, index) => {
+    return Array(MONTHS_TO_SHOW).fill(0).map((value, index) => {
       return {
         primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
         secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
@@ -340,36 +366,42 @@ export default class BudgetTable extends Component {
     });
   };
 
+  nextCollapseOption = () => {
+    this.setState({
+      tableCollapsed: (this.state.tableCollapsed + 1) % 3
+    });
+  };
+
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
-      <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
-        <div
-          style={{borderColor: '#329ff1 transparent transparent transparent'}}
-          className={this.classes.rowArrowWrap}
-          data-collapsed={this.state.tableCollapsed || null}
-          data-headline
-          onClick={() => {
-            this.setState({
-              tableCollapsed: ++this.state.tableCollapsed % 3
-            });
-            this.forceUpdate();
-          }}>
-          <div className={this.classes.rowArrow} data-headline/>
-        </div>
-        <td>
+      <td className={this.classes.titleCell}>
+        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
+          <div
+            style={{borderColor: '#329ff1 transparent transparent transparent'}}
+            className={this.classes.rowArrowWrap}
+            data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
+            data-headline
+            onClick={() => {
+              this.nextCollapseOption();
+              this.forceUpdate();
+            }}>
+            <div className={this.classes.rowArrow} data-headline/>
+          </div>
           {'Marketing Channel'}
-        </td>
-      </div>
+        </div>
+      </td>
       {this.getMonthHeaders()}
     </tr>;
   };
 
   render() {
     const props = getChannelsWithProps();
-    const parsedData = this.parseData(this.props.data);
+    const slicedData = this.props.data.slice(0, MONTHS_TO_SHOW);
+    const parsedData = this.parseData(slicedData);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
-    const rows = this.props.data && this.state.tableCollapsed !== 1 ? this.getRows(dataWithCategories) : [];
+    const rows = this.props.data && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL ? this.getRows(
+      dataWithCategories) : [];
 
     const footRowData = {
       channel: 'Total',

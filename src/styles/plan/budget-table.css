@@ -3,6 +3,8 @@
 .table {
     border-spacing: 0;
     width: 100%;
+    table-layout: fixed;
+    padding: 0 20px;
 }
 
 .row-arrow {
@@ -33,7 +35,7 @@
     cursor: pointer;
 }
 
-.row-arrow-wrap[data-collapsed] {
+.row-arrow-wrap[data-collapsed='true'] {
     transform: rotate(-180deg);
 }
 
@@ -43,8 +45,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    background-color: white;
-    margin: auto 6px 0 auto;
+    margin-right: 6px;
 }
 
 .channel-action-icon {
@@ -53,7 +54,7 @@
 }
 
 .title {
-    display: inline-flex;
+    display: -webkit-inline-box;
 }
 
 .row-arrow-wrap[data-headline] {
@@ -69,15 +70,30 @@
     background-color: white;
 }
 
-.table-row[data-category-row='true'] {
+.table-row[data-row-type='category'] {
     background-color: rgba(222, 235, 255, 0.32);
     color: #222a41;
+}
+
+.table-row[data-row-type='bottom'] {
+    background-color: #4d91fc;
+    color: #ffffff;
 }
 
 .row-title {
     vertical-align: middle;
     position: relative;
-    padding: 20px;
+    padding-left: 20px;
+    width: 130px;
+}
+
+.title-text {
+    width: 90px;
+    color: #222a41;
+}
+
+.title-text[data-bottom-row] {
+    color: white;
 }
 
 .head-row {
@@ -90,6 +106,7 @@
 
 .title-cell {
     height: 14px;
+    width: 200px;
 }
 
 .title-cell[data-category-row="true"] {
@@ -98,11 +115,12 @@
 
 .channel-edit-icons {
     display: inline-flex;
-    margin-left: 16px;
+    margin-left: 6px;
 }
 
-.title-text {
-    margin: auto;
+.category-cell {
+    border-bottom: 1px solid rgba(106, 154, 230, 0.19);
 }
 
 @mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;
+@mixin icon-nodpi plan:removeChannel , ../../assets/cancel-button;

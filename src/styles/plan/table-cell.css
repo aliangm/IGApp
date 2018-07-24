@@ -2,6 +2,7 @@
 
 .value-cell {
     height: 14px;
+    width: 100px;
 }
 
 .secondary-value {
@@ -12,21 +13,25 @@
 
 .cell-item {
     align-items: center;
-    display: flex;
+    display: inline-flex;
 }
 
 .icon {
     width: 22px;
     height: 22px;
     background-size: 22px;
-    background-color: white;
     cursor: pointer;
     background-position: center center;
     background-repeat: no-repeat;
-    padding: 4px;
+    padding-left: 5px;
 }
 
 .buttons {
+    display: flex;
+    margin-left: 3.5px;
+}
+
+.inner-buttons {
     display: flex;
 }
 
@@ -35,8 +40,11 @@
     border-radius: 3px;
     box-shadow: 0 0 3px 0 #e6e8f0;
     border: solid 1px #e6e8f0;
-    color: inherit;
+    color: #4d91fc;;
     padding: 3px;
+    font-size: inherit;
+    font-weight: inherit;
+    height: 32px;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;
@@ -45,3 +53,4 @@
 @mixin icon-nodpi plan:acceptSuggestion , ../../assets/plan_icons/redo;
 @mixin icon-nodpi plan:edit , ../../assets/plan_icons/edit-per-cell;
 @mixin icon-nodpi plan:approveEdit , ../../assets/plan_icons/accept;
+@mixin icon-nodpi plan:declineEdit , ../../assets/plan_icons/decline;
