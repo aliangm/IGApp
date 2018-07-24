@@ -61,15 +61,15 @@ export default class Plan extends Component {
     this.setBudgetsData();
   }
 
-  setBudgetsData = (isPlannerPrimary = false) => {
-    const budgetsData = this.props.planBudgets.map(month =>
+  setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
+    const budgetsData = planBudgets.map(month =>
       Object.keys(month).reduce((object, channelKey) => {
         const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
         object[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: isPlannerPrimary ? committedBudget : plannerBudget,
-          isConstraint: userBudgetConstraint,
-          isSoft: isSoft
+          isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
+          isSoft: withConstraints ? isSoft : false
         };
         return object;
       }, {})
@@ -82,19 +82,30 @@ export default class Plan extends Component {
   }
 
   commitChanges = () => {
-    const planBudgets = this.state.budgetsData.map(month =>
+    const planBudgets = this.getPlanBudgets();
+    this.props.updateUserMonthPlan({planBudgets: planBudgets}, this.props.region, this.props.planDate);
+    this.setState({planBudgets: planBudgets});
+  };
+
+  getPlanBudgets = () => {
+    return this.state.budgetsData.map(month =>
       Object.keys(month).reduce((object, channelKey) => {
         const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
         object[channelKey] = {
           committedBudget: primaryBudget,
-          userBudgetConstraint: isConstraint ? budgetConstraint : null,
-          isSoft: isConstraint ? isSoft : null
+          userBudgetConstraint: isConstraint ? budgetConstraint : -1,
+          isSoft: isConstraint ? isSoft : false
         };
         return object;
       }, {})
     );
-    this.props.updateUserMonthPlan({planBudgets: planBudgets}, this.props.region, this.props.planDate);
-    this.setState({planBudgets: planBudgets});
+  };
+
+  plan = () => {
+    const planBudgets = this.getPlanBudgets();
+    this.props.plan(true, {planBudgets: planBudgets}, (data) => {
+      this.setBudgetsData(data.planBudgets, true, true);
+    }, this.props.region, false);
   };
 
   removeChannel = channelKey => {
@@ -107,12 +118,12 @@ export default class Plan extends Component {
     this.setState({budgetsData: budgetsData});
   };
 
-  changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = null) => {
+  changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = false) => {
     const budgetsData = [...this.state.budgetsData];
     budgetsData[month][channelKey].isConstraint = isConstraint;
     budgetsData[month][channelKey].isSoft = isSoft;
     if (isConstraint) {
-      budgetsData[month][channelKey].budgetConstraint = this.props.planBudgets[month][channelKey].committedBudget;
+      budgetsData[month][channelKey].budgetConstraint = budgetsData[month][channelKey].primaryBudget;
     }
     this.setState({budgetsData: budgetsData});
   };
@@ -230,11 +241,7 @@ export default class Plan extends Component {
                     </label>
                   </div>
                   <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
-                                onClick={() => {
-                                  this.props.plan(true, false, (data) => {
-                                    this.props.setDataAsState(data);
-                                  }, this.props.region, false);
-                                }}
+                                onClick={this.plan}
                                 planNeedsUpdate={this.props.planNeedsUpdate}/>
                 </div>
               </FeatureToggle>
@@ -301,6 +308,7 @@ export default class Plan extends Component {
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
                                       onCommittedClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                        this.setBudgetsData();
                                       }}
                                       onScratchClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
