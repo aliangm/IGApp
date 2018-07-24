@@ -313,10 +313,7 @@ export default class Plan extends Component {
                                       }}
                                       onScratchClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                        this.props.plan(true, false, (data) => {
-                                          this.props.setDataAsState(data);
-                                          this.setBudgetsData(true);
-                                        }, this.props.region, false);
+                                        this.plan();
                                       }}/>
                   </div>
                 : null
