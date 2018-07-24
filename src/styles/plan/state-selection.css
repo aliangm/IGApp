@@ -41,4 +41,9 @@
     font-size: 11px;
     color: #FFF;
     background: #333;
+    visibility: hidden;
+}
+
+.reaction-icon:hover .reaction-label {
+    visibility: visible;
 }
