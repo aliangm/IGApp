@@ -11,7 +11,7 @@ export default class StateSelection extends Component {
   static propTypes = {
     currentConstraint: PropTypes.string.isRequired,
     changeConstraint: PropTypes.func.isRequired,
-    constraintOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+    constraintOptions: PropTypes.object.isRequired,
     changeSuggestionBoxOpen: PropTypes.func
   };
 

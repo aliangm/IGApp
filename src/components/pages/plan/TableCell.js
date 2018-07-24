@@ -31,10 +31,9 @@ export default class TableCell extends Component {
   style = style;
 
   static propTypes = {
-    primaryValue: PropTypes.string.isRequired,
-    secondaryValue: PropTypes.string,
+    primaryValue: PropTypes.number.isRequired,
+    secondaryValue: PropTypes.number,
     isConstraitsEnabled: PropTypes.bool,
-    key: PropTypes.number,
     constraintChange: PropTypes.func,
     isConstraint: PropTypes.bool,
     isSoft: PropTypes.bool,
@@ -96,11 +95,15 @@ export default class TableCell extends Component {
   };
 
   isEditModeType = (editModeType) => {
-    switch(editModeType){
-      case(EDIT_MODE.ANY): return this.state.isEditing || this.props.isEditMode;
-      case(EDIT_MODE.TEMP_STATE): return this.state.isEditing;
-      case(EDIT_MODE.FROM_PROP): return this.props.isEditMode;
-      case(EDIT_MODE.NONE): return !this.state.isEditing && !this.props.isEditMode;
+    switch (editModeType) {
+      case(EDIT_MODE.ANY):
+        return this.state.isEditing || this.props.isEditMode;
+      case(EDIT_MODE.TEMP_STATE):
+        return this.state.isEditing;
+      case(EDIT_MODE.FROM_PROP):
+        return this.props.isEditMode;
+      case(EDIT_MODE.NONE):
+        return !this.state.isEditing && !this.props.isEditMode;
     }
   };
 
@@ -147,9 +150,9 @@ export default class TableCell extends Component {
         && !this.isEditModeType(EDIT_MODE.TEMP_STATE)
         && (this.getConstraint() !== 'none' || this.isCellActive()))
         ? <StateSelection currentConstraint={this.getConstraint()}
-                        constraintOptions={this.getConstraintsDisplayInfo()}
-                        changeConstraint={this.changeConstraint}
-                        changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
+                          constraintOptions={this.getConstraintsDisplayInfo()}
+                          changeConstraint={this.changeConstraint}
+                          changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
@@ -166,8 +169,7 @@ export default class TableCell extends Component {
                }}
                onMouseLeave={() => {
                  this.setState({hoverCell: false});
-               }}
-               key={this.props.key}>
+               }}>
       <div className={this.classes.cellItem}>
         <div>
           {this.isEditModeType(EDIT_MODE.ANY) ?
