@@ -1,13 +1,12 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/budget-table.css';
-import {parseBudgets} from 'data/parseAnnualPlan';
-import {formatBudget} from 'components/utils/budget';
+import {formatBudget, stripNumberFromBudget} from 'components/utils/budget';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
-import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
+//import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
 import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 import {getChannelsWithProps} from 'components/utils/channels';
 import groupBy from 'lodash/groupBy';
@@ -37,9 +36,6 @@ export default class BudgetTable extends Component {
     tableRef: PropTypes.func,
     firstColumnCell: PropTypes.func,
     dates: PropTypes.array,
-    updateState: PropTypes.func,
-    approveWholeChannel: PropTypes.func,
-    declineWholeMonth: PropTypes.func,
     isEditMode: PropTypes.bool,
     isShowSecondaryEnabled: PropTypes.bool,
     isConstraitsEnabled: PropTypes.bool,
@@ -51,7 +47,7 @@ export default class BudgetTable extends Component {
 
   static defaultProps = {
     isEditMode: false,
-    isShowSecondaryEnabled: true,
+    isShowSecondaryEnabled: false,
     isConstraitsEnabled: false,
     data: []
   };
@@ -62,27 +58,27 @@ export default class BudgetTable extends Component {
     this.state = {
       tableCollapsed: COLLAPSE_OPTIONS.SHOW_ALL,
       collapsed: {},
-      draggableValues: []
+      draggedCells: []
     };
   }
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
+    const events = this.props.events ?
+      this.props.events
+        .filter(event => {
+          const eventMonth = parseInt(event.startDate.split('/')[1]);
+          return (currentMonth + index) % 12 === eventMonth % 12;
+        })
+        .map((event, index) => {
+          return <p key={index}>
+            {event.link
+              ? <a href={event.link} target="_blank">{event.eventName}</a>
+              : event.eventName} {event.startDate} {event.location}
+          </p>;
+        })
+      : null;
     const headers = this.props.dates.slice(0, MONTHS_TO_SHOW).map((month, index) => {
-      const events = this.props.events ?
-        this.props.events
-          .filter(event => {
-            const eventMonth = parseInt(event.startDate.split('/')[1]);
-            return (currentMonth + index) % 12 === eventMonth % 12;
-          })
-          .map((event, index) => {
-            return <p key={index}>
-              {event.link
-                ? <a href={event.link} target="_blank">{event.eventName}</a>
-                : event.eventName} {event.startDate} {event.location}
-            </p>;
-          })
-        : null;
       return events.length > 0 ? <div style={{position: 'relative'}}>
           <div className={this.classes.tableButton} onClick={() => {
             this.setState({monthPopup: month});
@@ -123,14 +119,14 @@ export default class BudgetTable extends Component {
   };
 
   commitDrag = () => {
-    let value = parseInt(this.state.draggableValue.replace(/[-$,]/g, ''));
+    let value = stripNumberFromBudget(this.state.draggableValue);
 
-    this.state.draggableValues.forEach(({month, channel}) => {
+    this.state.draggedCells.forEach(({month, channel}) => {
       this.props.editCommitedBudget(month, channel, value);
     });
 
     this.setState({
-      draggableValues: [],
+      draggedCells: [],
       draggableValue: null,
       isDragging: false
     });
@@ -138,7 +134,7 @@ export default class BudgetTable extends Component {
 
   dragEnter = (month, channel) => {
     this.setState({
-      draggableValues: [...this.state.draggableValues,
+      draggedCells: [...this.state.draggedCells,
         {channel: channel, month: month}]
     });
   };
@@ -189,9 +185,9 @@ export default class BudgetTable extends Component {
                 data.channel,
                 isConstraint,
                 isSoft)}
-              isEditMode={rowType === ROW_TYPE.REGULAR && this.props.isEditMode}
+              isEditMode={this.props.isEditMode}
               onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-              isConstraitsEnabled={rowType !== ROW_TYPE.CATEGORY && this.props.isConstraitsEnabled}
+              isConstraitsEnabled={this.props.isConstraitsEnabled}
               dragEnter={() => this.dragEnter(key, data.channel)}
               commitDrag={this.commitDrag}
               dragStart={this.dragStart}
@@ -201,7 +197,9 @@ export default class BudgetTable extends Component {
             />;
           }
           case(ROW_TYPE.CATEGORY): {
-            return <td className={this.classes.categoryCell}>${formatBudget(monthData.primaryBudget)}</td>;
+            return <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
+              ${formatBudget(monthData.primaryBudget)}
+            </td>;
           }
           case(ROW_TYPE.BOTTOM): {
             return <TableCell
@@ -237,6 +235,7 @@ export default class BudgetTable extends Component {
             }}>
             <div className={this.classes.rowArrow}/>
           </div> : null}
+
         {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
           <div>
             <div className={this.classes.editChannelNameWrapper}>
@@ -268,6 +267,7 @@ export default class BudgetTable extends Component {
             </Popup>
           </div>
           : null}
+
         <div className={this.classes.title}>
           {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
             : null}
@@ -299,60 +299,48 @@ export default class BudgetTable extends Component {
     this.setState({editChannelName: ''});
   };
 
-  handleChangeContextMenu = (event, data) => {
-    const channel = data.channel;
-    const percent = data.percent;
-    let planUnknownChannels = this.props.planUnknownChannels;
-    let projectedPlan = this.props.projectedPlan;
-    let approvedBudgets = this.props.approvedBudgets;
-    for (let i = 0; i < 12; i++) {
-      if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined) {
-        planUnknownChannels[i][channel] = Math.round(planUnknownChannels[i][channel] * percent);
-      }
-      else {
-        const newBudget = Math.round((projectedPlan[i].plannedChannelBudgets[channel] || 0) * percent);
-        projectedPlan[i].plannedChannelBudgets[channel] = newBudget;
-        if (!approvedBudgets[i]) {
-          approvedBudgets[i] = {};
-        }
-        approvedBudgets[i][channel] = newBudget;
-      }
-      this.props.updateState({
-        projectedPlan: projectedPlan,
-        approvedBudgets: approvedBudgets,
-        planUnknownChannels: planUnknownChannels
-      });
-    }
-  };
+  // handleChangeContextMenu = (event, data) => {
+  //   const channel = data.channel;
+  //   const percent = data.percent;
+  //   let planUnknownChannels = this.props.planUnknownChannels;
+  //   let projectedPlan = this.props.projectedPlan;
+  //   let approvedBudgets = this.props.approvedBudgets;
+  //   for (let i = 0; i < 12; i++) {
+  //     if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined)
+  // { planUnknownChannels[i][channel] = Math.round(planUnknownChannels[i][channel] * percent); } else { const
+  // newBudget = Math.round((projectedPlan[i].plannedChannelBudgets[channel] || 0) * percent);
+  // projectedPlan[i].plannedChannelBudgets[channel] = newBudget; if (!approvedBudgets[i]) { approvedBudgets[i] = {}; }
+  // approvedBudgets[i][channel] = newBudget; } this.props.updateState({ projectedPlan: projectedPlan, approvedBudgets:
+  // approvedBudgets, planUnknownChannels: planUnknownChannels }); } };
 
-  approveChannel = (event, data) => {
-    this.props.approveWholeChannel(data.channel);
-  };
+  // approveChannel = (event, data) => {
+  //   this.props.approveWholeChannel(data.channel);
+  // };
+  //
+  // declineChannel = (event, data) => {
+  //   this.props.declineWholeChannel(data.channel);
+  // };
 
-  declineChannel = (event, data) => {
-    this.props.declineWholeChannel(data.channel);
-  };
-
-  parseData = (data) => {
+  getDataByChannel = (data) => {
     const props = getChannelsWithProps();
+    const channels = union(...data.map(month => Object.keys(month)));
 
-    const notSorted = union(...data.map(month => Object.keys(month)))
-      .map(channel => {
-        const channelArray = Array(MONTHS_TO_SHOW).fill(
-          {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
+    const notSorted = channels.map(channel => {
+      const monthArray = Array(MONTHS_TO_SHOW).fill(
+        {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
-        data.forEach((month, index) => {
-          if (month[channel]) {
-            channelArray[index] = {
-              ...month[channel],
-              isConstraint: month[channel].isConstraint ? month[channel].isConstraint : false,
-              primaryBudget: month[channel].primaryBudget ? month[channel].primaryBudget : 0
-            };
-          }
-        });
-
-        return {channel: channel, nickname: props[channel].nickname, values: channelArray};
+      data.forEach((month, index) => {
+        if (month[channel]) {
+          monthArray[index] = {
+            ...month[channel],
+            isConstraint: month[channel].isConstraint ? month[channel].isConstraint : false,
+            primaryBudget: month[channel].primaryBudget ? month[channel].primaryBudget : 0
+          };
+        }
       });
+
+      return {channel: channel, nickname: props[channel].nickname, values: monthArray};
+    });
 
     return sortBy(notSorted, item => [props[item.channel].category.toLowerCase(), item.nickname.toLowerCase()]);
   };
@@ -377,13 +365,11 @@ export default class BudgetTable extends Component {
       <td className={this.classes.titleCell}>
         <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
           <div
-            style={{borderColor: '#329ff1 transparent transparent transparent'}}
             className={this.classes.rowArrowWrap}
             data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
             data-headline
             onClick={() => {
               this.nextCollapseOption();
-              this.forceUpdate();
             }}>
             <div className={this.classes.rowArrow} data-headline/>
           </div>
@@ -397,11 +383,11 @@ export default class BudgetTable extends Component {
   render() {
     const props = getChannelsWithProps();
     const slicedData = this.props.data.slice(0, MONTHS_TO_SHOW);
-    const parsedData = this.parseData(slicedData);
+    const parsedData = this.getDataByChannel(slicedData);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
-    const rows = this.props.data && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL ? this.getRows(
-      dataWithCategories) : [];
+    const rows = dataWithCategories && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL
+      ? this.getRows(dataWithCategories) : [];
 
     const footRowData = {
       channel: 'Total',
@@ -426,56 +412,103 @@ export default class BudgetTable extends Component {
           </tfoot>
         </table>
       </div>
-
-      <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-      {headRow}
-      </thead>
-
-      <ContextMenu id="rightClickEdit">
-        <SubMenu title="Increase by" hoverDelay={250}>
-          <MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>
-            10%
-          </MenuItem>
-          <MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>
-            20%
-          </MenuItem>
-          <MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>
-            30%
-          </MenuItem>
-          <MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>
-            40%
-          </MenuItem>
-          <MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>
-            50%
-          </MenuItem>
-        </SubMenu>
-        <SubMenu title="Decrease by" hoverDelay={250}>
-          <MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>
-            10%
-          </MenuItem>
-          <MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>
-            20%
-          </MenuItem>
-          <MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>
-            30%
-          </MenuItem>
-          <MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>
-            40%
-          </MenuItem>
-          <MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>
-            50%
-          </MenuItem>
-        </SubMenu>
-      </ContextMenu>
-
-      <ContextMenu id="rightClickNormal">
-        <MenuItem onClick={this.approveChannel}>
-          Approve all suggestions
-        </MenuItem>
-        <MenuItem onClick={this.declineChannel}>
-          Decline all suggestions
-        </MenuItem>
-      </ContextMenu>
     </div>;
+
+    {/*<thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>*/
+    }
+    {/*{headRow}*/
+    }
+    {/*</thead>*/
+    }
+
+    {/*<ContextMenu id="rightClickEdit">*/
+    }
+    {/*<SubMenu title="Increase by" hoverDelay={250}>*/
+    }
+    {/*<MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*10%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*20%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*30%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*40%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*50%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*</SubMenu>*/
+    }
+    {/*<SubMenu title="Decrease by" hoverDelay={250}>*/
+    }
+    {/*<MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*10%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*20%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*30%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*40%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>*/
+    }
+    {/*50%*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*</SubMenu>*/
+    }
+    {/*</ContextMenu>*/
+    }
+
+    {/*<ContextMenu id="rightClickNormal">*/
+    }
+    {/*<MenuItem onClick={this.approveChannel}>*/
+    }
+    {/*Approve all suggestions*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*<MenuItem onClick={this.declineChannel}>*/
+    }
+    {/*Decline all suggestions*/
+    }
+    {/*</MenuItem>*/
+    }
+    {/*</ContextMenu>*/
+    }
   }
-};
+}
