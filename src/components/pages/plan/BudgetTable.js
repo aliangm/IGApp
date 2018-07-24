@@ -233,7 +233,7 @@ export default class BudgetTable extends Component {
 
   getTitleCell = (rowType, data) => {
     return <td className={this.classes.titleCell} data-category-row={rowType === ROW_TYPE.CATEGORY}>
-      <div className={this.classes.rowTitle}>
+      <div className={this.classes.rowTitle} data-category-row={rowType === ROW_TYPE.CATEGORY}>
         {rowType === ROW_TYPE.CATEGORY ?
           <div
             className={this.classes.rowArrowWrap}
@@ -281,17 +281,20 @@ export default class BudgetTable extends Component {
           </div>
           : null}
 
-        <div className={this.classes.title}>
+        <div className={this.classes.title} data-category-row={rowType === ROW_TYPE.CATEGORY}>
           {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>
 
-          {rowType === ROW_TYPE.REGULAR && this.props.isEditMode ? <div className={this.classes.channelEditIcons}>
-            <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
-                 onClick={() => this.setState({editChannelName: data.channel})}/>
-            <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
-                 onClick={() => this.setState({deletePopup: data.channel})}/>
+          {rowType === ROW_TYPE.REGULAR && this.props.isEditMode ? <div
+            className={this.classes.channelEditIconsWrapper}>
+            <div className={this.classes.channelEditIcons}>
+              <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
+                   onClick={() => this.setState({editChannelName: data.channel})}/>
+              <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
+                   onClick={() => this.setState({deletePopup: data.channel})}/>
+            </div>
           </div> : null}
         </div>
       </div>
@@ -376,7 +379,7 @@ export default class BudgetTable extends Component {
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
       <td className={this.classes.titleCell}>
-        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
+        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell} data-category-row={true}>
           <div
             className={this.classes.rowArrowWrap}
             data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
@@ -386,7 +389,9 @@ export default class BudgetTable extends Component {
             }}>
             <div className={this.classes.rowArrow} data-headline/>
           </div>
-          {'Marketing Channel'}
+          <div className={this.classes.title} data-category-row={true}>
+            {'Marketing Channel'}
+          </div>
         </div>
       </td>
       {this.getMonthHeaders()}

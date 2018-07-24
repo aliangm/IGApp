@@ -25,14 +25,15 @@
 }
 
 .row-arrow-wrap {
-    position: absolute;
-    left: -11px;
     height: 19px;
     width: 19px;
     border-radius: 25px;
     background-color: #ffffff;
     border: solid 1px #d9e7fa;
     cursor: pointer;
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .row-arrow-wrap[data-collapsed='true'] {
@@ -45,7 +46,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    margin-right: 16px;
+    margin-right: 12.2px;
 }
 
 .channel-action-icon {
@@ -57,6 +58,13 @@
 
 .title {
     display: table;
+    margin-left: 32px;
+}
+
+.title[data-category-row="true"]{
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 22px;
 }
 
 .row-arrow-wrap[data-headline] {
@@ -83,14 +91,14 @@
 }
 
 .row-title {
-    vertical-align: middle;
-    position: relative;
-    padding-left: 20px;
-    width: 100%;
+    display: table;
+}
+
+.row-title[data-category-row="true"] {
+    margin-left: -12px;
 }
 
 .title-text {
-    width: 200px;
     color: #222a41;
     display: table-cell;
     vertical-align: middle;
@@ -113,17 +121,25 @@
     width: 309px;
 }
 
-.title-cell[data-category-row="true"] {
-    border-bottom: 1px solid rgba(106, 154, 230, 0.19);
-}
-
 .channel-edit-icons {
     display: inline-flex;
     margin-left: 6px;
+    vertical-align: middle;
+}
+
+.channel-edit-icons-wrapper {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .category-cell {
     border-bottom: 1px solid rgba(106, 154, 230, 0.19);
+    border-top: 1px solid rgba(106, 154, 230, 0.19);
+}
+
+.title-cell[data-category-row="true"] {
+    border-bottom: 1px solid rgba(106, 154, 230, 0.19);
+    border-top: 1px solid rgba(106, 154, 230, 0.19);
 }
 
 .sticky-header {
