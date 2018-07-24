@@ -357,7 +357,7 @@ export default class Plan extends Component {
                       <div className={this.classes.dropmenuItemCancel}
                            onClick={() => {
                              this.setState({editMode: false});
-                             this.props.getUserMonthPlan(this.props.region);
+                             this.setBudgetsData();
                            }}>
                         Cancel
                       </div>
