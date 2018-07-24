@@ -58,9 +58,22 @@ export default class BudgetTable extends Component {
     this.state = {
       tableCollapsed: COLLAPSE_OPTIONS.SHOW_ALL,
       collapsed: {},
-      draggedCells: []
+      draggedCells: [],
+      isSticky: false
     };
   }
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll = () => {
+    this.setState({isSticky: (this.tableRef && this.tableRef.getBoundingClientRect().top) < 70});
+  };
 
   getMonthHeaders = () => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
@@ -400,7 +413,11 @@ export default class BudgetTable extends Component {
 
     return <div>
       <div className={this.classes.box}>
-        <table className={this.classes.table} ref={this.props.tableRef}>
+        <table className={this.classes.table}
+               ref={(ref) => {
+                 this.tableRef = ref;
+                 this.props.tableRef(ref);
+               }}>
           <thead>
           {headRow}
           </thead>
@@ -412,14 +429,10 @@ export default class BudgetTable extends Component {
           </tfoot>
         </table>
       </div>
+      <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
+      {headRow}
+      </thead>
     </div>;
-
-    {/*<thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>*/
-    }
-    {/*{headRow}*/
-    }
-    {/*</thead>*/
-    }
 
     {/*<ContextMenu id="rightClickEdit">*/
     }
