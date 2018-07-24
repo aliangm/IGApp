@@ -59,7 +59,7 @@ export default class TableCell extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.primaryValue) {
+    if (newProps.primaryValue != null) {
       this.setState({
         editValue: newProps.primaryValue
       });
