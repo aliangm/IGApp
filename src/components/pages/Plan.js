@@ -136,10 +136,11 @@ export default class Plan extends Component {
   };
 
   editUpdate = () => {
-    return this.props.updateUserMonthPlan({
-      projectedPlan: this.props.projectedPlan,
-      approvedBudgets: this.props.approvedBudgets,
-      unknownChannels: this.props.planUnknownChannels
+    if (this.state.interactiveMode) {
+      return Promise.resolve();
+    }
+    else return this.props.updateUserMonthPlan({
+      planBudgets: this.getPlanBudgets()
     }, this.props.region, this.props.planDate);
   };
 
