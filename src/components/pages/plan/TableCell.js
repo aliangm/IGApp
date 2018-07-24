@@ -137,7 +137,7 @@ export default class TableCell extends Component {
 
   getActionButtons = () => {
     return <div className={this.classes.buttons}>
-      {this.isEditModeType(EDIT_MODE.TEMP_STATE) ?
+      {this.isEditModeType(EDIT_MODE.TEMP_STATE) && !this.isEditModeType(EDIT_MODE.FROM_PROP) ?
         <div className={this.classes.innerButtons}>
           <div className={this.classes.icon}
                data-icon="plan:approveEdit"
