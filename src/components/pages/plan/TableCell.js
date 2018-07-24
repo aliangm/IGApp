@@ -186,7 +186,7 @@ export default class TableCell extends Component {
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
       {this.showSuggestion() ?
-        <div className={this.classes.secondaryValue}>
+        <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY)}>
           {formatBudgetWithDollar(this.props.secondaryValue)}
         </div> : null}
     </td>;

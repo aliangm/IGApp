@@ -13,6 +13,10 @@
     position: absolute;
 }
 
+.secondary-value[data-in-edit="true"] {
+    margin-left: 10px;
+}
+
 .cell-item {
     align-items: center;
     display: inline-flex;
