@@ -10,6 +10,7 @@
     font-weight: 500;
     color: #b2bbd5;
     margin-top: 2px;
+    position: absolute;
 }
 
 .cell-item {
