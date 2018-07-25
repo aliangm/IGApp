@@ -19,3 +19,18 @@ h1, h2, h3, h4 {
   /* text-transform: uppercase; */
   color: #24b10e;
 }
+
+div::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+  background-color: transparent;
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: #707ea7;
+  border-radius: 4px;
+}
+
+div::-webkit-scrollbar-track {
+  background-color: transparent;
+}

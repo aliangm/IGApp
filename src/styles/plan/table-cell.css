@@ -3,12 +3,19 @@
 .value-cell {
     height: 14px;
     width: 100px;
+    position: relative;
 }
 
 .secondary-value {
     font-size: 10px;
     font-weight: 500;
     color: #b2bbd5;
+    margin-top: 2px;
+    position: absolute;
+}
+
+.secondary-value[data-in-edit="true"] {
+    margin-left: 10px;
 }
 
 .cell-item {
@@ -41,10 +48,9 @@
     box-shadow: 0 0 3px 0 #e6e8f0;
     border: solid 1px #e6e8f0;
     color: #4d91fc;;
-    padding: 3px;
+    padding: 10px 0 7px 8px;
     font-size: inherit;
     font-weight: inherit;
-    height: 32px;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;

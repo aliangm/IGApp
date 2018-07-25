@@ -108,7 +108,7 @@ export default class TableCell extends Component {
   };
 
   showSuggestion = () => {
-    return this.props.secondaryValue
+    return this.props.secondaryValue != null
       && (this.props.secondaryValue !== this.props.primaryValue)
       && this.isCellActive();
   };
@@ -177,20 +177,18 @@ export default class TableCell extends Component {
                  this.setState({hoverCell: false});
                }}>
       <div className={this.classes.cellItem}>
-        <div>
-          {this.isEditModeType(EDIT_MODE.ANY) ?
-            <input className={this.classes.editCell}
-                   type="text"
-                   value={formatBudgetWithDollar(this.state.editValue)}
-                   onChange={this.onInputValueChange}/>
-            : <div>{formatBudgetWithDollar(this.props.primaryValue)}</div>}
-          {this.showSuggestion() ?
-            <div className={this.classes.secondaryValue}>
-              {formatBudgetWithDollar(this.props.secondaryValue)}
-            </div> : null}
-        </div>
+        {this.isEditModeType(EDIT_MODE.ANY) ?
+          <input className={this.classes.editCell}
+                 type="text"
+                 value={formatBudgetWithDollar(this.state.editValue)}
+                 onChange={this.onInputValueChange}/>
+          : <div>{formatBudgetWithDollar(this.props.primaryValue)}</div>}
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
+      {this.showSuggestion() ?
+        <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY)}>
+          {formatBudgetWithDollar(this.props.secondaryValue)}
+        </div> : null}
     </td>;
   }
 };
