@@ -1,6 +1,5 @@
 .wrap {
     position: relative;
-    padding: 0 20px;
 }
 
 .box {
@@ -30,7 +29,7 @@
     width: calc(100% - 281px);
     display: inline-table;
     table-layout: fixed;
-    opacity:0;
+    opacity: 0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
     visibility: hidden;
     composes: table;
@@ -109,6 +108,7 @@
     border-top: 1px solid #b0e3a8;
     height: 49px;
 }
+
 /**
 .foot-row :global(td) {
     border-top: 1px solid #b0e3a8;
@@ -295,6 +295,7 @@
 .hover-table .foot-row :global(td) {
     border-top: 1px solid #273142;
 }
+
 /**
 .hover-table tr[data-hovered] {
     visibility: visible;
@@ -335,7 +336,8 @@
 .popup {
     display: flex;
     align-items: center;
-    justify-content: center;flex-direction: column;
+    justify-content: center;
+    flex-direction: column;
     width: 400px;
     height: 200px;
     position: absolute;
@@ -409,7 +411,6 @@
 
 .indicators-graph {
     margin-top: 20px;
-    width: 1166px;
 }
 
 .edit-channel-name {

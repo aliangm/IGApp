@@ -1,15 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
-import {XAxis, Tooltip, LineChart, Line, YAxis, CartesianGrid, ReferenceDot} from 'recharts';
+import {ResponsiveContainer, Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
-import {getNickname, getIndicatorsWithProps} from 'components/utils/indicators';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
+import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
 import {formatBudgetShortened} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
+import CustomCheckbox from 'components/controls/CustomCheckbox';
 
 export default class IndicatorsGraph extends Component {
 
@@ -108,26 +106,37 @@ export default class IndicatorsGraph extends Component {
                }}>{indicatorsMapping[indicator]}</Label>
       </div>
     );
-    const menuItems = this.state.checkedIndicators.map((indicator, index) =>
+    const menuItems = Object.keys(indicatorsMapping).map((indicator, index) =>
       <div className={this.classes.menuItem} key={indicator}>
-        <Label style={{
-          marginBottom: '3px',
-          fontSize: '12px',
-          textTransform: 'capitalize'
-        }}>{indicatorsMapping[indicator]}</Label>
-        <div className={this.classes.coloredCircle} style={{background: COLORS[index % COLORS.length]}}/>
+        <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
+                        onChange={this.toggleCheckbox.bind(this, indicator)}
+                        className={this.classes.label}
+                        checkboxStyle={{backgroundColor: COLORS[index % COLORS.length]}}>{indicatorsMapping[indicator]}</CustomCheckbox>
       </div>
     );
-    const lines = this.state.checkedIndicators.map((indicator, index) =>
-      <Line key={indicator}
-            type='monotone'
-            dataKey={indicator}
-            stroke={COLORS[index % COLORS.length]}
-            fill={COLORS[index % COLORS.length]}
-            strokeWidth={3}/>
-    );
+
+    const defs = this.state.checkedIndicators.map(indicator => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <defs key={indicator}>
+        <linearGradient id={indicator} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={COLORS[index % COLORS.length]} stopOpacity={0.2}/>
+          <stop offset="100%" stopColor={COLORS[index % COLORS.length]} stopOpacity={0}/>
+        </linearGradient>
+      </defs>;
+    });
+    const lines = this.state.checkedIndicators.map(indicator => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <Area key={indicator}
+                   isAnimationActive={false}
+                   type='monotone'
+                   dataKey={indicator}
+                   stroke={COLORS[index % COLORS.length]}
+                   fill={`url(#${indicator})`}
+                   fillOpacity={1}
+                   strokeWidth={1}/>;
+    });
     const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
-      <Line key={indicator + 1}
+      <Area key={indicator + 1}
             type='monotone'
             dataKey={indicator + 'Suggested'}
             stroke={COLORS[index % COLORS.length]}
@@ -137,15 +146,22 @@ export default class IndicatorsGraph extends Component {
             dot={{strokeDasharray: 'initial', fill: 'white'}}/>
     );
 
+    const CustomizedLabel = React.createClass({
+      render() {
+        const {x, y} = this.props;
+        return <svg>
+          <image x={x - 12} y={y - 12} width="24" height="24" href="../../assets/objective-dot.svg"/>
+        </svg>;
+      }
+    });
+
     const dots = this.state.checkedIndicators.map((indicator, index) =>
       this.props.objectives[indicator] &&
       <ReferenceDot {... this.props.objectives[indicator]}
-                    r={10}
-                    fill="#e60000"
-                    stroke="white"
-                    stroke-width={2}
+                    fill="none"
+                    stroke="none"
                     key={index}
-                    label="O"
+                    label={<CustomizedLabel/>}
                     alwaysShow={true}/>
     );
     const tooltip = (data) => {
@@ -153,48 +169,22 @@ export default class IndicatorsGraph extends Component {
       const prevIndex = currentIndex - 1;
       if (data.active && data.payload && data.payload.length > 0) {
         return <div className={this.classes.customTooltip}>
-          <div style={{fontWeight: 'bold'}}>
-            {data.label}
-          </div>
           {
             data.payload.map((item, index) => {
+              const indicator = item.dataKey;
+              const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
               if (item.value && !item.dataKey.includes('Suggested')) {
                 return <div key={index}>
-                  {indicatorsMapping[item.dataKey]}: {item.value}
-                  {prevIndex >= 0 ?
-                    <div style={{
-                      color: item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '#30b024' : '#d50a2e',
-                      display: 'inline',
-                      fontWeight: 'bold'
-                    }}>
-                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '+' : '-') +
-                      Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
-                    </div>
-                    : null}
-                  <div>
-                    {prevIndex >= 0 && this.props.data[prevIndex][item.dataKey + 'Suggested'] ?
-                      <div>
-                        {indicatorsMapping[item.dataKey] +
-                        ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
-                        <div style={{
-                          color: this.props.data[currentIndex][item.dataKey + 'Suggested'] -
-                          this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e',
-                          display: 'inline',
-                          fontWeight: 'bold'
-                        }}>
-                          {' (' +
-                          (this.props.data[currentIndex][item.dataKey + 'Suggested'] -
-                          this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') +
-                          Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] -
-                            this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
-                        </div>
-                      </div>
-                      : null}
+                  <div className={this.classes.customTooltipIndicator}>
+                    {indicatorsMapping[indicator]}
                   </div>
-                  {this.props.objectives[item.dataKey] !== undefined &&
-                  this.props.objectives[item.dataKey].x === data.label ?
+                  <div className={this.classes.customTooltipValue} style={{color: COLORS[colorIndex % COLORS.length]}}>
+                    {item.value}
+                  </div>
+                  {this.props.objectives[indicator] !== undefined &&
+                  this.props.objectives[indicator].x === data.label ?
                     <div>
-                      {indicatorsMapping[item.dataKey]} (objective): {this.props.objectives[item.dataKey].y}
+                      {indicatorsMapping[indicator]} (objective): {this.props.objectives[indicator].y}
                     </div>
                     : null}
                 </div>;
@@ -205,41 +195,36 @@ export default class IndicatorsGraph extends Component {
       }
       return null;
     };
+
     return <div className={this.classes.inner}>
-      <div className={this.classes.menuPosition}>
-        <div className={this.classes.menu}>
-          <div className={this.classes.menuTitle}>
-            Forecasting
-            <div style={{position: 'relative'}}>
-              <div className={this.classes.settings} onClick={() => {
-                this.refs.settingsPopup.open();
-              }}/>
-              <PlanPopup ref="settingsPopup" style={{
-                top: '20px'
-              }} title="Settings">
-                <PopupTextContent>
-                  {popupItems}
-                </PopupTextContent>
-              </PlanPopup>
-            </div>
-          </div>
+      <div className={this.classes.menu}>
+        <div className={this.classes.menuTitle}>
+          Forecasting
+        </div>
+        <div className={this.classes.menuItems}>
           {menuItems}
         </div>
       </div>
-      <div className={this.classes.chart} style={{width: this.width, marginLeft: this.marginLeft, marginTop: '30px'}}>
-        <LineChart width={this.width} height={400} data={this.props.data}>
-          <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
-          <YAxis tickFormatter={(tick) => formatBudgetShortened(tick)}
-                 style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
-                 domain={['dataMin', 'dataMax']}/>
-          <CartesianGrid vertical={false}/>
-          {dots}
-          <Tooltip content={tooltip.bind(this)}/>
-          {lines}
-          {suggestedLines}
-        </LineChart>
+      <div className={this.classes.chart}
+           style={{marginTop: '80px', marginLeft: '80px', width: '-webkit-fill-available'}}>
+        <ResponsiveContainer height={400} width='100%'>
+          <AreaChart data={this.props.data}>
+            <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} tickLine={false}/>
+            <YAxis axisLine={false}
+                   tickLine={false}
+                   tickFormatter={formatBudgetShortened}
+                   style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
+                   domain={['dataMin', 'dataMax']}/>
+            <CartesianGrid vertical={false}/>
+            {dots}
+            <Tooltip content={tooltip.bind(this)} offset={0}/>
+            {defs}
+            {lines}
+            {suggestedLines}
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>;
   }
 
-}
+};

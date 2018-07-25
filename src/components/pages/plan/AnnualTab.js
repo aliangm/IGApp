@@ -68,17 +68,16 @@ export default class AnnualTab extends Component {
 
     const currentSuggested = {};
     const dates = getDates(planDate);
-    const projections = this.props.projectedPlan.map((item, index) => {
+    const projections = this.props.forecastedIndicators.map((item, index) => {
       const json = {};
-      if (item.projectedIndicatorValues) {
-        Object.keys(item.projectedIndicatorValues).forEach(key => {
-          json[key + 'Suggested'] = item.projectedIndicatorValues[key];
-        });
-        Object.keys(this.props.actualIndicators).forEach(indicator => {
-          currentSuggested[indicator + 'Suggested'] = this.props.actualIndicators[indicator];
-        });
-      }
-      return {...json, name: dates[index], ... this.props.approvedBudgetsProjection[index]};
+      Object.keys(item).forEach(key => {
+        json[key] = item[key].committed;
+      });
+      return {...json, name: dates[index]};
+    });
+
+    Object.keys(this.props.actualIndicators).forEach(indicator => {
+      currentSuggested[indicator] = this.props.actualIndicators[indicator];
     });
 
     // Current indicators values to first cell
@@ -116,8 +115,7 @@ export default class AnnualTab extends Component {
                        approvedPlan={this.state.approvedPlan}
                        {...this.props}/>
 
-          <div className={this.classes.indicatorsGraph} style={{width: this.state.graphDimensions.width}}
-               ref={this.props.forecastingGraphRef.bind(this)}>
+          <div className={this.classes.indicatorsGraph} ref={this.props.forecastingGraphRef.bind(this)}>
             <IndicatorsGraph data={projections} objectives={objectives} dimensions={this.state.graphDimensions}/>
           </div>
         </div>

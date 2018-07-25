@@ -499,7 +499,8 @@ class AppComponent extends Component {
       technologyStack: data.technologyStack || [],
       historyData: data.historyData || {},
       budgetConstraints: data.budgetConstraints || {},
-      planBudgets: data.planBudgets || []
+      planBudgets: data.planBudgets || [],
+      forecastedIndicators: data.forecastedIndicators || []
     });
   }
 
