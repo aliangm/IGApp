@@ -183,8 +183,7 @@ export default class BudgetTable extends Component {
       {data.values.map((monthData, key) => {
         switch (rowType) {
           case(ROW_TYPE.REGULAR): {
-            return;
-            <TableCell
+            return <TableCell
               key={`${data.channel}:${key}`}
               primaryValue={monthData.primaryBudget}
               secondaryValue={this.props.isShowSecondaryEnabled
@@ -209,14 +208,12 @@ export default class BudgetTable extends Component {
             />;
           }
           case(ROW_TYPE.CATEGORY): {
-            return;
-            <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
+            return <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
               ${formatBudget(monthData.primaryBudget)}
             </td>;
           }
           case(ROW_TYPE.BOTTOM): {
-            return;
-            <TableCell
+            return <TableCell
               key={`${data.channel}:${key}`}
               primaryValue={monthData.primaryBudget}
               secondaryValue={this.props.isShowSecondaryEnabled
