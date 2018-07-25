@@ -9,6 +9,20 @@
     margin-left: 309px;
 }
 
+.table-scroller::-webkit-scrollbar {
+    height: 6px;
+    background-color: transparent;
+}
+
+.table-scroller::-webkit-scrollbar-thumb {
+    background-color: #707ea7;
+    border-radius: 4px;
+}
+
+.table-scroller::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
 .table {
     border-spacing: 0;
     width: 100%;
