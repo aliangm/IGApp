@@ -26,8 +26,6 @@ const COLLAPSE_OPTIONS = {
   SHOW_ALL: 2
 };
 
-const MONTHS_TO_SHOW = 8;
-
 export default class BudgetTable extends Component {
 
   style = style;
@@ -91,7 +89,7 @@ export default class BudgetTable extends Component {
           </p>;
         })
       : null;
-    const headers = this.props.dates.slice(0, MONTHS_TO_SHOW).map((month, index) => {
+    const headers = this.props.dates.map((month, index) => {
       return events.length > 0 ? <div style={{position: 'relative'}}>
           <div className={this.classes.tableButton} onClick={() => {
             this.setState({monthPopup: month});
@@ -122,7 +120,7 @@ export default class BudgetTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`}>{month}</td>;
+        <td key={`head:${index}`} className={this.classes.headRowCell}>{month}</td>;
     });
     return headers;
   };
@@ -185,7 +183,8 @@ export default class BudgetTable extends Component {
       {data.values.map((monthData, key) => {
         switch (rowType) {
           case(ROW_TYPE.REGULAR): {
-            return <TableCell
+            return;
+            <TableCell
               key={`${data.channel}:${key}`}
               primaryValue={monthData.primaryBudget}
               secondaryValue={this.props.isShowSecondaryEnabled
@@ -210,12 +209,14 @@ export default class BudgetTable extends Component {
             />;
           }
           case(ROW_TYPE.CATEGORY): {
-            return <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
+            return;
+            <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
               ${formatBudget(monthData.primaryBudget)}
             </td>;
           }
           case(ROW_TYPE.BOTTOM): {
-            return <TableCell
+            return;
+            <TableCell
               key={`${data.channel}:${key}`}
               primaryValue={monthData.primaryBudget}
               secondaryValue={this.props.isShowSecondaryEnabled
@@ -232,21 +233,23 @@ export default class BudgetTable extends Component {
   };
 
   getTitleCell = (rowType, data) => {
-    return <td className={this.classes.titleCell} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+    return <td className={this.classes.titleCell} data-row-type={rowType}>
       <div className={this.classes.rowTitle} data-category-row={rowType === ROW_TYPE.CATEGORY}>
         {rowType === ROW_TYPE.CATEGORY ?
-          <div
-            className={this.classes.rowArrowWrap}
-            data-collapsed={this.state.collapsed[data.channel] ? true : null}
-            onClick={() => {
-              this.setState({
-                collapsed: {
-                  ...this.state.collapsed,
-                  [data.channel]: !this.state.collapsed[data.channel]
-                }
-              });
-            }}>
-            <div className={this.classes.rowArrow}/>
+          <div className={this.classes.rowArrowBox}>
+            <div
+              className={this.classes.rowArrowWrap}
+              data-collapsed={this.state.collapsed[data.channel] ? true : null}
+              onClick={() => {
+                this.setState({
+                  collapsed: {
+                    ...this.state.collapsed,
+                    [data.channel]: !this.state.collapsed[data.channel]
+                  }
+                });
+              }}>
+              <div className={this.classes.rowArrow}/>
+            </div>
           </div> : null}
 
         {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
@@ -342,7 +345,7 @@ export default class BudgetTable extends Component {
     const channels = union(...data.map(month => Object.keys(month)));
 
     const notSorted = channels.map(channel => {
-      const monthArray = Array(MONTHS_TO_SHOW).fill(
+      const monthArray = Array(this.props.data.length).fill(
         {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
       data.forEach((month, index) => {
@@ -362,7 +365,7 @@ export default class BudgetTable extends Component {
   };
 
   sumChannels = (channels) => {
-    return Array(MONTHS_TO_SHOW).fill(0).map((value, index) => {
+    return Array(this.props.data.length).fill(0).map((value, index) => {
       return {
         primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
         secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
@@ -378,16 +381,18 @@ export default class BudgetTable extends Component {
 
   getHeadRow = () => {
     return <tr className={this.classes.headRow}>
-      <td className={this.classes.titleCell}>
-        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell} data-category-row={true}>
-          <div
-            className={this.classes.rowArrowWrap}
-            data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
-            data-headline
-            onClick={() => {
-              this.nextCollapseOption();
-            }}>
-            <div className={this.classes.rowArrow} data-headline/>
+      <td className={this.classes.titleCell} data-row-type="header">
+        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
+          <div className={this.classes.rowArrowBox}>
+            <div
+              className={this.classes.rowArrowWrap}
+              data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
+              data-headline
+              onClick={() => {
+                this.nextCollapseOption();
+              }}>
+              <div className={this.classes.rowArrow} data-headline/>
+            </div>
           </div>
           <div className={this.classes.title} data-category-row={true}>
             {'Marketing Channel'}
@@ -400,8 +405,7 @@ export default class BudgetTable extends Component {
 
   render() {
     const props = getChannelsWithProps();
-    const slicedData = this.props.data.slice(0, MONTHS_TO_SHOW);
-    const parsedData = this.getDataByChannel(slicedData);
+    const parsedData = this.getDataByChannel(this.props.data);
     const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
 
     const rows = dataWithCategories && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL
@@ -418,21 +422,23 @@ export default class BudgetTable extends Component {
 
     return <div>
       <div className={this.classes.box}>
-        <table className={this.classes.table}
-               ref={(ref) => {
-                 this.tableRef = ref;
-                 this.props.tableRef(ref);
-               }}>
-          <thead>
-          {headRow}
-          </thead>
-          <tbody className={this.classes.tableBody}>
-          {rows}
-          </tbody>
-          <tfoot>
-          {footRow}
-          </tfoot>
-        </table>
+        <div className={this.classes.tableScroller}>
+          <table className={this.classes.table}
+                 ref={(ref) => {
+                   this.tableRef = ref;
+                   this.props.tableRef(ref);
+                 }}>
+            <thead>
+            {headRow}
+            </thead>
+            <tbody className={this.classes.tableBody}>
+            {rows}
+            </tbody>
+            <tfoot>
+            {footRow}
+            </tfoot>
+          </table>
+        </div>
       </div>
       <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
       {headRow}

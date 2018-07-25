@@ -3,6 +3,7 @@
 .value-cell {
     height: 14px;
     width: 100px;
+    position: relative;
 }
 
 .secondary-value {
