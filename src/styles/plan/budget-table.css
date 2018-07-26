@@ -196,8 +196,7 @@
     opacity:0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
     visibility: hidden;
-    position: fixed;
-    top: 70px;
+    width: calc( 100% - 280px );
     composes: table;
 }
 
