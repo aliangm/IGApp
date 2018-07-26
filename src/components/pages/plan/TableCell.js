@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
 import {formatBudgetWithDollar, extractNumberFromBudget} from 'components/utils/budget';
+import isNil from 'lodash/isNil';
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -59,7 +60,7 @@ export default class TableCell extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.primaryValue != null) {
+    if (!isNil(newProps.primaryValue)) {
       this.setState({
         editValue: newProps.primaryValue
       });
@@ -108,7 +109,7 @@ export default class TableCell extends Component {
   };
 
   showSuggestion = () => {
-    return this.props.secondaryValue != null
+    return !isNil(this.props.secondaryValue)
       && (this.props.secondaryValue !== this.props.primaryValue)
       && this.isCellActive();
   };
@@ -125,7 +126,7 @@ export default class TableCell extends Component {
   onInputValueChange = (e) => {
     const value = extractNumberFromBudget(e.target.value);
 
-    if (value != null) {
+    if (!isNil(value)) {
       if (this.isEditModeType(EDIT_MODE.FROM_PROP)) {
         this.props.onChange(value);
       }

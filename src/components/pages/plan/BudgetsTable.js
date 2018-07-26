@@ -175,8 +175,7 @@ export default class BudgetsTable extends Component {
   approveMonthSuggestions = month => {
     const monthData = this.props.data[month];
     Object.keys(monthData).forEach(key => {
-      //if undefined or null don't enter, any other option should enter
-      if (monthData[key].secondaryBudget != null) {
+      if (!isNil(monthData[key].secondaryBudget)) {
         this.props.editCommittedBudget(month, key, monthData[key].secondaryBudget);
       }
     });
