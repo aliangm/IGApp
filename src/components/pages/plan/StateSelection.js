@@ -63,12 +63,14 @@ export default class StateSelection extends Component {
   };
 
   render() {
+    const constraintOptions = Object.keys(this.props.constraintOptions).map(key => {
+      return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
+    });
+
     return <div className={this.classes.stateSelectionWrap}>
       {this.state.showBox ? <div className={this.classes.stateSelectionBox}
                                  ref={(ref) => this.stateSelectionBox = ref}>
-        {Object.keys(this.props.constraintOptions).map(key => {
-          return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
-        })}
+        {constraintOptions}
       </div> : null}
       <div className={cellStyle.locals.icon}
            onClick={() => this.changeBoxShowing(true)}
