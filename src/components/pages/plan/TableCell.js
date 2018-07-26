@@ -62,7 +62,7 @@ export default class TableCell extends Component {
     this.state = {
       constraintsBoxOpen: false,
       hoverCell: false,
-      isEditing: false,
+      isCellEditing: false,
       editValue: this.props.primaryValue
     };
   }
@@ -106,13 +106,13 @@ export default class TableCell extends Component {
   isEditModeType = (editModeType) => {
     switch (editModeType) {
       case(EDIT_MODE.ANY):
-        return this.state.isEditing || this.props.isEditMode;
+        return this.state.isCellEditing || this.props.isEditMode;
       case(EDIT_MODE.FROM_STATE):
-        return this.state.isEditing;
+        return this.state.isCellEditing;
       case(EDIT_MODE.FROM_PROP):
         return this.props.isEditMode;
       case(EDIT_MODE.NONE):
-        return !this.state.isEditing && !this.props.isEditMode;
+        return !this.state.isCellEditing && !this.props.isEditMode;
     }
   };
 
@@ -124,11 +124,11 @@ export default class TableCell extends Component {
 
   approveEdit = () => {
     this.props.onChange(this.state.editValue);
-    this.setState({editValue: null, isEditing: false});
+    this.setState({editValue: null, isCellEditing: false});
   };
 
   declineEdit = () => {
-    this.setState({editValue: null, isEditing: false});
+    this.setState({editValue: null, isCellEditing: false});
   };
 
   onInputValueChange = (e) => {
@@ -171,7 +171,7 @@ export default class TableCell extends Component {
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
-        onClick={() => this.setState({isEditing: true, editValue: this.props.primaryValue})}
+        onClick={() => this.setState({isCellEditing: true, editValue: this.props.primaryValue})}
         className={this.classes.icon}
         data-icon="plan:edit"/> : null}
     </div>;
