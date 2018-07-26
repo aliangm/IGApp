@@ -5,7 +5,7 @@ import { XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, C
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
-import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
+import { formatNumber, formatBudgetShortened } from 'components/utils/budget';
 import merge from 'lodash/merge';
 import { getChannelsWithProps, getChannelsWithNicknames, getMetadata } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';

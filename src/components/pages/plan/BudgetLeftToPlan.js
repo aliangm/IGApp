@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/budget-left-to-plan.css';
-import {formatBudget} from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
 
 export default class Popup extends Component {
 
@@ -23,7 +23,7 @@ export default class Popup extends Component {
       </div>
       <div className={this.classes.center}>
         <div className={this.classes.number}>
-          {formatBudget(annualBudget)}
+          {formatNumber(annualBudget)}
         </div>
         <div className={this.classes.dollar}>
           $
@@ -33,7 +33,7 @@ export default class Popup extends Component {
         <div className={this.classes.lineFill} style={{width: `${lineWidth}px`}}/>
       </div>
       <div className={this.classes.bottomText}>
-        ${formatBudget(annualBudgetLeftToPlan)} left
+        ${formatNumber(annualBudgetLeftToPlan)} left
       </div>
     </div>;
   }

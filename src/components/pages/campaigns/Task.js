@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/campaigns/task.css';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import CampaignTask from 'components/pages/campaigns/CampaignTask';
 
 export default class Task extends Component {
@@ -50,7 +50,7 @@ export default class Task extends Component {
             <div className={ this.classes.content } onClick={ this.toggleDescription }/>
             : null }
           <div className={ this.classes.budget }>
-            {this.props.budget ? '$' + formatBudget(this.props.budget)  : '' }
+            {this.props.budget ? '$' + formatNumber(this.props.budget)  : '' }
           </div>
           <div className={ this.classes.dueDate }>
             { this.props.dueDate ? '(' + this.getNumberOfDaysLeft() + ')' : '' }

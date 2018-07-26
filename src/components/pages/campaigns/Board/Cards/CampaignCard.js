@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 
 import Component from 'components/Component';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 import style from 'styles/campaigns/card.css';
 import Avatar from 'components/Avatar';
@@ -56,7 +56,7 @@ class CampaignCard extends Component {
       })} id={item.id} onClick={onClick}>
         <div className={this.classes.campaignName}>{item.name}</div>
         <div className={this.classes.campaignFooter}>
-          <span className={this.classes.campaignBudget}>${formatBudget(item.actualSpent || item.budget || 0)}</span>
+          <span className={this.classes.campaignBudget}>${formatNumber(item.actualSpent || item.budget || 0)}</span>
           <Avatar member={this.getMember()} className={this.classes.initials}/>
         </div>
       </div>

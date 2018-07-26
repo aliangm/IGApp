@@ -216,7 +216,7 @@ export default class BudgetsTable extends Component {
           }
           case(ROW_TYPE.CATEGORY): {
             return <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
-              ${formatBudget(monthData.primaryBudget)}
+              {formatBudget(monthData.primaryBudget)}
             </td>;
           }
           case(ROW_TYPE.BOTTOM): {

@@ -5,7 +5,7 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import {timeFrameToDate} from 'components/utils/objective';
-import {formatBudget} from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getDates} from 'components/utils/date';
 

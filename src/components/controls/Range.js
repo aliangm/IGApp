@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import InputRange from 'react-input-range';
 import style from 'react-input-range/lib/css/index.css';
 import Textfield from 'components/controls/Textfield';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import rangeStyle from 'styles/controls/range.css';
 
 const DEFAULT_CLASS_NAMES = {
@@ -54,7 +54,7 @@ export default class Range extends Component {
 
     return <div style={ outerStyle } className={ outerClassName }>
       <Textfield
-        value={ "$" + formatBudget(min) }
+        value={ "$" + formatNumber(min) }
         onChange={ (e) => this.handleChangeText('min', e) }
         disabled={ disabled }
         style={{
@@ -80,7 +80,7 @@ export default class Range extends Component {
         { ...otherProps }
       />
       <Textfield
-        value={ "$" + (max === -1 ? '∞' : formatBudget(max)) }
+        value={ "$" + (max === -1 ? '∞' : formatNumber(max)) }
         onChange={ (e) => this.handleChangeText('max', e) }
         disabled={ disabled }
         style={{

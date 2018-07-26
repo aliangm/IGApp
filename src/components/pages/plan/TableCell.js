@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
-import {formatBudgetWithDollar, extractNumberFromBudget} from 'components/utils/budget';
+import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
 
 const CONSTRAINT_MAPPING = {
@@ -189,14 +189,14 @@ export default class TableCell extends Component {
         {this.isEditModeType(EDIT_MODE.ANY) ?
           <input className={this.classes.editCell}
                  type="text"
-                 value={formatBudgetWithDollar(this.state.editValue)}
+                 value={formatBudget(this.state.editValue)}
                  onChange={this.onInputValueChange}/>
-          : <div>{formatBudgetWithDollar(this.props.primaryValue)}</div>}
+          : <div>{formatBudget(this.props.primaryValue)}</div>}
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
       {this.showSuggestion() ?
         <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
-          {formatBudgetWithDollar(this.props.secondaryValue)}
+          {formatBudget(this.props.secondaryValue)}
         </div> : null}
     </td>;
   }

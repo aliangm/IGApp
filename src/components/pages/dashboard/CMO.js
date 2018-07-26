@@ -7,7 +7,7 @@ import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import { getIndicatorsWithProps, getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata } from 'components/utils/indicators';
 import { getChannelsWithProps, getMetadata as getChannelMetadata } from 'components/utils/channels';
-import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
+import { formatNumber, formatBudgetShortened } from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import { timeFrameToDate } from 'components/utils/objective';
 import Steps from 'components/pages/dashboard/Steps';
@@ -749,7 +749,7 @@ export default class CMO extends Component {
                           {element.name}
                         </div>
                         <div style={{ fontSize: '14px', fontWeight: '600', width: '70px' }}>
-                          ${formatBudget(element.value)}
+                          ${formatNumber(element.value)}
                         </div>
                         <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
                           ({Math.round(element.value / monthlyBudget * 100)}%)
