@@ -13,6 +13,7 @@ import groupBy from 'lodash/groupBy';
 import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
+import isNil from 'lodash/isNil';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -36,14 +37,17 @@ export default class BudgetsTable extends Component {
     data: PropTypes.array,
     editCommittedBudget: PropTypes.func,
     changeBudgetConstraint: PropTypes.func,
-    deleteChannel: PropTypes.func
+    deleteChannel: PropTypes.func,
+    scrollPosition: PropTypes.number,
+    changeScrollPosition: PropTypes.func
   };
 
   static defaultProps = {
     isEditMode: false,
     isShowSecondaryEnabled: false,
     isConstraitsEnabled: false,
-    data: []
+    data: [],
+    scrollPosition: 0
   };
 
   constructor(props) {
@@ -67,8 +71,14 @@ export default class BudgetsTable extends Component {
     this.tableScroller.removeEventListener('scroll', this.handleTableScroll);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!isNil(nextProps.scrollPosition)) {
+      this.tableScroller.scrollLeft = this.stickyHeader.scrollLeft = nextProps.scrollPosition;
+    }
+  }
+
   handleTableScroll = () => {
-    this.stickyHeader.scrollLeft = this.tableScroller.scrollLeft;
+    this.props.changeScrollPosition(this.tableScroller.scrollLeft);
   };
 
   handleScroll = () => {

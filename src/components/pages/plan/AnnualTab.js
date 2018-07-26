@@ -30,13 +30,20 @@ export default class AnnualTab extends Component {
     this.state = {
       hoverRow: void 0,
       graphDimensions: {},
-      approvedPlan: true
+      approvedPlan: true,
+      scrollPosition: 0
     };
   }
 
   componentDidMount() {
     this.calculateGraphDimensions();
   }
+
+  changeScrollPosition = (toPosition) => {
+    this.setState({
+      scrollPosition: toPosition
+    });
+  };
 
   calculateGraphDimensions() {
     if (this.planTable && this.firstColumnCell) {
@@ -105,11 +112,17 @@ export default class AnnualTab extends Component {
                         approvedPlan={this.state.approvedPlan}
                         editCommittedBudget={this.props.editCommittedBudget}
                         changeBudgetConstraint={this.props.changeBudgetConstraint}
+                        changeScrollPosition={this.changeScrollPosition}
+                        scrollPosition={this.state.scrollPosition}
                         {...this.props}
-                        />
+          />
 
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph data={projections} objectives={parsedObjectives} dimensions={this.state.graphDimensions}/>
+            <IndicatorsGraph data={projections}
+                             objectives={parsedObjectives}
+                             dimensions={this.state.graphDimensions}
+                             changeScrollPosition={this.changeScrollPosition}
+                             scrollPosition={this.state.scrollPosition}/>
           </div>
         </div>
       </div>
