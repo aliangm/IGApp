@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import {ResponsiveContainer, Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
-import Label from 'components/ControlsLabel';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
 import {formatBudgetShortened} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
@@ -24,7 +23,7 @@ export default class IndicatorsGraph extends Component {
   constructor(props) {
     super(props);
 
-    const initialIndicators = this.getInitialeIndicators(this.props);
+    const initialIndicators = this.getInitialIndicators(this.props);
     this.state = {
       checkedIndicators: initialIndicators ? initialIndicators : []
     };
@@ -32,7 +31,7 @@ export default class IndicatorsGraph extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.objectives, this.props.objectives)) {
-      const objectives = this.getInitialeIndicators(nextProps);
+      const objectives = this.getInitialIndicators(nextProps);
       if (objectives) {
         this.setState({
           checkedIndicators: objectives
@@ -41,7 +40,7 @@ export default class IndicatorsGraph extends Component {
     }
   }
 
-  getInitialeIndicators = (props) => {
+  getInitialIndicators = (props) => {
     const objectives = Object.keys(props.objectives);
     const objective = objectives && objectives[0];
     return objective ? [objective] : null;
@@ -55,7 +54,7 @@ export default class IndicatorsGraph extends Component {
     return this.props.dimensions.marginLeft - 65;
   }
 
-  toggleCheckbox(indicator) {
+  toggleCheckbox = indicator => {
     let checkedIndicators = this.state.checkedIndicators;
     const index = checkedIndicators.indexOf(indicator);
     if (index !== -1) {
@@ -65,7 +64,7 @@ export default class IndicatorsGraph extends Component {
       checkedIndicators.push(indicator);
     }
     this.setState({checkedIndicators: checkedIndicators});
-  }
+  };
 
   getTooltipContent() {
   }
@@ -95,21 +94,11 @@ export default class IndicatorsGraph extends Component {
       .forEach(item =>
         indicatorsMapping[item] = indicators[item].nickname
       );
-    const popupItems = Object.keys(indicatorsMapping).map(indicator =>
-      <div className={this.classes.menuItem} key={indicator}>
-        <Label checkbox={this.state.checkedIndicators.indexOf(indicator) !== -1}
-               onChange={this.toggleCheckbox.bind(this, indicator)}
-               style={{
-                 marginBottom: '3px',
-                 fontSize: '12px',
-                 textTransform: 'capitalize'
-               }}>{indicatorsMapping[indicator]}</Label>
-      </div>
-    );
+
     const menuItems = Object.keys(indicatorsMapping).map((indicator, index) =>
       <div className={this.classes.menuItem} key={indicator}>
         <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
-                        onChange={this.toggleCheckbox.bind(this, indicator)}
+                        onChange={() => this.toggleCheckbox(indicator)}
                         className={this.classes.label}
                         checkboxStyle={{backgroundColor: COLORS[index % COLORS.length]}}>{indicatorsMapping[indicator]}</CustomCheckbox>
       </div>
@@ -124,7 +113,7 @@ export default class IndicatorsGraph extends Component {
         </linearGradient>
       </defs>;
     });
-    const lines = this.state.checkedIndicators.map(indicator => {
+    const areas = this.state.checkedIndicators.map(indicator => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator}
                    isAnimationActive={false}
@@ -164,6 +153,7 @@ export default class IndicatorsGraph extends Component {
                     label={<CustomizedLabel/>}
                     alwaysShow={true}/>
     );
+
     const tooltip = (data) => {
       const currentIndex = this.props.data.findIndex(month => month.name === data.label);
       const prevIndex = currentIndex - 1;
@@ -217,9 +207,9 @@ export default class IndicatorsGraph extends Component {
                    domain={['dataMin', 'dataMax']}/>
             <CartesianGrid vertical={false}/>
             {dots}
-            <Tooltip content={tooltip.bind(this)} offset={0}/>
+            <Tooltip content={tooltip} offset={0}/>
             {defs}
-            {lines}
+            {areas}
             {suggestedLines}
           </AreaChart>
         </ResponsiveContainer>

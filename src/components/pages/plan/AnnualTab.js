@@ -64,11 +64,11 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {budgetsData, planDate, editMode, interactiveMode} = this.props;
+    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef} = this.props;
 
     const currentSuggested = {};
     const dates = getDates(planDate);
-    const projections = this.props.forecastedIndicators.map((item, index) => {
+    const projections = forecastedIndicators.map((item, index) => {
       const json = {};
       Object.keys(item).forEach(key => {
         json[key] = item[key].committed;
@@ -76,15 +76,15 @@ export default class AnnualTab extends Component {
       return {...json, name: dates[index]};
     });
 
-    Object.keys(this.props.actualIndicators).forEach(indicator => {
-      currentSuggested[indicator] = this.props.actualIndicators[indicator];
+    Object.keys(actualIndicators).forEach(indicator => {
+      currentSuggested[indicator] = actualIndicators[indicator];
     });
 
     // Current indicators values to first cell
-    projections.splice(0, 0, {...this.props.actualIndicators, name: 'today', ...currentSuggested});
+    projections.splice(0, 0, {...actualIndicators, name: 'today', ...currentSuggested});
 
-    const objectives = {};
-    this.props.objectives
+    const parsedObjectives = {};
+    objectives
       .filter(function (objective) {
         const today = new Date();
         const date = objective && objective.timeFrame ? timeFrameToDate(objective.timeFrame) : today;
@@ -99,7 +99,7 @@ export default class AnnualTab extends Component {
           : (objective.currentValue || 0) - delta);
         const date = timeFrameToDate(objective.timeFrame);
         const monthStr = monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-        objectives[objective.indicator] = {x: monthStr, y: target};
+        parsedObjectives[objective.indicator] = {x: monthStr, y: target};
       });
 
     return <div>
@@ -115,8 +115,8 @@ export default class AnnualTab extends Component {
                        approvedPlan={this.state.approvedPlan}
                        {...this.props}/>
 
-          <div className={this.classes.indicatorsGraph} ref={this.props.forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph data={projections} objectives={objectives} dimensions={this.state.graphDimensions}/>
+          <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
+            <IndicatorsGraph data={projections} objectives={parsedObjectives} dimensions={this.state.graphDimensions}/>
           </div>
         </div>
       </div>
