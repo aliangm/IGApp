@@ -23,7 +23,7 @@ const CONSTRAINT_MAPPING = {
 const EDIT_MODE = {
   ANY: 0,
   NONE: 1,
-  TEMP_STATE: 2,
+  FROM_STATE: 2,
   FROM_PROP: 3
 };
 
@@ -99,7 +99,7 @@ export default class TableCell extends Component {
     switch (editModeType) {
       case(EDIT_MODE.ANY):
         return this.state.isEditing || this.props.isEditMode;
-      case(EDIT_MODE.TEMP_STATE):
+      case(EDIT_MODE.FROM_STATE):
         return this.state.isEditing;
       case(EDIT_MODE.FROM_PROP):
         return this.props.isEditMode;
@@ -138,7 +138,7 @@ export default class TableCell extends Component {
 
   getActionButtons = () => {
     return <div className={this.classes.buttons}>
-      {this.isEditModeType(EDIT_MODE.TEMP_STATE) && !this.isEditModeType(EDIT_MODE.FROM_PROP) ?
+      {this.isEditModeType(EDIT_MODE.FROM_STATE) && !this.isEditModeType(EDIT_MODE.FROM_PROP) ?
         <div className={this.classes.innerButtons}>
           <div className={this.classes.icon}
                data-icon="plan:approveEdit"
@@ -154,7 +154,7 @@ export default class TableCell extends Component {
              data-icon='plan:acceptSuggestion'/>
         : null}
       {(this.props.isConstraitsEnabled
-        && !this.isEditModeType(EDIT_MODE.TEMP_STATE)
+        && !this.isEditModeType(EDIT_MODE.FROM_STATE)
         && (this.getConstraint() !== 'none' || this.isCellActive()))
         ? <StateSelection currentConstraint={this.getConstraint()}
                           constraintOptions={this.getConstraintsDisplayInfo()}

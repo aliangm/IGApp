@@ -113,7 +113,10 @@ export default class AnnualTab extends Component {
                         firstColumnCell={(ref) => this.firstColumnCell = ref}
                         dates={dates}
                         approvedPlan={this.state.approvedPlan}
-                        {...this.props}/>
+                        editCommittedBudget={this.props.editCommittedBudget}
+                        changeBudgetConstraint={this.props.changeBudgetConstraint}
+                        {...this.props}
+                        />
 
           <div className={this.classes.indicatorsGraph} ref={this.props.forecastingGraphRef.bind(this)}>
             <IndicatorsGraph data={projections} objectives={objectives} dimensions={this.state.graphDimensions}/>
