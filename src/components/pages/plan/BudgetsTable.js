@@ -14,12 +14,6 @@ import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 
-const ROW_TYPE = {
-  BOTTOM: 'bottom',
-  REGULAR: 'regular',
-  CATEGORY: 'category'
-};
-
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
   ONLY_CATEGORIES: 1,
@@ -165,10 +159,10 @@ export default class BudgetsTable extends Component {
   getCategoryRows = (category, channels) => {
     const categoryData = this.sumChannels(channels);
     const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
-      ROW_TYPE.CATEGORY);
+      true);
 
     return !this.state.collapsedCategories[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
-      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, ROW_TYPE.REGULAR))]
+      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, false))]
       : categoryRow;
   };
 
@@ -181,65 +175,72 @@ export default class BudgetsTable extends Component {
     });
   };
 
-  getTableRow = (data, rowType) => {
-    const titleCellKey = ((rowType === ROW_TYPE.CATEGORY) ? 'category' : '') + data.channel;
+  getBottomRow = (data) => {
+    const cells = data.values.map((monthData, key) => {
+      return <TableCell
+        key={`${data.channel}:${key}`}
+        primaryValue={monthData.primaryBudget}
+        secondaryValue={this.props.isShowSecondaryEnabled
+          ? monthData.secondaryBudget
+          : null}
+        isConstraitsEnabled={false}
+        approveSuggestion={() => this.approveMonthSuggestions(key)}
+        enableActionButtons={false}
+      />;
+    });
 
-    return <tr className={this.classes.tableRow} key={titleCellKey} data-row-type={rowType}>
-      {this.getTitleCell(rowType, data)}
+    return <tr className={this.classes.tableRow} data-row-type={'bottom'}>
+      <td className={this.classes.titleCell} data-row-type={'bottom'}>
+        <div className={this.classes.rowTitle} >
+          <div className={this.classes.title}>{data.nickname}</div>
+        </div>
+      </td>
+      {cells}
+    </tr>;
+  }
 
-      {data.values.map((monthData, key) => {
-        switch (rowType) {
-          case(ROW_TYPE.REGULAR): {
-            return <TableCell
-              key={`${data.channel}:${key}`}
-              primaryValue={monthData.primaryBudget}
-              secondaryValue={this.props.isShowSecondaryEnabled
-                ? monthData.secondaryBudget
-                : null}
-              isConstraint={monthData.isConstraint}
-              isSoft={monthData.isSoft}
-              constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-                key,
-                data.channel,
-                isConstraint,
-                isSoft)}
-              isEditMode={this.props.isEditMode}
-              onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-              isConstraitsEnabled={this.props.isConstraintsEnabled}
-              dragEnter={() => this.dragEnter(key, data.channel)}
-              commitDrag={this.commitDrag}
-              dragStart={this.dragStart}
-              isDragging={this.state.isDragging}
-              approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
-              enableActionButtons={true}
-            />;
-          }
-          case(ROW_TYPE.CATEGORY): {
-            return <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
-              {formatBudget(monthData.primaryBudget)}
-            </td>;
-          }
-          case(ROW_TYPE.BOTTOM): {
-            return <TableCell
-              key={`${data.channel}:${key}`}
-              primaryValue={monthData.primaryBudget}
-              secondaryValue={this.props.isShowSecondaryEnabled
-                ? monthData.secondaryBudget
-                : null}
-              isConstraitsEnabled={false}
-              approveSuggestion={() => this.approveMonthSuggestions(key)}
-              enableActionButtons={false}
-            />;
-          }
-        }
-      })}
+  getTableRow = (data, isCategoryRow) => {
+    const titleCellKey = (isCategoryRow ? 'category' : '') + data.channel;
+
+    const cells = data.values.map((monthData, key) => {
+      return !isCategoryRow ? <TableCell
+        key={`${data.channel}:${key}`}
+        primaryValue={monthData.primaryBudget}
+        secondaryValue={this.props.isShowSecondaryEnabled
+          ? monthData.secondaryBudget
+          : null}
+        isConstraint={monthData.isConstraint}
+        isSoft={monthData.isSoft}
+        constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+          key,
+          data.channel,
+          isConstraint,
+          isSoft)}
+        isEditMode={this.props.isEditMode}
+        onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
+        isConstraitsEnabled={this.props.isConstraintsEnabled}
+        dragEnter={() => this.dragEnter(key, data.channel)}
+        commitDrag={this.commitDrag}
+        dragStart={this.dragStart}
+        isDragging={this.state.isDragging}
+        approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+        enableActionButtons={true}
+      />
+        : <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
+          {formatBudget(monthData.primaryBudget)}
+        </td>;
+    });
+
+    return <tr className={this.classes.tableRow} key={titleCellKey} data-row-type={isCategoryRow ? 'category' : 'regular'}>
+      {this.getTitleCell(isCategoryRow, data)}
+      {cells}
     </tr>;
   };
 
-  getTitleCell = (rowType, data) => {
-    return <td className={this.classes.titleCell} data-row-type={rowType}>
-      <div className={this.classes.rowTitle} data-category-row={rowType === ROW_TYPE.CATEGORY ? true: null}>
-        {rowType === ROW_TYPE.CATEGORY ?
+  getTitleCell = (isCategoryRow, data) => {
+    return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}>
+      <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true: null}>
+        {isCategoryRow ?
           <div className={this.classes.rowArrowBox}>
             <div
               className={this.classes.rowArrowWrap}
@@ -256,7 +257,7 @@ export default class BudgetsTable extends Component {
             </div>
           </div> : null}
 
-        {this.props.isEditMode && rowType === ROW_TYPE.REGULAR ?
+        {this.props.isEditMode && !isCategoryRow ?
           <div>
             <div className={this.classes.editChannelNameWrapper}>
               <div className={this.classes.editChannelName} onClick={() => {
@@ -288,13 +289,13 @@ export default class BudgetsTable extends Component {
           </div>
           : null}
 
-        <div className={this.classes.title} data-category-row={rowType === ROW_TYPE.CATEGORY ? true : null}>
-          {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
+        <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
+          {!isCategoryRow ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>
 
-          {rowType === ROW_TYPE.REGULAR && this.props.isEditMode ? <div
+          {!isCategoryRow && this.props.isEditMode ? <div
             className={this.classes.channelEditIconsWrapper}>
             <div className={this.classes.channelEditIcons}>
               <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
@@ -438,7 +439,7 @@ export default class BudgetsTable extends Component {
     };
 
     const headRow = this.getHeadRow();
-    const footRow = parsedData && this.getTableRow(footRowData, ROW_TYPE.BOTTOM);
+    const footRow = parsedData && this.getBottomRow(footRowData);
 
     return <div style={{'margin-left': '40px'}}>
       <div className={this.classes.box}>
