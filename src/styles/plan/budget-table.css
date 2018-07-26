@@ -28,7 +28,8 @@
 }
 
 .head-row-cell {
-    width: 123px;
+    padding:0;
+    min-width: 123px;
 }
 
 .row-arrow[data-headline] {
@@ -94,6 +95,7 @@
     font-size: 14px;
     font-weight: 600;
     background-color: white;
+    width: fit-content;
 }
 
 .table-row[data-row-type='category'] {
@@ -137,7 +139,7 @@
 
 .title-cell {
     height: 64px;
-    width: 310px;
+    width: 309px;
     position: absolute;
     display: table;
     left: 0;
@@ -178,17 +180,24 @@
 .title-cell[data-row-type="header"] {
     background-color: white;
     height: 48px;
+    padding: 0;
+}
+
+.sticky-wrapper {
+    overflow-x: hidden;
+    vertical-align: middle;
+    overflow-y: hidden;
+    margin-left: 309px;
 }
 
 .sticky-header {
-    position: fixed;
-    top: 70px;
     z-index: 11;
     display: inline-table;
     opacity:0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
     visibility: hidden;
-    width: calc( 100% - 280px );
+    position: fixed;
+    top: 70px;
     composes: table;
 }
 

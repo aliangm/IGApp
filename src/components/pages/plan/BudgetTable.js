@@ -26,6 +26,8 @@ const COLLAPSE_OPTIONS = {
   SHOW_ALL: 2
 };
 
+const CELL_WIDTH = 123;
+
 export default class BudgetTable extends Component {
 
   style = style;
@@ -63,11 +65,17 @@ export default class BudgetTable extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.handleScroll);
+    this.tableScroller.addEventListener('scroll', this.handleTableScroll);
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
+    this.tableScroller.removeEventListener('scroll', this.handleTableScroll);
   }
+
+  handleTableScroll = () => {
+    this.stickyHeader.scrollLeft = this.tableScroller.scrollLeft;
+  };
 
   handleScroll = () => {
     this.setState({isSticky: (this.tableRef && this.tableRef.getBoundingClientRect().top) < 70});
@@ -120,7 +128,7 @@ export default class BudgetTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} className={this.classes.headRowCell}>{month}</td>;
+        <td key={`head:${index}`} className={this.classes.headRowCell} style={{width: `${CELL_WIDTH}px`}}>{month}</td>;
     });
     return headers;
   };
@@ -376,8 +384,8 @@ export default class BudgetTable extends Component {
     });
   };
 
-  getHeadRow = () => {
-    return <tr className={this.classes.headRow}>
+  getHeadRow = (isSticky = false) => {
+    const row = <tr className={this.classes.headRow}>
       <td className={this.classes.titleCell} data-row-type="header">
         <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
           <div className={this.classes.rowArrowBox}>
@@ -398,6 +406,23 @@ export default class BudgetTable extends Component {
       </td>
       {this.getMonthHeaders()}
     </tr>;
+
+    return isSticky ? <div className={this.classes.stickyWrapper} ref={ref => {
+      this.stickyHeader = ref;
+    }}>{row}</div> : row;
+  };
+
+  showNextMonth = () => {
+    this.tableScroller.scrollLeft =
+      (this.tableScroller.scrollLeft + CELL_WIDTH) - this.tableScroller.scrollLeft % CELL_WIDTH;
+  };
+
+  showPrevMonth = () => {
+    const substractionFromMonthPixel = this.tableScroller.scrollLeft % CELL_WIDTH;
+    this.tableScroller.scrollLeft =
+      substractionFromMonthPixel
+        ? this.tableScroller.scrollLeft - substractionFromMonthPixel
+        : this.tableScroller.scrollLeft - CELL_WIDTH;
   };
 
   render() {
@@ -417,9 +442,11 @@ export default class BudgetTable extends Component {
     const headRow = this.getHeadRow();
     const footRow = parsedData && this.getTableRow(footRowData, ROW_TYPE.BOTTOM);
 
-    return <div>
+    return <div style={{'margin-left': '40px'}}>
       <div className={this.classes.box}>
-        <div className={this.classes.tableScroller}>
+        <div className={this.classes.tableScroller} ref={(ref) => {
+          this.tableScroller = ref;
+        }}>
           <table className={this.classes.table}
                  ref={(ref) => {
                    this.tableRef = ref;
@@ -436,9 +463,15 @@ export default class BudgetTable extends Component {
             </tfoot>
           </table>
         </div>
+        <div onClick={this.showPrevMonth}>
+          prev
+        </div>
+        <div onClick={this.showNextMonth}>
+          next
+        </div>
       </div>
       <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-      {headRow}
+        {this.getHeadRow(true)}
       </thead>
     </div>;
 
