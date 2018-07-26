@@ -30,23 +30,13 @@ export default class AnnualTab extends Component {
     this.state = {
       hoverRow: void 0,
       graphDimensions: {},
-      approvedPlan: true,
-      isSticky: false
+      approvedPlan: true
     };
   }
 
   componentDidMount() {
     this.calculateGraphDimensions();
-    window.addEventListener('scroll', this.handleScroll);
   }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
-  }
-
-  handleScroll = () => {
-    this.setState({isSticky: window.pageYOffset >= (this.planTable && this.planTable.offsetTop)});
-  };
 
   calculateGraphDimensions() {
     if (this.planTable && this.firstColumnCell) {
