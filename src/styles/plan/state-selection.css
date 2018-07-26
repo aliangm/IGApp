@@ -31,7 +31,7 @@
 
 .reaction-icon:hover {
     transform: scale(1.5);
-        transform-origin: bottom;
+    transform-origin: bottom;
 }
 
 .reaction-label {
@@ -40,8 +40,8 @@
     top: -24px;
     border-radius: 10px;
     font-size: 11px;
-    color: #FFF;
-    background: #333;
+    color: #FFFFFF;
+    background: #333333;
     visibility: hidden;
 }
 

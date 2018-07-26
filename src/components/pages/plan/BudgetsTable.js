@@ -28,7 +28,7 @@ const COLLAPSE_OPTIONS = {
 
 const CELL_WIDTH = 123;
 
-export default class BudgetTable extends Component {
+export default class BudgetsTable extends Component {
 
   style = style;
 
@@ -38,7 +38,7 @@ export default class BudgetTable extends Component {
     dates: PropTypes.array,
     isEditMode: PropTypes.bool,
     isShowSecondaryEnabled: PropTypes.bool,
-    isConstraitsEnabled: PropTypes.bool,
+    isConstraintsEnabled: PropTypes.bool,
     data: PropTypes.array,
     editCommittedBudget: PropTypes.func,
     changeBudgetConstraint: PropTypes.func,
@@ -57,7 +57,7 @@ export default class BudgetTable extends Component {
 
     this.state = {
       tableCollapsed: COLLAPSE_OPTIONS.SHOW_ALL,
-      collapsed: {},
+      collapsedCategories: {},
       draggedCells: [],
       isSticky: false
     };
@@ -138,7 +138,7 @@ export default class BudgetTable extends Component {
   };
 
   commitDrag = () => {
-    let value = stripNumberFromBudget(this.state.draggableValue);
+    const value = stripNumberFromBudget(this.state.draggableValue);
 
     this.state.draggedCells.forEach(({month, channel}) => {
       this.props.editCommitedBudget(month, channel, value);
@@ -167,7 +167,7 @@ export default class BudgetTable extends Component {
     const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
       ROW_TYPE.CATEGORY);
 
-    return !this.state.collapsed[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
+    return !this.state.collapsedCategories[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
       [categoryRow, ...channels.map((channel) => this.getTableRow(channel, ROW_TYPE.REGULAR))]
       : categoryRow;
   };
@@ -206,7 +206,7 @@ export default class BudgetTable extends Component {
                 isSoft)}
               isEditMode={this.props.isEditMode}
               onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-              isConstraitsEnabled={this.props.isConstraitsEnabled}
+              isConstraitsEnabled={this.props.isConstraintsEnabled}
               dragEnter={() => this.dragEnter(key, data.channel)}
               commitDrag={this.commitDrag}
               dragStart={this.dragStart}
@@ -239,17 +239,17 @@ export default class BudgetTable extends Component {
 
   getTitleCell = (rowType, data) => {
     return <td className={this.classes.titleCell} data-row-type={rowType}>
-      <div className={this.classes.rowTitle} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+      <div className={this.classes.rowTitle} data-category-row={rowType === ROW_TYPE.CATEGORY ? true: null}>
         {rowType === ROW_TYPE.CATEGORY ?
           <div className={this.classes.rowArrowBox}>
             <div
               className={this.classes.rowArrowWrap}
-              data-collapsed={this.state.collapsed[data.channel] ? true : null}
+              data-collapsed={this.state.collapsedCategories[data.channel] ? true : null}
               onClick={() => {
                 this.setState({
-                  collapsed: {
-                    ...this.state.collapsed,
-                    [data.channel]: !this.state.collapsed[data.channel]
+                  collapsedCategories: {
+                    ...this.state.collapsedCategories,
+                    [data.channel]: !this.state.collapsedCategories[data.channel]
                   }
                 });
               }}>
@@ -289,7 +289,7 @@ export default class BudgetTable extends Component {
           </div>
           : null}
 
-        <div className={this.classes.title} data-category-row={rowType === ROW_TYPE.CATEGORY}>
+        <div className={this.classes.title} data-category-row={rowType === ROW_TYPE.CATEGORY ? true : null}>
           {rowType === ROW_TYPE.REGULAR ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
             : null}
 
@@ -345,8 +345,7 @@ export default class BudgetTable extends Component {
   //   this.props.declineWholeChannel(data.channel);
   // };
 
-  getDataByChannel = (data) => {
-    const props = getChannelsWithProps();
+  getDataByChannel = (data, channelsProps) => {
     const channels = union(...data.map(month => Object.keys(month)));
 
     const notSorted = channels.map(channel => {
@@ -363,10 +362,10 @@ export default class BudgetTable extends Component {
         }
       });
 
-      return {channel: channel, nickname: props[channel].nickname, values: monthArray};
+      return {channel: channel, nickname: channelsProps[channel].nickname, values: monthArray};
     });
 
-    return sortBy(notSorted, item => [props[item.channel].category.toLowerCase(), item.nickname.toLowerCase()]);
+    return sortBy(notSorted, item => [channelsProps[item.channel].category.toLowerCase(), item.nickname.toLowerCase()]);
   };
 
   sumChannels = (channels) => {
@@ -399,7 +398,7 @@ export default class BudgetTable extends Component {
               <div className={this.classes.rowArrow} data-headline/>
             </div>
           </div>
-          <div className={this.classes.title} data-category-row={true}>
+          <div className={this.classes.title} data-category-row >
             {'Marketing Channel'}
           </div>
         </div>
@@ -426,9 +425,9 @@ export default class BudgetTable extends Component {
   };
 
   render() {
-    const props = getChannelsWithProps();
-    const parsedData = this.getDataByChannel(this.props.data);
-    const dataWithCategories = groupBy(parsedData, (channel) => props[channel.channel].category);
+    const channelsProps = getChannelsWithProps();
+    const parsedData = this.getDataByChannel(this.props.data, channelsProps);
+    const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
 
     const rows = dataWithCategories && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL
       ? this.getRows(dataWithCategories) : [];

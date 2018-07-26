@@ -15,8 +15,6 @@ export default class StateSelection extends Component {
     changeSuggestionBoxOpen: PropTypes.func
   };
 
-  static defaultProps = {};
-
   constructor(props) {
     super(props);
 

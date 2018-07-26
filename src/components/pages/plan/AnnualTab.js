@@ -6,7 +6,7 @@ import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import {timeFrameToDate} from 'components/utils/objective';
 import {formatBudget} from 'components/utils/budget';
-import BudgetTable from 'components/pages/plan/BudgetTable';
+import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getDates} from 'components/utils/date';
 
 export default class AnnualTab extends Component {
@@ -105,15 +105,15 @@ export default class AnnualTab extends Component {
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
-          <BudgetTable isEditMode={editMode}
-                       isShowSecondaryEnabled={interactiveMode}
-                       isConstraitsEnabled={interactiveMode}
-                       data={budgetsData}
-                       tableRef={(ref) => this.planTable = ref}
-                       firstColumnCell={(ref) => this.firstColumnCell = ref}
-                       dates={dates}
-                       approvedPlan={this.state.approvedPlan}
-                       {...this.props}/>
+          <BudgetsTable isEditMode={editMode}
+                        isShowSecondaryEnabled={interactiveMode}
+                        isConstraintsEnabled={interactiveMode}
+                        data={budgetsData}
+                        tableRef={(ref) => this.planTable = ref}
+                        firstColumnCell={(ref) => this.firstColumnCell = ref}
+                        dates={dates}
+                        approvedPlan={this.state.approvedPlan}
+                        {...this.props}/>
 
           <div className={this.classes.indicatorsGraph} ref={this.props.forecastingGraphRef.bind(this)}>
             <IndicatorsGraph data={projections} objectives={objectives} dimensions={this.state.graphDimensions}/>

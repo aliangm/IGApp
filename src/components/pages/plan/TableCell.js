@@ -67,8 +67,8 @@ export default class TableCell extends Component {
   }
 
   getConstraint = () => {
-    return !this.props.isConstraint ? 'none' :
-      this.props.isSoft ? 'soft' : 'hard';
+    return !this.props.isConstraint ? 'none'
+      : (this.props.isSoft ? 'soft' : 'hard');
   };
 
   changeConstraint = (changeTo) => {
@@ -186,7 +186,7 @@ export default class TableCell extends Component {
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
       {this.showSuggestion() ?
-        <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY)}>
+        <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
           {formatBudgetWithDollar(this.props.secondaryValue)}
         </div> : null}
     </td>;
