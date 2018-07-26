@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
-import {formatBudgetWithDollar, stripNumberFromBudget} from 'components/utils/budget';
+import {formatBudgetWithDollar, extractNumberFromBudget} from 'components/utils/budget';
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -123,7 +123,7 @@ export default class TableCell extends Component {
   };
 
   onInputValueChange = (e) => {
-    const value = stripNumberFromBudget(e.target.value);
+    const value = extractNumberFromBudget(e.target.value);
 
     if (value != null) {
       if (this.isEditModeType(EDIT_MODE.FROM_PROP)) {

@@ -127,7 +127,7 @@ export default class Plan extends Component {
         isSoft: false
       };
     }
-    budgetsData[month][channelKey].primaryBudget = parseInt(newBudget.toString().replace(/\D+/g, '')) || 0;
+    budgetsData[month][channelKey].primaryBudget = newBudget;
     this.setState({budgetsData: budgetsData});
   };
 

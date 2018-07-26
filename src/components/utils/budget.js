@@ -23,7 +23,6 @@ export function formatBudgetShortened(budget) {
   return budget;
 }
 
-export function stripNumberFromBudget(budget) {
-  const newValueString = (budget === '' || budget === '$') ? '0' : budget;
-  return parseInt(newValueString.replace(/[-$,]/g, ''));
+export function extractNumberFromBudget(budget) {
+  return parseInt(budget.toString().replace(/\D+/g, '')) || 0;
 }
