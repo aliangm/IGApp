@@ -8,9 +8,9 @@ export default class NewScenarioPopup extends Component {
   style = style;
 
   static propTypes = {
-    hidden: PropTypes.bool,
-    onScratchClick: PropTypes.func,
-    onCommittedClick: PropTypes.func
+    hidden: PropTypes.bool.isRequired,
+    onScratchClick: PropTypes.func.isRequired,
+    onCommittedClick: PropTypes.func.isRequired
   };
 
   static defaultProps = {

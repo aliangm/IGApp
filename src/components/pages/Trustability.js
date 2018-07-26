@@ -2,13 +2,13 @@ import React from 'react';
 import Component from 'components/Component';
 import planStyle from 'styles/plan/plan.css';
 import Page from 'components/Page';
-import { formatDate } from 'components/utils/date';
+import {formatDate} from 'components/utils/date';
 import Select from 'components/controls/Select';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import merge from 'lodash/merge';
 import style from 'styles/users/users.css';
-import { getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata } from 'components/utils/indicators';
+import {getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata} from 'components/utils/indicators';
 
 export default class Trustability extends Component {
 
@@ -20,7 +20,7 @@ export default class Trustability extends Component {
     this.state = {
       month: '',
       indicatorsProjection: null
-    }
+    };
   }
 
   analyze() {
@@ -30,14 +30,14 @@ export default class Trustability extends Component {
         if (response.ok) {
           response.json()
             .then((data) => {
-              const callback = (data) => {
-                this.setState({indicatorsProjection: data.projectedPlan && data.projectedPlan[0] && data.projectedPlan[0].projectedIndicatorValues});
-              };
               const approvedBudgets = [];
               const relevantPlan = this.props.previousData[this.state.month];
               approvedBudgets.push(merge(relevantPlan.approvedBudgets && relevantPlan.approvedBudgets[0], relevantPlan.actualChannelBudgets && relevantPlan.actualChannelBudgets.knownChannels || {}));
-              const json = {... data, useApprovedBudgets: true, approvedBudgets: approvedBudgets};
-              this.props.plan(false, json, callback, this.props.region);
+              const json = {...data, useApprovedBudgets: true, approvedBudgets: approvedBudgets};
+              this.props.plan(false, json, this.props.region)
+                .then(data => {
+                  this.setState({indicatorsProjection: data.projectedPlan && data.projectedPlan[0] && data.projectedPlan[0].projectedIndicatorValues});
+                });
             });
         }
       })
@@ -48,7 +48,7 @@ export default class Trustability extends Component {
 
   render() {
 
-    const { previousData } = this.props;
+    const {previousData} = this.props;
 
     const months = previousData.map((item, index) => {
       if (index !== 0) {
@@ -84,27 +84,27 @@ export default class Trustability extends Component {
           ], {
             key: indicator,
             className: this.classes.tableRow
-          })
+          });
         }
       );
 
     return <div>
-      <Page contentClassName={ planStyle.locals.content } innerClassName={ planStyle.locals.pageInner } width="100%">
-        <div className={ planStyle.locals.head }>
-          <div className={ planStyle.locals.headTitle }>Trustability</div>
+      <Page contentClassName={planStyle.locals.content} innerClassName={planStyle.locals.pageInner} width="100%">
+        <div className={planStyle.locals.head}>
+          <div className={planStyle.locals.headTitle}>Trustability</div>
         </div>
         <div className={planStyle.locals.wrap}>
-          <div style={{ padding: '20px' }}>
-            <div style={{ display: 'flex' }}>
+          <div style={{padding: '20px'}}>
+            <div style={{display: 'flex'}}>
               <Select
                 selected={this.state.month}
                 select={{
                   options: months
                 }}
                 onChange={(e) => {
-                  this.setState({month: e.value, indicatorsProjection: null})
+                  this.setState({month: e.value, indicatorsProjection: null});
                 }}
-                style={{ width: '100px', marginRight: '10px' }}
+                style={{width: '100px', marginRight: '10px'}}
               />
               <Button type="primary2" style={{
                 width: '72px'
@@ -112,7 +112,7 @@ export default class Trustability extends Component {
               </Button>
             </div>
             <div>
-              { this.state.indicatorsProjection ?
+              {this.state.indicatorsProjection ?
                 <div className={this.classes.inner}>
                   <table className={this.classes.table}>
                     <thead>
@@ -128,29 +128,29 @@ export default class Trustability extends Component {
           </div>
         </div>
       </Page>
-    </div>
+    </div>;
   }
 
   getTableRow(title, items, props) {
-    return <tr {... props}>
-      { title != null ?
-        <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
-        : null }
+    return <tr {...props}>
+      {title != null ?
+        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
+        : null}
       {
         items.map((item, i) => {
-          return <td className={ this.classes.valueCell } key={ i }>{
+          return <td className={this.classes.valueCell} key={i}>{
             this.getCellItem(item)
-          }</td>
+          }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
   getCellItem(item) {
     let elem;
 
-    if (typeof item !== 'object' ) {
-      elem = <div className={ this.classes.cellItem }>{ item }</div>
+    if (typeof item !== 'object') {
+      elem = <div className={this.classes.cellItem}>{item}</div>;
     } else {
       elem = item;
     }

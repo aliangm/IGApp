@@ -17,6 +17,7 @@ import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
+import isEqual from 'lodash/isEqual';
 
 export default class Plan extends Component {
 
@@ -42,17 +43,17 @@ export default class Plan extends Component {
 
   componentDidMount() {
     this.getRelevantEvents(this.props);
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      // if user didn't upload an excel
-      if (!this.props.approvedBudgets || this.props.approvedBudgets.length === 0) {
-        this.props.approveAllBudgets(true);
-      }
-    };
     if (isPopupMode()) {
       disablePopupMode();
       if (this.props.userAccount.permissions.plannerAI) {
-        this.props.plan(true, null, callback, this.props.region, false);
+        this.props.plan(true, null, this.props.region, false)
+          .then(data => {
+            this.props.setDataAsState(data);
+            // if user didn't upload an excel
+            if (!this.props.approvedBudgets || this.props.approvedBudgets.length === 0) {
+              this.props.approveAllBudgets(true);
+            }
+          });
       }
       else {
         history.push('/dashboard/CMO');
@@ -62,8 +63,9 @@ export default class Plan extends Component {
   }
 
   setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
-    const budgetsData = planBudgets.map(month =>
-      Object.keys(month).reduce((object, channelKey) => {
+    const budgetsData = planBudgets.map(month => {
+      const object = {};
+      Object.keys(month).forEach(channelKey => {
         const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
         object[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
@@ -71,41 +73,45 @@ export default class Plan extends Component {
           isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
           isSoft: withConstraints ? isSoft : false
         };
-        return object;
-      }, {})
-    );
+      });
+      return object;
+    });
     this.setState({budgetsData: budgetsData});
   };
 
   componentWillReceiveProps(nextProps) {
     this.getRelevantEvents(nextProps);
+    if (!isEqual(nextProps.planBudgets, this.props.planBudgets)) {
+      this.setBudgetsData(nextProps.planBudgets);
+    }
   }
 
   commitChanges = () => {
     const planBudgets = this.getPlanBudgets();
     this.props.updateUserMonthPlan({planBudgets: planBudgets}, this.props.region, this.props.planDate);
-    this.setState({planBudgets: planBudgets});
   };
 
   getPlanBudgets = () => {
-    return this.state.budgetsData.map(month =>
-      Object.keys(month).reduce((object, channelKey) => {
+    return this.state.budgetsData.map(month => {
+      const object = {};
+      Object.keys(month).forEach(channelKey => {
         const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
         object[channelKey] = {
           committedBudget: primaryBudget,
           userBudgetConstraint: isConstraint ? budgetConstraint : -1,
           isSoft: isConstraint ? isSoft : false
         };
-        return object;
-      }, {})
-    );
+      });
+      return object;
+    });
   };
 
   plan = () => {
     const planBudgets = this.getPlanBudgets();
-    this.props.plan(true, {planBudgets: planBudgets}, (data) => {
-      this.setBudgetsData(data.planBudgets, true, true);
-    }, this.props.region, false);
+    this.props.plan(true, {planBudgets: planBudgets}, this.props.region, false)
+      .then(data => {
+        this.setBudgetsData(data.planBudgets, true, true);
+      });
   };
 
   removeChannel = channelKey => {

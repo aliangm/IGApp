@@ -8,8 +8,8 @@ export default class Popup extends Component {
   style = style;
 
   static propTypes = {
-    annualBudget: PropTypes.number,
-    annualBudgetLeftToPlan: PropTypes.number
+    annualBudget: PropTypes.number.isRequired,
+    annualBudgetLeftToPlan: PropTypes.number.isRequired
   };
 
   render() {

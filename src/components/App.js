@@ -604,7 +604,8 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
   }
 
-  plan(isCommitted, preferences, callback, region, silent) {
+  plan(isCommitted, preferences, region, silent) {
+    const deferred = q.defer();
     let body = preferences ? JSON.stringify(preferences) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     if (!silent) {
@@ -630,9 +631,7 @@ class AppComponent extends Component {
                       isPlannerError: false
                     });
                   }
-                  if (callback) {
-                    callback(data);
-                  }
+                  deferred.resolve(data);
                 }
               }
               else {
@@ -655,6 +654,7 @@ class AppComponent extends Component {
               this.setState({serverDown: true, isPlannerLoading: false});
             }
           }
+          deferred.reject();
         }
       })
       .catch((err) => {
@@ -663,25 +663,27 @@ class AppComponent extends Component {
             serverDown: true, isPlannerLoading: false
           });
         }
+        deferred.reject();
       });
+    return deferred.promise;
   }
 
   forecast() {
-    const callback = (data) => {
-      // PATCH
-      // Update user month plan using another request
-      const approvedBudgetsProjection = this.state.approvedBudgetsProjection;
-      data.projectedPlan.forEach((month, index) => {
-        if (!approvedBudgetsProjection[index]) {
-          approvedBudgetsProjection[index] = {};
-        }
-        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
+    this.plan(false, {useApprovedBudgets: true}, this.state.region, true)
+      .then(data => {
+        // PATCH
+        // Update user month plan using another request
+        const approvedBudgetsProjection = this.state.approvedBudgetsProjection;
+        data.projectedPlan.forEach((month, index) => {
+          if (!approvedBudgetsProjection[index]) {
+            approvedBudgetsProjection[index] = {};
+          }
+          approvedBudgetsProjection[index] = month.projectedIndicatorValues;
+        });
+        this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection},
+          this.state.region,
+          this.state.planDate);
       });
-      this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection},
-        this.state.region,
-        this.state.planDate);
-    };
-    this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
