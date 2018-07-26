@@ -106,7 +106,7 @@ export default class Plan extends Component {
     });
   };
 
-  plan = () => {
+  planAndSetBudgets = () => {
     const planBudgets = this.getPlanBudgets();
     this.props.plan(true, {planBudgets: planBudgets}, this.props.region, false)
       .then(data => {
@@ -261,7 +261,7 @@ export default class Plan extends Component {
                     </label>
                   </div>
                   <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
-                                onClick={this.plan}
+                                onClick={this.planAndSetBudgets}
                                 planNeedsUpdate={this.props.planNeedsUpdate}/>
                 </div>
               </FeatureToggle>
@@ -332,7 +332,7 @@ export default class Plan extends Component {
                                       }}
                                       onScratchClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                        this.plan();
+                                        this.planAndSetBudgets();
                                       }}/>
                   </div>
                 : null
