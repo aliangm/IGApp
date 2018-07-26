@@ -3,7 +3,7 @@ import Component from "components/Component";
 import icons from 'styles/icons/indicators.css';
 import style from 'styles/dashboard/objective.css';
 import { timeFrameToDate } from 'components/utils/objective';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 export default class Objective extends Component {
 
@@ -97,7 +97,7 @@ export default class Objective extends Component {
           y="50%"
           dy="-20px"
           textAnchor="middle">
-          { (this.props.isDollar ? '$' : '') + formatBudget(Math.round(this.props.value) || 0) + (this.props.isPercentage ? '%' : '') }
+          { (this.props.isDollar ? '$' : '') + formatNumber(Math.round(this.props.value) || 0) + (this.props.isPercentage ? '%' : '') }
         </text>
       </svg>
       <div style={{ marginTop: '-98px' }}>

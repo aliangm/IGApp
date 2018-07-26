@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Component from 'components/Component';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 import { DraggableCampaignCard } from './DraggableCard'
 
@@ -69,8 +69,8 @@ class Card extends Component {
         <div className={this.classes.card} onClick={this.handleClick}>
           <div className={this.classes.cardName}>{item.title}</div>
           <div className={this.classes.cardFooter}>
-            <span className={this.classes.cardBudget}>${formatBudget(item.campaignsBudget || 0)}</span>
-            <span className={this.classes.budget}>{" / $" + formatBudget(item.budget)}</span>
+            <span className={this.classes.cardBudget}>${formatNumber(item.campaignsBudget || 0)}</span>
+            <span className={this.classes.budget}>{" / $" + formatNumber(item.budget)}</span>
             <div className={this.classes.campaignsCount}>{item.campaigns.length}</div>
             <div className={ this.classes.cardIcon } data-icon={item.icon} />
           </div>

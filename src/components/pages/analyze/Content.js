@@ -4,7 +4,7 @@ import style from "styles/onboarding/onboarding.css";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Select from 'components/controls/Select';
 import { getIndicatorsWithNicknames } from 'components/utils/indicators';
-import { formatBudget, formatBudgetShortened } from 'components/utils/budget';
+import { formatNumber, formatBudgetShortened } from 'components/utils/budget';
 import { getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { FeatureToggle } from 'react-feature-toggles';
@@ -191,7 +191,7 @@ export default class Content extends Component {
               <div className={dashboardStyle.locals.contentTitle} data-tip={title}>
                 {title}
               </div>,
-              '$' + formatBudget(revenueMetric),
+              '$' + formatNumber(revenueMetric),
               webVisits,
               conversion,
               Math.round(funnelIndicator * 100) / 100,

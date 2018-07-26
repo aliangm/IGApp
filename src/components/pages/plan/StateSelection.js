@@ -12,10 +12,8 @@ export default class StateSelection extends Component {
     currentConstraint: PropTypes.string.isRequired,
     changeConstraint: PropTypes.func.isRequired,
     constraintOptions: PropTypes.object.isRequired,
-    changeSuggestionBoxOpen: PropTypes.func
+    changeConstraintsBoxOpen: PropTypes.func
   };
-
-  static defaultProps = {};
 
   constructor(props) {
     super(props);
@@ -42,7 +40,7 @@ export default class StateSelection extends Component {
   };
 
   changeBoxShowing = (shouldShow) => {
-    this.props.changeSuggestionBoxOpen(shouldShow);
+    this.props.changeConstraintsBoxOpen(shouldShow);
     this.setState({
       showBox: shouldShow
     });
@@ -65,12 +63,14 @@ export default class StateSelection extends Component {
   };
 
   render() {
+    const constraintOptions = Object.keys(this.props.constraintOptions).map(key => {
+      return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
+    });
+
     return <div className={this.classes.stateSelectionWrap}>
       {this.state.showBox ? <div className={this.classes.stateSelectionBox}
                                  ref={(ref) => this.stateSelectionBox = ref}>
-        {Object.keys(this.props.constraintOptions).map(key => {
-          return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
-        })}
+        {constraintOptions}
       </div> : null}
       <div className={cellStyle.locals.icon}
            onClick={() => this.changeBoxShowing(true)}

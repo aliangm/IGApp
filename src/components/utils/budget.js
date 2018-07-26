@@ -1,4 +1,4 @@
-export function formatBudget(budget) {
+export function formatNumber(budget) {
 	if (budget == null) {
 		return ''
 	}
@@ -6,8 +6,8 @@ export function formatBudget(budget) {
 	return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-export function formatBudgetWithDollar(budget) {
-  return '$' + formatBudget(budget);
+export function formatBudget(budget) {
+  return '$' + formatNumber(budget);
 }
 
 export function formatBudgetShortened(budget) {
@@ -23,7 +23,6 @@ export function formatBudgetShortened(budget) {
   return budget;
 }
 
-export function stripNumberFromBudget(budget) {
-  const newValueString = (budget === '' || budget === '$') ? '0' : budget;
-  return parseInt(newValueString.replace(/[-$,]/g, ''));
+export function extractNumberFromBudget(budget) {
+  return parseInt(budget.toString().replace(/\D+/g, '')) || 0;
 }

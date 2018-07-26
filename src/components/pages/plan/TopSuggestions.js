@@ -7,7 +7,7 @@ import {FeatureToggle} from 'react-feature-toggles';
 import Page from 'components/Page';
 import {getNickname as getIndicatorNickname, getMetadata} from 'components/utils/indicators';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
-import {formatBudget} from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
 import {formatDate} from 'components/utils/date';
 import Loading from 'components/pages/plan/Loading';
 import cloneDeepWith from 'lodash/cloneDeepWith';
@@ -90,13 +90,13 @@ export default class TopSuggestions extends Component {
         const diff = Math.round(ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric]);
         return this.getTableRow(null, [
           <b>{getIndicatorNickname(metric)}</b>,
-          formatBudget(actualIndicators[metric]),
-          formatBudget(approvedBudgetsProjection[0][metric]),
-          formatBudget(ifApprovedMetrics[metric]),
+          formatNumber(actualIndicators[metric]),
+          formatNumber(approvedBudgetsProjection[0][metric]),
+          formatNumber(ifApprovedMetrics[metric]),
           <div style={{display: 'flex'}}>
             <div className={this.classes.historyArrow} data-decline={diff < 0 ? true : null}/>
             <div className={this.classes.historyGrow} data-decline={diff < 0 ? true : null}>
-              {formatBudget(Math.abs(diff))} ({Math.round(((ifApprovedMetrics[metric] - actualIndicators[metric]) / (approvedBudgetsProjection[0][metric] - actualIndicators[metric]) - 1) * 100)}%)
+              {formatNumber(Math.abs(diff))} ({Math.round(((ifApprovedMetrics[metric] - actualIndicators[metric]) / (approvedBudgetsProjection[0][metric] - actualIndicators[metric]) - 1) * 100)}%)
             </div>
           </div>
         ], {
@@ -145,11 +145,11 @@ export default class TopSuggestions extends Component {
               </div>
               <div className={suggestionStyle.locals.budgets} style={{fontSize: '16px'}}>
                 <div className={suggestionStyle.locals.current}>
-                  ${item && formatBudget(item.current)}
+                  ${item && formatNumber(item.current)}
                 </div>
                 {' -> '}
                 <div className={suggestionStyle.locals.suggested}>
-                  ${item && formatBudget(item.suggested)}
+                  ${item && formatNumber(item.suggested)}
                 </div>
               </div>
               <div className={this.classes.forecastHeadline}>

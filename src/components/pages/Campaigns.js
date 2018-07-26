@@ -13,7 +13,7 @@ import Label from 'components/ControlsLabel';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
-import {formatBudget} from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
 
 function getDateString(stringDate) {
   if (stringDate) {
@@ -257,10 +257,10 @@ export default class Campaigns extends Component {
                   Budget left to invest
                   <div className={this.classes.campaignsTitleArrow}
                        style={{color: monthlyBudgetLeftToInvest >= 0 ? '#2ecc71' : '#ce352d'}}>
-                    ${monthlyBudgetLeftToInvest ? formatBudget(monthlyBudgetLeftToInvest) : 0}
+                    ${monthlyBudgetLeftToInvest ? formatNumber(monthlyBudgetLeftToInvest) : 0}
                   </div>
                   <div>
-                    {' / $' + formatBudget(monthlyBudget)}
+                    {' / $' + formatNumber(monthlyBudget)}
                   </div>
                 </div>
               </div>

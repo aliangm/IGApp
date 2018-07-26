@@ -2,7 +2,8 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import StateSelection from 'components/pages/plan/StateSelection';
-import {formatBudgetWithDollar, stripNumberFromBudget} from 'components/utils/budget';
+import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
+import isNil from 'lodash/isNil';
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -22,7 +23,7 @@ const CONSTRAINT_MAPPING = {
 const EDIT_MODE = {
   ANY: 0,
   NONE: 1,
-  TEMP_STATE: 2,
+  FROM_STATE: 2,
   FROM_PROP: 3
 };
 
@@ -47,11 +48,19 @@ export default class TableCell extends Component {
     enableActionButtons: PropTypes.bool
   };
 
+  defaultProps = {
+    secondaryValue: null,
+    isConstraitsEnabled: false,
+    isEditMode: false,
+    isDragging: false,
+    enableActionButtons: false
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      suggestionBoxOpen: false,
+      constraintsBoxOpen: false,
       hoverCell: false,
       isEditing: false,
       editValue: this.props.primaryValue
@@ -59,7 +68,7 @@ export default class TableCell extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.primaryValue != null) {
+    if (!isNil(newProps.primaryValue)) {
       this.setState({
         editValue: newProps.primaryValue
       });
@@ -67,8 +76,8 @@ export default class TableCell extends Component {
   }
 
   getConstraint = () => {
-    return !this.props.isConstraint ? 'none' :
-      this.props.isSoft ? 'soft' : 'hard';
+    return !this.props.isConstraint ? 'none'
+      : (this.props.isSoft ? 'soft' : 'hard');
   };
 
   changeConstraint = (changeTo) => {
@@ -76,8 +85,8 @@ export default class TableCell extends Component {
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
   };
 
-  changeSuggestionBoxOpen = (isOpen) => {
-    this.setState({suggestionBoxOpen: isOpen});
+  changeConstraintsBoxOpen = (isOpen) => {
+    this.setState({constraintsBoxOpen: isOpen});
   };
 
   getConstraintsDisplayInfo = () => {
@@ -91,14 +100,14 @@ export default class TableCell extends Component {
   };
 
   isCellActive = () => {
-    return this.state.hoverCell || this.state.suggestionBoxOpen;
+    return this.state.hoverCell || this.state.constraintsBoxOpen;
   };
 
   isEditModeType = (editModeType) => {
     switch (editModeType) {
       case(EDIT_MODE.ANY):
         return this.state.isEditing || this.props.isEditMode;
-      case(EDIT_MODE.TEMP_STATE):
+      case(EDIT_MODE.FROM_STATE):
         return this.state.isEditing;
       case(EDIT_MODE.FROM_PROP):
         return this.props.isEditMode;
@@ -108,7 +117,7 @@ export default class TableCell extends Component {
   };
 
   showSuggestion = () => {
-    return this.props.secondaryValue != null
+    return !isNil(this.props.secondaryValue)
       && (this.props.secondaryValue !== this.props.primaryValue)
       && this.isCellActive();
   };
@@ -123,9 +132,9 @@ export default class TableCell extends Component {
   };
 
   onInputValueChange = (e) => {
-    const value = stripNumberFromBudget(e.target.value);
+    const value = extractNumberFromBudget(e.target.value);
 
-    if (value != null) {
+    if (!isNil(value)) {
       if (this.isEditModeType(EDIT_MODE.FROM_PROP)) {
         this.props.onChange(value);
       }
@@ -137,7 +146,7 @@ export default class TableCell extends Component {
 
   getActionButtons = () => {
     return <div className={this.classes.buttons}>
-      {this.isEditModeType(EDIT_MODE.TEMP_STATE) && !this.isEditModeType(EDIT_MODE.FROM_PROP) ?
+      {this.isEditModeType(EDIT_MODE.FROM_STATE) && !this.isEditModeType(EDIT_MODE.FROM_PROP) ?
         <div className={this.classes.innerButtons}>
           <div className={this.classes.icon}
                data-icon="plan:approveEdit"
@@ -153,12 +162,12 @@ export default class TableCell extends Component {
              data-icon='plan:acceptSuggestion'/>
         : null}
       {(this.props.isConstraitsEnabled
-        && !this.isEditModeType(EDIT_MODE.TEMP_STATE)
+        && !this.isEditModeType(EDIT_MODE.FROM_STATE)
         && (this.getConstraint() !== 'none' || this.isCellActive()))
         ? <StateSelection currentConstraint={this.getConstraint()}
                           constraintOptions={this.getConstraintsDisplayInfo()}
                           changeConstraint={this.changeConstraint}
-                          changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
+                          changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
@@ -180,14 +189,14 @@ export default class TableCell extends Component {
         {this.isEditModeType(EDIT_MODE.ANY) ?
           <input className={this.classes.editCell}
                  type="text"
-                 value={formatBudgetWithDollar(this.state.editValue)}
+                 value={formatBudget(this.state.editValue)}
                  onChange={this.onInputValueChange}/>
-          : <div>{formatBudgetWithDollar(this.props.primaryValue)}</div>}
+          : <div>{formatBudget(this.props.primaryValue)}</div>}
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
       {this.showSuggestion() ?
-        <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY)}>
-          {formatBudgetWithDollar(this.props.secondaryValue)}
+        <div className={this.classes.secondaryValue} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
+          {formatBudget(this.props.secondaryValue)}
         </div> : null}
     </td>;
   }

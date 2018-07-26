@@ -3,7 +3,7 @@ import Component from "components/Component";
 import style from "styles/onboarding/onboarding.css";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Select from 'components/controls/Select';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import merge from 'lodash/merge';
 import { getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
@@ -82,7 +82,7 @@ export default class Channels extends Component {
   formatEffciency(dividend, divisor, indicatorName){
     const efficiency =  Math.round(dividend/divisor);
     if(isFinite(efficiency)){
-      return '$' + formatBudget(efficiency) + "/" + indicatorName;
+      return '$' + formatNumber(efficiency) + "/" + indicatorName;
     }
     if(dividend == 0){
       return '0';
@@ -261,11 +261,11 @@ export default class Channels extends Component {
                 {label}
               </div>
             </div>,
-            '$' + formatBudget(budget),
-            '$' + formatBudget(revenueMetric),
+            '$' + formatNumber(budget),
+            '$' + formatNumber(revenueMetric),
             Math.round(ROI * 100) + '%',
-            formatBudget(webVisits),
-            formatBudget(conversion),
+            formatNumber(webVisits),
+            formatNumber(conversion),
             Math.round(funnelIndicator * 100) / 100,
             this.formatEffciency(budget, funnelIndicator, getIndicatorNickname(this.state.attributionTableIndicator, true))
           ], {
@@ -280,11 +280,11 @@ export default class Channels extends Component {
     const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100;
     const footRow = this.getTableRow(null, [
       'Total',
-      '$' + formatBudget(totalBudget),
-      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
+      '$' + formatNumber(totalBudget),
+      '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-      formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-      formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
+      formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
+      formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
       totalIndicatorGenerated,
       this.formatEffciency(totalBudget, totalIndicatorGenerated, getIndicatorNickname(this.state.attributionTableIndicator, true))
     ], {
