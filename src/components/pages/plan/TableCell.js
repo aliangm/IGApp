@@ -48,11 +48,19 @@ export default class TableCell extends Component {
     enableActionButtons: PropTypes.bool
   };
 
+  defaultProps = {
+    secondaryValue: null,
+    isConstraitsEnabled: false,
+    isEditMode: false,
+    isDragging: false,
+    enableActionButtons: false
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      suggestionBoxOpen: false,
+      constraintsBoxOpen: false,
       hoverCell: false,
       isEditing: false,
       editValue: this.props.primaryValue
@@ -77,8 +85,8 @@ export default class TableCell extends Component {
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
   };
 
-  changeSuggestionBoxOpen = (isOpen) => {
-    this.setState({suggestionBoxOpen: isOpen});
+  changeConstraintsBoxOpen = (isOpen) => {
+    this.setState({constraintsBoxOpen: isOpen});
   };
 
   getConstraintsDisplayInfo = () => {
@@ -92,7 +100,7 @@ export default class TableCell extends Component {
   };
 
   isCellActive = () => {
-    return this.state.hoverCell || this.state.suggestionBoxOpen;
+    return this.state.hoverCell || this.state.constraintsBoxOpen;
   };
 
   isEditModeType = (editModeType) => {
@@ -159,7 +167,7 @@ export default class TableCell extends Component {
         ? <StateSelection currentConstraint={this.getConstraint()}
                           constraintOptions={this.getConstraintsDisplayInfo()}
                           changeConstraint={this.changeConstraint}
-                          changeSuggestionBoxOpen={this.changeSuggestionBoxOpen}
+                          changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div

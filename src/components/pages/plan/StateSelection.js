@@ -12,7 +12,7 @@ export default class StateSelection extends Component {
     currentConstraint: PropTypes.string.isRequired,
     changeConstraint: PropTypes.func.isRequired,
     constraintOptions: PropTypes.object.isRequired,
-    changeSuggestionBoxOpen: PropTypes.func
+    changeConstraintsBoxOpen: PropTypes.func
   };
 
   constructor(props) {
@@ -40,7 +40,7 @@ export default class StateSelection extends Component {
   };
 
   changeBoxShowing = (shouldShow) => {
-    this.props.changeSuggestionBoxOpen(shouldShow);
+    this.props.changeConstraintsBoxOpen(shouldShow);
     this.setState({
       showBox: shouldShow
     });
