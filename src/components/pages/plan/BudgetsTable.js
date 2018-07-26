@@ -20,7 +20,7 @@ const COLLAPSE_OPTIONS = {
   SHOW_ALL: 2
 };
 
-const CELL_WIDTH = 123;
+const CELL_WIDTH = 140;
 
 export default class BudgetsTable extends Component {
 
@@ -122,7 +122,7 @@ export default class BudgetsTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} className={this.classes.headRowCell} style={{width: `${CELL_WIDTH}px`}}>{month}</td>;
+        <td key={`head:${index}`} className={this.classes.headRowCell} style={{minWidth: `${CELL_WIDTH}px`, width: `${CELL_WIDTH}px`}}>{month}</td>;
     });
     return headers;
   };
