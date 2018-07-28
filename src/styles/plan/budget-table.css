@@ -52,6 +52,41 @@
     margin-left: -11px;
 }
 
+.month-navigation {
+    height: 13px;
+    width: 7px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    display: table-cell;
+}
+
+.month-buttons {
+    height: inherit;
+    position: absolute;
+    z-index: 10;
+    background-color: white;
+    width: 30px;
+}
+
+.button-wrapper {
+    height: 100%;
+    display: table;
+    margin: auto;
+}
+
+.next-button {
+    composes: month-buttons;
+    right: 0;
+}
+
+.prev-button {
+    composes: month-buttons;
+    transform: rotate(180deg);
+    left: 280px;
+}
+
 .row-arrow-wrap[data-collapsed='true'] {
     transform: rotate(-180deg);
 }
@@ -210,3 +245,4 @@
 
 @mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;
 @mixin icon-nodpi plan:removeChannel , ../../assets/cancel-button;
+@mixin icon-nodpi plan:monthNavigation , ../../assets/plan_icons/shape;
