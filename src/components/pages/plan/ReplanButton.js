@@ -15,11 +15,11 @@ export default class NextButton extends Component {
               onClick={this.props.onClick}
               className={this.classes.planButton}
               style={{
-                width: '160px'
+                width: '138px'
               }}
               icon='buttons:plan'
       >
-        Optimize Plan ({this.props.numberOfPlanUpdates})
+        Optimize ({this.props.numberOfPlanUpdates})
         {
           this.props.planNeedsUpdate ?
             <div className={planStyle.locals.planCircle}/>

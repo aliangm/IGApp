@@ -315,7 +315,7 @@ export default class Plan extends Component {
                     <Button type="primary"
                             style={{
                               marginLeft: '15px',
-                              width: '102px'
+                              width: '118px'
                             }}
                             selected={showNewScenarioPopup ? true : null}
                             onClick={() => {
@@ -359,7 +359,7 @@ export default class Plan extends Component {
                               editMode: !editMode
                             });
                           }}
-                          icon={editMode ? 'buttons:plan' : 'buttons:edit'}>
+                          icon={editMode ? 'buttons:done' : 'buttons:edit'}>
                     {editMode ? (interactiveMode ? 'Done' : 'Commit') : 'Edit'}
                   </Button>
                   <Popup
