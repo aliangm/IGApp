@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/controls/custom-checkbox.css';
 
@@ -6,16 +6,27 @@ export default class CustomCheckbox extends Component {
 
   style = style;
 
+  static propTypes = {
+    children: PropTypes.node,
+    onChange: PropTypes.func.isRequired,
+    style: PropTypes.object,
+    checkboxStyle: PropTypes.object,
+    checked: PropTypes.bool
+  };
+
+  static defaultProps = {
+    checked: false
+  };
+
   render() {
-    return <div className={this.classes.container} style={this.props.style}>
-      <div className={this.classes.checkbox} style={this.props.checkboxStyle}
-           data-checked={this.props.checked ? true : null}>
-        <div className={this.classes.checkMark} hidden={!this.props.checked}/>
-        <input type='checkbox' className={this.classes.input} checked={this.props.checked}
-               onChange={this.props.onChange}/>
+    const {style, checkboxStyle, checked, children, onChange} = this.props;
+    return <div className={this.classes.container} style={style}>
+      <div className={this.classes.checkbox} style={checkboxStyle} data-checked={checked ? true : null}>
+        <div className={this.classes.checkMark} hidden={!checked}/>
+        <input type='checkbox' className={this.classes.input} checked={checked} onChange={onChange}/>
       </div>
-      <div className={this.classes.children} data-checked={this.props.checked ? true : null}>
-        {this.props.children}
+      <div className={this.classes.children} data-checked={checked ? true : null}>
+        {children}
       </div>
     </div>;
   }
