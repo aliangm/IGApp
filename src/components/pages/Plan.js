@@ -76,7 +76,18 @@ export default class Plan extends Component {
       });
       return object;
     });
-    this.setState({budgetsData: budgetsData});
+    const historyBudgetsData = this.props.historyData.planBudgets.map(month => {
+      const object = {};
+      Object.keys(month).forEach(channelKey => {
+        const {committedBudget} = month[channelKey];
+        object[channelKey] = {
+          primaryBudget: committedBudget,
+          isHistory: true
+        };
+      });
+      return object;
+    });
+    this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]});
   };
 
   componentWillReceiveProps(nextProps) {
