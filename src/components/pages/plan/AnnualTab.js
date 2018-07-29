@@ -42,25 +42,29 @@ export default class AnnualTab extends Component {
     });
   };
 
-  render() {
-    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef} = this.props;
+  componentDidMount() {
+    this.setState({scrollPosition: this.props.historyData.indicators.length * CELL_WIDTH});
+  }
 
-    const currentSuggested = {};
-    const dates = getDates(planDate);
-    const projections = forecastedIndicators.map((item, index) => {
+  render() {
+    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef historyData: {indicators}} = this.props;
+
+    const forecastingData = [{...actualIndicators, name: 'today'}];
+
+    const futureDates = getDates(planDate);
+    forecastedIndicators.forEach((item, index) => {
       const json = {};
       Object.keys(item).forEach(key => {
         json[key] = item[key].committed;
       });
-      return {...json, name: dates[index]};
+      forecastingData.push({...json, name: futureDates[index]});
     });
 
-    Object.keys(actualIndicators).forEach(indicator => {
-      currentSuggested[indicator] = actualIndicators[indicator];
+    const pastDates = getDates(planDate, true, false);
+    indicators.forEach((json, index) => {
+      forecastingData.unshift({...json, name: pastDates[pastDates.length - 1 - index]});
     });
 
-    // Current indicators values to first cell
-    projections.splice(0, 0, {...actualIndicators, name: 'today', ...currentSuggested});
 
     const parsedObjectives = {};
     objectives
@@ -88,7 +92,7 @@ export default class AnnualTab extends Component {
                         isShowSecondaryEnabled={interactiveMode}
                         isConstraintsEnabled={interactiveMode}
                         data={budgetsData}
-                        dates={dates}
+                        dates={futureDates}
                         approvedPlan={this.state.approvedPlan}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
@@ -97,7 +101,7 @@ export default class AnnualTab extends Component {
           />
 
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph data={projections}
+            <IndicatorsGraph data={forecastingData}
                              objectives={parsedObjectives}
                              dimensions={this.state.graphDimensions}
                              changeScrollPosition={this.changeScrollPosition}
