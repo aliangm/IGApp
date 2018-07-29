@@ -199,7 +199,7 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart} ref='chart'>
-        <AreaChart data={this.props.data} height={400} width={this.props.cellWidth * (this.props.data.length - 1)}>
+        <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}>
           <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} tickLine={false}
                  interval={0}/>
           <YAxis axisLine={false}
