@@ -90,8 +90,6 @@ export default class AnnualTab extends Component {
                         data={budgetsData}
                         dates={dates}
                         approvedPlan={this.state.approvedPlan}
-                        editCommittedBudget={this.props.editCommittedBudget}
-                        changeBudgetConstraint={this.props.changeBudgetConstraint}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}

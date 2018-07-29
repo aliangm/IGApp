@@ -114,8 +114,8 @@ export default class Plan extends Component {
       });
   };
 
-  removeChannel = channelKey => {
-
+  deleteChannel = (channelKey) => {
+    console.log(`user tried to remove channel ${channelKey}`);
   };
 
   editCommittedBudget = (month, channelKey, newBudget) => {
@@ -239,7 +239,8 @@ export default class Plan extends Component {
         setRef: this.setRef.bind(this),
         forecastingGraphRef: this.forecastingGraphRef.bind(this),
         editCommittedBudget: this.editCommittedBudget,
-        changeBudgetConstraint: this.changeBudgetConstraint
+        changeBudgetConstraint: this.changeBudgetConstraint,
+        deleteChannel: this.deleteChannel
       })));
 
     const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
