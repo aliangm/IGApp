@@ -28,8 +28,6 @@ export default class BudgetsTable extends Component {
   style = style;
 
   static propTypes = {
-    tableRef: PropTypes.func,
-    firstColumnCell: PropTypes.func,
     dates: PropTypes.array,
     isEditMode: PropTypes.bool,
     isShowSecondaryEnabled: PropTypes.bool,
@@ -63,26 +61,26 @@ export default class BudgetsTable extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.handleScroll);
-    this.tableScroller.addEventListener('scroll', this.handleTableScroll);
+    this.refs.tableScroller.addEventListener('scroll', this.handleTableScroll);
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
-    this.tableScroller.removeEventListener('scroll', this.handleTableScroll);
+    this.refs.tableScroller.removeEventListener('scroll', this.handleTableScroll);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!isNil(nextProps.scrollPosition)) {
-      this.tableScroller.scrollLeft = this.stickyHeader.scrollLeft = nextProps.scrollPosition;
+      this.refs.tableScroller.scrollLeft = this.refs.stickyHeader.scrollLeft = nextProps.scrollPosition;
     }
   }
 
   handleTableScroll = () => {
-    this.props.changeScrollPosition(this.tableScroller.scrollLeft);
+    this.props.changeScrollPosition(this.refs.tableScroller.scrollLeft);
   };
 
   handleScroll = () => {
-    this.setState({isSticky: (this.tableRef && this.tableRef.getBoundingClientRect().top) < 70});
+    this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 70});
   };
 
   getMonthHeaders = () => {
@@ -406,7 +404,7 @@ export default class BudgetsTable extends Component {
         </div>
       </div>
       <td className={this.classes.titleCell} data-row-type="header">
-        <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
+        <div className={this.classes.rowTitle}>
           <div className={this.classes.rowArrowBox}>
             <div
               className={this.classes.rowArrowWrap}
@@ -426,22 +424,20 @@ export default class BudgetsTable extends Component {
       {this.getMonthHeaders()}
     </tr>;
 
-    return isSticky ? <div className={this.classes.stickyWrapper} ref={ref => {
-      this.stickyHeader = ref;
-    }}>{row}</div> : row;
+    return isSticky ? <div className={this.classes.stickyWrapper} ref='stickyHeader'>{row}</div> : row;
   };
 
   showNextMonth = () => {
-    this.tableScroller.scrollLeft =
-      (this.tableScroller.scrollLeft + CELL_WIDTH) - this.tableScroller.scrollLeft % CELL_WIDTH;
+    this.refs.tableScroller.scrollLeft =
+      (this.refs.tableScroller.scrollLeft + CELL_WIDTH) - this.refs.tableScroller.scrollLeft % CELL_WIDTH;
   };
 
   showPrevMonth = () => {
-    const substractionFromMonthPixel = this.tableScroller.scrollLeft % CELL_WIDTH;
-    this.tableScroller.scrollLeft =
+    const substractionFromMonthPixel = this.refs.tableScroller.scrollLeft % CELL_WIDTH;
+    this.refs.tableScroller.scrollLeft =
       substractionFromMonthPixel
-        ? this.tableScroller.scrollLeft - substractionFromMonthPixel
-        : this.tableScroller.scrollLeft - CELL_WIDTH;
+        ? this.refs.tableScroller.scrollLeft - substractionFromMonthPixel
+        : this.refs.tableScroller.scrollLeft - CELL_WIDTH;
   };
 
   render() {
@@ -463,14 +459,8 @@ export default class BudgetsTable extends Component {
 
     return <div style={{'margin-left': '40px'}}>
       <div className={this.classes.box}>
-        <div className={this.classes.tableScroller} ref={(ref) => {
-          this.tableScroller = ref;
-        }}>
-          <table className={this.classes.table}
-                 ref={(ref) => {
-                   this.tableRef = ref;
-                   this.props.tableRef(ref);
-                 }}>
+        <div className={this.classes.tableScroller} ref='tableScroller'>
+          <table className={this.classes.table} ref='tableRef'>
             <thead>
             {headRow}
             </thead>
