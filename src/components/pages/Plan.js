@@ -69,7 +69,7 @@ export default class Plan extends Component {
         const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
         channelsObject[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
-          secondaryBudget: isPlannerPrimary ? committedBudget : plannerBudget,
+          secondaryBudget: committedBudget,
           isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
           isSoft: withConstraints ? isSoft : false
         };

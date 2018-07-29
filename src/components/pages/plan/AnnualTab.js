@@ -89,7 +89,7 @@ export default class AnnualTab extends Component {
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
           <BudgetsTable isEditMode={editMode}
-                        isShowSecondaryEnabled={interactiveMode}
+                        isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
                         data={budgetsData}
                         dates={futureDates}
