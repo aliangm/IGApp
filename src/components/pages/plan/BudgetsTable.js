@@ -21,8 +21,6 @@ const COLLAPSE_OPTIONS = {
   SHOW_ALL: 2
 };
 
-const CELL_WIDTH = 140;
-
 export default class BudgetsTable extends Component {
 
   style = style;
@@ -132,7 +130,8 @@ export default class BudgetsTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} className={this.classes.headRowCell} style={{minWidth: `${CELL_WIDTH}px`, width: `${CELL_WIDTH}px`}}>{month}</td>;
+        <td key={`head:${index}`} className={this.classes.headRowCell}
+            style={{minWidth: `${this.props.cellWidth}px`, width: `${this.props.cellWidth}px`}}>{month}</td>;
     });
     return headers;
   };
@@ -201,47 +200,48 @@ export default class BudgetsTable extends Component {
 
     return <tr className={this.classes.tableRow} data-row-type={'bottom'}>
       <td className={this.classes.titleCell} data-row-type={'bottom'}>
-        <div className={this.classes.rowTitle} >
+        <div className={this.classes.rowTitle}>
           <div className={this.classes.title}>{data.nickname}</div>
         </div>
       </td>
       {cells}
     </tr>;
-  }
+  };
 
   getTableRow = (data, isCategoryRow) => {
     const titleCellKey = (isCategoryRow ? 'category' : '') + data.channel;
 
     const cells = data.values.map((monthData, key) => {
       return !isCategoryRow ? <TableCell
-        key={`${data.channel}:${key}`}
-        primaryValue={monthData.primaryBudget}
-        secondaryValue={this.props.isShowSecondaryEnabled
-          ? monthData.secondaryBudget
-          : null}
-        isConstraint={monthData.isConstraint}
-        isSoft={monthData.isSoft}
-        constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-          key,
-          data.channel,
-          isConstraint,
-          isSoft)}
-        isEditMode={this.props.isEditMode}
-        onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-        isConstraitsEnabled={this.props.isConstraintsEnabled}
-        dragEnter={() => this.dragEnter(key, data.channel)}
-        commitDrag={this.commitDrag}
-        dragStart={this.dragStart}
-        isDragging={this.state.isDragging}
-        approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
-        enableActionButtons={true}
-      />
+          key={`${data.channel}:${key}`}
+          primaryValue={monthData.primaryBudget}
+          secondaryValue={this.props.isShowSecondaryEnabled
+            ? monthData.secondaryBudget
+            : null}
+          isConstraint={monthData.isConstraint}
+          isSoft={monthData.isSoft}
+          constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
+            key,
+            data.channel,
+            isConstraint,
+            isSoft)}
+          isEditMode={this.props.isEditMode}
+          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
+          isConstraitsEnabled={this.props.isConstraintsEnabled}
+          dragEnter={() => this.dragEnter(key, data.channel)}
+          commitDrag={this.commitDrag}
+          dragStart={this.dragStart}
+          isDragging={this.state.isDragging}
+          approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+          enableActionButtons={true}
+        />
         : <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
           {formatBudget(monthData.primaryBudget)}
         </td>;
     });
 
-    return <tr className={this.classes.tableRow} key={titleCellKey} data-row-type={isCategoryRow ? 'category' : 'regular'}>
+    return <tr className={this.classes.tableRow} key={titleCellKey}
+               data-row-type={isCategoryRow ? 'category' : 'regular'}>
       {this.getTitleCell(isCategoryRow, data)}
       {cells}
     </tr>;
@@ -249,7 +249,7 @@ export default class BudgetsTable extends Component {
 
   getTitleCell = (isCategoryRow, data) => {
     return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}>
-      <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true: null}>
+      <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true : null}>
         {isCategoryRow ?
           <div className={this.classes.rowArrowBox}>
             <div
@@ -408,7 +408,7 @@ export default class BudgetsTable extends Component {
               <div className={this.classes.rowArrow} data-headline/>
             </div>
           </div>
-          <div className={this.classes.title} data-category-row >
+          <div className={this.classes.title} data-category-row>
             {'Marketing Channel'}
           </div>
         </div>
@@ -423,15 +423,15 @@ export default class BudgetsTable extends Component {
 
   showNextMonth = () => {
     this.tableScroller.scrollLeft =
-      (this.tableScroller.scrollLeft + CELL_WIDTH) - this.tableScroller.scrollLeft % CELL_WIDTH;
+      (this.tableScroller.scrollLeft + this.props.cellWidth) - this.tableScroller.scrollLeft % this.props.cellWidth;
   };
 
   showPrevMonth = () => {
-    const substractionFromMonthPixel = this.tableScroller.scrollLeft % CELL_WIDTH;
+    const substractionFromMonthPixel = this.tableScroller.scrollLeft % this.props.cellWidth;
     this.tableScroller.scrollLeft =
       substractionFromMonthPixel
         ? this.tableScroller.scrollLeft - substractionFromMonthPixel
-        : this.tableScroller.scrollLeft - CELL_WIDTH;
+        : this.tableScroller.scrollLeft - this.props.cellWidth;
   };
 
   render() {
@@ -480,7 +480,7 @@ export default class BudgetsTable extends Component {
         </div>
       </div>
       <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-        {this.getHeadRow(true)}
+      {this.getHeadRow(true)}
       </thead>
     </div>;
 
