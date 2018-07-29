@@ -56,7 +56,7 @@ export default class IndicatorsGraph extends Component {
   };
 
   toggleCheckbox = (indicator) => {
-    let checkedIndicators = this.state.checkedIndicators;
+    let checkedIndicators = [...this.state.checkedIndicators];
     const index = checkedIndicators.indexOf(indicator);
     if (index !== -1) {
       checkedIndicators.splice(index, 1);
