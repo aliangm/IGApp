@@ -9,6 +9,8 @@ import {formatNumber} from 'components/utils/budget';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getDates} from 'components/utils/date';
 
+const CELL_WIDTH = 140;
+
 export default class AnnualTab extends Component {
 
   style = style;
@@ -29,14 +31,9 @@ export default class AnnualTab extends Component {
     super(props);
     this.state = {
       hoverRow: void 0,
-      graphDimensions: {},
       approvedPlan: true,
       scrollPosition: 0
     };
-  }
-
-  componentDidMount() {
-    this.calculateGraphDimensions();
   }
 
   changeScrollPosition = (toPosition) => {
@@ -44,21 +41,6 @@ export default class AnnualTab extends Component {
       scrollPosition: toPosition
     });
   };
-
-  calculateGraphDimensions() {
-    if (this.planTable && this.firstColumnCell) {
-      const planTableOffsetWidth = this.planTable.offsetWidth;
-      const firstColumnOffsetWidth = this.firstColumnCell.offsetWidth;
-      window.requestAnimationFrame(() => {
-        this.setState({
-          graphDimensions: {
-            width: planTableOffsetWidth,
-            marginLeft: firstColumnOffsetWidth
-          }
-        });
-      });
-    }
-  }
 
   render() {
     const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef} = this.props;
@@ -106,14 +88,13 @@ export default class AnnualTab extends Component {
                         isShowSecondaryEnabled={interactiveMode}
                         isConstraintsEnabled={interactiveMode}
                         data={budgetsData}
-                        tableRef={(ref) => this.planTable = ref}
-                        firstColumnCell={(ref) => this.firstColumnCell = ref}
                         dates={dates}
                         approvedPlan={this.state.approvedPlan}
                         editCommittedBudget={this.props.editCommittedBudget}
                         changeBudgetConstraint={this.props.changeBudgetConstraint}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
+                        cellWidth={CELL_WIDTH}
                         {...this.props}
           />
 
@@ -122,7 +103,8 @@ export default class AnnualTab extends Component {
                              objectives={parsedObjectives}
                              dimensions={this.state.graphDimensions}
                              changeScrollPosition={this.changeScrollPosition}
-                             scrollPosition={this.state.scrollPosition}/>
+                             scrollPosition={this.state.scrollPosition}
+                             cellWidth={CELL_WIDTH}/>
           </div>
         </div>
       </div>

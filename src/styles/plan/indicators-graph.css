@@ -41,7 +41,10 @@
 }
 
 .chart {
-
+    margin-top: 80px;
+    margin-left: 80px;
+    width: fit-content;
+    overflow: scroll;
 }
 
 .custom-tooltip {

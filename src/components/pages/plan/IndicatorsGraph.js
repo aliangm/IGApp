@@ -1,24 +1,18 @@
 import React from 'react';
 import Component from 'components/Component';
-import {ResponsiveContainer, Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
 import {formatBudgetShortened} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
+import isNil from 'lodash/isNil';
 
 export default class IndicatorsGraph extends Component {
 
   style = style;
   styles = [onboardingStyle];
-
-  static defaultProps = {
-    dimensions: {
-      width: 0,
-      marginLeft: 0
-    }
-  };
 
   constructor(props) {
     super(props);
@@ -27,6 +21,14 @@ export default class IndicatorsGraph extends Component {
     this.state = {
       checkedIndicators: initialIndicators ? initialIndicators : []
     };
+  }
+
+  componentDidMount() {
+    this.refs.chart.addEventListener('scroll', this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    this.refs.chart.removeEventListener('scroll', this.handleScroll);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,7 +40,14 @@ export default class IndicatorsGraph extends Component {
         });
       }
     }
+    if (!isNil(nextProps.scrollPosition)) {
+      this.refs.chart.scrollLeft = nextProps.scrollPosition;
+    }
   }
+
+  handleScroll = () => {
+    this.props.changeScrollPosition(this.refs.chart.scrollLeft);
+  };
 
   getInitialIndicators = (props) => {
     const objectives = Object.keys(props.objectives);
@@ -46,15 +55,7 @@ export default class IndicatorsGraph extends Component {
     return objective ? [objective] : null;
   };
 
-  get width() {
-    return this.props.dimensions.width - this.marginLeft + 5;
-  }
-
-  get marginLeft() {
-    return this.props.dimensions.marginLeft - 65;
-  }
-
-  toggleCheckbox = indicator => {
+  toggleCheckbox = (indicator) => {
     let checkedIndicators = this.state.checkedIndicators;
     const index = checkedIndicators.indexOf(indicator);
     if (index !== -1) {
@@ -66,8 +67,8 @@ export default class IndicatorsGraph extends Component {
     this.setState({checkedIndicators: checkedIndicators});
   };
 
-  getTooltipContent() {
-  }
+  getTooltipContent = () => {
+  };
 
   render() {
     const COLORS = [
@@ -113,6 +114,7 @@ export default class IndicatorsGraph extends Component {
         </linearGradient>
       </defs>;
     });
+
     const areas = this.state.checkedIndicators.map(indicator => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator}
@@ -124,6 +126,7 @@ export default class IndicatorsGraph extends Component {
                    fillOpacity={1}
                    strokeWidth={1}/>;
     });
+
     const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
       <Area key={indicator + 1}
             type='monotone'
@@ -195,26 +198,23 @@ export default class IndicatorsGraph extends Component {
           {menuItems}
         </div>
       </div>
-      <div className={this.classes.chart}
-           style={{marginTop: '80px', marginLeft: '80px', width: '-webkit-fill-available'}}>
-        <ResponsiveContainer height={400} width='100%'>
-          <AreaChart data={this.props.data}>
-            <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} tickLine={false}/>
-            <YAxis axisLine={false}
-                   tickLine={false}
-                   tickFormatter={formatBudgetShortened}
-                   style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
-                   domain={['dataMin', 'dataMax']}/>
-            <CartesianGrid vertical={false}/>
-            {dots}
-            <Tooltip content={tooltip} offset={0}/>
-            {defs}
-            {areas}
-            {suggestedLines}
-          </AreaChart>
-        </ResponsiveContainer>
+      <div className={this.classes.chart} ref='chart'>
+        <AreaChart data={this.props.data} height={400} width={this.props.cellWidth * (this.props.data.length - 1)}>
+          <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} tickLine={false}
+                 interval={0}/>
+          <YAxis axisLine={false}
+                 tickLine={false}
+                 tickFormatter={formatBudgetShortened}
+                 style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
+                 domain={['dataMin', 'dataMax']}/>
+          <CartesianGrid vertical={false}/>
+          {dots}
+          <Tooltip content={tooltip} offset={0}/>
+          {defs}
+          {areas}
+          {suggestedLines}
+        </AreaChart>
       </div>
     </div>;
   }
-
 };
