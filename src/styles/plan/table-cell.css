@@ -3,6 +3,7 @@
 .value-cell {
     height: 14px;
     position: relative;
+    letter-spacing: 0.1px;
 }
 
 .secondary-value {
@@ -50,6 +51,7 @@
     padding: 10px 0 7px 8px;
     font-size: inherit;
     font-weight: inherit;
+    letter-spacing: 0.1px;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;

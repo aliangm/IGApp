@@ -408,7 +408,7 @@ export default class BudgetsTable extends Component {
           <div className={this.classes.rowArrowBox}>
             <div
               className={this.classes.rowArrowWrap}
-              data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL}
+              data-collapsed={this.state.tableCollapsed !== COLLAPSE_OPTIONS.SHOW_ALL ? true : null}
               data-headline
               onClick={() => {
                 this.nextCollapseOption();
