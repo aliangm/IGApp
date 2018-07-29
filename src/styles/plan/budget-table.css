@@ -250,5 +250,5 @@
 }
 
 @mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;
-@mixin icon-nodpi plan:removeChannel , ../../assets/cancel-button;
+@mixin icon-nodpi plan:removeChannel , ../../assets/plan_icons/delete;
 @mixin icon-nodpi plan:monthNavigation , ../../assets/plan_icons/shape;
