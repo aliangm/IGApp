@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/insights/insight-item.css';
 import icons from 'styles/icons/plan.css';
 import Button from 'components/controls/Button';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 export default class InsightItem extends Component {
 
@@ -37,7 +37,7 @@ export default class InsightItem extends Component {
           in <b>{dates}</b>, {this.textForForecastObjectives(leftSideObjectives,objectivesRatio, suggestedBudget, currentBudget)}
         </div>
       }
-      Suggested budget: <b>${formatBudget(suggestedBudget)}</b>.
+      Suggested budget: <b>${formatNumber(suggestedBudget)}</b>.
     </div>;
   }
 
@@ -51,7 +51,7 @@ export default class InsightItem extends Component {
       .map((item, index) => <div key={index}>
         - <b>{item.nickname}</b> {(item.ratio == 0 && suggestedBudget <= currentBudget)?  'will have no effect' :
         <span>{item.ratio >= 0 ? 'by' : 'only by'}
-          <span> </span><b>{Math.abs(item.ratio)}%</b> ({(item.projected < 0 ? '-' : '+') + formatBudget(Math.abs(item.projected))})<br/>
+          <span> </span><b>{Math.abs(item.ratio)}%</b> ({(item.projected < 0 ? '-' : '+') + formatNumber(Math.abs(item.projected))})<br/>
         </span>
       }
       </div>);

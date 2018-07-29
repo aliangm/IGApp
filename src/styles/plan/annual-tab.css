@@ -1,6 +1,5 @@
 .wrap {
     position: relative;
-    padding: 0 20px;
 }
 
 .box {
@@ -30,7 +29,7 @@
     width: calc(100% - 281px);
     display: inline-table;
     table-layout: fixed;
-    opacity:0;
+    opacity: 0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
     visibility: hidden;
     composes: table;
@@ -55,13 +54,13 @@
     font-weight: bold;
 }
 
-.table :global(tr[data-disabled]) {
+.table :global(tr[data-category-row='true']) {
     color: white;
     font-weight: 600;
     background-color: #273142b3;
 }
 
-.table :global(tr:not([data-disabled])):hover {
+.table :global(tr:not([data-category-row='true'])):hover {
     /**
     BUG: border changes table size
 
@@ -109,6 +108,7 @@
     border-top: 1px solid #b0e3a8;
     height: 49px;
 }
+
 /**
 .foot-row :global(td) {
     border-top: 1px solid #b0e3a8;
@@ -295,6 +295,7 @@
 .hover-table .foot-row :global(td) {
     border-top: 1px solid #273142;
 }
+
 /**
 .hover-table tr[data-hovered] {
     visibility: visible;
@@ -335,7 +336,8 @@
 .popup {
     display: flex;
     align-items: center;
-    justify-content: center;flex-direction: column;
+    justify-content: center;
+    flex-direction: column;
     width: 400px;
     height: 200px;
     position: absolute;
@@ -387,7 +389,6 @@
 }
 
 .inner-box {
-    margin: 20px 0;
 }
 
 .event-popup {
@@ -410,7 +411,6 @@
 
 .indicators-graph {
     margin-top: 20px;
-    width: 1166px;
 }
 
 .edit-channel-name {

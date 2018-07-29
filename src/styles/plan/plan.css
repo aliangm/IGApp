@@ -5,34 +5,29 @@
 }
 
 .head {
-  height: 90px;
-  border-bottom: 2px solid #e7e9ed;
+  height: 114px;
   display: flex;
   align-items: center;
-  background: #fafbfd;
-  position: fixed;
-  top: 70px;
-  width: calc(100% - 240px);
+  position: absolute;
+  width: calc(100% - 80px);
   z-index: 8;
+  padding: 0 40px;
 }
 
-@media (max-width: 1440px) {
-  .head {
-    width: calc(100% - 88px);
-  }
+.column {
+  width: 33.33%;
+  display: flex;
 }
 
 .head-title {
   text-transform: capitalize;
-  font-size: 32px;
-  /*line-height: 36px;*/
-  letter-spacing: -0.01em;
-  overflow: hidden;
+  font-size: 24px;
   font-weight: 500;
-  color: #0099CC;
+  letter-spacing: 0.1px;
+  color: #222a41;
+  overflow: hidden;
   flex-shrink: 0;
   flex-grow: 0;
-  padding-left: 32px;
 }
 
 .head-plan {
@@ -48,7 +43,6 @@
   text-align: center;
   position: relative;
   white-space: nowrap;
-  margin-right: 30px;
 }
 
 .wrap {
@@ -63,6 +57,7 @@
   margin: 0 !important;
   padding: 0 !important;
   background: #f5f6fb;
+  position: relative;
 }
 
 .title {
@@ -276,13 +271,6 @@
   justify-content: flex-end;
 }
 
-.left {
-  width: 50%;
-  display: flex;
-  justify-content: flex-start;
-  -webkit-box-pack: start;
-}
-
 .right {
   width: 50%;
   display: flex;
@@ -297,11 +285,11 @@
 
 .forecast-button {
   margin-left: 15px;
-  background: url(../../assets/graph.svg) center center no-repeat;
-  background-size: 26px auto;
+  background: white url(../../assets/forecast.svg) center center no-repeat;
+  background-size: 14px 14px;
   width: 36px;
   height: 36px;
-  box-shadow: inset 0 0 0 2px #2ea1f8;
   border-radius: 4px;
   cursor: pointer;
+  box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
 }

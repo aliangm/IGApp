@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/suggestion.css';
 import { getNickname } from 'components/utils/channels';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 export default class Suggestion extends Component {
 
@@ -49,11 +49,11 @@ export default class Suggestion extends Component {
           </div>
           <div className={this.classes.budgets}>
             <div className={this.classes.current}>
-              ${formatBudget(current)}
+              ${formatNumber(current)}
             </div>
             {" -> "}
             <div className={this.classes.suggested}>
-              ${formatBudget(suggested)}
+              ${formatNumber(suggested)}
             </div>
           </div>
           <div className={this.classes.actions}>

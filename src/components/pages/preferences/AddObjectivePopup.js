@@ -15,7 +15,7 @@ import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import navStyle from 'styles/profile/market-fit-popup.css';
 import { timeFrameToDate } from 'components/utils/objective';
 import { isPopupMode } from 'modules/popup-mode';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 export default class AddObjectivePopup extends Component {
 
@@ -173,7 +173,7 @@ export default class AddObjectivePopup extends Component {
                   <div>
                     <div className={this.classes.row}>
                       <Label style={{ justifyContent: 'center', textTransform: 'none', fontSize: '15px', fontWeight: '500', whiteSpace: 'pre' }}>
-                        {"I want to reach a target of "} <span style={{fontWeight: '700'}}>{formatBudget(this.state.amount)}</span>{" " + getNickname(this.state.indicator) +" by " + this.state.timeFrame}
+                        {"I want to reach a target of "} <span style={{fontWeight: '700'}}>{formatNumber(this.state.amount)}</span>{" " + getNickname(this.state.indicator) +" by " + this.state.timeFrame}
                       </Label>
                     </div>
                     <div className={ navStyle.locals.nav }>

@@ -4,6 +4,7 @@
   
 }
 
-@mixin icon-nodpi buttons:plan, ../../assets/plan-button-icon;
-@mixin icon-nodpi buttons:edit, ../../assets/edit-white;
+@mixin icon-nodpi buttons:plan, ../../assets/plan;
+@mixin icon-nodpi buttons:done, ../../assets/done-checkmark;
+@mixin icon-nodpi buttons:edit, ../../assets/edit-blue;
 @mixin icon-nodpi buttons:copy, ../../assets/copy-documents-option;

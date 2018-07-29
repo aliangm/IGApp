@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import Button from 'components/controls/Button';
 import copy from 'copy-to-clipboard';
 import style from 'styles/onboarding/onboarding.css';

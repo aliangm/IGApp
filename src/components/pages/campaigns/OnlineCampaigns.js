@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/campaigns/online-campaigns.css';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import Select from 'components/controls/Select';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
@@ -130,7 +130,7 @@ export default class OnlineCampaigns extends Component {
           campaign.impressions,
           campaign.clicks,
           campaign.conversions,
-          '$' + formatBudget(campaign.actualSpent || 0),
+          '$' + formatNumber(campaign.actualSpent || 0),
           campaign[selectedAttributionMetric] || 0
         ], {
           key: index,

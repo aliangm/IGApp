@@ -11,7 +11,7 @@ import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import Textfield from 'components/controls/Textfield';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 export default class SalesforceAutomaticPopup extends Component {
 
@@ -385,7 +385,7 @@ export default class SalesforceAutomaticPopup extends Component {
                     <div className={ salesForceStyle.locals.arrow }/>
                   </div>
                   <div className={ this.classes.colRight }>
-                    <Textfield value={ "$" + (formatBudget(this.state.mapping.CAC && this.state.mapping.CAC[0]) || '') } onChange={ this.handleChangeCAC.bind(this, 0) } ref="month1"/>
+                    <Textfield value={ "$" + (formatNumber(this.state.mapping.CAC && this.state.mapping.CAC[0]) || '') } onChange={ this.handleChangeCAC.bind(this, 0) } ref="month1"/>
                   </div>
                 </div>
               </div>
@@ -398,7 +398,7 @@ export default class SalesforceAutomaticPopup extends Component {
                     <div className={ salesForceStyle.locals.arrow }/>
                   </div>
                   <div className={ this.classes.colRight }>
-                    <Textfield value={ "$" + (formatBudget(this.state.mapping.CAC && this.state.mapping.CAC[1]) || '') } onChange={ this.handleChangeCAC.bind(this, 1) } ref="month2"/>
+                    <Textfield value={ "$" + (formatNumber(this.state.mapping.CAC && this.state.mapping.CAC[1]) || '') } onChange={ this.handleChangeCAC.bind(this, 1) } ref="month2"/>
                   </div>
                 </div>
               </div>
@@ -411,7 +411,7 @@ export default class SalesforceAutomaticPopup extends Component {
                     <div className={ salesForceStyle.locals.arrow }/>
                   </div>
                   <div className={ this.classes.colRight }>
-                    <Textfield value={ "$" + (formatBudget(this.state.mapping.CAC && this.state.mapping.CAC[2]) || '') } onChange={ this.handleChangeCAC.bind(this, 2) } ref="month3"/>
+                    <Textfield value={ "$" + (formatNumber(this.state.mapping.CAC && this.state.mapping.CAC[2]) || '') } onChange={ this.handleChangeCAC.bind(this, 2) } ref="month3"/>
                   </div>
                 </div>
               </div>

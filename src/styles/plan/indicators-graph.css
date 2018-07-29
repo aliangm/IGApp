@@ -1,44 +1,26 @@
 .inner {
     background: white;
-    border: 1px solid #ced0da;
-    border-radius: 4px;
     position: relative;
-
-    width: 100%;
-}
-
-.menu-position {
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: calc(100% - 40px);
+    padding-top: 40px;
+    padding-left: 40px;
+    height: 514px;
     display: flex;
-    justify-content: flex-start;
-    width: 146px;
-    height: 100%;
 }
 
 .menu {
-
+    width: max-content;
+    height: 100%;
 }
 
 .menu-title {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 500;
     text-transform: capitalize;
     white-space: nowrap;
-    margin-bottom: 9px;
-    margin-top: 6px;
-    margin-left: 7px;
-    display: flex;
-}
-
-.settings {
-    margin-left: 25px;
-    cursor: pointer;
-    background: url(../../assets/settings-work-tool.svg) center center no-repeat;
-    background-size: contain;
-    width: 15px;
-    height: 15px;
+    letter-spacing: 0.1px;
+    color: #222a41;
+    margin-bottom: 44px;
 }
 
 .colored-circle {
@@ -49,20 +31,64 @@
     margin-left: 10px;
 }
 
+.menu-items {
+    overflow-y: auto;
+    height: 440px;
+}
+
 .menu-item {
-    margin-left: 7px;
-    display: -webkit-box;
+    margin-bottom: 18px;
 }
 
 .chart {
-
+    margin-top: 80px;
+    margin-left: 80px;
+    width: fit-content;
+    overflow: scroll;
 }
 
 .custom-tooltip {
-    width: 250px;
-    margin: 0;
-    line-height: 24px;
-    border: 1px solid #f5f5f5;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
+    padding: 14px;
+    width: 126px;
+    height: auto;
+    background-color: #222a41;
+    box-shadow: 0 4px 8px 0 rgba(153, 164, 194, 0.16);
+    border-radius: 2px;
+    position: relative;
+    transform: translateY(-100%) translateX(-50%);
+    margin-top: -13px;
+}
+
+.custom-tooltip:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    height: 0;
+    border-top: solid 5px #222a41;
+    border-left: solid 5px transparent;
+    border-right: solid 5px transparent;
+}
+
+.custom-tooltip-indicator {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    color: #99a4c2;
+    margin-bottom: 8px;
+}
+
+.custom-tooltip-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #84b3ff;
+}
+
+.objective-dot {
+    background: url(../../assets/objective-dot.svg) center center no-repeat;
+    width: 23px;
+    height: 23px;
+    object-fit: contain;
 }

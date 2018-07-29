@@ -4,7 +4,7 @@ import style from 'styles/campaigns/campaign-task.css';
 import Textfield from 'components/controls/Textfield';
 import Button from 'components/controls/Button';
 import Calendar from 'components/controls/Calendar';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import Select from 'components/controls/Select';
 
 export default class CampaignTask extends Component {
@@ -99,7 +99,7 @@ export default class CampaignTask extends Component {
         </div>
       </div>
       <div hidden={ !this.state.showAdvanced }>
-        <Textfield className={ this.classes.textField } value={this.state.budget ? "$" + formatBudget(this.state.budget) : ""} onChange={ this.handleChangeBudget.bind(this) } placeHolder="Add a budget..."/>
+        <Textfield className={ this.classes.textField } value={this.state.budget ? "$" + formatNumber(this.state.budget) : ""} onChange={ this.handleChangeBudget.bind(this) } placeHolder="Add a budget..."/>
         <textarea className={ this.classes.textArea } value={ this.state.description } onChange={ this.handleChangeDescription.bind(this) } placeholder="Add a description..."/>
         <div className={ this.classes.oneLine }>
           <div className={ this.classes.left }>

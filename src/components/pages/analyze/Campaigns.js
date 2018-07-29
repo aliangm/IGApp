@@ -3,7 +3,7 @@ import Component from "components/Component";
 import style from "styles/onboarding/onboarding.css";
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import Select from 'components/controls/Select';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { FeatureToggle } from 'react-feature-toggles';
@@ -219,13 +219,13 @@ export default class Campaigns extends Component {
               } }}>
                 {label}
               </div>,
-              '$' + formatBudget(budget),
-              '$' + formatBudget(revenueMetric),
+              '$' + formatNumber(budget),
+              '$' + formatNumber(revenueMetric),
               Math.round(ROI * 100) + '%',
-              formatBudget(webVisits),
-              formatBudget(conversion),
+              formatNumber(webVisits),
+              formatNumber(conversion),
               Math.round(funnelIndicator),
-              '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0),
+              '$' + (isFinite(CPX) ? formatNumber(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0),
               <div style={{ display: 'flex' }}>
                 <ReactTooltip/>
                 {channels.map(channel =>
@@ -243,13 +243,13 @@ export default class Campaigns extends Component {
 
     const footRow = this.getTableRow(null, [
         'Total',
-        '$' + formatBudget(sumData.reduce((sum, item) => sum + item.budget, 0)),
-        '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
+        '$' + formatNumber(sumData.reduce((sum, item) => sum + item.budget, 0)),
+        '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
         Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-        formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-        formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
+        formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
+        formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
         Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-        '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)),
+        '$' + formatNumber(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)),
         ''
       ]
       , {

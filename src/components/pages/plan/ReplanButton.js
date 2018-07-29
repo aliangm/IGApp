@@ -11,14 +11,15 @@ export default class NextButton extends Component {
 
   render() {
     return <div style={{display: 'flex', position: 'relative'}}>
-      <Button type="reverse2"
+      <Button type='primary'
               onClick={this.props.onClick}
               className={this.classes.planButton}
               style={{
-                width: '130px'
+                width: '138px'
               }}
+              icon='buttons:plan'
       >
-        Update Plan ({this.props.numberOfPlanUpdates})
+        Optimize ({this.props.numberOfPlanUpdates})
         {
           this.props.planNeedsUpdate ?
             <div className={planStyle.locals.planCircle}/>
