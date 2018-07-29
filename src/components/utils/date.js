@@ -8,11 +8,11 @@ export function formatDate(dateStr) {
   else return null;
 }
 
-export function getDates(dateStr) {
+export function getDates(dateStr, includingPast = false, includingFuture = true) {
   if (dateStr) {
     const dates = [];
     const planDate = dateStr.split('/');
-    for (let i = 0; i < 12; i++) {
+    for (let i = includingPast ? -12 : 0; i < (includingFuture ? 12 : 0); i++) {
       const date = new Date(planDate[1], planDate[0] - 1);
       date.setMonth(date.getMonth() + i);
       dates.push(monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2));
