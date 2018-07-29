@@ -64,28 +64,27 @@ export default class Plan extends Component {
 
   setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
     const budgetsData = planBudgets.map(month => {
-      const object = {};
+      const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
         const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
-        object[channelKey] = {
+        channelsObject[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: isPlannerPrimary ? committedBudget : plannerBudget,
           isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
           isSoft: withConstraints ? isSoft : false
         };
       });
-      return object;
+      return {channels: channelsObject, isHistory: false};
     });
     const historyBudgetsData = this.props.historyData.planBudgets.map(month => {
-      const object = {};
+      const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
         const {committedBudget} = month[channelKey];
-        object[channelKey] = {
-          primaryBudget: committedBudget,
-          isHistory: true
+        channelsObject[channelKey] = {
+          primaryBudget: committedBudget
         };
       });
-      return object;
+      return {channels: channelsObject, isHistory: true};
     });
     this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]});
   };
@@ -103,7 +102,10 @@ export default class Plan extends Component {
   };
 
   getPlanBudgets = () => {
-    return this.state.budgetsData.map(month => {
+    const channels = this.state.budgetsData
+      .filter(item => !item.isHistory)
+      .map(item => item.channels);
+    return channels.map(month => {
       const object = {};
       Object.keys(month).forEach(channelKey => {
         const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
@@ -131,29 +133,29 @@ export default class Plan extends Component {
 
   editCommittedBudget = (month, channelKey, newBudget) => {
     const budgetsData = [...this.state.budgetsData];
-    if (!budgetsData[month][channelKey]) {
-      budgetsData[month][channelKey] = {
+    if (!budgetsData[month].channels[channelKey]) {
+      budgetsData[month].channels[channelKey] = {
         secondaryBudget: 0,
         isConstraint: false,
         isSoft: false
       };
     }
-    budgetsData[month][channelKey].primaryBudget = newBudget;
+    budgetsData[month].channels[channelKey].primaryBudget = newBudget;
     this.setState({budgetsData: budgetsData});
   };
 
   changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = false) => {
     const budgetsData = [...this.state.budgetsData];
-    if (!budgetsData[month][channelKey]) {
-      budgetsData[month][channelKey] = {
+    if (!budgetsData[month].channels[channelKey]) {
+      budgetsData[month].channels[channelKey] = {
         primaryBudget: 0,
         secondaryBudget: 0
       };
     }
-    budgetsData[month][channelKey].isConstraint = isConstraint;
-    budgetsData[month][channelKey].isSoft = isSoft;
+    budgetsData[month].channels[channelKey].isConstraint = isConstraint;
+    budgetsData[month].channels[channelKey].isSoft = isSoft;
     if (isConstraint) {
-      budgetsData[month][channelKey].budgetConstraint = budgetsData[month][channelKey].primaryBudget;
+      budgetsData[month].channels[channelKey].budgetConstraint = budgetsData[month].channels[channelKey].primaryBudget;
     }
     this.setState({budgetsData: budgetsData});
   };
