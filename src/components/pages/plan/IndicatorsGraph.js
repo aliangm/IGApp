@@ -8,6 +8,7 @@ import {formatBudgetShortened} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
+import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 
 export default class IndicatorsGraph extends Component {
 
@@ -43,6 +44,10 @@ export default class IndicatorsGraph extends Component {
     if (!isNil(nextProps.scrollPosition)) {
       this.refs.chart.scrollLeft = nextProps.scrollPosition;
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shouldUpdateComponent(nextProps, nextState, this.props, this.state, 'scrollPosition');
   }
 
   handleScroll = () => {
@@ -101,7 +106,10 @@ export default class IndicatorsGraph extends Component {
         <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
                         onChange={() => this.toggleCheckbox(indicator)}
                         className={this.classes.label}
-                        checkboxStyle={{backgroundColor: COLORS[index % COLORS.length]}}>{indicatorsMapping[indicator]}</CustomCheckbox>
+                        checkboxStyle={{
+                          backgroundColor: COLORS[index %
+                          COLORS.length]
+                        }}>{indicatorsMapping[indicator]}</CustomCheckbox>
       </div>
     );
 

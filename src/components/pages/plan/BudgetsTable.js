@@ -14,6 +14,7 @@ import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
+import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -65,6 +66,10 @@ export default class BudgetsTable extends Component {
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
     this.refs.tableScroller.removeEventListener('scroll', this.handleTableScroll);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shouldUpdateComponent(nextProps, nextState, this.props, this.state, 'scrollPosition');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -429,7 +434,9 @@ export default class BudgetsTable extends Component {
 
   showNextMonth = () => {
     this.refs.tableScroller.scrollLeft =
-      (this.refs.tableScroller.scrollLeft + this.props.cellWidth) - this.refs.tableScroller.scrollLeft % this.props.cellWidth;
+      (this.refs.tableScroller.scrollLeft + this.props.cellWidth) -
+      this.refs.tableScroller.scrollLeft %
+      this.props.cellWidth;
   };
 
   showPrevMonth = () => {
