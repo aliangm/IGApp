@@ -395,6 +395,16 @@ export default class BudgetsTable extends Component {
 
   getHeadRow = (isSticky = false) => {
     const row = <tr className={this.classes.headRow}>
+      <div className={this.classes.nextButton}>
+        <div className={this.classes.buttonWrapper}>
+          <div className={this.classes.monthNavigation} onClick={this.showNextMonth} data-icon="plan:monthNavigation"/>
+        </div>
+      </div>
+      <div className={this.classes.prevButton}>
+        <div className={this.classes.buttonWrapper}>
+          <div className={this.classes.monthNavigation} onClick={this.showPrevMonth} data-icon="plan:monthNavigation"/>
+        </div>
+      </div>
       <td className={this.classes.titleCell} data-row-type="header">
         <div className={this.classes.rowTitle} ref={this.props.firstColumnCell}>
           <div className={this.classes.rowArrowBox}>
@@ -471,12 +481,6 @@ export default class BudgetsTable extends Component {
             {footRow}
             </tfoot>
           </table>
-        </div>
-        <div onClick={this.showPrevMonth}>
-          prev
-        </div>
-        <div onClick={this.showNextMonth}>
-          next
         </div>
       </div>
       <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
