@@ -49,7 +49,7 @@ export default class AnnualTab extends Component {
   render() {
     const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef, historyData: {indicators}} = this.props;
 
-    const forecastingData = [{...actualIndicators, name: 'today'}];
+    const forecastingData = [];
 
     const futureDates = getDates(planDate);
     forecastedIndicators.forEach((item, index) => {
