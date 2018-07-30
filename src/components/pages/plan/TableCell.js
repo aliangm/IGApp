@@ -56,7 +56,7 @@ export default class TableCell extends Component {
     isEditMode: false,
     isDragging: false,
     enableActionButtons: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -85,6 +85,7 @@ export default class TableCell extends Component {
   changeConstraint = (changeTo) => {
     const typeOptions = CONSTRAINT_MAPPING[changeTo].constraintData;
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
+    this.state.hoverCell;
   };
 
   changeConstraintsBoxOpen = (isOpen) => {
@@ -170,6 +171,7 @@ export default class TableCell extends Component {
                           constraintOptions={this.getConstraintsDisplayInfo()}
                           changeConstraint={this.changeConstraint}
                           changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
+                          stateSelectionBox={(ref) => this.boxRef = ref}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
@@ -181,12 +183,22 @@ export default class TableCell extends Component {
 
   render() {
     return <td className={budgetsTableStyle.locals.valueCell}
-               onMouseEnter={() => {
-                 this.setState({hoverCell: true});
-               }}
                onMouseLeave={() => {
                  this.setState({hoverCell: false});
-               }}>
+               }}
+               onMouseOut={(e) => {
+                 if(e.target === this.refs.cellRef && e.relatedTarget === this.boxRef){
+                   this.setState({hoverCell: false})
+                 }
+               }}
+               onMouseOver={(e) => {
+                 if(!(this.boxRef && this.boxRef.contains(e.target))){
+                   this.setState({hoverCell: true});
+                 }
+                }
+               }
+               ref='cellRef'>
+
       <div className={this.classes.cellItem} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
         {this.isEditModeType(EDIT_MODE.ANY) ?
           <input className={this.classes.editCell}

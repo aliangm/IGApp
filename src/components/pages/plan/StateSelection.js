@@ -12,7 +12,8 @@ export default class StateSelection extends Component {
     currentConstraint: PropTypes.string.isRequired,
     changeConstraint: PropTypes.func.isRequired,
     constraintOptions: PropTypes.object.isRequired,
-    changeConstraintsBoxOpen: PropTypes.func
+    changeConstraintsBoxOpen: PropTypes.func,
+    stateSelectionBox: PropTypes.func
   };
 
   constructor(props) {
@@ -69,7 +70,10 @@ export default class StateSelection extends Component {
 
     return <div className={this.classes.stateSelectionWrap}>
       {this.state.showBox ? <div className={this.classes.stateSelectionBox}
-                                 ref={(ref) => this.stateSelectionBox = ref}>
+                                 ref={(ref) => {
+                                   this.stateSelectionBox = ref
+                                   this.props.stateSelectionBox(ref);
+                                 }}>
         {constraintOptions}
       </div> : null}
       <div className={cellStyle.locals.icon}
