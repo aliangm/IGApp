@@ -17,6 +17,10 @@
     display: inline-flex;
 }
 
+.cell-item[data-in-edit] {
+    margin-left: -8px;
+}
+
 .icon {
     width: 18px;
     height: 18px;
@@ -46,6 +50,7 @@
     font-size: inherit;
     font-weight: inherit;
     letter-spacing: 0.1px;
+    box-sizing: border-box;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;

@@ -187,7 +187,7 @@ export default class TableCell extends Component {
                onMouseLeave={() => {
                  this.setState({hoverCell: false});
                }}>
-      <div className={this.classes.cellItem}>
+      <div className={this.classes.cellItem} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
         {this.isEditModeType(EDIT_MODE.ANY) ?
           <input className={this.classes.editCell}
                  type="text"
