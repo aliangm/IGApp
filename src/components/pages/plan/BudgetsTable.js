@@ -15,6 +15,7 @@ import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
+import {getDatesSpecific} from 'components/utils/date';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -27,7 +28,6 @@ export default class BudgetsTable extends Component {
   style = style;
 
   static propTypes = {
-    dates: PropTypes.array,
     isEditMode: PropTypes.bool,
     isShowSecondaryEnabled: PropTypes.bool,
     isConstraintsEnabled: PropTypes.bool,
@@ -36,7 +36,8 @@ export default class BudgetsTable extends Component {
     changeBudgetConstraint: PropTypes.func,
     deleteChannel: PropTypes.func,
     scrollPosition: PropTypes.number,
-    changeScrollPosition: PropTypes.func
+    changeScrollPosition: PropTypes.func,
+    cellWidth: PropTypes.number
   };
 
   static defaultProps = {
@@ -86,7 +87,7 @@ export default class BudgetsTable extends Component {
     this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 70});
   };
 
-  getMonthHeaders = () => {
+  getMonthHeaders = (numberOfPastDates, dates) => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
     const events = this.props.events ?
       this.props.events
@@ -102,7 +103,7 @@ export default class BudgetsTable extends Component {
           </p>;
         })
       : null;
-    const headers = this.props.dates.map((month, index) => {
+    const headers = dates.map((month, index) => {
       return events.length > 0 ? <div style={{position: 'relative'}}>
           <div className={this.classes.tableButton} onClick={() => {
             this.setState({monthPopup: month});
@@ -133,8 +134,10 @@ export default class BudgetsTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} className={this.classes.headRowCell}
-            style={{minWidth: `${this.props.cellWidth}px`, width: `${this.props.cellWidth}px`}}>{month}</td>;
+        <td key={`head:${index}`}
+            className={this.classes.headRowCell}
+            style={{minWidth: `${this.props.cellWidth}px`, width: `${this.props.cellWidth}px`}}
+            data-history={index < numberOfPastDates ? true : null}>{month}</td>;
     });
     return headers;
   };
@@ -164,17 +167,17 @@ export default class BudgetsTable extends Component {
     });
   };
 
-  getRows = (data) => {
-    return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category])));
+  getRows = (data, numberOfPastDates) => {
+    return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category], numberOfPastDates)));
   };
 
-  getCategoryRows = (category, channels) => {
+  getCategoryRows = (category, channels, numberOfPastDates) => {
     const categoryData = this.sumChannels(channels);
     const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
-      true);
+      true, numberOfPastDates);
 
     return !this.state.collapsedCategories[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
-      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, false))]
+      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, false, numberOfPastDates))]
       : categoryRow;
   };
 
@@ -211,11 +214,20 @@ export default class BudgetsTable extends Component {
     </tr>;
   };
 
-  getTableRow = (data, isCategoryRow) => {
+  getTableRow = (data, isCategoryRow, numberOfPastDates) => {
     const titleCellKey = (isCategoryRow ? 'category' : '') + data.channel;
 
     const cells = data.values.map((monthData, key) => {
-      return !isCategoryRow ? <TableCell
+      const isHistory = key < numberOfPastDates;
+
+      return isCategoryRow || isHistory ?
+        (isCategoryRow ? <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}
+                             data-history={isHistory ? true : null}>
+            {formatBudget(monthData.primaryBudget)}
+          </td> :
+          <td key={`${data.channel}:${key}`} className={this.classes.historyCell}>
+            {formatBudget(monthData.primaryBudget)}
+          </td>) : <TableCell
           key={`${data.channel}:${key}`}
           primaryValue={monthData.primaryBudget}
           secondaryValue={this.props.isShowSecondaryEnabled
@@ -237,10 +249,7 @@ export default class BudgetsTable extends Component {
           isDragging={this.state.isDragging}
           approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
           enableActionButtons={true}
-        />
-        : <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
-          {formatBudget(monthData.primaryBudget)}
-        </td>;
+        />;
     });
 
     return <tr className={this.classes.tableRow} key={titleCellKey}
@@ -359,18 +368,19 @@ export default class BudgetsTable extends Component {
   // };
 
   getDataByChannel = (data, channelsProps) => {
-    const channels = union(...data.map(month => Object.keys(month)));
+    const channels = union(...data.map(month => Object.keys(month.channels)));
 
     const notSorted = channels.map(channel => {
       const monthArray = Array(this.props.data.length).fill(
         {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
       data.forEach((month, index) => {
-        if (month[channel]) {
+        const channels = month.channels;
+        if (channels[channel]) {
           monthArray[index] = {
-            ...month[channel],
-            isConstraint: month[channel].isConstraint ? month[channel].isConstraint : false,
-            primaryBudget: month[channel].primaryBudget ? month[channel].primaryBudget : 0
+            ...channels[channel],
+            isConstraint: channels[channel].isConstraint ? channels[channel].isConstraint : false,
+            primaryBudget: channels[channel].primaryBudget ? channels[channel].primaryBudget : 0
           };
         }
       });
@@ -396,7 +406,7 @@ export default class BudgetsTable extends Component {
     });
   };
 
-  getHeadRow = (isSticky = false) => {
+  getHeadRow = (numberOfPastDates, dates, isSticky = false) => {
     const row = <tr className={this.classes.headRow}>
       <div className={this.classes.nextButton}>
         <div className={this.classes.buttonWrapper}>
@@ -426,7 +436,7 @@ export default class BudgetsTable extends Component {
           </div>
         </div>
       </td>
-      {this.getMonthHeaders()}
+      {this.getMonthHeaders(numberOfPastDates, dates)}
     </tr>;
 
     return isSticky ? <div className={this.classes.stickyWrapper} ref='stickyHeader'>{row}</div> : row;
@@ -450,10 +460,13 @@ export default class BudgetsTable extends Component {
   render() {
     const channelsProps = getChannelsWithProps();
     const parsedData = this.getDataByChannel(this.props.data, channelsProps);
+    const numberOfPastDates = this.props.data.filter((month)=>month.isHistory).length;
+    const dates = getDatesSpecific(this.props.planDate, numberOfPastDates, this.props.data.length - numberOfPastDates);
+
     const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
 
     const rows = dataWithCategories && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL
-      ? this.getRows(dataWithCategories) : [];
+      ? this.getRows(dataWithCategories, numberOfPastDates) : [];
 
     const footRowData = {
       channel: 'Total',
@@ -461,7 +474,7 @@ export default class BudgetsTable extends Component {
       values: this.sumChannels(parsedData)
     };
 
-    const headRow = this.getHeadRow();
+    const headRow = this.getHeadRow(numberOfPastDates, dates);
     const footRow = parsedData && this.getBottomRow(footRowData);
 
     return <div style={{'margin-left': '40px'}}>
@@ -481,7 +494,7 @@ export default class BudgetsTable extends Component {
         </div>
       </div>
       <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-      {this.getHeadRow(true)}
+      {this.getHeadRow(numberOfPastDates,dates, true)}
       </thead>
     </div>;
 

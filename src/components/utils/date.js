@@ -9,10 +9,14 @@ export function formatDate(dateStr) {
 }
 
 export function getDates(dateStr, includingPast = false, includingFuture = true) {
+  return getDatesSpecific(dateStr, includingPast ? 12: 0, includingFuture ? 12 : 0);
+}
+
+export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture) {
   if (dateStr) {
     const dates = [];
     const planDate = dateStr.split('/');
-    for (let i = includingPast ? -12 : 0; i < (includingFuture ? 12 : 0); i++) {
+    for (let i = -numberOfPast; i < numberOfFuture; i++) {
       const date = new Date(planDate[1], planDate[0] - 1);
       date.setMonth(date.getMonth() + i);
       dates.push(monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2));

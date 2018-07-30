@@ -92,7 +92,6 @@ export default class AnnualTab extends Component {
                         isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
                         data={budgetsData}
-                        dates={futureDates}
                         approvedPlan={this.state.approvedPlan}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
