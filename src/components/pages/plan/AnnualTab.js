@@ -81,7 +81,7 @@ export default class AnnualTab extends Component {
           ? delta + (objective.currentValue || 0)
           : (objective.currentValue || 0) - delta);
         const date = timeFrameToDate(objective.timeFrame);
-        const monthStr = monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
+        const monthStr = monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2);
         parsedObjectives[objective.indicator] = {x: monthStr, y: target};
       });
 
