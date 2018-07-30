@@ -247,21 +247,24 @@ export default class Plan extends Component {
     );
 
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, merge({}, this.props, this.state, {
-        whatIf: this.props.plan,
-        setRef: this.setRef.bind(this),
-        forecastingGraphRef: this.forecastingGraphRef.bind(this),
-        editCommittedBudget: this.editCommittedBudget,
-        changeBudgetConstraint: this.changeBudgetConstraint,
-        deleteChannel: this.deleteChannel
-      })));
+      (child) => {
+        return React.cloneElement(child, merge({}, this.props, this.state, {
+          whatIf: this.props.plan,
+          setRef: this.setRef.bind(this),
+          forecastingGraphRef: this.forecastingGraphRef.bind(this),
+          editCommittedBudget: this.editCommittedBudget,
+          changeBudgetConstraint: this.changeBudgetConstraint,
+          deleteChannel: this.deleteChannel,
+          onPageScroll: ((onPageScroll) => {this.onPageScroll = onPageScroll})
+        }));
+      });
 
     const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
 
     return <div>
       <ReactTooltip/>
       <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
-            width="100%">
+            width="100%" onPageScroll={this.onPageScroll}>
         <div className={this.classes.head}>
           <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
             <div className={this.classes.headTitle}>Plan</div>
