@@ -132,7 +132,7 @@ export default class IndicatorsGraph extends Component {
                    stroke={COLORS[index % COLORS.length]}
                    fill={`url(#${indicator})`}
                    fillOpacity={1}
-                   strokeWidth={1}/>;
+                   strokeWidth={2}/>;
     });
 
     const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
@@ -208,14 +208,16 @@ export default class IndicatorsGraph extends Component {
       </div>
       <div className={this.classes.chart} ref='chart'>
         <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}>
-          <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} tickLine={false}
-                 interval={0}/>
           <YAxis axisLine={false}
                  tickLine={false}
                  tickFormatter={formatBudgetShortened}
-                 style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
+                 tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
                  domain={['dataMin', 'dataMax']}/>
           <CartesianGrid vertical={false}/>
+          <XAxis dataKey="name"
+                 tick={{fontSize: '11px', fill: '#99a4c2', fontWeight: 600, letterSpacing: '0.1px'}}
+                 tickLine={false}
+                 interval={0}/>
           {dots}
           <Tooltip content={tooltip} offset={0}/>
           {defs}
