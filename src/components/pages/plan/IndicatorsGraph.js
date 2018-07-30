@@ -149,7 +149,6 @@ export default class IndicatorsGraph extends Component {
     const CustomizedLabel = React.createClass({
       render() {
         const {viewBox} = this.props;
-        console.log('this.props', this.props);
         return <image x={viewBox.x} y={viewBox.y} width="24" height="24" href="../../assets/objective-dot.svg"/>;
       }
     });

@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
+import budgetsTableStyle from 'styles/plan/budget-table.css';
 import StateSelection from 'components/pages/plan/StateSelection';
 import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
@@ -30,6 +31,7 @@ const EDIT_MODE = {
 export default class TableCell extends Component {
 
   style = style;
+  styles = [budgetsTableStyle];
 
   static propTypes = {
     primaryValue: PropTypes.number.isRequired,
@@ -178,7 +180,7 @@ export default class TableCell extends Component {
   };
 
   render() {
-    return <td className={this.classes.valueCell}
+    return <td className={budgetsTableStyle.locals.valueCell}
                onMouseEnter={() => {
                  this.setState({hoverCell: true});
                }}
