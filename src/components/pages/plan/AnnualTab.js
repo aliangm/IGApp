@@ -8,6 +8,7 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {formatNumber} from 'components/utils/budget';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getDates} from 'components/utils/date';
+import {getIndicatorsWithProps} from 'components/utils/indicators';
 
 const CELL_WIDTH = 140;
 
@@ -47,7 +48,7 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef, historyData: {indicators}} = this.props;
+    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, objectives, forecastingGraphRef, historyData: {indicators}} = this.props;
 
     const forecastingData = [];
 
@@ -65,6 +66,11 @@ export default class AnnualTab extends Component {
       forecastingData.unshift({...json, name: pastDates[pastDates.length - 1 - index]});
     });
 
+    const zeroedIndicators = {};
+    Object.keys(getIndicatorsWithProps()).forEach(key => {
+      zeroedIndicators[key] = 0;
+    });
+    forecastingData.unshift({...zeroedIndicators, name: ''});
 
     const parsedObjectives = {};
     objectives
