@@ -1,11 +1,5 @@
 @import "../global/mixins.css";
 
-.value-cell {
-    height: 14px;
-    position: relative;
-    letter-spacing: 0.1px;
-}
-
 .secondary-value {
     font-size: 10px;
     font-weight: 500;
