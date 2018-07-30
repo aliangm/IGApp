@@ -46,7 +46,7 @@ export default class AnnualTab extends Component {
     const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef} = this.props;
 
     const currentSuggested = {};
-    const dates = getDates(planDate);
+    const dates = getDates(planDate, true, true);
     const projections = forecastedIndicators.map((item, index) => {
       const json = {};
       Object.keys(item).forEach(key => {

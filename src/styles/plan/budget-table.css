@@ -32,6 +32,11 @@
     letter-spacing: 0.1px;
 }
 
+.head-row-cell[data-history] {
+    background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
+    background-attachment: fixed;
+}
+
 .row-arrow[data-headline] {
     border: solid white;
     border-width: 0 1px 1px 0;
@@ -194,11 +199,21 @@
     vertical-align: middle;
 }
 
+.history-cell {
+    background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
+    background-attachment: fixed;
+}
+
 .category-cell {
     border-style: solid;
     border-color: rgba(106, 154, 230, 0.19);
     border-width: 1px 0;
     letter-spacing: 0.1px;
+}
+
+.category-cell[data-history] {
+    background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
+    background-attachment: fixed;
 }
 
 .title-cell[data-row-type="category"] {

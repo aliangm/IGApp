@@ -36,7 +36,8 @@ export default class BudgetsTable extends Component {
     changeBudgetConstraint: PropTypes.func,
     deleteChannel: PropTypes.func,
     scrollPosition: PropTypes.number,
-    changeScrollPosition: PropTypes.func
+    changeScrollPosition: PropTypes.func,
+    cellWidth: PropTypes.number
   };
 
   static defaultProps = {
@@ -86,7 +87,7 @@ export default class BudgetsTable extends Component {
     this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 70});
   };
 
-  getMonthHeaders = () => {
+  getMonthHeaders = (historyMonths) => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
     const events = this.props.events ?
       this.props.events
@@ -133,8 +134,10 @@ export default class BudgetsTable extends Component {
           </Popup>
         </div>
         :
-        <td key={`head:${index}`} className={this.classes.headRowCell}
-            style={{minWidth: `${this.props.cellWidth}px`, width: `${this.props.cellWidth}px`}}>{month}</td>;
+        <td key={`head:${index}`}
+            className={this.classes.headRowCell}
+            style={{minWidth: `${this.props.cellWidth}px`, width: `${this.props.cellWidth}px`}}
+            data-history={historyMonths.indexOf(index) > -1 ? true : null}>{month}</td>;
     });
     return headers;
   };
@@ -164,17 +167,17 @@ export default class BudgetsTable extends Component {
     });
   };
 
-  getRows = (data) => {
-    return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category])));
+  getRows = (data, historyMonths) => {
+    return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category], historyMonths)));
   };
 
-  getCategoryRows = (category, channels) => {
+  getCategoryRows = (category, channels, historyMonths) => {
     const categoryData = this.sumChannels(channels);
     const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
-      true);
+      true, historyMonths);
 
     return !this.state.collapsedCategories[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
-      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, false))]
+      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, false, historyMonths))]
       : categoryRow;
   };
 
@@ -211,11 +214,20 @@ export default class BudgetsTable extends Component {
     </tr>;
   };
 
-  getTableRow = (data, isCategoryRow) => {
+  getTableRow = (data, isCategoryRow, historyMonths) => {
     const titleCellKey = (isCategoryRow ? 'category' : '') + data.channel;
 
     const cells = data.values.map((monthData, key) => {
-      return !isCategoryRow ? <TableCell
+      const isHistory = historyMonths.indexOf(key) > -1;
+
+      return isCategoryRow || isHistory ?
+        (isCategoryRow ? <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}
+                             data-history={isHistory ? true : null}>
+            {formatBudget(monthData.primaryBudget)}
+          </td> :
+          <td key={`${data.channel}:${key}`} className={this.classes.historyCell}>
+            {formatBudget(monthData.primaryBudget)}
+          </td>) : <TableCell
           key={`${data.channel}:${key}`}
           primaryValue={monthData.primaryBudget}
           secondaryValue={this.props.isShowSecondaryEnabled
@@ -237,10 +249,7 @@ export default class BudgetsTable extends Component {
           isDragging={this.state.isDragging}
           approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
           enableActionButtons={true}
-        />
-        : <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}>
-          {formatBudget(monthData.primaryBudget)}
-        </td>;
+        />;
     });
 
     return <tr className={this.classes.tableRow} key={titleCellKey}
@@ -359,18 +368,19 @@ export default class BudgetsTable extends Component {
   // };
 
   getDataByChannel = (data, channelsProps) => {
-    const channels = union(...data.map(month => Object.keys(month)));
+    const channels = union(...data.map(month => Object.keys(month.channels)));
 
     const notSorted = channels.map(channel => {
       const monthArray = Array(this.props.data.length).fill(
         {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
 
       data.forEach((month, index) => {
-        if (month[channel]) {
+        const channels = month.channels;
+        if (channels[channel]) {
           monthArray[index] = {
-            ...month[channel],
-            isConstraint: month[channel].isConstraint ? month[channel].isConstraint : false,
-            primaryBudget: month[channel].primaryBudget ? month[channel].primaryBudget : 0
+            ...channels[channel],
+            isConstraint: channels[channel].isConstraint ? channels[channel].isConstraint : false,
+            primaryBudget: channels[channel].primaryBudget ? channels[channel].primaryBudget : 0
           };
         }
       });
@@ -396,7 +406,7 @@ export default class BudgetsTable extends Component {
     });
   };
 
-  getHeadRow = (isSticky = false) => {
+  getHeadRow = (historyMonths, isSticky = false) => {
     const row = <tr className={this.classes.headRow}>
       <div className={this.classes.nextButton}>
         <div className={this.classes.buttonWrapper}>
@@ -426,7 +436,7 @@ export default class BudgetsTable extends Component {
           </div>
         </div>
       </td>
-      {this.getMonthHeaders()}
+      {this.getMonthHeaders(historyMonths)}
     </tr>;
 
     return isSticky ? <div className={this.classes.stickyWrapper} ref='stickyHeader'>{row}</div> : row;
@@ -450,10 +460,14 @@ export default class BudgetsTable extends Component {
   render() {
     const channelsProps = getChannelsWithProps();
     const parsedData = this.getDataByChannel(this.props.data, channelsProps);
+    const historyMonths = Object.keys(this.props.data).map((monthKey) => {
+        return {key: parseInt(monthKey), data: this.props.data[monthKey]};
+      }).filter(month => month.data.isHistory).map(month => month.key);
+
     const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
 
     const rows = dataWithCategories && this.state.tableCollapsed !== COLLAPSE_OPTIONS.COLLAPSE_ALL
-      ? this.getRows(dataWithCategories) : [];
+      ? this.getRows(dataWithCategories, historyMonths) : [];
 
     const footRowData = {
       channel: 'Total',
@@ -461,7 +475,7 @@ export default class BudgetsTable extends Component {
       values: this.sumChannels(parsedData)
     };
 
-    const headRow = this.getHeadRow();
+    const headRow = this.getHeadRow(historyMonths);
     const footRow = parsedData && this.getBottomRow(footRowData);
 
     return <div style={{'margin-left': '40px'}}>
@@ -481,7 +495,7 @@ export default class BudgetsTable extends Component {
         </div>
       </div>
       <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-      {this.getHeadRow(true)}
+      {this.getHeadRow(historyMonths, true)}
       </thead>
     </div>;
 
