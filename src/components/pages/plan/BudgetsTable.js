@@ -38,7 +38,7 @@ export default class BudgetsTable extends Component {
     scrollPosition: PropTypes.number,
     changeScrollPosition: PropTypes.func,
     cellWidth: PropTypes.number,
-    onPageScroll: PropTypes.func
+    onPageScrollEventRegister: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -52,10 +52,6 @@ export default class BudgetsTable extends Component {
   constructor(props) {
     super(props);
 
-    if (this.props.onPageScroll) {
-      this.props.onPageScroll(this.handleScroll);
-    }
-
     this.state = {
       tableCollapsed: COLLAPSE_OPTIONS.SHOW_ALL,
       collapsedCategories: {},
@@ -66,10 +62,12 @@ export default class BudgetsTable extends Component {
 
   componentDidMount() {
     this.refs.tableScroller.addEventListener('scroll', this.handleTableScroll);
+    this.props.onPageScrollEventRegister(this.handleScroll);
   }
 
   componentWillUnmount() {
     this.refs.tableScroller.removeEventListener('scroll', this.handleTableScroll);
+    this.props.onPageScrollEventRegister(null);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
