@@ -207,7 +207,7 @@ export default class IndicatorsGraph extends Component {
       </div>
       <div className={this.classes.chart} ref='chart'>
         <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}
-                   margin={{top: 10, right: 20, left: 10, bottom: 21}}>
+                   margin={{top: 10, right: 25, left: 10, bottom: 21}}>
           <YAxis axisLine={false}
                  tickLine={false}
                  tickFormatter={formatBudgetShortened}
