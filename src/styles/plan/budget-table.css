@@ -262,10 +262,11 @@
     display: inline-table;
     opacity:0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
-    visibility: hidden;
+    visibility: collapse;
     width: 100%;
     position: sticky;
     top: 70px;
+    padding-bottom: 0;
     composes: table;
 }
 
