@@ -207,18 +207,18 @@ export default class IndicatorsGraph extends Component {
       </div>
       <div className={this.classes.chart} ref='chart'>
         <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}
-                   margin={{top: 10, right: 20, left: 10}}>
+                   margin={{top: 10, right: 20, left: 10, bottom: 21}}>
           <YAxis axisLine={false}
                  tickLine={false}
                  tickFormatter={formatBudgetShortened}
                  tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
-                 tickMargin={10}
-                 domain={['dataMin', 'dataMax']}/>
+                 tickMargin={21}
+                 domain={['auto', 'auto']}/>
           <CartesianGrid vertical={false}/>
           <XAxis dataKey="name"
                  tick={{fontSize: '11px', fill: '#99a4c2', fontWeight: 600, letterSpacing: '0.1px'}}
                  tickLine={false}
-                 tickMargin={10}
+                 tickMargin={21}
                  interval={0}/>
           {dots}
           <Tooltip content={tooltip} offset={0}/>
