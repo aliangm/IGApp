@@ -52,18 +52,25 @@ export default class AnnualTab extends Component {
 
     const forecastingData = [];
 
+    const getEndOfMonth = (dateStr) => {
+      const [monthStr, year] = dateStr.split(' ');
+      const month = monthNames.indexOf(monthStr);
+      const date = new Date(year, month + 1, 0);
+      return `${date.getDate()} ${monthStr} ${year}`;
+    };
+
     const futureDates = getDates(planDate);
     forecastedIndicators.forEach((item, index) => {
       const json = {};
       Object.keys(item).forEach(key => {
         json[key] = item[key].committed;
       });
-      forecastingData.push({...json, name: futureDates[index]});
+      forecastingData.push({...json, name: getEndOfMonth(futureDates[index])});
     });
 
     const pastDates = getDates(planDate, true, false);
     indicators.forEach((json, index) => {
-      forecastingData.unshift({...json, name: pastDates[pastDates.length - 1 - index]});
+      forecastingData.unshift({...json, name: getEndOfMonth(pastDates[pastDates.length - 1 - index])});
     });
 
     const zeroedIndicators = {};
@@ -88,7 +95,7 @@ export default class AnnualTab extends Component {
           : (objective.currentValue || 0) - delta);
         const date = timeFrameToDate(objective.timeFrame);
         const monthStr = monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2);
-        parsedObjectives[objective.indicator] = {x: monthStr, y: target};
+        parsedObjectives[objective.indicator] = {x: getEndOfMonth(monthStr), y: target};
       });
 
     return <div>

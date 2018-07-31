@@ -9,7 +9,7 @@
 }
 
 .menu {
-    width: max-content;
+    width: 300px;
     height: 100%;
 }
 
@@ -42,7 +42,7 @@
 
 .chart {
     margin-top: 80px;
-    margin-left: 80px;
+    margin-left: 40px;
     width: fit-content;
     overflow: scroll;
 }

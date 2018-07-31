@@ -9,7 +9,7 @@ export function formatDate(dateStr) {
 }
 
 export function getDates(dateStr, includingPast = false, includingFuture = true) {
-  return getDatesSpecific(dateStr, includingPast ? 12: 0, includingFuture ? 12 : 0);
+  return getDatesSpecific(dateStr, includingPast ? 12 : 0, includingFuture ? 12 : 0);
 }
 
 export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture) {
