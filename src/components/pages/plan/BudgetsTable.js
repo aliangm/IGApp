@@ -92,52 +92,22 @@ export default class BudgetsTable extends Component {
 
   getMonthHeaders = (numberOfPastDates, dates) => {
     const currentMonth = parseInt(this.props.planDate.split('/')[0]);
-    const events = this.props.events ?
-      this.props.events
-        .filter(event => {
-          const eventMonth = parseInt(event.startDate.split('/')[1]);
-          return (currentMonth + index) % 12 === eventMonth % 12;
-        })
-        .map((event, index) => {
-          return <p key={index}>
-            {event.link
-              ? <a href={event.link} target="_blank">{event.eventName}</a>
-              : event.eventName} {event.startDate} {event.location}
-          </p>;
-        })
-      : null;
+    // const events = this.props.events ?
+    //   this.props.events
+    //     .filter(event => {
+    //       const eventMonth = parseInt(event.startDate.split('/')[1]);
+    //       return (currentMonth + index) % 12 === eventMonth % 12;
+    //     })
+    //     .map((event, index) => {
+    //       return <p key={index}>
+    //         {event.link
+    //           ? <a href={event.link} target="_blank">{event.eventName}</a>
+    //           : event.eventName} {event.startDate} {event.location}
+    //       </p>;
+    //     })
+    //   : null;
     const headers = dates.map((month, index) => {
-      return events.length > 0 ? <div style={{position: 'relative'}}>
-          <div className={this.classes.tableButton} onClick={() => {
-            this.setState({monthPopup: month});
-          }}
-               onMouseEnter={() => {
-                 this.setState({monthPopupHover: month});
-               }}
-               onMouseLeave={() => {
-                 this.setState({monthPopupHover: ''});
-               }}>
-            {month}</div>
-          <Popup hidden={month !== this.state.monthPopup && month !== this.state.monthPopupHover}
-                 className={this.classes.eventPopup}>
-            <div className={popupStyle.locals.header}>
-              <div className={popupStyle.locals.title}>
-                {'Events - ' + month}
-              </div>
-              <div className={popupStyle.locals.close}
-                   role="button"
-                   onClick={() => {
-                     this.setState({monthPopup: ''});
-                   }}
-              />
-            </div>
-            <PopupTextContent>
-              {events}
-            </PopupTextContent>
-          </Popup>
-        </div>
-        :
-        <td key={`head:${index}`}
+      return <td key={`head:${index}`}
             className={this.classes.headRowCell}
             style={{width:`${this.props.cellWidth}px`}}
             data-history={index < numberOfPastDates ? true : null}>
