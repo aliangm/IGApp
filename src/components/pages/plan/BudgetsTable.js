@@ -252,6 +252,7 @@ export default class BudgetsTable extends Component {
           isDragging={this.state.isDragging}
           approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
           enableActionButtons={true}
+          cellKey={`${data.channel}:${key}`}
         />;
     });
 

@@ -5,6 +5,7 @@ import budgetsTableStyle from 'styles/plan/budget-table.css';
 import StateSelection from 'components/pages/plan/StateSelection';
 import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
+import {findDOMNode} from 'react-dom'
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -47,7 +48,8 @@ export default class TableCell extends Component {
     dragStart: PropTypes.func,
     isDragging: PropTypes.bool,
     approveSuggestion: PropTypes.func,
-    enableActionButtons: PropTypes.bool
+    enableActionButtons: PropTypes.bool,
+    cellKey: PropTypes.string
   };
 
   defaultProps = {
@@ -172,6 +174,7 @@ export default class TableCell extends Component {
                           changeConstraint={this.changeConstraint}
                           changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
                           stateSelectionBox={(ref) => this.boxRef = ref}
+                          cellKey={this.props.cellKey}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
@@ -187,12 +190,14 @@ export default class TableCell extends Component {
                  this.setState({hoverCell: false});
                }}
                onMouseOut={(e) => {
-                 if(e.target === this.refs.cellRef && e.relatedTarget === this.boxRef){
+                 const domElement = findDOMNode(this.boxRef);
+                 if(e.target === this.refs.cellRef && domElement && domElement.contains(e.relatedTarget)){
                    this.setState({hoverCell: false})
                  }
                }}
                onMouseOver={(e) => {
-                 if(!(this.boxRef && this.boxRef.contains(e.target))){
+                 const domElement = findDOMNode(this.boxRef);
+                 if(!(domElement && domElement.contains(e.target))){
                    this.setState({hoverCell: true});
                  }
                 }

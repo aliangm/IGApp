@@ -2,6 +2,8 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/state-selection.css';
 import cellStyle from 'styles/plan/table-cell.css';
+import ReactTooltip from 'react-tooltip';
+import {findDOMNode} from 'react-dom';
 
 export default class StateSelection extends Component {
 
@@ -18,10 +20,6 @@ export default class StateSelection extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      showBox: false
-    };
   }
 
   componentDidMount() {
@@ -33,23 +31,20 @@ export default class StateSelection extends Component {
   }
 
   onOutsideClick = (e) => {
-    if (this.state.showBox) {
-      if (e.target !== this.stateSelectionBox && !this.stateSelectionBox.contains(e.target)) {
-        this.changeBoxShowing(false);
-      }
+    const domElement = findDOMNode(this.stateSelectionBox);
+    if (domElement && e.target !== domElement && !domElement.contains(e.target)) {
+      this.closeBox();
     }
   };
 
-  changeBoxShowing = (shouldShow) => {
-    this.props.changeConstraintsBoxOpen(shouldShow);
-    this.setState({
-      showBox: shouldShow
-    });
+  closeBox = () => {
+    ReactTooltip.hide(this.refs.iconRef);
+    this.props.changeConstraintsBoxOpen(false);
   };
 
   changeReaction = (key) => {
     this.props.changeConstraint(key);
-    this.changeBoxShowing(false);
+    this.closeBox();
   };
 
   getReactionIcon = ({key, text, icon}) => {
@@ -68,17 +63,33 @@ export default class StateSelection extends Component {
       return this.getReactionIcon({key: key, ...this.props.constraintOptions[key]});
     });
 
-    return <div className={this.classes.stateSelectionWrap}>
-      {this.state.showBox ? <div className={this.classes.stateSelectionBox}
-                                 ref={(ref) => {
-                                   this.stateSelectionBox = ref
-                                   this.props.stateSelectionBox(ref);
-                                 }}>
+    const stateSelectionBox = <div>
+      <div className={this.classes.stateSelectionBox}>
         {constraintOptions}
-      </div> : null}
+      </div>
+    </div>;
+
+    return <div className={this.classes.stateSelectionWrap}>
+      <ReactTooltip id={'stateSelection' + this.props.cellKey}
+                    getContent={() => stateSelectionBox}
+                    class={this.classes.tooltip}
+                    effect='solid'
+                    afterShow={() => this.props.changeConstraintsBoxOpen(true)}
+                    afterHide={()=> this.props.changeConstraintsBoxOpen(false)}
+                    ref={(ref) => {
+                      this.stateSelectionBox = ref;
+                      this.props.stateSelectionBox(ref);
+                    }}/>
+
       <div className={cellStyle.locals.icon}
-           onClick={() => this.changeBoxShowing(true)}
-           data-icon={this.props.constraintOptions[this.props.currentConstraint].icon}/>
+           data-icon={this.props.constraintOptions[this.props.currentConstraint].icon}
+           data-tip=""
+           data-for={'stateSelection' + this.props.cellKey}
+           data-event="click"
+           data-iscapture="true"
+           data-scroll-hide='true'
+           ref='iconRef'
+      />
     </div>;
   }
 }
