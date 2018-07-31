@@ -1,15 +1,22 @@
 .state-selection-box {
-    position: absolute;
     width: fit-content;
     height: 87.3px;
     border-radius: 112.1px;
-    top: -103px;
-    left: -105px;
-    z-index: 11;
     display: inline-flex;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.06);
     background-color: #ffffff;
     border: solid 1.5px rgba(181, 181, 181, 0.3);
+}
+
+.tooltip {
+    pointer-events: auto !important;
+    background-color: transparent !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+}
+
+.tooltip::after {
+    content: none !important;
 }
 
 .reaction-icon {

@@ -37,7 +37,8 @@ export default class BudgetsTable extends Component {
     deleteChannel: PropTypes.func,
     scrollPosition: PropTypes.number,
     changeScrollPosition: PropTypes.func,
-    cellWidth: PropTypes.number
+    cellWidth: PropTypes.number,
+    onPageScrollEventRegister: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -60,13 +61,13 @@ export default class BudgetsTable extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.handleScroll);
     this.refs.tableScroller.addEventListener('scroll', this.handleTableScroll);
+    this.props.onPageScrollEventRegister(this.handleScroll);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
     this.refs.tableScroller.removeEventListener('scroll', this.handleTableScroll);
+    this.props.onPageScrollEventRegister(null);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -249,6 +250,7 @@ export default class BudgetsTable extends Component {
           isDragging={this.state.isDragging}
           approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
           enableActionButtons={true}
+          cellKey={`${data.channel}:${key}`}
         />;
     });
 

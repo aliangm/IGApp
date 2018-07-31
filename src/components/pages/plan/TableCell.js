@@ -5,6 +5,7 @@ import budgetsTableStyle from 'styles/plan/budget-table.css';
 import StateSelection from 'components/pages/plan/StateSelection';
 import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
+import {findDOMNode} from 'react-dom'
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -47,7 +48,8 @@ export default class TableCell extends Component {
     dragStart: PropTypes.func,
     isDragging: PropTypes.bool,
     approveSuggestion: PropTypes.func,
-    enableActionButtons: PropTypes.bool
+    enableActionButtons: PropTypes.bool,
+    cellKey: PropTypes.string
   };
 
   defaultProps = {
@@ -56,7 +58,7 @@ export default class TableCell extends Component {
     isEditMode: false,
     isDragging: false,
     enableActionButtons: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -85,6 +87,7 @@ export default class TableCell extends Component {
   changeConstraint = (changeTo) => {
     const typeOptions = CONSTRAINT_MAPPING[changeTo].constraintData;
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
+    this.state.hoverCell;
   };
 
   changeConstraintsBoxOpen = (isOpen) => {
@@ -170,6 +173,8 @@ export default class TableCell extends Component {
                           constraintOptions={this.getConstraintsDisplayInfo()}
                           changeConstraint={this.changeConstraint}
                           changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
+                          stateSelectionBox={(ref) => this.boxRef = ref}
+                          cellKey={this.props.cellKey}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
@@ -181,13 +186,25 @@ export default class TableCell extends Component {
 
   render() {
     return <td className={budgetsTableStyle.locals.valueCell}
-               onMouseEnter={() => {
-                 this.setState({hoverCell: true});
-               }}
                onMouseLeave={() => {
                  this.setState({hoverCell: false});
-               }}>
-      <div className={this.classes.cellItem}>
+               }}
+               onMouseOut={(e) => {
+                 const domElement = findDOMNode(this.boxRef);
+                 if(e.target === this.refs.cellRef && domElement && domElement.contains(e.relatedTarget)){
+                   this.setState({hoverCell: false})
+                 }
+               }}
+               onMouseOver={(e) => {
+                 const domElement = findDOMNode(this.boxRef);
+                 if(!(domElement && domElement.contains(e.target))){
+                   this.setState({hoverCell: true});
+                 }
+                }
+               }
+               ref='cellRef'>
+
+      <div className={this.classes.cellItem} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
         {this.isEditModeType(EDIT_MODE.ANY) ?
           <input className={this.classes.editCell}
                  type="text"

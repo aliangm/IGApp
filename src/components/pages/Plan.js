@@ -37,7 +37,8 @@ export default class Plan extends Component {
       addChannelPopup: false,
       editMode: false,
       interactiveMode: false,
-      showNewScenarioPopup: false
+      showNewScenarioPopup: false,
+      scrollEvent: null
     };
   }
 
@@ -162,7 +163,10 @@ export default class Plan extends Component {
   getRelevantEvents = props => {
     this.setState({
       events: events.filter(
-        event => event.vertical === props.userProfile.vertical || event.companyType === props.targetAudience.companyType)
+        event => event.vertical ===
+          props.userProfile.vertical ||
+          event.companyType ===
+          props.targetAudience.companyType)
     });
   };
 
@@ -170,9 +174,11 @@ export default class Plan extends Component {
     if (this.state.interactiveMode) {
       return Promise.resolve();
     }
-    else return this.props.updateUserMonthPlan({
-      planBudgets: this.getPlanBudgets()
-    }, this.props.region, this.props.planDate);
+    else {
+      return this.props.updateUserMonthPlan({
+        planBudgets: this.getPlanBudgets()
+      }, this.props.region, this.props.planDate);
+    }
   };
 
   addChannel = (newChannel) => {
@@ -246,21 +252,26 @@ export default class Plan extends Component {
     );
 
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, merge({}, this.props, this.state, {
-        whatIf: this.props.plan,
-        setRef: this.setRef.bind(this),
-        forecastingGraphRef: this.forecastingGraphRef.bind(this),
-        editCommittedBudget: this.editCommittedBudget,
-        changeBudgetConstraint: this.changeBudgetConstraint,
-        deleteChannel: this.deleteChannel
-      })));
+      (child) => {
+        return React.cloneElement(child, merge({}, this.props, this.state, {
+          whatIf: this.props.plan,
+          setRef: this.setRef.bind(this),
+          forecastingGraphRef: this.forecastingGraphRef.bind(this),
+          editCommittedBudget: this.editCommittedBudget,
+          changeBudgetConstraint: this.changeBudgetConstraint,
+          deleteChannel: this.deleteChannel,
+          onPageScrollEventRegister: ((onPageScroll) => {
+            this.setState({scrollEvent: onPageScroll});
+          })
+        }));
+      });
 
     const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
 
     return <div>
       <ReactTooltip/>
       <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
-            width="100%">
+            width="100%" onPageScroll={this.state.scrollEvent}>
         <div className={this.classes.head}>
           <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
             <div className={this.classes.headTitle}>Plan</div>
