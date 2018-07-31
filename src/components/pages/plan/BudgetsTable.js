@@ -139,8 +139,11 @@ export default class BudgetsTable extends Component {
         :
         <td key={`head:${index}`}
             className={this.classes.headRowCell}
-            style={{minWidth: `${this.props.cellWidth}px`, width: `${this.props.cellWidth}px`}}
-            data-history={index < numberOfPastDates ? true : null}>{month}</td>;
+            style={{width:`${this.props.cellWidth}px`}}
+            data-history={index < numberOfPastDates ? true : null}>
+
+          <div style={{width:`${this.props.cellWidth-12}px`}}>{month}</div>
+        </td>;
     });
     return headers;
   };
