@@ -12,6 +12,7 @@ export default class Page extends Component {
   componentDidMount() {
     window.addEventListener('scroll', this.props.onPageScroll);
   }
+
   componentWillUnmount() {
     window.removeEventListener('scroll', this.props.onPageScroll);
   }
@@ -57,10 +58,11 @@ export default class Page extends Component {
     return <div className={className}
                 style={this.props.style}
                 data-sidebar={this.props.sidebar}
-                onScroll={()=>{
-                  if(this.props.popup && this.props.onPageScroll){
-                    this.props.onPageScroll()
-                  }}}>
+                onScroll={() => {
+                  if (this.props.popup && this.props.onPageScroll) {
+                    this.props.onPageScroll();
+                  }
+                }}>
       <div className={this.classes.box} style={boxStyle}>
         <div className={innerClassName}>
           <div className={contentClassName}>
