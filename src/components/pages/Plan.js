@@ -49,17 +49,16 @@ export default class Plan extends Component {
         this.props.plan(true, null, this.props.region, false)
           .then(data => {
             this.props.setDataAsState(data);
-            // if user didn't upload an excel
-            if (!this.props.approvedBudgets || this.props.approvedBudgets.length === 0) {
-              this.props.approveAllBudgets(true);
-            }
+            this.setBudgetsData(data.planBudgets);
           });
       }
       else {
         history.push('/dashboard/CMO');
       }
     }
-    this.setBudgetsData();
+    else {
+      this.setBudgetsData();
+    }
   }
 
   setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
