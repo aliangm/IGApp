@@ -9,7 +9,7 @@
 }
 
 .menu {
-    width: 300px;
+    min-width: 196px;
     height: 100%;
 }
 
