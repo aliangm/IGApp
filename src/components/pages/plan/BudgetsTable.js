@@ -38,6 +38,7 @@ export default class BudgetsTable extends Component {
     scrollPosition: PropTypes.number,
     changeScrollPosition: PropTypes.func,
     cellWidth: PropTypes.number,
+    isPopup: PropTypes.bool,
     onPageScrollEventRegister: PropTypes.func.isRequired
   };
 
@@ -46,7 +47,8 @@ export default class BudgetsTable extends Component {
     isShowSecondaryEnabled: false,
     isConstraitsEnabled: false,
     data: [],
-    scrollPosition: 0
+    scrollPosition: 0,
+    isPopup: false
   };
 
   constructor(props) {
@@ -462,7 +464,7 @@ export default class BudgetsTable extends Component {
   render() {
     const channelsProps = getChannelsWithProps();
     const parsedData = this.getDataByChannel(this.props.data, channelsProps);
-    const numberOfPastDates = this.props.data.filter((month)=>month.isHistory).length;
+    const numberOfPastDates = this.props.data.filter((month) => month.isHistory).length;
     const dates = getDatesSpecific(this.props.planDate, numberOfPastDates, this.props.data.length - numberOfPastDates);
 
     const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
@@ -480,7 +482,13 @@ export default class BudgetsTable extends Component {
     const footRow = parsedData && this.getBottomRow(footRowData);
 
     return <div style={{'margin-left': '40px'}}>
-      <div className={this.classes.box}>
+      <div className={this.classes.box} ref='tableBox'>
+        <thead className={this.classes.stickyHeader}
+               data-sticky={this.state.isSticky ? true : null}
+               data-is-popup={this.props.isPopup ? true : null}>
+
+        {this.getHeadRow(numberOfPastDates, dates, true)}
+        </thead>
         <div className={this.classes.tableScroller} ref='tableScroller'>
           <table className={this.classes.table} ref='tableRef'>
             <thead>
@@ -495,9 +503,6 @@ export default class BudgetsTable extends Component {
           </table>
         </div>
       </div>
-      <thead className={this.classes.stickyHeader} data-sticky={this.state.isSticky ? true : null}>
-      {this.getHeadRow(numberOfPastDates,dates, true)}
-      </thead>
     </div>;
 
     {/*<ContextMenu id="rightClickEdit">*/

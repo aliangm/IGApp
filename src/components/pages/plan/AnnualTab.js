@@ -102,6 +102,7 @@ export default class AnnualTab extends Component {
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}
+                        isPopup={interactiveMode}
                         {...this.props}
           />
 
