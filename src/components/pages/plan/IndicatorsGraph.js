@@ -214,9 +214,15 @@ export default class IndicatorsGraph extends Component {
                  tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
                  tickMargin={21}
                  domain={['auto', 'auto']}/>
-          <CartesianGrid vertical={false}/>
+          <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
           <XAxis dataKey="name"
-                 tick={{fontSize: '11px', fill: '#99a4c2', fontWeight: 600, letterSpacing: '0.1px'}}
+                 style={{textTransform: 'uppercase'}}
+                 tick={{
+                   fontSize: '11px',
+                   fill: '#99a4c2',
+                   fontWeight: 600,
+                   letterSpacing: '0.1px'
+                 }}
                  tickLine={false}
                  tickMargin={21}
                  interval={0}/>
