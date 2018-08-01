@@ -455,7 +455,7 @@ export default class BudgetsTable extends Component {
     const headRow = this.getHeadRow(numberOfPastDates, dates);
     const footRow = parsedData && this.getBottomRow(footRowData);
 
-    return <div style={{'margin-left': '40px'}}>
+    return <div>
       <div className={this.classes.box} ref='tableBox'>
         <thead className={this.classes.stickyHeader}
                data-sticky={this.state.isSticky ? true : null}
