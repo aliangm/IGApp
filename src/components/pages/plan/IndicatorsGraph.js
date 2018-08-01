@@ -8,6 +8,7 @@ import {formatBudgetShortened} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
+import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 
 export default class IndicatorsGraph extends Component {
 
@@ -43,6 +44,10 @@ export default class IndicatorsGraph extends Component {
     if (!isNil(nextProps.scrollPosition)) {
       this.refs.chart.scrollLeft = nextProps.scrollPosition;
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shouldUpdateComponent(nextProps, nextState, this.props, this.state, 'scrollPosition');
   }
 
   handleScroll = () => {
@@ -101,7 +106,10 @@ export default class IndicatorsGraph extends Component {
         <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
                         onChange={() => this.toggleCheckbox(indicator)}
                         className={this.classes.label}
-                        checkboxStyle={{backgroundColor: COLORS[index % COLORS.length]}}>{indicatorsMapping[indicator]}</CustomCheckbox>
+                        checkboxStyle={{
+                          backgroundColor: COLORS[index %
+                          COLORS.length]
+                        }}>{indicatorsMapping[indicator]}</CustomCheckbox>
       </div>
     );
 
@@ -124,7 +132,7 @@ export default class IndicatorsGraph extends Component {
                    stroke={COLORS[index % COLORS.length]}
                    fill={`url(#${indicator})`}
                    fillOpacity={1}
-                   strokeWidth={1}/>;
+                   strokeWidth={2}/>;
     });
 
     const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
@@ -140,21 +148,20 @@ export default class IndicatorsGraph extends Component {
 
     const CustomizedLabel = React.createClass({
       render() {
-        const {x, y} = this.props;
-        return <svg>
-          <image x={x - 12} y={y - 12} width="24" height="24" href="../../assets/objective-dot.svg"/>
-        </svg>;
+        const {viewBox} = this.props;
+        return <image x={viewBox.x} y={viewBox.y} width="24" height="24" href="../../assets/objective-dot.svg"/>;
       }
     });
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
       this.props.objectives[indicator] &&
-      <ReferenceDot {... this.props.objectives[indicator]}
+      <ReferenceDot {...this.props.objectives[indicator]}
                     fill="none"
                     stroke="none"
                     key={index}
                     label={<CustomizedLabel/>}
-                    alwaysShow={true}/>
+                    alwaysShow={true}
+                    isFront={true}/>
     );
 
     const tooltip = (data) => {
@@ -199,15 +206,26 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart} ref='chart'>
-        <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}>
-          <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} tickLine={false}
-                 interval={0}/>
+        <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}
+                   margin={{top: 10, right: 25, left: 10, bottom: 21}}>
           <YAxis axisLine={false}
                  tickLine={false}
                  tickFormatter={formatBudgetShortened}
-                 style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}
-                 domain={['dataMin', 'dataMax']}/>
-          <CartesianGrid vertical={false}/>
+                 tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
+                 tickMargin={21}
+                 domain={['auto', 'auto']}/>
+          <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
+          <XAxis dataKey="name"
+                 style={{textTransform: 'uppercase'}}
+                 tick={{
+                   fontSize: '11px',
+                   fill: '#99a4c2',
+                   fontWeight: 600,
+                   letterSpacing: '0.1px'
+                 }}
+                 tickLine={false}
+                 tickMargin={21}
+                 interval={0}/>
           {dots}
           <Tooltip content={tooltip} offset={0}/>
           {defs}

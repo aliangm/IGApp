@@ -1,9 +1,11 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
+import budgetsTableStyle from 'styles/plan/budget-table.css';
 import StateSelection from 'components/pages/plan/StateSelection';
 import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
+import {findDOMNode} from 'react-dom'
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -30,6 +32,7 @@ const EDIT_MODE = {
 export default class TableCell extends Component {
 
   style = style;
+  styles = [budgetsTableStyle];
 
   static propTypes = {
     primaryValue: PropTypes.number.isRequired,
@@ -45,7 +48,8 @@ export default class TableCell extends Component {
     dragStart: PropTypes.func,
     isDragging: PropTypes.bool,
     approveSuggestion: PropTypes.func,
-    enableActionButtons: PropTypes.bool
+    enableActionButtons: PropTypes.bool,
+    cellKey: PropTypes.string
   };
 
   defaultProps = {
@@ -54,7 +58,7 @@ export default class TableCell extends Component {
     isEditMode: false,
     isDragging: false,
     enableActionButtons: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -67,8 +71,31 @@ export default class TableCell extends Component {
     };
   }
 
+  componentDidMount() {
+    document.addEventListener('click', this.onOutsideClick, true);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.onOutsideClick, true);
+  }
+
+  onOutsideClick = (e) => {
+    const domElement = this.refs.cellRef;
+    if (domElement && e.target !== domElement && !domElement.contains(e.target) && this.state.isCellEditing) {
+      if (this.state.editValue === this.props.primaryValue){
+        this.declineEdit();
+      }
+      else {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        this.refs.inputField.scrollIntoView({});
+        this.refs.inputField.focus();
+      }
+    }
+  };
+
   componentWillReceiveProps(newProps) {
-    if (!isNil(newProps.primaryValue)) {
+    if (!isNil(newProps.primaryValue) && newProps.primaryValue !== this.props.primaryValue) {
       this.setState({
         editValue: newProps.primaryValue
       });
@@ -119,7 +146,6 @@ export default class TableCell extends Component {
   showSuggestion = () => {
     return !isNil(this.props.secondaryValue)
       && (this.props.secondaryValue !== this.props.primaryValue)
-      && this.isCellActive();
   };
 
   approveEdit = () => {
@@ -128,7 +154,7 @@ export default class TableCell extends Component {
   };
 
   declineEdit = () => {
-    this.setState({editValue: null, isCellEditing: false});
+    this.setState({editValue: this.props.primaryValue, isCellEditing: false});
   };
 
   onInputValueChange = (e) => {
@@ -168,6 +194,8 @@ export default class TableCell extends Component {
                           constraintOptions={this.getConstraintsDisplayInfo()}
                           changeConstraint={this.changeConstraint}
                           changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
+                          stateSelectionBoxRef={(ref) => this.boxRef = ref}
+                          cellKey={this.props.cellKey}
         />
         : null}
       {this.isCellActive() && this.isEditModeType(EDIT_MODE.NONE) ? <div
@@ -178,19 +206,32 @@ export default class TableCell extends Component {
   };
 
   render() {
-    return <td className={this.classes.valueCell}
-               onMouseEnter={() => {
-                 this.setState({hoverCell: true});
-               }}
+    return <td className={budgetsTableStyle.locals.valueCell}
                onMouseLeave={() => {
                  this.setState({hoverCell: false});
-               }}>
-      <div className={this.classes.cellItem}>
+               }}
+               onMouseOut={(e) => {
+                 const domElement = findDOMNode(this.boxRef);
+                 if(e.target === this.refs.cellRef && domElement && domElement.contains(e.relatedTarget)){
+                   this.setState({hoverCell: false})
+                 }
+               }}
+               onMouseOver={(e) => {
+                 const domElement = findDOMNode(this.boxRef);
+                 if(!(domElement && domElement.contains(e.target))){
+                   this.setState({hoverCell: true});
+                 }
+                }
+               }
+               ref='cellRef'>
+
+      <div className={this.classes.cellItem} data-in-edit={this.isEditModeType(EDIT_MODE.ANY) ? true : null}>
         {this.isEditModeType(EDIT_MODE.ANY) ?
           <input className={this.classes.editCell}
                  type="text"
                  value={formatBudget(this.state.editValue)}
-                 onChange={this.onInputValueChange}/>
+                 onChange={this.onInputValueChange}
+                 ref='inputField'/>
           : <div>{formatBudget(this.props.primaryValue)}</div>}
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>

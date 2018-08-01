@@ -8,6 +8,7 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {formatNumber} from 'components/utils/budget';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getDates} from 'components/utils/date';
+import {getIndicatorsWithProps} from 'components/utils/indicators';
 
 const CELL_WIDTH = 140;
 
@@ -42,25 +43,41 @@ export default class AnnualTab extends Component {
     });
   };
 
-  render() {
-    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, actualIndicators, objectives, forecastingGraphRef} = this.props;
+  componentDidMount() {
+    this.setState({scrollPosition: this.props.historyData.indicators.length * CELL_WIDTH});
+  }
 
-    const currentSuggested = {};
-    const dates = getDates(planDate);
-    const projections = forecastedIndicators.map((item, index) => {
+  render() {
+    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, objectives, forecastingGraphRef, historyData: {indicators}} = this.props;
+
+    const forecastingData = [];
+
+    const getEndOfMonth = (dateStr) => {
+      const [monthStr, year] = dateStr.split(' ');
+      const month = monthNames.indexOf(monthStr);
+      const date = new Date(year, month + 1, 0);
+      return `${date.getDate()} ${monthStr} ${year}`;
+    };
+
+    const futureDates = getDates(planDate);
+    forecastedIndicators.forEach((item, index) => {
       const json = {};
       Object.keys(item).forEach(key => {
         json[key] = item[key].committed;
       });
-      return {...json, name: dates[index]};
+      forecastingData.push({...json, name: getEndOfMonth(futureDates[index])});
     });
 
-    Object.keys(actualIndicators).forEach(indicator => {
-      currentSuggested[indicator] = actualIndicators[indicator];
+    const pastDates = getDates(planDate, true, false);
+    indicators.forEach((json, index) => {
+      forecastingData.unshift({...json, name: getEndOfMonth(pastDates[pastDates.length - 1 - index])});
     });
 
-    // Current indicators values to first cell
-    projections.splice(0, 0, {...actualIndicators, name: 'today', ...currentSuggested});
+    const zeroedIndicators = {};
+    Object.keys(getIndicatorsWithProps()).forEach(key => {
+      zeroedIndicators[key] = 0;
+    });
+    forecastingData.unshift({...zeroedIndicators, name: ''});
 
     const parsedObjectives = {};
     objectives
@@ -77,27 +94,27 @@ export default class AnnualTab extends Component {
           ? delta + (objective.currentValue || 0)
           : (objective.currentValue || 0) - delta);
         const date = timeFrameToDate(objective.timeFrame);
-        const monthStr = monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-        parsedObjectives[objective.indicator] = {x: monthStr, y: target};
+        const monthStr = monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2);
+        parsedObjectives[objective.indicator] = {x: getEndOfMonth(monthStr), y: target};
       });
 
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
           <BudgetsTable isEditMode={editMode}
-                        isShowSecondaryEnabled={interactiveMode}
+                        isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
                         data={budgetsData}
-                        dates={dates}
                         approvedPlan={this.state.approvedPlan}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}
+                        isPopup={interactiveMode}
                         {...this.props}
           />
 
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph data={projections}
+            <IndicatorsGraph data={forecastingData}
                              objectives={parsedObjectives}
                              dimensions={this.state.graphDimensions}
                              changeScrollPosition={this.changeScrollPosition}

@@ -1,26 +1,24 @@
 @import "../global/mixins.css";
 
-.value-cell {
-    height: 14px;
-    position: relative;
-    letter-spacing: 0.1px;
-}
-
 .secondary-value {
     font-size: 10px;
     font-weight: 500;
     color: #b2bbd5;
-    margin-top: 2px;
+    margin-top: 6px;
     position: absolute;
 }
 
 .secondary-value[data-in-edit] {
-    margin-left: 10px;
+    margin-left: 2px;
 }
 
 .cell-item {
     align-items: center;
     display: inline-flex;
+}
+
+.cell-item[data-in-edit] {
+    margin-left: -8px;
 }
 
 .icon {
@@ -52,6 +50,7 @@
     font-size: inherit;
     font-weight: inherit;
     letter-spacing: 0.1px;
+    box-sizing: border-box;
 }
 
 @mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;

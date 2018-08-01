@@ -2,17 +2,21 @@
 
 .box {
     position: relative;
+    margin-left: 40px;
 }
 
 .table-scroller {
     overflow-x: auto;
     margin-left: 309px;
+    max-width: min-content;
 }
 
 .table {
+    padding-bottom: 13px;
     border-spacing: 0;
     width: 100%;
     table-layout: fixed;
+    border-collapse: collapse;
 }
 
 .row-arrow {
@@ -25,11 +29,6 @@
     position: absolute;
     top: 8px;
     left: 7px;
-}
-
-.head-row-cell {
-    padding:0;
-    letter-spacing: 0.1px;
 }
 
 .row-arrow[data-headline] {
@@ -176,7 +175,7 @@
 
 .title-cell {
     height: 64px;
-    width: 309px;
+    width: 310px;
     position: absolute;
     display: table;
     left: 0;
@@ -194,21 +193,57 @@
     vertical-align: middle;
 }
 
+.cell {
+    letter-spacing: 0.1px;
+    padding-left: 11px;
+    box-sizing: border-box;
+}
+
+.head-row-cell {
+    composes: cell;
+}
+
+.head-row-cell[data-history] {
+    background-color: rgba(112, 126, 167, 0.13);
+}
+
+.head-row-cell[data-first-month] {
+    border-bottom: 2px solid #4d91fc;
+    color: #4d91fc;
+}
+
+.history-cell {
+    composes: cell;
+    background-color: rgba(112, 126, 167, 0.13);
+}
+
+.value-cell {
+    composes: cell;
+    height: 14px;
+    position: relative;
+}
+
 .category-cell {
+    composes: cell;
     border-style: solid;
     border-color: rgba(106, 154, 230, 0.19);
     border-width: 1px 0;
-    letter-spacing: 0.1px;
+}
+
+.category-cell[data-history] {
+    background-color: rgba(112, 126, 167, 0.13);
 }
 
 .title-cell[data-row-type="category"] {
     background-color: rgba(222, 235, 255, 0.32);
     padding: 0;
+    margin-top: -0.5px;
+    z-index: 1;
+    margin-left: -0.5px;
 }
 
 .title-cell[data-row-type="regular"] {
     background-color: white;
-    height: 63px;
 }
 
 .title-cell[data-row-type="bottom"] {
@@ -227,6 +262,7 @@
     vertical-align: middle;
     overflow-y: hidden;
     margin-left: 309px;
+    max-width: min-content;
 }
 
 .sticky-header {
@@ -235,21 +271,20 @@
     opacity:0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
     visibility: hidden;
-    width: calc( 100% - 280px );
-    position: fixed;
+    width: 100%;
+    position: sticky;
     top: 70px;
+    padding-bottom: 0;
     composes: table;
+}
+
+.sticky-header[data-is-popup] {
+    top: 0;
 }
 
 .sticky-header[data-sticky] {
     visibility: visible;
     opacity: 1;
-}
-
-@media (max-width: 1440px) {
-    .sticky-header {
-        width: calc( 100% - 128px )
-    }
 }
 
 @mixin icon-nodpi plan:editChannel, ../../assets/plan_icons/edit-grey;

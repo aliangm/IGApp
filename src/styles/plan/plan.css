@@ -199,9 +199,8 @@
 }
 
 .dropmenu {
-  width: 100px;
   left: 15px !important;
-  padding: 4px 0 !important;
+  padding: 8px !important;
   min-height: inherit !important;
   top: 45px !important;
   text-transform: capitalize;
@@ -209,6 +208,9 @@
 
 .dropmenu-edit {
   width: 110px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 6px 0 rgba(27, 35, 56, 0.04);
   composes: dropmenu;
 }
 
@@ -223,42 +225,26 @@
 }
 
 .dropmenu-item {
-  padding: 0 13px;
+  padding-left: 10px;
   display: -webkit-box;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   position: relative;
   cursor: pointer;
-  color: #273142;
-  font-size: 14px;
-  height: 33px;
   text-decoration: none;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: #707ea7;
 }
 
 .dropmenu-item:hover, .dropmenu-item[data-selected] {
-  background-color: #E5F5F8;
-}
-
-.dropmenu-item-add {
-  composes: dropmenu-item;
-  background-color: #259af2;
-  color: white;
-  justify-content: center;
-}
-
-.dropmenu-item-cancel {
-  composes: dropmenu-item;
-  color: #259af2;
-  justify-content: center;
-}
-
-.dropmenu-item-cancel:hover, .dropmenu-item-cancel[data-selected] {
-  background-color: initial;
-}
-
-.dropmenu-item-add:hover, .dropmenu-item-add[data-selected] {
-  background-color: #259af2;
+  border-radius: 3px;
+  background-color: #f5f6fa;
+  font-weight: 600;
+  color: #4d91fc;
 }
 
 .dropButton {
