@@ -15,6 +15,7 @@
     border-spacing: 0;
     width: 100%;
     table-layout: fixed;
+    border-collapse: collapse;
 }
 
 .row-arrow {
@@ -173,7 +174,7 @@
 
 .title-cell {
     height: 64px;
-    width: 309px;
+    width: 310px;
     position: absolute;
     display: table;
     left: 0;
@@ -234,11 +235,13 @@
 .title-cell[data-row-type="category"] {
     background-color: rgba(222, 235, 255, 0.32);
     padding: 0;
+    margin-top: -0.5px;
+    z-index: 1;
+    margin-left: -0.5px;
 }
 
 .title-cell[data-row-type="regular"] {
     background-color: white;
-    height: 63px;
 }
 
 .title-cell[data-row-type="bottom"] {
