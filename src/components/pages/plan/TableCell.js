@@ -71,8 +71,31 @@ export default class TableCell extends Component {
     };
   }
 
+  componentDidMount() {
+    document.addEventListener('click', this.onOutsideClick, true);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.onOutsideClick, true);
+  }
+
+  onOutsideClick = (e) => {
+    const domElement = this.refs.cellRef;
+    if (domElement && e.target !== domElement && !domElement.contains(e.target) && this.state.isCellEditing) {
+      if (this.state.editValue === this.props.primaryValue){
+        this.declineEdit();
+      }
+      else {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        this.refs.inputField.scrollIntoView({});
+        this.refs.inputField.focus();
+      }
+    }
+  };
+
   componentWillReceiveProps(newProps) {
-    if (!isNil(newProps.primaryValue)) {
+    if (!isNil(newProps.primaryValue) && newProps.primaryValue !== this.props.primaryValue) {
       this.setState({
         editValue: newProps.primaryValue
       });
@@ -87,7 +110,6 @@ export default class TableCell extends Component {
   changeConstraint = (changeTo) => {
     const typeOptions = CONSTRAINT_MAPPING[changeTo].constraintData;
     this.props.constraintChange(typeOptions.isConstraint, typeOptions.isSoft);
-    this.state.hoverCell;
   };
 
   changeConstraintsBoxOpen = (isOpen) => {
@@ -124,7 +146,6 @@ export default class TableCell extends Component {
   showSuggestion = () => {
     return !isNil(this.props.secondaryValue)
       && (this.props.secondaryValue !== this.props.primaryValue)
-      && this.isCellActive();
   };
 
   approveEdit = () => {
@@ -133,7 +154,7 @@ export default class TableCell extends Component {
   };
 
   declineEdit = () => {
-    this.setState({editValue: null, isCellEditing: false});
+    this.setState({editValue: this.props.primaryValue, isCellEditing: false});
   };
 
   onInputValueChange = (e) => {
@@ -209,7 +230,8 @@ export default class TableCell extends Component {
           <input className={this.classes.editCell}
                  type="text"
                  value={formatBudget(this.state.editValue)}
-                 onChange={this.onInputValueChange}/>
+                 onChange={this.onInputValueChange}
+                 ref='inputField'/>
           : <div>{formatBudget(this.props.primaryValue)}</div>}
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
