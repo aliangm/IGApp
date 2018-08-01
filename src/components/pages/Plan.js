@@ -391,13 +391,13 @@ export default class Plan extends Component {
                     hidden={!editMode}
                   >
                     <div>
-                      <div className={this.classes.dropmenuItemAdd}
+                      <div className={this.classes.dropmenuItem}
                            onClick={() => {
                              this.setState({addChannelPopup: true});
                            }}>
                         Add Channel
                       </div>
-                      <div className={this.classes.dropmenuItemCancel}
+                      <div className={this.classes.dropmenuItem}
                            onClick={() => {
                              this.setState({editMode: false});
                              this.setBudgetsData();
