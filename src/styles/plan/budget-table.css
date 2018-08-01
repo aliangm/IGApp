@@ -268,7 +268,7 @@
     display: inline-table;
     opacity:0;
     transition: visibility 0.3s linear, opacity 0.3s linear;
-    visibility: collapse;
+    visibility: hidden;
     width: 100%;
     position: sticky;
     top: 70px;
