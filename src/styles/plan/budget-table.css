@@ -202,8 +202,7 @@
 }
 
 .head-row-cell[data-history] {
-    background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
-    background-attachment: fixed;
+    background-color: rgba(112, 126, 167, 0.13);
 }
 
 .head-row-cell[data-first-month] {
@@ -212,8 +211,7 @@
 
 .history-cell {
     composes: cell;
-    background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
-    background-attachment: fixed;
+    background-color: rgba(112, 126, 167, 0.13);
 }
 
 .value-cell {
@@ -230,8 +228,7 @@
 }
 
 .category-cell[data-history] {
-    background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
-    background-attachment: fixed;
+    background-color: rgba(112, 126, 167, 0.13);
 }
 
 .title-cell[data-row-type="category"] {
