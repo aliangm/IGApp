@@ -206,6 +206,10 @@
     background-attachment: fixed;
 }
 
+.head-row-cell[data-first-month] {
+    border-bottom: 2px solid #4d91fc;
+}
+
 .history-cell {
     composes: cell;
     background-image: linear-gradient(to right, rgba(169, 181, 210, 0), rgba(112, 126, 167, 0.13));
