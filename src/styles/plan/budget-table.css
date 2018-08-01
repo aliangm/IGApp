@@ -84,7 +84,7 @@
 .prev-button {
     composes: month-buttons;
     transform: rotate(180deg);
-    left: 280px;
+    left: 279px;
 }
 
 .row-arrow-wrap[data-collapsed] {
@@ -234,12 +234,14 @@
     background-color: rgba(112, 126, 167, 0.13);
 }
 
+.title-cell {
+    margin-left: -1px;
+}
+
 .title-cell[data-row-type="category"] {
     background-color: rgba(222, 235, 255, 0.32);
     padding: 0;
-    margin-top: -0.5px;
     z-index: 1;
-    margin-left: -0.5px;
 }
 
 .title-cell[data-row-type="regular"] {
