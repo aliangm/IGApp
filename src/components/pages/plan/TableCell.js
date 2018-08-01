@@ -173,7 +173,7 @@ export default class TableCell extends Component {
                           constraintOptions={this.getConstraintsDisplayInfo()}
                           changeConstraint={this.changeConstraint}
                           changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
-                          stateSelectionBox={(ref) => this.boxRef = ref}
+                          stateSelectionBoxRef={(ref) => this.boxRef = ref}
                           cellKey={this.props.cellKey}
         />
         : null}
