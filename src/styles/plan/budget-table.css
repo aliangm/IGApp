@@ -85,6 +85,7 @@
     composes: month-buttons;
     transform: rotate(180deg);
     left: 279px;
+    margin-top: -0.5px;
 }
 
 .row-arrow-wrap[data-collapsed] {
@@ -242,6 +243,7 @@
     background-color: rgba(222, 235, 255, 0.32);
     padding: 0;
     z-index: 1;
+    margin-top: -0.5px;
 }
 
 .title-cell[data-row-type="regular"] {
