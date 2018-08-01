@@ -18,8 +18,10 @@ export default class Page extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    window.removeEventListener('scroll', this.props.onPageScroll);
-    window.addEventListener('scroll', newProps.onPageScroll);
+    if (newProps.onPageScroll !== this.props.onPageScroll) {
+      window.removeEventListener('scroll', this.props.onPageScroll);
+      window.addEventListener('scroll', newProps.onPageScroll);
+    }
   }
 
   render() {

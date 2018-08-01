@@ -2,6 +2,7 @@
 
 .box {
     position: relative;
+    margin-left: 40px;
 }
 
 .table-scroller {
@@ -208,6 +209,7 @@
 
 .head-row-cell[data-first-month] {
     border-bottom: 2px solid #4d91fc;
+    color: #4d91fc;
 }
 
 .history-cell {
