@@ -38,10 +38,6 @@ export default class Preferences extends Component {
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
 
   static defaultProps = {
-    goals: {
-      primary: 'InfiniGrow Recommended',
-      secondary: 'InfiniGrow Recommended'
-    },
     objectives: [],
     isCheckAnnual: true,
     maxChannels: -1,
@@ -60,7 +56,6 @@ export default class Preferences extends Component {
       isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]}),
       showAdvancedFields: false
     };
-    this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.budgetConstraintRemove = this.budgetConstraintRemove.bind(this);
@@ -82,20 +77,6 @@ export default class Preferences extends Component {
   validate() {
     let filterNanArray = this.props.annualBudgetArray.filter((value)=>{return !!value});
     return filterNanArray.length == 12;
-  }
-
-  handleChangeGoals(parameter, event) {
-    let update = this.props.goals || {};
-    update[parameter] = event.value;
-    this.props.updateState({goals: update});
-    if (this.props.goals.primary == 'InfiniGrow Recommended' && this.props.goals.secondary != 'InfiniGrow Recommended') {
-      this.props.updateState({
-        goals: {
-          primary: this.props.goals.secondary,
-          secondary: 'InfiniGrow Recommended'
-        }
-      })
-    }
   }
 
   handleChangeBudget(parameter, event) {
@@ -338,52 +319,6 @@ export default class Preferences extends Component {
             {label: 'Dec', value: 11},
           ]
         }
-      },
-      primary_goal: {
-        label: 'Primary Focus',
-        labelQuestion: [''],
-        description: ['What is your company main focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
-        select: {
-          name: 'primary_goal',
-          onChange: () => {},
-          options: [
-            {value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended'},
-            {value: 'Revenue - Long Term', label: 'Revenue - Long Term'},
-            {value: 'Revenue - Short Term', label: 'Revenue - Short Term'},
-            {value: 'Reputation', label: 'Reputation'},
-            {value: 'Marketing ROI', label: 'Marketing ROI'},
-            {value: 'Market Share', label: 'Market Share'},
-            {value: 'Brand Awareness', label: 'Brand Awareness'},
-            {value: 'Better Quality Customers', label: 'Better Quality Customers'},
-            {value: 'Lead Generation', label: 'Lead Generation'},
-            {value: 'Retention Rates', label: 'Retention Rates'},
-            {value: 'Number Of Job Applicants', label: 'Number Of Job Applicants'},
-            {value: 'Thought Leadership', label: 'Thought Leadership'}
-          ]
-        }
-      },
-      secondary_goal: {
-        label: 'Secondary Focus',
-        labelQuestion: [''],
-        description: ['What is your company secondary focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
-        select: {
-          name: 'secondary_goal',
-          onChange: () => {},
-          options: [
-            {value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended'},
-            {value: 'Revenue - Long Term', label: 'Revenue - Long Term'},
-            {value: 'Revenue - Short Term', label: 'Revenue - Short Term'},
-            {value: 'Reputation', label: 'Reputation'},
-            {value: 'Marketing ROI', label: 'Marketing ROI'},
-            {value: 'Market Share', label: 'Market Share'},
-            {value: 'Brand Awareness', label: 'Brand Awareness'},
-            {value: 'Better Quality Customers', label: 'Better Quality Customers'},
-            {value: 'Lead Generation', label: 'Lead Generation'},
-            {value: 'Retention Rates', label: 'Retention Rates'},
-            {value: 'Number Of Job Applicants', label: 'Number Of Job Applicants'},
-            {value: 'Thought Leadership', label: 'Thought Leadership'}
-          ]
-        }
       }
     };
 
@@ -494,22 +429,6 @@ export default class Preferences extends Component {
              <Select { ... selects.plan } />
              </div>
              **/}
-            <div className={ this.classes.row } style={{
-              // maxWidth: '440px',
-              // minWidth: '200px',
-              width: '258px'
-            }}>
-              <Select { ... selects.primary_goal } selected={ this.props.goals.primary }
-                      onChange={ this.handleChangeGoals.bind(this, 'primary') }/>
-            </div>
-            <div className={ this.classes.row } style={{
-              // maxWidth: '440px',
-              // minWidth: '200px',
-              width: '258px'
-            }}>
-              <Select { ... selects.secondary_goal } selected={ this.props.goals.secondary }
-                      onChange={ this.handleChangeGoals.bind(this, 'secondary') }/>
-            </div>
             <div className={ this.classes.row } style={{}}>
               <Label style={{
                 marginBottom: '12px',
@@ -645,7 +564,6 @@ export default class Preferences extends Component {
               this.props.updateUserMonthPlan({
                 annualBudget: this.props.annualBudget,
                 annualBudgetArray: this.props.annualBudgetArray,
-                goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
                 objectives: this.props.objectives,
                 blockedChannels: this.props.blockedChannels,
                 inHouseChannels: this.props.inHouseChannels,
@@ -664,7 +582,6 @@ export default class Preferences extends Component {
                 this.props.updateUserMonthPlan({
                   annualBudget: this.props.annualBudget,
                   annualBudgetArray: this.props.annualBudgetArray,
-                  goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
                   objectives: this.props.objectives,
                   blockedChannels: this.props.blockedChannels,
                   inHouseChannels: this.props.inHouseChannels,
@@ -692,7 +609,6 @@ export default class Preferences extends Component {
                 this.props.updateUserMonthPlan({
                   annualBudget: this.props.annualBudget,
                   annualBudgetArray: this.props.annualBudgetArray,
-                  goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
                   objectives: this.props.objectives,
                   blockedChannels: this.props.blockedChannels,
                   inHouseChannels: this.props.inHouseChannels,
