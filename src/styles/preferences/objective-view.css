@@ -72,23 +72,3 @@
     display: inline;
     font-style: italic;
 }
-
-.objective-icon {
-    width: 27px;
-    height: 27px;
-    margin-left: 10px;
-    margin-top: 6px;
-    position: relative;
-    left: 462px;
-    top: -35px;
-}
-
-.objective-icon[data-active="success"] {
-    background: url(../../assets/success_bltp.svg) center center no-repeat;
-    background-size: contain;
-}
-
-.objective-icon[data-active="fail"] {
-    background: url(../../assets/passed-objective.svg) center center no-repeat;
-    background-size: contain;
-}
