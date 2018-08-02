@@ -1,9 +1,9 @@
-import React from "react";
-import Component from "components/Component";
+import React from 'react';
+import Component from 'components/Component';
 import icons from 'styles/icons/indicators.css';
 import style from 'styles/dashboard/objective.css';
-import { timeFrameToDate } from 'components/utils/objective';
-import { formatNumber } from 'components/utils/budget';
+import {timeFrameToDate} from 'components/utils/objective';
+import {formatNumber} from 'components/utils/budget';
 
 export default class Objective extends Component {
 
@@ -12,28 +12,31 @@ export default class Objective extends Component {
 
   static defaultProps = {
     sqSize: 200,
-    strokeWidth: 12
+    strokeWidth: 16
   };
 
-  getDaysLeft() {
+  getNumberOfDaysFromTarget(fromDate) {
     const targetDate = timeFrameToDate(this.props.timeFrame);
-    const today = new Date();
-    return Math.max(Math.ceil((targetDate.getTime() - today.getTime())/(24*60*60*1000)), 0) + " days left";
+    return Math.max(Math.ceil((targetDate.getTime() - fromDate.getTime()) / (24 * 60 * 60 * 1000)), 0);
   }
 
-  isObjectiveActive() {
-    // If the objective achieved, show green.
-    // Else, if date passed - red.
-    // Else - none.
+  getDaysLeft() {
     const today = new Date();
-    const date = timeFrameToDate(this.props.timeFrame);
+    const numberOfDays = this.getNumberOfDaysFromTarget(today);
+    if (numberOfDays) {
+      return `${numberOfDays} days left`;
+    }
+    return 'Finished!';
+  }
+
+  getObjectiveIcon() {
     if (this.props.target <= this.props.value) {
-      return 'success';
+      return <div className={this.classes.reachedIcon}/>;
     }
-    if (date < today) {
-      return 'fail'
+    else if (this.props.project >= this.props.target) {
+      return <div className={this.classes.alignedIcon}/>;
     }
-    return null;
+    else return <div className={this.classes.notAlignedIcon}/>;
   }
 
   render() {
@@ -47,24 +50,20 @@ export default class Objective extends Component {
     const dashArray = radius * Math.PI * 2;
     // Scale 100% coverage overlay with the actual percent
     const dashOffset = dashArray - dashArray * Math.min(1, this.props.value / this.props.target) / 2;
-    const isActive = this.isObjectiveActive();
-    return <div className={ this.classes.inner }>
-      <div className={ this.classes.title }>
-        {this.props.title}
-      </div>
+    return <div className={this.classes.inner}>
       <svg
-        width={this.props.sqSize*1.1}
+        width={this.props.sqSize * 1.1}
         height={this.props.sqSize}
         viewBox={viewBox}>
         <clipPath id="cut-off-bottom">
-          <rect x="0" y="0" width={this.props.sqSize} height={this.props.sqSize / 2} />
+          <rect x="0" y="0" width={this.props.sqSize} height={this.props.sqSize / 2}/>
         </clipPath>
         <circle
-          className={ this.classes.circleBackground }
+          className={this.classes.circleBackground}
           cx={this.props.sqSize / 2}
           cy={this.props.sqSize / 2}
           r={radius}
-          strokeWidth={`3px`}
+          strokeWidth={this.props.strokeWidth}
           style={{
             clipPath: 'url(#cut-off-bottom)'
           }}
@@ -76,10 +75,10 @@ export default class Objective extends Component {
           dy="20px"
           textAnchor="middle"
           alignmentBaseline="text-after-edge">
-          { Math.round(this.props.target) || 0 }
+          {formatNumber(Math.round(this.props.target)) || 0}
         </text>
         <circle
-          className={ this.classes.circleProgress }
+          className={this.classes.circleProgress}
           cx={this.props.sqSize / 2}
           cy={this.props.sqSize / 2}
           r={radius}
@@ -90,43 +89,32 @@ export default class Objective extends Component {
             strokeDasharray: dashArray,
             strokeDashoffset: dashOffset,
             stroke: this.props.color
-          }} />
-        <text
-          className={this.classes.current}
-          x="50%"
-          y="50%"
-          dy="-20px"
-          textAnchor="middle">
-          { (this.props.isDollar ? '$' : '') + formatNumber(Math.round(this.props.value) || 0) + (this.props.isPercentage ? '%' : '') }
+          }}/>
+        <text x="50%" y="35%" textAnchor="middle">
+          <tspan className={this.classes.current}>
+            {formatNumber(Math.round(this.props.value) || 0)}
+          </tspan>
+          <tspan className={this.classes.currentMark} dy={-5} dx={2}>
+            {(this.props.isDollar ? '$' : '')}{(this.props.isPercentage ? '%' : '')}
+          </tspan>
+        </text>
+        <text className={this.classes.title} x="50%" y="45%" textAnchor="middle">
+          {this.props.title}
         </text>
       </svg>
-      <div style={{ marginTop: '-98px' }}>
+      <div style={{marginTop: '-90px'}}>
         <div className={this.classes.center}>
-          <div className={this.classes.objectiveIcon} data-active={isActive}/>
+          {this.getObjectiveIcon()}
         </div>
-        <div className={ this.classes.textBottom }>
-          {
-            isActive ?
-              isActive === "success" ?
-                <div className={this.classes.successText}>You have reached your goal!</div>
-                :
-                <div className={this.classes.failText}>Your goal hasn’t been reached</div>
-              :
-              <div style={{ display: 'inline-flex', whiteSpace: 'pre' }}>
-                {this.props.project >= this.props.target ?
-                  <div className={this.classes.successText}>Aligned</div>
-                  :
-                  <div className={this.classes.failText}>Not aligned</div>
-                }
-                {" to your current plan"}
-              </div>
-          }
-        </div>
-        <div className={ this.classes.timeLeft }>
-          { this.getDaysLeft() }
+        <div className={this.classes.progress}>
+          <div className={this.classes.progressFill}
+               style={{backgroundImage: `linear-gradient(to right, #e6e8f0, ${this.props.color})`}}/>
+          <div className={this.classes.timeLeft}>
+            {this.getDaysLeft()}
+          </div>
         </div>
       </div>
-    </div>
+    </div>;
   }
 
 }
