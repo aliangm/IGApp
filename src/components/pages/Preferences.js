@@ -1,14 +1,11 @@
 import React from 'react';
-
 import Component from 'components/Component';
 import Page from 'components/Page';
-
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import Notice from 'components/Notice';
 import MultiRow from 'components/MultiRow';
-
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
 import ProfileInsights from 'components/pages/profile/Insights';
@@ -17,19 +14,18 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import NotSure from 'components/onboarding/NotSure';
 import MultiSelect from 'components/controls/MultiSelect';
 import PlanButton from 'components/pages/indicators/PlanButton';
-
 import style from 'styles/onboarding/onboarding.css';
 import preferencesStyle from 'styles/preferences/preferences.css';
-
-import { isPopupMode } from 'modules/popup-mode';
+import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 import PlanFromExcel from 'components/PlanFromExcel';
-import { formatChannels } from 'components/utils/channels';
+import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
-import { getNickname } from 'components/utils/indicators';
-import { FeatureToggle } from 'react-feature-toggles';
+import {getNickname} from 'components/utils/indicators';
+import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
+import {getDates, getEndOfMonthDate} from 'components/utils/date';
 
 export default class Preferences extends Component {
   style = style;
@@ -53,7 +49,9 @@ export default class Preferences extends Component {
     super(props);
     this.state = {
       isCheckAnnual: props.annualBudget !== null,
-      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]}),
+      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget) => {
+        return budget === props.annualBudgetArray[0];
+      }),
       showAdvancedFields: false
     };
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
@@ -75,7 +73,9 @@ export default class Preferences extends Component {
   }
 
   validate() {
-    let filterNanArray = this.props.annualBudgetArray.filter((value)=>{return !!value});
+    let filterNanArray = this.props.annualBudgetArray.filter((value) => {
+      return !!value;
+    });
     return filterNanArray.length == 12;
   }
 
@@ -168,80 +168,63 @@ export default class Preferences extends Component {
 
   objectiveRemove(index) {
     let update = this.props.objectives || [];
-    update.splice(index,1);
+    update.splice(index, 1);
     this.props.updateState({objectives: update});
   }
 
-  createOrUpdateObjective(objective, index) {
-    const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-    objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-    objective.nickname = getNickname(objective.indicator);
-    objective.alreadyNotified = false;
-    if (objective.isRecurrent) {
+  createOrUpdateObjective = (objectiveData) => {
+    let monthIndex = objectiveData.monthIndex;
+    const objective = objectiveData.indicator;
+    let objectives = [...this.props.objectives];
+
+    if (objectiveData.isRecurrent) {
       const now = new Date();
-      let endDate;
-      if (objective.isMonthly) {
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      if (objectiveData.isMonthly) {
+        monthIndex = 0;
       }
       else {
         const quarter = Math.floor((now.getMonth() / 3));
         const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
-        endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+        const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+        monthIndex = endDate.getMonth() - now.getMonth();
       }
-      objective.timeFrame = (endDate.getMonth()+1) + "-" + endDate.getDate() + "-" + endDate.getFullYear();
-
     }
-    let objectives = this.props.objectives || [];
-    if (index !== undefined) {
-      if (index === objective.order) {
-        objectives[index] = objective;
-      }
-      else {
-        objectives.splice(objective.order, 0, objective);
-      }
+
+    let newObjective = {};
+    if (objectives[monthIndex][objective]) {
+      newObjective = objectives[monthIndex][objective];
     }
     else {
-      if (objective.order === objectives.length) {
-        objectives.push(objective);
-      }
-      else {
-        objectives.splice(objective.order, 0, objective);
-      }
+      objectives[monthIndex][objective] = {
+        target: {
+          value: objectiveData.targetValue,
+          priority: objectiveData.priority
+        },
+        userInput: {
+          startDate: new Date(),
+          isRecurrent: objectiveData.isRecurrent,
+          isPercentage: objectiveData.isPercentage,
+          isTarget: objectiveData.isTarget,
+          amount: objectiveData.amount,
+          nickname: getNickname(objective)
+        }
+      };
     }
     this.props.updateState({objectives: objectives});
-    this.setState({showObjectivesPopup: false, objectiveIndex: undefined});
-  }
-
-  getDates = () => {
-    var monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", "Jul",
-      "Aug", "Sep", "Oct",
-      "Nov", "Dec"
-    ];
-    var dates = [];
-    for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate ? this.props.planDate.split("/") : null;
-      if (planDate) {
-        var date = new Date(planDate[1], planDate[0] - 1);
-        date.setMonth(date.getMonth() + i);
-        dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
-      }
-    }
-    return dates;
-  }
+    this.setState({showObjectivesPopup: false});
+  };
 
   monthBudgets() {
-    const datesArray = this.getDates();
+    const datesArray = getDates(this.props.planDate);
     return datesArray.map((month, index) => {
-      return <div className={ this.classes.cell } key={index}>
+      return <div className={this.classes.cell} key={index}>
         <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
         <Textfield
-          value={"$" + (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-          onChange={ this.handleChangeBudgetArray.bind(this, index)} style={{
+          value={'$' + (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+          onChange={this.handleChangeBudgetArray.bind(this, index)} style={{
           width: '166px'
         }}/>
-      </div>
+      </div>;
     });
   }
 
@@ -251,21 +234,21 @@ export default class Preferences extends Component {
     }
   }
 
-  handleBudgetDivideChange(){
+  handleBudgetDivideChange() {
     this.setState({isDivideEqually: !this.state.isDivideEqually}, this.calculateBudgets);
   }
 
   calculateBudgets() {
     if (this.state.isCheckAnnual) {
       let prevBudget = this.props.annualBudget || this.props.annualBudgetArray.reduce((a, b) => a + b, 0);
-      let planDate = this.props.planDate.split("/");
+      let planDate = this.props.planDate.split('/');
       let firstMonth = parseInt(planDate[0]) - 1;
 
       let budget = [];
       if (this.state.isDivideEqually) {
         let numOfMonth = 12;
         const value = Math.round(prevBudget / numOfMonth);
-        while(numOfMonth--) {
+        while (numOfMonth--) {
           budget.push(value);
         }
       }
@@ -282,7 +265,7 @@ export default class Preferences extends Component {
   }
 
   render() {
-    const { budgetConstraints, annualBudgetArray } = this.props;
+    const {budgetConstraints, annualBudgetArray} = this.props;
 
     const selects = {
       /**     plan: {
@@ -316,7 +299,7 @@ export default class Preferences extends Component {
             {label: 'Sep', value: 8},
             {label: 'Oct', value: 9},
             {label: 'Nov', value: 10},
-            {label: 'Dec', value: 11},
+            {label: 'Dec', value: 11}
           ]
         }
       }
@@ -324,7 +307,7 @@ export default class Preferences extends Component {
 
     const channels = {
       select: {
-        name: "channels",
+        name: 'channels',
         options: formatChannels()
       }
     };
@@ -357,40 +340,47 @@ export default class Preferences extends Component {
     }
 
     const objectivesOrder = this.props.objectives.map((item, index) => {
-      return {value: index, label: '#' + (index + 1)}
+      return {value: index, label: '#' + (index + 1)};
     });
 
-    const objectives = this.props.objectives.map((objective, index) => {
-      if (!objective.isArchived) {
-        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-        const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-        return <ObjectiveView
-          value={this.props.actualIndicators[objective.indicator]}
-          index={index}
-          key={index}
-          target={target}
-          {...objective}
-          editObjective={() => {
-            this.setState({showObjectivesPopup: true, objectiveIndex: index})
-          }}
-          deleteObjective={() => {
-            this.objectiveRemove(index)
-          }}
-        />
-      }
+    const dates = getDates(this.props.planDate);
+    const objectiveViews = [];
+    this.props.objectives.forEach((month, index) => {
+      Object.keys(month).forEach(objective => {
+        objectiveViews.push(
+          <ObjectiveView key={objectiveViews.length}
+                         index={objectiveViews.length}
+                         dueDate={getEndOfMonthDate(dates[index])}
+                         indicator={objective}
+                         value={this.props.actualIndicators[objective]}
+                         target={month[objective].target.value}
+                         {...month[objective].userInput}
+                         editObjective={() => {
+                           this.setState({
+                             showObjectivesPopup: true,
+                             objectiveMonth: index,
+                             objective: objective,
+                             objectiveEdit: true
+                           });
+                         }}
+                         deleteObjective={() => {
+                           this.objectiveRemove(index);
+                         }}/>);
+      });
     });
 
     const budgetConstraintsChannels = Object.keys(budgetConstraints);
 
     return <div>
-      <Page popup={ isPopupMode() } className={!isPopupMode() ? this.classes.static : null}>
+      <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}>
         {isPopupMode() ? <Title title="Preferences"
                                 subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : null}
-        <div className={ this.classes.error }>
-          <label hidden={ !this.props.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
+        <div className={this.classes.error}>
+          <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
+            :)</label>
         </div>
-        <div className={ this.classes.cols }>
-          <div className={ this.classes.colLeft }>
+        <div className={this.classes.cols}>
+          <div className={this.classes.colLeft}>
             {/**
              <div className={ this.classes.row } style={{
               width: '258px'
@@ -398,27 +388,29 @@ export default class Preferences extends Component {
              <Label question>Start Date</Label>
              <Calendar />
              </div> **/}
-            <div className={ this.classes.row }>
-              <Label checkbox={this.state.isCheckAnnual} onChange={ this.toggleBudgetsCheck.bind(this) } question={['']}
+            <div className={this.classes.row}>
+              <Label checkbox={this.state.isCheckAnnual} onChange={this.toggleBudgetsCheck.bind(this)} question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget
                 ($)</Label>
-              <div className={ this.classes.cell }>
+              <div className={this.classes.cell}>
                 <Textfield disabled={!this.state.isCheckAnnual}
-                           value={"$" + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                           onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
+                           value={'$' + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                           onChange={this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }}/>
-                <Label className={ preferencesStyle.locals.divideEqually } checkbox={this.state.isDivideEqually} onChange={ this.handleBudgetDivideChange.bind(this) }>Divide Equally</Label>
+                <Label className={preferencesStyle.locals.divideEqually} checkbox={this.state.isDivideEqually}
+                       onChange={this.handleBudgetDivideChange.bind(this)}>Divide Equally</Label>
                 {/** <NotSure style={{
                   marginLeft: '10px'
                 }} /> **/}
               </div>
             </div>
-            <div className={ this.classes.row }>
-              <Label checkbox={!this.state.isCheckAnnual} onChange={ this.toggleBudgetsCheck.bind(this) } question={['']}
+            <div className={this.classes.row}>
+              <Label checkbox={!this.state.isCheckAnnual} onChange={this.toggleBudgetsCheck.bind(this)}
+                     question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Monthly Budgets
                 ($)</Label>
-              { this.state.isCheckAnnual ? null : this.monthBudgets() }
+              {this.state.isCheckAnnual ? null : this.monthBudgets()}
             </div>
             {/**
              <div className={ this.classes.row } style={{
@@ -429,27 +421,35 @@ export default class Preferences extends Component {
              <Select { ... selects.plan } />
              </div>
              **/}
-            <div className={ this.classes.row } style={{}}>
+            <div className={this.classes.row} style={{}}>
               <Label style={{
                 marginBottom: '12px',
                 fontWeight: '600'
               }} question={['']}
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
-              {objectives}
-              <div className={ preferencesStyle.locals.addObjective } onClick={() => { this.setState({showObjectivesPopup: true, objectiveIndex: undefined}) }}/>
-              <AddObjectivePopup
-                hidden={ !this.state.showObjectivesPopup }
-                index={ this.state.objectiveIndex }
-                objectives={this.props.objectives}
-                close={() => { this.setState({showObjectivesPopup: false}) } }
-                createOrUpdateObjective={this.createOrUpdateObjective.bind(this)}
-                actualIndicators={ this.props.actualIndicators }
-                projectedPlan={ this.props.projectedPlan }
+              {objectiveViews}
+              <div className={preferencesStyle.locals.addObjective} onClick={() => {
+                this.setState({showObjectivesPopup: true, objectiveEdit: false});
+              }}/>
+              <AddObjectivePopup hidden={!this.state.showObjectivesPopup}
+                                 objectiveMonth={this.state.objectiveMonth}
+                                 objective={this.state.objective}
+                                 objectives={this.props.objectives}
+                                 objectiveEdit={this.state.objectiveEdit}
+                                 close={() => {
+                                   this.setState({showObjectivesPopup: false});
+                                 }}
+                                 dates={dates}
+                                 createOrUpdateObjective={this.createOrUpdateObjective}
+                                 actualIndicators={this.props.actualIndicators}
+                                 projectedPlan={this.props.projectedPlan}
               />
             </div>
             <FeatureToggle featureName="plannerAI">
               <div>
-                <div className={ preferencesStyle.locals.advancedButton } onClick={()=>{ this.setState({showAdvancedFields: !this.state.showAdvancedFields}) }}>
+                <div className={preferencesStyle.locals.advancedButton} onClick={() => {
+                  this.setState({showAdvancedFields: !this.state.showAdvancedFields});
+                }}>
                   Advanced
                 </div>
                 <div hidden={!this.state.showAdvancedFields}>
@@ -476,7 +476,8 @@ export default class Preferences extends Component {
                     </div>
                   </div>
                   <div className={this.classes.row}>
-                    <Label question={['']} description={['Are there any channels that you’re going to use in any case? Please provide their min/max budgets.']}>
+                    <Label question={['']}
+                           description={['Are there any channels that you’re going to use in any case? Please provide their min/max budgets.']}>
                       Monthly Budget Constraints
                     </Label>
                     <MultiRow numOfRows={budgetConstraintsChannels.length} rowRemoved={this.budgetConstraintRemove}>
@@ -503,13 +504,16 @@ export default class Preferences extends Component {
                             allowSameValues={true}
                             minValue={0}
                             maxValue={Math.max(...annualBudgetArray)}
-                            value={budgetConstraints[budgetConstraintsChannels[index]] ? budgetConstraints[budgetConstraintsChannels[index]].range : {min: 0, max: -1}}
+                            value={budgetConstraints[budgetConstraintsChannels[index]] ? budgetConstraints[budgetConstraintsChannels[index]].range : {
+                              min: 0,
+                              max: -1
+                            }}
                             onChange={this.handleRangeChange.bind(this, index)}
                           />
                           <div style={{marginLeft: '25px', alignSelf: 'center'}}>
                             {removeButton}
                           </div>
-                        </div>
+                        </div>;
                       }}
                     </MultiRow>
                   </div>
@@ -528,16 +532,16 @@ export default class Preferences extends Component {
                 </div>
               </div>
             </FeatureToggle>
-            <div className={ this.classes.row } style={{ marginTop: '55px' }}>
-              <PlanFromExcel {... this.props}/>
+            <div className={this.classes.row} style={{marginTop: '55px'}}>
+              <PlanFromExcel {...this.props}/>
             </div>
           </div>
 
-          { isPopupMode() ?
+          {isPopupMode() ?
 
-            <div className={ this.classes.colRight }>
-              <div className={ this.classes.row }>
-                <ProfileProgress progress={ 101 } image={
+            <div className={this.classes.colRight}>
+              <div className={this.classes.row}>
+                <ProfileProgress progress={101} image={
                   require('assets/flower/5.png')
                 }
                                  text="Seems you got some new super powers. Now the journey for GROWTH really begins!"/>
@@ -549,14 +553,14 @@ export default class Preferences extends Component {
                **/}
             </div>
 
-            : null }
+            : null}
         </div>
 
-        { isPopupMode() ?
+        {isPopupMode() ?
 
-          <div className={ this.classes.footer }>
-            <div className={ this.classes.almostFooter }>
-              <label hidden={ !this.state.validationError} style={{color: 'red'}}>
+          <div className={this.classes.footer}>
+            <div className={this.classes.almostFooter}>
+              <label hidden={!this.state.validationError} style={{color: 'red'}}>
                 Please fill all the required fields
               </label>
             </div>
@@ -602,7 +606,7 @@ export default class Preferences extends Component {
           </div>
 
           :
-          <div className={ this.classes.footer }>
+          <div className={this.classes.footer}>
             <SaveButton onClick={() => {
               if (this.validate()) {
                 this.setState({saveFail: false, saveSuccess: false});
@@ -622,10 +626,10 @@ export default class Preferences extends Component {
               else {
                 this.setState({saveFail: true});
               }
-            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
+            }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
           </div>
         }
       </Page>
-    </div>
+    </div>;
   }
-}
+};
