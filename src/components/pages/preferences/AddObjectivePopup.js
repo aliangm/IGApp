@@ -26,8 +26,7 @@ export default class AddObjectivePopup extends Component {
   defaultData = {
     indicator: '',
     isRecurrent: false,
-    isMonthly: true,
-    recurrentType: 'Monthly',
+    recurrentType: 'monthly',
     isPercentage: false,
     isTarget: true,
     amount: ''
@@ -49,7 +48,6 @@ export default class AddObjectivePopup extends Component {
         this.setState({
           indicator: nextProps.objective,
           isRecurrent: objective.userInput.isRecurrent,
-          isMonthly: objective.userInput.isMonthly,
           recurrentType: objective.userInput.recurrentType,
           isPercentage: objective.userInput.isPercentage,
           isTarget: objective.userInput.isTarget,
@@ -292,48 +290,58 @@ export default class AddObjectivePopup extends Component {
           </div>
           <div className={this.classes.row} style={{display: 'flex'}}>
             <Toggle
-              leftText="One Time"
-              rightText="Recurrent"
-              leftActive={!this.state.isRecurrent}
-              leftClick={() => {
-                this.setState({isRecurrent: false, isTarget: true});
-              }}
-              rightClick={() => {
-                this.setState({isRecurrent: true, isTarget: false});
-              }}
-              type="grey"
-            />
+              options={[{
+                text: 'One Time',
+                value: false
+              },
+                {
+                  text: 'Recurrent',
+                  value: true
+                }
+              ]}
+              selectedValue={this.state.isRecurrent}
+              onClick={(value) => {
+                this.setState({isRecurrent: value, isTarget: !value});
+              }}/>
           </div>
           {this.state.isRecurrent ? null :
             <div className={this.classes.row} style={{display: 'flex'}}>
               <Toggle
-                leftText="Target"
-                rightText={directionText}
-                leftActive={this.state.isTarget}
-                leftClick={() => {
-                  this.setState({isTarget: true});
-                }}
-                rightClick={() => {
-                  this.setState({isTarget: false});
-                }}
-                type="grey"
-              />
+                options={[{
+                  text: 'Target',
+                  value: true
+                },
+                  {
+                    text: directionText,
+                    value: false
+                  }
+                ]}
+                selectedValue={this.state.isTarget}
+                onClick={(value) => {
+                  this.setState({isTarget: value});
+                }}/>
             </div>
           }
           {this.state.isRecurrent ?
             <div className={this.classes.row} style={{display: 'flex'}}>
               <Toggle
-                leftText="Monthly"
-                rightText="Quarterly"
-                leftActive={this.state.isMonthly}
-                leftClick={() => {
-                  this.setState({isMonthly: true});
-                }}
-                rightClick={() => {
-                  this.setState({isMonthly: false});
-                }}
-                type="grey"
-              />
+                options={[{
+                  text: 'Monthly',
+                  value: 'monthly'
+                },
+                  {
+                    text: 'Quarterly',
+                    value: 'quarterly'
+                  },
+                  {
+                    text: 'Custom',
+                    value: 'custom'
+                  }
+                ]}
+                selectedValue={this.state.recurrentType}
+                onClick={(value) => {
+                  this.setState({recurrentType: value});
+                }}/>
             </div>
             : null}
           <div className={this.classes.row}>
