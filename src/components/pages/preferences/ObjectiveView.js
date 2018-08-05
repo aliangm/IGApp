@@ -9,9 +9,8 @@ export default class ObjectiveView extends Component {
   style = style;
 
   getDaysLeft() {
-    const targetDate = timeFrameToDate(this.props.timeFrame);
     const today = new Date();
-    return Math.max(Math.ceil((targetDate.getTime() - today.getTime()) / (24 * 60 * 60 * 1000)), 0) + ' days left';
+    return Math.max(Math.ceil((this.props.dueDate.getTime() - today.getTime()) / (24 * 60 * 60 * 1000)), 0) + ' days left';
   }
 
   render() {
