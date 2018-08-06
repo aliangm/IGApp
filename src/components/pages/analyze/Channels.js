@@ -8,7 +8,6 @@ import merge from 'lodash/merge';
 import { getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname } from 'components/utils/channels';
 import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { FeatureToggle } from 'react-feature-toggles';
-import { timeFrameToDate } from 'components/utils/objective';
 import { formatDate } from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
