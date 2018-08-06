@@ -26,6 +26,7 @@ import {getNickname, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
+import isNil from 'lodash/isNil';
 
 export default class Preferences extends Component {
   style = style;
@@ -173,7 +174,7 @@ export default class Preferences extends Component {
     this.props.updateState({objectives: objectives});
   };
 
-  createOrUpdateObjective = (objectiveData) => {
+  createOrUpdateObjective = (objectiveData, originalMonthIndex, originalObjective) => {
     let monthIndex = objectiveData.monthIndex;
     const objective = objectiveData.indicator;
     const isDirectionUp = getMetadata('isDirectionUp', objective);
@@ -221,24 +222,41 @@ export default class Preferences extends Component {
       }
     }
 
-    // TODO: handle priority change
-    // TODO: edit objective
-    objectives[monthIndex][objective] = {
-      target: {
-        value: objectiveData.isRecurrent ? objectiveData.recurrentArray.find(item => item !== -1) : objectiveData.targetValue,
-        priority: objectiveData.priority
-      },
-      userInput: {
-        startDate: new Date(),
-        isRecurrent: objectiveData.isRecurrent,
-        isPercentage: objectiveData.isPercentage,
-        isTarget: objectiveData.isTarget,
-        amount: objectiveData.amount,
-        recurrentType: objectiveData.recurrentType,
-        nickname: getNickname(objective),
-        recurrentArray: recurrentArray
-      }
-    };
+    // objective edit of month or indicator
+    if (!isNil(originalMonthIndex) && originalObjective && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
+      objectives[monthIndex][objective] = objectives[originalMonthIndex][originalObjective];
+      delete objectives[originalMonthIndex][originalObjective];
+    }
+
+    if (!objectives[monthIndex]) {
+      objectives[monthIndex] = {};
+    }
+
+    if (!objectives[monthIndex][objective]) {
+      objectives[monthIndex][objective] = {
+        target: {},
+        userInput: {
+          startDate: new Date()
+        }
+      };
+    }
+
+    // not the default priority, need to replace
+    if (objectiveData.priority !== this.props.calculatedData.objectives.objectivesData.length) {
+      const {monthIndex, indicator} = this.props.calculatedData.objectives.objectivesData.find(item => item.priority === objectiveData.priority);
+      objectives[monthIndex][indicator].target.priority = this.props.calculatedData.objectives.objectivesData.length;
+    }
+
+    objectives[monthIndex][objective].target.value = objectiveData.isRecurrent ? objectiveData.recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
+    objectives[monthIndex][objective].target.priority = objectiveData.priority;
+    objectives[monthIndex][objective].userInput.isRecurrent = objectiveData.isRecurrent;
+    objectives[monthIndex][objective].userInput.isPercentage = objectiveData.isPercentage;
+    objectives[monthIndex][objective].userInput.isTarget = objectiveData.isTarget;
+    objectives[monthIndex][objective].userInput.amount = objectiveData.amount;
+    objectives[monthIndex][objective].userInput.recurrentType = objectiveData.recurrentType;
+    objectives[monthIndex][objective].userInput.nickname = getNickname(objective);
+    objectives[monthIndex][objective].userInput.recurrentArray = recurrentArray;
+
     this.props.updateState({objectives: objectives});
     this.setState({showObjectivesPopup: false});
   };
