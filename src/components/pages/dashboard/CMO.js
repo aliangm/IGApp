@@ -94,7 +94,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {collapsedObjectives}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
+    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {funnelObjectives, collapsedObjectives, funnelFirstObjective}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
     const {months, isPast, advancedIndicator, showAdvanced} = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
@@ -211,18 +211,11 @@ export default class CMO extends Component {
       />;
     });
 
-    const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
-    const funnelObjectives = collapsedObjectives
-      .filter(item => item.dueDate >= new Date() && funnelPossibleObjectives.includes(item.indicator))
-      .map(item => item.indicator);
-
-    const firstFunnelObjective = funnelObjectives && funnelObjectives.length > 0 ? funnelObjectives[0] : 'newMQL';
-
     const futureBudget = approvedBudgets.slice(0, months)
       .reduce((sum, month) => Object.keys(month).reduce((monthSum, channel) => month[channel] + monthSum, 0) + sum, 0);
     const futureLTV = approvedBudgetsProjection.slice(0, months).reduce((sum, item) => sum + item.LTV, 0);
     const furureObjective = approvedBudgetsProjection.slice(0, months)
-      .reduce((sum, item) => sum + item[firstFunnelObjective], 0);
+      .reduce((sum, item) => sum + item[funnelFirstObjective], 0);
 
     const relevantPreviousData = previousData && previousData.slice(previousData.length - months);
     const pastBudget = relevantPreviousData &&
@@ -231,7 +224,7 @@ export default class CMO extends Component {
     const pastLTV = relevantPreviousData &&
       relevantPreviousData.reduce((sum, item) => (item.actualIndicators.LTV || 0) + sum, 0);
     const pastObjective = relevantPreviousData &&
-      relevantPreviousData.reduce((sum, item) => (item.actualIndicators[firstFunnelObjective] || 0) + sum, 0);
+      relevantPreviousData.reduce((sum, item) => (item.actualIndicators[funnelFirstObjective] || 0) + sum, 0);
 
     const relativePastData = previousData &&
       previousData.slice(previousData.length - (2 * months), previousData.length - months);
@@ -241,7 +234,7 @@ export default class CMO extends Component {
     const relativePastLTV = relativePastData &&
       relativePastData.reduce((sum, item) => (item.actualIndicators.LTV || 0) + sum, 0);
     const relativePastObjective = relativePastData &&
-      relativePastData.reduce((sum, item) => (item.actualIndicators[firstFunnelObjective] || 0) + sum, 0);
+      relativePastData.reduce((sum, item) => (item.actualIndicators[funnelFirstObjective] || 0) + sum, 0);
 
     const monthsOptions = previousData && previousData.map((item, index) => {
       return {value: index + 1, label: index + 1};
@@ -477,7 +470,7 @@ export default class CMO extends Component {
                     </div>
                   </div>
                   <div className={dashboardStyle.locals.quarterText}>
-                    {getIndicatorNickname(firstFunnelObjective)}
+                    {getIndicatorNickname(funnelFirstObjective)}
                   </div>
                 </div>
               </div>
@@ -706,7 +699,7 @@ export default class CMO extends Component {
                     </div>
                   </div>
                   <div className={dashboardStyle.locals.quarterText}>
-                    {getIndicatorNickname(firstFunnelObjective)}
+                    {getIndicatorNickname(funnelFirstObjective)}
                   </div>
                 </div>
               </div>

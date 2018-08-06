@@ -187,10 +187,9 @@ export default class Header extends Component {
                 });
               }}
               >
-                <InfiniGrowRobot company={this.props.userCompany}
-                                 objectives={this.props.objectives}
-                                 historyData={this.props.beforeInfiniGrowData}
-                                 actualIndicators={this.props.actualIndicators}/>
+              <InfiniGrowRobot company={this.props.userCompany}
+                               historyData={this.props.beforeInfiniGrowData}
+                               actualIndicators={this.props.actualIndicators}/>
                 <div style={{padding: '12px', backgroundColor: '#E6E6E6', borderTop: '1px solid #273142'}}>
                   <div>
                     <div style={{display: 'inline-block'}}>
