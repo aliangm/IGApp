@@ -12,7 +12,6 @@ export default class InfiniGrowRobot extends Component {
     comapny: '',
     historyData: {},
     actualIndicators: {},
-    funnelFirstObjective: 'newSQL'
   };
 
   render() {
