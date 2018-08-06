@@ -302,7 +302,7 @@ export default class Preferences extends Component {
   }
 
   render() {
-    const {budgetConstraints, annualBudgetArray, calculatedData: {objectivesData}} = this.props;
+    const {budgetConstraints, annualBudgetArray, calculatedData: {objectives: {objectivesData}}} = this.props;
 
     const channels = {
       select: {

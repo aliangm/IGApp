@@ -44,8 +44,11 @@ export function calculatedDataExtender(data){
           }
           return res;
         }, monthlyBudget),
-        objectivesData: objectivesData,
-        collapsedObjectives : collapsedObjectives
+        objectives: {
+          objectivesData: objectivesData,
+          collapsedObjectives : collapsedObjectives,
+          firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator: null
+        }
       },
       ...data
     }

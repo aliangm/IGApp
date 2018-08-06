@@ -58,7 +58,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {previousData, CEVs, calculatedData: {objectivesData}} = this.props;
+    const {previousData, CEVs, calculatedData: {objectives:{objectivesData}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
 
     let indicatorsData = {};

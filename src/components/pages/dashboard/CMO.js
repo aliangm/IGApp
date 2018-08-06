@@ -59,12 +59,7 @@ export default class CMO extends Component {
       this.setState({months: props.previousData.length});
     }
 
-    //set objective
-    const firstObjective = props.calculatedData.collapsedObjectives.length != 0 &&
-      props.calculatedData.collapsedObjectives[0];
-    if (firstObjective) {
-      this.setState({advancedIndicator: firstObjective.indicator});
-    }
+    this.setState({advancedIndicator: this.props.calculatedData.objectives.firstObjective});
   }
 
   componentDidMount() {
@@ -99,7 +94,7 @@ export default class CMO extends Component {
   }
 
   render() {
-    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {collapsedObjectives, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
+    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {collapsedObjectives}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
     const {months, isPast, advancedIndicator, showAdvanced} = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];

@@ -38,11 +38,7 @@ export default class Channels extends Component {
 
   initialize(props) {
     //set objective
-    const firstObjective = props.objectives
-      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date());
-    if (firstObjective){
-      this.setState({firstObjective: firstObjective.indicator});
-    }
+    this.setState({firstObjective: this.props.calculatedData.objectives.firstObjective});
   }
 
   componentDidMount() {
