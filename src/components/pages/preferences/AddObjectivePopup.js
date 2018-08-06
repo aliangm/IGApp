@@ -17,6 +17,7 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {isPopupMode} from 'modules/popup-mode';
 import {formatNumber} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
+import {getDates} from 'components/utils/date';
 
 export default class AddObjectivePopup extends Component {
 
@@ -29,7 +30,8 @@ export default class AddObjectivePopup extends Component {
     recurrentType: 'monthly',
     isPercentage: false,
     isTarget: true,
-    amount: ''
+    amount: '',
+    recurrentArray: new Array(12).fill(-1)
   };
 
   constructor(props) {
@@ -52,7 +54,8 @@ export default class AddObjectivePopup extends Component {
           isPercentage: objective.userInput.isPercentage,
           isTarget: objective.userInput.isTarget,
           priority: objective.target.priority,
-          amount: objective.userInput.amount
+          amount: objective.userInput.amount,
+          recurrentArray: objective.userInput.recurrentArray
         }, this.calculateTargetValue);
       }
       else {
@@ -105,6 +108,26 @@ export default class AddObjectivePopup extends Component {
     }
   }
 
+  getMonthsObjectives = () => {
+    return this.props.dates.map((month, index) =>
+      <div className={this.classes.cell} key={index}>
+        <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
+        <Textfield
+          value={this.state.recurrentArray[index] > 0 ? formatNumber(this.state.recurrentArray[index]) : ''}
+          onChange={(e) => {
+            this.handleCustomChange(e, index);
+          }}
+          style={{width: '166px'}}/>
+      </div>
+    );
+  };
+
+  handleCustomChange = (e, index) => {
+    const recurrentArray = [...this.state.recurrentArray];
+    recurrentArray[index] = parseInt(e.target.value) || -1;
+    this.setState({recurrentArray: recurrentArray}, this.calculateTargetValue);
+  };
+
   render() {
     const indicators = getIndicatorsWithProps();
     const indicatorOptions = Object.keys(indicators)
@@ -120,6 +143,11 @@ export default class AddObjectivePopup extends Component {
     const datesOptions = this.props.dates.map((item, index) => {
       return {label: item, value: index};
     });
+
+    const amountTextField = <Textfield type="number" value={this.state.amount} onChange={(e) => {
+      this.setState({amount: parseInt(e.target.value)}, this.calculateTargetValue);
+    }} style={{width: '102px'}}/>;
+
     return <div hidden={this.props.hidden}>
       {this.state.notSure ?
         <Page popup={true} width={'600px'} contentClassName={popupStyle.locals.content}
@@ -346,7 +374,7 @@ export default class AddObjectivePopup extends Component {
             : null}
           <div className={this.classes.row}>
             <Label>
-              Numeric objective
+              Numeric objective{this.state.recurrentType === 'custom' ? 's' : ''}
               <div hidden={(this.state.isRecurrent || isPopupMode())}>
                 <NotSure style={{
                   marginLeft: '88px'
@@ -360,30 +388,36 @@ export default class AddObjectivePopup extends Component {
                 }}/>
               </div>
             </Label>
-            <div style={{display: 'inline-flex'}}>
-              {this.state.isTarget ? null :
-                <div className={this.classes.text} style={{marginRight: '10px'}}>
-                  {`${directionText} By`}
+            {
+              this.state.isTarget ?
+                <div>
+                  {amountTextField}
                 </div>
-              }
-              <Textfield type="number" value={this.state.amount} onChange={(e) => {
-                this.setState({amount: parseInt(e.target.value)}, this.calculateTargetValue);
-              }} style={{width: '102px'}}/>
-              {this.state.isTarget ? null
                 :
-                <Select
-                  selected={this.state.isPercentage}
-                  select={{
-                    options: [{label: '%', value: true}, {label: '(num)', value: false}]
-                  }}
-                  onChange={(e) => {
-                    this.setState({isPercentage: e.value}, this.calculateTargetValue);
-                  }}
-                  placeholder='%/num'
-                  style={{marginLeft: '20px', width: '88px'}}
-                />
-              }
-            </div>
+                this.state.recurrentType !== 'custom'
+                  ?
+                  <div style={{display: 'inline-flex'}}>
+                    <div className={this.classes.text} style={{marginRight: '10px'}}>
+                      {`${directionText} By`}
+                    </div>
+                    {amountTextField}
+                    <Select
+                      selected={this.state.isPercentage}
+                      select={{
+                        options: [{label: '%', value: true}, {label: '(num)', value: false}]
+                      }}
+                      onChange={(e) => {
+                        this.setState({isPercentage: e.value}, this.calculateTargetValue);
+                      }}
+                      placeholder='%/num'
+                      style={{marginLeft: '20px', width: '88px'}}
+                    />
+                  </div>
+                  :
+                  <div>
+                    {this.getMonthsObjectives()}
+                  </div>
+            }
             {(this.state.targetValue && !this.state.isTarget) ?
               <div className={this.classes.text} style={{marginTop: '7px'}}>
                 Expected target: {formatNumber(this.state.targetValue)}
@@ -429,4 +463,4 @@ export default class AddObjectivePopup extends Component {
       }
     </div>;
   }
-}
+};

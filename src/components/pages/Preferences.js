@@ -182,7 +182,7 @@ export default class Preferences extends Component {
 
     if (objectiveData.isRecurrent) {
       const now = new Date();
-      if (objectiveData.isMonthly) {
+      if (objectiveData.recurrentType === 'monthly') {
         monthIndex = 0;
         for (let i = 0; i < 12; i++) {
           let targetValue = -1;
@@ -196,7 +196,7 @@ export default class Preferences extends Component {
           recurrentArray.push(Math.round(targetValue));
         }
       }
-      else {
+      else if (objectiveData.recurrentType === 'quarterly') {
         const quarter = Math.floor((now.getMonth() / 3));
         const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
         const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
@@ -215,32 +215,30 @@ export default class Preferences extends Component {
           recurrentArray[index] = targetValue;
         }
       }
+      else {
+        monthIndex = objectiveData.recurrentArray.findIndex(item => item !== -1);
+        recurrentArray = objectiveData.recurrentArray;
+      }
     }
 
     // TODO: handle priority change
-    //TODO: edit objective
-    let newObjective = {};
-    if (objectives[monthIndex][objective]) {
-      newObjective = objectives[monthIndex][objective];
-    }
-    else {
-      objectives[monthIndex][objective] = {
-        target: {
-          value: objectiveData.targetValue,
-          priority: objectiveData.priority
-        },
-        userInput: {
-          startDate: new Date(),
-          isRecurrent: objectiveData.isRecurrent,
-          isPercentage: objectiveData.isPercentage,
-          isTarget: objectiveData.isTarget,
-          amount: objectiveData.amount,
-          isMonthly: objectiveData.isMonthly,
-          nickname: getNickname(objective),
-          recurrentArray: recurrentArray
-        }
-      };
-    }
+    // TODO: edit objective
+    objectives[monthIndex][objective] = {
+      target: {
+        value: objectiveData.isRecurrent ? objectiveData.recurrentArray.find(item => item !== -1) : objectiveData.targetValue,
+        priority: objectiveData.priority
+      },
+      userInput: {
+        startDate: new Date(),
+        isRecurrent: objectiveData.isRecurrent,
+        isPercentage: objectiveData.isPercentage,
+        isTarget: objectiveData.isTarget,
+        amount: objectiveData.amount,
+        recurrentType: objectiveData.recurrentType,
+        nickname: getNickname(objective),
+        recurrentArray: recurrentArray
+      }
+    };
     this.props.updateState({objectives: objectives});
     this.setState({showObjectivesPopup: false});
   };
@@ -335,7 +333,7 @@ export default class Preferences extends Component {
     const dates = getDates(this.props.planDate);
     const objectiveData = [];
     this.props.objectives.forEach((month, index) => {
-      Object.keys(month).forEach(objective => {
+      month && Object.keys(month).forEach(objective => {
         objectiveData.push({
           monthIndex: index,
           dueDate: getEndOfMonthDate(dates[index]),
