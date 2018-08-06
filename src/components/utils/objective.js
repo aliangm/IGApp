@@ -26,31 +26,25 @@ export function flattenObjectives(objectives, actualIndicators, dates, shouldCol
     }
   };
 
-  if(shouldCollapseObjectives) {
-    const objectivesData = objectives.map((month, index) => {
-      const monthData = {};
-      Object.keys(month).forEach(objectiveKey => {
-        if(!monthData[objectiveKey]) {
-          monthData[objectiveKey] = getObjectiveData(objectiveKey, month[objectiveKey],index);
-        }
-      });
-
-      return monthData;
+  let objectivesData = objectives.map((month, index) => {
+    const monthData = {};
+    Object.keys(month).forEach(objectiveKey => {
+      monthData[objectiveKey] = getObjectiveData(objectiveKey, month[objectiveKey],index);
     });
 
-    const collapsedData = extend(objectivesData[(objectivesData.length-1)], ...[...objectivesData].reverse());
-    return Object.keys(collapsedData).map(objectKey => collapsedData[objectKey]);
-  }
+    return monthData;
+  })
 
+
+  if (shouldCollapseObjectives){
+    objectivesData = extend(objectivesData[(objectivesData.length-1)], ...[...objectivesData].reverse());
+    objectivesData = Object.keys(objectivesData).map(objectiveKey => objectivesData[objectiveKey]);
+  }
   else {
-    const objectiveData = [];
-    objectives.forEach((month, index) => {
-      Object.keys(month).forEach(objective => {
-        objectiveData.push(getObjectiveData(objective, month[objective],index));
-      });
-    });
-
-    return objectiveData;
+    objectivesData = [].concat(...objectivesData.map(monthData =>
+      Object.keys(monthData).map(objectiveKey => monthData[objectiveKey])));
   }
+
+  return objectivesData;
 }
 
