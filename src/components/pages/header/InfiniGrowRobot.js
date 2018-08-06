@@ -9,25 +9,19 @@ export default class InfiniGrowRobot extends Component {
   style = style;
 
   static defaultProps = {
-    objectives: [],
     comapny: '',
     historyData: {},
-    actualIndicators: {}
+    actualIndicators: {},
   };
 
   render() {
-    const {objectives, company, historyData, actualIndicators} = this.props;
+    const {company, historyData, actualIndicators, funnelFirstObjective} = this.props;
 
-    const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
-    let firstObjective = objectives
-      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date() && funnelPossibleObjectives.includes(item.indicator));
-
-    firstObjective = firstObjective ? firstObjective.indicator : 'newSQL';
-    const historyValue = historyData && historyData.indicators && historyData.indicators[firstObjective] && historyData.indicators[firstObjective][0];
-    const currentValue = actualIndicators[firstObjective];
+    const historyValue = historyData && historyData.indicators && historyData.indicators[funnelFirstObjective] && historyData.indicators[funnelFirstObjective][0];
+    const currentValue = actualIndicators[funnelFirstObjective];
     return <div className={this.classes.inner}>
       <div className={this.classes.textBubble}>
-        Since joining InfiniGrow, {company}'s {getIndicatorNickname(firstObjective)} has grown by {Math.round((currentValue - historyValue) / historyValue * 100)}%!
+        Since joining InfiniGrow, {company}'s {getIndicatorNickname(funnelFirstObjective)} has grown by {Math.round((currentValue - historyValue) / historyValue * 100)}%!
       </div>
       <div className={this.classes.robot}/>
     </div>

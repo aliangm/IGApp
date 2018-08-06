@@ -20,6 +20,8 @@ export function calculatedDataExtender(data){
   const dates = getDates(data.planDate);
   const objectivesData = flattenObjectives(data.objectives, data.actualIndicators, dates, false);
   const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
+  const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
+  const funnelObjectives = collapsedObjectives.filter(objective => funnelPossibleObjectives.includes(objective.indicator));
 
   return {
     calculatedData: {
@@ -47,7 +49,9 @@ export function calculatedDataExtender(data){
         objectives: {
           objectivesData: objectivesData,
           collapsedObjectives : collapsedObjectives,
-          firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator: null
+          firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator: null,
+          funnelObjectives: funnelObjectives,
+          funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives.first().indicator: 'newSQL'
         }
       },
       ...data
