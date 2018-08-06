@@ -31,7 +31,8 @@ export default class AddObjectivePopup extends Component {
     isPercentage: false,
     isTarget: true,
     amount: '',
-    recurrentArray: new Array(12).fill(-1)
+    recurrentArray: new Array(12).fill(-1),
+    monthIndex: ''
   };
 
   constructor(props) {
@@ -47,16 +48,19 @@ export default class AddObjectivePopup extends Component {
     if (nextProps.hidden !== this.props.hidden) {
       if (!isNil(nextProps.objectiveMonth) && nextProps.objective) {
         const objective = this.props.objectives[nextProps.objectiveMonth][nextProps.objective];
-        this.setState({
-          indicator: nextProps.objective,
-          isRecurrent: objective.userInput.isRecurrent,
-          recurrentType: objective.userInput.recurrentType,
-          isPercentage: objective.userInput.isPercentage,
-          isTarget: objective.userInput.isTarget,
-          priority: objective.target.priority,
-          amount: objective.userInput.amount,
-          recurrentArray: objective.userInput.recurrentArray
-        }, this.calculateTargetValue);
+        if (objective) {
+          this.setState({
+            indicator: nextProps.objective,
+            isRecurrent: objective.userInput.isRecurrent,
+            recurrentType: objective.userInput.recurrentType,
+            isPercentage: objective.userInput.isPercentage,
+            isTarget: objective.userInput.isTarget,
+            priority: objective.target.priority,
+            amount: objective.userInput.amount,
+            recurrentArray: objective.userInput.recurrentArray,
+            monthIndex: nextProps.objectiveMonth
+          }, this.calculateTargetValue);
+        }
       }
       else {
         this.setState({
@@ -264,7 +268,7 @@ export default class AddObjectivePopup extends Component {
                         width: '100px'
                       }} onClick={() => {
                         this.setState({notSure: 0, aggressiveLevel: ''}, () => {
-                          this.props.createOrUpdateObjective(this.state);
+                          this.props.createOrUpdateObjective(this.state, this.props.objectiveMonth, this.props.objective);
                         });
                       }}>
                         Use
@@ -294,7 +298,7 @@ export default class AddObjectivePopup extends Component {
                   options: indicatorOptions
                 }}
                 onChange={(e) => {
-                  this.setState({indicator: e.value});
+                  this.setState({indicator: e.value}, this.calculateTargetValue);
                 }}
                 style={{width: '200px'}}
                 ref="indicator"
@@ -334,7 +338,7 @@ export default class AddObjectivePopup extends Component {
               ]}
               selectedValue={this.state.isRecurrent}
               onClick={(value) => {
-                this.setState({isRecurrent: value, isTarget: !value});
+                this.setState({isRecurrent: value, isTarget: !value}, this.calculateTargetValue);
               }}/>
           </div>
           {this.state.isRecurrent ? null :
@@ -351,7 +355,7 @@ export default class AddObjectivePopup extends Component {
                 ]}
                 selectedValue={this.state.isTarget}
                 onClick={(value) => {
-                  this.setState({isTarget: value});
+                  this.setState({isTarget: value}, this.calculateTargetValue);
                 }}/>
             </div>
           }
@@ -458,7 +462,7 @@ export default class AddObjectivePopup extends Component {
                 type="primary2"
                 style={{width: '110px', marginLeft: '20px'}}
                 onClick={() => {
-                  this.props.createOrUpdateObjective(this.state);
+                  this.props.createOrUpdateObjective(this.state, this.props.objectiveMonth, this.props.objective);
                 }}>
                 {this.props.objectiveEdit ? 'Edit Objective' : 'Add Objective'}
               </Button>
