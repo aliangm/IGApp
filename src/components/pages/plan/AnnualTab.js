@@ -48,7 +48,7 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, objectives, forecastingGraphRef, historyData: {indicators}} = this.props;
+    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}} ,historyData: {indicators}} = this.props;
 
     const forecastingData = [];
 
@@ -80,20 +80,10 @@ export default class AnnualTab extends Component {
     forecastingData.unshift({...zeroedIndicators, name: ''});
 
     const parsedObjectives = {};
-    objectives
-      .filter(function (objective) {
-        const today = new Date();
-        const date = objective && objective.timeFrame ? timeFrameToDate(objective.timeFrame) : today;
-        return date >= today;
-      })
+    objectivesData
       .forEach(objective => {
-        const delta = objective.isPercentage
-          ? objective.amount * (objective.currentValue || 0) / 100
-          : objective.amount;
-        const target = objective.direction === 'equals' ? objective.amount : (objective.direction === 'increase'
-          ? delta + (objective.currentValue || 0)
-          : (objective.currentValue || 0) - delta);
-        const date = timeFrameToDate(objective.timeFrame);
+        const target = objective.target;
+        const date = objective.dueDate;
         const monthStr = monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2);
         parsedObjectives[objective.indicator] = {x: getEndOfMonth(monthStr), y: target};
       });

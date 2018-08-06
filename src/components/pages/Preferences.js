@@ -294,7 +294,7 @@ export default class Preferences extends Component {
   }
 
   render() {
-    const {budgetConstraints, annualBudgetArray} = this.props;
+    const {budgetConstraints, annualBudgetArray, calculatedData: {objectives: {objectivesData}}} = this.props;
 
     const channels = {
       select: {
@@ -307,7 +307,10 @@ export default class Preferences extends Component {
       if (value.options) {
         value.options.map(preventDuplicates);
       }
-      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || Object.keys(budgetConstraints).includes(value.value);
+      value.disabled =
+        this.props.blockedChannels.includes(value.value) ||
+        this.props.inHouseChannels.includes(value.value) ||
+        Object.keys(budgetConstraints).includes(value.value);
       return value;
     };
 
@@ -331,22 +334,8 @@ export default class Preferences extends Component {
     }
 
     const dates = getDates(this.props.planDate);
-    const objectiveData = [];
-    this.props.objectives.forEach((month, index) => {
-      month && Object.keys(month).forEach(objective => {
-        objectiveData.push({
-          monthIndex: index,
-          dueDate: getEndOfMonthDate(dates[index]),
-          indicator: objective,
-          value: this.props.actualIndicators[objective],
-          target: month[objective].target.value,
-          priority: month[objective].target.priority,
-          ...month[objective].userInput
-        });
-      });
-    });
 
-    const objectiveViews = objectiveData
+    const objectiveViews = objectivesData
       .sort((item1, item2) => item1.priority - item2.priority)
       .map((item, index) =>
         <ObjectiveView key={index}
@@ -430,7 +419,7 @@ export default class Preferences extends Component {
                                  objectiveMonth={this.state.objectiveMonth}
                                  objective={this.state.objective}
                                  objectives={this.props.objectives}
-                                 numOfObjectives={objectiveData.length}
+                                 numOfObjectives={objectivesData.length}
                                  objectiveEdit={this.state.objectiveEdit}
                                  close={() => {
                                    this.setState({showObjectivesPopup: false});
