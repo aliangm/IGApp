@@ -144,6 +144,11 @@ export default class AddObjectivePopup extends Component {
       return {label: item, value: index};
     });
 
+    const typeOptions = [{label: '(num)', value: false}];
+    if (this.props.actualIndicators[this.state.indicator]) {
+      typeOptions.push({label: '%', value: true});
+    }
+
     const amountTextField = <Textfield type="number" value={this.state.amount} onChange={(e) => {
       this.setState({amount: parseInt(e.target.value)}, this.calculateTargetValue);
     }} style={{width: '102px'}}/>;
@@ -404,7 +409,7 @@ export default class AddObjectivePopup extends Component {
                     <Select
                       selected={this.state.isPercentage}
                       select={{
-                        options: [{label: '%', value: true}, {label: '(num)', value: false}]
+                        options: typeOptions
                       }}
                       onChange={(e) => {
                         this.setState({isPercentage: e.value}, this.calculateTargetValue);
