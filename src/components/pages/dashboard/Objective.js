@@ -1,13 +1,11 @@
 import React from 'react';
 import Component from 'components/Component';
-import icons from 'styles/icons/indicators.css';
 import style from 'styles/dashboard/objective.css';
 import {formatNumber} from 'components/utils/budget';
 
 export default class Objective extends Component {
 
   style = style;
-  styles = [icons];
 
   static defaultProps = {
     sqSize: 200,
@@ -30,12 +28,12 @@ export default class Objective extends Component {
 
   getObjectiveIcon() {
     if (this.props.target <= this.props.value) {
-      return <div className={this.classes.reachedIcon}/>;
+      return <div className={this.classes.reachedIcon} data-tip='Goal had been reached'/>;
     }
     else if (this.props.project >= this.props.target) {
-      return <div className={this.classes.alignedIcon}/>;
+      return <div className={this.classes.alignedIcon} data-tip='You’re on-track to reach your goal'/>;
     }
-    else return <div className={this.classes.notAlignedIcon}/>;
+    else return <div className={this.classes.notAlignedIcon} data-tip='You’re off-track to reach your goal'/>;
   }
 
   render() {
@@ -51,6 +49,7 @@ export default class Objective extends Component {
     const dashOffset = dashArray - dashArray * Math.min(1, this.props.value / this.props.target) / 2;
     return <div className={this.classes.inner}>
       <svg
+        style={{marginTop: '25px'}}
         width={this.props.sqSize * 1.1}
         height={this.props.sqSize}
         viewBox={viewBox}>
@@ -101,10 +100,8 @@ export default class Objective extends Component {
           {this.props.title}
         </text>
       </svg>
-      <div style={{marginTop: '-90px'}}>
-        <div className={this.classes.center}>
-          {this.getObjectiveIcon()}
-        </div>
+      <div className={this.classes.bottom}>
+        {this.getObjectiveIcon()}
         <div className={this.classes.progress}>
           <div className={this.classes.progressFill}
                style={{backgroundImage: `linear-gradient(to right, #e6e8f0, ${this.props.color})`}}/>
