@@ -1,16 +1,15 @@
-import React from "react";
-import Component from "components/Component";
-import style from "styles/onboarding/onboarding.css";
-import { XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar } from "recharts";
-import dashboardStyle from "styles/dashboard/dashboard.css";
+import React from 'react';
+import Component from 'components/Component';
+import style from 'styles/onboarding/onboarding.css';
+import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar} from 'recharts';
+import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
-import { getIndicatorsWithNicknames } from 'components/utils/indicators';
-import { formatNumber, formatBudgetShortened } from 'components/utils/budget';
+import {getIndicatorsWithNicknames} from 'components/utils/indicators';
+import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import merge from 'lodash/merge';
-import { getChannelsWithProps, getChannelsWithNicknames, getMetadata } from 'components/utils/channels';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
-import { timeFrameToDate } from 'components/utils/objective';
-import { formatDate } from 'components/utils/date';
+import {getChannelsWithProps, getChannelsWithNicknames, getMetadata} from 'components/utils/channels';
+import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import {formatDate} from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
 
 export default class Overview extends Component {
@@ -34,12 +33,12 @@ export default class Overview extends Component {
   getDateString(stringDate) {
     if (stringDate) {
       const monthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct",
-        "Nov", "Dec"
+        'Jan', 'Feb', 'Mar',
+        'Apr', 'May', 'Jun', 'Jul',
+        'Aug', 'Sep', 'Oct',
+        'Nov', 'Dec'
       ];
-      const planDate = stringDate.split("/");
+      const planDate = stringDate.split('/');
       const date = new Date(planDate[1], planDate[0] - 1);
 
       return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
@@ -48,28 +47,24 @@ export default class Overview extends Component {
     return null;
   }
 
-  getObjectiveFormattedDate(dateStr) {
-    if (dateStr) {
-      const date = timeFrameToDate(dateStr);
-      const monthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct",
-        "Nov", "Dec"
-      ];
-      return monthNames[date.getMonth()] + '/' + date.getDate() + '/' + date.getFullYear().toString().substr(2, 2);
-    }
-    return null;
+  getObjectiveFormattedDate(dueDate) {
+    const monthNames = [
+      'Jan', 'Feb', 'Mar',
+      'Apr', 'May', 'Jun', 'Jul',
+      'Aug', 'Sep', 'Oct',
+      'Nov', 'Dec'
+    ];
+    return monthNames[dueDate.getMonth()] + '/' + dueDate.getDate() + '/' + dueDate.getFullYear().toString().substr(2, 2);
   }
 
   render() {
-    const { previousData, CEVs } = this.props;
+    const {previousData, CEVs, calculatedData: {objectivesData}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
 
     let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split("/");
-      const planDate2 = b.planDate.split("/");
+      const planDate1 = a.planDate.split('/');
+      const planDate2 = b.planDate.split('/');
       const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
       const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
       return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
@@ -82,14 +77,22 @@ export default class Overview extends Component {
         }
         const value = item.actualIndicators[indicator];
         indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      })
+      });
     });
     const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
+      return {value: index, label: formatDate(item.planDate)};
     });
     const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-    const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? merge(item.approvedBudgets[0], item.actualChannelBudgets && item.actualChannelBudgets.knownChannels ? item.actualChannelBudgets.knownChannels : {}) : {});
-    const totalCost = budgets.reduce((sum, item) => sum + Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) + sum, 0);
+    const budgets = relevantData.map(
+      item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0]
+        ? merge(item.approvedBudgets[0],
+          item.actualChannelBudgets && item.actualChannelBudgets.knownChannels
+            ? item.actualChannelBudgets.knownChannels
+            : {})
+        : {});
+    const totalCost = budgets.reduce((sum, item) => sum +
+      Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) +
+      sum, 0);
     let sumedBudgets = {};
     budgets.forEach(month => {
       Object.keys(month).forEach(channel => {
@@ -97,23 +100,38 @@ export default class Overview extends Component {
           sumedBudgets[channel] = 0;
         }
         sumedBudgets[channel] += month[channel];
-      })
+      });
     });
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
-      const current = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1] && indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length - 1].value;
-      const previous = indicatorsData[this.state.historicalPerformanceIndicator] && indicatorsData[this.state.historicalPerformanceIndicator][(this.props.months !== undefined ? this.props.months : 0)] && indicatorsData[this.state.historicalPerformanceIndicator][(this.props.months !== undefined ? this.props.months : 0)].value;
+      const current = indicatorsData[this.state.historicalPerformanceIndicator] &&
+        indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length -
+        1] &&
+        indicatorsData[this.state.historicalPerformanceIndicator][indicatorsData[this.state.historicalPerformanceIndicator].length -
+        1].value;
+      const previous = indicatorsData[this.state.historicalPerformanceIndicator] &&
+        indicatorsData[this.state.historicalPerformanceIndicator][(this.props.months !== undefined
+          ? this.props.months
+          : 0)] &&
+        indicatorsData[this.state.historicalPerformanceIndicator][(this.props.months !== undefined
+          ? this.props.months
+          : 0)].value;
       if (current) {
         if (previous) {
-          grow = Math.round((current - previous) / previous * 100)
+          grow = Math.round((current - previous) / previous * 100);
         }
-        else grow = Infinity;
+        else {
+          grow = Infinity;
+        }
       }
     }
-    const totalRevenue = (CEVs && CEVs[this.state.attributionTableRevenueMetric] ? Object.keys(CEVs[this.state.attributionTableRevenueMetric]).reduce((channelsSum, item) => channelsSum + CEVs[this.state.attributionTableRevenueMetric][item], 0) : 0);
+    const totalRevenue = (CEVs && CEVs[this.state.attributionTableRevenueMetric]
+      ? Object.keys(CEVs[this.state.attributionTableRevenueMetric])
+        .reduce((channelsSum, item) => channelsSum + CEVs[this.state.attributionTableRevenueMetric][item], 0)
+      : 0);
 
     const objectivesHeadRow = this.getTableRow(null, [
-      <div style={{ fontWeight: 'bold', fontSize: '22px' }}>
+      <div style={{fontWeight: 'bold', fontSize: '22px'}}>
         Objective
       </div>,
       'Date',
@@ -124,42 +142,56 @@ export default class Overview extends Component {
       className: dashboardStyle.locals.objectivesHeadRow
     });
 
-    const objectivesRows = this.props.objectives.map((objective, index) => {
-      const grow = Math.round(this.props.actualIndicators[objective.indicator] - objective.target);
-      const objectiveDate = timeFrameToDate(objective.timeFrame);
-      if (objectiveDate <= new Date()) {
-        return this.getTableRow(null, [
-          getIndicatorNickname(objective.indicator),
-          this.getObjectiveFormattedDate(objective.timeFrame),
-          objective.target,
-          this.props.actualIndicators[objective.indicator],
-          <div>
-            {grow ?
-              <div style={{display: 'flex'}}>
-                <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
-                <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
-                     style={{marginRight: '0'}}>
-                  {Math.abs(grow)}
-                </div>
+    const objectivesRows = objectivesData.map((objective, index) => {
+      const grow = Math.round(objective.value - objective.target);
+      return this.getTableRow(null, [
+        getIndicatorNickname(objective.indicator),
+        this.getObjectiveFormattedDate(objective.dueDate),
+        objective.target,
+        objective.value,
+        <div>
+          {grow ?
+            <div style={{display: 'flex'}}>
+              <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
+              <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
+                   style={{marginRight: '0'}}>
+                {Math.abs(grow)}
               </div>
-              :
-              <div className={dashboardStyle.locals.checkMark}/>
-            }
-          </div>,
-        ], {
-          key: index,
-          className: dashboardStyle.locals.objectivesTableRow
-        })
-      }
+            </div>
+            :
+            <div className={dashboardStyle.locals.checkMark}/>
+          }
+        </div>
+      ], {
+        key: index,
+        className: dashboardStyle.locals.objectivesTableRow
+      });
     });
 
     const channelCategoriesPerMonth = relevantData.map((month) => {
       const mergedObject = {};
       const channelsWithProps = getChannelsWithProps();
       Object.keys(channelsWithProps).forEach(channel => {
-        const totalValue = month.CEVs.MCL[channel] * month.actualIndicators.leadToAccountConversionRate / 100 * month.actualIndicators.LTV
-          + month.CEVs.MQL[channel] * month.actualIndicators.MQLToSQLConversionRate / 100 * month.actualIndicators.SQLToOppConversionRate / 100 * month.actualIndicators.OppToAccountConversionRate / 100 * month.actualIndicators.LTV
-          + month.CEVs.SQL[channel] * month.actualIndicators.SQLToOppConversionRate / 100 * month.actualIndicators.OppToAccountConversionRate / 100 * month.actualIndicators.LTV;
+        const totalValue = month.CEVs.MCL[channel] *
+          month.actualIndicators.leadToAccountConversionRate /
+          100 *
+          month.actualIndicators.LTV
+          +
+          month.CEVs.MQL[channel] *
+          month.actualIndicators.MQLToSQLConversionRate /
+          100 *
+          month.actualIndicators.SQLToOppConversionRate /
+          100 *
+          month.actualIndicators.OppToAccountConversionRate /
+          100 *
+          month.actualIndicators.LTV
+          +
+          month.CEVs.SQL[channel] *
+          month.actualIndicators.SQLToOppConversionRate /
+          100 *
+          month.actualIndicators.OppToAccountConversionRate /
+          100 *
+          month.actualIndicators.LTV;
         const channelCategory = getMetadata('category', channel);
         if (channelCategory && totalValue) {
           if (!mergedObject[channelCategory]) {
@@ -184,7 +216,7 @@ export default class Overview extends Component {
     let channelCategoriesSum = 0;
     const channelCategories = Object.keys(channelCategoriesForPeriod).map(category => {
       channelCategoriesSum += channelCategoriesForPeriod[category];
-      return {name: category, value: channelCategoriesForPeriod[category]}
+      return {name: category, value: channelCategoriesForPeriod[category]};
     });
 
     const COLORS = [
@@ -212,14 +244,14 @@ export default class Overview extends Component {
     });
 
     const CustomizedLabel = React.createClass({
-      render () {
+      render() {
         const {x, y, value} = this.props;
         const val = value[1] - value[0];
         return (val && val / channelCategoriesSum > 0.05) ?
           <svg>
             <rect
-              x={x-25}
-              y={y+20}
+              x={x - 25}
+              y={y + 20}
               fill="#979797"
               width={50}
               height={20}
@@ -234,17 +266,22 @@ export default class Overview extends Component {
               ${formatBudgetShortened(val)}
             </text>
           </svg>
-          : null
+          : null;
       }
     });
 
     const bars = channelCategoriesForPeriod && Object.keys(channelCategoriesForPeriod).map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]} label={<CustomizedLabel key={channel}/>}
-           isAnimationActive={false} onMouseEnter={ () => { this.setState({activeIndex: index}) } } onMouseLeave={ () => { this.setState({activeIndex: void 0}) } }/>
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}
+           label={<CustomizedLabel key={channel}/>}
+           isAnimationActive={false} onMouseEnter={() => {
+        this.setState({activeIndex: index});
+      }} onMouseLeave={() => {
+        this.setState({activeIndex: void 0});
+      }}/>
     );
 
     return <div>
-      <div className={ this.classes.wrap }>
+      <div className={this.classes.wrap}>
         <div>
           <div className={this.classes.cols} style={{width: '825px'}}>
             <div className={this.classes.colLeft}>
@@ -290,25 +327,41 @@ export default class Overview extends Component {
           </div>
           <div className={this.classes.cols}>
             <div className={this.classes.colLeft}>
-              <div className={dashboardStyle.locals.item} style={{ height: '387px', width: '1110px' }}>
-                <div className={ dashboardStyle.locals.text } data-tip="Total (estimated) business impact generated across funnel. Sum of volumes of each funnel stage X the possibility to convert to a paying account X estimated LTV.">
+              <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
+                <div className={dashboardStyle.locals.text}
+                     data-tip="Total (estimated) business impact generated across funnel. Sum of volumes of each funnel stage X the possibility to convert to a paying account X estimated LTV.">
                   Business Impact across funnel
                 </div>
-                <div style={{ display: 'flex' }}>
-                  <div className={ dashboardStyle.locals.chart } style={{ width: '443px' }}>
-                    <div className={ this.classes.footerLeft }>
-                      <div className={ dashboardStyle.locals.index }>
+                <div style={{display: 'flex'}}>
+                  <div className={dashboardStyle.locals.chart} style={{width: '443px'}}>
+                    <div className={this.classes.footerLeft}>
+                      <div className={dashboardStyle.locals.index}>
                         {
                           channelCategories.map((element, i) => (
-                            <div key={i} style={{ display: 'flex', marginTop: '5px' }}>
-                              <div style={{border: '2px solid ' + COLORS[i % COLORS.length], borderRadius: '50%', height: '8px', width: '8px', display: 'inline-flex', marginTop: '2px', backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'}}/>
-                              <div style={{fontWeight: this.state.activeIndex === i ? "bold" : 'initial', display: 'inline', paddingLeft: '4px', fontSize: '14px', width: '100px', textTransform: 'capitalize' }}>
+                            <div key={i} style={{display: 'flex', marginTop: '5px'}}>
+                              <div style={{
+                                border: '2px solid ' + COLORS[i % COLORS.length],
+                                borderRadius: '50%',
+                                height: '8px',
+                                width: '8px',
+                                display: 'inline-flex',
+                                marginTop: '2px',
+                                backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'
+                              }}/>
+                              <div style={{
+                                fontWeight: this.state.activeIndex === i ? 'bold' : 'initial',
+                                display: 'inline',
+                                paddingLeft: '4px',
+                                fontSize: '14px',
+                                width: '100px',
+                                textTransform: 'capitalize'
+                              }}>
                                 {element.name}
                               </div>
-                              <div style={{ fontSize: '14px', fontWeight: '600', width: '30px' }}>
-                                {Math.round(element.value/channelCategoriesSum*100)}%
+                              <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}>
+                                {Math.round(element.value / channelCategoriesSum * 100)}%
                               </div>
-                              <div style={{ width: '50px', fontSize: '14px', color: '#7f8fa4' }}>
+                              <div style={{width: '50px', fontSize: '14px', color: '#7f8fa4'}}>
                                 (${formatBudgetShortened(element.value)})
                               </div>
                             </div>
@@ -316,8 +369,13 @@ export default class Overview extends Component {
                         }
                       </div>
                     </div>
-                    <div className={ this.classes.footerRight } style={{ marginTop: '-30px', width: '315px', marginLeft: '-25px' }}>
-                      <PieChart width={429} height={350} onMouseEnter={ (d,i) => { this.setState({activeIndex: i}) } } onMouseLeave={ () => { this.setState({activeIndex: void 0}) } }>
+                    <div className={this.classes.footerRight}
+                         style={{marginTop: '-30px', width: '315px', marginLeft: '-25px'}}>
+                      <PieChart width={429} height={350} onMouseEnter={(d, i) => {
+                        this.setState({activeIndex: i});
+                      }} onMouseLeave={() => {
+                        this.setState({activeIndex: void 0});
+                      }}>
                         <Pie
                           data={channelCategories}
                           cx={250}
@@ -328,18 +386,20 @@ export default class Overview extends Component {
                           isAnimationActive={false}
                         >
                           {
-                            channelCategories .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={index}/>)
+                            channelCategories.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}
+                                                                          key={index}/>)
                           }
                         </Pie>
                       </PieChart>
                     </div>
                   </div>
-                  <div className={dashboardStyle.locals.line} style={{ left: '443px', bottom: '17px', height: '80%' }}/>
+                  <div className={dashboardStyle.locals.line} style={{left: '443px', bottom: '17px', height: '80%'}}/>
                   <div style={{marginLeft: '-10px'}}>
                     <BarChart width={700} height={350} data={data} maxBarSize={85}>
                       <CartesianGrid vertical={false} horizontal={false}/>
                       <XAxis dataKey="name" axisLine={false} tickLine={false}/>
-                      <YAxis yAxisId="left" axisLine={false} tickLine={false} tickFormatter={v => '$' + formatBudgetShortened(v)}/>
+                      <YAxis yAxisId="left" axisLine={false} tickLine={false}
+                             tickFormatter={v => '$' + formatBudgetShortened(v)}/>
                       {bars}
                     </BarChart>
                   </div>
@@ -365,7 +425,7 @@ export default class Overview extends Component {
                                 options: indicatorsOptions
                               }}
                               onChange={(e) => {
-                                this.setState({historicalPerformanceIndicator: e.value})
+                                this.setState({historicalPerformanceIndicator: e.value});
                               }}
                               style={{width: '172px', marginLeft: '8px'}}
                       />
@@ -382,7 +442,9 @@ export default class Overview extends Component {
                 </div>
                 <div className={dashboardStyle.locals.chart}>
                   <AreaChart width={540} height={280}
-                             data={indicatorsData[this.state.historicalPerformanceIndicator] ? indicatorsData[this.state.historicalPerformanceIndicator].slice(this.props.months) : []}
+                             data={indicatorsData[this.state.historicalPerformanceIndicator]
+                               ? indicatorsData[this.state.historicalPerformanceIndicator].slice(this.props.months)
+                               : []}
                              style={{marginLeft: '-21px'}}>
                     <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
                     <YAxis style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
@@ -418,7 +480,7 @@ export default class Overview extends Component {
         </div>
       </div>
       <ReactTooltip/>
-    </div>
+    </div>;
   }
 
   getTableRow(title, items, props) {
@@ -430,18 +492,19 @@ export default class Overview extends Component {
         items.map((item, i) => {
           return <td className={this.classes.valueCell} key={i}>{
             this.getCellItem(item)
-          }</td>
+          }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
   getCellItem(item) {
     let elem;
 
     if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>
-    } else {
+      elem = <div className={this.classes.cellItem}>{item}</div>;
+    }
+    else {
       elem = item;
     }
 
