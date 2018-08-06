@@ -2,7 +2,6 @@ import React from 'react';
 import Component from 'components/Component';
 import icons from 'styles/icons/indicators.css';
 import style from 'styles/dashboard/objective.css';
-import {timeFrameToDate} from 'components/utils/objective';
 import {formatNumber} from 'components/utils/budget';
 
 export default class Objective extends Component {
@@ -16,7 +15,7 @@ export default class Objective extends Component {
   };
 
   getNumberOfDaysFromTarget(fromDate) {
-    const targetDate = timeFrameToDate(this.props.timeFrame);
+    const targetDate = this.props.timeFrame;
     return Math.max(Math.ceil((targetDate.getTime() - fromDate.getTime()) / (24 * 60 * 60 * 1000)), 0);
   }
 

@@ -3,6 +3,8 @@ import { timeFrameToDate } from 'components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from 'utils.js';
 import sumBy from 'lodash/sumBy';
+import {flattenObjectives} from '../components/utils/objective';
+import {getDates} from 'components/utils/date';
 
 export function calculatedDataExtender(data){
 
@@ -14,6 +16,10 @@ export function calculatedDataExtender(data){
   const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
   const monthlyExtarpolatedMoneySpent = calculateActualSpent(data.approvedBudgets[0],data.planUnknownChannels[0] ,data.knownChannels, data.unknownChannels, data.planDate);
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
+
+  const dates = getDates(data.planDate);
+  const objectivesData = flattenObjectives(data.objectives, data.actualIndicators, dates, false);
+  const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
 
   return {
     calculatedData: {
@@ -38,6 +44,8 @@ export function calculatedDataExtender(data){
           }
           return res;
         }, monthlyBudget),
+        objectivesData: objectivesData,
+        collapsedObjectives : collapsedObjectives
       },
       ...data
     }

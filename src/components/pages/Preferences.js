@@ -25,7 +25,7 @@ import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
 import {getNickname, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
-import {getDates, getEndOfMonthDate} from 'components/utils/date';
+import {getDates} from 'components/utils/date';
 
 export default class Preferences extends Component {
   style = style;
@@ -49,9 +49,13 @@ export default class Preferences extends Component {
     super(props);
     this.state = {
       isCheckAnnual: props.annualBudget !== null,
-      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget) => {
-        return budget === props.annualBudgetArray[0];
-      }),
+      isDivideEqually: props.annualBudget !==
+        null &&
+        props.annualBudgetArray.length >
+        0 &&
+        props.annualBudgetArray.every((budget) => {
+          return budget === props.annualBudgetArray[0];
+        }),
       showAdvancedFields: false
     };
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
@@ -251,7 +255,9 @@ export default class Preferences extends Component {
       return <div className={this.classes.cell} key={index}>
         <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
         <Textfield
-          value={'$' + (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+          value={'$' +
+          (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
           onChange={this.handleChangeBudgetArray.bind(this, index)} style={{
           width: '166px'
         }}/>
@@ -296,7 +302,7 @@ export default class Preferences extends Component {
   }
 
   render() {
-    const {budgetConstraints, annualBudgetArray} = this.props;
+    const {budgetConstraints, annualBudgetArray, calculatedData: {objectivesData}} = this.props;
 
     const channels = {
       select: {
@@ -309,7 +315,10 @@ export default class Preferences extends Component {
       if (value.options) {
         value.options.map(preventDuplicates);
       }
-      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || Object.keys(budgetConstraints).includes(value.value);
+      value.disabled =
+        this.props.blockedChannels.includes(value.value) ||
+        this.props.inHouseChannels.includes(value.value) ||
+        Object.keys(budgetConstraints).includes(value.value);
       return value;
     };
 
@@ -333,22 +342,8 @@ export default class Preferences extends Component {
     }
 
     const dates = getDates(this.props.planDate);
-    const objectiveData = [];
-    this.props.objectives.forEach((month, index) => {
-      Object.keys(month).forEach(objective => {
-        objectiveData.push({
-          monthIndex: index,
-          dueDate: getEndOfMonthDate(dates[index]),
-          indicator: objective,
-          value: this.props.actualIndicators[objective],
-          target: month[objective].target.value,
-          priority: month[objective].target.priority,
-          ...month[objective].userInput
-        });
-      });
-    });
 
-    const objectiveViews = objectiveData
+    const objectiveViews = objectivesData
       .sort((item1, item2) => item1.priority - item2.priority)
       .map((item, index) =>
         <ObjectiveView key={index}
@@ -370,8 +365,10 @@ export default class Preferences extends Component {
 
     return <div>
       <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}>
-        {isPopupMode() ? <Title title="Preferences"
-                                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : null}
+        {isPopupMode()
+          ? <Title title="Preferences"
+                   subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
+          : null}
         <div className={this.classes.error}>
           <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
             :)</label>
@@ -391,7 +388,9 @@ export default class Preferences extends Component {
                 ($)</Label>
               <div className={this.classes.cell}>
                 <Textfield disabled={!this.state.isCheckAnnual}
-                           value={'$' + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                           value={'$' +
+                           (this.props.annualBudget ? this.props.annualBudget.toString()
+                             .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
                            onChange={this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }}/>
@@ -432,7 +431,7 @@ export default class Preferences extends Component {
                                  objectiveMonth={this.state.objectiveMonth}
                                  objective={this.state.objective}
                                  objectives={this.props.objectives}
-                                 numOfObjectives={objectiveData.length}
+                                 numOfObjectives={objectivesData.length}
                                  objectiveEdit={this.state.objectiveEdit}
                                  close={() => {
                                    this.setState({showObjectivesPopup: false});
@@ -502,10 +501,12 @@ export default class Preferences extends Component {
                             allowSameValues={true}
                             minValue={0}
                             maxValue={Math.max(...annualBudgetArray)}
-                            value={budgetConstraints[budgetConstraintsChannels[index]] ? budgetConstraints[budgetConstraintsChannels[index]].range : {
-                              min: 0,
-                              max: -1
-                            }}
+                            value={budgetConstraints[budgetConstraintsChannels[index]]
+                              ? budgetConstraints[budgetConstraintsChannels[index]].range
+                              : {
+                                min: 0,
+                                max: -1
+                              }}
                             onChange={this.handleRangeChange.bind(this, index)}
                           />
                           <div style={{marginLeft: '25px', alignSelf: 'center'}}>
