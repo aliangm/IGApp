@@ -243,8 +243,11 @@ export default class Preferences extends Component {
 
     // not the default priority, need to replace
     if (objectiveData.priority !== this.props.calculatedData.objectives.objectivesData.length) {
-      const {monthIndex, indicator} = this.props.calculatedData.objectives.objectivesData.find(item => item.priority === objectiveData.priority);
-      objectives[monthIndex][indicator].target.priority = this.props.calculatedData.objectives.objectivesData.length;
+      const previous = this.props.calculatedData.objectives.objectivesData.find(item => item.priority === objectiveData.priority);
+      if (previous) {
+        const {monthIndex, indicator} = previous;
+        objectives[monthIndex][indicator].target.priority = this.props.calculatedData.objectives.objectivesData.length;
+      }
     }
 
     objectives[monthIndex][objective].target.value = objectiveData.isRecurrent ? objectiveData.recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
