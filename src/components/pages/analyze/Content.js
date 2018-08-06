@@ -44,7 +44,7 @@ export default class Content extends Component {
   }
 
   render() {
-    const {previousData, attribution, calculatedData: {objectives: {objectivesData}}} = this.props;
+    const {previousData, attribution, calculatedData: {objectives: {funnelFirstObjective}}} = this.props;
     const attributionPages = attribution.pages || [];
 
     const sortedPreviousData = previousData.sort((a, b) => {
@@ -79,9 +79,7 @@ export default class Content extends Component {
       newUsers: 'users'
     };
 
-    const relevantObjective = objectivesData
-      .find(item => newFunnelMapping[item.indicator]);
-    const objective = relevantObjective ? relevantObjective.indicator : 'newMQL';
+    const objective = funnelFirstObjective;
 
     const headRow = this.getTableRow(null, [
       <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}>

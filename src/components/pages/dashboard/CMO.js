@@ -40,7 +40,8 @@ export default class CMO extends Component {
     },
     unfilteredCampaigns: {},
     objectives: [],
-    annualBudgetArray: []
+    annualBudgetArray: [],
+    firstObjective: 'SQL'
   };
 
   constructor() {
@@ -49,7 +50,6 @@ export default class CMO extends Component {
     this.state = {
       activeIndex: void 0,
       onlyThisMonth: true,
-      advancedIndicator: 'SQL'
     };
     this.onPieEnter = this.onPieEnter.bind(this);
   }
@@ -58,8 +58,6 @@ export default class CMO extends Component {
     if (this.state.months === undefined && props.previousData) {
       this.setState({months: props.previousData.length});
     }
-
-    this.setState({advancedIndicator: this.props.calculatedData.objectives.firstObjective});
   }
 
   componentDidMount() {
@@ -94,8 +92,8 @@ export default class CMO extends Component {
   }
 
   render() {
-    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {funnelObjectives, collapsedObjectives, funnelFirstObjective}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
-    const {months, isPast, advancedIndicator, showAdvanced} = this.state;
+    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
+    const {months, isPast, showAdvanced} = this.state;
     const merged = merge(approvedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
@@ -710,7 +708,7 @@ export default class CMO extends Component {
       {showAdvanced ?
         <div className={this.classes.cols}>
           <div className={this.classes.colLeft}>
-            <PerformanceGraph isPast={isPast} months={months} data={data} defaultIndicator={advancedIndicator}/>
+            <PerformanceGraph isPast={isPast} months={months} data={data} defaultIndicator={firstObjective}/>
           </div>
         </div>
         : null}
