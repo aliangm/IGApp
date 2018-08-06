@@ -4,18 +4,18 @@ import Page from 'components/Page';
 import style from 'styles/users/users.css';
 import ReactCountryFlag from 'react-country-flag';
 import planStyle from 'styles/plan/plan.css';
-import { getNickname } from 'components/utils/indicators';
+import {getNickname} from 'components/utils/indicators';
 import icons from 'styles/icons/plan.css';
 import uniq from 'lodash/uniq';
 import UsersPopup from 'components/pages/users/UsersPopup';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
-import dashboardStyle from "styles/dashboard/dashboard.css";
-import { formatDate } from 'components/utils/date';
+import dashboardStyle from 'styles/dashboard/dashboard.css';
+import {formatDate} from 'components/utils/date';
 import Select from 'components/controls/Select';
-import Toggle from 'components/controls/Toggle'
+import Toggle from 'components/controls/Toggle';
 
-const GROUP_BY ={
-  USERS : 0,
+const GROUP_BY = {
+  USERS: 0,
   ACCOUNT: 1
 };
 
@@ -29,54 +29,52 @@ export default class Users extends Component {
     this.state = {
       showPopup: false,
       groupBy: GROUP_BY.USERS
-    }
+    };
   }
 
   toggleUsersAccount = (newValue) => {
     this.setState({
       groupBy: newValue
     });
-  }
+  };
 
   timeSince(date) {
     const seconds = Math.floor((new Date() - date) / 1000);
     let interval = Math.floor(seconds / 31536000);
     if (interval >= 1) {
-      return interval + " years ago";
+      return interval + ' years ago';
     }
     interval = Math.floor(seconds / 2592000);
     if (interval >= 1) {
-      return interval + " months ago";
+      return interval + ' months ago';
     }
     interval = Math.floor(seconds / 86400);
     if (interval >= 1) {
-      return interval + " days ago";
+      return interval + ' days ago';
     }
     interval = Math.floor(seconds / 3600);
     if (interval >= 1) {
-      return interval + " hours ago";
+      return interval + ' hours ago';
     }
     interval = Math.floor(seconds / 60);
     if (interval >= 1) {
-      return interval + " minutes ago";
+      return interval + ' minutes ago';
     }
-    return Math.floor(seconds) + " seconds ago";
+    return Math.floor(seconds) + ' seconds ago';
   }
 
   mode(array) {
-    if(array.length === 0)
+    if (array.length === 0)
       return null;
     const modeMap = {};
     let maxEl = array[0], maxCount = 1;
-    for(let i = 0; i < array.length; i++)
-    {
+    for (let i = 0; i < array.length; i++) {
       const el = array[i];
-      if(modeMap[el] == null)
+      if (modeMap[el] == null)
         modeMap[el] = 1;
       else
         modeMap[el]++;
-      if(modeMap[el] > maxCount)
-      {
+      if (modeMap[el] > maxCount) {
         maxEl = el;
         maxCount = modeMap[el];
       }
@@ -130,7 +128,7 @@ export default class Users extends Component {
           });
           Object.keys(accountUsers).forEach(accountUser => {
             usersData.push(accountUsers[accountUser]);
-          })
+          });
         }
         else {
           const alreadyExists = usersData.findIndex(item => item.user === user.user);
@@ -202,7 +200,7 @@ export default class Users extends Component {
             </div>
           </div>,
           <div className={this.classes.container}>
-            {uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={"plan:" + item}/>)}
+            {uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={'plan:' + item}/>)}
           </div>,
           getNickname(user.funnelStage[user.funnelStage.length - 1], true),
           user.journey.length,
@@ -216,28 +214,35 @@ export default class Users extends Component {
           this.timeSince(lastTouchPoint),
           <div className={this.classes.container}>
             {devices && devices.map(item => <div key={item} className={this.classes.icon}
-                                                 data-icon={"device:" + item}/>)}
+                                                 data-icon={'device:' + item}/>)}
           </div>
         ], {
           key: index,
           className: this.classes.tableRow,
           onClick: this.showPopup.bind(this, user)
-        })
+        });
       });
 
     const months = previousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
+      return {value: index, label: formatDate(item.planDate)};
     });
 
     return <div>
       <div className={this.classes.toggle}>
         <Toggle
-          leftText={"Users"}
-          rightText={"Accounts"}
-          leftClick={() => this.toggleUsersAccount(GROUP_BY.USERS)}
-          rightClick={() => this.toggleUsersAccount(GROUP_BY.ACCOUNT)}
-          leftActive={this.state.groupBy === GROUP_BY.USERS}
-        />
+          options={[{
+            text: 'Users',
+            value: GROUP_BY.USERS
+          },
+            {
+              text: 'Accounts',
+              value: GROUP_BY.ACCOUNT
+            }
+          ]}
+          selectedValue={this.state.groupBy}
+          onClick={(value) => {
+            this.toggleUsersAccount(value);
+          }}/>
       </div>
       {this.props.userAccount.pages && this.props.userAccount.pages.users ?
         <div className={this.classes.inner}>
@@ -257,38 +262,38 @@ export default class Users extends Component {
           action="Let’s dig in >"
           icon="step:users"
           onClick={() => {
-            this.props.updateUserAccount({'pages.users': true})
+            this.props.updateUserAccount({'pages.users': true});
           }}
         />
       }
       <div hidden={!this.state.showPopup}>
         <UsersPopup user={this.state.selectedUser} close={() => {
-          this.setState({showPopup: false, selectedUser: {}})
+          this.setState({showPopup: false, selectedUser: {}});
         }}/>
       </div>
-    </div>
+    </div>;
   }
 
   getTableRow(title, items, props) {
-    return <tr {... props}>
-      { title != null ?
-        <td className={ this.classes.titleCell }>{ this.getCellItem(title) }</td>
-        : null }
+    return <tr {...props}>
+      {title != null ?
+        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
+        : null}
       {
         items.map((item, i) => {
-          return <td className={ this.classes.valueCell } key={ i }>{
+          return <td className={this.classes.valueCell} key={i}>{
             this.getCellItem(item)
-          }</td>
+          }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
   getCellItem(item) {
     let elem;
 
-    if (typeof item !== 'object' ) {
-      elem = <div className={ this.classes.cellItem }>{ item }</div>
+    if (typeof item !== 'object') {
+      elem = <div className={this.classes.cellItem}>{item}</div>;
     } else {
       elem = item;
     }

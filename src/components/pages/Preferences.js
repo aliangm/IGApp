@@ -25,7 +25,7 @@ import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
 import {getNickname, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
-import {getDates} from 'components/utils/date';
+import {getDates, getEndOfMonthDate} from 'components/utils/date';
 
 export default class Preferences extends Component {
   style = style;
@@ -49,13 +49,9 @@ export default class Preferences extends Component {
     super(props);
     this.state = {
       isCheckAnnual: props.annualBudget !== null,
-      isDivideEqually: props.annualBudget !==
-        null &&
-        props.annualBudgetArray.length >
-        0 &&
-        props.annualBudgetArray.every((budget) => {
-          return budget === props.annualBudgetArray[0];
-        }),
+      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget) => {
+        return budget === props.annualBudgetArray[0];
+      }),
       showAdvancedFields: false
     };
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
@@ -186,7 +182,7 @@ export default class Preferences extends Component {
 
     if (objectiveData.isRecurrent) {
       const now = new Date();
-      if (objectiveData.isMonthly) {
+      if (objectiveData.recurrentType === 'monthly') {
         monthIndex = 0;
         for (let i = 0; i < 12; i++) {
           let targetValue = -1;
@@ -200,7 +196,7 @@ export default class Preferences extends Component {
           recurrentArray.push(Math.round(targetValue));
         }
       }
-      else {
+      else if (objectiveData.recurrentType === 'quarterly') {
         const quarter = Math.floor((now.getMonth() / 3));
         const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
         const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
@@ -219,32 +215,30 @@ export default class Preferences extends Component {
           recurrentArray[index] = targetValue;
         }
       }
+      else {
+        monthIndex = objectiveData.recurrentArray.findIndex(item => item !== -1);
+        recurrentArray = objectiveData.recurrentArray;
+      }
     }
 
     // TODO: handle priority change
-    //TODO: edit objective
-    let newObjective = {};
-    if (objectives[monthIndex][objective]) {
-      newObjective = objectives[monthIndex][objective];
-    }
-    else {
-      objectives[monthIndex][objective] = {
-        target: {
-          value: objectiveData.targetValue,
-          priority: objectiveData.priority
-        },
-        userInput: {
-          startDate: new Date(),
-          isRecurrent: objectiveData.isRecurrent,
-          isPercentage: objectiveData.isPercentage,
-          isTarget: objectiveData.isTarget,
-          amount: objectiveData.amount,
-          isMonthly: objectiveData.isMonthly,
-          nickname: getNickname(objective),
-          recurrentArray: recurrentArray
-        }
-      };
-    }
+    // TODO: edit objective
+    objectives[monthIndex][objective] = {
+      target: {
+        value: objectiveData.isRecurrent ? objectiveData.recurrentArray.find(item => item !== -1) : objectiveData.targetValue,
+        priority: objectiveData.priority
+      },
+      userInput: {
+        startDate: new Date(),
+        isRecurrent: objectiveData.isRecurrent,
+        isPercentage: objectiveData.isPercentage,
+        isTarget: objectiveData.isTarget,
+        amount: objectiveData.amount,
+        recurrentType: objectiveData.recurrentType,
+        nickname: getNickname(objective),
+        recurrentArray: recurrentArray
+      }
+    };
     this.props.updateState({objectives: objectives});
     this.setState({showObjectivesPopup: false});
   };
@@ -255,9 +249,7 @@ export default class Preferences extends Component {
       return <div className={this.classes.cell} key={index}>
         <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
         <Textfield
-          value={'$' +
-          (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+          value={'$' + (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
           onChange={this.handleChangeBudgetArray.bind(this, index)} style={{
           width: '166px'
         }}/>
@@ -365,10 +357,8 @@ export default class Preferences extends Component {
 
     return <div>
       <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}>
-        {isPopupMode()
-          ? <Title title="Preferences"
-                   subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
-          : null}
+        {isPopupMode() ? <Title title="Preferences"
+                                subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/> : null}
         <div className={this.classes.error}>
           <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
             :)</label>
@@ -388,9 +378,7 @@ export default class Preferences extends Component {
                 ($)</Label>
               <div className={this.classes.cell}>
                 <Textfield disabled={!this.state.isCheckAnnual}
-                           value={'$' +
-                           (this.props.annualBudget ? this.props.annualBudget.toString()
-                             .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                           value={'$' + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
                            onChange={this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }}/>
@@ -501,12 +489,10 @@ export default class Preferences extends Component {
                             allowSameValues={true}
                             minValue={0}
                             maxValue={Math.max(...annualBudgetArray)}
-                            value={budgetConstraints[budgetConstraintsChannels[index]]
-                              ? budgetConstraints[budgetConstraintsChannels[index]].range
-                              : {
-                                min: 0,
-                                max: -1
-                              }}
+                            value={budgetConstraints[budgetConstraintsChannels[index]] ? budgetConstraints[budgetConstraintsChannels[index]].range : {
+                              min: 0,
+                              max: -1
+                            }}
                             onChange={this.handleRangeChange.bind(this, index)}
                           />
                           <div style={{marginLeft: '25px', alignSelf: 'center'}}>
