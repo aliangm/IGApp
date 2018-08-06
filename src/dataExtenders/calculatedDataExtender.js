@@ -51,7 +51,7 @@ export function calculatedDataExtender(data){
           collapsedObjectives : collapsedObjectives,
           firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator: null,
           funnelObjectives: funnelObjectives,
-          funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives.first().indicator: 'newSQL'
+          funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator: 'newSQL'
         }
       },
       ...data
