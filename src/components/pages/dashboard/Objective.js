@@ -68,7 +68,7 @@ export default class Objective extends Component {
         />
         <text
           className={this.classes.target}
-          x="97%"
+          x="95%"
           y="50%"
           dy="20px"
           textAnchor="middle"
