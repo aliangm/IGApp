@@ -11,6 +11,8 @@ import {getChannelsWithProps, getChannelsWithNicknames, getMetadata} from 'compo
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {formatDate} from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
+import {flattenObjectives} from 'components/utils/objective';
+import {getDatesSpecific} from 'components/utils/date'
 
 export default class Overview extends Component {
 
@@ -58,8 +60,9 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {previousData, CEVs, calculatedData: {objectives:{objectivesData}}} = this.props;
+    const {previousData, CEVs, historyData: {objectives, indicators}, planDate} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
+    const flattenHistoryObjectives = flattenObjectives(objectives, indicators, getDatesSpecific(planDate, objectives.length, 0), false, true);
 
     let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
@@ -142,7 +145,7 @@ export default class Overview extends Component {
       className: dashboardStyle.locals.objectivesHeadRow
     });
 
-    const objectivesRows = objectivesData.map((objective, index) => {
+    const objectivesRows = flattenHistoryObjectives.map((objective, index) => {
       const grow = Math.round(objective.value - objective.target);
       return this.getTableRow(null, [
         getIndicatorNickname(objective.indicator),

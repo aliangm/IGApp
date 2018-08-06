@@ -13,13 +13,13 @@ export function timeFrameToDate(timeFrame) {
   return new Date(formattedDate);
 }
 
-export function flattenObjectives(objectives, actualIndicators, dates, shouldCollapseObjectives = false){
+export function flattenObjectives(objectives, actualIndicators, dates, shouldCollapseObjectives = false, isHistory = false){
   const getObjectiveData = (indicator, objective, monthIndex) => {
     return {
       monthIndex: monthIndex,
       dueDate: getEndOfMonthDate(dates[monthIndex]),
       indicator: indicator,
-      value: actualIndicators[indicator],
+      value: isHistory ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator],
       target: objective.target.value,
       priority: objective.target.priority,
       ...objective.userInput
