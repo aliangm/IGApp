@@ -18,6 +18,7 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {formatDate} from 'components/utils/date';
 import insightsStyle from 'styles/insights/insights.css';
 import {Link} from 'react-router';
+import {getProfileSync, logout} from 'components/utils/AuthService';
 
 export default class Header extends Component {
 
@@ -49,9 +50,10 @@ export default class Header extends Component {
   };
 
   readNotifications() {
+    const profile = getProfileSync();
     let notifications = this.props.notifications.slice();
     notifications
-      .filter(notification => notification.UID === this.props.auth.getProfile().user_id)
+      .filter(notification => notification.UID === profile.user_id)
       .map(notification => {
         notification.isRead = true;
         return notification;
@@ -95,6 +97,7 @@ export default class Header extends Component {
   };
 
   get menuBig() {
+    const profile = getProfileSync();
     const tabs = this.props.tabs.map(({name, path}) => {
       return <Link to={path}
                    activeClassName={this.classes.headTabSelected}
@@ -114,10 +117,9 @@ export default class Header extends Component {
                     onClick={this.changeRegion.bind(this, region)}>{region}</div>;
       })
       : null;
-    const user = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
+    const user = this.props.teamMembers.find(user => user.userId === profile.user_id);
 
-    const userNotifications = this.props.notifications.filter(notification => notification.UID ===
-      this.props.auth.getProfile().user_id);
+    const userNotifications = this.props.notifications.filter(notification => notification.UID === profile.user_id);
     const isUnreadNotifications = userNotifications.some(notification => notification.isRead === false);
     return <div className={this.classes.menuBig} data-settings-open={this.props.isSettingsOpen}>
       <div className={this.classes.headTabs}>
@@ -259,6 +261,7 @@ export default class Header extends Component {
   }
 
   get menuSmall() {
+    const profile = getProfileSync();
     const hasUser = this.props.user;
     const regions = hasUser ?
       this.props.regions.map((region) => {
@@ -268,7 +271,7 @@ export default class Header extends Component {
                     onClick={this.changeRegion.bind(this, region)}>{region}</div>;
       })
       : null;
-    const user = this.props.teamMembers.find(user => user.userId === this.props.auth.getProfile().user_id);
+    const user = this.props.teamMembers.find(user => user.userId === profile.user_id);
     return <div className={this.classes.menuSmall}>
       <div className={this.classes.itemsBox}>
         {hasUser ?
@@ -369,7 +372,7 @@ export default class Header extends Component {
 
   logout() {
     this.props.updateState({unsaved: false}, () => {
-      this.props.auth.logout();
+      logout();
       history.push('/');
     });
   }

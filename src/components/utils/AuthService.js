@@ -1,123 +1,96 @@
-import Auth0Lock from 'auth0-lock'
+import auth0 from 'auth0-js';
 import history from 'history';
 import config from 'components/utils/Configuration';
 
-export default class AuthService {
+const options = {
+  responseType: 'token',
+  clientID: config.authClientId,
+  domain: config.authDomain,
+  redirectUri: window.location.origin,
+  scope: 'openid profile'
+};
 
-  terms = 'Terms'.link('http://infinigrow.com/terms/');
-  privacy = 'Privacy Policy'.link('http://infinigrow.com/privacy-policy/');
-  options= {
-    auth: {
-      redirectUrl: window.location.href,
-      responseType: 'token'
-      //autoParseHash: true
-    },
-    languageDictionary: {
-      title: '',
-      signUpTerms: 'By clicking Sign Up, you agree to our ' + this.terms + ' and ' + this.privacy + '.'
-    },
-    //autoclose: true,
-    closable: false,
-//      popupOptions: { width: '450px', height: '600px' },
-    theme: {
-      primaryColor: '#1165a3',
-      logo: '/icons/logo-on-white-bg.png'
-    },
-    socialButtonStyle: 'small',
-    additionalSignUpFields: [{
-      name: "access_code",
-      placeholder: "your access code",
-      // The following properties are optional
-      icon: "/icons/pad.png",
-    }]
-  };
-  constructor() {
-    // Configure Auth0
-    this.lock = new Auth0Lock(config.authClientId, config.authDomain, this.options);
+const webAuth = new auth0.WebAuth(options);
+let userProfile = {};
 
-    // Add callback for lock `authenticated` event
-    this.lock.on('authenticated', this._doAuthentication.bind(this));
+export function handleAuthentication() {
+  webAuth.parseHash({hash: window.location.hash.slice(1, window.location.hash.length - 10)}, function (err, authResult) {
+    if (authResult && authResult.accessToken && authResult.idToken) {
+      setSession(authResult);
+      history.push('/');
+    } else if (err) {
+      // navigate to the home route
+      history.push('/');
+      console.log(err);
+    }
+  });
+}
 
-    this.lock.on('authorization_error', this.authenticationError.bind(this));
+function setSession(authResult) {
+  // Set the time that the access token will expire at
+  let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+  localStorage.setItem('access_token', authResult.accessToken);
+  localStorage.setItem('id_token', authResult.idToken);
+  localStorage.setItem('expires_at', expiresAt);
+  // navigate to the home route
+  history.push('/');
+}
 
-    // binds login functions to keep this context
-    this.login = this.login.bind(this);
+export function login() {
+  webAuth.authorize();
+}
+
+export function getToken() {
+  // Retrieves the user token from local storage
+  return localStorage.getItem('id_token');
+}
+
+export function isAuthenticated() {
+  // Check whether the current time is past the
+  // access token's expiry time
+  let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+  return new Date().getTime() < expiresAt;
+}
+
+export function logout() {
+  // Clear access token and ID token from local storage
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('id_token');
+  localStorage.removeItem('expires_at');
+  // navigate to the home route
+  history.push('/');
+}
+
+function getAccessToken() {
+  const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) {
+    throw new Error('No Access Token found');
   }
+  return accessToken;
+}
 
-  _doAuthentication(authResult) {
-    localStorage.removeItem('login_error');
-    // Saves the user token
-    this.setToken(authResult.idToken);
-    // navigate to the home route
-    history.push('/');
-    // Async loads the user profile data
-
-    this.lock.getProfile(authResult.idToken, (error, profile) => {
-      if (error) {
-        console.log('Error loading the Profile', error)
-      } else {
-        this.setProfile(profile)
+export function getProfile(cb) {
+  if (userProfile && Object.keys(userProfile).length > 0) {
+    if (cb) {
+      cb(null, userProfile);
+    }
+  }
+  else {
+    let accessToken = getAccessToken();
+    webAuth.client.userInfo(accessToken, (err, profile) => {
+      if (profile) {
+        userProfile = profile;
       }
-    })
-
+      if (cb) {
+        cb(err, profile);
+      }
+    });
   }
+}
 
-  authenticationError(error) {
-    localStorage.setItem('login_error', true);
-    this.options.flashMessage = {
-      type: 'error',
-      text: error.error_description.split('?')[0]
-    };
-    this.lock.show(this.options);
-
+export function getProfileSync() {
+  if (userProfile) {
+    return userProfile;
   }
-
-  login() {
-    // Call the show method to display the widget.
-    this.lock.show();
-  }
-
-  loggedIn() {
-    // Checks if there is a saved token and it's still valid
-    return !!this.getToken()
-  }
-
-  setToken(idToken) {
-    // Saves user token to local storage
-    localStorage.setItem('id_token', idToken)
-  }
-
-  getToken() {
-    // Retrieves the user token from local storage
-    return localStorage.getItem('id_token')
-  }
-
-  setProfile(profile) {
-    // Saves profile data to local storage
-    localStorage.setItem('profile', JSON.stringify(profile));
-    // Triggers profile_updated event to update the UI
-    // this.emit('profile_updated', profile)
-    if (config.isProd) {
-      FS.identify(profile.user_id, {
-        displayName: profile.email,
-        email: profile.email
-      });
-    }
-  }
-
-  getProfile() {
-    // Retrieves the profile data from local storage
-    const profile = localStorage.getItem('profile');
-    return profile ? JSON.parse(localStorage.profile) : {}
-  }
-
-  logout() {
-    // Clear user token and profile data from local storage
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('profile');
-    if (config.isProd) {
-      FS.clearUserCookie(true);
-    }
-    localStorage.removeItem('region');
-  }
+  return null;
 }
