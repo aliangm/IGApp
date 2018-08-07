@@ -71,5 +71,8 @@
     "react-country-flag": "^0.1.12",
     "xlsx": "^0.12.1",
     "react-tooltip": "^3.4.0"
+  },
+  "dependencies": {
+    "auth0-js": "9.7.2"
   }
 }

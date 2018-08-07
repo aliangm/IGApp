@@ -16,6 +16,7 @@ import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopu
 import { formatBudget } from 'components/utils/budget';
 import { timeFrameToDate } from 'components/utils/objective';
 import { Link } from 'react-router';
+import {getProfileSync} from 'components/utils/AuthService';
 
 const tabs = {
   'By Channel': '/campaigns/by-channel',
@@ -203,7 +204,7 @@ export default class Campaigns extends Component {
 
     let filteredCampaigns = activeCampaigns;
 
-    const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
+    const member = teamMembers.find(member => member.userId === getProfileSync().user_id);
 
     if (member && member.isAdmin === false) {
       if (member.specificChannels && member.specificChannels.length > 0) {
@@ -304,7 +305,6 @@ export default class Campaigns extends Component {
                 updateCampaignsTemplates={this.updateCampaignsTemplates}
                 firstName={userFirstName}
                 lastName={userLastName}
-                auth={this.props.auth}
                 processedChannels={processedChannels}
                 addNotification={addNotification}
               />

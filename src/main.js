@@ -19,7 +19,7 @@ import Users from './components/pages/Users';
 import Insights from './components/pages/Insights';
 import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
-import AuthService from './components/utils/AuthService'
+import {isAuthenticated, logout, handleAuthentication, getProfileSync} from './components/utils/AuthService'
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
@@ -40,21 +40,19 @@ import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
-
 style.use();
-const auth = new AuthService();
 
 // validate authentication for private routes
 const requireAdminAuth = (nextState, replace) => {
-  if (!auth.loggedIn() || !auth.getProfile().app_metadata || !auth.getProfile().app_metadata.isAdmin) {
-    auth.logout();
+  if (!isAuthenticated() || !getProfileSync().app_metadata || !getProfileSync().app_metadata.isAdmin) {
+    logout();
     replace({ pathname: '/' })
   }
 };
 
 // validate authentication for private routes
 const requireAuth = (nextState, replace) => {
-  if (!auth.loggedIn()) {
+  if (!isAuthenticated()) {
     replace({ pathname: '/' })
   }
 };
@@ -62,7 +60,8 @@ const requireAuth = (nextState, replace) => {
 ReactDOM.render(
   <Router onUpdate={() => window.scrollTo(0, 0)} history={ history }>
     <Route path="/" component={ SignIn } />
-    <Route component={ App } auth={ auth } onEnter={ requireAuth }>
+    <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
+    <Route component={ App } onEnter={ requireAuth }>
       <Route component={ Dashboard } onEnter={ requireAdminAuth }>
         <Route path="/dashboard/CMO" component={ CMO } onEnter={ requireAdminAuth }/>
         <Route path="/dashboard/metrics" component={ Indicators } onEnter={ requireAdminAuth }/>

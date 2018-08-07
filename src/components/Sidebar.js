@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import { FeatureToggle } from 'react-feature-toggles';
 import { Link } from 'react-router';
 import global from 'global';
+import {getProfileSync} from 'components/utils/AuthService';
 
 import style from 'styles/sidebar.css';
 
@@ -80,6 +81,7 @@ export default class Sidebar extends Component {
       { icon: "sidebar:insights", link: "/plan/insights", text: "Insights", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.insights },
       { icon: "sidebar:planned-vs-actual", link: "/plan/planned-vs-actual", text: "Planned VS Actual", notFirstTime: true },
     ];
+    const profile = getProfileSync();
     return <div>
       <div className={ this.classes.backface }
            onClick={ this.close }
@@ -88,7 +90,7 @@ export default class Sidebar extends Component {
       <div className={ this.classes.box } data-open={ this.state.open ? true : null }>
         <div className={ this.classes.logo } />
         <div className={ this.classes.menu }>
-          {this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().app_metadata.isAdmin ?
+          {profile && profile.app_metadata && profile.app_metadata.isAdmin ?
             <div>
               <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard} isHighlighted={this.isHighlighted('/dashboard')}/>
               <CollapsedMenuItem icon="sidebar:profile" text="Profile" subMenu={ profileSubMenu } isOpen={ this.state.subMenu === 'profile' } isHighlighted={this.isHighlighted('/profile')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'profile') }/>

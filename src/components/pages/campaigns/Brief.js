@@ -13,6 +13,7 @@ import MultiSelect from 'components/controls/MultiSelect';
 import { getChannelsWithTitles, getTitle } from 'components/utils/channels';
 import Toggle from 'components/controls/Toggle';
 import buttonsStyle from 'styles/onboarding/buttons.css';
+import {getProfileSync} from 'components/utils/AuthService';
 
 export default class Brief extends Component {
 
@@ -280,7 +281,7 @@ export default class Brief extends Component {
     if (this.props.teamMembers) {
       this.props.teamMembers.forEach((member) => {
         if (member.name !== '') {
-          const label = this.props.auth.getProfile().app_metadata && this.props.auth.getProfile().user_id === member.userId ? member.name + " (me)" : member.name;
+          const label = getProfileSync().app_metadata && getProfileSync().user_id === member.userId ? member.name + " (me)" : member.name;
           selects.owner.select.options.push({value: member.userId, label: label});
         }
       });

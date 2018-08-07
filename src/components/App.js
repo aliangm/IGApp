@@ -17,6 +17,7 @@ import Popup from 'components/Popup';
 import style from 'styles/app.css';
 import { FeatureToggleProvider } from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
+import {getProfile} from 'components/utils/AuthService';
 
 class AppComponent extends Component {
 
@@ -36,7 +37,6 @@ class AppComponent extends Component {
       updateState: this.updateState.bind(this),
       setDataAsState: this.setDataAsState.bind(this),
       unsaved: false,
-      auth: props.route.auth,
       addNotification: this.addNotification.bind(this),
       plan: this.plan.bind(this),
       forecast: this.forecast.bind(this),
@@ -109,6 +109,7 @@ class AppComponent extends Component {
 
   componentDidMount() {
     this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave);
+    getProfile();
     const tasks = [
       this.getUserAccount(),
       this.getRegions(),
@@ -689,8 +690,8 @@ class AppComponent extends Component {
       (child) => React.cloneElement(child, this.state));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header auth={ this.props.route.auth } {... this.state} path={this.props.location.pathname}/>
-        <Sidebar auth={ this.props.route.auth } userAccount={this.state.userAccount} path={this.props.location.pathname}/>
+        <Header {... this.state} path={this.props.location.pathname}/>
+        <Sidebar userAccount={this.state.userAccount} path={this.props.location.pathname}/>
         <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
         { this.state.loaded ?
