@@ -241,7 +241,7 @@ export default class Plan extends Component {
     const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = merge([],
-      Object.keys(this.props.approvedBudgets.reduce((object, item) => {
+      Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
           return merge(object, item);
         }
         , {})),
