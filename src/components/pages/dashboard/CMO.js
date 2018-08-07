@@ -92,9 +92,9 @@ export default class CMO extends Component {
   }
 
   render() {
-    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
+    const {planDate, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {committedBudgets, objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
     const {months, isPast, showAdvanced} = this.state;
-    const merged = merge(approvedBudgets, planUnknownChannels);
+    const merged = merge(committedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
@@ -209,7 +209,7 @@ export default class CMO extends Component {
       />;
     });
 
-    const futureBudget = approvedBudgets.slice(0, months)
+    const futureBudget = committedBudgets.slice(0, months)
       .reduce((sum, month) => Object.keys(month).reduce((monthSum, channel) => month[channel] + monthSum, 0) + sum, 0);
     const futureLTV = approvedBudgetsProjection.slice(0, months).reduce((sum, item) => sum + item.LTV, 0);
     const furureObjective = approvedBudgetsProjection.slice(0, months)
@@ -319,7 +319,7 @@ export default class CMO extends Component {
         return json;
       })
       :
-      approvedBudgets.slice(0, months).map((month, index) => {
+      committedBudgets.slice(0, months).map((month, index) => {
         const json = {
           name: futureDates[index]
         };
