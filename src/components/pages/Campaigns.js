@@ -14,6 +14,7 @@ import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import {formatNumber} from 'components/utils/budget';
+import {getProfileSync} from 'components/utils/AuthService';
 
 function getDateString(stringDate) {
   if (stringDate) {
@@ -174,7 +175,7 @@ export default class Campaigns extends Component {
 
     let filteredCampaigns = activeCampaigns;
 
-    const member = teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
+    const member = teamMembers.find(member => member.userId === getProfileSync().user_id);
 
     if (member && member.isAdmin === false) {
       if (member.specificChannels && member.specificChannels.length > 0) {
@@ -279,7 +280,6 @@ export default class Campaigns extends Component {
                 updateCampaignsTemplates={this.updateCampaignsTemplates}
                 firstName={userFirstName}
                 lastName={userLastName}
-                auth={this.props.auth}
                 processedChannels={processedChannels}
                 addNotification={addNotification}
               />

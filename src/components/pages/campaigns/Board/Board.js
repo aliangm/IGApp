@@ -50,7 +50,6 @@ class Board extends Component {
       container: this.board,
       containerRect: this.containerRect,
       userAccount: this.props.userAccount,
-      auth: this.props.auth,
       showCampaign: this.props.showCampaign,
       addNewCampaign: this.props.addNewCampaign
     };

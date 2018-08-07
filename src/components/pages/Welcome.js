@@ -25,6 +25,7 @@ import ButtonWithSurePopup from 'components/pages/account/ButtonWithSurePopup';
 import AddMemberPopup from 'components/pages/account/AddMemberPopup';
 import Tabs from 'components/onboarding/Tabs';
 import Avatar from 'components/Avatar';
+import {getProfileSync} from 'components/utils/AuthService';
 
 export default class Welcome extends Component {
   style = style;
@@ -58,10 +59,10 @@ export default class Welcome extends Component {
   componentDidMount() {
     if(this.props.location.query.new) {
       const teamMembers = [{
-        email: this.props.auth.getProfile().email,
+        email: getProfileSync().email,
         name: '',
         role: '',
-        userId: this.props.auth.getProfile().user_id
+        userId: getProfileSync().user_id
       }];
       const json = {
         teamMembers: teamMembers
@@ -220,8 +221,8 @@ export default class Welcome extends Component {
       }
     };
     const title = isPopupMode() ? "Welcome! Let's get you started" : "Account";
-    const member = this.props.userAccount.teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
-    const memberIndex = this.props.userAccount.teamMembers.findIndex(member => member.userId === this.props.auth.getProfile().user_id);
+    const member = this.props.userAccount.teamMembers.find(member => member.userId === getProfileSync().user_id);
+    const memberIndex = this.props.userAccount.teamMembers.findIndex(member => member.userId === getProfileSync().user_id);
     const userAccount = <div>
       <div className={ this.classes.row }>
         <Label>Name</Label>

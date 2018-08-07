@@ -4,6 +4,7 @@ import style from 'styles/dashboard/steps.css';
 import Step from 'components/pages/dashboard/Step';
 import history from 'history';
 import Avatar from 'components/Avatar';
+import {getProfileSync} from 'components/utils/AuthService';
 
 export default class Steps extends Component {
 
@@ -16,7 +17,7 @@ export default class Steps extends Component {
     const campaign = this.props.userAccount.steps && this.props.userAccount.steps.campaign;
     const idea = this.props.userAccount.steps && this.props.userAccount.steps.campaignIdea;
     const plannedVsActual = this.props.userAccount.steps && this.props.userAccount.steps.plannedVsActual;
-    const member = this.props.userAccount.teamMembers.find(member => member.userId === this.props.auth.getProfile().user_id);
+    const member = this.props.userAccount.teamMembers.find(member => member.userId === getProfileSync().user_id);
     return <div hidden={(plan && attribution && campaign && idea && plannedVsActual) || this.props.userAccount.dontShowSteps}>
       <div>
         <div className={this.classes.center}>

@@ -6,7 +6,8 @@ import style from 'styles/signin/signin.css';
 import history from 'history';
 import serverCommunication from 'data/serverCommunication';
 import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
-import AuthService from 'components/utils/AuthService';
+import {isAuthenticated, login, getProfile} from 'components/utils/AuthService';
+
 export default class SignIn extends Component {
 
   style = style;
@@ -25,16 +26,10 @@ export default class SignIn extends Component {
     this.checkUserAuthorization = this.checkUserAuthorization.bind(this);
   }
 
-  componentWillMount() {
-    this.lock = new AuthService();
-  }
-
   componentDidMount() {
-    if (this.lock.loggedIn()) {
-      const timer = setInterval(() => {
-        const profile = this.lock.getProfile();
+    if (isAuthenticated()) {
+      getProfile((err, profile) => {
         if (profile && profile.app_metadata) {
-          clearInterval(timer);
           checkIfPopup()
             .then((popup) => {
               // No user Account
@@ -58,15 +53,13 @@ export default class SignIn extends Component {
             })
             .catch((err) => {
               console.log(err);
-              this.lock.login();
+              login();
             });
         }
-      }, 100);
+      });
     }
     else {
-      if (!localStorage.getItem('login_error')){
-        this.lock.login();
-      }
+      login();
     }
   }
 

@@ -8,6 +8,7 @@ import AddIdeaPopup from 'components/pages/campaigns/AddIdeaPopup';
 import setupStyle from 'styles/attribution/setup.css';
 import commentStyle from 'styles/campaigns/comment.css';
 import Avatar from 'components/Avatar';
+import {getProfileSync} from 'components/utils/AuthService';
 
 export default class Ideas extends Component {
 
@@ -31,7 +32,7 @@ export default class Ideas extends Component {
     update.push({
       ... idea,
       date: new Date(),
-      owner: this.props.auth.getProfile().user_id,
+      owner: getProfileSync().user_id,
       endorsements: []
     });
     this.setState({showAddIdeaPopup: false});

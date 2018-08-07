@@ -261,7 +261,6 @@ export default class CampaignPopup extends Component {
             teamMembers: this.props.teamMembers,
             firstName: this.props.firstName,
             lastName: this.props.lastName,
-            auth: this.props.auth,
             processedChannels: this.props.processedChannels,
             setRefName: this.setRefName,
             setRefSource: this.setRefSource,
