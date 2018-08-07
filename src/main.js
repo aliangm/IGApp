@@ -67,8 +67,8 @@ ReactDOM.render(
     <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={requireAdminAuth}>
-        <Route path="/dashboard/CMO" component={CMO} onEnter={requireAdminAuth}/>
-        <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAdminAuth}/>
+        <Route path="/dashboard/CMO" component={CMO} onEnter={requireAdminAuth} tabName='CMO'/>
+        <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAdminAuth} tabName='Metrics'/>
       </Route>
       <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
