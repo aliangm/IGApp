@@ -109,7 +109,6 @@ class AppComponent extends Component {
 
   componentDidMount() {
     this.setAsyncRouteLeaveHook(this.props.router, this.routerWillLeave);
-    getProfile();
     const tasks = [
       this.getUserAccount(),
       this.getRegions(),

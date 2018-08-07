@@ -1,6 +1,7 @@
 import auth0 from 'auth0-js';
 import history from 'history';
 import config from 'components/utils/Configuration';
+import q from 'q';
 
 const options = {
   responseType: 'token',
@@ -11,7 +12,6 @@ const options = {
 };
 
 const webAuth = new auth0.WebAuth(options);
-let userProfile = {};
 
 export function handleAuthentication() {
   webAuth.parseHash({hash: window.location.hash.slice(1, window.location.hash.length - 10)}, function (err, authResult) {
@@ -32,6 +32,14 @@ function setSession(authResult) {
   localStorage.setItem('access_token', authResult.accessToken);
   localStorage.setItem('id_token', authResult.idToken);
   localStorage.setItem('expires_at', expiresAt);
+  getProfile()
+    .then((profile) => {
+      localStorage.setItem('profile', JSON.stringify(profile));
+    })
+    .catch((err) => {
+      console.log('error while loading profile', err);
+    });
+
   // navigate to the home route
   history.push('/');
 }
@@ -57,6 +65,7 @@ export function logout() {
   localStorage.removeItem('access_token');
   localStorage.removeItem('id_token');
   localStorage.removeItem('expires_at');
+  localStorage.removeItem('profile');
   // navigate to the home route
   history.push('/');
 }
@@ -69,28 +78,27 @@ function getAccessToken() {
   return accessToken;
 }
 
-export function getProfile(cb) {
+export function getProfile() {
+  const deferred = q.defer();
+  const userProfile = getProfileSync();
   if (userProfile && Object.keys(userProfile).length > 0) {
-    if (cb) {
-      cb(null, userProfile);
-    }
+    deferred.resolve(userProfile);
   }
   else {
-    let accessToken = getAccessToken();
+    const accessToken = getAccessToken();
     webAuth.client.userInfo(accessToken, (err, profile) => {
-      if (profile) {
-        userProfile = profile;
+      if (err) {
+        deferred.reject(err);
       }
-      if (cb) {
-        cb(err, profile);
+      else if (profile) {
+        deferred.resolve(profile);
       }
     });
   }
+  return deferred.promise;
 }
 
 export function getProfileSync() {
-  if (userProfile) {
-    return userProfile;
-  }
-  return null;
+    const profile = localStorage.getItem('profile');
+    return profile ? JSON.parse(profile) : {};
 }
