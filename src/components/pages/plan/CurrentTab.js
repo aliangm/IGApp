@@ -31,7 +31,7 @@ function formatDate(dateStr) {
 export default class CurrentTab extends Component {
   static propTypes = {
     planDate: PropTypes.string,
-    approvedBudgets: PropTypes.array
+    committedBudgets: PropTypes.array
   };
 
   static defaultProps = {
@@ -55,14 +55,13 @@ export default class CurrentTab extends Component {
     this.setState({
       planDate: data.planDate,
       region: data.region,
-      approvedBudgets: data.approvedBudgets,
     });
   }
 
   render() {
-    const { planDate, approvedBudgets, region, planUnknownChannels, inHouseChannels } = this.state;
+    const { planDate, calculatedData: {committedBudgets}, region, planUnknownChannels, inHouseChannels } = this.state;
 
-    const planData = parseBudgets(approvedBudgets, planUnknownChannels, inHouseChannels);
+    const planData = parseBudgets(committedBudgets, planUnknownChannels, inHouseChannels);
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
     const monthBudget = planData['__TOTAL__'].approvedValues[0];
 

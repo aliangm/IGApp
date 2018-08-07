@@ -27,12 +27,12 @@ export default class TopSuggestions extends Component {
 
   forecastMetrics(item) {
     this.setState({showPopup: true, item: item});
-    const approvedBudgets = cloneDeepWith(this.props.approvedBudgets, (item => {
+    const committedBudgets = cloneDeepWith(this.props.committedBudgets, (item => {
       if (item !== null && typeof item === 'object') {
         Object.assign(item);
       }
     }));
-    approvedBudgets[0][item.channel] = item.suggested;
+    committedBudgets[0][item.channel] = item.suggested;
     this.props.plan(false, {
       useApprovedBudgets: true,
       approvedBudgets: approvedBudgets
@@ -45,17 +45,17 @@ export default class TopSuggestions extends Component {
   render() {
 
     const {active, showPopup, item, ifApprovedMetrics} = this.state;
-    const {approvedBudgets, projectedPlan, approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection} = this.props;
+    const {projectedPlan, approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection, calculatedData: {committedBudgets}} = this.props;
     const zeroBudgetSuggestions = {};
-    Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
+    Object.keys(committedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
     const nextMonthBudgets = merge(zeroBudgetSuggestions, projectedPlan[0].plannedChannelBudgets);
     const suggestionsOrdered = nextMonthBudgets ? Object.keys(nextMonthBudgets)
-        .filter(item => (projectedPlan[0].plannedChannelBudgets[item] || 0) !== (approvedBudgets[0][item] || 0))
+        .filter(item => (projectedPlan[0].plannedChannelBudgets[item] || 0) !== (committedBudgets[0][item] || 0))
         .map(item => {
           return {
             channel: item,
             suggested: projectedPlan[0].plannedChannelBudgets[item] || 0,
-            current: approvedBudgets[0][item] || 0
+            current: committedBudgets[0][item] || 0
           };
         })
         .sort((a, b) => Math.abs(b.suggested - b.current) - Math.abs(a.suggested - a.current))
