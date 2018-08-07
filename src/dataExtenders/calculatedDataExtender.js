@@ -10,11 +10,11 @@ export function calculatedDataExtender(data){
 
   const campaignsWithIndex = data.campaigns.map((campaign, index) => { return { ... campaign, index: index} });
   const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
-  const merged = merge(data.approvedBudgets, data.planUnknownChannels);
+  const merged = merge(data.planBudgets, data.planUnknownChannels);
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0] ? data.planUnknownChannels[0] : {};
-  const approvedChannels = data.approvedBudgets && data.approvedBudgets.length > 0 && data.approvedBudgets[0] ? data.approvedBudgets[0] : {};
-  const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
-  const monthlyExtarpolatedMoneySpent = calculateActualSpent(data.approvedBudgets[0],data.planUnknownChannels[0] ,data.knownChannels, data.unknownChannels, data.planDate);
+  const approvedChannels = data.planBudgets && data.planBudgets.length > 0 && data.planBudgets[0] ? data.planBudgets[0] : {};
+  const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel].committedBudget, 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
+  const monthlyExtarpolatedMoneySpent = calculateActualSpent(data.planBudgets[0],data.planUnknownChannels[0] ,data.knownChannels, data.unknownChannels, data.planDate);
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
 
   const dates = getDates(data.planDate);
@@ -58,12 +58,15 @@ export function calculatedDataExtender(data){
     }
 }
 
-function calculateActualSpent(approvedBudgets, planUnknownChannels, knownChannels, unknownChannels, planDate){
+function calculateActualSpent(planBudgets, planUnknownChannels, knownChannels, unknownChannels, planDate){
 
   const extarpolateRatio = getExtarpolateRatio(new Date(),planDate);
-  const approvedExtarpolate = {...approvedBudgets};
+  const approvedExtarpolate = {...planBudgets};
   const planUnknownExtarpolate = {...planUnknownChannels};
-  Object.keys(approvedExtarpolate).map((key) => { approvedExtarpolate[key] *= extarpolateRatio; });
+  Object.keys(approvedExtarpolate).map((key) => {
+    const committedBudget = approvedExtarpolate[key].committedBudget;
+    approvedExtarpolate[key] = committedBudget ? extarpolateRatio * committedBudget : 0;
+  });
   Object.keys(planUnknownExtarpolate).map((key) => { planUnknownExtarpolate[key] *= extarpolateRatio; });
 
   if(knownChannels) {
