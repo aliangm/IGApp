@@ -35,7 +35,7 @@ export default class TopSuggestions extends Component {
     committedBudgets[0][item.channel] = item.suggested;
     this.props.plan(false, {
       useApprovedBudgets: true,
-      approvedBudgets: approvedBudgets
+      approvedBudgets: committedBudgets
     }, this.props.region, true)
       .then(data => {
         this.setState({ifApprovedMetrics: data.projectedPlan[0].projectedIndicatorValues});
