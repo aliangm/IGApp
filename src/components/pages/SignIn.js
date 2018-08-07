@@ -5,7 +5,7 @@ import tagsStyle from 'styles/tags.css';
 import style from 'styles/signin/signin.css';
 import history from 'history';
 import serverCommunication from 'data/serverCommunication';
-import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
+import {isPopupMode, disablePopupMode, checkIfPopup} from 'modules/popup-mode';
 import {isAuthenticated, login, getProfile} from 'components/utils/AuthService';
 
 export default class SignIn extends Component {
@@ -21,49 +21,54 @@ export default class SignIn extends Component {
    }*/
   constructor(props) {
     super(props);
-    this.state = { login: true };
+    this.state = {login: true};
     this.handleChange = this.handleChange.bind(this);
     this.checkUserAuthorization = this.checkUserAuthorization.bind(this);
   }
 
   componentDidMount() {
     if (isAuthenticated()) {
-      getProfile((err, profile) => {
-        if (profile && profile.app_metadata) {
-          checkIfPopup()
-            .then((popup) => {
-              // No user Account
-              if (popup === null) {
-                history.push({
-                  pathname: '/settings/account',
-                  query: { new: true, freePlan: !!profile.app_metadata.freePlan }
-                });
-              }
-              else if (profile.app_metadata && !profile.app_metadata.isAdmin) {
-                history.push('/campaigns/by-channel');
-              }
-              else {
-                if (popup) {
-                  history.push('/settings/account');
+      getProfile()
+        .then((profile) => {
+          if (profile && profile.app_metadata) {
+            checkIfPopup()
+              .then((popup) => {
+                // No user Account
+                if (popup === null) {
+                  history.push({
+                    pathname: '/settings/account',
+                    query: {new: true, freePlan: !!profile.app_metadata.freePlan}
+                  });
+                }
+                else if (profile.app_metadata && !profile.app_metadata.isAdmin) {
+                  history.push('/campaigns/by-channel');
                 }
                 else {
-                  history.push('/dashboard/CMO')
+                  if (popup) {
+                    history.push('/settings/account');
+                  }
+                  else {
+                    history.push('/dashboard/CMO');
+                  }
                 }
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              login();
-            });
-        }
-      });
+              })
+              .catch((err) => {
+                console.log(err);
+                login();
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          login();
+        });
     }
     else {
       login();
     }
   }
 
-  handleChange(parameter, event){
+  handleChange(parameter, event) {
     let update = {};
     update[parameter] = event.target.value;
     this.setState(update);
@@ -74,7 +79,11 @@ export default class SignIn extends Component {
     let route = this.state.login ? 'login' : 'signup';
     var self = this;
     self.setState({isSignupError: false, isPromotionError: false});
-    serverCommunication.serverRequest('POST', route, JSON.stringify({email: self.state.email, password: self.state.password, promotionCode: self.state.promotionCode }))
+    serverCommunication.serverRequest('POST', route, JSON.stringify({
+      email: self.state.email,
+      password: self.state.password,
+      promotionCode: self.state.promotionCode
+    }))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -106,11 +115,11 @@ export default class SignIn extends Component {
             });
         }
         else {
-          if (response.status == 500){
+          if (response.status == 500) {
             self.setState({isPromotionError: true});
             self.refs.signupPromotionInput.focus();
           }
-          else if (response.status == 409){
+          else if (response.status == 409) {
             self.setState({isSignupError: true});
             self.refs.signupEmailInput.focus();
           }
@@ -210,6 +219,6 @@ export default class SignIn extends Component {
        </form>
        </div>
        </Page>**/}
-    </div>
+    </div>;
   }
 }
