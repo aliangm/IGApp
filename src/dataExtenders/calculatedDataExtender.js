@@ -11,7 +11,8 @@ export function calculatedDataExtender(data){
   const committedBudgets = data.planBudgets.map((month) => {
     const newMonth = {};
     Object.keys(month).map((key) => {
-      newMonth[key] = month[key].committedBudget
+      const committedBudget = month[key].committedBudget;
+      newMonth[key] = committedBudget ? committedBudget : 0
     });
 
     return newMonth;
@@ -68,10 +69,10 @@ export function calculatedDataExtender(data){
     }
 }
 
-function calculateActualSpent(commitedBudgets, planUnknownChannels, knownChannels, unknownChannels, planDate){
+function calculateActualSpent(committedBudgets, planUnknownChannels, knownChannels, unknownChannels, planDate){
 
   const extarpolateRatio = getExtarpolateRatio(new Date(),planDate);
-  const approvedExtarpolate = {...commitedBudgets};
+  const approvedExtarpolate = {...committedBudgets};
   const planUnknownExtarpolate = {...planUnknownChannels};
   Object.keys(approvedExtarpolate).map((key) => { approvedExtarpolate[key] *= extarpolateRatio; });
   Object.keys(planUnknownExtarpolate).map((key) => { planUnknownExtarpolate[key] *= extarpolateRatio; });

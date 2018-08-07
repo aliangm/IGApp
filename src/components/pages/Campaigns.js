@@ -55,7 +55,7 @@ export default class Campaigns extends Component {
 
   static defaultProps = {
     campaigns: [],
-    approvedBudgets: [],
+    calculatedData: {committedBudgets: []},
     planUnknownChannels: [],
     inHouseChannels: [],
     teamMembers: [],
@@ -132,13 +132,13 @@ export default class Campaigns extends Component {
 
   render() {
     const {selectedIndex, campaigns} = this.state;
-    const {approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification, calculatedData: {monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
+    const {planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification, calculatedData: {committedBudgets, monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0]
       ? planUnknownChannels[0]
       : {};
-    const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0]
-      ? approvedBudgets[0]
+    const approvedChannels = committedBudgets && committedBudgets.length > 0 && committedBudgets[0]
+      ? committedBudgets[0]
       : {};
     const inHouse = {};
     inHouseChannels.forEach(channel => {
