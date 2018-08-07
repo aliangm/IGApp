@@ -19,7 +19,7 @@ import Users from './components/pages/Users';
 import Insights from './components/pages/Insights';
 import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
-import AuthService from './components/utils/AuthService';
+import {isAuthenticated, logout, handleAuthentication, getProfileSync} from './components/utils/AuthService';
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
@@ -45,19 +45,18 @@ import Profile from 'components/pages/Profile';
 import {formatDate} from 'components/utils/date';
 
 style.use();
-const auth = new AuthService();
 
 // validate authentication for private routes
 const requireAdminAuth = (nextState, replace) => {
-  if (!auth.loggedIn() || !auth.getProfile().app_metadata || !auth.getProfile().app_metadata.isAdmin) {
-    auth.logout();
+  if (!isAuthenticated() || !getProfileSync().app_metadata || !getProfileSync().app_metadata.isAdmin) {
+    logout();
     replace({pathname: '/'});
   }
 };
 
 // validate authentication for private routes
 const requireAuth = (nextState, replace) => {
-  if (!auth.loggedIn()) {
+  if (!isAuthenticated()) {
     replace({pathname: '/'});
   }
 };
@@ -65,7 +64,8 @@ const requireAuth = (nextState, replace) => {
 ReactDOM.render(
   <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
     <Route path="/" component={SignIn}/>
-    <Route component={App} auth={auth} onEnter={requireAuth}>
+    <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
+    <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={requireAdminAuth}>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAdminAuth} tabName='CMO'/>
         <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAdminAuth} tabName='Metrics'/>
@@ -76,8 +76,8 @@ ReactDOM.render(
         <Route path="/plan/plan/current"
                component={CurrentTab}
                onEnter={requireAdminAuth}
-              // Special treatment for state derived tab name. The state is saved at App.js level therefore
-              // can't render the name here. DefaultName is for situation where the property is still loading
+          // Special treatment for state derived tab name. The state is saved at App.js level therefore
+          // can't render the name here. DefaultName is for situation where the property is still loading
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/plan/annual" component={AnnualTab} onEnter={requireAdminAuth} tabName='Annual'/>
         <Route path="/plan/plan/projections"

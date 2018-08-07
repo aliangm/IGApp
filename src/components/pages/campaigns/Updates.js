@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 
 import Comment from 'components/pages/campaigns/Comment';
-import AuthService from 'components/utils/AuthService';
+import {getProfileSync} from 'components/utils/AuthService';
 import CommentTextArea from 'components/pages/campaigns/CommentTextArea';
 
 import style from 'styles/campaigns/updates.css';
@@ -20,8 +20,7 @@ export default class Updates extends Component {
   };
 
   componentDidMount() {
-    const lock = new AuthService();
-    this.setState({userId: lock.getProfile().user_id});
+    this.setState({userId: getProfileSync().user_id});
   }
 
   getMembersNames() {

@@ -219,7 +219,6 @@ export default class ByChannelTab extends Component {
           showCampaign={this.props.showCampaign}
           addNewCampaign={this.props.addNewCampaign}
           userAccount={this.props.userAccount}
-          auth={this.props.auth}
         />
       </div>
     );

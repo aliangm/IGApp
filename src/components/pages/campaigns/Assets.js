@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
-import AuthService from 'components/utils/AuthService';
+import {getProfileSync} from 'components/utils/AuthService';
 import serverCommunication from 'data/serverCommunication';
 import style from 'styles/campaigns/assets.css';
 
@@ -22,8 +22,7 @@ export default class Assets extends Component {
 
 
   showCloudinary() {
-    const lock = new AuthService();
-    const profile = lock.getProfile();
+    const profile = getProfileSync();
     cloudinary.openUploadWidget(
       {
         cloud_name: 'infinigrow',
