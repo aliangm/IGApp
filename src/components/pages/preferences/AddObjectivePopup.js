@@ -135,13 +135,8 @@ export default class AddObjectivePopup extends Component {
   };
 
   render() {
-    const indicators = getIndicatorsWithProps();
-    const indicatorOptions = Object.keys(indicators)
-      .filter(item => indicators[item].isObjective)
-      .map(item => {
-        return {value: item, label: indicators[item].nickname};
-      });
-    const directionText = (this.state.indicator && indicators[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
+    const indicatorsWithProps = getIndicatorsWithProps();
+    const directionText = (this.state.indicator && indicatorsWithProps[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
     const objectivesPriority = [];
     for (let i = 0; i <= this.props.numOfPriorities; i++) {
       objectivesPriority.push({value: i, label: '#' + (i + 1)});
@@ -298,7 +293,7 @@ export default class AddObjectivePopup extends Component {
                 selected={this.state.indicator}
                 select={{
                   placeholder: 'KPI',
-                  options: indicatorOptions
+                  options: this.props.objectivesOptions
                 }}
                 onChange={(e) => {
                   this.setState({indicator: e.value}, this.calculateTargetValue);

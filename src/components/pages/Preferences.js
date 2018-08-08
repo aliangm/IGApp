@@ -22,7 +22,7 @@ import PlanFromExcel from 'components/PlanFromExcel';
 import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
-import {getNickname, getMetadata} from 'components/utils/indicators';
+import {getIndicatorsWithProps, getNickname, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
@@ -400,6 +400,13 @@ export default class Preferences extends Component {
                          this.objectiveRemove(item.indicator, item.monthIndex);
                        }}/>);
 
+    const indicatorsWithProps = getIndicatorsWithProps();
+    const objectiveOptions = Object.keys(indicatorsWithProps)
+      .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective && !objectivesData.find(item => item.indicator === indicatorKey))
+      .map(indicatorKey => {
+        return {value: indicatorKey, label: indicatorsWithProps[indicatorKey].nickname};
+      });
+
     const budgetConstraintsChannels = Object.keys(budgetConstraints);
 
     return <div>
@@ -483,6 +490,7 @@ export default class Preferences extends Component {
                                    });
                                  }}
                                  dates={dates}
+                                 objectivesOptions={objectiveOptions}
                                  createOrUpdateObjective={this.createOrUpdateObjective}
                                  actualIndicators={this.props.actualIndicators}
                                  projectedPlan={this.props.projectedPlan}
