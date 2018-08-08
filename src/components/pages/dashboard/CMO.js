@@ -41,7 +41,6 @@ export default class CMO extends Component {
     unfilteredCampaigns: {},
     objectives: [],
     annualBudgetArray: [],
-    firstObjective: 'SQL'
   };
 
   constructor() {
