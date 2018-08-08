@@ -53,7 +53,13 @@ export default class Preferences extends Component {
       isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget) => {
         return budget === props.annualBudgetArray[0];
       }),
-      showAdvancedFields: false
+      showAdvancedFields: false,
+      objectivePopupData: {
+        hidden: true,
+        objective: null,
+        objectiveMonth: null,
+        objectiveEdit: false
+      }
     };
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
@@ -261,7 +267,7 @@ export default class Preferences extends Component {
     objectives[monthIndex][objective].userInput.recurrentArray = recurrentArray;
 
     this.props.updateState({objectives: objectives});
-    this.setState({showObjectivesPopup: false});
+    this.setState({objectivePopupData: {objective: null, objectiveMonth: null, objectiveEdit: false, hidden: true}});
   };
 
   monthBudgets() {
@@ -363,12 +369,12 @@ export default class Preferences extends Component {
                        index={index}
                        {...item}
                        editObjective={() => {
-                         this.setState({
-                           showObjectivesPopup: true,
+                         this.setState({objectivePopupData: {
+                           hidden: false,
                            objectiveMonth: item.monthIndex,
                            objective: item.indicator,
                            objectiveEdit: true
-                         });
+                         }});
                        }}
                        deleteObjective={() => {
                          this.objectiveRemove(item.indicator, item.monthIndex);
@@ -434,16 +440,13 @@ export default class Preferences extends Component {
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
               {objectiveViews}
               <div className={preferencesStyle.locals.addObjective} onClick={() => {
-                this.setState({showObjectivesPopup: true, objectiveEdit: false});
+                this.setState({objectivePopupData: {hidden: false, objectiveEdit: false, objective: null, objectiveMonth: null}});
               }}/>
-              <AddObjectivePopup hidden={!this.state.showObjectivesPopup}
-                                 objectiveMonth={this.state.objectiveMonth}
-                                 objective={this.state.objective}
-                                 objectives={this.props.objectives}
-                                 numOfObjectives={objectivesData.length}
-                                 objectiveEdit={this.state.objectiveEdit}
+              <AddObjectivePopup objectives={this.props.objectives}
+                                 {...this.state.objectivePopupData}
+                                 numOfPriorities={objectivesData.length}
                                  close={() => {
-                                   this.setState({showObjectivesPopup: false});
+                                   this.setState({objectivePopupData: {hidden: true, objectiveEdit: false, objective: null, objectiveMonth: null}});
                                  }}
                                  dates={dates}
                                  createOrUpdateObjective={this.createOrUpdateObjective}

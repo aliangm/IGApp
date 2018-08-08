@@ -15,7 +15,7 @@ import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import navStyle from 'styles/profile/market-fit-popup.css';
 import {timeFrameToDate} from 'components/utils/objective';
 import {isPopupMode} from 'modules/popup-mode';
-import {formatNumber} from 'components/utils/budget';
+import {formatNumber, extractNumberFromBudget} from 'components/utils/budget';
 import isNil from 'lodash/isNil';
 import {getDates} from 'components/utils/date';
 
@@ -65,7 +65,7 @@ export default class AddObjectivePopup extends Component {
       else {
         this.setState({
           ...this.defaultData,
-          priority: nextProps.numOfObjectives,
+          priority: nextProps.numOfPriorities,
           notSure: 0
         });
       }
@@ -119,16 +119,17 @@ export default class AddObjectivePopup extends Component {
         <Textfield
           value={this.state.recurrentArray[index] > 0 ? formatNumber(this.state.recurrentArray[index]) : ''}
           onChange={(e) => {
-            this.handleCustomChange(e, index);
+            const value = extractNumberFromBudget(e.target.value, -1);
+            this.handleCustomChange(value, index);
           }}
           style={{width: '166px'}}/>
       </div>
     );
   };
 
-  handleCustomChange = (e, index) => {
+  handleCustomChange = (value, index) => {
     const recurrentArray = [...this.state.recurrentArray];
-    recurrentArray[index] = parseInt(e.target.value) || -1;
+    recurrentArray[index] = value;
     this.setState({recurrentArray: recurrentArray}, this.calculateTargetValue);
   };
 
@@ -141,7 +142,7 @@ export default class AddObjectivePopup extends Component {
       });
     const directionText = (this.state.indicator && indicators[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
     const objectivesPriority = [];
-    for (let i = 0; i <= this.props.numOfObjectives; i++) {
+    for (let i = 0; i <= this.props.numOfPriorities; i++) {
       objectivesPriority.push({value: i, label: '#' + (i + 1)});
     }
     const datesOptions = this.props.dates.map((item, index) => {
@@ -149,6 +150,7 @@ export default class AddObjectivePopup extends Component {
     });
 
     const typeOptions = [{label: '(num)', value: false}];
+    // If current indicator is 0 or not defined, prevent increase in percentages
     if (this.props.actualIndicators[this.state.indicator]) {
       typeOptions.push({label: '%', value: true});
     }
@@ -245,7 +247,7 @@ export default class AddObjectivePopup extends Component {
                         whiteSpace: 'pre'
                       }}>
                         {'I want to reach a target of '} <span
-                        style={{fontWeight: '700'}}>{formatNumber(this.state.amount)}</span>{' ' + getNickname(this.state.indicator) + ' by ' + this.state.timeFrame}
+                        style={{fontWeight: '700'}}>{formatNumber(this.state.amount)}</span>{` ${getNickname(this.state.indicator)} by ${this.state.timeFrame}`}
                       </Label>
                     </div>
                     <div className={navStyle.locals.nav}>
