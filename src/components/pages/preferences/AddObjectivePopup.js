@@ -15,7 +15,8 @@ import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import navStyle from 'styles/profile/market-fit-popup.css';
 import {timeFrameToDate} from 'components/utils/objective';
 import {isPopupMode} from 'modules/popup-mode';
-import {formatNumber, extractNumberFromBudget} from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
+import {extractNumber} from 'components/utils/utils';
 import isNil from 'lodash/isNil';
 import {getDates} from 'components/utils/date';
 
@@ -119,7 +120,7 @@ export default class AddObjectivePopup extends Component {
         <Textfield
           value={this.state.recurrentArray[index] > 0 ? formatNumber(this.state.recurrentArray[index]) : ''}
           onChange={(e) => {
-            const value = extractNumberFromBudget(e.target.value, -1);
+            const value = extractNumber(e.target.value, -1);
             this.handleCustomChange(value, index);
           }}
           style={{width: '166px'}}/>

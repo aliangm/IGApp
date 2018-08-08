@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/budget-table.css';
-import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
+import {formatBudget} from 'components/utils/budget';
+import {extractNumber} from 'components/utils/utils';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
@@ -124,7 +125,7 @@ export default class BudgetsTable extends Component {
   };
 
   commitDrag = () => {
-    const value = extractNumberFromBudget(this.state.draggableValue);
+    const value = extractNumber(this.state.draggableValue);
 
     this.state.draggedCells.forEach(({month, channel}) => {
       this.props.editCommitedBudget(month, channel, value);

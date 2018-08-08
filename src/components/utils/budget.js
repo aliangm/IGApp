@@ -1,9 +1,9 @@
 export function formatNumber(budget) {
-	if (budget == null) {
-		return ''
-	}
+  if (budget == null) {
+    return '';
+  }
 
-	return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function formatBudget(budget) {
@@ -21,8 +21,4 @@ export function formatBudgetShortened(budget) {
     return (budget / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
   }
   return budget;
-}
-
-export function extractNumberFromBudget(budget, defaultValue = 0) {
-  return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
 }

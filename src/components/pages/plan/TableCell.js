@@ -3,9 +3,10 @@ import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import budgetsTableStyle from 'styles/plan/budget-table.css';
 import StateSelection from 'components/pages/plan/StateSelection';
-import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
+import {formatBudget} from 'components/utils/budget';
+import {extractNumber} from 'components/utils/utils';
 import isNil from 'lodash/isNil';
-import {findDOMNode} from 'react-dom'
+import {findDOMNode} from 'react-dom';
 
 const CONSTRAINT_MAPPING = {
   'none': {
@@ -82,7 +83,7 @@ export default class TableCell extends Component {
   onOutsideClick = (e) => {
     const domElement = this.refs.cellRef;
     if (domElement && e.target !== domElement && !domElement.contains(e.target) && this.state.isCellEditing) {
-      if (this.state.editValue === this.props.primaryValue){
+      if (this.state.editValue === this.props.primaryValue) {
         this.declineEdit();
       }
       else {
@@ -145,7 +146,7 @@ export default class TableCell extends Component {
 
   showSuggestion = () => {
     return !isNil(this.props.secondaryValue)
-      && (this.props.secondaryValue !== this.props.primaryValue)
+      && (this.props.secondaryValue !== this.props.primaryValue);
   };
 
   approveEdit = () => {
@@ -158,7 +159,7 @@ export default class TableCell extends Component {
   };
 
   onInputValueChange = (e) => {
-    const value = extractNumberFromBudget(e.target.value);
+    const value = extractNumber(e.target.value);
 
     if (!isNil(value)) {
       if (this.isEditModeType(EDIT_MODE.FROM_PROP)) {
@@ -212,16 +213,16 @@ export default class TableCell extends Component {
                }}
                onMouseOut={(e) => {
                  const domElement = findDOMNode(this.boxRef);
-                 if(e.target === this.refs.cellRef && domElement && domElement.contains(e.relatedTarget)){
-                   this.setState({hoverCell: false})
+                 if (e.target === this.refs.cellRef && domElement && domElement.contains(e.relatedTarget)) {
+                   this.setState({hoverCell: false});
                  }
                }}
                onMouseOver={(e) => {
                  const domElement = findDOMNode(this.boxRef);
-                 if(!(domElement && domElement.contains(e.target))){
+                 if (!(domElement && domElement.contains(e.target))) {
                    this.setState({hoverCell: true});
                  }
-                }
+               }
                }
                ref='cellRef'>
 
