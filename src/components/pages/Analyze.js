@@ -6,7 +6,8 @@ import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Select from 'components/controls/Select';
 import {formatDate} from 'components/utils/date';
-
+import {getDatesSpecific} from 'components/utils/date'
+import merge from 'lodash/merge';
 
 export default class Analyze extends Component {
 
@@ -19,7 +20,7 @@ export default class Analyze extends Component {
 
   render() {
 
-    const {previousData} = this.props;
+    const {previousData, historyData, planDate} = this.props;
     const sortedPreviousData = previousData.sort((a, b) => {
       const planDate1 = a.planDate.split('/');
       const planDate2 = b.planDate.split('/');
@@ -32,8 +33,44 @@ export default class Analyze extends Component {
       return {value: index, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'};
     });
 
+    const indicatorsData = {};
+    const months = getDatesSpecific(planDate, historyData.indicators.length, 0);
+
+    historyData.indicators.forEach((item, key) => {
+      const displayDate = months[key];
+      Object.keys(item).forEach(indicator => {
+        if (!indicatorsData[indicator]) {
+          indicatorsData[indicator] = [];
+        }
+        const value = item[indicator];
+        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
+      })
+    });
+
+    const committedBudgets = historyData.planBudgets.map((month) => {
+      const newMonth = {};
+      Object.keys(month).map((key) => {
+        const committedBudget = month[key].committedBudget;
+        newMonth[key] = committedBudget ? committedBudget : 0
+      });
+
+      return newMonth;
+    });
+
+    const sumBudgets = {};
+    committedBudgets.forEach(month => {
+      Object.keys(month).forEach(channel => {
+        if (!sumBudgets[channel]) {
+          sumBudgets[channel] = 0;
+        }
+        sumBudgets[channel] += month[channel];
+      })
+    });
+
+    const historyCalculatedProps = {indicatorsData: indicatorsData, committedBudgets: committedBudgets, sumBudgets: sumBudgets};
+
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, this.props));
+      (child) => React.cloneElement(child, merge(historyCalculatedProps,this.props)));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>

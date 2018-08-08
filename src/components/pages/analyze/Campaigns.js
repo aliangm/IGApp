@@ -61,30 +61,8 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const { previousData, attribution, campaigns, CEVs } = this.props;
+    const {historyData, attribution, campaigns, CEVs } = this.props;
     const attributionCampaigns = attribution.campaigns || {};
-
-    let indicatorsData = {};
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split("/");
-      const planDate2 = b.planDate.split("/");
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
-    });
-    sortedPreviousData.forEach(item => {
-      const displayDate = this.getDateString(item.planDate);
-      Object.keys(item.actualIndicators).forEach(indicator => {
-        if (!indicatorsData[indicator]) {
-          indicatorsData[indicator] = [];
-        }
-        const value = item.actualIndicators[indicator];
-        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      })
-    });
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
-    });
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
@@ -344,7 +322,7 @@ export default class Campaigns extends Component {
                       options: attributionModels
                     }}
                     onChange={(e) => {
-                      this.props.calculateAttributionData(this.props.months ? previousData.length - this.props.months - 1 : 0, e.value)
+                      this.props.calculateAttributionData(this.props.months ? historyData.length - this.props.months - 1 : 0, e.value)
                     }}
                     style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
                   />

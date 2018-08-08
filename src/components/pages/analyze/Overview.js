@@ -60,11 +60,10 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {previousData, CEVs, historyData: {objectives, indicators}, planDate} = this.props;
+    const {previousData, CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives, indicators, getDatesSpecific(planDate, objectives.length, 0), false, true);
 
-    let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
       const planDate1 = a.planDate.split('/');
       const planDate2 = b.planDate.split('/');
@@ -72,39 +71,12 @@ export default class Overview extends Component {
       const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
       return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
     });
-    sortedPreviousData.forEach(item => {
-      const displayDate = this.getDateString(item.planDate);
-      Object.keys(item.actualIndicators).forEach(indicator => {
-        if (!indicatorsData[indicator]) {
-          indicatorsData[indicator] = [];
-        }
-        const value = item.actualIndicators[indicator];
-        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      });
-    });
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)};
-    });
     const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-    const budgets = relevantData.map(
-      item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0]
-        ? merge(item.approvedBudgets[0],
-          item.actualChannelBudgets && item.actualChannelBudgets.knownChannels
-            ? item.actualChannelBudgets.knownChannels
-            : {})
-        : {});
-    const totalCost = budgets.reduce((sum, item) => sum +
+
+    const totalCost = committedBudgets.reduce((sum, item) => sum +
       Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) +
       sum, 0);
-    let sumedBudgets = {};
-    budgets.forEach(month => {
-      Object.keys(month).forEach(channel => {
-        if (!sumedBudgets[channel]) {
-          sumedBudgets[channel] = 0;
-        }
-        sumedBudgets[channel] += month[channel];
-      });
-    });
+
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
       const current = indicatorsData[this.state.historicalPerformanceIndicator] &&
@@ -293,7 +265,7 @@ export default class Overview extends Component {
                   Channels
                 </div>
                 <div className={dashboardStyle.locals.number}>
-                  {Object.keys(budgets.reduce((sum, item) => merge(sum, item), {})).length}
+                  {Object.keys(committedBudgets.reduce((sum, item) => merge(sum, item), {})).length}
                 </div>
               </div>
             </div>

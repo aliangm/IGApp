@@ -86,10 +86,9 @@ export default class Channels extends Component {
   }
 
   render() {
-    const { previousData, attribution, CEVs } = this.props;
+    const { previousData, attribution, CEVs, sumBudgets } = this.props;
     const { firstObjective } = this.state;
 
-    let indicatorsData = {};
     const sortedPreviousData = previousData.sort((a, b) => {
       const planDate1 = a.planDate.split("/");
       const planDate2 = b.planDate.split("/");
@@ -97,31 +96,7 @@ export default class Channels extends Component {
       const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
       return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
     });
-    sortedPreviousData.forEach(item => {
-      const displayDate = this.getDateString(item.planDate);
-      Object.keys(item.actualIndicators).forEach(indicator => {
-        if (!indicatorsData[indicator]) {
-          indicatorsData[indicator] = [];
-        }
-        const value = item.actualIndicators[indicator];
-        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      })
-    });
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
-    });
     const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-    const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? merge(item.approvedBudgets[0], item.actualChannelBudgets && item.actualChannelBudgets.knownChannels ? item.actualChannelBudgets.knownChannels : {}) : {});
-    let sumedBudgets = {};
-    budgets.forEach(month => {
-      Object.keys(month).forEach(channel => {
-        if (!sumedBudgets[channel]) {
-          sumedBudgets[channel] = 0;
-        }
-        sumedBudgets[channel] += month[channel];
-      })
-    });
-
     const data = relevantData.map(month => {
         const json = {
           name: formatDate(month.planDate)
@@ -229,7 +204,7 @@ export default class Channels extends Component {
       const json =  {
         channel: item.value,
         label: item.label,
-        budget: sumedBudgets[item.value] || 0,
+        budget: sumBudgets[item.value] || 0,
         revenueMetric:(CEVs && CEVs[this.state.attributionTableRevenueMetric] ? CEVs[this.state.attributionTableRevenueMetric][item.value] : 0),
         webVisits: (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item.value] : 0),
         conversion: (CEVs && CEVs["conversion"] ? CEVs["conversion"][item.value] : 0),
