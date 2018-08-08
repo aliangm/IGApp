@@ -275,7 +275,7 @@ export default class Plan extends Component {
         <div className={this.classes.head}>
           <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
             <div className={this.classes.headTitle}>Plan</div>
-            {annualTabActive && interactiveMode ?
+            {annualTabActive && interactiveMode && !editMode ?
               <FeatureToggle featureName="plannerAI">
                 <div style={{display: 'flex'}}>
                   <div className={this.classes.error}>
