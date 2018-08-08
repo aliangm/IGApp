@@ -256,15 +256,23 @@ export default class Preferences extends Component {
       }
     }
 
-    objectives[monthIndex][objective].target.value = objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
-    objectives[monthIndex][objective].target.priority = objectiveData.priority;
-    objectives[monthIndex][objective].userInput.isRecurrent = objectiveData.isRecurrent;
-    objectives[monthIndex][objective].userInput.isPercentage = objectiveData.isPercentage;
-    objectives[monthIndex][objective].userInput.isTarget = objectiveData.isTarget;
-    objectives[monthIndex][objective].userInput.amount = objectiveData.amount;
-    objectives[monthIndex][objective].userInput.recurrentType = objectiveData.recurrentType;
-    objectives[monthIndex][objective].userInput.nickname = getNickname(objective);
-    objectives[monthIndex][objective].userInput.recurrentArray = recurrentArray;
+    objectives[monthIndex][objective] = {
+      target: {
+        ...objectives[monthIndex][objective].target,
+        value: objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue,
+        priority: objectiveData.priority
+      },
+      userInput: {
+        ...objectives[monthIndex][objective].userInput,
+        isRecurrent: objectiveData.isRecurrent,
+        isPercentage: objectiveData.isPercentage,
+        isTarget: objectiveData.isTarget,
+        amount: objectiveData.amount,
+        recurrentType: objectiveData.recurrentType,
+        nickname: getNickname(objective),
+        recurrentArray: recurrentArray
+      }
+    };
 
     this.props.updateState({objectives: objectives});
     this.setState({objectivePopupData: {objective: null, objectiveMonth: null, objectiveEdit: false, hidden: true}});
