@@ -62,7 +62,7 @@ export default class Overview extends Component {
   render() {
     const {previousData, CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
-    const flattenHistoryObjectives = flattenObjectives(objectives, indicators, getDatesSpecific(planDate, objectives.length, 0), false, true);
+    const flattenHistoryObjectives = flattenObjectives(objectives, indicators, getDatesSpecific(planDate, objectives.length, 0), false);
 
     const sortedPreviousData = previousData.sort((a, b) => {
       const planDate1 = a.planDate.split('/');

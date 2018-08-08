@@ -12,7 +12,10 @@ export default class Toggle extends Component {
   };
 
   static propTypes = {
-    options: PropTypes.array.isRequired,
+    options: PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.any.isRequired,
+      text: PropTypes.any.isRequired
+    })).isRequired,
     selectedValue: PropTypes.any.isRequired,
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object

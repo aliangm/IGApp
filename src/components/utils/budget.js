@@ -23,6 +23,6 @@ export function formatBudgetShortened(budget) {
   return budget;
 }
 
-export function extractNumberFromBudget(budget) {
-  return parseInt(budget.toString().replace(/\D+/g, '')) || 0;
+export function extractNumberFromBudget(budget, defaultValue = 0) {
+  return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
 }
