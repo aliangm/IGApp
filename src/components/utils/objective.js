@@ -16,7 +16,7 @@ export function timeFrameToDate(timeFrame) {
 export function flattenObjectives(objectives,
                                   actualIndicators,
                                   dates,
-                                  shouldCollapseObjectives = false) {
+                                  removeDuplicates = false) {
 
   const getObjectiveData = (indicator, objective, monthIndex) => {
     return {
@@ -41,9 +41,17 @@ export function flattenObjectives(objectives,
   });
 
 
-  if (shouldCollapseObjectives) {
-    objectivesData = extend(objectivesData[(objectivesData.length - 1)], ...[...objectivesData].reverse());
-    objectivesData = Object.keys(objectivesData).map(objectiveKey => objectivesData[objectiveKey]);
+  if (removeDuplicates) {
+    const withoutDuplicates = {};
+    objectivesData.forEach((month) => {
+      Object.keys(month).forEach((key) => {
+        if (!withoutDuplicates[key]) {
+          withoutDuplicates[key] = month[key];
+        }
+      });
+    })
+
+    objectivesData = Object.keys(withoutDuplicates).map(objectiveKey => withoutDuplicates[objectiveKey]);
   }
   else {
     objectivesData = [].concat(...objectivesData.map(monthData =>
