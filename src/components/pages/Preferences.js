@@ -183,99 +183,109 @@ export default class Preferences extends Component {
   createOrUpdateObjective = (objectiveData, originalMonthIndex, originalObjective) => {
     let monthIndex = objectiveData.monthIndex;
     const objective = objectiveData.indicator;
-    const isDirectionUp = getMetadata('isDirectionUp', objective);
-    let objectives = [...this.props.objectives];
-    let recurrentArray = [];
+    if (objective) {
+      const isDirectionUp = getMetadata('isDirectionUp', objective);
+      let objectives = [...this.props.objectives];
+      let recurrentArray = [];
 
-    if (objectiveData.isRecurrent) {
-      const now = new Date();
-      if (objectiveData.recurrentType === 'monthly') {
-        monthIndex = 0;
-        for (let i = 0; i < 12; i++) {
-          let targetValue = -1;
-          const value = i ? recurrentArray[i - 1] : this.props.actualIndicators[objective];
-          if (objectiveData.isPercentage) {
-            targetValue = (1 + (objectiveData.amount / 100 * (isDirectionUp ? 1 : -1))) * value;
+      if (objectiveData.isRecurrent) {
+        const now = new Date();
+        if (objectiveData.recurrentType === 'monthly') {
+          monthIndex = 0;
+          for (let i = 0; i < 12; i++) {
+            let targetValue = -1;
+            const value = i ? recurrentArray[i - 1] : this.props.actualIndicators[objective];
+            if (objectiveData.isPercentage) {
+              targetValue = (1 + (objectiveData.amount / 100 * (isDirectionUp ? 1 : -1))) * value;
+            }
+            else {
+              targetValue = value + objectiveData.amount * (isDirectionUp ? 1 : -1);
+            }
+            recurrentArray.push(Math.round(targetValue));
           }
-          else {
-            targetValue = value + objectiveData.amount * (isDirectionUp ? 1 : -1);
+        }
+        else if (objectiveData.recurrentType === 'quarterly') {
+          const quarter = Math.floor((now.getMonth() / 3));
+          const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
+          const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+          monthIndex = endDate.getMonth() - now.getMonth();
+          recurrentArray = new Array(12).fill(-1);
+          for (let i = 0; i < 4; i++) {
+            const index = (monthIndex + (i * 3)) % 12;
+            let targetValue = -1;
+            const value = i ? recurrentArray[(monthIndex + ((i - 1) * 3)) % 12] : this.props.actualIndicators[objective];
+            if (objectiveData.isPercentage) {
+              targetValue = (objectiveData.amount / 100 + 1) * value;
+            }
+            else {
+              targetValue = objectiveData.amount + value;
+            }
+            recurrentArray[index] = targetValue;
           }
-          recurrentArray.push(Math.round(targetValue));
+        }
+        else {
+          monthIndex = objectiveData.recurrentArray.findIndex(item => item !== -1);
+          recurrentArray = objectiveData.recurrentArray;
         }
       }
-      else if (objectiveData.recurrentType === 'quarterly') {
-        const quarter = Math.floor((now.getMonth() / 3));
-        const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
-        const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
-        monthIndex = endDate.getMonth() - now.getMonth();
-        recurrentArray = new Array(12).fill(-1);
-        for (let i = 0; i < 4; i++) {
-          const index = (monthIndex + (i * 3)) % 12;
-          let targetValue = -1;
-          const value = i ? recurrentArray[(monthIndex + ((i - 1) * 3)) % 12] : this.props.actualIndicators[objective];
-          if (objectiveData.isPercentage) {
-            targetValue = (objectiveData.amount / 100 + 1) * value;
+
+      // objective edit of month or indicator
+      if (!isNil(originalMonthIndex) && originalObjective && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
+        objectives[monthIndex][objective] = objectives[originalMonthIndex][originalObjective];
+        delete objectives[originalMonthIndex][originalObjective];
+      }
+
+      if (!objectives[monthIndex]) {
+        objectives[monthIndex] = {};
+      }
+
+      if (!objectives[monthIndex][objective]) {
+        objectives[monthIndex][objective] = {
+          target: {},
+          userInput: {
+            startDate: new Date()
           }
-          else {
-            targetValue = objectiveData.amount + value;
-          }
-          recurrentArray[index] = targetValue;
+        };
+      }
+
+      // not the default priority, need to replace
+      if (objectiveData.priority !== this.props.calculatedData.objectives.objectivesData.length) {
+        const previous = this.props.calculatedData.objectives.objectivesData.find(item => item.priority === objectiveData.priority);
+        if (previous) {
+          const {monthIndex, indicator} = previous;
+          objectives[monthIndex][indicator].target.priority = this.props.calculatedData.objectives.objectivesData.length;
         }
       }
-      else {
-        monthIndex = objectiveData.recurrentArray.findIndex(item => item !== -1);
-        recurrentArray = objectiveData.recurrentArray;
+      const targetValue = objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
+      if (!isNil(monthIndex) && targetValue && targetValue !== -1) {
+        objectives[monthIndex][objective] = {
+          target: {
+            ...objectives[monthIndex][objective].target,
+            value: targetValue,
+            priority: objectiveData.priority
+          },
+          userInput: {
+            ...objectives[monthIndex][objective].userInput,
+            isRecurrent: objectiveData.isRecurrent,
+            isPercentage: objectiveData.isPercentage,
+            isTarget: objectiveData.isTarget,
+            amount: objectiveData.amount,
+            recurrentType: objectiveData.recurrentType,
+            nickname: getNickname(objective),
+            recurrentArray: recurrentArray
+          }
+        };
+        this.props.updateState({objectives: objectives});
+        this.setState({
+          objectivePopupData: {
+            objective: null,
+            objectiveMonth: null,
+            objectiveEdit: false,
+            hidden: true
+          }
+        });
       }
     }
-
-    // objective edit of month or indicator
-    if (!isNil(originalMonthIndex) && originalObjective && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
-      objectives[monthIndex][objective] = objectives[originalMonthIndex][originalObjective];
-      delete objectives[originalMonthIndex][originalObjective];
-    }
-
-    if (!objectives[monthIndex]) {
-      objectives[monthIndex] = {};
-    }
-
-    if (!objectives[monthIndex][objective]) {
-      objectives[monthIndex][objective] = {
-        target: {},
-        userInput: {
-          startDate: new Date()
-        }
-      };
-    }
-
-    // not the default priority, need to replace
-    if (objectiveData.priority !== this.props.calculatedData.objectives.objectivesData.length) {
-      const previous = this.props.calculatedData.objectives.objectivesData.find(item => item.priority === objectiveData.priority);
-      if (previous) {
-        const {monthIndex, indicator} = previous;
-        objectives[monthIndex][indicator].target.priority = this.props.calculatedData.objectives.objectivesData.length;
-      }
-    }
-
-    objectives[monthIndex][objective] = {
-      target: {
-        ...objectives[monthIndex][objective].target,
-        value: objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue,
-        priority: objectiveData.priority
-      },
-      userInput: {
-        ...objectives[monthIndex][objective].userInput,
-        isRecurrent: objectiveData.isRecurrent,
-        isPercentage: objectiveData.isPercentage,
-        isTarget: objectiveData.isTarget,
-        amount: objectiveData.amount,
-        recurrentType: objectiveData.recurrentType,
-        nickname: getNickname(objective),
-        recurrentArray: recurrentArray
-      }
-    };
-
-    this.props.updateState({objectives: objectives});
-    this.setState({objectivePopupData: {objective: null, objectiveMonth: null, objectiveEdit: false, hidden: true}});
   };
 
   monthBudgets() {
@@ -377,12 +387,14 @@ export default class Preferences extends Component {
                        index={index}
                        {...item}
                        editObjective={() => {
-                         this.setState({objectivePopupData: {
-                           hidden: false,
-                           objectiveMonth: item.monthIndex,
-                           objective: item.indicator,
-                           objectiveEdit: true
-                         }});
+                         this.setState({
+                           objectivePopupData: {
+                             hidden: false,
+                             objectiveMonth: item.monthIndex,
+                             objective: item.indicator,
+                             objectiveEdit: true
+                           }
+                         });
                        }}
                        deleteObjective={() => {
                          this.objectiveRemove(item.indicator, item.monthIndex);
@@ -448,13 +460,27 @@ export default class Preferences extends Component {
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
               {objectiveViews}
               <div className={preferencesStyle.locals.addObjective} onClick={() => {
-                this.setState({objectivePopupData: {hidden: false, objectiveEdit: false, objective: null, objectiveMonth: null}});
+                this.setState({
+                  objectivePopupData: {
+                    hidden: false,
+                    objectiveEdit: false,
+                    objective: null,
+                    objectiveMonth: null
+                  }
+                });
               }}/>
               <AddObjectivePopup objectives={this.props.objectives}
                                  {...this.state.objectivePopupData}
                                  numOfPriorities={objectivesData.length}
                                  close={() => {
-                                   this.setState({objectivePopupData: {hidden: true, objectiveEdit: false, objective: null, objectiveMonth: null}});
+                                   this.setState({
+                                     objectivePopupData: {
+                                       hidden: true,
+                                       objectiveEdit: false,
+                                       objective: null,
+                                       objectiveMonth: null
+                                     }
+                                   });
                                  }}
                                  dates={dates}
                                  createOrUpdateObjective={this.createOrUpdateObjective}

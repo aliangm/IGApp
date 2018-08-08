@@ -13,13 +13,13 @@ export function initialize(indicatorsSchema, userMapping) {
 }
 
 export function getTitle(indicator) {
-  if (isInitialized) {
+  if (isInitialized && indicator) {
     return schema.properties[indicator].title;
   }
 }
 
 export function getNickname(indicator, isSingular = false) {
-  if (isInitialized) {
+  if (isInitialized && indicator) {
     const nickname = schema.properties[indicator].nickname;
     if (isSingular && nickname.slice(-1) === 's') {
       return nickname.slice(0,-1);
@@ -31,7 +31,7 @@ export function getNickname(indicator, isSingular = false) {
 }
 
 export function getMetadata(type, indicator) {
-  if (isInitialized) {
+  if (isInitialized && indicator && type) {
     return schema.properties[indicator][type];
   }
 }

@@ -33,7 +33,7 @@ export default class AddObjectivePopup extends Component {
     isTarget: true,
     amount: '',
     recurrentArray: new Array(12).fill(-1),
-    monthIndex: ''
+    monthIndex: null
   };
 
   constructor(props) {
