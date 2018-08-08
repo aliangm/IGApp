@@ -554,7 +554,7 @@ export default class Preferences extends Component {
                             step={50}
                             allowSameValues={true}
                             minValue={0}
-                            maxValue={Math.max(...annualBudgetArray)}
+                            maxValue={Math.min(...annualBudgetArray)}
                             value={budgetConstraints[budgetConstraintsChannels[index]] ? budgetConstraints[budgetConstraintsChannels[index]].range : {
                               min: 0,
                               max: -1
