@@ -256,7 +256,7 @@ export default class Preferences extends Component {
       }
     }
 
-    objectives[monthIndex][objective].target.value = objectiveData.isRecurrent ? objectiveData.recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
+    objectives[monthIndex][objective].target.value = objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
     objectives[monthIndex][objective].target.priority = objectiveData.priority;
     objectives[monthIndex][objective].userInput.isRecurrent = objectiveData.isRecurrent;
     objectives[monthIndex][objective].userInput.isPercentage = objectiveData.isPercentage;
