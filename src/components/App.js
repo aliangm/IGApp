@@ -445,10 +445,6 @@ class AppComponent extends Component {
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
       region: data.region,
-      goals: {
-        primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-        secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-      },
       objectives: data.objectives || [],
       blockedChannels: data.blockedChannels || [],
       inHouseChannels: data.inHouseChannels || [],
@@ -760,8 +756,9 @@ class AppComponent extends Component {
       (child) => React.cloneElement(child, extendedData));
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header {...this.state} path={this.props.location.pathname} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
-        <Sidebar userAccount={this.state.userAccount} path={this.props.location.pathname}/>
+        <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
+        <Sidebar userAccount={this.state.userAccount}
+                 path={this.props.location.pathname}/>
         <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
         <PlanLoading showPopup={this.state.isPlannerLoading} close={() => {
           this.setState({isPlannerLoading: false});

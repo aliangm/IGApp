@@ -104,3 +104,11 @@
   color: red;
   font-size: 20px;
 }
+
+.text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: #99a4c2;
+  align-self: center;
+}

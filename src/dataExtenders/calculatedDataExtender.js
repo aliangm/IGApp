@@ -3,6 +3,8 @@ import { timeFrameToDate } from 'components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from 'utils.js';
 import sumBy from 'lodash/sumBy';
+import {flattenObjectives} from '../components/utils/objective';
+import {getDates} from 'components/utils/date';
 
 export function calculatedDataExtender(data){
 
@@ -14,6 +16,12 @@ export function calculatedDataExtender(data){
   const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
   const monthlyExtarpolatedMoneySpent = calculateActualSpent(data.approvedBudgets[0],data.planUnknownChannels[0] ,data.knownChannels, data.unknownChannels, data.planDate);
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
+
+  const dates = getDates(data.planDate);
+  const objectivesData = flattenObjectives(data.objectives, data.actualIndicators, dates, false);
+  const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
+  const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
+  const funnelObjectives = collapsedObjectives.filter(objective => funnelPossibleObjectives.includes(objective.indicator));
 
   return {
     calculatedData: {
@@ -38,6 +46,13 @@ export function calculatedDataExtender(data){
           }
           return res;
         }, monthlyBudget),
+        objectives: {
+          objectivesData: objectivesData,
+          collapsedObjectives : collapsedObjectives,
+          firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator: null,
+          funnelObjectives: funnelObjectives,
+          funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator: 'newSQL'
+        }
       },
       ...data
     }

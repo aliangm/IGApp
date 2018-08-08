@@ -25,3 +25,9 @@ export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture) {
   }
   return [];
 }
+
+export function getEndOfMonthDate(dateStr) {
+  const [monthStr, year] = dateStr.split(' ');
+  const month = monthNames.indexOf(monthStr);
+  return new Date(parseInt(`20${year}`), month + 1, 0);
+}

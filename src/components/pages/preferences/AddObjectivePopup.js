@@ -7,52 +7,65 @@ import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
-import { getIndicatorsWithProps, getNickname } from 'components/utils/indicators';
+import {getIndicatorsWithProps, getNickname, getMetadata} from 'components/utils/indicators';
 import Calendar from 'components/controls/Calendar';
 import Toggle from 'components/controls/Toggle';
 import NotSure from 'components/onboarding/NotSure';
 import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import navStyle from 'styles/profile/market-fit-popup.css';
-import { timeFrameToDate } from 'components/utils/objective';
-import { isPopupMode } from 'modules/popup-mode';
-import { formatNumber } from 'components/utils/budget';
+import {timeFrameToDate} from 'components/utils/objective';
+import {isPopupMode} from 'modules/popup-mode';
+import {formatNumber, extractNumberFromBudget} from 'components/utils/budget';
+import isNil from 'lodash/isNil';
+import {getDates} from 'components/utils/date';
 
 export default class AddObjectivePopup extends Component {
 
   style = style;
   styles = [popupStyle, navStyle];
 
+  defaultData = {
+    indicator: '',
+    isRecurrent: false,
+    recurrentType: 'monthly',
+    isPercentage: false,
+    isTarget: true,
+    amount: '',
+    recurrentArray: new Array(12).fill(-1),
+    monthIndex: ''
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      indicator: '',
-      isRecurrent: false,
-      isMonthly: true,
-      amount: '',
-      isPercentage: '',
-      direction: '',
-      timeFrame: '',
-      order: props.objectives.length,
-      notSure: 0
+      ...this.defaultData,
+      notSure: 0,
+      priority: 0
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.hidden !== this.props.hidden) {
-      const objective = this.props.objectives[nextProps.index];
-      if (objective) {
-        this.setState({... objective, order: nextProps.index});
+      if (!isNil(nextProps.objectiveMonth) && nextProps.objective) {
+        const objective = this.props.objectives[nextProps.objectiveMonth][nextProps.objective];
+        if (objective) {
+          this.setState({
+            indicator: nextProps.objective,
+            isRecurrent: objective.userInput.isRecurrent,
+            recurrentType: objective.userInput.recurrentType,
+            isPercentage: objective.userInput.isPercentage,
+            isTarget: objective.userInput.isTarget,
+            priority: objective.target.priority,
+            amount: objective.userInput.amount,
+            recurrentArray: objective.userInput.recurrentArray,
+            monthIndex: nextProps.objectiveMonth
+          }, this.calculateTargetValue);
+        }
       }
       else {
         this.setState({
-          indicator: '',
-          isRecurrent: false,
-          isMonthly: true,
-          amount: '',
-          isPercentage: '',
-          direction: '',
-          timeFrame: '',
-          order: nextProps.objectives.length,
+          ...this.defaultData,
+          priority: nextProps.numOfPriorities,
           notSure: 0
         });
       }
@@ -81,26 +94,73 @@ export default class AddObjectivePopup extends Component {
     });
   }
 
+  calculateTargetValue() {
+    const isDirectionUp = getMetadata('isDirectionUp', this.state.indicator);
+    let targetValue;
+    if (this.state.isTarget) {
+      targetValue = this.state.amount;
+    }
+    else if (this.state.isPercentage) {
+      targetValue = (1 + (this.state.amount / 100 * (isDirectionUp ? 1 : -1))) * this.props.actualIndicators[this.state.indicator];
+    }
+    else {
+      targetValue = this.props.actualIndicators[this.state.indicator] + (this.state.amount * (isDirectionUp ? 1 : -1));
+    }
+
+    if (targetValue) {
+      this.setState({targetValue: Math.round(targetValue)});
+    }
+  }
+
+  getMonthsObjectives = () => {
+    return this.props.dates.map((month, index) =>
+      <div className={this.classes.cell} key={index}>
+        <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
+        <Textfield
+          value={this.state.recurrentArray[index] > 0 ? formatNumber(this.state.recurrentArray[index]) : ''}
+          onChange={(e) => {
+            const value = extractNumberFromBudget(e.target.value, -1);
+            this.handleCustomChange(value, index);
+          }}
+          style={{width: '166px'}}/>
+      </div>
+    );
+  };
+
+  handleCustomChange = (value, index) => {
+    const recurrentArray = [...this.state.recurrentArray];
+    recurrentArray[index] = value;
+    this.setState({recurrentArray: recurrentArray}, this.calculateTargetValue);
+  };
+
   render() {
     const indicators = getIndicatorsWithProps();
     const indicatorOptions = Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
       .map(item => {
-        return { value: item, label: indicators[item].nickname }
+        return {value: item, label: indicators[item].nickname};
       });
-    const directionOptions = [
-      {label: 'increase', value: 'increase'},
-      {label: 'decrease', value: 'decrease'},
-    ];
-    if (!this.state.isRecurrent) {
-      directionOptions.push({label: '(target)', value: 'equals'});
+    const directionText = (this.state.indicator && indicators[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
+    const objectivesPriority = [];
+    for (let i = 0; i <= this.props.numOfPriorities; i++) {
+      objectivesPriority.push({value: i, label: '#' + (i + 1)});
     }
-    const objectivesOrder = this.props.objectives.map((item, index) => {
-      return {value: index, label: '#' + (index + 1)}
+    const datesOptions = this.props.dates.map((item, index) => {
+      return {label: item, value: index};
     });
-    objectivesOrder.push({value: this.props.objectives.length, label: '#' + (this.props.objectives.length + 1)});
-    return <div hidden={ this.props.hidden }>
-      { this.state.notSure ?
+
+    const typeOptions = [{label: '(num)', value: false}];
+    // If current indicator is 0 or not defined, prevent increase in percentages
+    if (this.props.actualIndicators[this.state.indicator]) {
+      typeOptions.push({label: '%', value: true});
+    }
+
+    const amountTextField = <Textfield type="number" value={this.state.amount} onChange={(e) => {
+      this.setState({amount: parseInt(e.target.value)}, this.calculateTargetValue);
+    }} style={{width: '102px'}}/>;
+
+    return <div hidden={this.props.hidden}>
+      {this.state.notSure ?
         <Page popup={true} width={'600px'} contentClassName={popupStyle.locals.content}
               innerClassName={popupStyle.locals.inner}>
           <div className={popupStyle.locals.title}>
@@ -111,92 +171,110 @@ export default class AddObjectivePopup extends Component {
               this.state.notSure === 1 ?
                 <div>
                   <div className={this.classes.row}>
-                    <Label style={{ justifyContent: 'center', textTransform: 'capitalize', fontSize: '15px' }}>
+                    <Label style={{justifyContent: 'center', textTransform: 'capitalize', fontSize: '15px'}}>
                       Add a Due date
                     </Label>
                     <div style={{width: '200px', margin: 'auto', paddingLeft: '35px'}}>
                       <Calendar value={this.state.timeFrame} onChange={(e) => {
-                        this.setState({timeFrame: e})
+                        this.setState({timeFrame: e});
                       }}/>
                     </div>
                   </div>
-                  <div className={ navStyle.locals.nav }>
+                  <div className={navStyle.locals.nav}>
                     <Button type="normal-accent" style={{
                       width: '100px',
                       marginRight: '20px'
-                    }} onClick={ () => { this.setState({notSure: 0}) } }>
-                      <div className={ navStyle.locals.backIcon } />
+                    }} onClick={() => {
+                      this.setState({notSure: 0});
+                    }}>
+                      <div className={navStyle.locals.backIcon}/>
                       BACK
                     </Button>
                     <Button type="accent" style={{
                       width: '100px'
-                    }} onClick={ () => { this.setState({notSure: 2}) } }>
+                    }} onClick={() => {
+                      this.setState({notSure: 2});
+                    }}>
                       NEXT
-                      <div className={ navStyle.locals.nextIcon } />
+                      <div className={navStyle.locals.nextIcon}/>
                     </Button>
                   </div>
                 </div>
                 : this.state.notSure === 2 ?
                 <div>
                   <div className={this.classes.row}>
-                    <Label style={{ justifyContent: 'center', textTransform: 'capitalize', fontSize: '15px' }}>How aggressive you’re willing to be with the objective?</Label>
-                    <div style={{ justifyContent: 'center', display: 'flex' }}>
+                    <Label style={{justifyContent: 'center', textTransform: 'capitalize', fontSize: '15px'}}>How
+                      aggressive you’re willing to be with the objective?</Label>
+                    <div style={{justifyContent: 'center', display: 'flex'}}>
                       <ButtonsSet buttons={[
                         {key: 0.5, text: 'Light', icon: 'buttons:light'},
                         {key: 0.75, text: 'Caution', icon: 'buttons:caution'},
                         {key: 1, text: 'Moderate', icon: 'buttons:moderate'},
                         {key: 1.25, text: 'Aggressive', icon: 'buttons:aggressive'},
-                        {key: 1.5, text: 'Optimistic', icon: 'buttons:optimistic'},
+                        {key: 1.5, text: 'Optimistic', icon: 'buttons:optimistic'}
                       ]} selectedKey={this.state.aggressiveLevel}
                                   onChange={(e) => {
-                                    this.setState({aggressiveLevel: e})
+                                    this.setState({aggressiveLevel: e});
                                   }}/>
                     </div>
                   </div>
-                  <div className={ navStyle.locals.nav }>
+                  <div className={navStyle.locals.nav}>
                     <Button type="normal-accent" style={{
                       width: '100px',
                       marginRight: '20px'
-                    }} onClick={ () => { this.setState({notSure: 1}) } }>
-                      <div className={ navStyle.locals.backIcon } />
+                    }} onClick={() => {
+                      this.setState({notSure: 1});
+                    }}>
+                      <div className={navStyle.locals.backIcon}/>
                       BACK
                     </Button>
                     <Button type="accent" style={{
                       width: '100px'
-                    }} onClick={ this.calculateObjective.bind(this) }>
+                    }} onClick={this.calculateObjective.bind(this)}>
                       NEXT
-                      <div className={ navStyle.locals.nextIcon } />
+                      <div className={navStyle.locals.nextIcon}/>
                     </Button>
                   </div>
                 </div>
                 : this.state.notSure === 3 ?
                   <div>
                     <div className={this.classes.row}>
-                      <Label style={{ justifyContent: 'center', textTransform: 'none', fontSize: '15px', fontWeight: '500', whiteSpace: 'pre' }}>
-                        {"I want to reach a target of "} <span style={{fontWeight: '700'}}>{formatNumber(this.state.amount)}</span>{" " + getNickname(this.state.indicator) +" by " + this.state.timeFrame}
+                      <Label style={{
+                        justifyContent: 'center',
+                        textTransform: 'none',
+                        fontSize: '15px',
+                        fontWeight: '500',
+                        whiteSpace: 'pre'
+                      }}>
+                        {'I want to reach a target of '} <span
+                        style={{fontWeight: '700'}}>{formatNumber(this.state.amount)}</span>{` ${getNickname(this.state.indicator)} by ${this.state.timeFrame}`}
                       </Label>
                     </div>
-                    <div className={ navStyle.locals.nav }>
+                    <div className={navStyle.locals.nav}>
                       <Button type="normal-accent" style={{
                         width: '100px',
                         marginRight: '20px'
-                      }} onClick={ () => { this.setState({amount: '',
-                        isPercentage: '',
-                        direction: '',
-                        notSure: 0,
-                        aggressiveLevel: ''}) } }>
-                        <div className={ navStyle.locals.backIcon } />
+                      }} onClick={() => {
+                        this.setState({
+                          amount: '',
+                          isPercentage: '',
+                          direction: '',
+                          notSure: 0,
+                          aggressiveLevel: ''
+                        });
+                      }}>
+                        <div className={navStyle.locals.backIcon}/>
                         Don't use
                       </Button>
                       <Button type="accent" style={{
                         width: '100px'
-                      }} onClick={ () => {
+                      }} onClick={() => {
                         this.setState({notSure: 0, aggressiveLevel: ''}, () => {
-                          this.props.createOrUpdateObjective(this.state, this.props.index)
+                          this.props.createOrUpdateObjective(this.state, this.props.objectiveMonth, this.props.objective);
                         });
-                      } }>
+                      }}>
                         Use
-                        <div className={ navStyle.locals.nextIcon } />
+                        <div className={navStyle.locals.nextIcon}/>
                       </Button>
                     </div>
                   </div>
@@ -212,38 +290,102 @@ export default class AddObjectivePopup extends Component {
           </div>
           <div className={this.classes.row}>
             <Label>
-              Choose metrics as objective
+              Choose metric as objective
+            </Label>
+            <div style={{display: 'flex'}}>
+              <Select
+                selected={this.state.indicator}
+                select={{
+                  placeholder: 'KPI',
+                  options: indicatorOptions
+                }}
+                onChange={(e) => {
+                  this.setState({indicator: e.value}, this.calculateTargetValue);
+                }}
+                style={{width: '200px'}}
+                ref="indicator"
+              />
+              {(this.state.indicator && this.props.actualIndicators[this.state.indicator]) ?
+                <div className={this.classes.text} style={{marginLeft: '20px'}}>
+                  current: {formatNumber(this.props.actualIndicators[this.state.indicator])}
+                </div>
+                : null}
+            </div>
+          </div>
+          <div className={this.classes.row}>
+            <Label>
+              Priority
             </Label>
             <Select
-              selected={this.state.indicator}
+              selected={this.state.priority}
               select={{
-                placeholder: 'KPI',
-                options: indicatorOptions
+                options: objectivesPriority
               }}
               onChange={(e) => {
-                this.setState({indicator: e.value, currentValue: this.props.actualIndicators[e.value] || 0})
+                this.setState({priority: parseInt(e.value)});
               }}
-              style={{width: '200px'}}
-              ref="indicator"
+              style={{width: '75px'}}
             />
           </div>
           <div className={this.classes.row} style={{display: 'flex'}}>
             <Toggle
-              leftText="One Time"
-              rightText="Recurrent"
-              leftActive={!this.state.isRecurrent}
-              leftClick={() => {
-                this.setState({isRecurrent: false})
-              }}
-              rightClick={() => {
-                this.setState({isRecurrent: true})
-              }}
-              type="grey"
-            />
+              options={[{
+                text: 'One Time',
+                value: false
+              },
+                {
+                  text: 'Recurrent',
+                  value: true
+                }
+              ]}
+              selectedValue={this.state.isRecurrent}
+              onClick={(value) => {
+                this.setState({isRecurrent: value, isTarget: !value}, this.calculateTargetValue);
+              }}/>
           </div>
+          {this.state.isRecurrent ? null :
+            <div className={this.classes.row} style={{display: 'flex'}}>
+              <Toggle
+                options={[{
+                  text: 'Target',
+                  value: true
+                },
+                  {
+                    text: directionText,
+                    value: false
+                  }
+                ]}
+                selectedValue={this.state.isTarget}
+                onClick={(value) => {
+                  this.setState({isTarget: value}, this.calculateTargetValue);
+                }}/>
+            </div>
+          }
+          {this.state.isRecurrent ?
+            <div className={this.classes.row} style={{display: 'flex'}}>
+              <Toggle
+                options={[{
+                  text: 'Monthly',
+                  value: 'monthly'
+                },
+                  {
+                    text: 'Quarterly',
+                    value: 'quarterly'
+                  },
+                  {
+                    text: 'Custom',
+                    value: 'custom'
+                  }
+                ]}
+                selectedValue={this.state.recurrentType}
+                onClick={(value) => {
+                  this.setState({recurrentType: value});
+                }}/>
+            </div>
+            : null}
           <div className={this.classes.row}>
             <Label>
-              Numeric objective
+              Numeric objective{this.state.recurrentType === 'custom' ? 's' : ''}
               <div hidden={(this.state.isRecurrent || isPopupMode())}>
                 <NotSure style={{
                   marginLeft: '88px'
@@ -257,76 +399,60 @@ export default class AddObjectivePopup extends Component {
                 }}/>
               </div>
             </Label>
-            <div style={{display: 'inline-flex'}}>
-              <Textfield type="number" value={this.state.amount} onChange={(e) => {
-                this.setState({amount: parseInt(e.target.value)})
-              }} style={{width: '102px'}}/>
-              <Select
-                selected={this.state.isPercentage}
-                select={{
-                  options: [{label: '%', value: true}, {label: '(num)', value: false}]
-                }}
-                onChange={(e) => {
-                  this.setState({isPercentage: e.value})
-                }}
-                placeholder='%/num'
-                style={{marginLeft: '20px', width: '88px'}}
-              />
-              <Select
-                selected={this.state.direction}
-                select={{
-                  options: directionOptions
-                }}
-                onChange={(e) => {
-                  this.setState({direction: e.value})
-                }}
-                placeholder='Direction'
-                style={{marginLeft: '20px', width: '104px'}}
-              />
-            </div>
+            {
+              this.state.isTarget ?
+                <div>
+                  {amountTextField}
+                </div>
+                :
+                this.state.recurrentType !== 'custom'
+                  ?
+                  <div style={{display: 'inline-flex'}}>
+                    <div className={this.classes.text} style={{marginRight: '10px'}}>
+                      {`${directionText} By`}
+                    </div>
+                    {amountTextField}
+                    <Select
+                      selected={this.state.isPercentage}
+                      select={{
+                        options: typeOptions
+                      }}
+                      onChange={(e) => {
+                        this.setState({isPercentage: e.value}, this.calculateTargetValue);
+                      }}
+                      placeholder='%/num'
+                      style={{marginLeft: '20px', width: '88px'}}
+                    />
+                  </div>
+                  :
+                  <div>
+                    {this.getMonthsObjectives()}
+                  </div>
+            }
+            {(this.state.targetValue && !this.state.isTarget) ?
+              <div className={this.classes.text} style={{marginTop: '7px'}}>
+                Expected target: {formatNumber(this.state.targetValue)}
+              </div>
+              : null}
           </div>
           {!this.state.isRecurrent ?
             <div className={this.classes.row}>
               <Label>
                 Due date
               </Label>
-              <div style={{width: '200px'}}>
-                <Calendar value={this.state.timeFrame} onChange={(e) => {
-                  this.setState({timeFrame: e})
-                }}/>
-              </div>
-            </div>
-            :
-            <div className={this.classes.row} style={{display: 'flex'}}>
-              <Toggle
-                leftText="Monthly"
-                rightText="Quarterly"
-                leftActive={this.state.isMonthly}
-                leftClick={() => {
-                  this.setState({isMonthly: true})
+              <Select
+                selected={this.state.monthIndex}
+                select={{
+                  options: datesOptions
                 }}
-                rightClick={() => {
-                  this.setState({isMonthly: false})
+                onChange={(e) => {
+                  this.setState({monthIndex: e.value});
                 }}
-                type="grey"
+                style={{width: '100px'}}
               />
             </div>
-          }
-          <div className={this.classes.row}>
-            <Label>
-              Order
-            </Label>
-            <Select
-              selected={this.state.order}
-              select={{
-                options: objectivesOrder
-              }}
-              onChange={(e) => {
-                this.setState({order: parseInt(e.value)})
-              }}
-              style={{width: '75px'}}
-            />
-          </div>
+            :
+            null}
           <div className={this.classes.footerCols}>
             <div className={this.classes.footerLeft}>
               <Button
@@ -338,14 +464,14 @@ export default class AddObjectivePopup extends Component {
                 type="primary2"
                 style={{width: '110px', marginLeft: '20px'}}
                 onClick={() => {
-                  this.props.createOrUpdateObjective(this.state, this.props.index)
+                  this.props.createOrUpdateObjective(this.state, this.props.objectiveMonth, this.props.objective);
                 }}>
-                {this.props.index !== undefined ? 'Edit Objective' : 'Add Objective'}
+                {this.props.objectiveEdit ? 'Edit Objective' : 'Add Objective'}
               </Button>
             </div>
           </div>
         </Page>
       }
-    </div>
+    </div>;
   }
-}
+};
