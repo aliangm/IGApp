@@ -18,10 +18,6 @@ export default class Campaigns extends Component {
   style = style;
   styles = [dashboardStyle, icons];
 
-  static defaultProps = {
-    previousData: []
-  };
-
   constructor(props) {
     super(props);
 
