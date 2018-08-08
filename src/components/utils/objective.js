@@ -3,17 +3,22 @@ import extend from 'lodash/extend';
 
 export function timeFrameToDate(timeFrame) {
   /*
-  const formattedDateArray = timeFrame.split('-').reverse();
-  formattedDateArray.push(formattedDateArray.shift());
-  const formattedDate = formattedDateArray.reverse().join('-');
-  */
+   const formattedDateArray = timeFrame.split('-').reverse();
+   formattedDateArray.push(formattedDateArray.shift());
+   const formattedDate = formattedDateArray.reverse().join('-');
+   */
   const formattedDateArray = timeFrame.split('-');
   formattedDateArray.splice(0, 0, formattedDateArray.splice(2, 1)[0]);
   const formattedDate = formattedDateArray.join('-');
   return new Date(formattedDate);
 }
 
-export function flattenObjectives(objectives, actualIndicators, dates, shouldCollapseObjectives = false, isHistory = false){
+export function flattenObjectives(objectives,
+                                  actualIndicators,
+                                  dates,
+                                  shouldCollapseObjectives = false,
+                                  isHistory = false) {
+
   const getObjectiveData = (indicator, objective, monthIndex) => {
     return {
       monthIndex: monthIndex,
@@ -23,21 +28,21 @@ export function flattenObjectives(objectives, actualIndicators, dates, shouldCol
       target: objective.target.value,
       priority: objective.target.priority,
       ...objective.userInput
-    }
+    };
   };
 
   let objectivesData = objectives.map((month, index) => {
     const monthData = {};
     Object.keys(month).forEach(objectiveKey => {
-      monthData[objectiveKey] = getObjectiveData(objectiveKey, month[objectiveKey],index);
+      monthData[objectiveKey] = getObjectiveData(objectiveKey, month[objectiveKey], index);
     });
 
     return monthData;
-  })
+  });
 
 
-  if (shouldCollapseObjectives){
-    objectivesData = extend(objectivesData[(objectivesData.length-1)], ...[...objectivesData].reverse());
+  if (shouldCollapseObjectives) {
+    objectivesData = extend(objectivesData[(objectivesData.length - 1)], ...[...objectivesData].reverse());
     objectivesData = Object.keys(objectivesData).map(objectiveKey => objectivesData[objectiveKey]);
   }
   else {
