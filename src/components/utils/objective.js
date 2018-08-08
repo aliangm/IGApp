@@ -16,15 +16,15 @@ export function timeFrameToDate(timeFrame) {
 export function flattenObjectives(objectives,
                                   actualIndicators,
                                   dates,
-                                  shouldCollapseObjectives = false,
-                                  isHistory = false) {
+                                  shouldCollapseObjectives = false) {
 
   const getObjectiveData = (indicator, objective, monthIndex) => {
     return {
       monthIndex: monthIndex,
       dueDate: getEndOfMonthDate(dates[monthIndex]),
       indicator: indicator,
-      value: isHistory ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator],
+      // in the case that objectives comes from historyData, indicators an array and needs special treatment
+      value: Array.isArray(actualIndicators) ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator],
       target: objective.target.value,
       priority: objective.target.priority,
       ...objective.userInput
