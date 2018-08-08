@@ -49,7 +49,7 @@ export function flattenObjectives(objectives,
           withoutDuplicates[key] = month[key];
         }
       });
-    })
+    });
 
     objectivesData = Object.keys(withoutDuplicates).map(objectiveKey => withoutDuplicates[objectiveKey]);
   }
