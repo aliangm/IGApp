@@ -231,7 +231,8 @@ export default class BudgetsTable extends Component {
     });
 
     return <tr className={this.classes.tableRow} key={titleCellKey}
-               data-row-type={isCategoryRow ? 'category' : 'regular'}>
+               data-row-type={isCategoryRow ? 'category' : 'regular'}
+               ref={!isCategoryRow ? this.props.setRef.bind(this, data.channel) : null}>
       {this.getTitleCell(isCategoryRow, data)}
       {cells}
     </tr>;
