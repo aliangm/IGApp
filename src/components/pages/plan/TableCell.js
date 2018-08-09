@@ -146,6 +146,7 @@ export default class TableCell extends Component {
 
   showSuggestion = () => {
     return !isNil(this.props.secondaryValue)
+      && (this.isCellActive() || this.isEditModeType(EDIT_MODE.FROM_PROP))
       && (this.props.secondaryValue !== this.props.primaryValue);
   };
 
