@@ -18,9 +18,9 @@ export default class NewScenarioPopup extends Component {
   };
 
   render() {
-    const {hidden, onScratchClick, onCommittedClick} = this.props;
+    const {hidden, onScratchClick, onCommittedClick, onClose} = this.props;
     return <div hidden={hidden}>
-      <Page popup={true} width={'572px'} contentClassName={this.classes.content}>
+      <Page popup={true} width={'572px'} contentClassName={this.classes.content} onClose={onClose}>
         <div className={this.classes.center}>
           <div className={this.classes.inner}>
             <div className={this.classes.title}>

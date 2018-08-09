@@ -11,10 +11,16 @@ export default class Page extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.props.onPageScroll);
+    if (this.props.onClose) {
+      window.addEventListener('keydown', this.handleKeyPress);
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.props.onPageScroll);
+    if (this.props.onClose) {
+      window.removeEventListener('keydown', this.handleKeyPress);
+    }
   }
 
   componentWillReceiveProps(newProps) {
@@ -23,6 +29,12 @@ export default class Page extends Component {
       window.addEventListener('scroll', newProps.onPageScroll);
     }
   }
+
+  handleKeyPress = (e) => {
+    if (e.key === 'Escape') {
+      this.props.onClose();
+    }
+  };
 
   render() {
     let className = this.props.popup ?
@@ -67,6 +79,9 @@ export default class Page extends Component {
                 }}>
       <div className={this.classes.box} style={boxStyle}>
         <div className={innerClassName}>
+          {this.props.popup && this.props.onClose ?
+            <div className={this.classes.closeButton} onClick={this.props.onClose}/>
+            : null}
           <div className={contentClassName}>
             {this.props.children}
           </div>

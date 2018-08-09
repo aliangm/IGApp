@@ -350,6 +350,7 @@ export default class Plan extends Component {
                       New Scenario
                     </Button>
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
+                                      onClose={() => { this.setState({showNewScenarioPopup: false}) }}
                                       onCommittedClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
                                         this.setBudgetsData();
