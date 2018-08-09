@@ -13,6 +13,10 @@ export default class Analyze extends Component {
   style = style;
   styles = [analyzeStyle];
 
+  static defaultProps = {
+    numberOfMonths: 0
+  }
+
   render() {
     const historyDataLength = (data) => data.indicators.length;
 
