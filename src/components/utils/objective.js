@@ -33,7 +33,7 @@ export function flattenObjectives(objectives,
 
   let objectivesData = objectives.map((month, index) => {
     const monthData = {};
-    Object.keys(month).forEach(objectiveKey => {
+    month && Object.keys(month).forEach(objectiveKey => {
       monthData[objectiveKey] = getObjectiveData(objectiveKey, month[objectiveKey], index);
     });
 
