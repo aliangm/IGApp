@@ -293,7 +293,7 @@ export default class Plan extends Component {
         return React.cloneElement(child, merge({}, this.props, this.state, {
           whatIf: this.props.plan,
           setRef: this.setRef,
-          forecastingGraphRef: this.forecastingGraphRef.bind(this),
+          forecastingGraphRef: this.forecastingGraphRef,
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
