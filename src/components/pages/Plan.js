@@ -128,7 +128,21 @@ export default class Plan extends Component {
   };
 
   deleteChannel = (channelKey) => {
-    console.log(`user tried to remove channel ${channelKey}`);
+    let budgetsData = [...this.state.budgetsData];
+    budgetsData = budgetsData
+      .map(month => {
+        if (month.isHistory) {
+          return month;
+        }
+        else {
+          const channels = month.channels;
+          if (channels[channelKey]) {
+            channels[channelKey].primaryBudget = 0;
+          }
+          return {channels: channels, isHistory: month.isHistory};
+        }
+      });
+    this.setState({budgetsData: budgetsData});
   };
 
   editCommittedBudget = (month, channelKey, newBudget) => {
