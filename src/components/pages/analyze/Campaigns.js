@@ -57,7 +57,7 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const {historyData, attribution, campaigns, CEVs } = this.props;
+    const {attribution, campaigns} = this.props;
     const attributionCampaigns = attribution.campaigns || {};
 
     const metrics = [
@@ -318,7 +318,7 @@ export default class Campaigns extends Component {
                       options: attributionModels
                     }}
                     onChange={(e) => {
-                      this.props.calculateAttributionData(this.props.months ? historyData.length - this.props.months - 1 : 0, e.value)
+                      this.props.calculateAttributionData(e.value)
                     }}
                     style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
                   />
