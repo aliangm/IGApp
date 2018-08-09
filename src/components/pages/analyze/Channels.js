@@ -4,15 +4,12 @@ import style from 'styles/onboarding/onboarding.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {formatNumber} from 'components/utils/budget';
-import merge from 'lodash/merge';
 import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
-import {formatDate} from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
-import sumBy from 'lodash/sumBy';
 
 export default class Channels extends Component {
 
@@ -43,23 +40,6 @@ export default class Channels extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.initialize(nextProps);
-  }
-
-  getDateString(stringDate) {
-    if (stringDate) {
-      const monthNames = [
-        'Jan', 'Feb', 'Mar',
-        'Apr', 'May', 'Jun', 'Jul',
-        'Aug', 'Sep', 'Oct',
-        'Nov', 'Dec'
-      ];
-      const planDate = stringDate.split('/');
-      const date = new Date(planDate[1], planDate[0] - 1);
-
-      return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-    }
-
-    return null;
   }
 
   sortBy(param) {
@@ -197,8 +177,7 @@ export default class Channels extends Component {
       return json;
     });
 
-    channelsWithData =
-      channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
+    channelsWithData = channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const rows = channelsWithData
       .sort((item1, item2) =>

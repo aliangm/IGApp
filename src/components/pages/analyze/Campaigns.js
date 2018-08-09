@@ -30,23 +30,6 @@ export default class Campaigns extends Component {
     };
   }
 
-  getDateString(stringDate) {
-    if (stringDate) {
-      const monthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct",
-        "Nov", "Dec"
-      ];
-      const planDate = stringDate.split("/");
-      const date = new Date(planDate[1], planDate[0] - 1);
-
-      return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-    }
-
-    return null;
-  }
-
   sortBy(param) {
     if (this.state.sortBy === param) {
       this.setState({isDesc: this.state.isDesc * -1});

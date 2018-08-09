@@ -5,15 +5,13 @@ import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Ce
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
-import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
+import {formatBudgetShortened} from 'components/utils/budget';
 import merge from 'lodash/merge';
-import {getChannelsWithProps, getChannelsWithNicknames, getMetadata} from 'components/utils/channels';
+import {getChannelsWithProps, getMetadata} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
-import {formatDate} from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDatesSpecific} from 'components/utils/date';
-import sumBy from 'lodash/sumBy';
 
 export default class Overview extends Component {
 

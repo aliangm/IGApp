@@ -5,8 +5,6 @@ import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Select from 'components/controls/Select';
-import {formatDate} from 'components/utils/date';
-import {getDatesSpecific} from 'components/utils/date';
 
 export default class Analyze extends Component {
 
@@ -29,8 +27,6 @@ export default class Analyze extends Component {
     }
 
     const indicatorsData = {};
-
-
     historyDataWithCurrentMonth.indicators.forEach((item, key) => {
       const displayDate = months[key];
       Object.keys(item).forEach(indicator => {

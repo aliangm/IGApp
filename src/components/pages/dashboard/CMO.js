@@ -12,7 +12,6 @@ import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import Steps from 'components/pages/dashboard/Steps';
 import Label from 'components/ControlsLabel';
 import merge from 'lodash/merge';
-import {formatDate} from 'components/utils/date';
 import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
@@ -23,7 +22,7 @@ import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
 import {getExtarpolateRatio} from 'utils';
 import sumBy from 'lodash/sumBy';
-import {getCommittedBudgetsData} from 'components/utils/budget';
+import {getPlanBudgetsData} from 'components/utils/budget';
 
 export default class CMO extends Component {
 
@@ -236,7 +235,7 @@ export default class CMO extends Component {
       relativePastData[key] = historyData[key].slice(historyData.indicators.length - (2 * months), historyData.indicators.length - months);
     })
 
-    const {pastTotalSum: relativePastBudget} = getCommittedBudgetsData(relativePastData.planBudgets);
+    const {totalCost: relativePastBudget} = getPlanBudgetsData(relativePastData.planBudgets);
 
     const relativePastLTV = relativePastData && sumLTV(relativePastData);
     const relativePastObjective = relativePastData && sumObjective(relativePastData);

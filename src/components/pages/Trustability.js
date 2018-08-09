@@ -8,7 +8,7 @@ import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import style from 'styles/users/users.css';
 import {getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata} from 'components/utils/indicators';
-import {getCommittedBudgetsData} from 'components/utils/budget';
+import {getCommitedBudgets} from 'components/utils/budget';
 
 export default class Trustability extends Component {
 
@@ -31,9 +31,8 @@ export default class Trustability extends Component {
         if (response.ok) {
           response.json()
             .then((data) => {
-              const relevantPlan = this.props.historyData.planBudgets;
-              const {committedBudgets} = getCommittedBudgetsData(relevantPlan);
-
+              const relevantPlanBudgets = this.props.historyData.planBudgets;
+              const committedBudgets = getCommitedBudgets(relevantPlanBudgets);
               const json = {...data, useApprovedBudgets: true, approvedBudgets: committedBudgets[this.state.month]};
               this.props.plan(false, json, this.props.region)
                 .then(data => {

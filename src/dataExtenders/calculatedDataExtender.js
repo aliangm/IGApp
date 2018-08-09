@@ -1,24 +1,15 @@
 import merge from "lodash/merge";
 import { timeFrameToDate } from 'components/utils/objective';
-import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from 'utils.js';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDates} from 'components/utils/date';
-import {getCommittedBudgetsData} from 'components/utils/budget';
+import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 
 export function calculatedDataExtender(data){
 
-  const committedBudgets = data.planBudgets.map((month) => {
-    const newMonth = {};
-    Object.keys(month).map((key) => {
-      const committedBudget = month[key].committedBudget;
-      newMonth[key] = committedBudget ? committedBudget : 0
-    });
-
-    return newMonth;
-  });
+  const committedBudgets = getCommitedBudgets(data.planBudgets);
 
   const campaignsWithIndex = data.campaigns.map((campaign, index) => { return { ... campaign, index: index} });
   const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
@@ -87,8 +78,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
   });
 
   const months = getDatesSpecific(currentData.planDate, historyDataLength(historyDataWithCurrentMonth) - 1, 1);
-
-  const {committedBudgets, sumBudgets, totalCost} = getCommittedBudgetsData(historyDataWithCurrentMonth.planBudgets);
+  const {committedBudgets, sumBudgets, totalCost} = getPlanBudgetsData(historyDataWithCurrentMonth.planBudgets);
 
   const indicatorsDataPerMonth = months.map((month, monthIndex) => {
     return {
