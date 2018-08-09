@@ -12,16 +12,13 @@ import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {formatDate} from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
-import {getDatesSpecific} from 'components/utils/date'
+import {getDatesSpecific} from 'components/utils/date';
+import sumBy from 'lodash/sumBy';
 
 export default class Overview extends Component {
 
   style = style;
   styles = [dashboardStyle];
-
-  static defaultProps = {
-    previousData: []
-  };
 
   constructor(props) {
     super(props);
@@ -56,26 +53,22 @@ export default class Overview extends Component {
       'Aug', 'Sep', 'Oct',
       'Nov', 'Dec'
     ];
-    return monthNames[dueDate.getMonth()] + '/' + dueDate.getDate() + '/' + dueDate.getFullYear().toString().substr(2, 2);
+    return monthNames[dueDate.getMonth()] +
+      '/' +
+      dueDate.getDate() +
+      '/' +
+      dueDate.getFullYear().toString().substr(2, 2);
   }
 
   render() {
-    const {previousData, CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets} = this.props;
+    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets, sumBudgets, monthsNames} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
-    const flattenHistoryObjectives = flattenObjectives(objectives, indicators, getDatesSpecific(planDate, objectives.length, 0), false);
+    const flattenHistoryObjectives = flattenObjectives(objectives,
+      indicators,
+      getDatesSpecific(planDate, objectives.length, 0),
+      false);
 
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split('/');
-      const planDate2 = b.planDate.split('/');
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
-    });
-    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-
-    const totalCost = committedBudgets.reduce((sum, item) => sum +
-      Object.keys(item).reduce((monthSum, channel) => item[channel] + monthSum, 0) +
-      sum, 0);
+    const totalCost = sumBy(Object.keys(sumBudgets), (key) => sumBudgets[key]);
 
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
@@ -143,30 +136,30 @@ export default class Overview extends Component {
       });
     });
 
-    const channelCategoriesPerMonth = relevantData.map((month) => {
+    const channelCategoriesPerMonth = indicators.map((month) => {
       const mergedObject = {};
       const channelsWithProps = getChannelsWithProps();
       Object.keys(channelsWithProps).forEach(channel => {
-        const totalValue = month.CEVs.MCL[channel] *
-          month.actualIndicators.leadToAccountConversionRate /
+        const totalValue = CEVs.MCL[channel] *
+          month.leadToAccountConversionRate /
           100 *
-          month.actualIndicators.LTV
+          month.LTV
           +
-          month.CEVs.MQL[channel] *
-          month.actualIndicators.MQLToSQLConversionRate /
+          CEVs.MQL[channel] *
+          month.MQLToSQLConversionRate /
           100 *
-          month.actualIndicators.SQLToOppConversionRate /
+          month.SQLToOppConversionRate /
           100 *
-          month.actualIndicators.OppToAccountConversionRate /
+          month.OppToAccountConversionRate /
           100 *
-          month.actualIndicators.LTV
+          month.LTV
           +
-          month.CEVs.SQL[channel] *
-          month.actualIndicators.SQLToOppConversionRate /
+          CEVs.SQL[channel] *
+          month.SQLToOppConversionRate /
           100 *
-          month.actualIndicators.OppToAccountConversionRate /
+          month.OppToAccountConversionRate /
           100 *
-          month.actualIndicators.LTV;
+          month.LTV;
         const channelCategory = getMetadata('category', channel);
         if (channelCategory && totalValue) {
           if (!mergedObject[channelCategory]) {
@@ -214,7 +207,7 @@ export default class Overview extends Component {
 
     const data = channelCategoriesPerMonth.map((month, index) => {
 
-      month.name = formatDate(relevantData[index].planDate);
+      month.name = monthsNames[index].name;
       return month;
     });
 

@@ -12,15 +12,12 @@ import { formatDate } from 'components/utils/date';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
+import sumBy from 'lodash/sumBy';
 
 export default class Channels extends Component {
 
   style = style;
   styles = [dashboardStyle, icons];
-
-  static defaultProps = {
-    previousData: []
-  };
 
   constructor(props) {
     super(props);
@@ -86,34 +83,17 @@ export default class Channels extends Component {
   }
 
   render() {
-    const { previousData, attribution, CEVs, sumBudgets } = this.props;
+    const { attribution, CEVs, sumBudgets, committedBudgets, historyData, monthsNames } = this.props;
     const { firstObjective } = this.state;
 
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split("/");
-      const planDate2 = b.planDate.split("/");
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    const data = monthsNames.map((month, monthIndex) => {
+        return {
+          name: monthsNames[monthIndex],
+          ...historyData.indicators[monthIndex],
+          ...committedBudgets[monthIndex],
+          total: sumBy(Object.keys(committedBudgets[monthIndex]), (channelKey)=>committedBudgets[monthIndex][channelKey])
+        }
     });
-    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-    const data = relevantData.map(month => {
-        const json = {
-          name: formatDate(month.planDate)
-        };
-        month.approvedBudgets && Object.keys(month.approvedBudgets[0]).forEach(channel => {
-          json[channel] = month.approvedBudgets[0][channel];
-        });
-
-        json['total'] = month.approvedBudgets && Object.keys(month.approvedBudgets[0]).reduce((sum, channel) =>
-          sum + month.approvedBudgets[0][channel], 0);
-
-        Object.keys(month.actualIndicators).forEach(indicator => {
-          json[indicator] = month.actualIndicators[indicator];
-        });
-
-        return json;
-      });
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
@@ -357,7 +337,7 @@ export default class Channels extends Component {
                       options: attributionModels
                     }}
                     onChange={(e) => {
-                      this.props.calculateAttributionData(this.props.months ? previousData.length - this.props.months - 1 : 0, e.value)
+                      this.props.calculateAttributionData(e.value)
                     }}
                     style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
                   />

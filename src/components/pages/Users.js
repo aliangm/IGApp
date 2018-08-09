@@ -88,7 +88,7 @@ export default class Users extends Component {
 
   render() {
 
-    const {attribution, previousData} = this.props;
+    const {attribution} = this.props;
 
     const headRow = this.getTableRow(null, [
       'User',
@@ -222,10 +222,6 @@ export default class Users extends Component {
           onClick: this.showPopup.bind(this, user)
         });
       });
-
-    const months = previousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)};
-    });
 
     return <div>
       <div className={this.classes.toggle}>

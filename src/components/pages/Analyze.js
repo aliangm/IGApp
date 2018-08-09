@@ -6,8 +6,7 @@ import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Select from 'components/controls/Select';
 import {formatDate} from 'components/utils/date';
-import {getDatesSpecific} from 'components/utils/date'
-import merge from 'lodash/merge';
+import {getDatesSpecific} from 'components/utils/date';
 
 export default class Analyze extends Component {
 
@@ -15,28 +14,34 @@ export default class Analyze extends Component {
   styles = [analyzeStyle];
 
   static defaultProps = {
-    previousData: []
+    numberOfMonths: 0
   };
 
   render() {
+    const historyDataLength = (data) => data.indicators.length;
 
-    const {previousData, historyData, planDate} = this.props;
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split('/');
-      const planDate2 = b.planDate.split('/');
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    const {historyData, planDate, numberOfMonths} = this.props;
+    const historyDataWithCurrentMonth = {};
+    Object.keys(historyData).forEach(key => {
+      const sliceNumber = historyDataLength(historyData) - numberOfMonths;
+      if (key === 'indicators') {
+        historyDataWithCurrentMonth[key] = [...historyData[key], this.props.actualIndicators].slice(sliceNumber);
+      }
+      else {
+        historyDataWithCurrentMonth[key] = [...historyData[key], this.props[key][0]].slice(sliceNumber);
+      }
     });
-    const selectOptions = sortedPreviousData.map((item, index) => {
-      const lastXMonth = sortedPreviousData.length - index - 1;
-      return {value: index, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'};
-    });
+
+    const selectOptions = [];
+    for (let i = 0; i < historyDataLength(historyData) + 1; i++) {
+      const lastXMonth = i;
+      selectOptions.push({value: i, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'});
+    }
 
     const indicatorsData = {};
-    const months = getDatesSpecific(planDate, historyData.indicators.length, 0);
+    const months = getDatesSpecific(planDate, historyDataLength(historyDataWithCurrentMonth) - 1, 1);
 
-    historyData.indicators.forEach((item, key) => {
+    historyDataWithCurrentMonth.indicators.forEach((item, key) => {
       const displayDate = months[key];
       Object.keys(item).forEach(indicator => {
         if (!indicatorsData[indicator]) {
@@ -44,14 +49,14 @@ export default class Analyze extends Component {
         }
         const value = item[indicator];
         indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      })
+      });
     });
 
-    const committedBudgets = historyData.planBudgets.map((month) => {
+    const committedBudgets = historyDataWithCurrentMonth.planBudgets.map((month) => {
       const newMonth = {};
       Object.keys(month).map((key) => {
         const committedBudget = month[key].committedBudget;
-        newMonth[key] = committedBudget ? committedBudget : 0
+        newMonth[key] = committedBudget ? committedBudget : 0;
       });
 
       return newMonth;
@@ -64,23 +69,31 @@ export default class Analyze extends Component {
           sumBudgets[channel] = 0;
         }
         sumBudgets[channel] += month[channel];
-      })
+      });
     });
 
-    const historyCalculatedProps = {indicatorsData: indicatorsData, committedBudgets: committedBudgets, sumBudgets: sumBudgets};
+    const historyCalculatedProps = {
+      indicatorsData: indicatorsData,
+      committedBudgets: committedBudgets,
+      sumBudgets: sumBudgets,
+      historyData: historyDataWithCurrentMonth,
+      monthsNames: months,
+      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(numberOfMonths, attributionModel)
+    };
 
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, merge(historyCalculatedProps,this.props)));
+      (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Analyze</div>
           <div className={this.classes.headPlan}>
             <Select
-              selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+              selected={numberOfMonths}
               select={{options: selectOptions}}
               onChange={(e) => {
-                this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel);
+                this.props.calculateAttributionData(e.value,
+                  this.props.attributionModel);
               }}
               className={analyzeStyle.locals.dateSelect}
             />

@@ -696,7 +696,7 @@ class AppComponent extends Component {
               this.setDataAsState(data);
               this.setState({
                 loaded: true,
-                months: this.state.previousData.length - 1 - monthsExceptThisMonth,
+                numberOfMonths: monthsExceptThisMonth,
                 attributionModel: attributionModel
               });
               deferred.resolve();
