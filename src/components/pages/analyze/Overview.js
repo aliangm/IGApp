@@ -61,7 +61,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets, monthsNames, pastTotalCost: totalCost} = this.props;
+    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets, monthsNames, totalCost} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,

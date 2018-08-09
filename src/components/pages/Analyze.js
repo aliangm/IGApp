@@ -20,7 +20,7 @@ export default class Analyze extends Component {
   render() {
     const historyDataLength = (data) => data.indicators.length;
 
-    const {historyData, numberOfMonths, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, pastTotalCost, months, indicatorsDataPerMonth}}} = this.props;
+    const {historyData, numberOfMonths, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, totalCost, months, indicatorsDataPerMonth}}} = this.props;
 
     const selectOptions = [];
     for (let i = 0; i < historyDataLength(historyData) + 1; i++) {
@@ -48,7 +48,7 @@ export default class Analyze extends Component {
       sumBudgets: sumBudgets,
       historyData: historyDataWithCurrentMonth,
       monthsNames: months,
-      pastTotalCost: pastTotalCost,
+      totalCost: totalCost,
       indicatorsDataPerMonth: indicatorsDataPerMonth,
       calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(numberOfMonths,
         attributionModel)

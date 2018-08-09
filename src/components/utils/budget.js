@@ -55,6 +55,6 @@ export function getCommittedBudgetsData(planBudgets){
   return {
     committedBudgets: committedBudgets,
     sumBudgets: sumBudgets,
-    pastTotalSum: totalCost
+    totalCost: totalCost
   };
 }
