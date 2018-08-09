@@ -71,6 +71,7 @@ export default class Plan extends Component {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: committedBudget,
           isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
+          budgetConstraint: withConstraints ? committedBudget : null,
           isSoft: withConstraints ? isSoft : false
         };
       });
@@ -117,6 +118,21 @@ export default class Plan extends Component {
       });
       return object;
     });
+  };
+
+  setCommittedBudgetsAsSoftConstraints = () => {
+    let planBudgets = [...this.props.planBudgets];
+    planBudgets = planBudgets.map(month => {
+      const newMonthChannels = month;
+      Object.keys(newMonthChannels).forEach(channelKey => {
+        if (newMonthChannels[channelKey].committedBudget) {
+          newMonthChannels[channelKey].isSoft = true;
+          newMonthChannels[channelKey].userBudgetConstraint = newMonthChannels[channelKey].committedBudget;
+        }
+      });
+      return newMonthChannels;
+    });
+    this.setBudgetsData(planBudgets, true);
   };
 
   planAndSetBudgets = () => {
@@ -366,7 +382,7 @@ export default class Plan extends Component {
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
                                       onCommittedClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                        this.setBudgetsData();
+                                        this.setCommittedBudgetsAsSoftConstraints();
                                       }}
                                       onScratchClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
