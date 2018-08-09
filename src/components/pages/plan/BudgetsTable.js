@@ -48,7 +48,6 @@ export default class BudgetsTable extends Component {
     isShowSecondaryEnabled: false,
     isConstraitsEnabled: false,
     data: [],
-    scrollPosition: 0,
     isPopup: false
   };
 
@@ -78,7 +77,8 @@ export default class BudgetsTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isNil(nextProps.scrollPosition)) {
+    //should only update scroll position when data already exists for this component and not empty
+    if (!isNil(nextProps.scrollPosition) && this.props.data && this.props.data.length !== 0) {
       this.refs.tableScroller.scrollLeft = this.refs.stickyHeader.scrollLeft = nextProps.scrollPosition;
     }
   }
