@@ -310,14 +310,14 @@ export default class BudgetsTable extends Component {
     </td>;
   };
 
-  editChannelName = (longName, shortName, category, channel) => {
+  editChannelName = (name, category, channel) => {
     let namesMapping = this.props.namesMapping || {};
     if (!namesMapping.channels) {
       namesMapping.channels = {};
     }
     namesMapping.channels[channel] = {
-      title: longName,
-      nickname: shortName,
+      title: `${category} / ${name}`,
+      nickname: name,
       category: category
     };
     this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
