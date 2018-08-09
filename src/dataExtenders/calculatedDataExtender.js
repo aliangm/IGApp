@@ -3,8 +3,10 @@ import { timeFrameToDate } from 'components/utils/objective';
 import { parsePlannedVsActual } from 'data/parsePlannedVsActual';
 import { getExtarpolateRatio } from 'utils.js';
 import sumBy from 'lodash/sumBy';
-import {flattenObjectives} from '../components/utils/objective';
+import {flattenObjectives} from 'components/utils/objective';
 import {getDates} from 'components/utils/date';
+import {getCommittedBudgetsData} from 'components/utils/budget';
+import {getDatesSpecific} from 'components/utils/date';
 
 export function calculatedDataExtender(data){
 
@@ -63,10 +65,48 @@ export function calculatedDataExtender(data){
           firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator: null,
           funnelObjectives: funnelObjectives,
           funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator: 'newSQL'
-        }
+        },
+      historyData: calculateHistoryData(data, data.historyData, data.numberOfMonths)
       },
       ...data
     }
+}
+
+function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0){
+  const historyDataLength = (data) => data.indicators.length;
+
+  const historyDataWithCurrentMonth = {};
+  Object.keys(historyData).forEach(key => {
+    const sliceNumber = historyDataLength(historyData) - monthExceptThisMonth;
+    if (key === 'indicators') {
+      historyDataWithCurrentMonth[key] = [...historyData[key], currentData.actualIndicators].slice(sliceNumber);
+    }
+    else {
+      historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key][0]].slice(sliceNumber);
+    }
+  });
+
+  const months = getDatesSpecific(currentData.planDate, historyDataLength(historyDataWithCurrentMonth) - 1, 1);
+
+  const {committedBudgets, sumBudgets, totalCost} = getCommittedBudgetsData(historyDataWithCurrentMonth.planBudgets);
+
+  const indicatorsDataPerMonth = months.map((month, monthIndex) => {
+    return {
+      name: months[monthIndex],
+      ...historyData.indicators[monthIndex],
+      ...committedBudgets[monthIndex],
+      total: sumBy(Object.keys(committedBudgets[monthIndex]), (channelKey)=>committedBudgets[monthIndex][channelKey])
+    }
+  });
+
+  return {
+    historyDataWithCurrentMonth,
+    months,
+    committedBudgets,
+    sumBudgets,
+    totalCost,
+    indicatorsDataPerMonth
+  }
 }
 
 function calculateActualSpent(committedBudgets, planUnknownChannels, knownChannels, unknownChannels, planDate){

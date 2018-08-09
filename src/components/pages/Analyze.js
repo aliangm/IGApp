@@ -13,24 +13,10 @@ export default class Analyze extends Component {
   style = style;
   styles = [analyzeStyle];
 
-  static defaultProps = {
-    numberOfMonths: 0
-  };
-
   render() {
     const historyDataLength = (data) => data.indicators.length;
 
-    const {historyData, planDate, numberOfMonths} = this.props;
-    const historyDataWithCurrentMonth = {};
-    Object.keys(historyData).forEach(key => {
-      const sliceNumber = historyDataLength(historyData) - numberOfMonths;
-      if (key === 'indicators') {
-        historyDataWithCurrentMonth[key] = [...historyData[key], this.props.actualIndicators].slice(sliceNumber);
-      }
-      else {
-        historyDataWithCurrentMonth[key] = [...historyData[key], this.props[key][0]].slice(sliceNumber);
-      }
-    });
+    const {historyData, numberOfMonths, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, pastTotalCost, months, indicatorsDataPerMonth}}} = this.props;
 
     const selectOptions = [];
     for (let i = 0; i < historyDataLength(historyData) + 1; i++) {
@@ -39,7 +25,7 @@ export default class Analyze extends Component {
     }
 
     const indicatorsData = {};
-    const months = getDatesSpecific(planDate, historyDataLength(historyDataWithCurrentMonth) - 1, 1);
+
 
     historyDataWithCurrentMonth.indicators.forEach((item, key) => {
       const displayDate = months[key];
@@ -52,33 +38,16 @@ export default class Analyze extends Component {
       });
     });
 
-    const committedBudgets = historyDataWithCurrentMonth.planBudgets.map((month) => {
-      const newMonth = {};
-      Object.keys(month).map((key) => {
-        const committedBudget = month[key].committedBudget;
-        newMonth[key] = committedBudget ? committedBudget : 0;
-      });
-
-      return newMonth;
-    });
-
-    const sumBudgets = {};
-    committedBudgets.forEach(month => {
-      Object.keys(month).forEach(channel => {
-        if (!sumBudgets[channel]) {
-          sumBudgets[channel] = 0;
-        }
-        sumBudgets[channel] += month[channel];
-      });
-    });
-
     const historyCalculatedProps = {
       indicatorsData: indicatorsData,
       committedBudgets: committedBudgets,
       sumBudgets: sumBudgets,
       historyData: historyDataWithCurrentMonth,
       monthsNames: months,
-      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(numberOfMonths, attributionModel)
+      pastTotalCost: pastTotalCost,
+      indicatorsDataPerMonth: indicatorsDataPerMonth,
+      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(numberOfMonths,
+        attributionModel)
     };
 
     const childrenWithProps = React.Children.map(this.props.children,

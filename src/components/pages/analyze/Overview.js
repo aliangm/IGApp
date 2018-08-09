@@ -61,14 +61,12 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets, sumBudgets, monthsNames} = this.props;
+    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets, monthsNames, pastTotalCost: totalCost} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
       getDatesSpecific(planDate, objectives.length, 0),
       false);
-
-    const totalCost = sumBy(Object.keys(sumBudgets), (key) => sumBudgets[key]);
 
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
