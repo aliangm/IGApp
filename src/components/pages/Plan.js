@@ -163,14 +163,13 @@ export default class Plan extends Component {
 
   editCommittedBudget = (month, channelKey, newBudget) => {
     const budgetsData = [...this.state.budgetsData];
-    if (!budgetsData[month].channels[channelKey]) {
-      budgetsData[month].channels[channelKey] = {
-        secondaryBudget: 0,
-        isConstraint: false,
-        isSoft: false
-      };
-    }
-    budgetsData[month].channels[channelKey].primaryBudget = newBudget;
+    budgetsData[month].channels[channelKey] = {
+      secondaryBudget: budgetsData[month].channels[channelKey].secondaryBudget || 0,
+      primaryBudget: newBudget,
+      budgetConstraint: newBudget,
+      isConstraint: true,
+      isSoft: true
+    };
     this.setState({budgetsData: budgetsData});
   };
 
