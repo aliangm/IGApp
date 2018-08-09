@@ -2,13 +2,13 @@ import React from 'react';
 import Component from 'components/Component';
 import planStyle from 'styles/plan/plan.css';
 import Page from 'components/Page';
-import {formatDate} from 'components/utils/date';
+import {getDatesSpecific} from 'components/utils/date';
 import Select from 'components/controls/Select';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
-import merge from 'lodash/merge';
 import style from 'styles/users/users.css';
 import {getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata} from 'components/utils/indicators';
+import {getCommittedBudgetsData} from 'components/utils/budget';
 
 export default class Trustability extends Component {
 
@@ -24,16 +24,17 @@ export default class Trustability extends Component {
   }
 
   analyze() {
-    const previousMonth = this.props.previousData[this.state.month - 1].planDate;
+    const previousMonth = getDatesSpecific(this.props.planDate, this.props.historyData.indicators.length, 0, true)[this.state.month];
+
     serverCommunication.serverRequest('POST', 'calculateCEVAndCIM', JSON.stringify({analyzeDate: previousMonth}), this.props.region)
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
-              const approvedBudgets = [];
-              const relevantPlan = this.props.previousData[this.state.month];
-              approvedBudgets.push(merge(relevantPlan.approvedBudgets && relevantPlan.approvedBudgets[0], relevantPlan.actualChannelBudgets && relevantPlan.actualChannelBudgets.knownChannels || {}));
-              const json = {...data, useApprovedBudgets: true, approvedBudgets: approvedBudgets};
+              const relevantPlan = this.props.historyData.planBudgets;
+              const {committedBudgets} = getCommittedBudgetsData(relevantPlan);
+
+              const json = {...data, useApprovedBudgets: true, approvedBudgets: committedBudgets[this.state.month]};
               this.props.plan(false, json, this.props.region)
                 .then(data => {
                   this.setState({indicatorsProjection: data.projectedPlan && data.projectedPlan[0] && data.projectedPlan[0].projectedIndicatorValues});
@@ -48,14 +49,11 @@ export default class Trustability extends Component {
 
   render() {
 
-    const {previousData} = this.props;
+    const {historyData, planDate} = this.props;
 
-    const months = previousData.map((item, index) => {
-      if (index !== 0) {
-        return {value: index, label: formatDate(item.planDate)};
-      }
-    });
-    months.shift();
+    const months = getDatesSpecific(planDate, historyData.indicators.length,0).map((item, index) => {
+        return {value: index, label: item};
+      });
 
     const headRow = this.getTableRow(null, [
       'Indicator',
@@ -68,11 +66,11 @@ export default class Trustability extends Component {
       className: this.classes.headRow
     });
 
-    const rows = this.state.indicatorsProjection && Object.keys(previousData[this.state.month].actualIndicators)
+    const rows = this.state.indicatorsProjection && Object.keys(historyData.indicators[this.state.month])
       .map(indicator => {
-          const beginning = getIndicatorMetadata('isRefreshed', indicator) ? 0 : previousData[this.state.month - 1].actualIndicators[indicator];
+          const beginning = getIndicatorMetadata('isRefreshed', indicator) ? 0 : historyData.indicators[this.state.month - 1][indicator];
           const projected = this.state.indicatorsProjection[indicator];
-          const actual = previousData[this.state.month].actualIndicators[indicator];
+          const actual = historyData.indicators[this.state.month][indicator];
           const dev = Math.round(((projected > actual ? (projected - beginning) / (actual - beginning) : (actual - beginning) / (projected - beginning)) - 1) * 100);
           return this.getTableRow(null, [
             getIndicatorNickname(indicator),

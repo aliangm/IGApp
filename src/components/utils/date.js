@@ -5,21 +5,26 @@ export function formatDate(dateStr) {
     const [monthNum, yearNum] = dateStr.split('/');
     return `${monthNames[monthNum - 1]} ${yearNum.substr(2, 2)}`;
   }
-  else return null;
+  else {
+    return null;
+  }
 }
 
 export function getDates(dateStr, includingPast = false, includingFuture = true) {
   return getDatesSpecific(dateStr, includingPast ? 12 : 0, includingFuture ? 12 : 0);
 }
 
-export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture) {
+export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystemDates = false) {
   if (dateStr) {
     const dates = [];
     const planDate = dateStr.split('/');
     for (let i = -numberOfPast; i < numberOfFuture; i++) {
       const date = new Date(planDate[1], planDate[0] - 1);
       date.setMonth(date.getMonth() + i);
-      dates.push(monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2));
+      const monthStr = isSystemDates ? date.getMonth() + 1 : monthNames[date.getMonth()];
+      const yearStr = isSystemDates ?  date.getFullYear().toString() : date.getFullYear().toString().substr(2, 2);
+      const delimiter = isSystemDates ? '/' : ' ';
+      dates.push(monthStr + delimiter + yearStr);
     }
     return dates;
   }
