@@ -55,7 +55,6 @@ export default class Campaigns extends Component {
 
   static defaultProps = {
     campaigns: [],
-    calculatedData: {committedBudgets: []},
     planUnknownChannels: [],
     inHouseChannels: [],
     teamMembers: [],
