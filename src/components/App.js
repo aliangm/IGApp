@@ -672,7 +672,7 @@ class AppComponent extends Component {
               this.setDataAsState(data);
               this.setState({
                 loaded: true,
-                numberOfMonths: monthsExceptThisMonth,
+                monthsExceptThisMonth: monthsExceptThisMonth,
                 attributionModel: attributionModel
               });
               deferred.resolve();

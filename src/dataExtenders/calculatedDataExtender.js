@@ -68,7 +68,7 @@ export function calculatedDataExtender(data) {
         funnelObjectives: funnelObjectives,
         funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator : 'newSQL'
       },
-      historyData: calculateHistoryData(data, data.historyData, data.numberOfMonths)
+      historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth)
     },
     ...data
   };

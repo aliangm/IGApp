@@ -12,11 +12,11 @@ export default class Analyze extends Component {
   styles = [analyzeStyle];
 
   static defaultProps = {
-    numberOfMonths: 0
+    monthsExceptThisMonth: 0
   };
 
   render() {
-    const {numberOfMonths, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, totalCost, months, indicatorsDataPerMonth, historyDataLength}}} = this.props;
+    const {monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, totalCost, months, indicatorsDataPerMonth, historyDataLength}}} = this.props;
 
     const selectOptions = [];
     for (let i = 0; i < historyDataLength + 1; i++) {
@@ -44,7 +44,7 @@ export default class Analyze extends Component {
       monthsNames: months,
       totalCost: totalCost,
       indicatorsDataPerMonth: indicatorsDataPerMonth,
-      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(numberOfMonths,
+      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(monthsExceptThisMonth,
         attributionModel)
     };
 
@@ -56,7 +56,7 @@ export default class Analyze extends Component {
           <div className={this.classes.headTitle}>Analyze</div>
           <div className={this.classes.headPlan}>
             <Select
-              selected={numberOfMonths}
+              selected={monthsExceptThisMonth}
               select={{options: selectOptions}}
               onChange={(e) => {
                 this.props.calculateAttributionData(e.value,
