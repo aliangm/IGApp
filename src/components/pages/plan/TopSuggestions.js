@@ -27,7 +27,7 @@ export default class TopSuggestions extends Component {
 
   forecastMetrics(item) {
     this.setState({showPopup: true, item: item});
-    const committedBudgets = cloneDeepWith(this.props.committedBudgets, (item => {
+    const committedBudgets = cloneDeepWith(this.props.calculatedData.committedBudgets, (item => {
       if (item !== null && typeof item === 'object') {
         Object.assign(item);
       }

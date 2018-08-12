@@ -56,7 +56,7 @@ export function getCommitedBudgets(planBudgets) {
     const newMonth = {};
     Object.keys(month).map((key) => {
       const committedBudget = month[key].committedBudget;
-      newMonth[key] = committedBudget ? committedBudget : 0;
+      newMonth[key] = committedBudget || 0;
     });
 
     return newMonth;

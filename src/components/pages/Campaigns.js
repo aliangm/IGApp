@@ -137,7 +137,7 @@ export default class Campaigns extends Component {
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0]
       ? planUnknownChannels[0]
       : {};
-    const approvedChannels = committedBudgets && committedBudgets.length > 0 && committedBudgets[0]
+    const firstMonthChannels = committedBudgets && committedBudgets.length > 0 && committedBudgets[0]
       ? committedBudgets[0]
       : {};
     const inHouse = {};
@@ -152,7 +152,7 @@ export default class Campaigns extends Component {
         });
       }
     });
-    let channels = merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
+    let channels = merge({}, campaignsChannels, firstMonthChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: {},
       icons: {},

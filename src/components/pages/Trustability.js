@@ -24,9 +24,15 @@ export default class Trustability extends Component {
   }
 
   analyze() {
-    const previousMonth = getDatesSpecific(this.props.planDate, this.props.historyData.indicators.length, 0, true)[this.state.month];
+    const previousMonth = getDatesSpecific(this.props.planDate,
+      this.props.historyData.indicators.length,
+      0,
+      true)[this.state.month];
 
-    serverCommunication.serverRequest('POST', 'calculateCEVAndCIM', JSON.stringify({analyzeDate: previousMonth}), this.props.region)
+    serverCommunication.serverRequest('POST',
+      'calculateCEVAndCIM',
+      JSON.stringify({analyzeDate: previousMonth}),
+      this.props.region)
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -36,7 +42,11 @@ export default class Trustability extends Component {
               const json = {...data, useApprovedBudgets: true, approvedBudgets: committedBudgets[this.state.month]};
               this.props.plan(false, json, this.props.region)
                 .then(data => {
-                  this.setState({indicatorsProjection: data.projectedPlan && data.projectedPlan[0] && data.projectedPlan[0].projectedIndicatorValues});
+                  this.setState({
+                    indicatorsProjection: data.projectedPlan &&
+                      data.projectedPlan[0] &&
+                      data.projectedPlan[0].projectedIndicatorValues
+                  });
                 });
             });
         }
@@ -50,9 +60,9 @@ export default class Trustability extends Component {
 
     const {historyData, planDate} = this.props;
 
-    const months = getDatesSpecific(planDate, historyData.indicators.length,0).map((item, index) => {
-        return {value: index, label: item};
-      });
+    const months = getDatesSpecific(planDate, historyData.indicators.length, 0).map((item, index) => {
+      return {value: index, label: item};
+    });
 
     const headRow = this.getTableRow(null, [
       'Indicator',
@@ -67,10 +77,12 @@ export default class Trustability extends Component {
 
     const rows = this.state.indicatorsProjection && Object.keys(historyData.indicators[this.state.month])
       .map(indicator => {
-          const beginning = getIndicatorMetadata('isRefreshed', indicator) ? 0 : historyData.indicators[this.state.month - 1][indicator];
+          const beginning = getIndicatorMetadata('isRefreshed', indicator) ? 0 : historyData.indicators[this.state.month -
+          1][indicator];
           const projected = this.state.indicatorsProjection[indicator];
           const actual = historyData.indicators[this.state.month][indicator];
-          const dev = Math.round(((projected > actual ? (projected - beginning) / (actual - beginning) : (actual - beginning) / (projected - beginning)) - 1) * 100);
+          const dev = Math.round(((projected > actual ? (projected - beginning) / (actual - beginning) : (actual -
+            beginning) / (projected - beginning)) - 1) * 100);
           return this.getTableRow(null, [
             getIndicatorNickname(indicator),
             beginning,
@@ -148,7 +160,8 @@ export default class Trustability extends Component {
 
     if (typeof item !== 'object') {
       elem = <div className={this.classes.cellItem}>{item}</div>;
-    } else {
+    }
+    else {
       elem = item;
     }
 

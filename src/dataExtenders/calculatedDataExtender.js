@@ -15,8 +15,7 @@ export function calculatedDataExtender(data){
   const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
   const merged = merge(committedBudgets, data.planUnknownChannels);
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0] ? data.planUnknownChannels[0] : {};
-  const approvedChannels = committedBudgets && committedBudgets.length > 0 && committedBudgets[0] ? committedBudgets[0] : {};
-  const monthlyBudget = Object.keys(approvedChannels).reduce((sum, channel) => sum + approvedChannels[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
+  const monthlyBudget = Object.keys(committedBudgets[0]).reduce((sum, channel) => sum + committedBudgets[channel], 0) + Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
   const monthlyExtarpolatedMoneySpent = calculateActualSpent(committedBudgets[0],data.planUnknownChannels[0] ,data.knownChannels, data.unknownChannels, data.planDate);
   const extarpolateRatio = getExtarpolateRatio(new Date(),data.planDate);
 
@@ -78,6 +77,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
   });
 
   const months = getDatesSpecific(currentData.planDate, historyDataLength(historyDataWithCurrentMonth) - 1, 1);
+
   const {committedBudgets, sumBudgets, totalCost} = getPlanBudgetsData(historyDataWithCurrentMonth.planBudgets);
 
   const indicatorsDataPerMonth = months.map((month, monthIndex) => {
