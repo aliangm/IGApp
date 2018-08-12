@@ -56,7 +56,7 @@ export default class Channels extends Component {
     if (isFinite(efficiency)) {
       return '$' + formatNumber(efficiency) + '/' + indicatorName;
     }
-    if (dividend == 0) {
+    if (dividend === 0) {
       return '0';
     }
     return '-';
