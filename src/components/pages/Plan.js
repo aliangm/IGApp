@@ -11,7 +11,7 @@ import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
 import history from 'history';
 import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
-import {output} from 'components/utils/channels';
+import {output, isOtherChannel, initialize} from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
@@ -87,6 +87,14 @@ export default class Plan extends Component {
       });
       return {channels: channelsObject, isHistory: true};
     });
+    this.props.planUnknownChannels.forEach((month, index) => {
+      Object.keys(month).forEach(channelKey => {
+        const committedBudget = month[channelKey];
+        budgetsData[index].channels[channelKey] = {
+          primaryBudget: committedBudget
+        };
+      });
+    });
     this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]});
   };
 
@@ -99,7 +107,11 @@ export default class Plan extends Component {
 
   commitChanges = () => {
     const planBudgets = this.getPlanBudgets();
-    this.props.updateUserMonthPlan({planBudgets: planBudgets}, this.props.region, this.props.planDate);
+    this.props.updateUserMonthPlan({
+      planBudgets: planBudgets,
+      unknownChannels: this.getPlanUnknownChannels(),
+      namesMapping: this.props.namesMapping
+    }, this.props.region, this.props.planDate);
   };
 
   getPlanBudgets = () => {
@@ -110,12 +122,28 @@ export default class Plan extends Component {
       const object = {};
       Object.keys(month).forEach(channelKey => {
         const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
-        if (primaryBudget || isConstraint) {
+        if (!isOtherChannel(channelKey) && (primaryBudget || isConstraint)) {
           object[channelKey] = {
             committedBudget: primaryBudget,
             userBudgetConstraint: isConstraint ? budgetConstraint : -1,
             isSoft: isConstraint ? isSoft : false
           };
+        }
+      });
+      return object;
+    });
+  };
+
+  getPlanUnknownChannels = () => {
+    const channels = this.state.budgetsData
+      .filter(item => !item.isHistory)
+      .map(item => item.channels);
+    return channels.map(month => {
+      const object = {};
+      Object.keys(month).forEach(channelKey => {
+        const {primaryBudget} = month[channelKey];
+        if (isOtherChannel(channelKey) && primaryBudget) {
+          object[channelKey] = primaryBudget;
         }
       });
       return object;
@@ -210,7 +238,9 @@ export default class Plan extends Component {
     }
     else {
       return this.props.updateUserMonthPlan({
-        planBudgets: this.getPlanBudgets()
+        planBudgets: this.getPlanBudgets(),
+        unknownChannels: this.getPlanUnknownChannels(),
+        namesMapping: this.props.namesMapping
       }, this.props.region, this.props.planDate);
     }
   };
@@ -244,25 +274,21 @@ export default class Plan extends Component {
     });
   };
 
-  addUnknownChannel = (otherChannel, otherChannelHierarchy) => {
-    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel;
-    let planUnknownChannels = this.props.planUnknownChannels;
-    for (let i = 0; i < 12; i++) {
-      if (!planUnknownChannels[i]) {
-        planUnknownChannels[i] = {};
-      }
-      planUnknownChannels[i][channel] = 0;
+  addUnknownChannel = (name, category) => {
+    let namesMapping = {...this.props.namesMapping};
+    if (!namesMapping.channels) {
+      namesMapping.channels = {};
     }
-    this.props.updateUserMonthPlan({
-      unknownChannels: planUnknownChannels
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this[channel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
-        }
-      });
+    const channel = `${category} / ${name}`;
+    namesMapping.channels[channel] = {
+      title: channel,
+      nickname: name,
+      category: category,
+      isOtherChannel: true
+    };
+    this.props.updateState({namesMapping: namesMapping});
+    initialize(this.props.channelsSchema, namesMapping.channels);
+    this.addChannel(channel);
   };
 
   setRef = (channel, ref) => {

@@ -497,7 +497,8 @@ class AppComponent extends Component {
       beforeInfiniGrowData: data.beforeInfiniGrowData || {},
       budgetConstraints: data.budgetConstraints || {},
       planBudgets: data.planBudgets || [],
-      forecastedIndicators: data.forecastedIndicators || []
+      forecastedIndicators: data.forecastedIndicators || [],
+      namesMapping: data.namesMapping || {}
     });
   }
 

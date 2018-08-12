@@ -8,7 +8,7 @@ import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 //import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
 import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
-import {getChannelsWithProps} from 'components/utils/channels';
+import {getChannelsWithProps, isOtherChannel} from 'components/utils/channels';
 import groupBy from 'lodash/groupBy';
 import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
@@ -219,7 +219,7 @@ export default class BudgetsTable extends Component {
             isSoft)}
           isEditMode={this.props.isEditMode}
           onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-          isConstraitsEnabled={this.props.isConstraintsEnabled}
+          isConstraitsEnabled={this.props.isConstraintsEnabled && !isOtherChannel(data.channel)}
           dragEnter={() => this.dragEnter(key, data.channel)}
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
@@ -291,7 +291,7 @@ export default class BudgetsTable extends Component {
           : null}
 
         <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
-          {!isCategoryRow ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
+          {!isCategoryRow ? <div className={this.classes.rowIcon} data-icon={!isOtherChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>
