@@ -40,10 +40,10 @@ export default class Content extends Component {
   }
 
   render() {
-    const {historyData, attribution, calculatedData: {objectives: {funnelFirstObjective}}} = this.props;
+    const {attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
     const attributionPages = attribution.pages || [];
 
-    const actualIndicatorsArray = historyData.indicators;
+    const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},

@@ -63,7 +63,7 @@ export default class Channels extends Component {
   }
 
   render() {
-    const {attribution, CEVs, sumBudgets, indicatorsDataPerMonth} = this.props;
+    const {attribution, CEVs, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}} = this.props;
     const {firstObjective} = this.state;
 
     const metrics = [
@@ -177,7 +177,8 @@ export default class Channels extends Component {
       return json;
     });
 
-    channelsWithData = channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
+    channelsWithData =
+      channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const rows = channelsWithData
       .sort((item1, item2) =>
@@ -387,7 +388,7 @@ export default class Channels extends Component {
           </FeatureToggle>
         </div>
         <div>
-          <PerformanceGraph isPast={true} months={this.props.months || 1} data={indicatorsDataPerMonth}
+          <PerformanceGraph isPast={true} months={months || 1} data={indicatorsDataPerMonth}
                             defaultIndicator={firstObjective}/>
         </div>
       </div>

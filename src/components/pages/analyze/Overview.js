@@ -59,7 +59,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, committedBudgets, monthsNames, totalCost} = this.props;
+    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {committedBudgets, months, totalCost}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
@@ -203,7 +203,7 @@ export default class Overview extends Component {
 
     const data = channelCategoriesPerMonth.map((month, index) => {
 
-      month.name = monthsNames[index].name;
+      month.name = months[index].name;
       return month;
     });
 
