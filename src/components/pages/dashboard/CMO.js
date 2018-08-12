@@ -56,7 +56,7 @@ export default class CMO extends Component {
 
   initialize(props) {
     if (this.state.months === undefined && props.historyData) {
-      this.setState({months: props.historyData.indicators.length});
+      this.setState({months: props.calculatedData.historyData.historyDataLength});
     }
   }
 
@@ -98,7 +98,7 @@ export default class CMO extends Component {
         committedBudgets,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
         annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
-        historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth}
+        historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
 
@@ -130,8 +130,8 @@ export default class CMO extends Component {
       0 &&
       actualIndicators.CAC !==
       0);
-    const previousMonthData = (historyData.indicators && historyData.indicators.length > 1)
-      ? {actualIndicators: {...historyData.indicators[historyData.indicators.length - 1]}}
+    const previousMonthData = (historyDataLength > 1)
+      ? {actualIndicators: {...historyData.indicators[historyDataLength - 1]}}
       : {actualIndicators: {LTV: 0, CAC: 0}};
     const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV, actualIndicators.CAC) : null;
     const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators)
@@ -232,8 +232,8 @@ export default class CMO extends Component {
 
     const relativePastData = {};
     Object.keys(historyData).forEach((key) => {
-      relativePastData[key] = historyData[key].slice(historyData.indicators.length - (2 * months), historyData.indicators.length - months);
-    })
+      relativePastData[key] = historyData[key].slice(historyDataLength - (2 * months), historyDataLength - months);
+    });
 
     const {totalCost: relativePastBudget} = getPlanBudgetsData(relativePastData.planBudgets);
 

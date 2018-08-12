@@ -25,7 +25,7 @@ export default class Trustability extends Component {
 
   analyze() {
     const previousMonth = getDatesSpecific(this.props.planDate,
-      this.props.historyData.indicators.length,
+      this.props.calculatedData.historyData.historyDataLength,
       0,
       true)[this.state.month];
 
@@ -58,9 +58,9 @@ export default class Trustability extends Component {
 
   render() {
 
-    const {historyData, planDate} = this.props;
+    const {historyData, planDate, calculatedData: {historyData: {historyDataLength}}} = this.props;
 
-    const months = getDatesSpecific(planDate, historyData.indicators.length, 0).map((item, index) => {
+    const months = getDatesSpecific(planDate, historyDataLength, 0).map((item, index) => {
       return {value: index, label: item};
     });
 

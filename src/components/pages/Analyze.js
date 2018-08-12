@@ -13,15 +13,13 @@ export default class Analyze extends Component {
 
   static defaultProps = {
     numberOfMonths: 0
-  }
+  };
 
   render() {
-    const historyDataLength = (data) => data.indicators.length;
-
-    const {historyData, numberOfMonths, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, totalCost, months, indicatorsDataPerMonth}}} = this.props;
+    const {numberOfMonths, calculatedData: {historyData: {historyDataWithCurrentMonth, committedBudgets, sumBudgets, totalCost, months, indicatorsDataPerMonth, historyDataLength}}} = this.props;
 
     const selectOptions = [];
-    for (let i = 0; i < historyDataLength(historyData) + 1; i++) {
+    for (let i = 0; i < historyDataLength + 1; i++) {
       const lastXMonth = i;
       selectOptions.push({value: i, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'});
     }
