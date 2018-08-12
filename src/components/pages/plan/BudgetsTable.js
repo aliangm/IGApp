@@ -87,7 +87,7 @@ export default class BudgetsTable extends Component {
   };
 
   handleScroll = () => {
-    this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 70});
+    this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 20});
   };
 
   getMonthHeaders = (numberOfPastDates, dates) => {
