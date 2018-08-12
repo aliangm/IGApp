@@ -60,7 +60,7 @@ module.exports = function(args) {
 
   return {
     entry: entry,
-    devtool: 'source-map',
+    devtool: isProd ? 'none' : 'source-map',
     output: {
       path: path.join(__dirname, env.folder),
       filename: '[name].js',
