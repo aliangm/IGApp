@@ -80,6 +80,8 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
   const historyDataWithCurrentMonth = {};
   Object.keys(historyData).forEach(key => {
     const sliceNumber = historyDataLength(historyData) - monthExceptThisMonth;
+    // Indicators key in current month is actually "ActualIndicators" and not an array, that's why is has special treatment
+    // All the other one's has the same exact name and are arrays.
     if (key === 'indicators') {
       historyDataWithCurrentMonth[key] = [...historyData[key], currentData.actualIndicators].slice(sliceNumber);
     }
