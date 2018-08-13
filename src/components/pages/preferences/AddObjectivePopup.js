@@ -15,7 +15,8 @@ import ButtonsSet from 'components/pages/profile/ButtonsSet';
 import navStyle from 'styles/profile/market-fit-popup.css';
 import {timeFrameToDate} from 'components/utils/objective';
 import {isPopupMode} from 'modules/popup-mode';
-import {formatNumber, extractNumberFromBudget} from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
+import {extractNumber} from 'components/utils/utils';
 import isNil from 'lodash/isNil';
 import {getDates} from 'components/utils/date';
 
@@ -32,7 +33,7 @@ export default class AddObjectivePopup extends Component {
     isTarget: true,
     amount: '',
     recurrentArray: new Array(12).fill(-1),
-    monthIndex: ''
+    monthIndex: null
   };
 
   constructor(props) {
@@ -119,7 +120,7 @@ export default class AddObjectivePopup extends Component {
         <Textfield
           value={this.state.recurrentArray[index] > 0 ? formatNumber(this.state.recurrentArray[index]) : ''}
           onChange={(e) => {
-            const value = extractNumberFromBudget(e.target.value, -1);
+            const value = extractNumber(e.target.value, -1);
             this.handleCustomChange(value, index);
           }}
           style={{width: '166px'}}/>
@@ -134,13 +135,8 @@ export default class AddObjectivePopup extends Component {
   };
 
   render() {
-    const indicators = getIndicatorsWithProps();
-    const indicatorOptions = Object.keys(indicators)
-      .filter(item => indicators[item].isObjective)
-      .map(item => {
-        return {value: item, label: indicators[item].nickname};
-      });
-    const directionText = (this.state.indicator && indicators[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
+    const indicatorsWithProps = getIndicatorsWithProps();
+    const directionText = (this.state.indicator && indicatorsWithProps[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
     const objectivesPriority = [];
     for (let i = 0; i <= this.props.numOfPriorities; i++) {
       objectivesPriority.push({value: i, label: '#' + (i + 1)});
@@ -297,7 +293,7 @@ export default class AddObjectivePopup extends Component {
                 selected={this.state.indicator}
                 select={{
                   placeholder: 'KPI',
-                  options: indicatorOptions
+                  options: this.props.objectivesOptions
                 }}
                 onChange={(e) => {
                   this.setState({indicator: e.value}, this.calculateTargetValue);

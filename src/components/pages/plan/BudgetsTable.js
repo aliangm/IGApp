@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/budget-table.css';
-import {formatBudget, extractNumberFromBudget} from 'components/utils/budget';
+import {formatBudget} from 'components/utils/budget';
+import {extractNumber} from 'components/utils/utils';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
@@ -47,7 +48,6 @@ export default class BudgetsTable extends Component {
     isShowSecondaryEnabled: false,
     isConstraitsEnabled: false,
     data: [],
-    scrollPosition: 0,
     isPopup: false
   };
 
@@ -77,7 +77,8 @@ export default class BudgetsTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isNil(nextProps.scrollPosition)) {
+    //should only update scroll position when data already exists for this component and not empty
+    if (!isNil(nextProps.scrollPosition) && this.props.data && this.props.data.length !== 0) {
       this.refs.tableScroller.scrollLeft = this.refs.stickyHeader.scrollLeft = nextProps.scrollPosition;
     }
   }
@@ -124,7 +125,7 @@ export default class BudgetsTable extends Component {
   };
 
   commitDrag = () => {
-    const value = extractNumberFromBudget(this.state.draggableValue);
+    const value = extractNumber(this.state.draggableValue);
 
     this.state.draggedCells.forEach(({month, channel}) => {
       this.props.editCommitedBudget(month, channel, value);

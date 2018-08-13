@@ -37,6 +37,7 @@
   background: white;
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
 }
 
 .content {
@@ -96,4 +97,15 @@
   .box {
     padding: 10px 0 0 0 !important;
   }
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  background: url(../assets/x.svg) center center no-repeat;
+  background-size: contain;
+  cursor: pointer;
 }

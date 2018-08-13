@@ -16,6 +16,9 @@ export function getTitle(indicator) {
   if (isInitialized) {
     return schema.properties[indicator].title;
   }
+  else {
+    console.error('indicators schema is not initialized');
+  }
 }
 
 export function getNickname(indicator, isSingular = false) {
@@ -28,11 +31,17 @@ export function getNickname(indicator, isSingular = false) {
       return nickname;
     }
   }
+  else {
+    console.error('indicators schema is not initialized');
+  }
 }
 
 export function getMetadata(type, indicator) {
   if (isInitialized) {
     return schema.properties[indicator][type];
+  }
+  else {
+    console.error('indicators schema is not initialized');
   }
 }
 
@@ -42,10 +51,16 @@ export function getIndicatorsWithNicknames() {
       return {value: item, label: schema.properties[item].nickname}
     });
   }
+  else {
+    console.error('indicators schema is not initialized');
+  }
 }
 
 export function getIndicatorsWithProps() {
   if (isInitialized) {
     return schema.properties;
+  }
+  else {
+    console.error('indicators schema is not initialized');
   }
 }

@@ -1,6 +1,6 @@
 import merge from 'lodash/merge';
 import {timeFrameToDate} from 'components/utils/objective';
-import {getExtarpolateRatio} from 'utils.js';
+import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDates} from 'components/utils/date';

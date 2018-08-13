@@ -4,7 +4,7 @@ import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} fro
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
-import {formatBudgetShortened} from 'components/utils/budget';
+import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
@@ -179,12 +179,12 @@ export default class IndicatorsGraph extends Component {
                     {indicatorsMapping[indicator]}
                   </div>
                   <div className={this.classes.customTooltipValue} style={{color: COLORS[colorIndex % COLORS.length]}}>
-                    {item.value}
+                    {formatNumber(item.value)}
                   </div>
                   {this.props.objectives[indicator] !== undefined &&
                   this.props.objectives[indicator].x === data.label ?
-                    <div>
-                      {indicatorsMapping[indicator]} (objective): {this.props.objectives[indicator].y}
+                    <div className={this.classes.customTooltipObjective}>
+                      Objective: {formatNumber(this.props.objectives[indicator].y)}
                     </div>
                     : null}
                 </div>;
