@@ -402,7 +402,7 @@ export default class AddObjectivePopup extends Component {
                   {amountTextField}
                 </div>
                 :
-                this.state.recurrentType !== 'custom'
+                this.state.recurrentType !== 'custom' || !this.state.isRecurrent
                   ?
                   <div style={{display: 'inline-flex'}}>
                     <div className={this.classes.text} style={{marginRight: '10px'}}>
