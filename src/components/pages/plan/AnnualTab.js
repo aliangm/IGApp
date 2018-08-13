@@ -18,13 +18,10 @@ export default class AnnualTab extends Component {
   styles = [planStyles, icons];
 
   static defaultProps = {
-    projectedPlan: [],
-    approvedBudgets: [],
     actualIndicators: {},
     planDate: '',
     events: [],
     objectives: [],
-    approvedBudgetsProjection: [],
     annualBudgetArray: []
   };
 

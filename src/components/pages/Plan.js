@@ -26,7 +26,6 @@ export default class Plan extends Component {
   static defaultProps = {
     userProfile: {},
     targetAudience: {},
-    projectedPlan: [],
     planDate: '',
     userAccount: {}
   };
