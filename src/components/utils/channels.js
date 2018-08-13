@@ -7,9 +7,13 @@ export function initialize(channelsSchema, userMapping) {
   schema = channelsSchema;
   if (userMapping) {
     Object.keys(userMapping).forEach(channel => {
+      if (!schema.properties[channel]) {
+        schema.properties[channel] = {};
+      }
       schema.properties[channel].title = userMapping[channel].title;
       schema.properties[channel].nickname = userMapping[channel].nickname;
       schema.properties[channel].category = userMapping[channel].category;
+      schema.properties[channel].isUnknownChannel = !!userMapping[channel].isUnknownChannel;
     });
   }
   isInitialized = true;
@@ -40,6 +44,10 @@ export function getMetadata(type, channel) {
   else {
     console.log(channel);
   }
+}
+
+export function isUnknownChannel(channel) {
+  return getMetadata('isUnknownChannel', channel);
 }
 
 export function getChannelsWithTitles() {

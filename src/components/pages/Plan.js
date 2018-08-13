@@ -11,7 +11,7 @@ import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
 import history from 'history';
 import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
-import {output} from 'components/utils/channels';
+import {output, isUnknownChannel, initialize} from 'components/utils/channels';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
@@ -70,6 +70,7 @@ export default class Plan extends Component {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: committedBudget,
           isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
+          budgetConstraint: withConstraints ? committedBudget : null,
           isSoft: withConstraints ? isSoft : false
         };
       });
@@ -85,6 +86,14 @@ export default class Plan extends Component {
       });
       return {channels: channelsObject, isHistory: true};
     });
+    this.props.planUnknownChannels.forEach((month, index) => {
+      Object.keys(month).forEach(channelKey => {
+        const committedBudget = month[channelKey];
+        budgetsData[index].channels[channelKey] = {
+          primaryBudget: committedBudget
+        };
+      });
+    });
     this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]});
   };
 
@@ -97,25 +106,53 @@ export default class Plan extends Component {
 
   commitChanges = () => {
     const planBudgets = this.getPlanBudgets();
-    this.props.updateUserMonthPlan({planBudgets: planBudgets}, this.props.region, this.props.planDate);
+    this.props.updateUserMonthPlan({
+      planBudgets: planBudgets,
+      unknownChannels: this.getPlanBudgets(true),
+      namesMapping: this.props.namesMapping
+    }, this.props.region, this.props.planDate);
   };
 
-  getPlanBudgets = () => {
+  getPlanBudgets = (unknownChannels = false) => {
     const channels = this.state.budgetsData
       .filter(item => !item.isHistory)
       .map(item => item.channels);
     return channels.map(month => {
       const object = {};
-      Object.keys(month).forEach(channelKey => {
-        const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
-        object[channelKey] = {
-          committedBudget: primaryBudget,
-          userBudgetConstraint: isConstraint ? budgetConstraint : -1,
-          isSoft: isConstraint ? isSoft : false
-        };
-      });
+      Object.keys(month)
+        .filter(channelKey => unknownChannels ? isUnknownChannel(channelKey) : !isUnknownChannel(channelKey))
+        .forEach(channelKey => {
+          const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
+          if (primaryBudget || isConstraint) {
+            if (unknownChannels) {
+              object[channelKey] = primaryBudget;
+            }
+            else {
+              object[channelKey] = {
+                committedBudget: primaryBudget,
+                userBudgetConstraint: isConstraint ? budgetConstraint : -1,
+                isSoft: isConstraint ? isSoft : false
+              };
+            }
+          }
+        });
       return object;
     });
+  };
+
+  setCommittedBudgetsAsSoftConstraints = () => {
+    let planBudgets = [...this.props.planBudgets];
+    planBudgets = planBudgets.map(month => {
+      const newMonthChannels = {...month};
+      Object.keys(newMonthChannels).forEach(channelKey => {
+        if (newMonthChannels[channelKey].committedBudget) {
+          newMonthChannels[channelKey].isSoft = true;
+          newMonthChannels[channelKey].userBudgetConstraint = newMonthChannels[channelKey].committedBudget;
+        }
+      });
+      return newMonthChannels;
+    });
+    this.setBudgetsData(planBudgets, true);
   };
 
   planAndSetBudgets = () => {
@@ -127,19 +164,36 @@ export default class Plan extends Component {
   };
 
   deleteChannel = (channelKey) => {
-    console.log(`user tried to remove channel ${channelKey}`);
+    const budgetsData = this.state.budgetsData
+      .map(month => {
+        if (month.isHistory) {
+          return month;
+        }
+        else {
+          const channels = {...month.channels};
+          if (channels[channelKey]) {
+            channels[channelKey].primaryBudget = 0;
+            if (!channels[channelKey].secondaryBudget && !channels[channelKey].isConstraint) {
+              delete channels[channelKey];
+            }
+          }
+          return {channels: channels, isHistory: month.isHistory};
+        }
+      });
+    this.setState({budgetsData: budgetsData});
   };
 
   editCommittedBudget = (month, channelKey, newBudget) => {
     const budgetsData = [...this.state.budgetsData];
-    if (!budgetsData[month].channels[channelKey]) {
-      budgetsData[month].channels[channelKey] = {
-        secondaryBudget: 0,
-        isConstraint: false,
-        isSoft: false
-      };
-    }
-    budgetsData[month].channels[channelKey].primaryBudget = newBudget;
+    const secondary = budgetsData[month].channels[channelKey] && budgetsData[month].channels[channelKey].secondaryBudget;
+    const alreadyHardConstraint = budgetsData[month].channels[channelKey] && budgetsData[month].channels[channelKey].isConstraint && budgetsData[month].channels[channelKey].isSoft === false;
+    budgetsData[month].channels[channelKey] = {
+      secondaryBudget: secondary || 0,
+      primaryBudget: newBudget,
+      budgetConstraint: newBudget,
+      isConstraint: true,
+      isSoft: !alreadyHardConstraint
+    };
     this.setState({budgetsData: budgetsData});
   };
 
@@ -175,31 +229,56 @@ export default class Plan extends Component {
     }
     else {
       return this.props.updateUserMonthPlan({
-        planBudgets: this.getPlanBudgets()
+        planBudgets: this.getPlanBudgets(),
+        unknownChannels: this.getPlanBudgets(true),
+        namesMapping: this.props.namesMapping
       }, this.props.region, this.props.planDate);
     }
   };
 
-
-  addUnknownChannel = (otherChannel, otherChannelHierarchy) => {
-    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel;
-    let planUnknownChannels = this.props.planUnknownChannels;
-    for (let i = 0; i < 12; i++) {
-      if (!planUnknownChannels[i]) {
-        planUnknownChannels[i] = {};
-      }
-      planUnknownChannels[i][channel] = 0;
-    }
-    this.props.updateUserMonthPlan({
-      unknownChannels: planUnknownChannels
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this[channel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
+  addChannel = (channelKey) => {
+    let budgetsData = [...this.state.budgetsData];
+    budgetsData = budgetsData
+      .map(month => {
+        if (month.isHistory) {
+          return month;
+        }
+        else {
+          const channels = {...month.channels};
+          if (!channels[channelKey]) {
+            channels[channelKey] = {
+              secondaryBudget: 0,
+              primaryBudget: 0,
+              budgetConstraint: 0,
+              isConstraint: false,
+              isSoft: false
+            };
+          }
+          return {channels: channels, isHistory: month.isHistory};
         }
       });
+    this.setState({budgetsData: budgetsData, addChannelPopup: false}, () => {
+      const domElement = ReactDOM.findDOMNode(this[channelKey]);
+      if (domElement) {
+        domElement.scrollIntoView({});
+      }
+    });
+  };
+
+  addUnknownChannel = (name, category) => {
+    const namesMapping = {...this.props.namesMapping};
+    if (!namesMapping.channels) {
+      namesMapping.channels = {};
+    }
+    const channel = `${category} / ${name}`;
+    namesMapping.channels[channel] = {
+      title: channel,
+      nickname: name,
+      category: category,
+      isUnknownChannel: true
+    };
+    this.props.updateState({namesMapping: namesMapping});
+    this.addChannel(channel);
   };
 
   setRef = (channel, ref) => {
@@ -223,8 +302,8 @@ export default class Plan extends Component {
       (child) => {
         return React.cloneElement(child, merge({}, this.props, this.state, {
           whatIf: this.props.plan,
-          setRef: this.setRef.bind(this),
-          forecastingGraphRef: this.forecastingGraphRef.bind(this),
+          setRef: this.setRef,
+          forecastingGraphRef: this.forecastingGraphRef,
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
@@ -320,7 +399,7 @@ export default class Plan extends Component {
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
                                       onCommittedClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
-                                        this.setBudgetsData();
+                                        this.setCommittedBudgetsAsSoftConstraints();
                                       }}
                                       onScratchClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
