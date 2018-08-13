@@ -11,16 +11,12 @@ export default class Page extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.props.onPageScroll);
-    if (this.props.onClose) {
-      window.addEventListener('keydown', this.handleKeyPress);
-    }
+    window.addEventListener('keydown', this.handleKeyPress);
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.props.onPageScroll);
-    if (this.props.onClose) {
-      window.removeEventListener('keydown', this.handleKeyPress);
-    }
+    window.removeEventListener('keydown', this.handleKeyPress);
   }
 
   componentWillReceiveProps(newProps) {
@@ -31,7 +27,7 @@ export default class Page extends Component {
   }
 
   handleKeyPress = (e) => {
-    if (e.key === 'Escape') {
+    if (this.props.onClose && e.key === 'Escape') {
       this.props.onClose();
     }
   };
