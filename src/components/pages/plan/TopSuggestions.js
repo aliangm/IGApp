@@ -45,16 +45,15 @@ export default class TopSuggestions extends Component {
   render() {
 
     const {active, showPopup, item, ifApprovedMetrics} = this.state;
-    const {approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection, calculatedData: {committedBudgets, suggestedBudgets}} = this.props;
+    const {approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection, calculatedData: {committedBudgets}} = this.props;
     const zeroBudgetSuggestions = {};
     Object.keys(committedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
-    const nextMonthBudgets = merge(zeroBudgetSuggestions, suggestedBudgets);
+    const nextMonthBudgets = merge(zeroBudgetSuggestions);
     const suggestionsOrdered = nextMonthBudgets ? Object.keys(nextMonthBudgets)
         .filter(item => (suggestedBudgets[0][item] || 0) !== (committedBudgets[0][item] || 0))
         .map(item => {
           return {
             channel: item,
-            suggested: suggestedBudgets[0][item] || 0,
             current: committedBudgets[0][item] || 0
           };
         })

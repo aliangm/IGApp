@@ -29,8 +29,8 @@ export function extractNumberFromBudget(budget, defaultValue = 0) {
   return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
 }
 
-export function getPlanBudgetsData(planBudgets) {
-  const {committedBudgets} = seperateCommittedAndSuggested(planBudgets);
+export function getPlanBudgetsData(planBudgets){
+  const committedBudgets = getCommitedBudgets(planBudgets);
 
   const sumBudgets = {};
   committedBudgets.forEach(month => {
@@ -51,22 +51,14 @@ export function getPlanBudgetsData(planBudgets) {
   };
 }
 
-export function seperateCommittedAndSuggested(planBudgets) {
-  const committedBudgets = Array(planBudgets.length);
-  const suggestedBudgets = Array(planBudgets.length);
-
-  planBudgets.forEach((month, index) => {
-    const committedMonth = {};
-    const suggestedMonth = {};
+export function getCommitedBudgets(planBudgets) {
+  return planBudgets.map((month) => {
+    const newMonth = {};
     Object.keys(month).map((key) => {
       const committedBudget = month[key].committedBudget;
-      committedMonth[key] = committedBudget || 0;
-      suggestedMonth[key] = month[key].secondaryValue;
+      newMonth[key] = committedBudget || 0;
     });
 
-    committedBudgets[index] = committedMonth;
-    suggestedBudgets[index] = suggestedMonth;
+    return newMonth;
   });
-
-  return {committedBudgets, suggestedBudgets};
 }
