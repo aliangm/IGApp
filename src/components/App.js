@@ -147,7 +147,6 @@ class AppComponent extends Component {
             .then((data) => {
               if (!dontSetState) {
                 this.setDataAsState(data);
-                this.getPreviousData();
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
@@ -178,7 +177,6 @@ class AppComponent extends Component {
             .then((data) => {
               if (data) {
                 this.setDataAsState(data);
-                this.getPreviousData();
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
@@ -196,28 +194,6 @@ class AppComponent extends Component {
       });
 
     return deferred.promise;
-  }
-
-  getPreviousData() {
-    serverCommunication.serverRequest('GET', 'previousdata', null, this.state.region)
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                this.setState({
-                  previousData: data
-                });
-              }
-            });
-        }
-        else if (response.status == 401) {
-          history.push('/');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   }
 
   getUserAccount() {
@@ -462,7 +438,6 @@ class AppComponent extends Component {
       campaignIdeas: data.campaignIdeas || [],
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       projectedPlan: data.projectedPlan || [],
-      approvedBudgets: data.approvedBudgets || [],
       approvedBudgetsProjection: data.approvedBudgetsProjection || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
@@ -697,7 +672,7 @@ class AppComponent extends Component {
               this.setDataAsState(data);
               this.setState({
                 loaded: true,
-                months: this.state.previousData.length - 1 - monthsExceptThisMonth,
+                monthsExceptThisMonth: monthsExceptThisMonth,
                 attributionModel: attributionModel
               });
               deferred.resolve();

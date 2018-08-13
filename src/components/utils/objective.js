@@ -1,5 +1,4 @@
 import {getEndOfMonthDate} from 'components/utils/date';
-import extend from 'lodash/extend';
 
 export function timeFrameToDate(timeFrame) {
   /*
