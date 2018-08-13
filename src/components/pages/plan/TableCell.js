@@ -197,6 +197,7 @@ export default class TableCell extends Component {
                           changeConstraint={this.changeConstraint}
                           changeConstraintsBoxOpen={this.changeConstraintsBoxOpen}
                           stateSelectionBoxRef={(ref) => this.boxRef = ref}
+                          boxOpen={this.state.constraintsBoxOpen}
                           cellKey={this.props.cellKey}
         />
         : null}
