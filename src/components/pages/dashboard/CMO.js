@@ -16,7 +16,6 @@ import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import Steps from 'components/pages/dashboard/Steps';
 import Label from 'components/ControlsLabel';
 import merge from 'lodash/merge';
-import {formatDate} from 'components/utils/date';
 import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
@@ -26,6 +25,8 @@ import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
 import {getExtarpolateRatio} from 'components/utils/utils';
+import sumBy from 'lodash/sumBy';
+import {getPlanBudgetsData} from 'components/utils/budget';
 
 export default class CMO extends Component {
 
@@ -58,8 +59,8 @@ export default class CMO extends Component {
   }
 
   initialize(props) {
-    if (this.state.months === undefined && props.previousData) {
-      this.setState({months: props.previousData.length});
+    if (this.state.months === undefined && props.historyData) {
+      this.setState({months: props.calculatedData.historyData.historyDataLength});
     }
   }
 
@@ -95,9 +96,18 @@ export default class CMO extends Component {
   }
 
   render() {
-    const {planDate, approvedBudgets, approvedBudgetsProjection, actualIndicators, campaigns, objectives, annualBudgetArray, planUnknownChannels, previousData, attribution, CEVs, annualBudget, calculatedData: {objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective}, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending}} = this.props;
+    const {
+      planDate, historyData, approvedBudgetsProjection, actualIndicators, campaigns, planUnknownChannels, attribution, CEVs, annualBudget,
+      calculatedData: {
+        committedBudgets,
+        objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
+        annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
+        historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth, historyDataLength}
+      }
+    } = this.props;
+
     const {months, isPast, showAdvanced} = this.state;
-    const merged = merge(approvedBudgets, planUnknownChannels);
+    const merged = merge(committedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
       .filter(channel => merged[0][channel])
@@ -124,10 +134,10 @@ export default class CMO extends Component {
       0 &&
       actualIndicators.CAC !==
       0);
-    const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV, actualIndicators.CAC) : null;
-    const previousMonthData = (previousData && previousData.length > 1)
-      ? previousData[previousData.length - 2]
+    const previousMonthData = (historyDataLength > 1)
+      ? {actualIndicators: {...historyData.indicators[historyDataLength - 1]}}
       : {actualIndicators: {LTV: 0, CAC: 0}};
+    const ratio = ratioCanBeCalculated(actualIndicators) ? ratioCalc(actualIndicators.LTV, actualIndicators.CAC) : null;
     const lastMonthRatio = ratioCanBeCalculated(previousMonthData.actualIndicators)
       ? ratioCalc(previousMonthData.actualIndicators.LTV, previousMonthData.actualIndicators.CAC)
       : null;
@@ -212,34 +222,27 @@ export default class CMO extends Component {
       />;
     });
 
-    const futureBudget = approvedBudgets.slice(0, months)
+    const futureBudget = committedBudgets.slice(0, months)
       .reduce((sum, month) => Object.keys(month).reduce((monthSum, channel) => month[channel] + monthSum, 0) + sum, 0);
     const futureLTV = approvedBudgetsProjection.slice(0, months).reduce((sum, item) => sum + item.LTV, 0);
     const furureObjective = approvedBudgetsProjection.slice(0, months)
       .reduce((sum, item) => sum + item[funnelFirstObjective], 0);
 
-    const relevantPreviousData = previousData && previousData.slice(previousData.length - months);
-    const pastBudget = relevantPreviousData &&
-      relevantPreviousData.reduce((sum, item) => Object.keys(item.approvedBudgets && item.approvedBudgets[0])
-        .reduce((monthSum, channel) => item.approvedBudgets[0][channel] + monthSum, 0) + sum, 0);
-    const pastLTV = relevantPreviousData &&
-      relevantPreviousData.reduce((sum, item) => (item.actualIndicators.LTV || 0) + sum, 0);
-    const pastObjective = relevantPreviousData &&
-      relevantPreviousData.reduce((sum, item) => (item.actualIndicators[funnelFirstObjective] || 0) + sum, 0);
+    const sumLTV = (indicators) => sumBy(indicators, (month) => month.LTV);
+    const sumObjective = (indicators) => sumBy(indicators, (month) => month[funnelFirstObjective]);
 
-    const relativePastData = previousData &&
-      previousData.slice(previousData.length - (2 * months), previousData.length - months);
-    const relativePastBudget = relativePastData &&
-      relativePastData.reduce((sum, item) => Object.keys(item.approvedBudgets && item.approvedBudgets[0])
-        .reduce((monthSum, channel) => item.approvedBudgets[0][channel] + monthSum, 0) + sum, 0);
-    const relativePastLTV = relativePastData &&
-      relativePastData.reduce((sum, item) => (item.actualIndicators.LTV || 0) + sum, 0);
-    const relativePastObjective = relativePastData &&
-      relativePastData.reduce((sum, item) => (item.actualIndicators[funnelFirstObjective] || 0) + sum, 0);
+    const pastLTV = sumLTV(historyDataWithCurrentMonth.indicators);
+    const pastObjective = sumObjective(historyDataWithCurrentMonth.indicators);
 
-    const monthsOptions = previousData && previousData.map((item, index) => {
-      return {value: index + 1, label: index + 1};
+    const relativePastData = {};
+    Object.keys(historyData).forEach((key) => {
+      relativePastData[key] = historyData[key].slice(historyDataLength - (2 * months), historyDataLength - months);
     });
+
+    const {totalCost: relativePastBudget} = getPlanBudgetsData(relativePastData.planBudgets);
+
+    const relativePastLTV = relativePastData && sumLTV(relativePastData);
+    const relativePastObjective = relativePastData && sumObjective(relativePastData);
 
     const futureDates = getDates(this.props.planDate);
 
@@ -278,7 +281,7 @@ export default class CMO extends Component {
       return {title: channelsWithProps[channel].nickname, score: score, icon: 'plan:' + channel};
     });
 
-    const topCampaigns = Object.keys(attribution.campaigns).map(campaign => {
+    const topCampaigns = attribution.campaigns ? Object.keys(attribution.campaigns).map(campaign => {
       const campaignData = attribution.campaigns[campaign];
       const score = Math.round(campaignData.MCL * weights.newMCL
         + campaignData.MQL * weights.newMQL
@@ -292,7 +295,7 @@ export default class CMO extends Component {
           ? 'plan:' + campaignData.channels[0]
           : 'plan:multiChannel' : null
       };
-    });
+    }) : [];
 
     const topContent = attribution.pages.map(item => {
       const score = Math.round(item.MCL * weights.newMCL
@@ -303,26 +306,9 @@ export default class CMO extends Component {
       return {title: item.title, score: score, icon: 'plan:' + item.channel};
     });
 
-    const data = isPast ?
-      relevantPreviousData.map(month => {
-        const json = {
-          name: formatDate(month.planDate)
-        };
-        month.approvedBudgets && Object.keys(month.approvedBudgets[0]).forEach(channel => {
-          json[channel] = month.approvedBudgets[0][channel];
-        });
-
-        json['total'] = month.approvedBudgets && Object.keys(month.approvedBudgets[0]).reduce((sum, channel) =>
-          sum + month.approvedBudgets[0][channel], 0);
-
-        Object.keys(month.actualIndicators).forEach(indicator => {
-          json[indicator] = month.actualIndicators[indicator];
-        });
-
-        return json;
-      })
+    const data = isPast ? indicatorsDataPerMonth
       :
-      approvedBudgets.slice(0, months).map((month, index) => {
+      committedBudgets.slice(0, months).map((month, index) => {
         const json = {
           name: futureDates[index]
         };
@@ -388,23 +374,23 @@ export default class CMO extends Component {
               <div style={{marginTop: '18px'}}>
                 <div className={dashboardStyle.locals.quarter1}>
                   <div className={dashboardStyle.locals.quarterNumber}>
-                    {Math.round(pastLTV / pastBudget * 100)}%
+                    {Math.round(pastLTV / totalCost * 100)}%
                     <div className={dashboardStyle.locals.center} style={{
                       visibility: (relativePastBudget &&
                         isFinite(relativePastBudget) &&
                         relativePastLTV &&
                         isFinite(relativePastLTV) &&
-                        ((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1)) ? 'visible' : 'hidden'
+                        ((pastLTV / totalCost) / (relativePastLTV / relativePastBudget) - 1)) ? 'visible' : 'hidden'
                     }}>
                       <div className={dashboardStyle.locals.historyArrow}
-                           data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1) < 0
+                           data-decline={((pastLTV / totalCost) / (relativePastLTV / relativePastBudget) - 1) < 0
                              ? true
                              : null}/>
                       <div className={dashboardStyle.locals.historyGrow}
-                           data-decline={((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1) < 0
+                           data-decline={((pastLTV / totalCost) / (relativePastLTV / relativePastBudget) - 1) < 0
                              ? true
                              : null} style={{marginRight: '0'}}>
-                        {Math.round(((pastLTV / pastBudget) / (relativePastLTV / relativePastBudget) - 1) * 100)}%
+                        {Math.round(((pastLTV / totalCost) / (relativePastLTV / relativePastBudget) - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -414,18 +400,18 @@ export default class CMO extends Component {
                 </div>
                 <div className={dashboardStyle.locals.quarter2}>
                   <div className={dashboardStyle.locals.quarterNumber}>
-                    ${formatBudgetShortened(pastBudget)}
+                    ${formatBudgetShortened(totalCost)}
                     <div className={dashboardStyle.locals.center} style={{
                       visibility: (relativePastBudget &&
                         isFinite(relativePastBudget) &&
-                        (pastBudget / relativePastBudget - 1)) ? 'visible' : 'hidden'
+                        (totalCost / relativePastBudget - 1)) ? 'visible' : 'hidden'
                     }}>
                       <div className={dashboardStyle.locals.historyArrow}
-                           data-decline={(pastBudget / relativePastBudget - 1) < 0 ? true : null}/>
+                           data-decline={(totalCost / relativePastBudget - 1) < 0 ? true : null}/>
                       <div className={dashboardStyle.locals.historyGrow}
-                           data-decline={(pastBudget / relativePastBudget - 1) < 0 ? true : null}
+                           data-decline={(totalCost / relativePastBudget - 1) < 0 ? true : null}
                            style={{marginRight: '0'}}>
-                        {Math.round((pastBudget / relativePastBudget - 1) * 100)}%
+                        {Math.round((totalCost / relativePastBudget - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -623,18 +609,20 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.quarterNumber}>
                     {Math.round(futureLTV / futureBudget * 100)}%
                     <div className={dashboardStyle.locals.center} style={{
-                      visibility: (pastBudget &&
-                        isFinite(pastBudget) &&
+                      visibility: (totalCost &&
+                        isFinite(totalCost) &&
                         pastLTV &&
                         isFinite(pastLTV) &&
-                        ((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1)) ? 'visible' : 'hidden'
+                        ((futureLTV / futureBudget) / (pastLTV / totalCost) - 1)) ? 'visible' : 'hidden'
                     }}>
                       <div className={dashboardStyle.locals.historyArrow}
-                           data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1) < 0 ? true : null}/>
+                           data-decline={((futureLTV / futureBudget) / (pastLTV / totalCost) - 1) < 0
+                             ? true
+                             : null}/>
                       <div className={dashboardStyle.locals.historyGrow}
-                           data-decline={((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1) < 0 ? true : null}
+                           data-decline={((futureLTV / futureBudget) / (pastLTV / totalCost) - 1) < 0 ? true : null}
                            style={{marginRight: '0'}}>
-                        {Math.round(((futureLTV / futureBudget) / (pastLTV / pastBudget) - 1) * 100)}%
+                        {Math.round(((futureLTV / futureBudget) / (pastLTV / totalCost) - 1) * 100)}%
                       </div>
                     </div>
                   </div>
@@ -646,15 +634,16 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.quarterNumber}>
                     ${formatBudgetShortened(futureBudget)}
                     <div className={dashboardStyle.locals.center} style={{
-                      visibility: (pastBudget && isFinite(pastBudget) && (futureBudget / pastBudget - 1))
+                      visibility: (totalCost && isFinite(totalCost) && (futureBudget / totalCost - 1))
                         ? 'visible'
                         : 'hidden'
                     }}>
                       <div className={dashboardStyle.locals.historyArrow}
-                           data-decline={(futureBudget / pastBudget - 1) < 0 ? true : null}/>
+                           data-decline={(futureBudget / totalCost - 1) < 0 ? true : null}/>
                       <div className={dashboardStyle.locals.historyGrow}
-                           data-decline={(futureBudget / pastBudget - 1) < 0 ? true : null} style={{marginRight: '0'}}>
-                        {Math.round((futureBudget / pastBudget - 1) * 100)}%
+                           data-decline={(futureBudget / totalCost - 1) < 0 ? true : null}
+                           style={{marginRight: '0'}}>
+                        {Math.round((futureBudget / totalCost - 1) * 100)}%
                       </div>
                     </div>
                   </div>

@@ -11,15 +11,15 @@ import {findDOMNode} from 'react-dom';
 const CONSTRAINT_MAPPING = {
   'none': {
     constraintData: {isConstraint: false},
-    displayOptions: {text: 'None', icon: 'plan:none'}
+    displayOptions: {text: 'Feel free to optimize', icon: 'plan:none'}
   },
   'soft': {
     constraintData: {isConstraint: true, isSoft: true},
-    displayOptions: {text: 'Soft', icon: 'plan:like'}
+    displayOptions: {text: 'I like the direction', icon: 'plan:like'}
   },
   'hard': {
     constraintData: {isConstraint: true, isSoft: false},
-    displayOptions: {text: 'Hard', icon: 'plan:lock'}
+    displayOptions: {text: 'Lock budget', icon: 'plan:lock'}
   }
 };
 

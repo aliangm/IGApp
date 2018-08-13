@@ -86,7 +86,7 @@ export default class AddObjectivePopup extends Component {
     if (months > 11) {
       months = 11;
     }
-    const value = Math.round((this.props.projectedPlan[months].projectedIndicatorValues[this.state.indicator] - this.props.actualIndicators[this.state.indicator]) * this.state.aggressiveLevel + this.props.actualIndicators[this.state.indicator]);
+    const value = Math.round((this.props.forecastedIndicators[months][this.state.indicator].committedBudget - this.props.actualIndicators[this.state.indicator]) * this.state.aggressiveLevel + this.props.actualIndicators[this.state.indicator]);
     this.setState({
       amount: value,
       isPercentage: false,

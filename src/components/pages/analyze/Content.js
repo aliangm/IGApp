@@ -19,10 +19,6 @@ export default class Content extends Component {
   style = style;
   styles = [dashboardStyle, icons];
 
-  static defaultProps = {
-    previousData: []
-  };
-
   constructor(props) {
     super(props);
 
@@ -44,24 +40,10 @@ export default class Content extends Component {
   }
 
   render() {
-    const {previousData, attribution, calculatedData: {objectives: {funnelFirstObjective}}} = this.props;
+    const {attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
     const attributionPages = attribution.pages || [];
 
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split('/');
-      const planDate2 = b.planDate.split('/');
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
-    });
-
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)};
-    });
-
-    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-
-    const actualIndicatorsArray = relevantData.map(item => item.actualIndicators);
+    const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},

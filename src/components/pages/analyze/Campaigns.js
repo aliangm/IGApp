@@ -18,10 +18,6 @@ export default class Campaigns extends Component {
   style = style;
   styles = [dashboardStyle, icons];
 
-  static defaultProps = {
-    previousData: []
-  };
-
   constructor(props) {
     super(props);
 
@@ -34,23 +30,6 @@ export default class Campaigns extends Component {
     };
   }
 
-  getDateString(stringDate) {
-    if (stringDate) {
-      const monthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct",
-        "Nov", "Dec"
-      ];
-      const planDate = stringDate.split("/");
-      const date = new Date(planDate[1], planDate[0] - 1);
-
-      return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-    }
-
-    return null;
-  }
-
   sortBy(param) {
     if (this.state.sortBy === param) {
       this.setState({isDesc: this.state.isDesc * -1});
@@ -61,30 +40,8 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const { previousData, attribution, campaigns, CEVs } = this.props;
+    const {attribution, campaigns} = this.props;
     const attributionCampaigns = attribution.campaigns || {};
-
-    let indicatorsData = {};
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split("/");
-      const planDate2 = b.planDate.split("/");
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
-    });
-    sortedPreviousData.forEach(item => {
-      const displayDate = this.getDateString(item.planDate);
-      Object.keys(item.actualIndicators).forEach(indicator => {
-        if (!indicatorsData[indicator]) {
-          indicatorsData[indicator] = [];
-        }
-        const value = item.actualIndicators[indicator];
-        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      })
-    });
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
-    });
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
@@ -344,7 +301,7 @@ export default class Campaigns extends Component {
                       options: attributionModels
                     }}
                     onChange={(e) => {
-                      this.props.calculateAttributionData(this.props.months ? previousData.length - this.props.months - 1 : 0, e.value)
+                      this.props.calculateAttributionData(e.value)
                     }}
                     style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
                   />

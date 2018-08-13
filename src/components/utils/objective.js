@@ -1,5 +1,4 @@
 import {getEndOfMonthDate} from 'components/utils/date';
-import extend from 'lodash/extend';
 
 export function timeFrameToDate(timeFrame) {
   /*
@@ -16,15 +15,15 @@ export function timeFrameToDate(timeFrame) {
 export function flattenObjectives(objectives,
                                   actualIndicators,
                                   dates,
-                                  shouldCollapseObjectives = false,
-                                  isHistory = false) {
+                                  removeDuplicates = false) {
 
   const getObjectiveData = (indicator, objective, monthIndex) => {
     return {
       monthIndex: monthIndex,
       dueDate: getEndOfMonthDate(dates[monthIndex]),
       indicator: indicator,
-      value: isHistory ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator],
+      // in the case that objectives comes from historyData, indicators an array and needs special treatment
+      value: Array.isArray(actualIndicators) ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator],
       target: objective.target.value,
       priority: objective.target.priority,
       ...objective.userInput
@@ -33,7 +32,7 @@ export function flattenObjectives(objectives,
 
   let objectivesData = objectives.map((month, index) => {
     const monthData = {};
-    Object.keys(month).forEach(objectiveKey => {
+    month && Object.keys(month).forEach(objectiveKey => {
       monthData[objectiveKey] = getObjectiveData(objectiveKey, month[objectiveKey], index);
     });
 
@@ -41,9 +40,17 @@ export function flattenObjectives(objectives,
   });
 
 
-  if (shouldCollapseObjectives) {
-    objectivesData = extend(objectivesData[(objectivesData.length - 1)], ...[...objectivesData].reverse());
-    objectivesData = Object.keys(objectivesData).map(objectiveKey => objectivesData[objectiveKey]);
+  if (removeDuplicates) {
+    const withoutDuplicates = {};
+    objectivesData.forEach((month) => {
+      Object.keys(month).forEach((key) => {
+        if (!withoutDuplicates[key]) {
+          withoutDuplicates[key] = month[key];
+        }
+      });
+    });
+
+    objectivesData = Object.keys(withoutDuplicates).map(objectiveKey => withoutDuplicates[objectiveKey]);
   }
   else {
     objectivesData = [].concat(...objectivesData.map(monthData =>

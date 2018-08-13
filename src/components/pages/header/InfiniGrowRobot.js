@@ -18,10 +18,11 @@ export default class InfiniGrowRobot extends Component {
     const {company, historyData, actualIndicators, funnelFirstObjective} = this.props;
 
     const historyValue = historyData && historyData.indicators && historyData.indicators[funnelFirstObjective] && historyData.indicators[funnelFirstObjective][0];
-    const currentValue = actualIndicators[funnelFirstObjective];
+    const currentValue = actualIndicators[funnelFirstObjective] || 0;
+    const growth = Math.round((currentValue - historyValue) / historyValue * 100);
     return <div className={this.classes.inner}>
       <div className={this.classes.textBubble}>
-        Since joining InfiniGrow, {company}'s {getIndicatorNickname(funnelFirstObjective)} has grown by {Math.round((currentValue - historyValue) / historyValue * 100)}%!
+        Since joining InfiniGrow, {company}'s {getIndicatorNickname(funnelFirstObjective)} has grown by {growth ? `${growth}%` : 'Infinity'}!
       </div>
       <div className={this.classes.robot}/>
     </div>

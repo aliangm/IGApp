@@ -9,7 +9,7 @@ import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 //import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
 import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
-import {getChannelsWithProps} from 'components/utils/channels';
+import {getChannelsWithProps, isUnknownChannel} from 'components/utils/channels';
 import groupBy from 'lodash/groupBy';
 import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
@@ -88,7 +88,7 @@ export default class BudgetsTable extends Component {
   };
 
   handleScroll = () => {
-    this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 70});
+    this.setState({isSticky: (this.refs.tableRef && this.refs.tableRef.getBoundingClientRect().top) < 20});
   };
 
   getMonthHeaders = (numberOfPastDates, dates) => {
@@ -220,7 +220,7 @@ export default class BudgetsTable extends Component {
             isSoft)}
           isEditMode={this.props.isEditMode}
           onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-          isConstraitsEnabled={this.props.isConstraintsEnabled}
+          isConstraitsEnabled={this.props.isConstraintsEnabled && !isUnknownChannel(data.channel)}
           dragEnter={() => this.dragEnter(key, data.channel)}
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
@@ -232,7 +232,8 @@ export default class BudgetsTable extends Component {
     });
 
     return <tr className={this.classes.tableRow} key={titleCellKey}
-               data-row-type={isCategoryRow ? 'category' : 'regular'}>
+               data-row-type={isCategoryRow ? 'category' : 'regular'}
+               ref={!isCategoryRow ? (ref) => { this.props.setRef(data.channel, ref) }: null}>
       {this.getTitleCell(isCategoryRow, data)}
       {cells}
     </tr>;
@@ -291,7 +292,7 @@ export default class BudgetsTable extends Component {
           : null}
 
         <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
-          {!isCategoryRow ? <div className={this.classes.rowIcon} data-icon={`plan:${data.channel}`}/>
+          {!isCategoryRow ? <div className={this.classes.rowIcon} data-icon={!isUnknownChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>
@@ -310,14 +311,14 @@ export default class BudgetsTable extends Component {
     </td>;
   };
 
-  editChannelName = (longName, shortName, category, channel) => {
+  editChannelName = (name, category, channel) => {
     let namesMapping = this.props.namesMapping || {};
     if (!namesMapping.channels) {
       namesMapping.channels = {};
     }
     namesMapping.channels[channel] = {
-      title: longName,
-      nickname: shortName,
+      title: `${category} / ${name}`,
+      nickname: name,
       category: category
     };
     this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
