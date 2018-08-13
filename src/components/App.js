@@ -133,6 +133,9 @@ class AppComponent extends Component {
   }
 
   updateState(newState, callback) {
+    if (newState.namesMapping) {
+      initializeChannels(this.state.channelsSchema, newState.namesMapping.channels);
+    }
     this.setState(newState, callback);
     this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
   }
@@ -498,7 +501,10 @@ class AppComponent extends Component {
       budgetConstraints: data.budgetConstraints || {},
       planBudgets: data.planBudgets || [],
       forecastedIndicators: data.forecastedIndicators || [],
-      namesMapping: data.namesMapping || {}
+      namesMapping: data.namesMapping && Object.keys(data.namesMapping).length > 0 ? data.namesMapping : {
+        channels: {},
+        indicators: {}
+      }
     });
   }
 

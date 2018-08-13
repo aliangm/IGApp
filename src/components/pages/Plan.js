@@ -120,26 +120,23 @@ export default class Plan extends Component {
       .map(item => item.channels);
     return channels.map(month => {
       const object = {};
-      Object.keys(month).forEach(channelKey => {
-        const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
-        if (primaryBudget || isConstraint) {
-          const isUnknown = isUnknownChannel(channelKey);
-           if (unknownChannels) {
-             if (isOther) {
-               object[channelKey] = primaryBudget;
-             }
-           }
-           else {
-            if (!isOther) {
+      Object.keys(month)
+        .filter(channelKey => unknownChannels ? isUnknownChannel(channelKey) : !isUnknownChannel(channelKey))
+        .forEach(channelKey => {
+          const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
+          if (primaryBudget || isConstraint) {
+            if (unknownChannels) {
+              object[channelKey] = primaryBudget;
+            }
+            else {
               object[channelKey] = {
                 committedBudget: primaryBudget,
                 userBudgetConstraint: isConstraint ? budgetConstraint : -1,
                 isSoft: isConstraint ? isSoft : false
               };
             }
-           }
-        }
-      });
+          }
+        });
       return object;
     });
   };
@@ -168,8 +165,7 @@ export default class Plan extends Component {
   };
 
   deleteChannel = (channelKey) => {
-    let budgetsData = [...this.state.budgetsData];
-    budgetsData = budgetsData
+    const budgetsData = [...this.state.budgetsData]
       .map(month => {
         if (month.isHistory) {
           return month;
@@ -283,7 +279,6 @@ export default class Plan extends Component {
       isUnknownChannel: true
     };
     this.props.updateState({namesMapping: namesMapping});
-    initialize(this.props.channelsSchema, namesMapping.channels);
     this.addChannel(channel);
   };
 
