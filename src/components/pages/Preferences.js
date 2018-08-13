@@ -257,7 +257,7 @@ export default class Preferences extends Component {
         }
       }
       const targetValue = objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
-      if (!isNil(monthIndex) && targetValue && targetValue !== -1) {
+      if (!isNil(monthIndex) && targetValue) {
         objectives[monthIndex][objective] = {
           target: {
             ...objectives[monthIndex][objective].target,
