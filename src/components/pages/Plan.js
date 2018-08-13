@@ -165,7 +165,7 @@ export default class Plan extends Component {
   };
 
   deleteChannel = (channelKey) => {
-    const budgetsData = [...this.state.budgetsData]
+    const budgetsData = this.state.budgetsData
       .map(month => {
         if (month.isHistory) {
           return month;
