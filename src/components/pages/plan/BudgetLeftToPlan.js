@@ -33,7 +33,7 @@ export default class Popup extends Component {
         <div className={this.classes.lineFill} style={{width: `${lineWidth}px`}}/>
       </div>
       <div className={this.classes.bottomText}>
-        ${formatNumber(annualBudgetLeftToPlan)} left
+        ${formatNumber(annualBudgetLeftToPlan)} left to plan
       </div>
     </div>;
   }

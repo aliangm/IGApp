@@ -5,7 +5,11 @@ import {PieChart, Pie, Cell} from 'recharts';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
-import {getIndicatorsWithProps, getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata} from 'components/utils/indicators';
+import {
+  getIndicatorsWithProps,
+  getNickname as getIndicatorNickname,
+  getMetadata as getIndicatorMetadata
+} from 'components/utils/indicators';
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
@@ -20,7 +24,7 @@ import {getDates} from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
-import {getExtarpolateRatio} from 'utils';
+import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 
