@@ -105,7 +105,8 @@ export default class AddObjectivePopup extends Component {
       targetValue = (1 + (this.state.amount / 100 * (isDirectionUp ? 1 : -1))) * this.props.actualIndicators[this.state.indicator];
     }
     else {
-      targetValue = this.props.actualIndicators[this.state.indicator] + (this.state.amount * (isDirectionUp ? 1 : -1));
+      const indicator = this.props.actualIndicators[this.state.indicator] || 0;
+      targetValue = indicator + (this.state.amount * (isDirectionUp ? 1 : -1));
     }
 
     if (targetValue) {
