@@ -55,7 +55,6 @@ export default class Campaigns extends Component {
 
   static defaultProps = {
     campaigns: [],
-    approvedBudgets: [],
     planUnknownChannels: [],
     inHouseChannels: [],
     teamMembers: [],
@@ -132,13 +131,13 @@ export default class Campaigns extends Component {
 
   render() {
     const {selectedIndex, campaigns} = this.state;
-    const {approvedBudgets, planUnknownChannels, planDate, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification, calculatedData: {monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
+    const {planUnknownChannels, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification, calculatedData: {committedBudgets, monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0]
       ? planUnknownChannels[0]
       : {};
-    const approvedChannels = approvedBudgets && approvedBudgets.length > 0 && approvedBudgets[0]
-      ? approvedBudgets[0]
+    const firstMonthChannels = committedBudgets && committedBudgets.length > 0 && committedBudgets[0]
+      ? committedBudgets[0]
       : {};
     const inHouse = {};
     inHouseChannels.forEach(channel => {
@@ -152,7 +151,7 @@ export default class Campaigns extends Component {
         });
       }
     });
-    let channels = merge({}, campaignsChannels, approvedChannels, unknownChannels, inHouse);
+    let channels = merge({}, campaignsChannels, firstMonthChannels, unknownChannels, inHouse);
     const processedChannels = {
       titles: {},
       icons: {},

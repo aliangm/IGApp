@@ -459,7 +459,7 @@ export default class Preferences extends Component {
                                  dates={dates}
                                  createOrUpdateObjective={this.createOrUpdateObjective}
                                  actualIndicators={this.props.actualIndicators}
-                                 projectedPlan={this.props.projectedPlan}
+                                 forecastedIndicators={this.props.forecastedIndicators}
               />
             </div>
             <FeatureToggle featureName="plannerAI">

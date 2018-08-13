@@ -18,13 +18,10 @@ export default class AnnualTab extends Component {
   styles = [planStyles, icons];
 
   static defaultProps = {
-    projectedPlan: [],
-    approvedBudgets: [],
     actualIndicators: {},
     planDate: '',
     events: [],
     objectives: [],
-    approvedBudgetsProjection: [],
     annualBudgetArray: []
   };
 
@@ -44,7 +41,7 @@ export default class AnnualTab extends Component {
   };
 
   componentDidMount() {
-    this.setState({scrollPosition: this.props.historyData.indicators.length * CELL_WIDTH});
+    this.setState({scrollPosition: this.props.calculatedData.historyData.historyDataLength * CELL_WIDTH});
   }
 
   render() {

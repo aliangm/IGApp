@@ -5,8 +5,6 @@ import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Select from 'components/controls/Select';
-import {formatDate} from 'components/utils/date';
-
 
 export default class Analyze extends Component {
 
@@ -14,36 +12,49 @@ export default class Analyze extends Component {
   styles = [analyzeStyle];
 
   static defaultProps = {
-    previousData: []
+    monthsExceptThisMonth: 0
   };
 
   render() {
+    const {monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
 
-    const {previousData} = this.props;
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split('/');
-      const planDate2 = b.planDate.split('/');
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
+    const selectOptions = [];
+    for (let i = 0; i < historyDataLength + 1; i++) {
+      const lastXMonth = i;
+      selectOptions.push({value: i, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'});
+    }
+
+    const indicatorsData = {};
+    historyDataWithCurrentMonth.indicators.forEach((item, key) => {
+      const displayDate = months[key];
+      Object.keys(item).forEach(indicator => {
+        if (!indicatorsData[indicator]) {
+          indicatorsData[indicator] = [];
+        }
+        const value = item[indicator];
+        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
+      });
     });
-    const selectOptions = sortedPreviousData.map((item, index) => {
-      const lastXMonth = sortedPreviousData.length - index - 1;
-      return {value: index, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'};
-    });
+
+    const historyCalculatedProps = {
+      indicatorsData: indicatorsData,
+      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(monthsExceptThisMonth,
+        attributionModel)
+    };
 
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, this.props));
+      (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Analyze</div>
           <div className={this.classes.headPlan}>
             <Select
-              selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
+              selected={monthsExceptThisMonth}
               select={{options: selectOptions}}
               onChange={(e) => {
-                this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel);
+                this.props.calculateAttributionData(e.value,
+                  this.props.attributionModel);
               }}
               className={analyzeStyle.locals.dateSelect}
             />

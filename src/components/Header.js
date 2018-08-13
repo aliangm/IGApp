@@ -385,29 +385,6 @@ export default class Header extends Component {
   render() {
     let popup = null;
     if (this.state.suggestionPopup) {
-      const {approvedBudgets, projectedPlan, planDate, approveChannel, declineChannel, approvedBudgetsProjection, actualIndicators, CIM} = this.props;
-      const {indicator} = this.state;
-      const zeroBudgetSuggestions = {};
-      Object.keys(approvedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
-      const nextMonthBudgets = merge(zeroBudgetSuggestions, projectedPlan[0].plannedChannelBudgets);
-      const currentBudgets = Object.keys(approvedBudgets[0]).reduce((sum, current) => sum +
-        approvedBudgets[0][current] *
-        CIM[current][indicator], 0);
-      const orderedSuggestions = Object.keys(nextMonthBudgets)
-        .filter(channel => nextMonthBudgets[channel] !== (approvedBudgets[0][channel] || 0))
-        .sort((channel1, channel2) => {
-          const budget1 = (nextMonthBudgets[channel1] - (approvedBudgets[0][channel1] || 0)) * CIM[channel1][indicator];
-          const budget2 = (nextMonthBudgets[channel2] - (approvedBudgets[0][channel2] || 0)) * CIM[channel2][indicator];
-          return budget2 - budget1;
-        });
-      const channel = orderedSuggestions && orderedSuggestions.length > 0 && orderedSuggestions[0];
-      const ratio = ((nextMonthBudgets[channel] - (approvedBudgets[0][channel] || 0)) * CIM[channel][indicator]) /
-        currentBudgets;
-      const objectivesRatio = [{
-        ratio: Math.round(ratio * 100),
-        nickname: getIndicatorNickname(indicator),
-        projected: Math.round((approvedBudgetsProjection[0][indicator] - actualIndicators[indicator]) * ratio)
-      }];
 
       popup = <Page popup={true}
                     width="825px"
@@ -420,22 +397,6 @@ export default class Header extends Component {
                  this.setState({suggestionPopup: false});
                }}/>
         </div>
-        <InsightItem
-          channel={channel}
-          channelNickname={getChannelNickname(channel)}
-          objectivesRatio={objectivesRatio}
-          dates={formatDate(planDate)}
-          currentBudget={approvedBudgets[0][channel] || 0}
-          suggestedBudget={nextMonthBudgets[channel]}
-          approveChannel={() => {
-            approveChannel(0, channel, nextMonthBudgets[channel]);
-            this.setState({suggestionPopup: false});
-          }}
-          declineChannel={() => {
-            declineChannel(0, channel, (approvedBudgets[0][channel] || 0));
-            this.setState({suggestionPopup: false});
-          }}
-        />
       </Page>;
     }
     return <div className={this.classes.box}>

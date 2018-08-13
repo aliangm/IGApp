@@ -26,7 +26,6 @@ export default class Plan extends Component {
   static defaultProps = {
     userProfile: {},
     targetAudience: {},
-    projectedPlan: [],
     planDate: '',
     userAccount: {}
   };
@@ -294,16 +293,10 @@ export default class Plan extends Component {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
     const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
 
-    const planChannels = merge([],
-      Object.keys(this.props.approvedBudgets.reduce((object, item) => {
+    const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
           return merge(object, item);
         }
-        , {})),
-      Object.keys(this.props.projectedPlan.reduce((object, item) => {
-          return merge(object, item.plannedChannelBudgets);
-        }
-        , {}))
-    );
+        , {}));
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => {
