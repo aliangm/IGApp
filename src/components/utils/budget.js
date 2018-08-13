@@ -1,11 +1,11 @@
 import sumBy from 'lodash/sumBy';
 
 export function formatNumber(budget) {
-	if (budget == null) {
-		return ''
-	}
+  if (budget == null) {
+    return '';
+  }
 
-	return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function formatBudget(budget) {
@@ -29,8 +29,8 @@ export function extractNumberFromBudget(budget, defaultValue = 0) {
   return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
 }
 
-export function getPlanBudgetsData(planBudgets){
-  const committedBudgets = getCommitedBudgets(planBudgets);
+export function getPlanBudgetsData(planBudgets) {
+  const {committedBudgets} = seperateCommittedAndSuggested(planBudgets);
 
   const sumBudgets = {};
   committedBudgets.forEach(month => {
@@ -45,20 +45,28 @@ export function getPlanBudgetsData(planBudgets){
   const totalCost = sumBy(Object.keys(sumBudgets), key => sumBudgets[key]);
 
   return {
-    committedBudgets: committedBudgets,
-    sumBudgets: sumBudgets,
-    totalCost: totalCost
+    committedBudgets,
+    sumBudgets,
+    totalCost
   };
 }
 
-export function getCommitedBudgets(planBudgets) {
-  return planBudgets.map((month) => {
-    const newMonth = {};
+export function seperateCommittedAndSuggested(planBudgets) {
+  const committedBudgets = Array(planBudgets.length);
+  const suggestedBudgets = Array(planBudgets.length);
+
+  planBudgets.forEach((month, index) => {
+    const committedMonth = {};
+    const suggestedMonth = {};
     Object.keys(month).map((key) => {
       const committedBudget = month[key].committedBudget;
-      newMonth[key] = committedBudget || 0;
+      committedMonth[key] = committedBudget || 0;
+      suggestedMonth[key] = month[key].secondaryValue;
     });
 
-    return newMonth;
+    committedBudgets[index] = committedMonth;
+    suggestedBudgets[index] = suggestedMonth;
   });
+
+  return {committedBudgets, suggestedBudgets};
 }

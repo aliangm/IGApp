@@ -4,12 +4,12 @@ import {getExtarpolateRatio} from 'utils.js';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDates} from 'components/utils/date';
-import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
+import {seperateCommittedAndSuggested, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 
 export function calculatedDataExtender(data) {
 
-  const committedBudgets = getCommitedBudgets(data.planBudgets);
+  const {committedBudgets, suggestedBudgets} = seperateCommittedAndSuggested(data.planBudgets);
 
   const campaignsWithIndex = data.campaigns.map((campaign, index) => {
     return {...campaign, index: index};
@@ -39,6 +39,7 @@ export function calculatedDataExtender(data) {
     calculatedData: {
       campaignsWithIndex: campaignsWithIndex,
       committedBudgets: committedBudgets,
+      suggestedBudgets: suggestedBudgets,
       activeCampaigns: activeCampaigns,
       annualBudgetLeftToPlan: data.annualBudget -
         merged.reduce((annualSum, month) => Object.keys(month)
