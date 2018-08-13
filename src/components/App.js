@@ -41,14 +41,6 @@ class AppComponent extends Component {
       addNotification: this.addNotification.bind(this),
       plan: this.plan.bind(this),
       forecast: this.forecast.bind(this),
-      approveAllBudgets: this.approveAllBudgets.bind(this),
-      approveChannel: this.approveChannel.bind(this),
-      approveWholeChannel: this.approveWholeChannel.bind(this),
-      approveWholeMonth: this.approveWholeMonth.bind(this),
-      declineAllBudgets: this.declineAllBudgets.bind(this),
-      declineChannel: this.declineChannel.bind(this),
-      declineWholeChannel: this.declineWholeChannel.bind(this),
-      declineWholeMonth: this.declineWholeMonth.bind(this),
       calculateAttributionData: this.calculateAttributionData.bind(this)
     };
   }
@@ -427,17 +419,12 @@ class AppComponent extends Component {
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
       actualIndicators: data.actualIndicators || {},
-      plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length > 0 ?
-        data.projectedPlan[0].plannedChannelBudgets :
-        {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      monthBudget: data.projectedPlan && data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
       campaignIdeas: data.campaignIdeas || [],
       numberOfPlanUpdates: data.numberOfPlanUpdates,
-      projectedPlan: data.projectedPlan || [],
       approvedBudgetsProjection: data.approvedBudgetsProjection || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
@@ -500,29 +487,6 @@ class AppComponent extends Component {
     }
   }
 
-  approveAllBudgets(withProjections) {
-    const json = {
-      approvedBudgets: this.state.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)
-    };
-    if (withProjections) {
-      json.approvedBudgetsProjection =
-        this.state.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
-    }
-    return this.state.updateUserMonthPlan(json, this.state.region, this.state.planDate)
-      .then(() => {
-        this.forecast();
-      });
-  }
-
-  declineAllBudgets() {
-    const projectedPlan = this.state.projectedPlan;
-    projectedPlan.forEach((month, index) => {
-      month.plannedChannelBudgets = this.state.approvedBudgets[index];
-    });
-    // this.setState({dropmenuVisible: false});
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
   approveChannel(month, channel, budget) {
     let approvedBudgets = this.state.approvedBudgets;
     let approvedMonth = this.state.approvedBudgets[month] || {};
@@ -532,48 +496,6 @@ class AppComponent extends Component {
       .then(() => {
         this.forecast();
       });
-  }
-
-  approveWholeChannel(channel) {
-    const approvedBudgets = this.state.approvedBudgets;
-    approvedBudgets.forEach((month, index) => {
-      month[channel] = this.state.projectedPlan[index].plannedChannelBudgets[channel] || 0;
-    });
-    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
-      .then(() => {
-        this.forecast();
-      });
-  }
-
-  declineWholeChannel(channel) {
-    const projectedPlan = this.state.projectedPlan;
-    projectedPlan.forEach((month, index) => {
-      month.plannedChannelBudgets[channel] = this.state.approvedBudgets[index][channel] || 0;
-    });
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
-  approveWholeMonth(month) {
-    const approvedBudgets = this.state.approvedBudgets;
-    approvedBudgets[month] = this.state.projectedPlan[month].plannedChannelBudgets;
-    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
-      .then(() => {
-        this.forecast();
-      });
-  }
-
-  declineWholeMonth(month) {
-    const projectedPlan = this.state.projectedPlan;
-    projectedPlan[month].plannedChannelBudgets = this.state.approvedBudgets[month];
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
-  declineChannel(month, channel, budget) {
-    let projectedPlan = this.state.projectedPlan;
-    let projectedMonth = this.state.projectedPlan[month];
-    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
-    projectedPlan[month] = projectedMonth;
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
   }
 
   plan(isCommitted, preferences, region, silent) {

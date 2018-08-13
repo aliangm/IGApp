@@ -26,7 +26,6 @@ export default class Plan extends Component {
   static defaultProps = {
     userProfile: {},
     targetAudience: {},
-    projectedPlan: [],
     planDate: '',
     userAccount: {}
   };
@@ -181,31 +180,6 @@ export default class Plan extends Component {
     }
   };
 
-  addChannel = (newChannel) => {
-    let projectedPlan = this.props.projectedPlan;
-    let approvedBudgets = this.props.approvedBudgets;
-    for (let i = 0; i < 12; i++) {
-      if (!approvedBudgets[i]) {
-        approvedBudgets[i] = {};
-      }
-      if (!projectedPlan[i] || Object.keys(projectedPlan[i]).length === 0) {
-        projectedPlan[i] = {plannedChannelBudgets: {}, projectedIndicatorValues: {}};
-      }
-      projectedPlan[i].plannedChannelBudgets[newChannel] = 0;
-      approvedBudgets[i][newChannel] = 0;
-    }
-    this.props.updateUserMonthPlan({
-      projectedPlan: projectedPlan,
-      approvedBudgets: approvedBudgets
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this[newChannel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
-        }
-      });
-  };
 
   addUnknownChannel = (otherChannel, otherChannelHierarchy) => {
     const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel;
@@ -240,16 +214,10 @@ export default class Plan extends Component {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
     const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
 
-    const planChannels = merge([],
-      Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
+    const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
           return merge(object, item);
         }
-        , {})),
-      Object.keys(this.props.projectedPlan.reduce((object, item) => {
-          return merge(object, item.plannedChannelBudgets);
-        }
-        , {}))
-    );
+        , {}));
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => {

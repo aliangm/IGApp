@@ -1,11 +1,11 @@
 import sumBy from 'lodash/sumBy';
 
 export function formatNumber(budget) {
-	if (budget == null) {
-		return ''
-	}
+  if (budget == null) {
+    return '';
+  }
 
-	return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function formatBudget(budget) {
@@ -45,9 +45,9 @@ export function getPlanBudgetsData(planBudgets){
   const totalCost = sumBy(Object.keys(sumBudgets), key => sumBudgets[key]);
 
   return {
-    committedBudgets: committedBudgets,
-    sumBudgets: sumBudgets,
-    totalCost: totalCost
+    committedBudgets,
+    sumBudgets,
+    totalCost
   };
 }
 
