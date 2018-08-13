@@ -30,7 +30,6 @@ export default class CMO extends Component {
   styles = [dashboardStyle];
 
   static defaultProps = {
-    approvedBudgets: [],
     approvedBudgetsProjection: [],
     actualIndicators: {
       MCL: 0,
