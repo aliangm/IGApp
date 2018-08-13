@@ -421,7 +421,6 @@ class AppComponent extends Component {
       actualIndicators: data.actualIndicators || {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      monthBudget: data.projectedPlan && data.projectedPlan.length > 0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
       campaignIdeas: data.campaignIdeas || [],
