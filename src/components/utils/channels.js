@@ -13,7 +13,7 @@ export function initialize(channelsSchema, userMapping) {
       schema.properties[channel].title = userMapping[channel].title;
       schema.properties[channel].nickname = userMapping[channel].nickname;
       schema.properties[channel].category = userMapping[channel].category;
-      schema.properties[channel].isOtherChannel = !!userMapping[channel].isOtherChannel;
+      schema.properties[channel].isUnknownChannel = !!userMapping[channel].isUnknownChannel;
     });
   }
   isInitialized = true;
@@ -46,8 +46,8 @@ export function getMetadata(type, channel) {
   }
 }
 
-export function isOtherChannel(channel) {
-  return getMetadata('isOtherChannel', channel);
+export function isUnknownChannel(channel) {
+  return getMetadata('isUnknownChannel', channel);
 }
 
 export function getChannelsWithTitles() {
