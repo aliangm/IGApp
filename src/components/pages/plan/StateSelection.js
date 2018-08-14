@@ -15,7 +15,8 @@ export default class StateSelection extends Component {
     changeConstraint: PropTypes.func.isRequired,
     constraintOptions: PropTypes.object.isRequired,
     changeConstraintsBoxOpen: PropTypes.func,
-    stateSelectionBoxRef: PropTypes.func
+    stateSelectionBoxRef: PropTypes.func,
+    boxOpen: PropTypes.bool
   };
 
   constructor(props) {
@@ -31,9 +32,11 @@ export default class StateSelection extends Component {
   }
 
   onOutsideClick = (e) => {
-    const domElement = findDOMNode(this.stateSelectionBox);
-    if (domElement && e.target !== domElement && !domElement.contains(e.target)) {
-      this.closeBox();
+    if (this.props.boxOpen) {
+      const domElement = findDOMNode(this.stateSelectionBox);
+      if (domElement && e.target !== domElement && !domElement.contains(e.target)) {
+        this.closeBox();
+      }
     }
   };
 
@@ -75,7 +78,7 @@ export default class StateSelection extends Component {
                     class={this.classes.tooltip}
                     effect='solid'
                     afterShow={() => this.props.changeConstraintsBoxOpen(true)}
-                    afterHide={()=> this.props.changeConstraintsBoxOpen(false)}
+                    afterHide={() => this.props.changeConstraintsBoxOpen(false)}
                     ref={(ref) => {
                       this.stateSelectionBox = ref;
                       this.props.stateSelectionBoxRef(ref);
