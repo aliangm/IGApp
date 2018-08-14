@@ -8,3 +8,12 @@
 
 .inner {
 }
+
+.constraint-step {
+    display: table;
+}
+
+.constraint-text {
+    display: table-cell;
+    vertical-align: middle;
+}
