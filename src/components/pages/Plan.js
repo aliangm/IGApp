@@ -18,6 +18,7 @@ import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
+import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
 
 export default class Plan extends Component {
 
@@ -37,7 +38,8 @@ export default class Plan extends Component {
       editMode: false,
       interactiveMode: false,
       showNewScenarioPopup: false,
-      scrollEvent: null
+      scrollEvent: null,
+      showOptimizationPopup: false
     };
   }
 
@@ -185,8 +187,12 @@ export default class Plan extends Component {
 
   editCommittedBudget = (month, channelKey, newBudget) => {
     const budgetsData = [...this.state.budgetsData];
-    const secondary = budgetsData[month].channels[channelKey] && budgetsData[month].channels[channelKey].secondaryBudget;
-    const alreadyHardConstraint = budgetsData[month].channels[channelKey] && budgetsData[month].channels[channelKey].isConstraint && budgetsData[month].channels[channelKey].isSoft === false;
+    const secondary = budgetsData[month].channels[channelKey] &&
+      budgetsData[month].channels[channelKey].secondaryBudget;
+    const alreadyHardConstraint = budgetsData[month].channels[channelKey] &&
+      budgetsData[month].channels[channelKey].isConstraint &&
+      budgetsData[month].channels[channelKey].isSoft ===
+      false;
     budgetsData[month].channels[channelKey] = {
       secondaryBudget: secondary || 0,
       primaryBudget: newBudget,
@@ -294,9 +300,9 @@ export default class Plan extends Component {
     const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
-          return merge(object, item);
-        }
-        , {}));
+        return merge(object, item);
+      }
+      , {}));
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => {
@@ -338,6 +344,16 @@ export default class Plan extends Component {
               </FeatureToggle>
               : null
             }
+            <Button type="secondary"
+                    style={{
+                      marginLeft: '15px',
+                      width: '102px'
+                    }}
+                    onClick={() => {
+                      this.setState({showOptimizationPopup: true});
+                    }}>
+              Get Suggestions
+            </Button>
           </div>
           <div className={this.classes.column} style={{justifyContent: 'center'}}>
             <BudgetLeftToPlan annualBudget={annualBudget} annualBudgetLeftToPlan={annualBudgetLeftToPlan}/>
@@ -397,7 +413,9 @@ export default class Plan extends Component {
                       New Scenario
                     </Button>
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
-                                      onClose={() => { this.setState({showNewScenarioPopup: false}) }}
+                                      onClose={() => {
+                                        this.setState({showNewScenarioPopup: false});
+                                      }}
                                       onCommittedClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
                                         this.setCommittedBudgetsAsSoftConstraints();
@@ -471,6 +489,9 @@ export default class Plan extends Component {
             </div>
           </div>
         </div>
+        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup} onClose={() => {
+          this.setState({showOptimizationPopup: false});
+        }}/>
         {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
           <div className={this.classes.wrap}>
             <div className={this.classes.serverDown}>
