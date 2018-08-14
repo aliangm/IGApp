@@ -28,7 +28,7 @@ export default class PlanFromExcel extends Component {
     let firstTime = new Array(12).fill(true);
     Papa.parse(files[0], {complete: (result, file) => {
       try {
-        let approvedBudgets = this.props.approvedBudgets.length > 0 ? this.props.approvedBudgets : new Array(12).fill(null);
+        let planBudgets = this.props.planBudgets.length > 0 ? this.props.planBudgets : new Array(12).fill(null);
         result.data.forEach((row, index) => {
           if (index > 0) {
             const channel = row[0];
@@ -36,21 +36,24 @@ export default class PlanFromExcel extends Component {
               if (cell != '' && cellIndex > 1) {
                 const budget = parseInt(cell.replace(/[-$h,]/g, ''));
                 if (budget && firstTime[cellIndex - 2]) {
-                  approvedBudgets[cellIndex - 2] = {};
+                  planBudgets[cellIndex - 2] = {};
                   firstTime[cellIndex - 2] = false;
                 }
-                approvedBudgets[cellIndex - 2][channel] = budget;
+                planBudgets[cellIndex - 2][channel] = {
+                  committedBudget: budget,
+                  userBudgetConstraint: -1
+                }
               }
             })
           }
         });
         // Validate
         let isValid = true;
-        approvedBudgets.forEach(month => {
+        planBudgets.forEach(month => {
           if (month) {
             Object.keys(month).forEach((channel) => {
               const title = getTitle(channel);
-              if (!title || isNaN(month[channel])) {
+              if (!title || isNaN(month[channel].committedBudget)) {
                 isValid = false;
               }
             });
@@ -58,7 +61,7 @@ export default class PlanFromExcel extends Component {
         });
         if (isValid) {
           this.setState({successUpload: true});
-          return this.props.updateState({approvedBudgets: approvedBudgets});
+          return this.props.updateUserMonthPlan({planBudgets: planBudgets});
         }
         else {
           this.setState({successUpload: false})
