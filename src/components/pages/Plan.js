@@ -489,9 +489,15 @@ export default class Plan extends Component {
             </div>
           </div>
         </div>
-        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup} onClose={() => {
-          this.setState({showOptimizationPopup: false});
-        }}/>
+        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup}
+                               onClose={() => {
+                                 this.setState({showOptimizationPopup: false});
+                               }}
+                               planWithConstraints={(constraints, callback) => {
+                                 console.log('planning')
+                                 callback("New Suggestion");
+                               }}
+        />
         {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
           <div className={this.classes.wrap}>
             <div className={this.classes.serverDown}>

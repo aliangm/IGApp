@@ -6,7 +6,7 @@ import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 
-export default class AddObjectivePopup extends Component {
+export default class PlanOptimizationPopup extends Component {
 
   style = style;
 
@@ -14,14 +14,17 @@ export default class AddObjectivePopup extends Component {
     hidden: PropTypes.bool
   };
 
-  initialConstraint = {
+  initialConstraints = {
     channelsLimit: null,
     channelsToBlock: []
   };
 
   constructor(props) {
     super(props);
-    this.state = this.initialConstraint;
+    this.state = {
+      constraints: this.initialConstraints,
+      currentSuggestion: null
+    };
   }
 
   getSteps = () => [
@@ -35,7 +38,7 @@ export default class AddObjectivePopup extends Component {
       component: <UserOptionsStep options={[
         {value: 1, label: 'No.', trigger: '2'},
         {value: 2, label: 'Sure!', trigger: '3'}
-      ]} />
+      ]}/>
     },
     {
       id: '2',
@@ -50,19 +53,19 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '4',
-      component: <UserOptionsStep options = {[
+      component: <UserOptionsStep options={[
         {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
         {
           value: 2,
           label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '5',
       component: <FunctionStep
-        funcToRun={(callback) => this.setConstraintAndRunPlanner(this.initialConstraint, callback)}
+        funcToRun={(callback) => this.setConstraintAndRunPlanner(this.initialConstraints, callback)}
         textForUser='OK running optimal plan'
         nextStepId='7'
       />,
@@ -81,7 +84,7 @@ export default class AddObjectivePopup extends Component {
           label: 'Decline',
           trigger: '11'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '8',
@@ -92,7 +95,7 @@ export default class AddObjectivePopup extends Component {
           label: 'Get a new suggestion',
           trigger: '10'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '9',
@@ -101,7 +104,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '10',
-      component: <FunctionStep funcToRun={this.clearConstraints}
+      component: <FunctionStep funcToRun={this.clearState}
                                nextStepId='4'
                                textForUser={'That’s great :)\n' +
                                'Do you have specific requirements for the reallocation suggestion?'}/>,
@@ -109,7 +112,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '11',
-      message: 'why?',
+      message: 'Why?',
       trigger: '12'
     },
     {
@@ -122,7 +125,7 @@ export default class AddObjectivePopup extends Component {
           label: 'I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '13',
@@ -137,12 +140,21 @@ export default class AddObjectivePopup extends Component {
     }
   ];
 
-  clearConstraints = (callback) => {
-    this.setState(this.initialConstraint, callback);
+  clearState = (callback) => {
+    this.setState({
+      constraints: this.initialConstraints,
+      currentSuggestion: null
+    }, callback);
   };
 
   setConstraintAndRunPlanner = (changeObject, callback) => {
-    this.setState(changeObject, this.runPlannerWithConstraints(callback));
+    this.setState({
+        constraints: {
+          ...this.state.constraints,
+          ...changeObject
+        }
+      }
+      , this.runPlannerWithConstraints(callback));
   };
 
   noParticularReasonAndRun = (callback) => {
@@ -151,8 +163,12 @@ export default class AddObjectivePopup extends Component {
   };
 
   runPlannerWithConstraints = (callback) => {
-    console.log('run the planner with state constraint');
-    callback();
+    this.props.planWithConstraints(this.state.constraints,
+      (suggestion) => {
+        this.setState({currentSuggestion: suggestion});
+        console.log('Received an answer');
+        callback();
+      });
   };
 
   render() {
