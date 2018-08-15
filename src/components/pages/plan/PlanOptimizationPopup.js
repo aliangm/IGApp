@@ -4,6 +4,7 @@ import React, {PropTypes} from 'react';
 import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
+import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 
 export default class AddObjectivePopup extends Component {
 
@@ -31,10 +32,10 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '1',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'No.', trigger: '2'},
         {value: 2, label: 'Sure!', trigger: '3'}
-      ]
+      ]} />
     },
     {
       id: '2',
@@ -49,14 +50,14 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '4',
-      options: [
+      component: <UserOptionsStep options = {[
         {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
         {
           value: 2,
           label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]
+      ]} />
     },
     {
       id: '5',
@@ -73,25 +74,25 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '7',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'Approve', trigger: '8'},
         {
           value: 2,
           label: 'Decline',
           trigger: '11'
         }
-      ]
+      ]} />
     },
     {
       id: '8',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'Close', trigger: '9'},
         {
           value: 2,
           label: 'Get a new suggestion',
           trigger: '10'
         }
-      ]
+      ]} />
     },
     {
       id: '9',
@@ -113,7 +114,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '12',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'I want to lock budgets for specific channels', trigger: '13'},
         {value: 2, label: 'No particular reason, I just don’t like it', trigger: '14'},
         {
@@ -121,7 +122,7 @@ export default class AddObjectivePopup extends Component {
           label: 'I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]
+      ]} />
     },
     {
       id: '13',
