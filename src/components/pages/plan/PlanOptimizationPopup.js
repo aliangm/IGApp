@@ -5,18 +5,6 @@ import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 
-class ClearConstraint extends Component {
-  componentDidMount() {
-    this.props.clearConstraints();
-    this.props.triggerNextStep({trigger: '4'});
-  }
-
-  render() {
-    return <div>{'That’s great :)\n' +
-    'Do you have specific requirements for the reallocation suggestion?'}</div>;
-  }
-};
-
 export default class AddObjectivePopup extends Component {
 
   style = style;
@@ -133,8 +121,8 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '14',
-      message: 'OK running again',
-      end: true
+      component: <NoParticularReasonStep noParticularReasonAndRun={this.noParticularReasonAndRun}/>,
+      asMessage: true
     }
   ];
 
@@ -143,13 +131,18 @@ export default class AddObjectivePopup extends Component {
   };
 
   setConstraintAndRunPlanner = (changeObject, callback) => {
-    this.setState(changeObject,
-      () => {
-        console.log('run the planner with state constraint');
-        callback();
-      }
-    );
+    this.setState(changeObject, this.runPlannerWithConstraints(callback));
   };
+
+  noParticularReasonAndRun = (callback) => {
+    console.log('setting lock on all suggested channels');
+    this.runPlannerWithConstraints(callback);
+  }
+
+  runPlannerWithConstraints = (callback) => {
+    console.log('run the planner with state constraint');
+    callback();
+  }
 
   render() {
     return <div hidden={this.props.hidden}>
@@ -210,5 +203,27 @@ export class CustomizedHeader extends Component {
         Here you can get specific improvement suggestions on your current plan.
       </div>
     </div>;
+  }
+}
+
+class ClearConstraint extends Component {
+  componentDidMount() {
+    this.props.clearConstraints();
+    this.props.triggerNextStep({trigger: '4'});
+  }
+
+  render() {
+    return <div>{'That’s great :)\n' +
+    'Do you have specific requirements for the reallocation suggestion?'}</div>;
+  }
+}
+
+class NoParticularReasonStep extends Component {
+  componentDidMount() {
+    this.props.noParticularReasonAndRun(() => this.props.triggerNextStep({trigger: '7'}));
+  }
+
+  render() {
+    return <div>{'OK trying to run again'}</div>;
   }
 }
