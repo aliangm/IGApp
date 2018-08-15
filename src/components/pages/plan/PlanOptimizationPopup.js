@@ -194,7 +194,9 @@ export default class AddObjectivePopup extends Component {
                  customStyle={{
                    background: 'transparent',
                    border: 'none',
-                   boxShadow: 'none'
+                   boxShadow: 'none',
+                   padding: '0',
+                   margin: '0 0 7px 0'
                  }}/>
       </Page>
     </div>;
