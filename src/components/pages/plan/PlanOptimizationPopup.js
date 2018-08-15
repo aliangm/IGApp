@@ -13,13 +13,14 @@ export default class AddObjectivePopup extends Component {
     hidden: PropTypes.bool
   };
 
+  initialConstraint = {
+    channelsLimit: null,
+    channelsToBlock: []
+  };
+
   constructor(props) {
     super(props);
-
-    this.state = {
-      channelsLimit: null,
-      channelsToBlock: []
-    };
+    this.state = this.initialConstraint;
   }
 
   getSteps = () => [
@@ -59,8 +60,12 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '5',
-      message: 'ok optimal suggestion',
-      end: true
+      component: <FunctionStep
+        funcToRun={(callback) => this.setConstraintAndRunPlanner(this.initialConstraint, callback)}
+        textForUser='OK running optimal plan'
+        nextStepId='7'
+      />,
+      asMessage: true
     },
     {
       id: '6',
@@ -95,7 +100,10 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '10',
-      component: <ClearConstraint clearConstraints={this.clearConstraints}/>,
+      component: <FunctionStep funcToRun={this.clearConstraints}
+                               nextStepId='4'
+                               textForUser={'That’s great :)\n' +
+                               'Do you have specific requirements for the reallocation suggestion?'}/>,
       asMessage: true
     },
     {
@@ -121,13 +129,15 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '14',
-      component: <NoParticularReasonStep noParticularReasonAndRun={this.noParticularReasonAndRun}/>,
+      component: <FunctionStep funcToRun={this.noParticularReasonAndRun}
+                               textForUser={'OK trying to run again'}
+                               nextStepId='7'/>,
       asMessage: true
     }
   ];
 
-  clearConstraints = () => {
-    this.setState({channelsLimit: null, channelsToBlock: []});
+  clearConstraints = (callback) => {
+    this.setState(this.initialConstraint, callback);
   };
 
   setConstraintAndRunPlanner = (changeObject, callback) => {
@@ -137,12 +147,12 @@ export default class AddObjectivePopup extends Component {
   noParticularReasonAndRun = (callback) => {
     console.log('setting lock on all suggested channels');
     this.runPlannerWithConstraints(callback);
-  }
+  };
 
   runPlannerWithConstraints = (callback) => {
     console.log('run the planner with state constraint');
     callback();
-  }
+  };
 
   render() {
     return <div hidden={this.props.hidden}>
@@ -206,24 +216,20 @@ export class CustomizedHeader extends Component {
   }
 }
 
-class ClearConstraint extends Component {
+class FunctionStep extends Component {
+  static PropTypes = {
+    funcToRun: PropTypes.func.isRequired,
+    textForUser: PropTypes.string.isRequired,
+    nextStepId: PropTypes.string.isRequired
+  };
+
   componentDidMount() {
-    this.props.clearConstraints();
-    this.props.triggerNextStep({trigger: '4'});
+    this.props.funcToRun(() => {
+      this.props.triggerNextStep({trigger: this.props.nextStepId});
+    });
   }
 
   render() {
-    return <div>{'That’s great :)\n' +
-    'Do you have specific requirements for the reallocation suggestion?'}</div>;
-  }
-}
-
-class NoParticularReasonStep extends Component {
-  componentDidMount() {
-    this.props.noParticularReasonAndRun(() => this.props.triggerNextStep({trigger: '7'}));
-  }
-
-  render() {
-    return <div>{'OK trying to run again'}</div>;
+    return <div>{this.props.textForUser}</div>;
   }
 }
