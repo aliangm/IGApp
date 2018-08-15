@@ -4,6 +4,7 @@ import React, {PropTypes} from 'react';
 import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
+import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 
 export default class AddObjectivePopup extends Component {
 
@@ -13,13 +14,14 @@ export default class AddObjectivePopup extends Component {
     hidden: PropTypes.bool
   };
 
+  initialConstraint = {
+    channelsLimit: null,
+    channelsToBlock: []
+  };
+
   constructor(props) {
     super(props);
-
-    this.state = {
-      channelsLimit: null,
-      channelsToBlock: []
-    };
+    this.state = this.initialConstraint;
   }
 
   getSteps = () => [
@@ -30,10 +32,10 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '1',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'No.', trigger: '2'},
         {value: 2, label: 'Sure!', trigger: '3'}
-      ]
+      ]} />
     },
     {
       id: '2',
@@ -48,19 +50,23 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '4',
-      options: [
+      component: <UserOptionsStep options = {[
         {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
         {
           value: 2,
           label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]
+      ]} />
     },
     {
       id: '5',
-      message: 'ok optimal suggestion',
-      end: true
+      component: <FunctionStep
+        funcToRun={(callback) => this.setConstraintAndRunPlanner(this.initialConstraint, callback)}
+        textForUser='OK running optimal plan'
+        nextStepId='7'
+      />,
+      asMessage: true
     },
     {
       id: '6',
@@ -68,25 +74,25 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '7',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'Approve', trigger: '8'},
         {
           value: 2,
           label: 'Decline',
           trigger: '11'
         }
-      ]
+      ]} />
     },
     {
       id: '8',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'Close', trigger: '9'},
         {
           value: 2,
           label: 'Get a new suggestion',
           trigger: '10'
         }
-      ]
+      ]} />
     },
     {
       id: '9',
@@ -95,7 +101,10 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '10',
-      component: <ClearConstraint clearConstraints={this.clearConstraints}/>,
+      component: <FunctionStep funcToRun={this.clearConstraints}
+                               nextStepId='4'
+                               textForUser={'That’s great :)\n' +
+                               'Do you have specific requirements for the reallocation suggestion?'}/>,
       asMessage: true
     },
     {
@@ -105,7 +114,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '12',
-      options: [
+      component: <UserOptionsStep options={[
         {value: 1, label: 'I want to lock budgets for specific channels', trigger: '13'},
         {value: 2, label: 'No particular reason, I just don’t like it', trigger: '14'},
         {
@@ -113,7 +122,7 @@ export default class AddObjectivePopup extends Component {
           label: 'I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]
+      ]} />
     },
     {
       id: '13',
@@ -121,13 +130,15 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '14',
-      component: <NoParticularReasonStep noParticularReasonAndRun={this.noParticularReasonAndRun}/>,
+      component: <FunctionStep funcToRun={this.noParticularReasonAndRun}
+                               textForUser={'OK trying to run again'}
+                               nextStepId='7'/>,
       asMessage: true
     }
   ];
 
-  clearConstraints = () => {
-    this.setState({channelsLimit: null, channelsToBlock: []});
+  clearConstraints = (callback) => {
+    this.setState(this.initialConstraint, callback);
   };
 
   setConstraintAndRunPlanner = (changeObject, callback) => {
@@ -137,12 +148,12 @@ export default class AddObjectivePopup extends Component {
   noParticularReasonAndRun = (callback) => {
     console.log('setting lock on all suggested channels');
     this.runPlannerWithConstraints(callback);
-  }
+  };
 
   runPlannerWithConstraints = (callback) => {
     console.log('run the planner with state constraint');
     callback();
-  }
+  };
 
   render() {
     return <div hidden={this.props.hidden}>
@@ -206,24 +217,20 @@ export class CustomizedHeader extends Component {
   }
 }
 
-class ClearConstraint extends Component {
+class FunctionStep extends Component {
+  static PropTypes = {
+    funcToRun: PropTypes.func.isRequired,
+    textForUser: PropTypes.string.isRequired,
+    nextStepId: PropTypes.string.isRequired
+  };
+
   componentDidMount() {
-    this.props.clearConstraints();
-    this.props.triggerNextStep({trigger: '4'});
+    this.props.funcToRun(() => {
+      this.props.triggerNextStep({trigger: this.props.nextStepId});
+    });
   }
 
   render() {
-    return <div>{'That’s great :)\n' +
-    'Do you have specific requirements for the reallocation suggestion?'}</div>;
-  }
-}
-
-class NoParticularReasonStep extends Component {
-  componentDidMount() {
-    this.props.noParticularReasonAndRun(() => this.props.triggerNextStep({trigger: '7'}));
-  }
-
-  render() {
-    return <div>{'OK trying to run again'}</div>;
+    return <div>{this.props.textForUser}</div>;
   }
 }
