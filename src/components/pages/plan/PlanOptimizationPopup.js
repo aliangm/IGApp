@@ -5,56 +5,17 @@ import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 
-const steps = [
-  {
-    id: '0',
-    message: 'Hey there!\nLooking to improve your plan?',
-    trigger: '1'
-  },
-  {
-    id: '1',
-    options: [
-      {value: 1, label: 'No.', trigger: '2'},
-      {value: 2, label: 'Sure!', trigger: '3'}
-    ]
-  },
-  {
-    id: '2',
-    message: 'Great!',
-    end: true
-  },
-  {
-    id: '3',
-    message: 'That’s great :)\n' +
-      'Do you have specific requirements for the reallocation suggestion?',
-    trigger: '4'
-  },
-  {
-    id: '4',
-    options: [
-      {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
-      {
-        value: 2,
-        label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
-        trigger: '6'
-      }
-    ]
-  },
-  {
-    id: '5',
-    message: 'ok optimal suggestion',
-    end: true
-  },
-  {
-    id: '6',
-    component: <ConstraintStep/>
-  },
-  {
-    id: '7',
-    message: `channels limit is: {previousValue}`,
-    end: true
+class ClearConstraint extends Component {
+  componentDidMount() {
+    this.props.clearConstraints();
+    this.props.triggerNextStep({trigger: '4'});
   }
-];
+
+  render() {
+    return <div>{'That’s great :)\n' +
+    'Do you have specific requirements for the reallocation suggestion?'}</div>;
+  }
+};
 
 export default class AddObjectivePopup extends Component {
 
@@ -66,7 +27,129 @@ export default class AddObjectivePopup extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      channelsLimit: null,
+      channelsToBlock: []
+    };
   }
+
+  getSteps = () => [
+    {
+      id: '0',
+      message: 'Hey there!\nLooking to improve your plan?',
+      trigger: '1'
+    },
+    {
+      id: '1',
+      options: [
+        {value: 1, label: 'No.', trigger: '2'},
+        {value: 2, label: 'Sure!', trigger: '3'}
+      ]
+    },
+    {
+      id: '2',
+      message: 'Great!',
+      end: true
+    },
+    {
+      id: '3',
+      message: 'That’s great :)\n' +
+        'Do you have specific requirements for the reallocation suggestion?',
+      trigger: '4'
+    },
+    {
+      id: '4',
+      options: [
+        {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
+        {
+          value: 2,
+          label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
+          trigger: '6'
+        }
+      ]
+    },
+    {
+      id: '5',
+      message: 'ok optimal suggestion',
+      end: true
+    },
+    {
+      id: '6',
+      component: <ConstraintStep type='channelsNumber' setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
+    },
+    {
+      id: '7',
+      options: [
+        {value: 1, label: 'Approve', trigger: '8'},
+        {
+          value: 2,
+          label: 'Decline',
+          trigger: '11'
+        }
+      ]
+    },
+    {
+      id: '8',
+      options: [
+        {value: 1, label: 'Close', trigger: '9'},
+        {
+          value: 2,
+          label: 'Get a new suggestion',
+          trigger: '10'
+        }
+      ]
+    },
+    {
+      id: '9',
+      message: 'Ok Bye!',
+      end: true
+    },
+    {
+      id: '10',
+      component: <ClearConstraint clearConstraints={this.clearConstraints}/>,
+      asMessage: true
+    },
+    {
+      id: '11',
+      message: 'why?',
+      trigger: '12'
+    },
+    {
+      id: '12',
+      options: [
+        {value: 1, label: 'I want to lock budgets for specific channels', trigger: '13'},
+        {value: 2, label: 'No particular reason, I just don’t like it', trigger: '14'},
+        {
+          value: 3,
+          label: 'I want to limit the number of channels that will be touched in the suggestion',
+          trigger: '6'
+        }
+      ]
+    },
+    {
+      id: '13',
+      component: <ConstraintStep type='lockingChannels' setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
+    },
+    {
+      id: '14',
+      message: 'OK running again',
+      end: true
+    }
+  ];
+
+  clearConstraints = () => {
+    this.setState({channelsLimit: null, channelsToBlock: []});
+  };
+
+  setConstraintAndRunPlanner = (changeObject, callback) => {
+    this.setState(changeObject,
+      () => {
+        console.log('run the planner with state constraint');
+        callback();
+      }
+    );
+  };
 
   render() {
     return <div hidden={this.props.hidden}>
@@ -79,7 +162,6 @@ export default class AddObjectivePopup extends Component {
                    borderRadius: 'inherit',
                    boxShadow: 'none'
                  }}
-                 steps={steps}
                  botAvatar='icons/InfiniGrow - white logo SVG.svg'
                  avatarStyle={{
                    backgroundColor: '#6c7482',
@@ -103,7 +185,13 @@ export default class AddObjectivePopup extends Component {
                  hideUserAvatar={true}
                  width='650px'
                  headerComponent={<CustomizedHeader/>}
-                 hideSubmitButton={true}/>
+                 hideSubmitButton={true}
+                 steps={this.getSteps()}
+                 customStyle={{
+                   background: 'transparent',
+                   border: 'none',
+                   boxShadow: 'none'
+                 }}/>
       </Page>
     </div>;
   }
