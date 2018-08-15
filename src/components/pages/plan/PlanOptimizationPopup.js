@@ -35,7 +35,7 @@ export default class AddObjectivePopup extends Component {
       component: <UserOptionsStep options={[
         {value: 1, label: 'No.', trigger: '2'},
         {value: 2, label: 'Sure!', trigger: '3'}
-      ]} />
+      ]}/>
     },
     {
       id: '2',
@@ -45,19 +45,19 @@ export default class AddObjectivePopup extends Component {
     {
       id: '3',
       message: 'That’s great :)\n' +
-        'Do you have specific requirements for the reallocation suggestion?',
+      'Do you have specific requirements for the reallocation suggestion?',
       trigger: '4'
     },
     {
       id: '4',
-      component: <UserOptionsStep options = {[
+      component: <UserOptionsStep options={[
         {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
         {
           value: 2,
           label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '5',
@@ -81,7 +81,7 @@ export default class AddObjectivePopup extends Component {
           label: 'Decline',
           trigger: '11'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '8',
@@ -92,7 +92,7 @@ export default class AddObjectivePopup extends Component {
           label: 'Get a new suggestion',
           trigger: '10'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '9',
@@ -122,7 +122,7 @@ export default class AddObjectivePopup extends Component {
           label: 'I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ]} />
+      ]}/>
     },
     {
       id: '13',
@@ -176,7 +176,7 @@ export default class AddObjectivePopup extends Component {
                    height: '12px'
                  }}
                  bubbleStyle={{
-                   clipPath: 'polygon(5% 0, 100% 0%, 100% 100%, 5% 100%, 5% 40%, 0 30%, 5% 20%)',
+                   clipPath: 'polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 9px 38px, 0 29px, 9px 20px)',
                    borderRadius: '14px 7px 7px 14px',
                    paddingLeft: '20px',
                    margin: '0',
