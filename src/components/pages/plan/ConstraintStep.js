@@ -1,10 +1,14 @@
 import Component from 'components/Component';
 import Textfield from 'components/controls/Textfield';
-import React from 'react';
+import React, {PropTypes} from 'react';
 import style from 'styles/plan/plan-optimization-popup.css';
 
 export default class ConstraintStep extends Component {
   style = style;
+
+  static PropTypes = {
+    onConstraintAdd: PropTypes.func.isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -26,10 +30,12 @@ export default class ConstraintStep extends Component {
       <div className={this.classes.constraintText} onClick={() => {
         if (!this.state.setClicked) {
           this.setState({setClicked: true});
-          this.props.triggerNextStep({
-            value: this.state.channelLimit,
-            trigger: '7'
-          });
+          this.props.setConstraintAndRunPlanner(this.state.channelLimit,
+            () => this.props.triggerNextStep({
+              value: this.state.channelLimit,
+              trigger: '7'
+            })
+          );
         }
       }}>
         Set
