@@ -67,7 +67,7 @@ export default class ConstraintStep extends Component {
 
         }
         {this.isChannelsLimitConstraint ? <span className={this.classes.constraintText}>channels</span> : null}
-        <div className={this.classes.option}
+        <div className={this.classes.setButton}
              data-chosen={this.state.setClicked ? true : null}
              onClick={() => {
                 if (!this.state.setClicked) {
