@@ -2,17 +2,26 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/insight-item.css';
 import Button from 'components/controls/Button';
+import ReactTooltip from 'react-tooltip';
 
 export default class InsightItem extends Component {
 
   style = style;
 
+  getTooltip = () =>
+    `<div style="text-align: center">
+      MAR 18<br/>
+      MQLs <span class="arrow">144%</span> (+33)<br/> 
+    </div>`;
+
   render() {
 
     return <div>
+      <ReactTooltip place='bottom' effect='solid' id='insightItem' html={true}/>
       <div className={this.classes.frame}>
         <div className={this.classes.title}>
           Optimization Opportunity
+          <div className={this.classes.forecastingIcon} data-tip={this.getTooltip()} data-for='insightItem'/>
         </div>
         <div className={this.classes.inner}>
           <ChannelItem/>

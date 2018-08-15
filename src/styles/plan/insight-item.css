@@ -14,6 +14,16 @@
     color: #354052;
     padding: 12px 0;
     border-bottom: solid 1px #f2f2f2;
+    display: flex;
+}
+
+.forecasting-icon {
+    margin-left: 20px;
+    background: white url(../../assets/forecast.svg) center center no-repeat;
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    align-self: center;
 }
 
 .inner {
