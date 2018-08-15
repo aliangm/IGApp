@@ -6,14 +6,14 @@ import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 
 class ClearConstraint extends Component {
-  componentDidMount(){
+  componentDidMount() {
     this.props.clearConstraints();
     this.props.triggerNextStep({trigger: '4'});
   }
 
   render() {
     return <div>{'That’s great :)\n' +
-      'Do you have specific requirements for the reallocation suggestion?'}</div>;
+    'Do you have specific requirements for the reallocation suggestion?'}</div>;
   }
 };
 
@@ -86,7 +86,7 @@ export default class AddObjectivePopup extends Component {
           label: 'Decline',
           trigger: '11'
         }
-      ],
+      ]
     },
     {
       id: '8',
@@ -97,16 +97,16 @@ export default class AddObjectivePopup extends Component {
           label: 'Get a new suggestion',
           trigger: '10'
         }
-      ],
+      ]
     },
     {
       id: '9',
-      message: "Ok Bye!",
+      message: 'Ok Bye!',
       end: true
     },
     {
       id: '10',
-      component: <ClearConstraint clearConstraints={this.clearConstraints} />,
+      component: <ClearConstraint clearConstraints={this.clearConstraints}/>,
       asMessage: true
     },
     {
@@ -117,14 +117,14 @@ export default class AddObjectivePopup extends Component {
     {
       id: '12',
       options: [
-        {value: 1, label:  'I want to lock budgets for specific channels', trigger: '13'},
-        {value: 2, label:  'No particular reason, I just don’t like it', trigger: '14'},
+        {value: 1, label: 'I want to lock budgets for specific channels', trigger: '13'},
+        {value: 2, label: 'No particular reason, I just don’t like it', trigger: '14'},
         {
           value: 3,
           label: 'I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
-      ],
+      ]
     },
     {
       id: '13',
@@ -153,15 +153,62 @@ export default class AddObjectivePopup extends Component {
 
   render() {
     return <div hidden={this.props.hidden}>
-      <Page popup={true} contentClassName={this.classes.content} innerClassName={this.classes.inner} centered={true}>
-        <div className={this.classes.chatBot}>
-          <ChatBot steps={this.getSteps()} customStyle={{
-            background: 'transparent',
-            border: 'none',
-            boxShadow: 'none'
-          }}/>
-        </div>
+      <Page popup={true} width='650px' contentClassName={this.classes.content}>
+        <ChatBot className={this.classes.chatbot}
+                 style={{
+                   background: '#ffffff',
+                   fontFamily: 'inherit',
+                   width: '100%',
+                   borderRadius: 'inherit',
+                   boxShadow: 'none'
+                 }}
+                 botAvatar='icons/InfiniGrow - white logo SVG.svg'
+                 avatarStyle={{
+                   backgroundColor: '#6c7482',
+                   borderRadius: '50%',
+                   padding: '11px 7px',
+                   minWidth: '15px',
+                   width: '21px',
+                   height: '12px'
+                 }}
+                 bubbleStyle={{
+                   clipPath: 'polygon(5% 0, 100% 0%, 100% 100%, 5% 100%, 5% 40%, 0 30%, 5% 20%)',
+                   borderRadius: '14px 7px 7px 14px',
+                   paddingLeft: '20px',
+                   margin: '0',
+                   background: '#e6e8f0',
+                   fontSize: '18px',
+                   fontWeight: '500',
+                   color: '#3e495a',
+                   boxShadow: 'none'
+                 }}
+                 hideUserAvatar={true}
+                 width='650px'
+                 headerComponent={<CustomizedHeader/>}
+                 hideSubmitButton={true}
+                 steps={this.getSteps()}
+                 customStyle={{
+                   background: 'transparent',
+                   border: 'none',
+                   boxShadow: 'none'
+                 }}/>
       </Page>
+    </div>;
+  }
+}
+
+export class CustomizedHeader extends Component {
+
+  style = style;
+
+  render() {
+    return <div>
+      <div className={this.classes.title}>
+        Improve your current committed plan
+      </div>
+      <div className={this.classes.subtitle}>
+        Here you can get specific improvement suggestions on your current plan.
+      </div>
     </div>;
   }
 }
