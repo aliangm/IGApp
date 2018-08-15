@@ -29,7 +29,8 @@ export default class AddObjectivePopup extends Component {
     super(props);
 
     this.state = {
-      channelsLimit: null
+      channelsLimit: null,
+      channelsToBlock: []
     };
   }
 
@@ -75,7 +76,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '6',
-      component: <ConstraintStep setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
+      component: <ConstraintStep type='channelsNumber' setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
     },
     {
       id: '7',
@@ -128,8 +129,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '13',
-      message: 'Ok locking',
-      end: true
+      component: <ConstraintStep type='lockingChannels' setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
     },
     {
       id: '14',
@@ -139,11 +139,11 @@ export default class AddObjectivePopup extends Component {
   ];
 
   clearConstraints = () => {
-    this.setState({channelsLimit: null});
+    this.setState({channelsLimit: null, channelsToBlock: []});
   };
 
-  setConstraintAndRunPlanner = (channelsLimit, callback) => {
-    this.setState({channelsLimit: channelsLimit},
+  setConstraintAndRunPlanner = (changeObject, callback) => {
+    this.setState(changeObject,
       () => {
         console.log('run the planner with state constraint');
         callback();
