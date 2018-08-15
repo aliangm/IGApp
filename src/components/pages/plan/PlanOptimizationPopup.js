@@ -6,6 +6,10 @@ import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 
+const channelsBlockOptions = ['advertising_celebrityEndorsements',
+  'advertising_searchMarketing_SEM_onlineDirectories',
+  'mobile_mobileApp'];
+
 export default class PlanOptimizationPopup extends Component {
 
   style = style;
@@ -129,7 +133,9 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '13',
-      component: <ConstraintStep type='lockingChannels' setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
+      component: <ConstraintStep type='lockingChannels'
+                                 setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
+                                 channelsBlockOptions={channelsBlockOptions}/>
     },
     {
       id: '14',
@@ -154,7 +160,7 @@ export default class PlanOptimizationPopup extends Component {
           ...changeObject
         }
       }
-      , this.runPlannerWithConstraints(callback));
+      , () => this.runPlannerWithConstraints(callback));
   };
 
   noParticularReasonAndRun = (callback) => {
