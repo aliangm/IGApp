@@ -20,6 +20,7 @@ import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
 import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
 import intersection from 'lodash/intersection';
+import union from 'lodash/union';
 
 export default class Plan extends Component {
 
@@ -132,7 +133,7 @@ export default class Plan extends Component {
             }
             else {
               object[channelKey] = {
-                committedBudget: primaryBudget,
+                committedBudget: primaryBudget ? primaryBudget : -1,
                 userBudgetConstraint: isConstraint ? budgetConstraint : -1,
                 isSoft: isConstraint ? isSoft : false
               };
@@ -320,19 +321,30 @@ export default class Plan extends Component {
 
     this.props.plan(false, {
         planBudgets: withBlockedChannels,
-        improveMaxChanges: constraints.channelsLimit
       },
       this.props.region,
       false)
       .then(data => {
-        console.log('finished plan');
-        callback('New Suggestion');
-      })
-      .catch((err) => {
-        console.log('error from planner');
-        callback('New Suggestion');
+        const changesArray = this.getChangesFromPlan(data.planBudgets);
+        callback(changesArray);
       });
   };
+
+  getChangesFromPlan = (planBudgets) => {
+    const suggestions = planBudgets.map((month, monthKey) => {
+      return Object.keys(month).map((channelKey) => {
+        return {
+          channel: channelKey,
+          monthKey: monthKey,
+          fromBudget: month[channelKey].committedBudget,
+          toBudget: month[channelKey].plannerBudget
+        }
+      })
+        .filter((data) => data.fromBudget !== data.toBudget);
+    });
+
+    return union(...suggestions);
+  }
 
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
