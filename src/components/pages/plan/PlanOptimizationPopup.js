@@ -50,7 +50,7 @@ export default class PlanOptimizationPopup extends Component {
     {
       id: '3',
       message: 'That’s great :)\n' +
-      'Do you have specific requirements for the reallocation suggestion?',
+        'Do you have specific requirements for the reallocation suggestion?',
       trigger: '4'
     },
     {
@@ -126,9 +126,10 @@ export default class PlanOptimizationPopup extends Component {
       id: '13',
       component: <ConstraintStep type='lockingChannels'
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
-                                 getChannelsBlockOptions={() =>
-                                   uniq(this.state.currentSuggestions.map((suggestion) => suggestion.channel))
-                                 }/>
+                                 getChannelsBlockOptions={() => {
+                                   const {channelsArray} = this.state.currentSuggestions;
+                                   uniq(channelsArray.map((suggestion) => suggestion.channel));
+                                 }}/>
     },
     {
       id: '14',
@@ -172,7 +173,9 @@ export default class PlanOptimizationPopup extends Component {
   getInsightData = () => {
     const fromChannels = [];
     const toChannels = [];
-    this.state.currentSuggestions.forEach(item => {
+    const {channlesArray: channelsArray, forecastedIndicators} = this.state.currentSuggestions;
+
+    channelsArray.forEach(item => {
       if (item.fromBudget > item.toBudget) {
         fromChannels.push(item);
       }
@@ -180,7 +183,7 @@ export default class PlanOptimizationPopup extends Component {
         toChannels.push(item);
       }
     });
-    return {fromChannels, toChannels};
+    return {fromChannels, toChannels, forecastedIndicators};
   };
 
   render() {

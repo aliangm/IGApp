@@ -322,9 +322,10 @@ export default class Plan extends Component {
         const currentMonthBudget = month[channelKey];
         newMonth[channelKey] = {
           ...currentMonthBudget,
-          committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null) ? 0
+          committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null)
+            ? 0
             : currentMonthBudget.committedBudget
-        }
+        };
       });
 
       return newMonth;
@@ -340,12 +341,12 @@ export default class Plan extends Component {
       false,
       constraints.channelsLimit)
       .then(data => {
-        const changesArray = this.getChangesFromPlan(data.planBudgets);
-        callback(changesArray);
+        const changesObject = this.getChangesObjectFromPlan(data);
+        callback(changesObject);
       });
   };
 
-  getChangesFromPlan = (planBudgets) => {
+  getChangesObjectFromPlan = ({planBudgets, forecastedIndicators}) => {
     const suggestions = planBudgets.map((month, monthKey) => {
       return Object.keys(month).map((channelKey) => {
         return {
@@ -358,7 +359,23 @@ export default class Plan extends Component {
         .filter((data) => data.fromBudget !== data.toBudget);
     });
 
-    return union(...suggestions);
+    const objectivesKeys = this.props.calculatedData.objectives.collapsedObjectives.map((objective) => objective.indicator);
+    const parsedForecasting = forecastedIndicators.map((month, monthKey) => {
+      return Object.keys(month).map((indicatorKey) => {
+        return {
+          indicator: indicatorKey,
+          monthKey: monthKey,
+          committed: month[indicatorKey].committed,
+          ifApproved: month[indicatorKey].planner
+        };
+      })
+        .filter((data) => data.ifApproved &&
+          data.committed !==
+          data.ifApproved &&
+          objectivesKeys.includes(data.indicator));
+    });
+
+    return {channlesArray: union(...suggestions), forecastedIndicators: union(...parsedForecasting)};
   };
 
   render() {
