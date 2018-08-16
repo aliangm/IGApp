@@ -41,7 +41,8 @@ class AppComponent extends Component {
       addNotification: this.addNotification.bind(this),
       plan: this.plan.bind(this),
       forecast: this.forecast.bind(this),
-      calculateAttributionData: this.calculateAttributionData.bind(this)
+      calculateAttributionData: this.calculateAttributionData.bind(this),
+      optimalImprovementPlan: this.optimalImprovementPlan.bind(this)
     };
   }
 
@@ -503,6 +504,25 @@ class AppComponent extends Component {
       .then(() => {
         this.forecast();
       });
+  }
+
+  optimalImprovementPlan(isCommitted, preferences, region, silent, improveMaxChanges) {
+    const plannerControls = {
+      optimizeScenarios: improveMaxChanges ? {
+        optimalImprovement: {
+          params: {
+            improveMaxChanges: improveMaxChanges
+          }
+        }
+      } : null,
+      systemControls: {
+        optimizeControl: {
+          scenario: "optimalImprovement"
+        }
+      }
+    };
+
+    return this.plan(isCommitted, preferences, region, silent, plannerControls);
   }
 
   plan(isCommitted, preferences, region, silent, plannerControls = null) {
