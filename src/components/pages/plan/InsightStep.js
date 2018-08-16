@@ -13,14 +13,15 @@ export default class InsightStep extends Component {
 
   render() {
     const {getInsightData, planDate} = this.props;
-    const {fromChannels, toChannels} = getInsightData && getInsightData();
+    const {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets} = getInsightData && getInsightData();
     return <div className={this.classes.optionsWrapper}>
       <InsightItem fromChannels={fromChannels}
                    toChannels={toChannels}
                    planDate={planDate}
-                   forecasting={[]}
+                   forecasting={forecastedIndicators}
                    onCommit={() => {
-                     this.props.triggerNextStep({trigger: '8'});
+                     commitPlanBudgets()
+                       .then(() => this.props.triggerNextStep({trigger: '8'}));
                    }}
                    onDecline={() => {
                      this.props.triggerNextStep({trigger: '11'});

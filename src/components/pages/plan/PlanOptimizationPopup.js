@@ -125,9 +125,10 @@ export default class PlanOptimizationPopup extends Component {
       id: '13',
       component: <ConstraintStep type='lockingChannels'
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
-                                 getChannelsBlockOptions={() =>
-                                   uniq(this.state.currentSuggestions.map((suggestion) => suggestion.channel))
-                                 }/>
+                                 getChannelsBlockOptions={() => {
+                                   const {channelsArray} = this.state.currentSuggestions;
+                                   uniq(channelsArray.map((suggestion) => suggestion.channel));
+                                 }}/>
     },
     {
       id: '14',
@@ -178,7 +179,9 @@ export default class PlanOptimizationPopup extends Component {
   getInsightData = () => {
     const fromChannels = [];
     const toChannels = [];
-    this.state.currentSuggestions.forEach(item => {
+    const {channelsArray, forecastedIndicators, commitPlanBudgets} = this.state.currentSuggestions;
+
+    channelsArray.forEach(item => {
       if (item.fromBudget > item.toBudget) {
         fromChannels.push(item);
       }
@@ -186,7 +189,7 @@ export default class PlanOptimizationPopup extends Component {
         toChannels.push(item);
       }
     });
-    return {fromChannels, toChannels};
+    return {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets};
   };
 
   render() {
