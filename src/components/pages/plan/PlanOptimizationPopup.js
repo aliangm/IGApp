@@ -44,8 +44,8 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '2',
-      message: 'Great!',
-      end: true
+      message: 'That\'s too bad, I\'m always here if you need anything.',
+      trigger: '15'
     },
     {
       id: '3',
@@ -82,19 +82,19 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '8',
-      component: <UserOptionsStep options={[
-        {value: 1, label: 'Close', trigger: '9'},
-        {
-          value: 2,
-          label: 'Get a new suggestion',
-          trigger: '10'
-        }
-      ]}/>
+      message: 'Awesome! Are you looking for another improvement suggestion?',
+      trigger: '9'
     },
     {
       id: '9',
-      message: 'Ok Bye!',
-      end: true
+      component: <UserOptionsStep options={[
+        {value: 1, label: 'No', trigger: '2'},
+        {
+          value: 2,
+          label: 'Yes',
+          trigger: '10'
+        }
+      ]}/>
     },
     {
       id: '10',
@@ -135,8 +135,15 @@ export default class PlanOptimizationPopup extends Component {
                                textForUser={'OK trying to run again'}
                                nextStepId='7'/>,
       asMessage: true
-    }
-  ];
+    },
+    {
+      id: '15',
+      component: <div className={this.classes.optionsWrapper}>
+        <div className={this.classes.option} onClick={this.props.onClose}>
+          Close
+        </div>
+      </div>
+    }];
 
   clearState = (callback) => {
     this.setState({
@@ -186,7 +193,6 @@ export default class PlanOptimizationPopup extends Component {
     return <div hidden={this.props.hidden}>
       <Page popup={true} width='650px' contentClassName={this.classes.content} onClose={this.props.onClose}>
         <ChatBot className={this.classes.chatbot}
-                 handleEnd={this.props.onClose}
                  style={{
                    background: '#ffffff',
                    fontFamily: 'inherit',
@@ -198,9 +204,9 @@ export default class PlanOptimizationPopup extends Component {
                  avatarStyle={{
                    backgroundColor: '#6c7482',
                    borderRadius: '50%',
-                   padding: '11px 7px',
+                   padding: '11px 0',
                    minWidth: '15px',
-                   width: '21px',
+                   width: '34px',
                    height: '12px',
                    marginBottom: '15px'
                  }}
@@ -230,6 +236,9 @@ export default class PlanOptimizationPopup extends Component {
                  }}
                  inputStyle={{
                    display: 'none'
+                 }}
+                 contentStyle={{
+                   paddingRight: '6px'
                  }}/>
       </Page>
     </div>;
