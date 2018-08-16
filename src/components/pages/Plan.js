@@ -316,28 +316,29 @@ export default class Plan extends Component {
 
   planWithConstraints = (constraints, callback) => {
     const planBudgets = this.getPlanBudgets();
-    const withBlockedChannels = this.applyLockOnChannels(planBudgets,
+    const normalizedBudgets = planBudgets.map((month) => {
+      const newMonth = {};
+      Object.keys(month).forEach(channelKey => {
+        const currentMonthBudget = month[channelKey];
+        newMonth[channelKey] = {
+          ...currentMonthBudget,
+          committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null) ? 0
+            : currentMonthBudget.committedBudget
+        }
+      });
+
+      return newMonth;
+    });
+
+    const withBlockedChannels = this.applyLockOnChannels(normalizedBudgets,
       constraints.channelsToBlock);
 
-    this.props.plan(false, {
+    this.props.optimalImprovementPlan(false, {
         planBudgets: withBlockedChannels
       },
       this.props.region,
       false,
-      {
-        optimizeScenarios: {
-          optimalImprovement: {
-            improveMaxChanges: constraints.channelsLimit
-          }
-        },
-
-        systemControls: {
-          optimizeControl: {
-            scenario: "optimalImprovement"
-          }
-        }
-      }
-    )
+      constraints.channelsLimit)
       .then(data => {
         const changesArray = this.getChangesFromPlan(data.planBudgets);
         callback(changesArray);
