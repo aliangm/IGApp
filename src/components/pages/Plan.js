@@ -342,8 +342,28 @@ export default class Plan extends Component {
       constraints.channelsLimit)
       .then(data => {
         const changesObject = this.getChangesObjectFromPlan(data);
-        callback(changesObject);
+        callback({
+          ...changesObject,
+          commitPlanBudgets: () => this.props.updateUserMonthPlan({planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)},
+            this.props.region,
+            this.props.planDate)
+        });
       });
+  };
+
+  applyAllPlannerSuggestions = (planBudgets) => {
+    return planBudgets.map(month => {
+      const newMonth = {};
+
+      Object.keys(month).forEach((channelKey) => {
+        newMonth[channelKey] = {
+          ...month[channelKey],
+          committedBudget: month[channelKey].plannerBudget
+        };
+      });
+
+      return newMonth;
+    });
   };
 
   getChangesObjectFromPlan = ({planBudgets, forecastedIndicators}) => {
@@ -375,7 +395,7 @@ export default class Plan extends Component {
           objectivesKeys.includes(data.indicator));
     });
 
-    return {channlesArray: union(...suggestions), forecastedIndicators: union(...parsedForecasting)};
+    return {channelsArray: union(...suggestions), forecastedIndicators: union(...parsedForecasting)};
   };
 
   render() {

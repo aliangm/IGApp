@@ -172,7 +172,7 @@ export default class PlanOptimizationPopup extends Component {
   getInsightData = () => {
     const fromChannels = [];
     const toChannels = [];
-    const {channlesArray: channelsArray, forecastedIndicators} = this.state.currentSuggestions;
+    const {channelsArray, forecastedIndicators, commitPlanBudgets} = this.state.currentSuggestions;
 
     channelsArray.forEach(item => {
       if (item.fromBudget > item.toBudget) {
@@ -182,7 +182,7 @@ export default class PlanOptimizationPopup extends Component {
         toChannels.push(item);
       }
     });
-    return {fromChannels, toChannels, forecastedIndicators};
+    return {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets};
   };
 
   render() {
