@@ -6,6 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import {formatBudget} from 'components/utils/budget';
 import groupBy from 'lodash/groupBy';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import {getDates} from 'components/utils/date';
 
 export default class InsightItem extends Component {
 
@@ -16,22 +17,23 @@ export default class InsightItem extends Component {
       fromBudget: PropTypes.number.isRequired,
       toBudget: PropTypes.number.isRequired,
       channel: PropTypes.any.isRequired,
-      month: PropTypes.any.isRequired
+      monthKey: PropTypes.any.isRequired
     })).isRequired,
     toChannels: PropTypes.arrayOf(PropTypes.shape({
       fromBudget: PropTypes.number.isRequired,
       toBudget: PropTypes.number.isRequired,
       channel: PropTypes.any.isRequired,
-      month: PropTypes.any.isRequired
+      monthKey: PropTypes.any.isRequired
     })).isRequired,
     forecasting: PropTypes.arrayOf(PropTypes.shape({
       committed: PropTypes.number.isRequired,
       ifApproved: PropTypes.number.isRequired,
       indicator: PropTypes.any.isRequired,
-      month: PropTypes.any.isRequired
+      monthKey: PropTypes.any.isRequired
     })).isRequired,
     onCommit: PropTypes.func.isRequired,
-    onDecline: PropTypes.func.isRequired
+    onDecline: PropTypes.func.isRequired,
+    planDate: PropTypes.string.isRequired
   };
 
   static defaultProps = {
@@ -82,8 +84,8 @@ export default class InsightItem extends Component {
     ]
   };
 
-  getTooltip = () => {
-    const forecastingData = groupBy(this.props.forecasting, (item) => item.month);
+  getTooltip = (dates) => {
+    const forecastingData = groupBy(this.props.forecasting, (item) => item.monthKey);
     return Object.keys(forecastingData).map(month => {
       const monthIndicators = forecastingData[month]
         .map(item =>
@@ -92,7 +94,7 @@ export default class InsightItem extends Component {
         </div><br/>`
         );
       return `<div style="text-align: center; font-size: 10px; font-weight: 500">
-        ${month}
+        ${dates[month]}
         </div><br/>
       <div>
       ${monthIndicators.join('')}
@@ -101,16 +103,17 @@ export default class InsightItem extends Component {
   };
 
   render() {
-    const {fromChannels, toChannels} = this.props;
-    const fromChannelsItems = fromChannels.map((item, index) => <ChannelItem key={index} {...item}/>);
-    const toChannelsItems = toChannels.map((item, index) => <ChannelItem key={index} {...item}/>);
+    const {fromChannels, toChannels, planDate, onCommit, onDecline} = this.props;
+    const dates = getDates(planDate);
+    const fromChannelsItems = fromChannels.map((item, index) => <ChannelItem key={index} {...item} month={dates[item.monthKey]}/>);
+    const toChannelsItems = toChannels.map((item, index) => <ChannelItem key={index} {...item} month={dates[item.monthKey]}/>);
 
     return <div>
       <ReactTooltip place='bottom' effect='solid' id='insightItem' html={true}/>
       <div className={this.classes.frame}>
         <div className={this.classes.title}>
           Optimization Opportunity
-          <div className={this.classes.forecastingIcon} data-tip={this.getTooltip()} data-for='insightItem'/>
+          <div className={this.classes.forecastingIcon} data-tip={this.getTooltip(dates)} data-for='insightItem'/>
         </div>
         <div className={this.classes.inner}>
           <div>
@@ -123,10 +126,10 @@ export default class InsightItem extends Component {
         </div>
       </div>
       <div className={this.classes.buttons}>
-        <Button type='reverse2' icon='buttons:approve' style={{width: '100px'}}>
+        <Button type='reverse2' icon='buttons:approve' style={{width: '100px'}} onClick={onCommit}>
           Commit
         </Button>
-        <Button type='warning' icon='buttons:decline' style={{width: '100px', marginLeft: '20px'}}>
+        <Button type='warning' icon='buttons:decline' style={{width: '100px', marginLeft: '20px'}} onClick={onDecline}>
           Decline
         </Button>
       </div>

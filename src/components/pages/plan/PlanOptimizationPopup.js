@@ -6,6 +6,7 @@ import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 import uniq from 'lodash/uniq';
+import InsightStep from 'components/pages/plan/InsightStep';
 
 export default class PlanOptimizationPopup extends Component {
 
@@ -78,14 +79,7 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '7',
-      component: <UserOptionsStep options={[
-        {value: 1, label: 'Approve', trigger: '8'},
-        {
-          value: 2,
-          label: 'Decline',
-          trigger: '11'
-        }
-      ]}/>
+      component: <InsightStep getInsightData={this.getInsightData} planDate={this.props.planDate}/>
     },
     {
       id: '8',
@@ -173,6 +167,20 @@ export default class PlanOptimizationPopup extends Component {
         this.setState({currentSuggestions: suggestions});
         callback();
       });
+  };
+
+  getInsightData = () => {
+    const fromChannels = [];
+    const toChannels = [];
+    this.state.currentSuggestions.forEach(item => {
+      if (item.fromBudget > item.toBudget) {
+        fromChannels.push(item);
+      }
+      else {
+        toChannels.push(item);
+      }
+    });
+    return {fromChannels, toChannels};
   };
 
   render() {
