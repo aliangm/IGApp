@@ -505,9 +505,9 @@ class AppComponent extends Component {
       });
   }
 
-  plan(isCommitted, preferences, region, silent) {
+  plan(isCommitted, preferences, region, silent, plannerControls = null) {
     const deferred = q.defer();
-    let body = preferences ? JSON.stringify(preferences) : null;
+    let body = preferences || plannerControls ? JSON.stringify({preferences, plannerControls}) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     if (!silent) {
       this.setState({
