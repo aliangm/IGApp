@@ -556,6 +556,7 @@ export default class Plan extends Component {
           </div>
         </div>
         <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup}
+                               planDate={this.props.planDate}
                                onClose={() => {
                                  this.setState({showOptimizationPopup: false});
                                }}

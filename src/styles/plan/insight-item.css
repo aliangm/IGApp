@@ -1,0 +1,93 @@
+.frame {
+    width: 569px;
+    min-height: 194px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    border: solid 2px #e3e6f4;
+    border-top: solid 7px #0099cc;
+    padding: 0 20px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #354052;
+    padding: 12px 0;
+    border-bottom: solid 1px #f2f2f2;
+    display: flex;
+}
+
+.forecasting-icon {
+    margin-left: 20px;
+    background: white url(../../assets/forecast.svg) center center no-repeat;
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    align-self: center;
+}
+
+.inner {
+    display: flex;
+    padding: 20px 0;
+}
+
+.arrow-icon {
+    background: url(../../assets/green-arrow.svg) center center no-repeat;
+    background-size: contain;
+    width: 42px;
+    height: 32px;
+    min-width: 42px;
+    min-height: 32px;
+    align-self: center;
+    justify-content: space-between;
+}
+
+.buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.channel-item {
+    width: fit-content;
+    margin: 0 15px;
+}
+
+.date {
+    font-size: 11px;
+    font-weight: bold;
+    color: #99a4c2;
+    text-align: center;
+}
+
+.channel-icon {
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    margin: 15px auto;
+}
+
+.budget {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.from-budget {
+    composes: budget;
+    color: #222a41;
+}
+
+.to-budget {
+    composes: budget;
+    color: #2fcf5f;
+}
+
+.shift-icon {
+    background: url(../../assets/budget-shift.svg) center center no-repeat;
+    background-size: contain;
+    width: 8px;
+    height: 13px;
+    margin: 0 7px;
+}

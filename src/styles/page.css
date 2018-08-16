@@ -108,4 +108,5 @@
   background: url(../assets/x.svg) center center no-repeat;
   background-size: contain;
   cursor: pointer;
+  z-index: 9999999;
 }

@@ -6,6 +6,7 @@ import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 import uniq from 'lodash/uniq';
+import InsightStep from 'components/pages/plan/InsightStep';
 
 export default class PlanOptimizationPopup extends Component {
 
@@ -49,7 +50,7 @@ export default class PlanOptimizationPopup extends Component {
     {
       id: '3',
       message: 'That’s great :)\n' +
-        'Do you have specific requirements for the reallocation suggestion?',
+      'Do you have specific requirements for the reallocation suggestion?',
       trigger: '4'
     },
     {
@@ -78,14 +79,7 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '7',
-      component: <UserOptionsStep options={[
-        {value: 1, label: 'Approve', trigger: '8'},
-        {
-          value: 2,
-          label: 'Decline',
-          trigger: '11'
-        }
-      ]}/>
+      component: <InsightStep getInsightData={this.getInsightData} planDate={this.props.planDate}/>
     },
     {
       id: '8',
@@ -175,10 +169,25 @@ export default class PlanOptimizationPopup extends Component {
       });
   };
 
+  getInsightData = () => {
+    const fromChannels = [];
+    const toChannels = [];
+    this.state.currentSuggestions.forEach(item => {
+      if (item.fromBudget > item.toBudget) {
+        fromChannels.push(item);
+      }
+      else {
+        toChannels.push(item);
+      }
+    });
+    return {fromChannels, toChannels};
+  };
+
   render() {
     return <div hidden={this.props.hidden}>
-      <Page popup={true} width='650px' contentClassName={this.classes.content}>
+      <Page popup={true} width='650px' contentClassName={this.classes.content} onClose={this.props.onClose}>
         <ChatBot className={this.classes.chatbot}
+                 handleEnd={this.props.onClose}
                  style={{
                    background: '#ffffff',
                    fontFamily: 'inherit',
@@ -196,7 +205,7 @@ export default class PlanOptimizationPopup extends Component {
                    height: '12px'
                  }}
                  bubbleStyle={{
-                   clipPath: 'polygon(5% 0, 100% 0%, 100% 100%, 5% 100%, 5% 40%, 0 30%, 5% 20%)',
+                   clipPath: 'polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 9px 38px, 0 29px, 9px 20px)',
                    borderRadius: '14px 7px 7px 14px',
                    paddingLeft: '20px',
                    margin: '0',
