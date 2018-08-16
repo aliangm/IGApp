@@ -185,8 +185,9 @@ export default class PlanOptimizationPopup extends Component {
 
   render() {
     return <div hidden={this.props.hidden}>
-      <Page popup={true} width='650px' contentClassName={this.classes.content}>
+      <Page popup={true} width='650px' contentClassName={this.classes.content} onClose={this.props.onClose}>
         <ChatBot className={this.classes.chatbot}
+                 handleEnd={this.props.onClose}
                  style={{
                    background: '#ffffff',
                    fontFamily: 'inherit',
