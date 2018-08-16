@@ -36,53 +36,13 @@ export default class InsightItem extends Component {
     planDate: PropTypes.string.isRequired
   };
 
-  static defaultProps = {
-    fromChannels: [{
-      fromBudget: 1000,
-      toBudget: 2000,
-      channel: 'web_landingPages',
-      month: 'APR 18'
-    },
-      {
-        fromBudget: 1000,
-        toBudget: 2000,
-        channel: 'web_landingPages',
-        month: 'APR 18'
-      }
-    ],
-    toChannels: [{
-      fromBudget: 1000,
-      toBudget: 2000,
-      channel: 'web_landingPages',
-      month: 'APR 18'
-    },
-      {
-        fromBudget: 1000,
-        toBudget: 2000,
-        channel: 'web_landingPages',
-        month: 'APR 18'
-      }
-    ],
-    forecasting: [{
-      committed: 40,
-      ifApproved: 50,
-      indicator: 'MQL',
-      month: 'APR 18'
-    },
-      {
-        committed: 40,
-        ifApproved: 50,
-        indicator: 'opps',
-        month: 'APR 18'
-      },
-      {
-        committed: 40,
-        ifApproved: 50,
-        indicator: 'opps',
-        month: 'MAY 18'
-      }
-    ]
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      disabled: false
+    };
+  }
 
   getTooltip = (dates) => {
     const forecastingData = groupBy(this.props.forecasting, (item) => item.monthKey);
@@ -128,10 +88,23 @@ export default class InsightItem extends Component {
         </div>
       </div>
       <div className={this.classes.buttons}>
-        <Button type='approve' icon='buttons:approve' style={{width: '100px'}} onClick={onCommit}>
+        <Button type='approve' icon='buttons:approve' style={{width: '100px'}}
+                disabled={this.state.disabled}
+                onClick={() => {
+                  onCommit();
+                  this.setState({disabled: true});
+                }}>
           Commit
         </Button>
-        <Button type='decline' icon='buttons:decline' style={{width: '100px', marginLeft: '20px'}} onClick={onDecline}>
+        <Button type='decline' icon='buttons:decline' style={{
+          width: '100px',
+          marginLeft: '20px'
+        }}
+                disabled={this.state.disabled}
+                onClick={() => {
+                  onDecline();
+                  this.setState({disabled: true});
+                }}>
           Decline
         </Button>
       </div>
@@ -163,4 +136,4 @@ export class ChannelItem extends Component {
       </div>
     </div>;
   }
-}
+};
