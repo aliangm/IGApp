@@ -5,10 +5,7 @@ import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
-
-const channelsBlockOptions = ['advertising_celebrityEndorsements',
-  'advertising_searchMarketing_SEM_onlineDirectories',
-  'mobile_mobileApp'];
+import uniq from 'lodash/uniq';
 
 export default class PlanOptimizationPopup extends Component {
 
@@ -27,7 +24,7 @@ export default class PlanOptimizationPopup extends Component {
     super(props);
     this.state = {
       constraints: this.initialConstraints,
-      currentSuggestion: null
+      currentSuggestions: []
     };
   }
 
@@ -135,7 +132,9 @@ export default class PlanOptimizationPopup extends Component {
       id: '13',
       component: <ConstraintStep type='lockingChannels'
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
-                                 channelsBlockOptions={channelsBlockOptions}/>
+                                 getChannelsBlockOptions={() =>
+                                   uniq(this.state.currentSuggestions.map((suggestion) => suggestion.channel))
+                                 }/>
     },
     {
       id: '14',
@@ -149,7 +148,7 @@ export default class PlanOptimizationPopup extends Component {
   clearState = (callback) => {
     this.setState({
       constraints: this.initialConstraints,
-      currentSuggestion: null
+      currentSuggestions: []
     }, callback);
   };
 
@@ -170,9 +169,8 @@ export default class PlanOptimizationPopup extends Component {
 
   runPlannerWithConstraints = (callback) => {
     this.props.planWithConstraints(this.state.constraints,
-      (suggestion) => {
-        this.setState({currentSuggestion: suggestion});
-        console.log('Received an answer');
+      (suggestions) => {
+        this.setState({currentSuggestions: suggestions});
         callback();
       });
   };

@@ -11,7 +11,7 @@ export default class ConstraintStep extends Component {
   static PropTypes = {
     onConstraintAdd: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
-    channelsBlockOptions: PropTypes.arrayOf(PropTypes.string)
+    getChannelsBlockOptions: PropTypes.func
   };
 
   constructor(props) {
@@ -38,7 +38,8 @@ export default class ConstraintStep extends Component {
   render() {
     const disableInput = this.state.setClicked;
     const beforeInputText = this.isChannelsLimitConstraint() ? `Don't touch more than` : `Don’t touch`;
-    const channelsOptions = this.props.channelsBlockOptions && this.props.channelsBlockOptions.map((channelKey) => {
+    const channelsBlockOptions = this.props.getChannelsBlockOptions && this.props.getChannelsBlockOptions();
+    const channelsOptions = channelsBlockOptions && channelsBlockOptions.map((channelKey) => {
       return {
         value: channelKey,
         label: getNickname(channelKey)
