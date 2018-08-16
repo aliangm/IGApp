@@ -320,10 +320,24 @@ export default class Plan extends Component {
       constraints.channelsToBlock);
 
     this.props.plan(false, {
-        planBudgets: withBlockedChannels,
+        planBudgets: withBlockedChannels
       },
       this.props.region,
-      false)
+      false,
+      {
+        optimizeScenarios: {
+          optimalImprovement: {
+            improveMaxChanges: constraints.channelsLimit
+          }
+        },
+
+        systemControls: {
+          optimizeControl: {
+            scenario: "optimalImprovement"
+          }
+        }
+      }
+    )
       .then(data => {
         const changesArray = this.getChangesFromPlan(data.planBudgets);
         callback(changesArray);
@@ -338,13 +352,13 @@ export default class Plan extends Component {
           monthKey: monthKey,
           fromBudget: month[channelKey].committedBudget,
           toBudget: month[channelKey].plannerBudget
-        }
+        };
       })
         .filter((data) => data.fromBudget !== data.toBudget);
     });
 
     return union(...suggestions);
-  }
+  };
 
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
