@@ -6,7 +6,11 @@ import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/ConstraintStep';
 import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
 
-export default class AddObjectivePopup extends Component {
+const channelsBlockOptions = ['advertising_celebrityEndorsements',
+  'advertising_searchMarketing_SEM_onlineDirectories',
+  'mobile_mobileApp'];
+
+export default class PlanOptimizationPopup extends Component {
 
   style = style;
 
@@ -14,14 +18,17 @@ export default class AddObjectivePopup extends Component {
     hidden: PropTypes.bool
   };
 
-  initialConstraint = {
+  initialConstraints = {
     channelsLimit: null,
     channelsToBlock: []
   };
 
   constructor(props) {
     super(props);
-    this.state = this.initialConstraint;
+    this.state = {
+      constraints: this.initialConstraints,
+      currentSuggestion: null
+    };
   }
 
   getSteps = () => [
@@ -62,7 +69,7 @@ export default class AddObjectivePopup extends Component {
     {
       id: '5',
       component: <FunctionStep
-        funcToRun={(callback) => this.setConstraintAndRunPlanner(this.initialConstraint, callback)}
+        funcToRun={(callback) => this.setConstraintAndRunPlanner(this.initialConstraints, callback)}
         textForUser='OK running optimal plan'
         nextStepId='7'
       />,
@@ -101,7 +108,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '10',
-      component: <FunctionStep funcToRun={this.clearConstraints}
+      component: <FunctionStep funcToRun={this.clearState}
                                nextStepId='4'
                                textForUser={'That’s great :)\n' +
                                'Do you have specific requirements for the reallocation suggestion?'}/>,
@@ -109,7 +116,7 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '11',
-      message: 'why?',
+      message: 'Why?',
       trigger: '12'
     },
     {
@@ -126,7 +133,9 @@ export default class AddObjectivePopup extends Component {
     },
     {
       id: '13',
-      component: <ConstraintStep type='lockingChannels' setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}/>
+      component: <ConstraintStep type='lockingChannels'
+                                 setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
+                                 channelsBlockOptions={channelsBlockOptions}/>
     },
     {
       id: '14',
@@ -137,12 +146,21 @@ export default class AddObjectivePopup extends Component {
     }
   ];
 
-  clearConstraints = (callback) => {
-    this.setState(this.initialConstraint, callback);
+  clearState = (callback) => {
+    this.setState({
+      constraints: this.initialConstraints,
+      currentSuggestion: null
+    }, callback);
   };
 
   setConstraintAndRunPlanner = (changeObject, callback) => {
-    this.setState(changeObject, this.runPlannerWithConstraints(callback));
+    this.setState({
+        constraints: {
+          ...this.state.constraints,
+          ...changeObject
+        }
+      }
+      , () => this.runPlannerWithConstraints(callback));
   };
 
   noParticularReasonAndRun = (callback) => {
@@ -151,8 +169,12 @@ export default class AddObjectivePopup extends Component {
   };
 
   runPlannerWithConstraints = (callback) => {
-    console.log('run the planner with state constraint');
-    callback();
+    this.props.planWithConstraints(this.state.constraints,
+      (suggestion) => {
+        this.setState({currentSuggestion: suggestion});
+        console.log('Received an answer');
+        callback();
+      });
   };
 
   render() {

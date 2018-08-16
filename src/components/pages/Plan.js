@@ -19,6 +19,7 @@ import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
 import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
+import intersection from 'lodash/intersection';
 
 export default class Plan extends Component {
 
@@ -295,6 +296,44 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
+  applyLockOnChannels(planBudgets, blockedChannels) {
+    return planBudgets.map((month) => {
+      const newMonth = {...month};
+
+      intersection(blockedChannels, Object.keys(month)).forEach(channelKey => {
+        const channelBudget = newMonth[channelKey];
+        newMonth[channelKey] = {
+          ...channelBudget,
+          userBudgetConstraint: channelBudget.committedBudget,
+          isSoft: false
+        };
+      });
+
+      return newMonth;
+    });
+  }
+
+  planWithConstraints = (constraints, callback) => {
+    const planBudgets = this.getPlanBudgets();
+    const withBlockedChannels = this.applyLockOnChannels(planBudgets,
+      constraints.channelsToBlock);
+
+    this.props.plan(false, {
+        planBudgets: withBlockedChannels,
+        improveMaxChanges: constraints.channelsLimit
+      },
+      this.props.region,
+      false)
+      .then(data => {
+        console.log('finished plan');
+        callback('New Suggestion');
+      })
+      .catch((err) => {
+        console.log('error from planner');
+        callback('New Suggestion');
+      });
+  };
+
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
     const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
@@ -489,9 +528,12 @@ export default class Plan extends Component {
             </div>
           </div>
         </div>
-        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup} onClose={() => {
-          this.setState({showOptimizationPopup: false});
-        }}/>
+        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup}
+                               onClose={() => {
+                                 this.setState({showOptimizationPopup: false});
+                               }}
+                               planWithConstraints={this.planWithConstraints}
+        />
         {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
           <div className={this.classes.wrap}>
             <div className={this.classes.serverDown}>

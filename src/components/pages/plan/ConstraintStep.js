@@ -3,13 +3,15 @@ import Textfield from 'components/controls/Textfield';
 import React, {PropTypes} from 'react';
 import style from 'styles/plan/plan-optimization-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
+import {getNickname} from 'components/utils/channels';
 
 export default class ConstraintStep extends Component {
   style = style;
 
   static PropTypes = {
     onConstraintAdd: PropTypes.func.isRequired,
-    type: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
+    channelsBlockOptions: PropTypes.arrayOf(PropTypes.string)
   };
 
   constructor(props) {
@@ -36,6 +38,12 @@ export default class ConstraintStep extends Component {
   render() {
     const disableInput = this.state.setClicked;
     const beforeInputText = this.isChannelsLimitConstraint() ? `Don't touch more than` : `Don’t touch`;
+    const channelsOptions = this.props.channelsBlockOptions && this.props.channelsBlockOptions.map((channelKey) => {
+      return {
+        value: channelKey,
+        label: getNickname(channelKey)
+      }
+    });
 
     return <div className={this.classes.optionsWrapper}>
         <div className={this.classes.constraintStep}>
@@ -54,14 +62,7 @@ export default class ConstraintStep extends Component {
                        inputClassName={this.classes.numberInput}/>
           : <MultiSelect disabled={disableInput}
                          selected={this.state.changeObject.channelsToBlock}
-                         select={{
-                           name: 'Channels',
-                           options: [
-                             {value: 'first', label: 'first label'},
-                             {value: 'second', label: 'second label'},
-                             {value: 'third', label: 'third label'}]
-                         }}
-
+                         select={{name: 'Channels', options: channelsOptions}}
                          onChange={this.handleChangeMulti}
                          className={this.classes.inputField}/>
 
