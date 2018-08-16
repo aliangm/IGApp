@@ -324,7 +324,7 @@ export default class Plan extends Component {
           ...currentMonthBudget,
           committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null) ? 0
             : currentMonthBudget.committedBudget
-        }
+        };
       });
 
       return newMonth;
@@ -394,32 +394,34 @@ export default class Plan extends Component {
         <div className={this.classes.head}>
           <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
             <div className={this.classes.headTitle}>Plan</div>
-            {annualTabActive && interactiveMode && !editMode ?
-              <FeatureToggle featureName="plannerAI">
-                <div style={{display: 'flex'}}>
-                  <div className={this.classes.error}>
-                    <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade,
-                      click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
-                               target='_blank'>here</a>
-                    </label>
+            {(annualTabActive && !editMode) ?
+              interactiveMode ?
+                <FeatureToggle featureName="plannerAI">
+                  <div style={{display: 'flex'}}>
+                    <div className={this.classes.error}>
+                      <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To
+                        upgrade,
+                        click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
+                                 target='_blank'>here</a>
+                      </label>
+                    </div>
+                    <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                                  onClick={this.planAndSetBudgets}
+                                  planNeedsUpdate={this.props.planNeedsUpdate}/>
                   </div>
-                  <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
-                                onClick={this.planAndSetBudgets}
-                                planNeedsUpdate={this.props.planNeedsUpdate}/>
-                </div>
-              </FeatureToggle>
-              : null
-            }
-            <Button type="secondary"
-                    style={{
-                      marginLeft: '15px',
-                      width: '102px'
-                    }}
-                    onClick={() => {
-                      this.setState({showOptimizationPopup: true});
-                    }}>
-              Get Suggestions
-            </Button>
+                </FeatureToggle>
+                :
+                <Button type="primary"
+                        style={{
+                          marginLeft: '15px',
+                          width: '118px'
+                        }}
+                        onClick={() => {
+                          this.setState({showOptimizationPopup: true});
+                        }}>
+                  Get Suggestions
+                </Button>
+              : null}
           </div>
           <div className={this.classes.column} style={{justifyContent: 'center'}}>
             <BudgetLeftToPlan annualBudget={annualBudget} annualBudgetLeftToPlan={annualBudgetLeftToPlan}/>
