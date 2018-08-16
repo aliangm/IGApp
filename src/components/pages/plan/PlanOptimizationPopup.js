@@ -226,6 +226,9 @@ export default class PlanOptimizationPopup extends Component {
                    boxShadow: 'none',
                    padding: '0',
                    margin: '0 0 7px 0'
+                 }}
+                 inputStyle={{
+                   display: 'none'
                  }}/>
       </Page>
     </div>;
