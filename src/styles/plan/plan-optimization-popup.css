@@ -25,12 +25,11 @@
 }
 
 .constraint-step {
-    display: table;
+    display: flex;
+    align-items: center;
 }
 
 .constraint-text {
-    display: table-cell;
-    vertical-align: middle;
     color: #007aff;
 }
 
@@ -65,10 +64,10 @@
 }
 
 .input-field {
-    margin: 0 5px;
+    margin: 0 7px;
 }
 
 .number-input {
-    width: 42px;
+    width: 39px;
     padding: 5px;
 }

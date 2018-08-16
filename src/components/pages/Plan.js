@@ -451,7 +451,7 @@ export default class Plan extends Component {
                 <Button type="primary"
                         style={{
                           marginLeft: '15px',
-                          width: '118px'
+                          width: '135px'
                         }}
                         onClick={() => {
                           this.setState({showOptimizationPopup: true});

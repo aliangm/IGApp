@@ -4,7 +4,7 @@
     border-radius: 2px;
     background-color: #ffffff;
     border: solid 2px #e3e6f4;
-    border-top: solid 7px #0099cc;
+    border-top: solid 7px #4d91fc;
     padding: 0 20px;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .buttons {
-    margin-top: 15px;
+    margin: 15px 0;
     display: flex;
     justify-content: center;
 }
