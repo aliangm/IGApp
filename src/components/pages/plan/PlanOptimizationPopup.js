@@ -23,7 +23,7 @@ export default class PlanOptimizationPopup extends Component {
 
   initialState = {
     constraints: this.initialConstraints,
-    currentSuggestions: []
+    currentSuggestions: {}
   };
 
   constructor(props) {
@@ -131,7 +131,7 @@ export default class PlanOptimizationPopup extends Component {
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
                                  getChannelsBlockOptions={() => {
                                    const {channelsArray} = this.state.currentSuggestions;
-                                   uniq(channelsArray.map((suggestion) => suggestion.channel));
+                                   return uniq(channelsArray.map((suggestion) => suggestion.channel));
                                  }}/>
     },
     {
@@ -153,7 +153,7 @@ export default class PlanOptimizationPopup extends Component {
   clearState = (callback) => {
     this.setState({
       constraints: this.initialConstraints,
-      currentSuggestions: []
+      currentSuggestions: {}
     }, callback);
   };
 
