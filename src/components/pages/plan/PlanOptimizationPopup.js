@@ -32,7 +32,7 @@ export default class PlanOptimizationPopup extends Component {
   getSteps = () => [
     {
       id: '0',
-      message: 'Hey there!\nLooking to improve your plan?',
+      message: 'Hey there! \n Looking to improve your plan?',
       trigger: '1'
     },
     {
@@ -49,8 +49,7 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '3',
-      message: 'That’s great :)\n' +
-        'Do you have specific requirements for the reallocation suggestion?',
+      message: 'That’s great :) \n Do you have specific requirements for the reallocation suggestion?',
       trigger: '4'
     },
     {
@@ -205,18 +204,20 @@ export default class PlanOptimizationPopup extends Component {
                    padding: '11px 7px',
                    minWidth: '15px',
                    width: '21px',
-                   height: '12px'
+                   height: '12px',
+                   marginBottom: '15px'
                  }}
                  bubbleStyle={{
-                   clipPath: 'polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 9px 38px, 0 29px, 9px 20px)',
+                   clipPath: 'polygon(9px 0px, 100% 0px, 100% 100%, 9px 100%, 9px calc(100% - 35px), 0px calc(100% - 25px), 9px calc(100% - 15px))',
                    borderRadius: '14px 7px 7px 14px',
                    paddingLeft: '20px',
-                   margin: '0',
+                   margin: '0 0 15px',
                    background: '#e6e8f0',
                    fontSize: '18px',
                    fontWeight: '500',
                    color: '#3e495a',
-                   boxShadow: 'none'
+                   boxShadow: 'none',
+                   whiteSpace: 'pre-line'
                  }}
                  hideUserAvatar={true}
                  width='650px'
@@ -229,6 +230,9 @@ export default class PlanOptimizationPopup extends Component {
                    boxShadow: 'none',
                    padding: '0',
                    margin: '0 0 7px 0'
+                 }}
+                 inputStyle={{
+                   display: 'none'
                  }}/>
       </Page>
     </div>;
