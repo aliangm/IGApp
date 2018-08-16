@@ -241,7 +241,7 @@ export default class PlanOptimizationPopup extends Component {
                    display: 'none'
                  }}
                  contentStyle={{
-                   paddingRight: '6px'
+                   padding: '6px'
                  }}/>
       </Page>
     </div>;
