@@ -105,10 +105,12 @@ export default class InsightItem extends Component {
   render() {
     const {fromChannels, toChannels, planDate, onCommit, onDecline} = this.props;
     const dates = getDates(planDate);
-    const fromChannelsItems = fromChannels.map((item, index) => <ChannelItem key={index} {...item} month={dates[item.monthKey]}/>);
-    const toChannelsItems = toChannels.map((item, index) => <ChannelItem key={index} {...item} month={dates[item.monthKey]}/>);
+    const fromChannelsItems = fromChannels.map((item, index) => <ChannelItem key={index} {...item}
+                                                                             month={dates[item.monthKey]}/>);
+    const toChannelsItems = toChannels.map((item, index) => <ChannelItem key={index} {...item}
+                                                                         month={dates[item.monthKey]}/>);
 
-    return <div>
+    return <div style={{width: '100%'}}>
       <ReactTooltip place='bottom' effect='solid' id='insightItem' html={true}/>
       <div className={this.classes.frame}>
         <div className={this.classes.title}>
@@ -116,11 +118,11 @@ export default class InsightItem extends Component {
           <div className={this.classes.forecastingIcon} data-tip={this.getTooltip(dates)} data-for='insightItem'/>
         </div>
         <div className={this.classes.inner}>
-          <div>
+          <div style={{width: 'fit-content'}}>
             {fromChannelsItems}
           </div>
           <div className={this.classes.arrowIcon}/>
-          <div>
+          <div style={{width: 'fit-content'}}>
             {toChannelsItems}
           </div>
         </div>
@@ -149,7 +151,7 @@ export class ChannelItem extends Component {
           {month}
         </div>
         <div className={this.classes.channelIcon} data-icon={`plan:${channel}`}/>
-        <div style={{display: 'flex', alignItems: 'center'}}>
+        <div className={this.classes.budgets}>
           <div className={this.classes.fromBudget}>
             {formatBudget(fromBudget)}
           </div>
