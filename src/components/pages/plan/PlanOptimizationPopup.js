@@ -21,11 +21,15 @@ export default class PlanOptimizationPopup extends Component {
     channelsToBlock: []
   };
 
+  initialState = {
+    constraints: this.initialConstraints,
+    currentSuggestions: {}
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      constraints: this.initialConstraints,
-      currentSuggestions: []
+      ...this.initialState
     };
   }
 
@@ -127,7 +131,7 @@ export default class PlanOptimizationPopup extends Component {
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
                                  getChannelsBlockOptions={() => {
                                    const {channelsArray} = this.state.currentSuggestions;
-                                   uniq(channelsArray.map((suggestion) => suggestion.channel));
+                                   return uniq(channelsArray.map((suggestion) => suggestion.channel));
                                  }}/>
     },
     {
@@ -149,7 +153,7 @@ export default class PlanOptimizationPopup extends Component {
   clearState = (callback) => {
     this.setState({
       constraints: this.initialConstraints,
-      currentSuggestions: []
+      currentSuggestions: {}
     }, callback);
   };
 
@@ -192,57 +196,65 @@ export default class PlanOptimizationPopup extends Component {
     return {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets};
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.hidden) {
+      this.setState(this.initialState);
+    }
+  }
+
   render() {
+    const chatBot = <ChatBot className={this.classes.chatbot}
+                             style={{
+                               background: '#ffffff',
+                               fontFamily: 'inherit',
+                               width: '100%',
+                               borderRadius: 'inherit',
+                               boxShadow: 'none'
+                             }}
+                             botAvatar='icons/InfiniGrow - white logo SVG.svg'
+                             avatarStyle={{
+                               backgroundColor: '#6c7482',
+                               borderRadius: '50%',
+                               padding: '11px 0',
+                               minWidth: '15px',
+                               width: '34px',
+                               height: '12px',
+                               marginBottom: '15px'
+                             }}
+                             bubbleStyle={{
+                               clipPath: 'polygon(9px 0px, 100% 0px, 100% 100%, 9px 100%, 9px calc(100% - 35px), 0px calc(100% - 25px), 9px calc(100% - 15px))',
+                               borderRadius: '14px 7px 7px 14px',
+                               paddingLeft: '20px',
+                               margin: '0 0 15px',
+                               background: '#e6e8f0',
+                               fontSize: '18px',
+                               fontWeight: '500',
+                               color: '#3e495a',
+                               boxShadow: 'none',
+                               whiteSpace: 'pre-line'
+                             }}
+                             hideUserAvatar={true}
+                             width='650px'
+                             headerComponent={<CustomizedHeader/>}
+                             hideSubmitButton={true}
+                             steps={this.getSteps()}
+                             customStyle={{
+                               background: 'transparent',
+                               border: 'none',
+                               boxShadow: 'none',
+                               padding: '0',
+                               margin: '0 0 7px 0'
+                             }}
+                             inputStyle={{
+                               display: 'none'
+                             }}
+                             contentStyle={{
+                               padding: '6px'
+                             }}/>;
+
     return <div hidden={this.props.hidden}>
       <Page popup={true} width='650px' contentClassName={this.classes.content} onClose={this.props.onClose}>
-        <ChatBot className={this.classes.chatbot}
-                 style={{
-                   background: '#ffffff',
-                   fontFamily: 'inherit',
-                   width: '100%',
-                   borderRadius: 'inherit',
-                   boxShadow: 'none'
-                 }}
-                 botAvatar='icons/InfiniGrow - white logo SVG.svg'
-                 avatarStyle={{
-                   backgroundColor: '#6c7482',
-                   borderRadius: '50%',
-                   padding: '11px 0',
-                   minWidth: '15px',
-                   width: '34px',
-                   height: '12px',
-                   marginBottom: '15px'
-                 }}
-                 bubbleStyle={{
-                   clipPath: 'polygon(9px 0px, 100% 0px, 100% 100%, 9px 100%, 9px calc(100% - 35px), 0px calc(100% - 25px), 9px calc(100% - 15px))',
-                   borderRadius: '14px 7px 7px 14px',
-                   paddingLeft: '20px',
-                   margin: '0 0 15px',
-                   background: '#e6e8f0',
-                   fontSize: '18px',
-                   fontWeight: '500',
-                   color: '#3e495a',
-                   boxShadow: 'none',
-                   whiteSpace: 'pre-line'
-                 }}
-                 hideUserAvatar={true}
-                 width='650px'
-                 headerComponent={<CustomizedHeader/>}
-                 hideSubmitButton={true}
-                 steps={this.getSteps()}
-                 customStyle={{
-                   background: 'transparent',
-                   border: 'none',
-                   boxShadow: 'none',
-                   padding: '0',
-                   margin: '0 0 7px 0'
-                 }}
-                 inputStyle={{
-                   display: 'none'
-                 }}
-                 contentStyle={{
-                   padding: '6px'
-                 }}/>
+        {!this.props.hidden ? chatBot : null}
       </Page>
     </div>;
   }
