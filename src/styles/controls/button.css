@@ -11,6 +11,14 @@
     text-transform: capitalize;
 }
 
+.box[data-disabled] {
+    background: #f5f6fa !important;
+    color: #99a4c2 !important;
+    cursor: default !important;
+    box-shadow: none !important;;
+    user-select: none !important;;
+}
+
 .cont {
     height: 36px;
     box-sizing: border-box;
