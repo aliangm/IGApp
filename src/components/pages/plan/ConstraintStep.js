@@ -38,7 +38,7 @@ export default class ConstraintStep extends Component {
   render() {
     const disableInput = this.state.setClicked;
     const beforeInputText = this.isChannelsLimitConstraint() ? `Don't touch more than` : `Don’t touch`;
-    const channelsBlockOptions = this.props.getChannelsBlockOptions();
+    const channelsBlockOptions = this.props.getChannelsBlockOptions && this.props.getChannelsBlockOptions();
     const channelsOptions = channelsBlockOptions && channelsBlockOptions.map((channelKey) => {
       return {
         value: channelKey,
