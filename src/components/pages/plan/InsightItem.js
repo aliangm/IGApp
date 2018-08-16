@@ -126,10 +126,10 @@ export default class InsightItem extends Component {
         </div>
       </div>
       <div className={this.classes.buttons}>
-        <Button type='reverse2' icon='buttons:approve' style={{width: '100px'}} onClick={onCommit}>
+        <Button type='approve' icon='buttons:approve' style={{width: '100px'}} onClick={onCommit}>
           Commit
         </Button>
-        <Button type='warning' icon='buttons:decline' style={{width: '100px', marginLeft: '20px'}} onClick={onDecline}>
+        <Button type='decline' icon='buttons:decline' style={{width: '100px', marginLeft: '20px'}} onClick={onDecline}>
           Decline
         </Button>
       </div>
@@ -149,7 +149,7 @@ export class ChannelItem extends Component {
           {month}
         </div>
         <div className={this.classes.channelIcon} data-icon={`plan:${channel}`}/>
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex', alignItems: 'center'}}>
           <div className={this.classes.fromBudget}>
             {formatBudget(fromBudget)}
           </div>
