@@ -372,7 +372,7 @@ export default class Plan extends Component {
         return {
           channel: channelKey,
           monthKey: monthKey,
-          fromBudget: month[channelKey].committedBudget,
+          fromBudget: month[channelKey].committedBudget || 0,
           toBudget: month[channelKey].plannerBudget
         };
       })
