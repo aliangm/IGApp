@@ -8,6 +8,7 @@ import UserOptionsStep from 'components/pages/plan/suggestionsChatSteps/UserOpti
 import uniq from 'lodash/uniq';
 import InsightStep from 'components/pages/plan/suggestionsChatSteps/InsightStep';
 import FunctionStep from 'components/pages/plan/suggestionsChatSteps/FunctionStep';
+import Button from 'components/controls/Button';
 
 export default class PlanOptimizationPopup extends Component {
 
@@ -143,9 +144,12 @@ export default class PlanOptimizationPopup extends Component {
     {
       id: '15',
       component: <div className={this.classes.optionsWrapper}>
-        <div className={this.classes.option} onClick={this.props.onClose}>
+        <Button type='chat-button'
+                style={{marginBottom: '7px'}}
+                contClassName={this.classes.chatButtonCont}
+                onClick={this.props.onClose}>
           Close
-        </div>
+        </Button>
       </div>
     }];
 
