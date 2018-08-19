@@ -133,7 +133,7 @@ export default class Plan extends Component {
             }
             else {
               object[channelKey] = {
-                committedBudget: primaryBudget ? primaryBudget : -1,
+                committedBudget: primaryBudget || -1,
                 userBudgetConstraint: isConstraint ? budgetConstraint : -1,
                 isSoft: isConstraint ? isSoft : false
               };
@@ -297,11 +297,11 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
-  applyLockOnChannels(planBudgets, blockedChannels) {
+  applyLockOnChannels(planBudgets, lockedChannels) {
     return planBudgets.map((month) => {
       const newMonth = {...month};
 
-      intersection(blockedChannels, Object.keys(month)).forEach(channelKey => {
+      intersection(lockedChannels, Object.keys(month)).forEach(channelKey => {
         const channelBudget = newMonth[channelKey];
         newMonth[channelKey] = {
           ...channelBudget,
@@ -314,41 +314,44 @@ export default class Plan extends Component {
     });
   }
 
-  planWithConstraints = (constraints, callback) => {
-    const planBudgets = this.getPlanBudgets();
-    const normalizedBudgets = planBudgets.map((month) => {
-      const newMonth = {};
-      Object.keys(month).forEach(channelKey => {
-        const currentMonthBudget = month[channelKey];
-        newMonth[channelKey] = {
-          ...currentMonthBudget,
-          committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null)
-            ? 0
-            : currentMonthBudget.committedBudget
-        };
-      });
-
-      return newMonth;
-    });
-
-    const withBlockedChannels = this.applyLockOnChannels(normalizedBudgets,
-      constraints.channelsToBlock);
-
-    this.props.optimalImprovementPlan(false, {
-        planBudgets: withBlockedChannels
-      },
-      this.props.region,
-      false,
-      constraints.channelsLimit)
-      .then(data => {
-        const changesObject = this.getChangesObjectFromPlan(data);
-        callback({
-          ...changesObject,
-          commitPlanBudgets: () => this.props.updateUserMonthPlan({planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)},
-            this.props.region,
-            this.props.planDate)
+  planWithConstraints = (constraints) => {
+    return new Promise((resolve, reject) => {
+      const planBudgets = this.getPlanBudgets();
+      const normalizedBudgets = planBudgets.map((month) => {
+        const newMonth = {};
+        Object.keys(month).forEach(channelKey => {
+          const currentMonthBudget = month[channelKey];
+          newMonth[channelKey] = {
+            ...currentMonthBudget,
+            committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null)
+              ? 0
+              : currentMonthBudget.committedBudget
+          };
         });
+
+        return newMonth;
       });
+
+      const planWithLockedChannles = this.applyLockOnChannels(normalizedBudgets,
+        constraints.channelsToBlock);
+
+      this.props.optimalImprovementPlan(false, {
+          planBudgets: planWithLockedChannles
+        },
+        this.props.region,
+        false,
+        constraints.channelsLimit)
+        .then(data => {
+          const changesObject = this.getChangesObjectFromPlan(data);
+
+          resolve({
+            ...changesObject,
+            commitPlanBudgets: () => this.props.updateUserMonthPlan({planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)},
+              this.props.region,
+              this.props.planDate)
+          });
+        });
+    });
   };
 
   applyAllPlannerSuggestions = (planBudgets) => {

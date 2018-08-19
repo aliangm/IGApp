@@ -173,8 +173,8 @@ export default class PlanOptimizationPopup extends Component {
   };
 
   runPlannerWithConstraints = (callback) => {
-    this.props.planWithConstraints(this.state.constraints,
-      (suggestions) => {
+    this.props.planWithConstraints(this.state.constraints)
+      .then((suggestions) => {
         this.setState({currentSuggestions: suggestions});
         callback();
       });
