@@ -301,6 +301,7 @@ export default class Plan extends Component {
     return planBudgets.map((month) => {
       const newMonth = {...month};
 
+      // Applying lock only for channels that actually exists in this month
       intersection(lockedChannels, Object.keys(month)).forEach(channelKey => {
         const channelBudget = newMonth[channelKey];
         newMonth[channelKey] = {
@@ -340,7 +341,7 @@ export default class Plan extends Component {
       });
 
       const planWithLockedChannles = this.applyLockOnChannels(normalizedBudgets,
-        constraints.channelsToBlock);
+        constraints.channelsToLock);
 
       this.props.optimalImprovementPlan(false, {
           planBudgets: planWithLockedChannles

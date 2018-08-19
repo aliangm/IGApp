@@ -11,24 +11,24 @@ export default class ConstraintStep extends Component {
   static PropTypes = {
     onConstraintAdd: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
-    getChannelsBlockOptions: PropTypes.func
+    getChannelsLockOptions: PropTypes.func
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      changeObject: this.isChannelsLimitConstraint() ? {channelsLimit: 2} : {channelsToBlock: []},
+      changeObject: this.isChannelsLimitConstraint() ? {channelsLimit: 2} : {channelsToLock: []},
       setClicked: false
     };
   }
 
   handleChangeMulti = (event) => {
-    const channelsToBlock = event.map((obj) => {
+    const channelsToLock = event.map((obj) => {
       return obj.value;
     });
 
-    this.setState({changeObject: {channelsToBlock}});
+    this.setState({changeObject: {channelsToLock}});
   };
 
   isChannelsLimitConstraint = () => {
@@ -38,8 +38,8 @@ export default class ConstraintStep extends Component {
   render() {
     const disableInput = this.state.setClicked;
     const beforeInputText = this.isChannelsLimitConstraint() ? `Don't touch more than` : `Don’t touch`;
-    const channelsBlockOptions = this.props.getChannelsBlockOptions && this.props.getChannelsBlockOptions();
-    const channelsOptions = channelsBlockOptions && channelsBlockOptions.map((channelKey) => {
+    const channelsLockOptions = this.props.getChannelsLockOptions && this.props.getChannelsLockOptions();
+    const channelsOptions = channelsLockOptions && channelsLockOptions.map((channelKey) => {
       return {
         value: channelKey,
         label: getNickname(channelKey)
@@ -70,7 +70,7 @@ export default class ConstraintStep extends Component {
             <span className={this.classes.constraintText}>channels</span>
           </div>
           : <MultiSelect disabled={disableInput}
-                         selected={this.state.changeObject.channelsToBlock}
+                         selected={this.state.changeObject.channelsToLock}
                          select={{name: 'Channels', options: channelsOptions}}
                          onChange={this.handleChangeMulti}
                          className={this.classes.inputField}
