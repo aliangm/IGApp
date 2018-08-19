@@ -2,6 +2,7 @@ import Component from 'components/Component';
 import React, {PropTypes} from 'react';
 import style from 'styles/plan/plan-optimization-popup.css';
 import isNil from 'lodash/isNil';
+import Button from 'components/controls/Button';
 
 export default class UserOptionsStep extends Component {
 
@@ -22,15 +23,17 @@ export default class UserOptionsStep extends Component {
   render() {
     const chosenKey = this.state.chosenKey;
     const createOptionDiv = (isChosen, {label, trigger}, key) => {
-      return <div className={this.classes.option}
-                  key={key}
-                  data-chosen={isChosen ? true : null}
-                  onClick={() => {
-                    this.setState({chosenKey: key});
-                    this.props.triggerNextStep({trigger: trigger});
-                  }}>
+      return <Button type='chat-button'
+                     style={{marginBottom: '7px'}}
+                     contClassName={this.classes.chatButtonCont}
+                     disabled={isChosen}
+                     key={key}
+                     onClick={() => {
+                       this.setState({chosenKey: key});
+                       this.props.triggerNextStep({trigger: trigger});
+                     }}>
         {label}
-      </div>;
+      </Button>;
     };
 
     const options = this.props.options.map((option, key) => {

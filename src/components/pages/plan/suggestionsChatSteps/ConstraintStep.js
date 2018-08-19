@@ -4,6 +4,7 @@ import React, {PropTypes} from 'react';
 import style from 'styles/plan/plan-optimization-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
 import {getNickname} from 'components/utils/channels';
+import Button from 'components/controls/Button';
 
 export default class ConstraintStep extends Component {
   style = style;
@@ -78,20 +79,19 @@ export default class ConstraintStep extends Component {
           />
 
         }
-        <div className={this.classes.setButton}
-             data-chosen={this.state.setClicked ? true : null}
-             onClick={() => {
-               if (!this.state.setClicked) {
-                 this.setState({setClicked: true});
-                 this.props.setConstraintAndRunPlanner(this.state.changeObject,
-                   () => this.props.triggerNextStep({
-                     trigger: '7'
-                   })
-                 );
-               }
-             }}>
+        <Button type='chat-button'
+                contClassName={this.classes.chatButtonCont}
+                disabled={this.state.setClicked}
+                onClick={() => {
+                  this.setState({setClicked: true});
+                  this.props.setConstraintAndRunPlanner(this.state.changeObject,
+                    () => this.props.triggerNextStep({
+                      trigger: '7'
+                    })
+                  );
+                }}>
           Set
-        </div>
+        </Button>
       </div>
     </div>;
   }
