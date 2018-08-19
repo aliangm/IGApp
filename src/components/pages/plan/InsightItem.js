@@ -6,6 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import {formatBudget} from 'components/utils/budget';
 import groupBy from 'lodash/groupBy';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getDates} from 'components/utils/date';
 
 export default class InsightItem extends Component {
@@ -123,7 +124,8 @@ export class ChannelItem extends Component {
         <div className={this.classes.date}>
           {month}
         </div>
-        <div className={this.classes.channelIcon} data-icon={`plan:${channel}`}/>
+        <div className={this.classes.channelIcon} data-icon={`plan:${channel}`} data-tip={getChannelNickname(channel)}
+             data-for='insightItem'/>
         <div className={this.classes.budgets}>
           <div className={this.classes.fromBudget}>
             {formatBudget(fromBudget)}
