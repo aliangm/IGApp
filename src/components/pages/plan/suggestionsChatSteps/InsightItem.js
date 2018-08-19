@@ -8,6 +8,7 @@ import groupBy from 'lodash/groupBy';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getDates} from 'components/utils/date';
+import {formatNumber} from 'components/utils/budget';
 
 export default class InsightItem extends Component {
 
@@ -51,7 +52,7 @@ export default class InsightItem extends Component {
       const monthIndicators = forecastingData[month]
         .map(item =>
           `<div style="text-align: left; font-size: 10px; font-weight: 500">
-       ${getIndicatorNickname(item.indicator)} <span style="color: #24b10e">${Math.round(item.ifApproved / item.committed * 100)}%</span> (+${item.ifApproved - item.committed})
+       ${getIndicatorNickname(item.indicator)} <span style="color: #24b10e">${Math.round(item.ifApproved / item.committed * 100)}%</span> (${item.ifApproved > item.committed ? '+' : '-'}${formatNumber(Math.abs(item.ifApproved - item.committed))})
         </div><br/>`
         );
       return `<div style="text-align: center; font-size: 10px; font-weight: 500">
