@@ -19,12 +19,18 @@ export default class PlanOptimizationPopup extends Component {
 
   initialConstraints = {
     channelsLimit: null,
-    channelsToBlock: []
+    channelsToLock: []
+  };
+
+  initialSuggestions = {
+    channelsArray: [],
+    forecastedIndicators: [],
+    commitPlanBudgets: null
   };
 
   initialState = {
     constraints: this.initialConstraints,
-    currentSuggestions: {}
+    currentSuggestions: this.initialSuggestions
   };
 
   constructor(props) {
@@ -125,7 +131,7 @@ export default class PlanOptimizationPopup extends Component {
       id: '13',
       component: <ConstraintStep type='lockingChannels'
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
-                                 getChannelsBlockOptions={() => {
+                                 getChannelsLockOptions={() => {
                                    const {channelsArray} = this.state.currentSuggestions;
                                    return uniq(channelsArray.map((suggestion) => suggestion.channel));
                                  }}/>
@@ -147,10 +153,7 @@ export default class PlanOptimizationPopup extends Component {
     }];
 
   clearState = (callback) => {
-    this.setState({
-      constraints: this.initialConstraints,
-      currentSuggestions: {}
-    }, callback);
+    this.setState(this.initialState, callback);
   };
 
   setConstraintAndRunPlanner = (changeObject, callback) => {
@@ -171,7 +174,12 @@ export default class PlanOptimizationPopup extends Component {
   runPlannerWithConstraints = (callback) => {
     this.props.planWithConstraints(this.state.constraints)
       .then((suggestions) => {
-        this.setState({currentSuggestions: suggestions});
+        this.setState({
+          currentSuggestions: {
+            ...this.initialSuggestions,
+            ...suggestions
+          }
+        });
         callback();
       });
   };
