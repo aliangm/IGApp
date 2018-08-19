@@ -14,7 +14,7 @@ export default class UserOptionsStep extends Component {
     })).isRequired
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {chosenKey: null};
   }
@@ -24,13 +24,13 @@ export default class UserOptionsStep extends Component {
     const createOptionDiv = (isChosen, {label, trigger}, key) => {
       return <div className={this.classes.option}
                   key={key}
-                  data-chosen={isChosen ? true: null}
+                  data-chosen={isChosen ? true : null}
                   onClick={() => {
                     this.setState({chosenKey: key});
                     this.props.triggerNextStep({trigger: trigger});
                   }}>
         {label}
-      </div>
+      </div>;
     };
 
     const options = this.props.options.map((option, key) => {

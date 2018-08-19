@@ -333,7 +333,7 @@ export default class Plan extends Component {
       const normalizedBudgets = this.manipulatePlanBudgets(planBudgets, (channelData) => {
         return {
           ...channelData,
-          committedBudget: (channelData.committedBudget === -1 || channelData.committedBudget === null)
+          committedBudget: (!channelData.committedBudget || channelData.committedBudget === -1)
             ? 0
             : channelData.committedBudget
         };

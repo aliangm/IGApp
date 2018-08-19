@@ -49,18 +49,26 @@ export default class ConstraintStep extends Component {
     return <div className={this.classes.optionsWrapper}>
       <div className={this.classes.constraintStep}>
         <span className={this.classes.constraintText}>{beforeInputText}</span>
-        {this.props.type === 'channelsNumber'
-          ? <Textfield type="number" value={this.state.changeObject.channelsLimit}
+        {this.isChannelsLimitConstraint()
+          ? <div style={{
+            display: 'inherit',
+            alignItems: 'inherit'
+          }}>
+            <Textfield type="number" value={this.state.changeObject.channelsLimit}
                        onChange={(e) =>
                          this.setState({
                            changeObject: {
                              channelsLimit: parseInt(e.target.value)
                            }
                          })
-                       } min="2"
+                       }
+                       min="2"
+                       max="7"
                        disabled={disableInput}
                        className={this.classes.inputField}
                        inputClassName={this.classes.numberInput}/>
+            <span className={this.classes.constraintText}>channels</span>
+          </div>
           : <MultiSelect disabled={disableInput}
                          selected={this.state.changeObject.channelsToBlock}
                          select={{name: 'Channels', options: channelsOptions}}
@@ -70,7 +78,6 @@ export default class ConstraintStep extends Component {
           />
 
         }
-        {this.isChannelsLimitConstraint() ? <span className={this.classes.constraintText}>channels</span> : null}
         <div className={this.classes.setButton}
              data-chosen={this.state.setClicked ? true : null}
              onClick={() => {
