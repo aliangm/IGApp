@@ -131,10 +131,7 @@ export default class PlanOptimizationPopup extends Component {
       id: '13',
       component: <ConstraintStep type='lockingChannels'
                                  setConstraintAndRunPlanner={this.setConstraintAndRunPlanner}
-                                 getChannelsLockOptions={() => {
-                                   const {channelsArray} = this.state.currentSuggestions;
-                                   return uniq(channelsArray.map((suggestion) => suggestion.channel));
-                                 }}/>
+                                 getChannelsLockOptions={this.getChannelsLockOptions}/>
     },
     {
       id: '14',
@@ -167,8 +164,14 @@ export default class PlanOptimizationPopup extends Component {
   };
 
   noParticularReasonAndRun = (callback) => {
-    console.log('setting lock on all suggested channels');
-    this.runPlannerWithConstraints(callback);
+    this.setState({
+        constraints: {
+          ...this.state.constraints,
+          channelsToLock: this.getChannelsLockOptions()
+        }
+      },
+      this.runPlannerWithConstraints(callback)
+    );
   };
 
   runPlannerWithConstraints = (callback) => {
@@ -182,6 +185,11 @@ export default class PlanOptimizationPopup extends Component {
         });
         callback();
       });
+  };
+
+  getChannelsLockOptions = () => {
+    const {channelsArray} = this.state.currentSuggestions;
+    return uniq(channelsArray.map((suggestion) => suggestion.channel));
   };
 
   getInsightData = () => {
