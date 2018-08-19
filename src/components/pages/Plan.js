@@ -21,6 +21,7 @@ import isEqual from 'lodash/isEqual';
 import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
 import intersection from 'lodash/intersection';
 import union from 'lodash/union';
+import maxBy from 'lodash/maxBy';
 
 export default class Plan extends Component {
 
@@ -297,7 +298,7 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
-  applyLockOnChannels(planBudgets, lockedChannels) {
+  applyLockOnChannels = (planBudgets, lockedChannels) => {
     return planBudgets.map((month) => {
       const newMonth = {...month};
 
@@ -313,7 +314,7 @@ export default class Plan extends Component {
 
       return newMonth;
     });
-  }
+  };
 
   manipulatePlanBudgets = (planBudgets, manipulateFunctions) => {
     return planBudgets.map((month) => {
@@ -372,7 +373,7 @@ export default class Plan extends Component {
   };
 
   getChangesObjectFromPlan = ({planBudgets, forecastedIndicators}) => {
-    const suggestions = planBudgets.map((month, monthKey) => {
+    const suggestions = union(...planBudgets.map((month, monthKey) => {
       return Object.keys(month).map((channelKey) => {
         return {
           channel: channelKey,
@@ -382,9 +383,11 @@ export default class Plan extends Component {
         };
       })
         .filter((data) => data.fromBudget !== data.toBudget);
-    });
+    }));
 
     const objectivesKeys = this.props.calculatedData.objectives.collapsedObjectives.map((objective) => objective.indicator);
+    const latestMonthWithSuggestion = maxBy(suggestions, suggestion => suggestion.monthKey).monthKey;
+
     const parsedForecasting = forecastedIndicators.map((month, monthKey) => {
       return Object.keys(month).map((indicatorKey) => {
         return {
@@ -397,10 +400,11 @@ export default class Plan extends Component {
         .filter((data) => data.ifApproved &&
           data.committed !==
           data.ifApproved &&
+          data.monthKey <= latestMonthWithSuggestion &&
           objectivesKeys.includes(data.indicator));
     });
 
-    return {channelsArray: union(...suggestions), forecastedIndicators: union(...parsedForecasting)};
+    return {channelsArray: suggestions, forecastedIndicators: union(...parsedForecasting)};
   };
 
   render() {
