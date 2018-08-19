@@ -3,10 +3,10 @@ import Page from 'components/Page';
 import React, {PropTypes} from 'react';
 import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
-import ConstraintStep from 'components/pages/plan/ConstraintStep';
-import UserOptionsStep from 'components/pages/plan/UserOptionsStep';
+import ConstraintStep from 'components/pages/plan/suggestionsChatSteps/ConstraintStep';
+import UserOptionsStep from 'components/pages/plan/suggestionsChatSteps/UserOptionsStep';
 import uniq from 'lodash/uniq';
-import InsightStep from 'components/pages/plan/InsightStep';
+import InsightStep from 'components/pages/plan/suggestionsChatSteps/InsightStep';
 
 export default class PlanOptimizationPopup extends Component {
 
@@ -28,9 +28,7 @@ export default class PlanOptimizationPopup extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      ...this.initialState
-    };
+    this.state = this.initialState;
   }
 
   getSteps = () => [
@@ -59,9 +57,8 @@ export default class PlanOptimizationPopup extends Component {
     {
       id: '4',
       component: <UserOptionsStep options={[
-        {value: 1, label: 'No, I want the optimal suggestion', trigger: '5'},
+        {label: 'No, I want the optimal suggestion', trigger: '5'},
         {
-          value: 2,
           label: 'yes, I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
@@ -92,9 +89,8 @@ export default class PlanOptimizationPopup extends Component {
     {
       id: '9',
       component: <UserOptionsStep options={[
-        {value: 1, label: 'No', trigger: '2'},
+        {label: 'No', trigger: '2'},
         {
-          value: 2,
           label: 'Yes',
           trigger: '10'
         }
@@ -116,10 +112,9 @@ export default class PlanOptimizationPopup extends Component {
     {
       id: '12',
       component: <UserOptionsStep options={[
-        {value: 1, label: 'I want to lock budgets for specific channels', trigger: '13'},
-        {value: 2, label: 'No particular reason, I just don’t like it', trigger: '14'},
+        {label: 'I want to lock budgets for specific channels', trigger: '13'},
+        {label: 'No particular reason, I just don’t like it', trigger: '14'},
         {
-          value: 3,
           label: 'I want to limit the number of channels that will be touched in the suggestion',
           trigger: '6'
         }
@@ -173,8 +168,8 @@ export default class PlanOptimizationPopup extends Component {
   };
 
   runPlannerWithConstraints = (callback) => {
-    this.props.planWithConstraints(this.state.constraints,
-      (suggestions) => {
+    this.props.planWithConstraints(this.state.constraints)
+      .then((suggestions) => {
         this.setState({currentSuggestions: suggestions});
         callback();
       });

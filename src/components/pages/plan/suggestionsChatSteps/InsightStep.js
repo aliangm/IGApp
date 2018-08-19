@@ -1,7 +1,7 @@
 import Component from 'components/Component';
 import React, {PropTypes} from 'react';
 import style from 'styles/plan/plan-optimization-popup.css';
-import InsightItem from 'components/pages/plan/InsightItem';
+import InsightItem from 'components/pages/plan/suggestionsChatSteps/InsightItem';
 
 export default class InsightStep extends Component {
   style = style;
