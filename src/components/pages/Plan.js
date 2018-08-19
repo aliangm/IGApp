@@ -314,22 +314,29 @@ export default class Plan extends Component {
     });
   }
 
+  manipulatePlanBudgets = (planBudgets, manipulateFunctions) => {
+    return planBudgets.map((month) => {
+      const newMonth = {};
+
+      Object.keys(month).forEach(channelKey => {
+        newMonth[channelKey] = manipulateFunctions(month[channelKey]);
+      });
+
+      return newMonth;
+    });
+  };
+
   planWithConstraints = (constraints) => {
     return new Promise((resolve, reject) => {
       const planBudgets = this.getPlanBudgets();
-      const normalizedBudgets = planBudgets.map((month) => {
-        const newMonth = {};
-        Object.keys(month).forEach(channelKey => {
-          const currentMonthBudget = month[channelKey];
-          newMonth[channelKey] = {
-            ...currentMonthBudget,
-            committedBudget: (currentMonthBudget.committedBudget === -1 || currentMonthBudget.committedBudget === null)
-              ? 0
-              : currentMonthBudget.committedBudget
-          };
-        });
 
-        return newMonth;
+      const normalizedBudgets = this.manipulatePlanBudgets(planBudgets, (channelData) => {
+        return {
+          ...channelData,
+          committedBudget: (channelData.committedBudget === -1 || channelData.committedBudget === null)
+            ? 0
+            : channelData.committedBudget
+        };
       });
 
       const planWithLockedChannles = this.applyLockOnChannels(normalizedBudgets,
@@ -355,17 +362,11 @@ export default class Plan extends Component {
   };
 
   applyAllPlannerSuggestions = (planBudgets) => {
-    return planBudgets.map(month => {
-      const newMonth = {};
-
-      Object.keys(month).forEach((channelKey) => {
-        newMonth[channelKey] = {
-          ...month[channelKey],
-          committedBudget: month[channelKey].plannerBudget
-        };
-      });
-
-      return newMonth;
+    return this.manipulatePlanBudgets(planBudgets, (channelData) => {
+      return {
+        ...channelData,
+        committedBudget: channelData.plannerBudget
+      };
     });
   };
 
