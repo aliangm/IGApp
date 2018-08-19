@@ -203,7 +203,7 @@ export default class Overview extends Component {
 
     const data = channelCategoriesPerMonth.map((month, index) => {
 
-      month.name = months[index].name;
+      month.name = months[index];
       return month;
     });
 
