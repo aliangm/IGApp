@@ -29,7 +29,8 @@ export default class Button extends Component {
                 role="button"
                 tabIndex={0}
                 style={this.props.style}
-                onClick={this.props.onClick}
+                onClick={this.props.disabled ? null : this.props.onClick}
+                data-disabled={this.props.disabled ? true : null}
                 data-selected={this.props.selected || null}
     >
       {this.props.icon ?

@@ -41,7 +41,8 @@ class AppComponent extends Component {
       addNotification: this.addNotification.bind(this),
       plan: this.plan.bind(this),
       forecast: this.forecast.bind(this),
-      calculateAttributionData: this.calculateAttributionData.bind(this)
+      calculateAttributionData: this.calculateAttributionData.bind(this),
+      optimalImprovementPlan: this.optimalImprovementPlan.bind(this)
     };
   }
 
@@ -505,9 +506,28 @@ class AppComponent extends Component {
       });
   }
 
-  plan(isCommitted, preferences, region, silent) {
+  optimalImprovementPlan(isCommitted, preferences, region, silent, improveMaxChanges) {
+    const plannerControls = {
+      optimizeScenarios: improveMaxChanges ? {
+        optimalImprovement: {
+          params: {
+            improveMaxChanges: improveMaxChanges
+          }
+        }
+      } : null,
+      systemControls: {
+        optimizeControl: {
+          scenario: "optimalImprovement"
+        }
+      }
+    };
+
+    return this.plan(isCommitted, preferences, region, silent, plannerControls);
+  }
+
+  plan(isCommitted, preferences, region, silent, plannerControls = null) {
     const deferred = q.defer();
-    let body = preferences ? JSON.stringify(preferences) : null;
+    let body = preferences || plannerControls ? JSON.stringify({preferences, plannerControls}) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     if (!silent) {
       this.setState({

@@ -18,6 +18,10 @@ import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
+import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
+import intersection from 'lodash/intersection';
+import union from 'lodash/union';
+import maxBy from 'lodash/maxBy';
 
 export default class Plan extends Component {
 
@@ -37,7 +41,8 @@ export default class Plan extends Component {
       editMode: false,
       interactiveMode: false,
       showNewScenarioPopup: false,
-      scrollEvent: null
+      scrollEvent: null,
+      showOptimizationPopup: false
     };
   }
 
@@ -129,7 +134,7 @@ export default class Plan extends Component {
             }
             else {
               object[channelKey] = {
-                committedBudget: primaryBudget,
+                committedBudget: primaryBudget || -1,
                 userBudgetConstraint: isConstraint ? budgetConstraint : -1,
                 isSoft: isConstraint ? isSoft : false
               };
@@ -185,8 +190,12 @@ export default class Plan extends Component {
 
   editCommittedBudget = (month, channelKey, newBudget) => {
     const budgetsData = [...this.state.budgetsData];
-    const secondary = budgetsData[month].channels[channelKey] && budgetsData[month].channels[channelKey].secondaryBudget;
-    const alreadyHardConstraint = budgetsData[month].channels[channelKey] && budgetsData[month].channels[channelKey].isConstraint && budgetsData[month].channels[channelKey].isSoft === false;
+    const secondary = budgetsData[month].channels[channelKey] &&
+      budgetsData[month].channels[channelKey].secondaryBudget;
+    const alreadyHardConstraint = budgetsData[month].channels[channelKey] &&
+      budgetsData[month].channels[channelKey].isConstraint &&
+      budgetsData[month].channels[channelKey].isSoft ===
+      false;
     budgetsData[month].channels[channelKey] = {
       secondaryBudget: secondary || 0,
       primaryBudget: newBudget,
@@ -289,14 +298,123 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
+  applyLockOnChannels = (planBudgets, lockedChannels) => {
+    return planBudgets.map((month) => {
+      const newMonth = {...month};
+
+      // Applying lock only for channels that actually exists in this month
+      intersection(lockedChannels, Object.keys(month)).forEach(channelKey => {
+        const channelBudget = newMonth[channelKey];
+        newMonth[channelKey] = {
+          ...channelBudget,
+          userBudgetConstraint: channelBudget.committedBudget,
+          isSoft: false
+        };
+      });
+
+      return newMonth;
+    });
+  };
+
+  manipulatePlanBudgets = (planBudgets, manipulateFunctions) => {
+    return planBudgets.map((month) => {
+      const newMonth = {};
+
+      Object.keys(month).forEach(channelKey => {
+        newMonth[channelKey] = manipulateFunctions(month[channelKey]);
+      });
+
+      return newMonth;
+    });
+  };
+
+  planWithConstraints = (constraints) => {
+    return new Promise((resolve, reject) => {
+      const planBudgets = this.getPlanBudgets();
+
+      const normalizedBudgets = this.manipulatePlanBudgets(planBudgets, (channelData) => {
+        return {
+          ...channelData,
+          committedBudget: (!channelData.committedBudget || channelData.committedBudget === -1)
+            ? 0
+            : channelData.committedBudget
+        };
+      });
+
+      const planWithLockedChannles = this.applyLockOnChannels(normalizedBudgets,
+        constraints.channelsToLock);
+
+      this.props.optimalImprovementPlan(false, {
+          planBudgets: planWithLockedChannles
+        },
+        this.props.region,
+        false,
+        constraints.channelsLimit)
+        .then(data => {
+          const changesObject = this.getChangesObjectFromPlan(data);
+
+          resolve({
+            ...changesObject,
+            commitPlanBudgets: () => this.props.updateUserMonthPlan({planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)},
+              this.props.region,
+              this.props.planDate)
+          });
+        });
+    });
+  };
+
+  applyAllPlannerSuggestions = (planBudgets) => {
+    return this.manipulatePlanBudgets(planBudgets, (channelData) => {
+      return {
+        ...channelData,
+        committedBudget: channelData.plannerBudget
+      };
+    });
+  };
+
+  getChangesObjectFromPlan = ({planBudgets, forecastedIndicators}) => {
+    const suggestions = union(...planBudgets.map((month, monthKey) => {
+      return Object.keys(month).map((channelKey) => {
+        return {
+          channel: channelKey,
+          monthKey: monthKey,
+          fromBudget: month[channelKey].committedBudget || 0,
+          toBudget: month[channelKey].plannerBudget
+        };
+      })
+        .filter((data) => data.fromBudget !== data.toBudget);
+    }));
+
+    const objectivesKeys = this.props.calculatedData.objectives.collapsedObjectives.map((objective) => objective.indicator);
+    const latestMonthWithSuggestion = maxBy(suggestions, suggestion => suggestion.monthKey).monthKey;
+
+    const parsedForecasting = forecastedIndicators.map((month, monthKey) => {
+      return Object.keys(month).map((indicatorKey) => {
+        return {
+          indicator: indicatorKey,
+          monthKey: monthKey,
+          committed: month[indicatorKey].committed,
+          ifApproved: month[indicatorKey].planner
+        };
+      })
+        .filter((data) => data.ifApproved &&
+          data.committed !==
+          data.ifApproved &&
+          data.monthKey <= latestMonthWithSuggestion &&
+          objectivesKeys.includes(data.indicator));
+    });
+
+    return {channelsArray: suggestions, forecastedIndicators: union(...parsedForecasting)};
+  };
+
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
     const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
-          return merge(object, item);
-        }
-        , {}));
+        return merge(object, item);
+      }
+      , {}));
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => {
@@ -322,22 +440,34 @@ export default class Plan extends Component {
         <div className={this.classes.head}>
           <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
             <div className={this.classes.headTitle}>Plan</div>
-            {annualTabActive && interactiveMode && !editMode ?
-              <FeatureToggle featureName="plannerAI">
-                <div style={{display: 'flex'}}>
-                  <div className={this.classes.error}>
-                    <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade,
-                      click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
-                               target='_blank'>here</a>
-                    </label>
+            {(annualTabActive && !editMode) ?
+              interactiveMode ?
+                <FeatureToggle featureName="plannerAI">
+                  <div style={{display: 'flex'}}>
+                    <div className={this.classes.error}>
+                      <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To
+                        upgrade,
+                        click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
+                                 target='_blank'>here</a>
+                      </label>
+                    </div>
+                    <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                                  onClick={this.planAndSetBudgets}
+                                  planNeedsUpdate={this.props.planNeedsUpdate}/>
                   </div>
-                  <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
-                                onClick={this.planAndSetBudgets}
-                                planNeedsUpdate={this.props.planNeedsUpdate}/>
-                </div>
-              </FeatureToggle>
-              : null
-            }
+                </FeatureToggle>
+                :
+                <Button type="primary"
+                        style={{
+                          marginLeft: '15px',
+                          width: '135px'
+                        }}
+                        onClick={() => {
+                          this.setState({showOptimizationPopup: true});
+                        }}>
+                  Get Suggestions
+                </Button>
+              : null}
           </div>
           <div className={this.classes.column} style={{justifyContent: 'center'}}>
             <BudgetLeftToPlan annualBudget={annualBudget} annualBudgetLeftToPlan={annualBudgetLeftToPlan}/>
@@ -397,7 +527,9 @@ export default class Plan extends Component {
                       New Scenario
                     </Button>
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
-                                      onClose={() => { this.setState({showNewScenarioPopup: false}) }}
+                                      onClose={() => {
+                                        this.setState({showNewScenarioPopup: false});
+                                      }}
                                       onCommittedClick={() => {
                                         this.setState({interactiveMode: true, showNewScenarioPopup: false});
                                         this.setCommittedBudgetsAsSoftConstraints();
@@ -471,6 +603,13 @@ export default class Plan extends Component {
             </div>
           </div>
         </div>
+        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup}
+                               planDate={this.props.planDate}
+                               onClose={() => {
+                                 this.setState({showOptimizationPopup: false});
+                               }}
+                               planWithConstraints={this.planWithConstraints}
+        />
         {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
           <div className={this.classes.wrap}>
             <div className={this.classes.serverDown}>
