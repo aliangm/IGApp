@@ -174,7 +174,7 @@ export default class PlanOptimizationPopup extends Component {
           channelsToLock: this.getChannelsLockOptions()
         }
       },
-      this.runPlannerWithConstraints(callback)
+      () => this.runPlannerWithConstraints(callback)
     );
   };
 
