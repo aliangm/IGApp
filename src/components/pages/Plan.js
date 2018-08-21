@@ -203,7 +203,12 @@ export default class Plan extends Component {
       isConstraint: true,
       isSoft: !alreadyHardConstraint
     };
-    this.setState({budgetsData: budgetsData});
+
+    this.setState({budgetsData: budgetsData}, () => {
+      if (!this.state.interactiveMode && !this.state.editMode) {
+        this.commitChanges();
+      }
+    });
   };
 
   changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = false) => {
