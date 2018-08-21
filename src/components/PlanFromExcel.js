@@ -40,6 +40,7 @@ export default class PlanFromExcel extends Component {
                   firstTime[cellIndex - 2] = false;
                 }
                 planBudgets[cellIndex - 2][channel] = {
+                  isSoft: false,
                   committedBudget: budget,
                   userBudgetConstraint: -1
                 }
