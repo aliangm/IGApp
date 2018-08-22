@@ -22,7 +22,7 @@ import PlanFromExcel from 'components/PlanFromExcel';
 import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
-import {getIndicatorsWithProps, getNickname, getMetadata} from 'components/utils/indicators';
+import {getIndicatorsWithProps, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
@@ -271,7 +271,6 @@ export default class Preferences extends Component {
             isTarget: objectiveData.isTarget,
             amount: objectiveData.amount,
             recurrentType: objectiveData.recurrentType,
-            nickname: getNickname(objective),
             recurrentArray: recurrentArray
           }
         };
