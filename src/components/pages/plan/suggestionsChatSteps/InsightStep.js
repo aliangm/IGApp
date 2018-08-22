@@ -11,9 +11,13 @@ export default class InsightStep extends Component {
     plan: PropTypes.any.isRequired
   };
 
+  componentWillMount(){
+    this.insightData = this.props.getInsightData && this.props.getInsightData();
+  }
+
   render() {
-    const {getInsightData, planDate} = this.props;
-    const {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets} = getInsightData && getInsightData();
+    const {planDate} = this.props;
+    const {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets} = this.insightData;
     return <div className={this.classes.optionsWrapper}>
       <InsightItem fromChannels={fromChannels}
                    toChannels={toChannels}
