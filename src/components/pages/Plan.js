@@ -22,6 +22,7 @@ import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
 import intersection from 'lodash/intersection';
 import union from 'lodash/union';
 import maxBy from 'lodash/maxBy';
+import isNil from 'lodash/isNil';
 
 export default class Plan extends Component {
 
@@ -74,7 +75,7 @@ export default class Plan extends Component {
         channelsObject[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: committedBudget,
-          isConstraint: withConstraints ? userBudgetConstraint !== -1 : false,
+          isConstraint: withConstraints ? !isNil(userBudgetConstraint) : false,
           budgetConstraint: withConstraints ? committedBudget : null,
           isSoft: withConstraints ? isSoft : false
         };
@@ -134,8 +135,8 @@ export default class Plan extends Component {
             }
             else {
               object[channelKey] = {
-                committedBudget: primaryBudget || -1,
-                userBudgetConstraint: isConstraint ? budgetConstraint : -1,
+                committedBudget: primaryBudget,
+                userBudgetConstraint: isConstraint ? budgetConstraint : null,
                 isSoft: isConstraint ? isSoft : false
               };
             }
@@ -340,9 +341,7 @@ export default class Plan extends Component {
       const normalizedBudgets = this.manipulatePlanBudgets(planBudgets, (channelData) => {
         return {
           ...channelData,
-          committedBudget: (!channelData.committedBudget || channelData.committedBudget === -1)
-            ? 0
-            : channelData.committedBudget
+          committedBudget: !channelData.committedBudget ? 0 : channelData.committedBudget
         };
       });
 

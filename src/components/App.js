@@ -405,6 +405,10 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  setPartialDataAsState = (data) => {
+    this.setState(data);
+  };
+
   setDataAsState(data) {
     this.setState({
       dataUpdated: true,
@@ -552,6 +556,7 @@ class AppComponent extends Component {
                       isPlannerError: false
                     });
                   }
+                  this.setPartialDataAsState({numberOfPlanUpdates: data.numberOfPlanUpdates});
                   deferred.resolve(data);
                 }
               }
