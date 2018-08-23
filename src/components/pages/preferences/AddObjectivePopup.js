@@ -156,12 +156,6 @@ export default class AddObjectivePopup extends Component {
       this.setState({amount: parseInt(e.target.value)}, this.calculateTargetValue);
     }} style={{width: '102px'}}/>;
 
-    const objectiveOptions = [...this.props.objectivesOptions];
-    // Edit of objective, add the current objective to options
-    if (this.state.indicator && !objectiveOptions.find(item => item.value === this.state.indicator)) {
-      objectiveOptions.unshift({value: this.state.indicator, label: getNickname(this.state.indicator)});
-    }
-
     return <div hidden={this.props.hidden}>
       {this.state.notSure ?
         <Page popup={true} width={'600px'} contentClassName={popupStyle.locals.content}
@@ -300,7 +294,7 @@ export default class AddObjectivePopup extends Component {
                 selected={this.state.indicator}
                 select={{
                   placeholder: 'KPI',
-                  options: objectiveOptions
+                  options: this.props.objectivesOptions
                 }}
                 onChange={(e) => {
                   this.setState({indicator: e.value}, this.calculateTargetValue);

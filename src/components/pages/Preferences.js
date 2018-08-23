@@ -404,7 +404,8 @@ export default class Preferences extends Component {
 
     const indicatorsWithProps = getIndicatorsWithProps();
     const objectiveOptions = Object.keys(indicatorsWithProps)
-      .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective && !objectivesData.find(item => item.indicator === indicatorKey))
+      .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective &&
+        !objectivesData.find(item => item.indicator === indicatorKey && (this.state.objectivePopupData.objective ? item.indicator !== this.state.objectivePopupData.objective : true)))
       .map(indicatorKey => {
         return {value: indicatorKey, label: indicatorsWithProps[indicatorKey].nickname};
       });
