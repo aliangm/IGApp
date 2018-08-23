@@ -229,7 +229,7 @@ export default class Preferences extends Component {
         }
       }
 
-      const isEdit = !!(originalObjective && !isNil(originalMonthIndex));
+      const isEdit = !!originalObjective && !isNil(originalMonthIndex);
 
       // objective edit of month or indicator
       if (isEdit && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
