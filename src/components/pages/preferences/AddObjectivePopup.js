@@ -96,7 +96,7 @@ export default class AddObjectivePopup extends Component {
   }
 
   calculateTargetValue() {
-    const isDirectionUp = getMetadata('isDirectionUp', this.state.indicator);
+    const isDirectionUp = this.state.indicator && getMetadata('isDirectionUp', this.state.indicator);
     let targetValue;
     if (this.state.isTarget) {
       targetValue = this.state.amount;

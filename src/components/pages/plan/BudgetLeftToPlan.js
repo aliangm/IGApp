@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/plan/budget-left-to-plan.css';
 import {formatNumber} from 'components/utils/budget';
 
-export default class Popup extends Component {
+export default class BudgetLeftToPlan extends Component {
 
   style = style;
 
@@ -14,8 +14,10 @@ export default class Popup extends Component {
 
   render() {
     const {annualBudget, annualBudgetLeftToPlan} = this.props;
+    const totalWidth = 216;
 
-    const lineWidth = 216 * (annualBudgetLeftToPlan >= 0 ? Math.round(annualBudgetLeftToPlan / annualBudget) : 1);
+    const lineWidth = Math.round(totalWidth *
+      (1 - (annualBudgetLeftToPlan >= 0 ? annualBudgetLeftToPlan / annualBudget : 0)));
 
     return <div>
       <div className={this.classes.upperText}>

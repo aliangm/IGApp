@@ -22,7 +22,7 @@ import PlanFromExcel from 'components/PlanFromExcel';
 import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
-import {getIndicatorsWithProps, getNickname, getMetadata} from 'components/utils/indicators';
+import {getIndicatorsWithProps, getMetadata} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
@@ -229,8 +229,10 @@ export default class Preferences extends Component {
         }
       }
 
+      const isEdit = !!originalObjective && !isNil(originalMonthIndex);
+
       // objective edit of month or indicator
-      if (!isNil(originalMonthIndex) && originalObjective && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
+      if (isEdit && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
         objectives[monthIndex][objective] = objectives[originalMonthIndex][originalObjective];
         delete objectives[originalMonthIndex][originalObjective];
       }
@@ -248,12 +250,13 @@ export default class Preferences extends Component {
         };
       }
 
-      // not the default priority, need to replace
-      if (objectiveData.priority !== this.props.calculatedData.objectives.objectivesData.length) {
+      // not the expected priority, need to replace
+      const expectedPriority = isEdit ? objectives[monthIndex][objective].target.priority : this.props.calculatedData.objectives.objectivesData.length;
+      if (objectiveData.priority !== expectedPriority) {
         const previous = this.props.calculatedData.objectives.objectivesData.find(item => item.priority === objectiveData.priority);
         if (previous) {
           const {monthIndex, indicator} = previous;
-          objectives[monthIndex][indicator].target.priority = this.props.calculatedData.objectives.objectivesData.length;
+          objectives[monthIndex][indicator].target.priority = expectedPriority;
         }
       }
       const targetValue = objectiveData.isRecurrent ? recurrentArray.find(item => item !== -1) : objectiveData.targetValue;
@@ -271,7 +274,6 @@ export default class Preferences extends Component {
             isTarget: objectiveData.isTarget,
             amount: objectiveData.amount,
             recurrentType: objectiveData.recurrentType,
-            nickname: getNickname(objective),
             recurrentArray: recurrentArray
           }
         };
@@ -402,7 +404,8 @@ export default class Preferences extends Component {
 
     const indicatorsWithProps = getIndicatorsWithProps();
     const objectiveOptions = Object.keys(indicatorsWithProps)
-      .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective && !objectivesData.find(item => item.indicator === indicatorKey))
+      .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective &&
+        !objectivesData.find(item => item.indicator === indicatorKey && (this.state.objectivePopupData.objective ? item.indicator !== this.state.objectivePopupData.objective : true)))
       .map(indicatorKey => {
         return {value: indicatorKey, label: indicatorsWithProps[indicatorKey].nickname};
       });

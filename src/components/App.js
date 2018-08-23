@@ -552,6 +552,10 @@ class AppComponent extends Component {
                       isPlannerError: false
                     });
                   }
+                  this.updateState({
+                    numberOfPlanUpdates: data.numberOfPlanUpdates,
+                    unsaved: false
+                  });
                   deferred.resolve(data);
                 }
               }
