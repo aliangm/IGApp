@@ -100,7 +100,7 @@ export default class Plan extends Component {
         };
       });
     });
-    this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]});
+    this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]}, this.forecastPlans);
   };
 
   componentWillReceiveProps(nextProps) {
@@ -169,6 +169,51 @@ export default class Plan extends Component {
       });
   };
 
+  forecastPlans = () => {
+    const {primaryBudgets, secondaryBudgets} = this.getPlansFromBudgetsData();
+
+    this.props.forecast(primaryBudgets)
+      .then((data) => this.setState({primaryForecast: data}));
+
+    this.props.forecast(secondaryBudgets)
+      .then((data) => this.setState({secondaryForecast: data}));
+  };
+
+
+  getPlansFromBudgetsData = () => {
+
+    const channels = this.state.budgetsData
+      .filter(item => !item.isHistory)
+      .map(item => item.channels);
+
+    const primaryBudgets = new Array(channels.length);
+    const secondaryBudgets = new Array(channels.length);
+
+    channels.forEach((month, monthKey) => {
+      const primaryMonth = {};
+      const secondaryMonth = {};
+
+      Object.keys(month)
+        .filter(channelKey => !isUnknownChannel(channelKey))
+        .forEach(channelKey => {
+          const {primaryBudget, secondaryBudget} = month[channelKey];
+          primaryMonth[channelKey] = {
+            committedBudget: primaryBudget || null
+          };
+
+          secondaryMonth[channelKey] = {
+            committedBudget: !isNil(secondaryBudget) ? secondaryBudget : primaryMonth[channelKey].committedBudget
+          };
+
+        });
+
+      primaryBudgets[monthKey] = primaryMonth;
+      secondaryBudgets[monthKey] = secondaryMonth;
+    });
+
+    return {primaryBudgets, secondaryBudgets};
+  };
+
   deleteChannel = (channelKey) => {
     const budgetsData = this.state.budgetsData
       .map(month => {
@@ -206,6 +251,8 @@ export default class Plan extends Component {
     };
 
     this.setState({budgetsData: budgetsData}, () => {
+      this.forecastPlans();
+
       if (!this.state.interactiveMode && !this.state.editMode) {
         this.commitChanges();
       }
