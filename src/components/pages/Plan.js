@@ -57,7 +57,7 @@ export default class Plan extends Component {
           .then(data => {
             this.props.setDataAsState(data);
             this.setBudgetsData(data.planBudgets);
-            this.setState({primaryPlanForecastedIndicators: parsePlannerForecasting(data.forecastedIndicators)});
+            this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
           });
       }
       else {
@@ -480,6 +480,7 @@ export default class Plan extends Component {
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
+          secondaryPlanForecastedIndicators: this.state.editMode || this.state.interactiveMode ? this.props.forecastedIndicators : null,
           onPageScrollEventRegister: ((onPageScroll) => {
             this.setState({scrollEvent: onPageScroll});
           })

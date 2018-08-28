@@ -45,7 +45,7 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {budgetsData, planDate, editMode, interactiveMode, forecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}} ,historyData: {indicators}} = this.props;
+    const {budgetsData, planDate, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
 
     const forecastingData = [];
 
@@ -56,17 +56,34 @@ export default class AnnualTab extends Component {
       return `${date.getDate()} ${monthStr} ${year}`;
     };
 
+    const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators && secondaryPlanForecastedIndicators.length !== 0;
+
     const futureDates = getDates(planDate);
-    forecastedIndicators.forEach((item, index) => {
+    primaryPlanForecastedIndicators.forEach((month, monthIndex) => {
       const json = {};
-      Object.keys(item).forEach(key => {
-        json[key] = item[key].committed;
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].committed;
       });
-      forecastingData.push({...json, name: getEndOfMonth(futureDates[index])});
+
+      if (showSecondaryIndicatorGraph) {
+        Object.keys(secondaryPlanForecastedIndicators[monthIndex]).forEach((key) => {
+          json[key+'Suggested'] = secondaryPlanForecastedIndicators[monthIndex][key].committed;
+        });
+      }
+
+      forecastingData.push({...json, name: getEndOfMonth(futureDates[monthIndex])});
     });
 
     const pastDates = getDates(planDate, true, false);
-    indicators.forEach((json, index) => {
+    indicators.forEach((month, index) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key];
+        if(showSecondaryIndicatorGraph){
+          json[key+'Suggested'] = json[key];
+        }
+      });
+
       forecastingData.unshift({...json, name: getEndOfMonth(pastDates[pastDates.length - 1 - index])});
     });
 

@@ -168,9 +168,19 @@ export default class IndicatorsGraph extends Component {
       const currentIndex = this.props.data.findIndex(month => month.name === data.label);
       const prevIndex = currentIndex - 1;
       if (data.active && data.payload && data.payload.length > 0) {
+        const parsedIndicators = data.payload.filter((item) => !item.dataKey.includes('Suggested'))
+          .map((item) => {
+            const secondaryItem = data.payload.find((secondaryItem) => secondaryItem.dataKey == item.dataKey + 'Suggested');
+            return {
+              ...item,
+              secondaryValue: secondaryItem ? secondaryItem.value : null
+            };
+          });
+
         return <div className={this.classes.customTooltip}>
           {
-            data.payload.map((item, index) => {
+
+            parsedIndicators.map((item, index) => {
               const indicator = item.dataKey;
               const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
               if (item.value && !item.dataKey.includes('Suggested')) {
@@ -178,8 +188,19 @@ export default class IndicatorsGraph extends Component {
                   <div className={this.classes.customTooltipIndicator}>
                     {indicatorsMapping[indicator]}
                   </div>
-                  <div className={this.classes.customTooltipValue} style={{color: COLORS[colorIndex % COLORS.length]}}>
-                    {formatNumber(item.value)}
+                  <div className={this.classes.customTooltipValues}>
+                    <div className={this.classes.customTooltipValue} style={{color: COLORS[colorIndex % COLORS.length]}}>
+                      {formatNumber(item.value)}
+                    </div>
+                    {item.secondaryValue ?
+                      <div className={this.classes.customTooltipValue}
+                           style={{
+                             color: COLORS[colorIndex % COLORS.length],
+                             opacity: '0.8'
+                           }}>
+                        {formatNumber(item.secondaryValue)}
+                      </div> : null
+                    }
                   </div>
                   {this.props.objectives[indicator] !== undefined &&
                   this.props.objectives[indicator].x === data.label ?

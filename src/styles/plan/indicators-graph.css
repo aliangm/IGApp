@@ -84,6 +84,11 @@
     font-size: 12px;
     font-weight: 600;
     color: #84b3ff;
+    margin-right: 27px;
+}
+
+.custom-tooltip-values {
+    display: inline-flex;
 }
 
 .custom-tooltip-objective {
