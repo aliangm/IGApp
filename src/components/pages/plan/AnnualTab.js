@@ -45,7 +45,7 @@ export default class AnnualTab extends Component {
     const {budgetsData, planDate, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
 
     const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators &&
-      secondaryPlanForecastedIndicators.length !== 0;
+      secondaryPlanForecastedIndicators.length > 0;
 
     const parsedObjectives = {};
     objectivesData
