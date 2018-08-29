@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
@@ -91,7 +91,7 @@ export default class IndicatorsGraph extends Component {
 
       if (this.props.dashedLineData) {
         Object.keys(this.props.dashedLineData[monthIndex]).forEach((key) => {
-          json[key+DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
+          json[key + DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
         });
       }
 
@@ -105,7 +105,7 @@ export default class IndicatorsGraph extends Component {
         json[key] = month[key];
 
         if (this.props.dashedLineData) {
-          json[key+DASHED_KEY_SUFFIX] = json[key];
+          json[key + DASHED_KEY_SUFFIX] = json[key];
         }
       });
 
@@ -302,6 +302,8 @@ export default class IndicatorsGraph extends Component {
                  tickMargin={21}
                  interval={0}/>
           {dots}
+          <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
+                  wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
           <Tooltip content={tooltip} offset={0}/>
           {defs}
           {areas}
@@ -311,3 +313,26 @@ export default class IndicatorsGraph extends Component {
     </div>;
   }
 };
+
+class CustomizedLegend extends Component {
+
+  style = style;
+
+  render() {
+    return this.props.hidden ? null :
+      <div style={{display: 'flex'}}>
+        <div style={{display: 'flex'}}>
+          <div className={this.classes.legendIcon}/>
+          <div className={this.classes.legendText}>
+            Committed
+          </div>
+        </div>
+        <div style={{display: 'flex'}}>
+          <div className={this.classes.legendIconDashed}/>
+          <div className={this.classes.legendText}>
+            New Scenario
+          </div>
+        </div>
+      </div>;
+  }
+}
