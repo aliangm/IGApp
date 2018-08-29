@@ -36,3 +36,10 @@ export function getEndOfMonthDate(dateStr) {
   const month = monthNames.indexOf(monthStr);
   return new Date(parseInt(`20${year}`), month + 1, 0);
 }
+
+export function getEndOfMonthString(dateStr) {
+  const [monthStr, year] = dateStr.split(' ');
+  const month = monthNames.indexOf(monthStr);
+  const date = new Date(year, month + 1, 0);
+  return `${date.getDate()} ${monthStr} ${year}`;
+}

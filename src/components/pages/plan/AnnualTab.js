@@ -4,11 +4,8 @@ import style from 'styles/plan/annual-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
-import {timeFrameToDate} from 'components/utils/objective';
-import {formatNumber} from 'components/utils/budget';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getDates} from 'components/utils/date';
-import {getIndicatorsWithProps} from 'components/utils/indicators';
+import {monthNames, getEndOfMonthString} from 'components/utils/date';
 
 const CELL_WIDTH = 140;
 
@@ -47,51 +44,8 @@ export default class AnnualTab extends Component {
   render() {
     const {budgetsData, planDate, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
 
-    const forecastingData = [];
-
-    const getEndOfMonth = (dateStr) => {
-      const [monthStr, year] = dateStr.split(' ');
-      const month = monthNames.indexOf(monthStr);
-      const date = new Date(year, month + 1, 0);
-      return `${date.getDate()} ${monthStr} ${year}`;
-    };
-
-    const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators && secondaryPlanForecastedIndicators.length !== 0;
-
-    const futureDates = getDates(planDate);
-    primaryPlanForecastedIndicators.forEach((month, monthIndex) => {
-      const json = {};
-      Object.keys(month).forEach(key => {
-        json[key] = month[key].committed;
-      });
-
-      if (showSecondaryIndicatorGraph) {
-        Object.keys(secondaryPlanForecastedIndicators[monthIndex]).forEach((key) => {
-          json[key+'Suggested'] = secondaryPlanForecastedIndicators[monthIndex][key].committed;
-        });
-      }
-
-      forecastingData.push({...json, name: getEndOfMonth(futureDates[monthIndex])});
-    });
-
-    const pastDates = getDates(planDate, true, false);
-    indicators.forEach((month, index) => {
-      const json = {};
-      Object.keys(month).forEach(key => {
-        json[key] = month[key];
-        if(showSecondaryIndicatorGraph){
-          json[key+'Suggested'] = json[key];
-        }
-      });
-
-      forecastingData.unshift({...json, name: getEndOfMonth(pastDates[pastDates.length - 1 - index])});
-    });
-
-    const zeroedIndicators = {};
-    Object.keys(getIndicatorsWithProps()).forEach(key => {
-      zeroedIndicators[key] = 0;
-    });
-    forecastingData.unshift({...zeroedIndicators, name: ''});
+    const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators &&
+      secondaryPlanForecastedIndicators.length !== 0;
 
     const parsedObjectives = {};
     objectivesData
@@ -99,7 +53,7 @@ export default class AnnualTab extends Component {
         const target = objective.target;
         const date = objective.dueDate;
         const monthStr = monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2);
-        parsedObjectives[objective.indicator] = {x: getEndOfMonth(monthStr), y: target};
+        parsedObjectives[objective.indicator] = {x: getEndOfMonthString(monthStr), y: target};
       });
 
     return <div>
@@ -118,12 +72,16 @@ export default class AnnualTab extends Component {
           />
 
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph data={forecastingData}
-                             objectives={parsedObjectives}
+            <IndicatorsGraph objectives={parsedObjectives}
                              dimensions={this.state.graphDimensions}
                              changeScrollPosition={this.changeScrollPosition}
                              scrollPosition={this.state.scrollPosition}
-                             cellWidth={CELL_WIDTH}/>
+                             cellWidth={CELL_WIDTH}
+                             mainLineData={showSecondaryIndicatorGraph ? secondaryPlanForecastedIndicators : primaryPlanForecastedIndicators}
+                             dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
+                             pastIndicators={indicators}
+                             planDate={planDate}
+            />
           </div>
         </div>
       </div>
