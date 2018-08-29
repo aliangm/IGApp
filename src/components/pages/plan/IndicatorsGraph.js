@@ -183,7 +183,7 @@ export default class IndicatorsGraph extends Component {
                    strokeWidth={2}/>;
     });
 
-    const dashedLines = this.state.checkedIndicators.map((indicator) => {
+    const dashedAreas = this.state.checkedIndicators.map((indicator) => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator + 1}
                    type='monotone'
@@ -307,7 +307,7 @@ export default class IndicatorsGraph extends Component {
           <Tooltip content={tooltip} offset={0}/>
           {defs}
           {areas}
-          {dashedLines}
+          {dashedAreas}
         </AreaChart>
       </div>
     </div>;
