@@ -43,7 +43,8 @@ export default class Plan extends Component {
       interactiveMode: false,
       showNewScenarioPopup: false,
       scrollEvent: null,
-      showOptimizationPopup: false
+      showOptimizationPopup: false,
+      primaryPlanForecastedIndicators: this.props.forecastedIndicators
     };
   }
 
@@ -56,6 +57,7 @@ export default class Plan extends Component {
           .then(data => {
             this.props.setDataAsState(data);
             this.setBudgetsData(data.planBudgets);
+            this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
           });
       }
       else {
@@ -66,6 +68,22 @@ export default class Plan extends Component {
       this.setBudgetsData();
     }
   }
+
+  parsePlannerForecasting = (forecastedIndicators) => {
+    return forecastedIndicators.map((month) => {
+      const newMonth = {};
+
+      Object.keys(month).forEach((indicator) => {
+        if (month[indicator].planner) {
+          newMonth[indicator] = {
+            committed: month[indicator].planner
+          };
+        }
+      });
+
+      return newMonth;
+    });
+  };
 
   setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
     const budgetsData = planBudgets.map(month => {
@@ -107,16 +125,17 @@ export default class Plan extends Component {
     this.getRelevantEvents(nextProps);
     if (!isEqual(nextProps.planBudgets, this.props.planBudgets)) {
       this.setBudgetsData(nextProps.planBudgets);
+      this.setState({primaryPlanForecastedIndicators: nextProps.forecastedIndicators});
     }
   }
 
   commitChanges = () => {
     const planBudgets = this.getPlanBudgets();
-    this.props.updateUserMonthPlan({
+    this.forecastAndUpdateUserMonthPlan({
       planBudgets: planBudgets,
       unknownChannels: this.getPlanBudgets(true),
       namesMapping: this.props.namesMapping
-    }, this.props.region, this.props.planDate);
+    }, this.state.primaryPlanForecastedIndicators);
   };
 
   getPlanBudgets = (unknownChannels = false) => {
@@ -166,6 +185,7 @@ export default class Plan extends Component {
     this.props.plan(true, {planBudgets: planBudgets}, this.props.region, false)
       .then(data => {
         this.setBudgetsData(data.planBudgets, true, true);
+        this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
       });
   };
 
@@ -206,9 +226,15 @@ export default class Plan extends Component {
     };
 
     this.setState({budgetsData: budgetsData}, () => {
-      if (!this.state.interactiveMode && !this.state.editMode) {
-        this.commitChanges();
-      }
+      this.props.forecast(this.getPlanBudgets())
+        .then((data) => {
+          this.setState({primaryPlanForecastedIndicators: data},
+            () => {
+              if (!this.state.interactiveMode && !this.state.editMode) {
+                this.commitChanges();
+              }
+            });
+        });
     });
   };
 
@@ -243,11 +269,11 @@ export default class Plan extends Component {
       return Promise.resolve();
     }
     else {
-      return this.props.updateUserMonthPlan({
+      return this.forecastAndUpdateUserMonthPlan({
         planBudgets: this.getPlanBudgets(),
         unknownChannels: this.getPlanBudgets(true),
         namesMapping: this.props.namesMapping
-      }, this.props.region, this.props.planDate);
+      });
     }
   };
 
@@ -359,9 +385,9 @@ export default class Plan extends Component {
 
           resolve({
             ...changesObject,
-            commitPlanBudgets: () => this.props.updateUserMonthPlan({planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)},
-              this.props.region,
-              this.props.planDate)
+            commitPlanBudgets: () => this.forecastAndUpdateUserMonthPlan({
+              planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)
+            })
           });
         });
     });
@@ -373,6 +399,30 @@ export default class Plan extends Component {
         ...channelData,
         committedBudget: channelData.plannerBudget
       };
+    });
+  };
+
+  forecastAndUpdateUserMonthPlan = ({planBudgets, ...userMonthPlan}, forecasting) => {
+    const updateMonthPlan = (forecasting) => {
+      return this.props.updateUserMonthPlan({
+        ...userMonthPlan,
+        planBudgets: planBudgets,
+        forecastedIndicators: forecasting
+      }, this.props.region, this.props.planDate);
+    };
+
+    return new Promise((resolve, reject) => {
+      if (!forecasting) {
+        this.props.forecast(planBudgets)
+          .then((data) => {
+            updateMonthPlan(data)
+              .then(() => resolve());
+          });
+      }
+      else {
+        updateMonthPlan(forecasting)
+          .then(() => resolve());
+      }
     });
   };
 
@@ -429,6 +479,9 @@ export default class Plan extends Component {
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
+          secondaryPlanForecastedIndicators: this.state.editMode || this.state.interactiveMode
+            ? this.props.forecastedIndicators
+            : null,
           onPageScrollEventRegister: ((onPageScroll) => {
             this.setState({scrollEvent: onPageScroll});
           })
@@ -498,6 +551,7 @@ export default class Plan extends Component {
                             onClick={() => {
                               this.setState({interactiveMode: false});
                               this.setBudgetsData();
+                              this.setState({primaryPlanForecastedIndicators: this.props.forecastedIndicators});
                             }}>
                       Cancel
                     </Button>
@@ -557,7 +611,6 @@ export default class Plan extends Component {
                             if (editMode) {
                               this.editUpdate()
                                 .then(() => {
-                                  this.props.forecast();
                                   if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
                                     this.props.updateUserAccount({'steps.plan': true});
                                   }

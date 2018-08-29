@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
@@ -9,6 +9,10 @@ import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
+import {getDates, getEndOfMonthString} from 'components/utils/date';
+
+const DASHED_OPACITY = '0.7';
+const DASHED_KEY_SUFFIX = '_DASEHD';
 
 export default class IndicatorsGraph extends Component {
 
@@ -75,6 +79,48 @@ export default class IndicatorsGraph extends Component {
   getTooltipContent = () => {
   };
 
+  getAreasData = () => {
+    const forecastingData = [];
+
+    const futureDates = getDates(this.props.planDate);
+    this.props.mainLineData.forEach((month, monthIndex) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].committed;
+      });
+
+      if (this.props.dashedLineData) {
+        Object.keys(this.props.dashedLineData[monthIndex]).forEach((key) => {
+          json[key + DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
+        });
+      }
+
+      forecastingData.push({...json, name: getEndOfMonthString(futureDates[monthIndex])});
+    });
+
+    const pastDates = getDates(this.props.planDate, true, false);
+    this.props.pastIndicators.forEach((month, index) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key];
+
+        if (this.props.dashedLineData) {
+          json[key + DASHED_KEY_SUFFIX] = json[key];
+        }
+      });
+
+      forecastingData.unshift({...json, name: getEndOfMonthString(pastDates[pastDates.length - 1 - index])});
+    });
+
+    const zeroedIndicators = {};
+    Object.keys(getIndicatorsWithProps()).forEach(key => {
+      zeroedIndicators[key] = 0;
+    });
+    forecastingData.unshift({...zeroedIndicators, name: ''});
+
+    return forecastingData;
+  };
+
   render() {
     const COLORS = [
       '#189aca',
@@ -100,6 +146,8 @@ export default class IndicatorsGraph extends Component {
       .forEach(item =>
         indicatorsMapping[item] = indicators[item].nickname
       );
+
+    const areaData = this.getAreasData();
 
     const menuItems = Object.keys(indicatorsMapping).map((indicator, index) =>
       <div className={this.classes.menuItem} key={indicator}>
@@ -135,16 +183,19 @@ export default class IndicatorsGraph extends Component {
                    strokeWidth={2}/>;
     });
 
-    const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
-      <Area key={indicator + 1}
-            type='monotone'
-            dataKey={indicator + 'Suggested'}
-            stroke={COLORS[index % COLORS.length]}
-            fill={COLORS[index % COLORS.length]}
-            strokeWidth={3}
-            strokeDasharray="7 11"
-            dot={{strokeDasharray: 'initial', fill: 'white'}}/>
-    );
+    const dashedAreas = this.state.checkedIndicators.map((indicator) => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <Area key={indicator + 1}
+                   type='monotone'
+                   isAnimationActive={false}
+                   dataKey={indicator + DASHED_KEY_SUFFIX}
+                   stroke={COLORS[index % COLORS.length]}
+                   strokeWidth={2}
+                   fill='transparent'
+                   strokeDasharray="7 11"
+                   style={{opacity: DASHED_OPACITY}}
+      />;
+    });
 
     const CustomizedLabel = React.createClass({
       render() {
@@ -165,21 +216,45 @@ export default class IndicatorsGraph extends Component {
     );
 
     const tooltip = (data) => {
-      const currentIndex = this.props.data.findIndex(month => month.name === data.label);
+      const currentIndex = areaData.findIndex(month => month.name === data.label);
       const prevIndex = currentIndex - 1;
       if (data.active && data.payload && data.payload.length > 0) {
+        const parsedIndicators = data.payload.filter((item) => !item.dataKey.includes(DASHED_KEY_SUFFIX))
+          .map((item) => {
+            const secondaryItem = data.payload.find((secondaryItem) => secondaryItem.dataKey ==
+              item.dataKey +
+              DASHED_KEY_SUFFIX);
+            return {
+              ...item,
+              secondaryValue: secondaryItem ? secondaryItem.value : null
+            };
+          });
+
         return <div className={this.classes.customTooltip}>
           {
-            data.payload.map((item, index) => {
+
+            parsedIndicators.map((item, index) => {
               const indicator = item.dataKey;
               const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
-              if (item.value && !item.dataKey.includes('Suggested')) {
+              if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
                 return <div key={index}>
                   <div className={this.classes.customTooltipIndicator}>
                     {indicatorsMapping[indicator]}
                   </div>
-                  <div className={this.classes.customTooltipValue} style={{color: COLORS[colorIndex % COLORS.length]}}>
-                    {formatNumber(item.value)}
+                  <div className={this.classes.customTooltipValues}>
+                    <div className={this.classes.customTooltipValue}
+                         style={{color: COLORS[colorIndex % COLORS.length]}}>
+                      {formatNumber(item.value)}
+                    </div>
+                    {item.secondaryValue ?
+                      <div className={this.classes.customTooltipValue}
+                           style={{
+                             color: COLORS[colorIndex % COLORS.length],
+                             opacity: DASHED_OPACITY
+                           }}>
+                        {formatNumber(item.secondaryValue)}
+                      </div> : null
+                    }
                   </div>
                   {this.props.objectives[indicator] !== undefined &&
                   this.props.objectives[indicator].x === data.label ?
@@ -206,7 +281,7 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart} ref='chart'>
-        <AreaChart data={this.props.data} height={400} width={70 + this.props.cellWidth * (this.props.data.length - 1)}
+        <AreaChart data={areaData} height={400} width={70 + this.props.cellWidth * (areaData.length - 1)}
                    margin={{top: 10, right: 25, left: 10, bottom: 21}}>
           <YAxis axisLine={false}
                  tickLine={false}
@@ -227,12 +302,37 @@ export default class IndicatorsGraph extends Component {
                  tickMargin={21}
                  interval={0}/>
           {dots}
+          <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
+                  wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
           <Tooltip content={tooltip} offset={0}/>
           {defs}
           {areas}
-          {suggestedLines}
+          {dashedAreas}
         </AreaChart>
       </div>
     </div>;
   }
 };
+
+class CustomizedLegend extends Component {
+
+  style = style;
+
+  render() {
+    return this.props.hidden ? null :
+      <div style={{display: 'flex'}}>
+        <div style={{display: 'flex'}}>
+          <div className={this.classes.legendIcon}/>
+          <div className={this.classes.legendText}>
+            Committed
+          </div>
+        </div>
+        <div style={{display: 'flex'}}>
+          <div className={this.classes.legendIconDashed}/>
+          <div className={this.classes.legendText}>
+            New Scenario
+          </div>
+        </div>
+      </div>;
+  }
+}

@@ -593,22 +593,19 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  forecast() {
-    this.plan(false, {useApprovedBudgets: true}, this.state.region, true)
-      .then(data => {
-        // PATCH
-        // Update user month plan using another request
-        const approvedBudgetsProjection = this.state.approvedBudgetsProjection;
-        data.projectedPlan.forEach((month, index) => {
-          if (!approvedBudgetsProjection[index]) {
-            approvedBudgetsProjection[index] = {};
+  forecast(planBudgets) {
+    return new Promise((resolve, reject) => {
+      serverCommunication.serverRequest('POST', 'forecast', JSON.stringify({...this.state, planBudgets: planBudgets}), this.state.region)
+        .then((response) => {
+          if(response.ok){
+            response.json()
+              .then((data) => resolve(data));
           }
-          approvedBudgetsProjection[index] = month.projectedIndicatorValues;
+          else{
+            reject();
+          }
         });
-        this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection},
-          this.state.region,
-          this.state.planDate);
-      });
+    })
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
