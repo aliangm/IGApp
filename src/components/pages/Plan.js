@@ -74,16 +74,15 @@ export default class Plan extends Component {
       const newMonth = {};
 
       Object.keys(month).forEach((indicator) => {
-        if (month[indicator].planner)
-        {
+        if (month[indicator].planner) {
           newMonth[indicator] = {
             committed: month[indicator].planner
-          }
+          };
         }
       });
 
       return newMonth;
-    })
+    });
   };
 
   setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
@@ -230,7 +229,7 @@ export default class Plan extends Component {
       this.props.forecast(this.getPlanBudgets())
         .then((data) => {
           this.setState({primaryPlanForecastedIndicators: data},
-            ()=> {
+            () => {
               if (!this.state.interactiveMode && !this.state.editMode) {
                 this.commitChanges();
               }
@@ -404,24 +403,24 @@ export default class Plan extends Component {
   };
 
   forecastAndUpdateUserMonthPlan = ({planBudgets, ...userMonthPlan}, forecasting) => {
+    const updateMonthPlan = (forecasting) => {
+      return this.props.updateUserMonthPlan({
+        ...userMonthPlan,
+        planBudgets: planBudgets,
+        forecastedIndicators: forecasting
+      }, this.props.region, this.props.planDate);
+    };
+
     return new Promise((resolve, reject) => {
       if (!forecasting) {
         this.props.forecast(planBudgets)
           .then((data) => {
-            this.props.updateUserMonthPlan({
-              ...userMonthPlan,
-              planBudgets: planBudgets,
-              forecastedIndicators: data
-            }, this.props.region, this.props.planDate)
+            updateMonthPlan(data)
               .then(() => resolve());
           });
       }
       else {
-        this.props.updateUserMonthPlan({
-          ...userMonthPlan,
-          planBudgets: planBudgets,
-          forecastedIndicators: forecasting
-        }, this.props.region, this.props.planDate)
+        updateMonthPlan(forecasting)
           .then(() => resolve());
       }
     });
@@ -480,7 +479,9 @@ export default class Plan extends Component {
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
-          secondaryPlanForecastedIndicators: this.state.editMode || this.state.interactiveMode ? this.props.forecastedIndicators : null,
+          secondaryPlanForecastedIndicators: this.state.editMode || this.state.interactiveMode
+            ? this.props.forecastedIndicators
+            : null,
           onPageScrollEventRegister: ((onPageScroll) => {
             this.setState({scrollEvent: onPageScroll});
           })
