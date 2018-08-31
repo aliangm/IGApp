@@ -50,13 +50,10 @@ export default class FloatingComponent extends Component {
                 className={`${this.classes.floatingComponent} ${this.props.className} ${this.state.isActive ? this.classes.isActive : ''}`}
             >   
                 <div className={this.classes.outer} style={style}>
-                    <div
-                        className={this.classes.control}
-                        onClick={this.toggleActive}
-                    >
-                        <div className={this.classes.controlHandle}>
-                            <span className={this.classes.controlIcon}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="4" viewBox="0 0 7 4">
+                    <div className={this.classes.control}>
+                        <div className={this.classes.controlHandle} onClick={this.toggleActive}>
+                            <span className={this.classes.controlIconWrapper}>
+                                <svg className={this.classes.controlIcon} xmlns="http://www.w3.org/2000/svg" width="7" height="4" viewBox="0 0 7 4">
                                     <path fill="#B2BBD5" fill-rule="nonzero" d="M.703 0L0 .719l3.477 3.34L6.949.719 6.254 0 3.477 2.66z"/>
                                 </svg>
                             </span>
