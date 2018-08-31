@@ -14,7 +14,6 @@ const RightTabCountour = () => (
         width="24px" height="29px" viewBox="0 0 24 29" enable-background="new 0 0 24 29" xmlSpace="preserve">
         <path fill="#FFFFFF" d="M24,29H0V0c6.63,0,12,5.37,12,12c0,0-0.154,3.76,0,5c0.509,4.104,2.17,6.67,3.5,8S19.66,27.66,24,29z"/>
     </svg>
-    
 );
 
 /**
@@ -43,13 +42,6 @@ export default class FloatingComponent extends Component {
 
     state = {
         isActive: false
-    }
-
-    constructor(props) {
-        super(props);
-        const userStyle = this.props.style;
-        console.log(userStyle);
-        // this.style = 
     }
 
     toggleActive = () => {
