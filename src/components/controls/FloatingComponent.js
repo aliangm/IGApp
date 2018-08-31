@@ -43,7 +43,10 @@ export default class FloatingComponent extends Component {
 
     render() {
         const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
-        const style = this.state.isActive ? this.props.style : {};
+
+        // Merge default styles with style from props
+        const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style); 
+        const style = this.state.isActive ? mergedStyle : {};
         
         return (            
             <div
