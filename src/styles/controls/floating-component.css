@@ -93,11 +93,17 @@
     pointer-events: none;
 }
 
-.child {}
+.child {
+    
+}
 
 .is-active .child {
     height: 358px;
     overflow-y: scroll;
+}
+
+.outer-clone {
+
 }
 
 @media only screen and (min-width:560px) { 

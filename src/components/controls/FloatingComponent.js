@@ -50,6 +50,8 @@ export default class FloatingComponent extends Component {
             isActive: !this.state.isActive,
             isControlInView: false
         });
+        window.scrollTo(window.scrollX, window.scrollY - 1);
+        window.scrollTo(window.scrollX, window.scrollY + 1);
     }
 
     componentDidMount() {
@@ -79,11 +81,14 @@ export default class FloatingComponent extends Component {
         // We use style when floating is active
         const style = this.state.isActive ? mergedStyle : {};
 
+        // Clone height, used to make scrolling possible past the floating component
+        const cloneHeight = this.state.isActive ? `${this.outerEl.offsetHeight}px` : 0;
+
         return (            
             <div
                 className={`${this.classes.floatingComponent} ${this.props.className} ${this.state.isActive ? this.classes.isActive : ''}`}
             >   
-                <div className={this.classes.outer} style={style}>
+                <div ref={el => this.outerEl = el} className={this.classes.outer} style={style}>
                     <div
                         ref={el => this.controlHandleEl = el}
                         className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
@@ -105,6 +110,7 @@ export default class FloatingComponent extends Component {
                         </div>
                     </div>
                 </div>
+                <div style={{ height: cloneHeight }} ref={el => this.cloneEl = el} className={this.classes.outerClone}/>
             </div>
         );
     }
