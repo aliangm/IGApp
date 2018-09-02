@@ -41,18 +41,51 @@ export default class FloatingComponent extends Component {
     }
 
     state = {
-        isActive: false
+        isActive: false,
+        isControlInView: false
     }
 
     toggleActive = () => {
-        this.setState({ isActive: !this.state.isActive})
+        const elementHeight = this.controlHandleEl.offsetHeight;
+        const innerElementTop = this.innerEl.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        let isControInView = true;
+        
+
+        if (innerElementTop + elementHeight <  windowHeight) {
+            isControInView = true;
+        } else if (innerElementTop  > windowHeight) {
+            isControInView = false;
+        }
+
+        this.setState({ isActive: !this.state.isActive, isControInView})
+    }
+
+    componentDidMount() {
+        document.addEventListener('scroll', () => {
+            const elementHeight = this.controlHandleEl.offsetHeight;
+            const innerElementTop = this.innerEl.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+
+            if (innerElementTop + elementHeight <  windowHeight) {
+                this.setState({ isControlInView: true });
+            } else if (innerElementTop >= windowHeight) {
+                this.setState({ isControlInView: false });
+            }
+        });
+    }
+
+    componentWillUpdate() {
+        
     }
 
     render() {
         const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
 
-        // Merge default styles with style from props
+        // Merge default styles with style from props (use it also when flaoting is inactive)
         const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style); 
+        
+        // We use style when floating is active
         const style = this.state.isActive ? mergedStyle : {};
 
         return (            
@@ -60,7 +93,11 @@ export default class FloatingComponent extends Component {
                 className={`${this.classes.floatingComponent} ${this.props.className} ${this.state.isActive ? this.classes.isActive : ''}`}
             >   
                 <div className={this.classes.outer} style={style}>
-                    <div className={this.classes.control}>
+                    <div
+                        ref={el => this.controlHandleEl = el}
+                        style={!this.state.isControlInView && !this.state.isActive? {left: mergedStyle.left}: {}}
+                        className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
+                    >
                         <LeftTabCountour />
                         <div className={this.classes.controlHandle} onClick={this.toggleActive}>
                             <span className={this.classes.controlIconWrapper}>
@@ -72,7 +109,7 @@ export default class FloatingComponent extends Component {
                         </div>
                         <RightTabCountour />
                     </div>
-                    <div className={this.classes.inner}>
+                    <div className={this.classes.inner} ref={el => this.innerEl = el}>
                         <div className={this.classes.child}>
                             {this.props.children}
                         </div>
@@ -80,5 +117,15 @@ export default class FloatingComponent extends Component {
                 </div>
             </div>
         );
+    }
+}
+
+const debounce = (func, delay) => {
+    let inDebounce
+    return function () {
+        const context = this
+        const args = arguments
+        clearTimeout(inDebounce)
+        inDebounce = setTimeout(() => func.apply(context, args), delay)
     }
 }
