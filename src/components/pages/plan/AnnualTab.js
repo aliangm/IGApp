@@ -6,6 +6,7 @@ import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getEndOfMonthString} from 'components/utils/date';
+import FloatingComponent from 'components/controls/FloatingComponent';
 
 const CELL_WIDTH = 140;
 
@@ -72,16 +73,18 @@ export default class AnnualTab extends Component {
           />
 
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <IndicatorsGraph objectives={parsedObjectives}
-                             dimensions={this.state.graphDimensions}
-                             changeScrollPosition={this.changeScrollPosition}
-                             scrollPosition={this.state.scrollPosition}
-                             cellWidth={CELL_WIDTH}
-                             mainLineData={showSecondaryIndicatorGraph ? secondaryPlanForecastedIndicators : primaryPlanForecastedIndicators}
-                             dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
-                             pastIndicators={indicators}
-                             planDate={planDate}
-            />
+            <FloatingComponent>
+              <IndicatorsGraph objectives={parsedObjectives}
+                              dimensions={this.state.graphDimensions}
+                              changeScrollPosition={this.changeScrollPosition}
+                              scrollPosition={this.state.scrollPosition}
+                              cellWidth={CELL_WIDTH}
+                              mainLineData={showSecondaryIndicatorGraph ? secondaryPlanForecastedIndicators : primaryPlanForecastedIndicators}
+                              dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
+                              pastIndicators={indicators}
+                              planDate={planDate}
+              />
+            </FloatingComponent>
           </div>
         </div>
       </div>
