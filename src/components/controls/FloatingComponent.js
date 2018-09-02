@@ -30,14 +30,16 @@ export default class FloatingComponent extends Component {
         hiddenText: 'hide',
         shownText: 'show',
         style: {},
-        className: ''
+        className: '',
+        isLast: true
     }
 
     static propTypes = {
         hiddenText: PropTypes.string,
         shownText: PropTypes.string,
         style: PropTypes.object,
-        className: PropTypes.string
+        className: PropTypes.string,
+        isLast: PropTypes.bool
     }
 
     state = {
@@ -82,7 +84,7 @@ export default class FloatingComponent extends Component {
         const style = this.state.isActive ? mergedStyle : {};
 
         // Clone height, used to make scrolling possible past the floating component
-        const cloneHeight = this.state.isActive ? `${this.outerEl.offsetHeight}px` : 0;
+        const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
 
         return (            
             <div
