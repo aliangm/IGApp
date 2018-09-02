@@ -19,12 +19,12 @@ const RightTabCountour = () => (
 /**
  * Wraps your component in a controlable
  * floating element
- * 
+ *
  * @extends {React.Component}
  */
 export default class FloatingComponent extends Component {
     style = style;
-    
+
 
     static defaultProps = {
         hiddenText: 'hide',
@@ -70,26 +70,22 @@ export default class FloatingComponent extends Component {
         });
     }
 
-    componentWillUpdate() {
-        
-    }
-
     render() {
         const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
 
         // Merge default styles with style from props (use it also when flaoting is inactive)
-        const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style); 
-        
+        const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style);
+
         // We use style when floating is active
         const style = this.state.isActive ? mergedStyle : {};
 
         // Clone height, used to make scrolling possible past the floating component
         const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
 
-        return (            
+        return (
             <div
                 className={`${this.classes.floatingComponent} ${this.props.className} ${this.state.isActive ? this.classes.isActive : ''}`}
-            >   
+            >
                 <div ref={el => this.outerEl = el} className={this.classes.outer} style={style}>
                     <div
                         ref={el => this.controlHandleEl = el}
@@ -115,15 +111,5 @@ export default class FloatingComponent extends Component {
                 <div style={{ height: cloneHeight }} ref={el => this.cloneEl = el} className={this.classes.outerClone}/>
             </div>
         );
-    }
-}
-
-const debounce = (func, delay) => {
-    let inDebounce
-    return function () {
-        const context = this
-        const args = arguments
-        clearTimeout(inDebounce)
-        inDebounce = setTimeout(() => func.apply(context, args), delay)
     }
 }
