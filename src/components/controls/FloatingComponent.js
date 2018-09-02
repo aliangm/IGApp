@@ -46,19 +46,10 @@ export default class FloatingComponent extends Component {
     }
 
     toggleActive = () => {
-        const elementHeight = this.controlHandleEl.offsetHeight;
-        const innerElementTop = this.innerEl.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-        let isControInView = true;
-        
-
-        if (innerElementTop + elementHeight <  windowHeight) {
-            isControInView = true;
-        } else if (innerElementTop  > windowHeight) {
-            isControInView = false;
-        }
-
-        this.setState({ isActive: !this.state.isActive, isControInView})
+        this.setState({
+            isActive: !this.state.isActive,
+            isControlInView: false
+        });
     }
 
     componentDidMount() {
