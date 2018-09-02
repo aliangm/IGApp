@@ -29,7 +29,7 @@ export default class FloatingComponent extends Component {
     static defaultProps = {
         hiddenText: 'hide',
         shownText: 'show',
-        style: { left: '88px'},
+        style: {},
         className: ''
     }
 
@@ -86,7 +86,6 @@ export default class FloatingComponent extends Component {
                 <div className={this.classes.outer} style={style}>
                     <div
                         ref={el => this.controlHandleEl = el}
-                        style={!this.state.isControlInView && !this.state.isActive? {left: mergedStyle.left}: {}}
                         className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
                     >
                         <LeftTabCountour />

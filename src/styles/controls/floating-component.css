@@ -1,15 +1,15 @@
 .floating-component {
-
+    
 }
 
 .outer {
-
+    left: 0px;
 }
 
 .is-active .outer {
     position: fixed;
     bottom: 0;
-    left: 0;
+    left: 0px;
     right: 0;
     z-index: 100;
 }
@@ -26,14 +26,12 @@
 .control {
     display: flex;
     justify-content: center;
+    background: transparent;
+    z-index: 300;
 }
 
-.is-not-in-view {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
+.control svg {
+    z-index: 300;
 }
 
 .control-handle {
@@ -43,6 +41,7 @@
     padding-left: 12px;
     padding-right: 12px;
     cursor: pointer;
+    z-index: 300;
 }
 
 .control-icon-wrapper {
@@ -53,6 +52,7 @@
 
 .control-icon {
     transform: rotate(180deg);
+    z-index: 300;
 }
 
 .is-active .control-icon {
@@ -72,6 +72,25 @@
     letter-spacing: 0.1px;
     color: #99a4c2;
     vertical-align: -1px;
+    z-index: 300;
+}
+
+.is-not-in-view {
+    position: fixed;
+    bottom: 0;
+    left: 0px;
+    right: 0;
+}
+
+.is-not-in-view::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -29px;
+    box-shadow: 0 0 80px 0 rgba(24, 32, 51, 0.16);
+    height: 29px;
+    pointer-events: none;
 }
 
 .child {}
@@ -79,4 +98,13 @@
 .is-active .child {
     height: 358px;
     overflow-y: scroll;
+}
+
+@media only screen and (min-width:560px) { 
+    .is-not-in-view  {
+        left: 88px;
+    }
+    .is-active .outer {
+        left: 88px;
+    }
 }
