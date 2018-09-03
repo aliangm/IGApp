@@ -36,14 +36,6 @@
     bottom: -1px;
 }
 
-#left-contour {
-    right: -1px;
-}
-
-#right-countour {
-    left: -1px;
-}
-
 .control-handle {
     background: #FFF;
     padding-top: 3px;
