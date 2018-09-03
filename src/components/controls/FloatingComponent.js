@@ -31,6 +31,9 @@ export default class FloatingComponent extends Component {
         shownText: 'show',
         style: {},
         className: '',
+
+        /** If child component is not at the end
+         *  of the page set this to false */
         isLast: true,
         breakpoint: 560
     }
