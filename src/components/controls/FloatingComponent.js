@@ -55,6 +55,9 @@ export default class FloatingComponent extends Component {
         const childEl = this.childWrapperEl.children[0];
         this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
 
+        // window.childEl = childEl;
+        window.component = this;
+
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
 
@@ -81,8 +84,17 @@ export default class FloatingComponent extends Component {
             isActive: !this.state.isActive,
             isControlInView: false
         });
-        triggerScroll();
+        // triggerScroll();
+    }
 
+    deactivateAndRecalculate = () => {
+        this.setState({
+            isActive: false,
+            isControlInView: false
+        }, () => {
+            const childEl = this.childWrapperEl.children[0];
+            this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
+        });
     }
 
     handleAnimationEnd = (ev) => {
@@ -121,6 +133,9 @@ export default class FloatingComponent extends Component {
         if (!this.outerEl) {
             return;
         }
+        // Do this so we can recalculate the alignment
+        this.deactivateAndRecalculate();
+        
         this.setState({ windowWidth: window.innerWidth });
     }
 
