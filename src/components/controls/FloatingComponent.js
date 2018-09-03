@@ -63,54 +63,69 @@ export default class FloatingComponent extends Component {
         this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
 
         // Needed for animating the height of the component
-        window.addEventListener('animationend', ev => {
-            if (!this.controlHandleEl || !this.outerEl) {
-                return;
-            }
-            
-            if (ev.animationName.indexOf('expand') !== -1) {
-                this.setState({ height: 358 }, () => {
-                    window.scrollTo(window.scrollX, window.scrollY - 1);
-                    window.scrollTo(window.scrollX, window.scrollY + 1);
-                });
-            }
-
-            if (ev.animationName.indexOf('contract') !== -1) {
-                this.setState({ height: 0 }, () => {
-                    window.scrollTo(window.scrollX, window.scrollY - 1);
-                    window.scrollTo(window.scrollX, window.scrollY + 1);
-                });
-            }
-        })
+        window.addEventListener('animationend', this.handleAnimationEnd);
 
         // Update on resize state windowWidth on resize
         // Used to determine alignment for child component
-        window.addEventListener('resize', () => {
-            if (!this.controlHandleEl || !this.outerEl) {
-                return;
-            }
-            this.setState({ windowWidth: window.innerWidth });
-        });
+        window.addEventListener('resize', this.handleResize);
        
-        document.addEventListener('scroll', () => {
-            if (!this.controlHandleEl || !this.outerEl) {
-                return;
-            }
-
-            const elementHeight = this.controlHandleEl.offsetHeight;
-            const innerElementTop = this.innerEl.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-
-            if (innerElementTop + elementHeight <  windowHeight) {
-                this.setState({ isControlInView: true });
-            } else if (innerElementTop >= windowHeight) {
-                this.setState({ isControlInView: false });
-            }
-        });
+        document.addEventListener('scroll', this.handleScroll);
 
         // Set initial window height
         this.setState({ windowWidth: window.innerWidth });
     }
+
+
+    // TODO: remove event listeners
+    componentWillUnmount() {
+        window.removeEventListener('animationend', this.handleAnimationEnd);
+        window.removeEventListener('resize', this.handleResize);
+        document.removeEventListener('scroll', this.handleScroll);
+    }
+
+    handleAnimationEnd = (ev) => {
+        if (!this.outerEl) {
+            return;
+        }
+
+        if (ev.animationName.indexOf('expand') !== -1) {
+            this.setState({ height: 358 }, () => {
+                window.scrollTo(window.scrollX, window.scrollY - 1);
+                window.scrollTo(window.scrollX, window.scrollY + 1);
+            });
+        }
+
+        if (ev.animationName.indexOf('contract') !== -1) {
+            this.setState({ height: 0 }, () => {
+                window.scrollTo(window.scrollX, window.scrollY - 1);
+                window.scrollTo(window.scrollX, window.scrollY + 1);
+            });
+        }
+    }
+
+    handleScroll = () => {
+        if (!this.outerEl) {
+            return;
+        }
+
+        const elementHeight = this.controlHandleEl.offsetHeight;
+        const innerElementTop = this.innerEl.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+
+        if (innerElementTop + elementHeight <  windowHeight) {
+            this.setState({ isControlInView: true });
+        } else if (innerElementTop >= windowHeight) {
+            this.setState({ isControlInView: false });
+        }
+    }
+
+    handleResize = () => {
+        if (!this.outerEl) {
+            return;
+        }
+        this.setState({ windowWidth: window.innerWidth });
+    }
+
 
     render() {
         const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
