@@ -48,6 +48,12 @@ export default class FloatingComponent extends Component {
         isActive: false,
         isControlInView: false,
         windowWidth: null,
+        
+        /** 
+         * Only two things interest us
+         * height > 0 - child wrapper padding will be calculated
+         * height === 0 - child wrapper padding will not be calculated
+          */
         height: 0
     }
 
@@ -60,6 +66,8 @@ export default class FloatingComponent extends Component {
 
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
+        window.addEventListener('animationstart', this.handleAnimationStart);
+
 
         // Update on resize state windowWidth on resize
         // Used to determine alignment for child component
@@ -72,9 +80,10 @@ export default class FloatingComponent extends Component {
     }
 
 
-    // TODO: remove event listeners
+    
     componentWillUnmount() {
         window.removeEventListener('animationend', this.handleAnimationEnd);
+        window.removeEventListener('animationstart', this.handleAnimationStart);
         window.removeEventListener('resize', this.handleResize);
         document.removeEventListener('scroll', this.handleScroll);
     }
@@ -84,7 +93,7 @@ export default class FloatingComponent extends Component {
             isActive: !this.state.isActive,
             isControlInView: false
         });
-        // triggerScroll();
+        triggerScroll();
     }
 
     deactivateAndRecalculate = () => {
@@ -95,6 +104,7 @@ export default class FloatingComponent extends Component {
             const childEl = this.childWrapperEl.children[0];
             this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
         });
+        triggerScroll();
     }
 
     handleAnimationEnd = (ev) => {
@@ -109,6 +119,17 @@ export default class FloatingComponent extends Component {
 
         if (ev.animationName.indexOf('contract') !== -1) {
             this.setState({ height: 0 });
+            triggerScroll();
+        }
+    }
+
+    handleAnimationStart = (ev) => {
+        if (!this.outerEl) {
+            return;
+        }
+
+        if (ev.animationName.indexOf('expand') !== -1) {
+            this.setState({ height: 1 });
             triggerScroll();
         }
     }
@@ -155,7 +176,7 @@ export default class FloatingComponent extends Component {
         // Determine padding which we use to align the child component
         let childPaddingLeft = 0;
         if (
-            this.state.isActive &&
+            this.state.height > 0 &&
             this.state.windowWidth < this.props.breakpoint &&
             this.childWrapperEl &&
             this.childWrapperEl.childElementCount
