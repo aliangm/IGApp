@@ -80,7 +80,9 @@ export default class FloatingComponent extends Component {
         this.setState({
             isActive: !this.state.isActive,
             isControlInView: false
-        }, triggerScroll);
+        });
+        triggerScroll();
+
     }
 
     handleAnimationEnd = (ev) => {
@@ -89,11 +91,13 @@ export default class FloatingComponent extends Component {
         }
 
         if (ev.animationName.indexOf('expand') !== -1) {
-            this.setState({ height: 358 }, triggerScroll);
+            this.setState({ height: 358 });
+            triggerScroll();
         }
 
         if (ev.animationName.indexOf('contract') !== -1) {
-            this.setState({ height: 0 }, triggerScroll);
+            this.setState({ height: 0 });
+            triggerScroll();
         }
     }
 
