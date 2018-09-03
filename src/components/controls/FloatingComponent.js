@@ -31,7 +31,8 @@ export default class FloatingComponent extends Component {
         shownText: 'show',
         style: {},
         className: '',
-        isLast: true
+        isLast: true,
+        breakpoint: 700
     }
 
     static propTypes = {
@@ -39,12 +40,14 @@ export default class FloatingComponent extends Component {
         shownText: PropTypes.string,
         style: PropTypes.object,
         className: PropTypes.string,
-        isLast: PropTypes.bool
+        isLast: PropTypes.bool,
+        breakpoint: PropTypes.number
     }
 
     state = {
         isActive: false,
-        isControlInView: false
+        isControlInView: false,
+        windowWidth: null
     }
 
     toggleActive = () => {
@@ -57,6 +60,15 @@ export default class FloatingComponent extends Component {
     }
 
     componentDidMount() {
+        const childEl = this.childWrapperEl.children[0];
+        this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
+
+        // Update on resize state windowWidth on resize
+        // Used to determine alignment for child component
+        window.addEventListener('resize', () => {
+            this.setState({ windowWidth: window.innerWidth });
+        });
+       
         document.addEventListener('scroll', () => {
             const elementHeight = this.controlHandleEl.offsetHeight;
             const innerElementTop = this.innerEl.getBoundingClientRect().top;
@@ -68,6 +80,9 @@ export default class FloatingComponent extends Component {
                 this.setState({ isControlInView: false });
             }
         });
+
+        // Set initial window height
+        this.setState({ windowWidth: window.innerWidth });
     }
 
     render() {
@@ -81,6 +96,17 @@ export default class FloatingComponent extends Component {
 
         // Clone height, used to make scrolling possible past the floating component
         const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
+
+        // Determine padding which we use to align the child component
+        let childPaddingLeft = 0;
+        if (
+            this.state.isActive &&
+            this.state.windowWidth < this.props.breakpoint &&
+            this.childWrapperEl &&
+            this.childWrapperEl.childElementCount
+        ) {
+            childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
+        } 
 
         return (
             <div
@@ -103,7 +129,11 @@ export default class FloatingComponent extends Component {
                         <RightTabCountour />
                     </div>
                     <div className={this.classes.inner} ref={el => this.innerEl = el}>
-                        <div className={this.classes.child}>
+                        <div
+                            ref={el => this.childWrapperEl = el}
+                            className={this.classes.child}
+                            style={{paddingLeft: childPaddingLeft}}
+                        >
                             {this.props.children}
                         </div>
                     </div>
