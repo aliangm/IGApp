@@ -16,7 +16,7 @@
 
 .inner {
     background-color: #ffffff;
-    transition: all .3s;
+    transition: all .2s;
 }
 
 .is-active .inner {
@@ -96,19 +96,19 @@
 .child {
     height: 0;
     animation-name: contract;
-    animation-duration: .3s;
+    animation-duration: .2s;
     animation-timing-function: ease-out;
 }
 
 .child.is-enabled {
     animation-name: expand;
-    animation-duration: .3s;
+    animation-duration: .2s;
     animation-timing-function: ease-in;
 }
 
 .child.is-enabled-end {
     animation-name: contract;
-    animation-duration: .3s;
+    animation-duration: .2s;
     animation-timing-function: ease-out;
 }
 
