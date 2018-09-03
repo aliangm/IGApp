@@ -32,6 +32,16 @@
 
 .control svg {
     z-index: 300;
+    position: relative;
+    bottom: -1px;
+}
+
+#left-contour {
+    right: -1px;
+}
+
+#right-countour {
+    left: -1px;
 }
 
 .control-handle {
