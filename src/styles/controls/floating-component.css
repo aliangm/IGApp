@@ -140,12 +140,3 @@
 .outer-clone {
 
 }
-
-@media only screen and (min-width:560px) { 
-    .is-not-in-view  {
-        left: 88px;
-    }
-    .is-active .outer {
-        left: 88px;
-    }
-}

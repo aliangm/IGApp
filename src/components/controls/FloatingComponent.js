@@ -32,7 +32,7 @@ export default class FloatingComponent extends Component {
         style: {},
         className: '',
         isLast: true,
-        breakpoint: 700
+        breakpoint: 560
     }
 
     static propTypes = {
@@ -61,9 +61,6 @@ export default class FloatingComponent extends Component {
         const childEl = this.childWrapperEl.children[0];
         this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
 
-        // window.childEl = childEl;
-        window.component = this;
-
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
         window.addEventListener('animationstart', this.handleAnimationStart);
@@ -89,6 +86,12 @@ export default class FloatingComponent extends Component {
     }
 
     toggleActive = () => {
+        // Update inactiveLeftPosition on toggle, when inactive->activa
+        if (!this.state.isActive) {
+            const childEl = this.childWrapperEl.children[0];
+            this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
+        }
+
         this.setState({
             isActive: !this.state.isActive,
             isControlInView: false
@@ -168,7 +171,7 @@ export default class FloatingComponent extends Component {
         const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style);
 
         // We use style when floating is active
-        const style = this.state.isActive ? mergedStyle : {};
+        let style = this.state.isActive ? mergedStyle : {};
 
         // Clone height, used to make scrolling possible past the floating component
         const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
@@ -182,7 +185,15 @@ export default class FloatingComponent extends Component {
             this.childWrapperEl.childElementCount
         ) {
             childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
-        } 
+            style.left = childPaddingLeft;
+        }
+
+        // Calculate left position of the outer component
+        if (this.state.height > 0 && this.state.windowWidth >= this.props.breakpoint) {
+            style.left = this.inactiveLeftPosition;
+        } else {
+            style.left = 0;
+        }
 
         // Child classes
         let childClasses = this.classes.child;
