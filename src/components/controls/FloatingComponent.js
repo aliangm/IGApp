@@ -217,6 +217,7 @@ export default class FloatingComponent extends Component {
                     <div
                         ref={el => this.controlHandleEl = el}
                         className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
+                        style={{left: `${this.inactiveLeftPosition}px`}}
                     >
                         <LeftTabCountour />
                         <div className={this.classes.controlHandle} onClick={this.toggleActive}>
