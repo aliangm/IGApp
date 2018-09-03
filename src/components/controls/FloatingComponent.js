@@ -47,7 +47,8 @@ export default class FloatingComponent extends Component {
     state = {
         isActive: false,
         isControlInView: false,
-        windowWidth: null
+        windowWidth: null,
+        height: 0
     }
 
     toggleActive = () => {
@@ -55,21 +56,47 @@ export default class FloatingComponent extends Component {
             isActive: !this.state.isActive,
             isControlInView: false
         });
-        window.scrollTo(window.scrollX, window.scrollY - 1);
-        window.scrollTo(window.scrollX, window.scrollY + 1);
     }
 
     componentDidMount() {
         const childEl = this.childWrapperEl.children[0];
         this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
 
+        // Needed for animating the height of the component
+        window.addEventListener('animationend', ev => {
+            if (!this.controlHandleEl || !this.outerEl) {
+                return;
+            }
+            
+            if (ev.animationName.indexOf('expand') !== -1) {
+                this.setState({ height: 358 }, () => {
+                    window.scrollTo(window.scrollX, window.scrollY - 1);
+                    window.scrollTo(window.scrollX, window.scrollY + 1);
+                });
+            }
+
+            if (ev.animationName.indexOf('contract') !== -1) {
+                this.setState({ height: 0 }, () => {
+                    window.scrollTo(window.scrollX, window.scrollY - 1);
+                    window.scrollTo(window.scrollX, window.scrollY + 1);
+                });
+            }
+        })
+
         // Update on resize state windowWidth on resize
         // Used to determine alignment for child component
         window.addEventListener('resize', () => {
+            if (!this.controlHandleEl || !this.outerEl) {
+                return;
+            }
             this.setState({ windowWidth: window.innerWidth });
         });
        
         document.addEventListener('scroll', () => {
+            if (!this.controlHandleEl || !this.outerEl) {
+                return;
+            }
+
             const elementHeight = this.controlHandleEl.offsetHeight;
             const innerElementTop = this.innerEl.getBoundingClientRect().top;
             const windowHeight = window.innerHeight;
@@ -108,10 +135,24 @@ export default class FloatingComponent extends Component {
             childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
         } 
 
+        // Child classes
+        let childClasses = this.classes.child;
+        if (this.state.isActive) {
+            childClasses = `${childClasses} ${this.classes.isEnabled}`;
+        } else if (!this.state.isActive && this.state.height > 0) {
+            childClasses = `${childClasses} ${this.classes.isEnabledEnd}`;
+        }
+
+        // Component parent div classes
+        let outerClasses = `${this.classes.floatingComponent} ${this.props.className}`;
+        if (this.state.isActive) {
+            outerClasses = `${outerClasses} ${this.classes.isActive}`;
+        } else if (this.state.height > 0) {
+            outerClasses = `${outerClasses} ${this.classes.isActive}`;
+        }
+
         return (
-            <div
-                className={`${this.classes.floatingComponent} ${this.props.className} ${this.state.isActive ? this.classes.isActive : ''}`}
-            >
+            <div className={outerClasses}>
                 <div ref={el => this.outerEl = el} className={this.classes.outer} style={style}>
                     <div
                         ref={el => this.controlHandleEl = el}
@@ -131,7 +172,7 @@ export default class FloatingComponent extends Component {
                     <div className={this.classes.inner} ref={el => this.innerEl = el}>
                         <div
                             ref={el => this.childWrapperEl = el}
-                            className={this.classes.child}
+                            className={childClasses}
                             style={{paddingLeft: childPaddingLeft}}
                         >
                             {this.props.children}

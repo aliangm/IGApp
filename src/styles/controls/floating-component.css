@@ -94,7 +94,32 @@
 }
 
 .child {
-    
+    height: 0;
+    animation-name: contract;
+    animation-duration: .3s;
+    animation-timing-function: ease-out;
+}
+
+.child.is-enabled {
+    animation-name: expand;
+    animation-duration: .3s;
+    animation-timing-function: ease-in;
+}
+
+.child.is-enabled-end {
+    animation-name: contract;
+    animation-duration: .3s;
+    animation-timing-function: ease-out;
+}
+
+@keyframes expand {
+    0%   {height: 0;}
+    100% {height:  358px;}
+}
+
+@keyframes contract {
+    0%   {height: 358px;}
+    100% {height:  0;}
 }
 
 .is-active .child {
