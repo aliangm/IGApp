@@ -51,13 +51,6 @@ export default class FloatingComponent extends Component {
         height: 0
     }
 
-    toggleActive = () => {
-        this.setState({
-            isActive: !this.state.isActive,
-            isControlInView: false
-        });
-    }
-
     componentDidMount() {
         const childEl = this.childWrapperEl.children[0];
         this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
@@ -83,23 +76,24 @@ export default class FloatingComponent extends Component {
         document.removeEventListener('scroll', this.handleScroll);
     }
 
+    toggleActive = () => {
+        this.setState({
+            isActive: !this.state.isActive,
+            isControlInView: false
+        }, triggerScroll);
+    }
+
     handleAnimationEnd = (ev) => {
         if (!this.outerEl) {
             return;
         }
 
         if (ev.animationName.indexOf('expand') !== -1) {
-            this.setState({ height: 358 }, () => {
-                window.scrollTo(window.scrollX, window.scrollY - 1);
-                window.scrollTo(window.scrollX, window.scrollY + 1);
-            });
+            this.setState({ height: 358 }, triggerScroll);
         }
 
         if (ev.animationName.indexOf('contract') !== -1) {
-            this.setState({ height: 0 }, () => {
-                window.scrollTo(window.scrollX, window.scrollY - 1);
-                window.scrollTo(window.scrollX, window.scrollY + 1);
-            });
+            this.setState({ height: 0 }, triggerScroll);
         }
     }
 
@@ -198,4 +192,9 @@ export default class FloatingComponent extends Component {
             </div>
         );
     }
+}
+
+const triggerScroll = () => {
+    window.scrollTo(window.scrollX, window.scrollY - 1);
+    window.scrollTo(window.scrollX, window.scrollY + 1);
 }
