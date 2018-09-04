@@ -26,6 +26,7 @@ export default class Attribution extends Component {
   }
 
   render() {
+    const offlineTabActive = this.props.children ? this.props.children.type.name === 'Offline' : null;
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.props));
@@ -38,7 +39,7 @@ export default class Attribution extends Component {
           <div className={this.classes.head}>
             <div className={this.classes.headTitle}>Attribution</div>
             <div className={this.classes.headPlan}>
-              {this.state.selectedTab !== 3 ? null :
+              {offlineTabActive ?
                 <Button type="primary2"
                         style={{width: '102px'}}
                         selected={this.state.showOfflinePopup ? true : null}
@@ -47,6 +48,7 @@ export default class Attribution extends Component {
                         }}>
                   Upload
                 </Button>
+                : null
               }
             </div>
           </div>

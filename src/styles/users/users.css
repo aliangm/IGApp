@@ -36,9 +36,9 @@
     cursor: pointer;
 }
 
-@mixin icon-nodpi device:desktop, ../../assets/desktop;
-@mixin icon-nodpi device:tablet, ../../assets/tablet;
-@mixin icon-nodpi device:phone, ../../assets/phone;
+@mixin icon-nodpi device:Computer, ../../assets/desktop;
+@mixin icon-nodpi device:Tablet, ../../assets/tablet;
+@mixin icon-nodpi device:Mobile, ../../assets/phone;
 
 .icon {
     background-repeat: no-repeat;

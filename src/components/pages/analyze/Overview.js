@@ -59,7 +59,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {CEVs, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {committedBudgets, months, totalCost}}} = this.props;
+    const {attribution: {channelsImpact}, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {committedBudgets, months, totalCost}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
@@ -89,9 +89,9 @@ export default class Overview extends Component {
         }
       }
     }
-    const totalRevenue = (CEVs && CEVs[this.state.attributionTableRevenueMetric]
-      ? Object.keys(CEVs[this.state.attributionTableRevenueMetric])
-        .reduce((channelsSum, item) => channelsSum + CEVs[this.state.attributionTableRevenueMetric][item], 0)
+    const totalRevenue = (channelsImpact && channelsImpact[this.state.attributionTableRevenueMetric]
+      ? Object.keys(channelsImpact[this.state.attributionTableRevenueMetric])
+        .reduce((channelsSum, item) => channelsSum + channelsImpact[this.state.attributionTableRevenueMetric][item], 0)
       : 0);
 
     const objectivesHeadRow = this.getTableRow(null, [
@@ -136,26 +136,32 @@ export default class Overview extends Component {
       const mergedObject = {};
       const channelsWithProps = getChannelsWithProps();
       Object.keys(channelsWithProps).forEach(channel => {
-        const totalValue = CEVs.MCL[channel] *
+        const totalValue = ((channelsImpact && channelsImpact.MCL && channelsImpact.MCL[channel]) ?
+          channelsImpact.MCL[channel] *
           month.leadToAccountConversionRate /
           100 *
           month.LTV
+          : 0)
           +
-          CEVs.MQL[channel] *
-          month.MQLToSQLConversionRate /
-          100 *
-          month.SQLToOppConversionRate /
-          100 *
-          month.OppToAccountConversionRate /
-          100 *
-          month.LTV
+          ((channelsImpact && channelsImpact.MQL && channelsImpact.MQL[channel]) ?
+            channelsImpact.MQL[channel] *
+            month.MQLToSQLConversionRate /
+            100 *
+            month.SQLToOppConversionRate /
+            100 *
+            month.OppToAccountConversionRate /
+            100 *
+            month.LTV
+            : 0)
           +
-          CEVs.SQL[channel] *
-          month.SQLToOppConversionRate /
-          100 *
-          month.OppToAccountConversionRate /
-          100 *
-          month.LTV;
+          ((channelsImpact && channelsImpact.SQL && channelsImpact.SQL[channel]) ?
+            channelsImpact.SQL[channel] *
+            month.SQLToOppConversionRate /
+            100 *
+            month.OppToAccountConversionRate /
+            100 *
+            month.LTV
+            : 0);
         const channelCategory = getMetadata('category', channel);
         if (channelCategory && totalValue) {
           if (!mergedObject[channelCategory]) {

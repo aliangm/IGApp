@@ -1,10 +1,10 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/campaigns/online-campaigns.css';
-import { formatNumber } from 'components/utils/budget';
+import {formatNumber} from 'components/utils/budget';
 import Select from 'components/controls/Select';
-import { getNickname as getChannelNickname } from 'components/utils/channels';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
+import {getNickname as getChannelNickname} from 'components/utils/channels';
+import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import Avatar from 'components/Avatar';
 
 export default class OnlineCampaigns extends Component {
@@ -18,7 +18,7 @@ export default class OnlineCampaigns extends Component {
       selectedAttributionMetric: 'MCL',
       soryBy: 'impressions',
       isDesc: 1
-    }
+    };
   }
 
   sortBy(param) {
@@ -31,8 +31,8 @@ export default class OnlineCampaigns extends Component {
   }
 
   render() {
-    const { filteredCampaigns: campaigns, attribution } = this.props;
-    const { selectedAttributionMetric, editMetric } = this.state;
+    const {filteredCampaigns: campaigns, attribution: {campaigns: attributionCampaigns}} = this.props;
+    const {selectedAttributionMetric, editMetric} = this.state;
 
     const metrics = [
       {value: 'conversion', label: 'Conversions'},
@@ -49,43 +49,43 @@ export default class OnlineCampaigns extends Component {
     const headRow = this.getTableRow(null, [
       'Status',
       'Channel',
-      <div onClick={this.sortBy.bind(this, 'name')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'name')} style={{cursor: 'pointer'}}>
         Campaign Name
       </div>,
       'Owner',
-      <div onClick={this.sortBy.bind(this, 'impressions')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'impressions')} style={{cursor: 'pointer'}}>
         Impressions
       </div>,
-      <div onClick={this.sortBy.bind(this, 'clicks')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'clicks')} style={{cursor: 'pointer'}}>
         Clicks
       </div>,
-      <div onClick={this.sortBy.bind(this, 'conversions')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'conversions')} style={{cursor: 'pointer'}}>
         Conv.
       </div>,
-      <div onClick={this.sortBy.bind(this, 'actualSpent')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'actualSpent')} style={{cursor: 'pointer'}}>
         Ad Spend
       </div>,
       <div style={{display: 'inline-flex'}}>
-        { editMetric ?
+        {editMetric ?
           <Select
             selected={selectedAttributionMetric}
             select={{
               options: metrics
             }}
             onChange={(e) => {
-              this.setState({selectedAttributionMetric: e.value})
+              this.setState({selectedAttributionMetric: e.value});
             }}
-            style={{ width: '160px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
+            style={{width: '160px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
           />
           :
-          <div onClick={this.sortBy.bind(this, selectedAttributionMetric)} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, selectedAttributionMetric)} style={{cursor: 'pointer'}}>
             {metrics.find(item => item.value === selectedAttributionMetric).label}
           </div>
         }
         <div className={this.classes.metricEdit} onClick={() => {
-          this.setState({editMetric: !editMetric})
+          this.setState({editMetric: !editMetric});
         }}>
-          { editMetric ? 'Done' : 'Edit' }
+          {editMetric ? 'Done' : 'Edit'}
         </div>
       </div>
     ], {
@@ -95,18 +95,19 @@ export default class OnlineCampaigns extends Component {
     const campaignsWithAttribution = campaigns
       .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId)
       .map(campaign => {
-        let attributionData = attribution && attribution.campaigns && (attribution.campaigns[campaign.name] || (campaign.tracking && campaign.tracking.campaignUTM && attribution.campaigns[campaign.tracking.campaignUTM]));
-        attributionData = attributionData ? attributionData[Object.keys(attributionData)[0]] : {};
+        const attributionData = attributionCampaigns && attributionCampaigns.find(item =>
+          item.name === campaign.name || (campaign.tracking && campaign.tracking.campaignUTM && item.name === campaign.tracking.campaignUTM)
+        );
         const user = campaign.owner && this.props.teamMembers.find(user => user.userId === campaign.owner);
-        const clicksObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "clicks");
-        const impressionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "impressions");
-        const conversionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === "conversions");
+        const clicksObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === 'clicks');
+        const impressionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === 'impressions');
+        const conversionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === 'conversions');
         return {
           impressions: impressionsObj ? impressionsObj.actualGrowth : 0,
           clicks: clicksObj ? clicksObj.actualGrowth : 0,
           conversions: conversionsObj ? conversionsObj.actualGrowth : 0,
-          ... campaign,
-          ... attributionData,
+          ...attributionData,
+          ...campaign,
           user: user
         };
       });
@@ -117,10 +118,11 @@ export default class OnlineCampaigns extends Component {
       )
       .map((campaign, index) =>
         this.getTableRow(null, [
-          <div className={this.classes.statusIcon} data-icon={"status:" + campaign.status} title={campaign.status}/>,
+          <div className={this.classes.statusIcon} data-icon={'status:' + campaign.status} title={campaign.status}/>,
           <div>
             {campaign.source.map(channel =>
-              <div key={channel} className={this.classes.channelIcon} data-icon={"plan:" + channel} title={getChannelNickname(channel)}/>
+              <div key={channel} className={this.classes.channelIcon} data-icon={'plan:' + channel}
+                   title={getChannelNickname(channel)}/>
             )}
           </div>,
           campaign.name,
@@ -139,7 +141,7 @@ export default class OnlineCampaigns extends Component {
       );
 
     return (
-      <div className={ this.classes.wrap }>
+      <div className={this.classes.wrap}>
         <table className={this.classes.table}>
           <thead>
           {headRow}
@@ -149,7 +151,7 @@ export default class OnlineCampaigns extends Component {
           </tbody>
         </table>
       </div>
-    )
+    );
   }
 
   getTableRow(title, items, props) {
@@ -161,17 +163,17 @@ export default class OnlineCampaigns extends Component {
         items.map((item, i) => {
           return <td className={this.classes.valueCell} key={i}>{
             this.getCellItem(item)
-          }</td>
+          }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
   getCellItem(item) {
     let elem;
 
     if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>
+      elem = <div className={this.classes.cellItem}>{item}</div>;
     } else {
       elem = item;
     }

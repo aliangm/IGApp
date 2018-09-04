@@ -96,7 +96,7 @@ export default class CMO extends Component {
 
   render() {
     const {
-      planDate, historyData, approvedBudgetsProjection, actualIndicators, campaigns, planUnknownChannels, attribution, CEVs, annualBudget,
+      planDate, historyData, approvedBudgetsProjection, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
       calculatedData: {
         committedBudgets,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
@@ -272,23 +272,24 @@ export default class CMO extends Component {
 
     const channelsWithProps = getChannelsWithProps();
     const topChannels = Object.keys(channelsWithProps).map(channel => {
-      const score = Math.round(CEVs.MCL[channel] * weights.newMCL
-        + CEVs.MQL[channel] * weights.newMQL
-        + CEVs.SQL[channel] * weights.newSQL
-        + CEVs.opps[channel] * weights.newOpps
-        + CEVs.users[channel] * weights.newUsers);
+      const score = Math.round(
+        ((channelsImpact && channelsImpact.MCL && channelsImpact.MCL[channel]) ? channelsImpact.MCL[channel] * weights.newMCL : 0)
+        + ((channelsImpact && channelsImpact.MQL && channelsImpact.MQL[channel]) ? channelsImpact.MQL[channel] * weights.newMQL : 0)
+        + ((channelsImpact && channelsImpact.SQL && channelsImpact.SQL[channel]) ? channelsImpact.SQL[channel] * weights.newSQL : 0)
+        + ((channelsImpact && channelsImpact.opps && channelsImpact.opps[channel]) ? channelsImpact.opps[channel] * weights.newOpps : 0)
+        + ((channelsImpact && channelsImpact.users && channelsImpact.users[channel]) ? channelsImpact.users[channel] * weights.newUsers : 0)
+      );
       return {title: channelsWithProps[channel].nickname, score: score, icon: 'plan:' + channel};
     });
 
-    const topCampaigns = attribution.campaigns ? Object.keys(attribution.campaigns).map(campaign => {
-      const campaignData = attribution.campaigns[campaign];
+    const topCampaigns = attributionCampaigns ? attributionCampaigns.map(campaignData => {
       const score = Math.round(campaignData.MCL * weights.newMCL
         + campaignData.MQL * weights.newMQL
         + campaignData.SQL * weights.newSQL
         + campaignData.opps * weights.newOpps
         + campaignData.users * weights.newUsers);
       return {
-        title: campaign,
+        title: campaignData.name,
         score: score,
         icon: campaignData.channels.length > 0 ? campaignData.channels.length === 1
           ? 'plan:' + campaignData.channels[0]
@@ -296,7 +297,7 @@ export default class CMO extends Component {
       };
     }) : [];
 
-    const topContent = attribution.pages.map(item => {
+    const topContent = pages.map(item => {
       const score = Math.round(item.MCL * weights.newMCL
         + item.MQL * weights.newMQL
         + item.SQL * weights.newSQL

@@ -63,7 +63,7 @@ export default class Channels extends Component {
   }
 
   render() {
-    const {attribution, CEVs, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}} = this.props;
+    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}} = this.props;
     const {firstObjective} = this.state;
 
     const metrics = [
@@ -163,14 +163,18 @@ export default class Channels extends Component {
         channel: item.value,
         label: item.label,
         budget: sumBudgets[item.value] || 0,
-        revenueMetric: (CEVs && CEVs[this.state.attributionTableRevenueMetric]
-          ? CEVs[this.state.attributionTableRevenueMetric][item.value]
-          : 0),
-        webVisits: (CEVs && CEVs['webVisits'] ? CEVs['webVisits'][item.value] : 0),
-        conversion: (CEVs && CEVs['conversion'] ? CEVs['conversion'][item.value] : 0),
-        funnelIndicator: (CEVs && CEVs[this.state.attributionTableIndicator]
-          ? CEVs[this.state.attributionTableIndicator][item.value]
-          : 0)
+        revenueMetric: (channelsImpact && channelsImpact[this.state.attributionTableRevenueMetric] && channelsImpact[this.state.attributionTableRevenueMetric][item.value])
+          ? channelsImpact[this.state.attributionTableRevenueMetric][item.value]
+          : 0,
+        webVisits: (channelsImpact && channelsImpact['webVisits'] && channelsImpact['webVisits'][item.value])
+          ? channelsImpact['webVisits'][item.value]
+          : 0,
+        conversion: (channelsImpact && channelsImpact['conversion'] && channelsImpact['conversion'][item.value])
+          ? channelsImpact['conversion'][item.value]
+          : 0,
+        funnelIndicator: (channelsImpact && channelsImpact[this.state.attributionTableIndicator] && channelsImpact[this.state.attributionTableIndicator][item.value])
+          ? channelsImpact[this.state.attributionTableIndicator][item.value]
+          : 0
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
       json.CPX = json.budget / json.funnelIndicator;
@@ -229,24 +233,23 @@ export default class Channels extends Component {
       className: dashboardStyle.locals.footRow
     });
 
-    const CEV = CEVs && CEVs[this.state.conversionIndicator];
+    const convIndicatorImpact = channelsImpact && channelsImpact[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
     let fatherChannelsSum = 0;
-    Object.keys(CEV).forEach(channel => {
+    convIndicatorImpact && Object.keys(convIndicatorImpact).forEach(channel => {
       const channelCategory = getMetadata('category', channel);
-      if (channelCategory && CEV[channel]) {
-        fatherChannelsSum += CEV[channel];
+      if (channelCategory && convIndicatorImpact[channel]) {
+        fatherChannelsSum += convIndicatorImpact[channel];
         const existsFather = fatherChannelsWithBudgets.find(item => item.name === channelCategory);
         if (existsFather) {
-          existsFather.value += CEV[channel];
+          existsFather.value += convIndicatorImpact[channel];
         }
         else {
-          fatherChannelsWithBudgets.push({name: channelCategory, value: CEV[channel]});
+          fatherChannelsWithBudgets.push({name: channelCategory, value: convIndicatorImpact[channel]});
         }
       }
     });
 
-    const users = attribution && attribution.users;
     const journeys = [];
     let journeysSum = 0;
     users.forEach(user => {
