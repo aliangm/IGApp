@@ -282,15 +282,14 @@ export default class CMO extends Component {
       return {title: channelsWithProps[channel].nickname, score: score, icon: 'plan:' + channel};
     });
 
-    const topCampaigns = attributionCampaigns ? Object.keys(attributionCampaigns).map(campaign => {
-      const campaignData = attributionCampaigns[campaign];
+    const topCampaigns = attributionCampaigns ? attributionCampaigns.map(campaignData => {
       const score = Math.round(campaignData.MCL * weights.newMCL
         + campaignData.MQL * weights.newMQL
         + campaignData.SQL * weights.newSQL
         + campaignData.opps * weights.newOpps
         + campaignData.users * weights.newUsers);
       return {
-        title: campaign,
+        title: campaignData.name,
         score: score,
         icon: campaignData.channels.length > 0 ? campaignData.channels.length === 1
           ? 'plan:' + campaignData.channels[0]
