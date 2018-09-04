@@ -40,7 +40,6 @@ export default class FloatingComponent extends Component {
          */
         breakpoint: 560,
         popup: false
-
     }
 
     static propTypes = {
@@ -58,7 +57,8 @@ export default class FloatingComponent extends Component {
         isActive: false,
         isControlInView: false,
         windowWidth: null,
-        isCalculatePadding: false
+        isCalculatePadding: false,
+        scrollElement: null
     }
 
     componentDidMount() {
@@ -76,7 +76,7 @@ export default class FloatingComponent extends Component {
         // Used to determine alignment for child component
         window.addEventListener('resize', this.handleResize);
        
-        document.addEventListener('scroll', this.handleScroll);
+        document.addEventListener('scroll', this.handleScroll);        
 
         this.updateInactiveChild();
 
@@ -86,18 +86,50 @@ export default class FloatingComponent extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         // When the popup prows changes it will trigger update
+        const scrollElement = this.getScrollParent(this.outerEl);
+        if (scrollElement && !this.state.scrollElement) {
+                this.setState({ scrollElement });
+        }
+
         if (this.props.popup !== prevProps.popup) {
             this.deactivateAndRecalculate();
         }
+
+        if (this.props.popup && this.props.popup !== prevProps.popup) {
+            this.state.scrollElement.addEventListener('scroll', this.handleScroll);
+            document.removeEventListener('scroll', this.handleScroll);
+        }
+
+        
+        if (!this.props.popup && this.props.popup !== prevProps.popup) {
+            this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
+            document.addEventListener('scroll', this.handleScroll);
+        }
     }
-
-
     
     componentWillUnmount() {
         window.removeEventListener('animationend', this.handleAnimationEnd);
         window.removeEventListener('animationstart', this.handleAnimationStart);
         window.removeEventListener('resize', this.handleResize);
         document.removeEventListener('scroll', this.handleScroll);
+    }
+
+    /**
+     * Gets first scroll parent
+     * 
+     * @param {HTMLElement} node
+     * @returns {HTMLElement}
+     */
+    getScrollParent = (node) => {
+        if (node == null) {
+            return null;
+        }
+
+        if (node.scrollHeight > node.clientHeight && node.className.indexOf('popup') !== -1) {
+            return node;
+        } else {
+            return this.getScrollParent(node.parentNode);
+        }
     }
 
     toggleActive = () => {
@@ -155,7 +187,7 @@ export default class FloatingComponent extends Component {
         }
     }
 
-    handleScroll = () => {
+    handleScroll = (ev) => {
         const elementHeight = this.controlHandleEl.offsetHeight;
         const innerElementTop = this.innerEl.getBoundingClientRect().top;
         const windowHeight = window.innerHeight;
@@ -245,7 +277,7 @@ export default class FloatingComponent extends Component {
         const { childStyle, outerStyle } = this.getStyles();
 
         return (
-            <div className={outerClasses}>
+            <div className={outerClasses} ref={el => this.componentEl = el}>
                 <div ref={el => this.outerEl = el} className={this.classes.outer} style={outerStyle}>
                     <div
                         ref={el => this.controlHandleEl = el}
