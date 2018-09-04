@@ -54,12 +54,15 @@ export default class FloatingComponent extends Component {
         isActive: false,
         isControlInView: false,
         windowWidth: null,
-        isCalculatePadding: false
+        isCalculatePadding: false,
+        inactiveLeftPosition: null,
+        inactiveChildWidth: null
     }
 
     componentDidMount() {
         const childEl = this.childWrapperEl.children[0];
-        this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
+
+        window.component = this;
 
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
@@ -73,7 +76,10 @@ export default class FloatingComponent extends Component {
         document.addEventListener('scroll', this.handleScroll);
 
         // Set initial window width
-        this.setState({ windowWidth: window.innerWidth });
+        this.setState({
+            windowWidth: window.innerWidth,
+            inactiveLeftPosition: childEl.getBoundingClientRect().left
+        });
     }
 
 
@@ -86,15 +92,11 @@ export default class FloatingComponent extends Component {
     }
 
     toggleActive = () => {
-        // Update inactiveLeftPosition on toggle, when inactive->activa
-        if (!this.state.isActive) {
-            const childEl = this.childWrapperEl.children[0];
-            this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
-        }
-
+        const childEl = this.childWrapperEl.children[0];
         this.setState({
             isActive: !this.state.isActive,
-            isControlInView: false
+            isControlInView: false,
+            inactiveLeftPosition: childEl.getBoundingClientRect().left
         });
         triggerScroll();
     }
@@ -105,7 +107,11 @@ export default class FloatingComponent extends Component {
             isControlInView: false
         }, () => {
             const childEl = this.childWrapperEl.children[0];
-            this.inactiveLeftPosition = childEl.getBoundingClientRect().left;
+            const childBoundingBox = childEl.getBoundingClientRect();
+            this.setState({
+                inactiveLeftPosition: childBoundingBox.left,
+                inactiveChildWidth: childBoundingBox.width
+            });
         });
         triggerScroll();
     }
@@ -169,13 +175,13 @@ export default class FloatingComponent extends Component {
             this.childWrapperEl &&
             this.childWrapperEl.childElementCount
         ) {
-            childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
+            childPaddingLeft = this.state.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
             style.left = childPaddingLeft;
         }
 
         // Calculate left position of the outer component
         if (this.state.isCalculatePadding && this.state.windowWidth >= this.props.breakpoint) {
-            style.left = this.inactiveLeftPosition;
+            style.left = this.state.inactiveLeftPosition;
         } else {
             style.left = 0;
         }
@@ -200,7 +206,7 @@ export default class FloatingComponent extends Component {
                     <div
                         ref={el => this.controlHandleEl = el}
                         className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
-                        style={{left: `${this.inactiveLeftPosition}px`}}
+                        style={{left: `${this.state.inactiveLeftPosition}px`}}
                     >
                         <LeftTabCountour />
                         <div className={this.classes.controlHandle} onClick={this.toggleActive}>
