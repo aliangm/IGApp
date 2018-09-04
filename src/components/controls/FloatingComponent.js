@@ -38,7 +38,9 @@ export default class FloatingComponent extends Component {
         /** Below this window width left position will not be calculate
          * essentially a resolution where the left menu is not shown anymore
          */
-        breakpoint: 560
+        breakpoint: 560,
+        popup: false
+
     }
 
     static propTypes = {
@@ -47,20 +49,21 @@ export default class FloatingComponent extends Component {
         style: PropTypes.object,
         className: PropTypes.string,
         isLast: PropTypes.bool,
-        breakpoint: PropTypes.number
+        breakpoint: PropTypes.number,
+        popup: PropTypes.bool
+
     }
 
     state = {
         isActive: false,
         isControlInView: false,
         windowWidth: null,
-        isCalculatePadding: false,
-        inactiveLeftPosition: null,
-        inactiveChildWidth: null
+        isCalculatePadding: false
     }
 
     componentDidMount() {
-        const childEl = this.childWrapperEl.children[0];
+        const childElBox = this.childWrapperEl
+        .children[0].getBoundingClientRect();
 
         window.component = this;
 
@@ -75,11 +78,17 @@ export default class FloatingComponent extends Component {
        
         document.addEventListener('scroll', this.handleScroll);
 
+        this.updateInactiveChild();
+
         // Set initial window width
-        this.setState({
-            windowWidth: window.innerWidth,
-            inactiveLeftPosition: childEl.getBoundingClientRect().left
-        });
+        this.setState({ windowWidth: window.innerWidth });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        // When the popup prows changes it will trigger update
+        if (this.props.popup !== prevProps.popup) {
+            this.deactivateAndRecalculate();
+        }
     }
 
 
@@ -92,11 +101,10 @@ export default class FloatingComponent extends Component {
     }
 
     toggleActive = () => {
-        const childEl = this.childWrapperEl.children[0];
+        this.updateInactiveChild();
         this.setState({
             isActive: !this.state.isActive,
-            isControlInView: false,
-            inactiveLeftPosition: childEl.getBoundingClientRect().left
+            isControlInView: false
         });
         triggerScroll();
     }
@@ -108,12 +116,22 @@ export default class FloatingComponent extends Component {
         }, () => {
             const childEl = this.childWrapperEl.children[0];
             const childBoundingBox = childEl.getBoundingClientRect();
-            this.setState({
-                inactiveLeftPosition: childBoundingBox.left,
-                inactiveChildWidth: childBoundingBox.width
-            });
+            this.inactiveLeftPosition = childBoundingBox.left;
+            this.inactiveChildWidth = childBoundingBox.width;
+
         });
         triggerScroll();
+    }
+
+    updateInactiveChild = () => {
+        if (this.state.isActive) {
+            return;
+        }
+
+        const childEl = this.childWrapperEl.children[0];
+        const childBoundingBox = childEl.getBoundingClientRect();
+        this.inactiveLeftPosition = childBoundingBox.left;
+        this.inactiveChildWidth = childBoundingBox.width;
     }
 
     handleAnimationEnd = (ev) => {
@@ -126,6 +144,8 @@ export default class FloatingComponent extends Component {
             this.setState({ isCalculatePadding: false });
             triggerScroll();
         }
+
+        this.updateInactiveChild();
     }
 
     handleAnimationStart = (ev) => {
@@ -162,7 +182,7 @@ export default class FloatingComponent extends Component {
         const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style);
 
         // We use style when floating is active
-        let style = this.state.isActive ? mergedStyle : {};
+        let outerStyle = this.state.isActive ? mergedStyle : {};
 
         // Clone height, used to make scrolling possible past the floating component
         const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
@@ -175,16 +195,34 @@ export default class FloatingComponent extends Component {
             this.childWrapperEl &&
             this.childWrapperEl.childElementCount
         ) {
-            childPaddingLeft = this.state.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
-            style.left = childPaddingLeft;
+            childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
+            outerStyle.left = childPaddingLeft;
         }
 
         // Calculate left position of the outer component
         if (this.state.isCalculatePadding && this.state.windowWidth >= this.props.breakpoint) {
-            style.left = this.state.inactiveLeftPosition;
+            outerStyle.left = this.inactiveLeftPosition;
         } else {
-            style.left = 0;
+            outerStyle.left = 0;
         }
+
+        // Case when is popup
+        if (this.props.popup && this.state.isActive) {
+            outerStyle = {
+                width: `${this.inactiveChildWidth}px`,
+                left: `${this.inactiveLeftPosition}px`,
+            };
+        }
+
+        // Child wrapper style
+        let childStyle = {};
+        if (!this.state.isActive) {
+            childStyle.height = 'auto';
+        }
+        childStyle.leftPadding = `${childPaddingLeft}px`;
+
+        console.log('CHILDSTYLE', childStyle);
+        
 
         // Child classes
         let childClasses = this.classes.child;
@@ -202,11 +240,11 @@ export default class FloatingComponent extends Component {
 
         return (
             <div className={outerClasses}>
-                <div ref={el => this.outerEl = el} className={this.classes.outer} style={style}>
+                <div ref={el => this.outerEl = el} className={this.classes.outer} style={outerStyle}>
                     <div
                         ref={el => this.controlHandleEl = el}
                         className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
-                        style={{left: `${this.state.inactiveLeftPosition}px`}}
+                        style={{left: `${this.inactiveLeftPosition}px`}}
                     >
                         <LeftTabCountour />
                         <div className={this.classes.controlHandle} onClick={this.toggleActive}>
@@ -223,7 +261,7 @@ export default class FloatingComponent extends Component {
                         <div
                             ref={el => this.childWrapperEl = el}
                             className={childClasses}
-                            style={{paddingLeft: childPaddingLeft}}
+                            style={childStyle}
                         >
                             {this.props.children}
                         </div>
