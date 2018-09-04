@@ -174,18 +174,12 @@ export default class FloatingComponent extends Component {
         this.setState({ windowWidth: window.innerWidth });
     }
 
-
-    render() {
-        const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
-
+    getStyles = () => {
         // Merge default styles with style from props (use it also when flaoting is inactive)
         const mergedStyle = Object.assign({}, FloatingComponent.defaultProps.style, this.props.style);
 
         // We use style when floating is active
         let outerStyle = this.state.isActive ? mergedStyle : {};
-
-        // Clone height, used to make scrolling possible past the floating component
-        const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
 
         // Determine padding which we use to align the child component
         let childPaddingLeft = 0;
@@ -224,6 +218,16 @@ export default class FloatingComponent extends Component {
             childStyle.paddingLeft = `${childPaddingLeft}px`;
         }
 
+        return { outerStyle, childStyle };
+    }
+
+
+    render() {
+        const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
+        
+        // Clone height, used to make scrolling possible past the floating component
+        const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
+
         // Child classes
         let childClasses = this.classes.child;
         if (this.state.isActive) {
@@ -237,6 +241,8 @@ export default class FloatingComponent extends Component {
         if (this.state.isActive || this.state.isCalculatePadding) {
             outerClasses = `${outerClasses} ${this.classes.isActive}`;
         }
+
+        const { childStyle, outerStyle } = this.getStyles();
 
         return (
             <div className={outerClasses}>
