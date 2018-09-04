@@ -7,7 +7,7 @@ const LeftTabCountour = () => (
     <svg version="1.1" style={{left: '1px'}} id="left-contour" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24px" height="29px" viewBox="0 0 24 29" enableBackground="new 0 0 24 29" xmlSpace="preserve">
         <path fill="#FFFFFF" d="M24,0v29H0c4.34-1.34,7.17-2.67,8.5-4s2.991-3.896,3.5-8c0.154-1.24,0.026-3.75,0-5 C11.864,5.371,17.37,0,24,0z"/>
     </svg>
-)
+);
 
 const RightTabCountour = () => (
     <svg version="1.1" style={{right: '1px'}} id="right-countour" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
@@ -35,6 +35,9 @@ export default class FloatingComponent extends Component {
         /** If child component is not at the end
          *  of the page set this to false */
         isLast: true,
+        /** Below this window width left position will not be calculate
+         * essentially a resolution where the left menu is not shown anymore
+         */
         breakpoint: 560
     }
 
@@ -51,13 +54,7 @@ export default class FloatingComponent extends Component {
         isActive: false,
         isControlInView: false,
         windowWidth: null,
-        
-        /** 
-         * Only two things interest us
-         * height > 0 - child wrapper padding will be calculated
-         * height === 0 - child wrapper padding will not be calculated
-          */
-        height: 0
+        isCalculatePadding: false
     }
 
     componentDidMount() {
@@ -75,7 +72,7 @@ export default class FloatingComponent extends Component {
        
         document.addEventListener('scroll', this.handleScroll);
 
-        // Set initial window height
+        // Set initial window width
         this.setState({ windowWidth: window.innerWidth });
     }
 
@@ -114,37 +111,25 @@ export default class FloatingComponent extends Component {
     }
 
     handleAnimationEnd = (ev) => {
-        if (!this.outerEl) {
-            return;
-        }
-
         if (ev.animationName.indexOf('expand') !== -1) {
-            this.setState({ height: 358 });
+            this.setState({ isCalculatePadding: true });
             triggerScroll();
         }
 
         if (ev.animationName.indexOf('contract') !== -1) {
-            this.setState({ height: 0 });
+            this.setState({ isCalculatePadding: false });
             triggerScroll();
         }
     }
 
     handleAnimationStart = (ev) => {
-        if (!this.outerEl) {
-            return;
-        }
-
         if (ev.animationName.indexOf('expand') !== -1) {
-            this.setState({ height: 1 });
+            this.setState({ isCalculatePadding: true });
             triggerScroll();
         }
     }
 
     handleScroll = () => {
-        if (!this.outerEl) {
-            return;
-        }
-
         const elementHeight = this.controlHandleEl.offsetHeight;
         const innerElementTop = this.innerEl.getBoundingClientRect().top;
         const windowHeight = window.innerHeight;
@@ -157,9 +142,6 @@ export default class FloatingComponent extends Component {
     }
 
     handleResize = () => {
-        if (!this.outerEl) {
-            return;
-        }
         // Do this so we can recalculate the alignment
         this.deactivateAndRecalculate();
         
@@ -182,7 +164,7 @@ export default class FloatingComponent extends Component {
         // Determine padding which we use to align the child component
         let childPaddingLeft = 0;
         if (
-            this.state.height > 0 &&
+            this.state.isCalculatePadding &&
             this.state.windowWidth < this.props.breakpoint &&
             this.childWrapperEl &&
             this.childWrapperEl.childElementCount
@@ -192,7 +174,7 @@ export default class FloatingComponent extends Component {
         }
 
         // Calculate left position of the outer component
-        if (this.state.height > 0 && this.state.windowWidth >= this.props.breakpoint) {
+        if (this.state.isCalculatePadding && this.state.windowWidth >= this.props.breakpoint) {
             style.left = this.inactiveLeftPosition;
         } else {
             style.left = 0;
@@ -202,15 +184,13 @@ export default class FloatingComponent extends Component {
         let childClasses = this.classes.child;
         if (this.state.isActive) {
             childClasses = `${childClasses} ${this.classes.isEnabled}`;
-        } else if (!this.state.isActive && this.state.height > 0) {
+        } else if (!this.state.isActive && this.state.isCalculatePadding) {
             childClasses = `${childClasses} ${this.classes.isEnabledEnd}`;
         }
 
         // Component parent div classes
         let outerClasses = `${this.classes.floatingComponent} ${this.props.className}`;
-        if (this.state.isActive) {
-            outerClasses = `${outerClasses} ${this.classes.isActive}`;
-        } else if (this.state.height > 0) {
+        if (this.state.isActive || this.state.isCalculatePadding) {
             outerClasses = `${outerClasses} ${this.classes.isActive}`;
         }
 
