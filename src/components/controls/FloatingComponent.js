@@ -219,10 +219,10 @@ export default class FloatingComponent extends Component {
         if (!this.state.isActive) {
             childStyle.height = 'auto';
         }
-        childStyle.leftPadding = `${childPaddingLeft}px`;
 
-        console.log('CHILDSTYLE', childStyle);
-        
+        if (!this.props.popup) {
+            childStyle.paddingLeft = `${childPaddingLeft}px`;
+        }
 
         // Child classes
         let childClasses = this.classes.child;
