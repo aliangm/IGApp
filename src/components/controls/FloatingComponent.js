@@ -66,6 +66,7 @@ export default class FloatingComponent extends Component {
         isControlInView: false,
         windowWidth: null,
         isCalculatePadding: false,
+        /** @type {HTMLElement} */
         scrollElement: null
     };
 
@@ -73,7 +74,7 @@ export default class FloatingComponent extends Component {
     inactiveChildWidth = null;
 
     /** @type {number} */
-    inactiveLeftPosition = null;
+    inactiveChildLeftPosition = null;
 
     /** @type {number} */
     inactiveHandleLeftPos = null;
@@ -89,8 +90,6 @@ export default class FloatingComponent extends Component {
     
 
     componentDidMount() {
-
-        window.component = this;
 
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
@@ -139,10 +138,15 @@ export default class FloatingComponent extends Component {
     }
     
     componentWillUnmount() {
+        // Remove all binded listeners
         window.removeEventListener('animationend', this.handleAnimationEnd);
         window.removeEventListener('animationstart', this.handleAnimationStart);
         window.removeEventListener('resize', this.handleResize);
         document.removeEventListener('scroll', this.handleScroll);
+
+        if (this.state.scrollElement) {
+            this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
+        }
     }
 
     /**
@@ -180,7 +184,7 @@ export default class FloatingComponent extends Component {
         }, () => {
             const childEl = this.childWrapperEl.children[0];
             const childBoundingBox = childEl.getBoundingClientRect();
-            this.inactiveLeftPosition = childBoundingBox.left;
+            this.inactiveChildLeftPosition = childBoundingBox.left;
             this.inactiveChildWidth = childBoundingBox.width;
 
         });
@@ -194,7 +198,7 @@ export default class FloatingComponent extends Component {
 
         const childEl = this.childWrapperEl.children[0];
         const childBoundingBox = childEl.getBoundingClientRect();
-        this.inactiveLeftPosition = childBoundingBox.left;
+        this.inactiveChildLeftPosition = childBoundingBox.left;
         this.inactiveChildWidth = childBoundingBox.width;
     }
 
@@ -251,13 +255,13 @@ export default class FloatingComponent extends Component {
             this.state.isCalculatePadding &&
             this.state.windowWidth < this.props.breakpoint
         ) {
-            childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
+            childPaddingLeft = this.inactiveChildLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
             outerStyle.left = childPaddingLeft;
         }
 
         // Calculate left position of the outer component
         if (this.state.isCalculatePadding && this.state.windowWidth >= this.props.breakpoint) {
-            outerStyle.left = this.inactiveLeftPosition;
+            outerStyle.left = this.inactiveChildLeftPosition;
         } else {
             outerStyle.left = 0;
         }
@@ -266,7 +270,7 @@ export default class FloatingComponent extends Component {
         if (this.props.popup && this.state.isActive) {
             outerStyle = {
                 width: `${this.inactiveChildWidth}px`,
-                left: `${this.inactiveLeftPosition}px`,
+                left: `${this.inactiveChildLeftPosition}px`,
             };
         }
 
@@ -285,7 +289,7 @@ export default class FloatingComponent extends Component {
         if (this.props.popup) {
             innerStyle.left = childStyle.left;
         } else {
-            innerStyle.left = `${this.inactiveLeftPosition}px`;
+            innerStyle.left = `${this.inactiveChildLeftPosition}px`;
         }
 
         if (this.state.isCalculatePadding) {
@@ -304,7 +308,7 @@ export default class FloatingComponent extends Component {
             !this.state.isCalculatePadding &&
             !this.props.popup
         ) {
-            controlStyle = { left: `${this.inactiveLeftPosition}px`};
+            controlStyle = { left: `${this.inactiveChildLeftPosition}px`};
         }
 
         return { outerStyle, childStyle, innerStyle, controlStyle };
