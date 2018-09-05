@@ -36,7 +36,12 @@
 }
 
 .control.is-animating {
-    position: relative;
+    /* position: relative; */
+    position: absolute;
+    top: -29px;
+    left: 0;
+    right: 0;
+    z-index: 299;
 }
 
 
