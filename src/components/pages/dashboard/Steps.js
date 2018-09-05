@@ -13,7 +13,7 @@ export default class Steps extends Component {
   render() {
     const doesHaveAttribution = this.props.userAccount.permissions && this.props.userAccount.permissions.attribution;
     const plan = this.props.userAccount.steps && this.props.userAccount.steps.plan;
-    const attribution = this.props.CEVs && this.props.CEVs.conversion;
+    const attribution = this.props.attribution.channelsImpact && this.props.attribution.channelsImpact.conversion;
     const campaign = this.props.userAccount.steps && this.props.userAccount.steps.campaign;
     const idea = this.props.userAccount.steps && this.props.userAccount.steps.campaignIdea;
     const plannedVsActual = this.props.userAccount.steps && this.props.userAccount.steps.plannedVsActual;

@@ -448,7 +448,7 @@ class AppComponent extends Component {
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
       twitteradsapi: data.twitteradsapi,
-      attribution: data.attribution || {events: []},
+      attribution: data.attribution || {events: [], channelsImpact: {}},
       pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{
         price: '',
         isMonthly: false,
@@ -456,7 +456,6 @@ class AppComponent extends Component {
       }],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
-      CEVs: data.CEVs || {},
       CIM: data.CIM || {},
       technologyStack: data.technologyStack || [],
       historyData: data.historyData || {},

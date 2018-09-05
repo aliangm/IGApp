@@ -185,8 +185,8 @@ export default class Users extends Component {
           const domain = item.email && item.email.match('(?<=@).+');
           return domain && domain[0];
         }));
-        const devices = uniq(user.devices);
-        const countries = uniq(user.countries);
+        const devices = uniq(user.journey.reduce((mergedItem, item) => [...mergedItem, ...item.devices], []));
+        const countries = uniq(user.journey.reduce((mergedItem, item) => [...mergedItem, ...item.countries], []));
         return this.getTableRow(null, [
           <div className={this.classes.container}>
             <div className={this.classes.icon} style={{
@@ -205,21 +205,21 @@ export default class Users extends Component {
           getNickname(user.funnelStage[user.funnelStage.length - 1], true),
           user.journey.length,
           <div className={this.classes.container}>
-            {countries && countries.map(item => <div key={item.code} className={this.classes.container}>
-              <ReactCountryFlag code={item.code} svg/>
-              <div style={{marginLeft: '5px'}}>{item.code}</div>
+            {countries && countries.length > 0 && countries.map(item => <div key={item} className={this.classes.container}>
+              <ReactCountryFlag code={item} svg/>
+              <div style={{marginLeft: '5px'}}>{item}</div>
             </div>)}
           </div>,
           this.timeSince(firstTouchPoint),
           this.timeSince(lastTouchPoint),
           <div className={this.classes.container}>
-            {devices && devices.map(item => <div key={item} className={this.classes.icon}
+            {devices && devices.length > 0 && devices.map(item => <div key={item} className={this.classes.icon}
                                                  data-icon={'device:' + item}/>)}
           </div>
         ], {
           key: index,
           className: this.classes.tableRow,
-          onClick: this.showPopup.bind(this, user)
+          onClick: this.showPopup.bind(this, {...user, devices: devices, countries: countries})
         });
       });
 
