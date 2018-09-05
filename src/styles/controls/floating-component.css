@@ -38,6 +38,8 @@
 
 .control-handle {
     background: #FFF;
+    bottom: -1px;
+    position: relative;
     padding-top: 3px;
     padding-bottom: 6px;
     padding-left: 12px;

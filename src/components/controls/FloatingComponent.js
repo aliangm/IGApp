@@ -17,10 +17,18 @@ const RightTabCountour = () => (
 );
 
 /**
- * Wraps your component in a controlable
- * floating element
+ * Wraps your component in a controlable floating element
  *
- * @extends {React.Component}
+ * @typedef {object} Props
+ * @prop {string} hiddenText Text that will appear when component is not active
+ * @prop {string} shownText Text that will appear when component is active
+ * @prop {object} style
+ * @prop {string} className
+ * @prop {boolean} isLast Is the child component at the end of the scroll range?
+ * @prop {number} breakpoint Screen width when there's no menu appearing
+ * @prop {boolean} popup Is the component in a popup?
+ * @prop {string} popupClassname Partial match of the popup element class name
+ * @extends {React.Component<Props>}
  */
 export default class FloatingComponent extends Component {
     style = style;
@@ -31,7 +39,6 @@ export default class FloatingComponent extends Component {
         shownText: 'show',
         style: {},
         className: '',
-
         /** If child component is not at the end
          *  of the page set this to false */
         isLast: true,
@@ -39,7 +46,8 @@ export default class FloatingComponent extends Component {
          * essentially a resolution where the left menu is not shown anymore
          */
         breakpoint: 560,
-        popup: false
+        popup: false,
+        popupClassname: 'popup'
     }
 
     static propTypes = {
@@ -49,8 +57,8 @@ export default class FloatingComponent extends Component {
         className: PropTypes.string,
         isLast: PropTypes.bool,
         breakpoint: PropTypes.number,
-        popup: PropTypes.bool
-
+        popup: PropTypes.bool,
+        popupClassname: PropTypes.string
     }
 
     state = {
@@ -86,7 +94,7 @@ export default class FloatingComponent extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         // When the popup prows changes it will trigger update
-        const scrollElement = this.getScrollParent(this.outerEl);
+        const scrollElement = this.getScrollParent(this.outerEl, this.props.popupClassname);
         if (scrollElement && !this.state.scrollElement) {
                 this.setState({ scrollElement });
         }
@@ -115,12 +123,13 @@ export default class FloatingComponent extends Component {
     }
 
     /**
-     * Gets first scroll parent
+     * Gets a first upward element that is scrollable
      * 
-     * @param {HTMLElement} node
-     * @returns {HTMLElement}
+     * @param {HTMLElement} node Starting element
+     * @param {string} className Partial match of the popup className
+     * @returns {(HTMLElement|null)}First upward scrolling element
      */
-    getScrollParent = (node) => {
+    getScrollParent = (node, className) => {
         if (node == null) {
             return null;
         }
