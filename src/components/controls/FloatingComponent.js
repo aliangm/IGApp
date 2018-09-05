@@ -249,9 +249,7 @@ export default class FloatingComponent extends Component {
         let childPaddingLeft = 0;
         if (
             this.state.isCalculatePadding &&
-            this.state.windowWidth < this.props.breakpoint &&
-            this.childWrapperEl &&
-            this.childWrapperEl.childElementCount
+            this.state.windowWidth < this.props.breakpoint
         ) {
             childPaddingLeft = this.inactiveLeftPosition - this.childWrapperEl.getBoundingClientRect().left;
             outerStyle.left = childPaddingLeft;
@@ -292,6 +290,11 @@ export default class FloatingComponent extends Component {
 
         if (this.state.isCalculatePadding) {
             innerStyle.width = `${this.inactiveChildWidth}px`;
+        }
+
+        // Add relative to inner when component is active and when under breakpoint
+        if (this.state.isActive && this.state.windowWidth < this.props.breakpoint) {
+            innerStyle.position = 'relative';
         }
 
         // Control styles
