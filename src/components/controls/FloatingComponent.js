@@ -48,7 +48,7 @@ export default class FloatingComponent extends Component {
         breakpoint: 560,
         popup: false,
         popupClassname: 'popup'
-    }
+    };
 
     static propTypes = {
         hiddenText: PropTypes.string,
@@ -59,7 +59,7 @@ export default class FloatingComponent extends Component {
         breakpoint: PropTypes.number,
         popup: PropTypes.bool,
         popupClassname: PropTypes.string
-    }
+    };
 
     state = {
         isActive: false,
@@ -67,11 +67,28 @@ export default class FloatingComponent extends Component {
         windowWidth: null,
         isCalculatePadding: false,
         scrollElement: null
-    }
+    };
+
+    /** @type {number} */
+    inactiveChildWidth = null;
+
+    /** @type {number} */
+    inactiveLeftPosition = null;
+
+    /** @type {number} */
+    inactiveHandleLeftPos = null;
+
+    /** @type {HTMLElement} */
+    innerEl = null;
+
+    /** @type {HTMLElement} */
+    outerEl = null;
+
+    /** @type {HTMLElement} */
+    controlHandleEl = null;
+    
 
     componentDidMount() {
-        const childElBox = this.childWrapperEl
-        .children[0].getBoundingClientRect();
 
         window.component = this;
 
@@ -103,15 +120,21 @@ export default class FloatingComponent extends Component {
             this.deactivateAndRecalculate();
         }
 
+        // Add / remove event listeners to respective elements
         if (this.props.popup && this.props.popup !== prevProps.popup) {
             this.state.scrollElement.addEventListener('scroll', this.handleScroll);
             document.removeEventListener('scroll', this.handleScroll);
         }
-
         
         if (!this.props.popup && this.props.popup !== prevProps.popup) {
             this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
             document.addEventListener('scroll', this.handleScroll);
+        }
+
+        // Update the position of the handle when inactive so we can
+        // center it when component is wrapped inside of a popup
+        if (this.props.popup && !this.state.isActive) {
+            this.inactiveHandleLeftPos = this.controlHandleEl.getBoundingClientRect().left;
         }
     }
     
@@ -291,7 +314,7 @@ export default class FloatingComponent extends Component {
                     <div
                         ref={el => this.controlHandleEl = el}
                         className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
-                        style={{left: `${this.inactiveLeftPosition}px`}}
+                        style={this.props.popup ? {left: childStyle.left} : {left: `${this.inactiveLeftPosition}px`}}
                     >
                         <LeftTabCountour />
                         <div className={this.classes.controlHandle} onClick={this.toggleActive}>
