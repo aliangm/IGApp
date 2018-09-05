@@ -85,7 +85,7 @@ export default class FloatingComponent extends Component {
     outerEl = null;
 
     /** @type {HTMLElement} */
-    controlHandleEl = null;
+    controlEl = null;
     
 
     componentDidMount() {
@@ -134,7 +134,7 @@ export default class FloatingComponent extends Component {
         // Update the position of the handle when inactive so we can
         // center it when component is wrapped inside of a popup
         if (this.props.popup && !this.state.isActive) {
-            this.inactiveHandleLeftPos = this.controlHandleEl.getBoundingClientRect().left;
+            this.inactiveHandleLeftPos = this.controlEl.getBoundingClientRect().left;
         }
     }
     
@@ -220,7 +220,7 @@ export default class FloatingComponent extends Component {
     }
 
     handleScroll = (ev) => {
-        const elementHeight = this.controlHandleEl.offsetHeight;
+        const elementHeight = this.controlEl.offsetHeight;
         const innerElementTop = this.innerEl.getBoundingClientRect().top;
         const windowHeight = window.innerHeight;
 
@@ -285,13 +285,7 @@ export default class FloatingComponent extends Component {
         return { outerStyle, childStyle };
     }
 
-
-    render() {
-        const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
-        
-        // Clone height, used to make scrolling possible past the floating component
-        const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
-
+    getClassnames = () => {
         // Child classes
         let childClasses = this.classes.child;
         if (this.state.isActive) {
@@ -306,14 +300,36 @@ export default class FloatingComponent extends Component {
             outerClasses = `${outerClasses} ${this.classes.isActive}`;
         }
 
-        const { childStyle, outerStyle } = this.getStyles();
+        // Add animate class to outer element
+        let controlClasses = this.classes.control;
+        if (!this.state.isControlInView && !this.state.isActive) {
+            controlClasses = `${controlClasses} ${this.classes.isNotInView}`;
+        }
 
+        let innerClasses = this.classes.inner;
+        if (this.state.isCalculatePadding) {
+            innerClasses = `${this.classes.inner} ${this.classes.isAnimating}`;
+        }
+
+        return { childClasses, outerClasses, controlClasses, innerClasses };
+    }
+
+
+    render() {
+        const controlText = this.state.isActive ? this.props.hiddenText : this.props.shownText;
+        
+        // Clone height, used to make scrolling possible past the floating component
+        const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
+
+        const { childStyle, outerStyle } = this.getStyles();
+        const { childClasses, outerClasses, controlClasses, innerClasses } = this.getClassnames();
+        
         return (
             <div className={outerClasses} ref={el => this.componentEl = el}>
                 <div ref={el => this.outerEl = el} className={this.classes.outer} style={outerStyle}>
                     <div
-                        ref={el => this.controlHandleEl = el}
-                        className={!this.state.isControlInView && !this.state.isActive? `${this.classes.control} ${this.classes.isNotInView}` : this.classes.control}
+                        ref={el => this.controlEl = el}
+                        className={controlClasses}
                         style={this.props.popup ? {left: childStyle.left} : {left: `${this.inactiveLeftPosition}px`}}
                     >
                         <LeftTabCountour />
@@ -327,7 +343,7 @@ export default class FloatingComponent extends Component {
                         </div>
                         <RightTabCountour />
                     </div>
-                    <div className={this.classes.inner} ref={el => this.innerEl = el}>
+                    <div className={innerClasses} ref={el => this.innerEl = el}>
                         <div
                             ref={el => this.childWrapperEl = el}
                             className={childClasses}
