@@ -272,7 +272,7 @@ export default class FloatingComponent extends Component {
             };
         }
 
-        // Child wrapper style
+        // Child wrapper styles
         let childStyle = {};
         if (!this.state.isActive) {
             childStyle.height = 'auto';
@@ -282,12 +282,35 @@ export default class FloatingComponent extends Component {
             childStyle.paddingLeft = `${childPaddingLeft}px`;
         }
 
-        return { outerStyle, childStyle };
+        // Inner styles
+        let innerStyle = {};
+        if (this.props.popup) {
+            innerStyle.left = childStyle.left;
+        } else {
+            innerStyle.left = `${this.inactiveLeftPosition}px`;
+        }
+
+        if (this.state.isCalculatePadding) {
+            innerStyle.width = `${this.inactiveChildWidth}px`;
+        }
+
+        // Control styles
+        let controlStyle = {};
+        if(
+            this.state.windowWidth > this.props.breakpoint &&
+            !this.state.isCalculatePadding &&
+            !this.props.popup
+        ) {
+            controlStyle = { left: `${this.inactiveLeftPosition}px`};
+        }
+
+        return { outerStyle, childStyle, innerStyle, controlStyle };
     }
 
     getClassnames = () => {
         // Child classes
         let childClasses = this.classes.child;
+
         if (this.state.isActive) {
             childClasses = `${childClasses} ${this.classes.isEnabled}`;
         } else if (!this.state.isActive && this.state.isCalculatePadding) {
@@ -305,6 +328,9 @@ export default class FloatingComponent extends Component {
         if (!this.state.isControlInView && !this.state.isActive) {
             controlClasses = `${controlClasses} ${this.classes.isNotInView}`;
         }
+        if (this.state.isCalculatePadding) {
+            controlClasses = `${controlClasses} ${this.classes.isAnimating}`;
+        }
 
         let innerClasses = this.classes.inner;
         if (this.state.isCalculatePadding) {
@@ -321,17 +347,13 @@ export default class FloatingComponent extends Component {
         // Clone height, used to make scrolling possible past the floating component
         const cloneHeight = this.state.isActive && this.props.isLast ? `${this.outerEl.offsetHeight}px` : 0;
 
-        const { childStyle, outerStyle } = this.getStyles();
+        const { childStyle, outerStyle, controlStyle, innerStyle } = this.getStyles();
         const { childClasses, outerClasses, controlClasses, innerClasses } = this.getClassnames();
         
         return (
             <div className={outerClasses} ref={el => this.componentEl = el}>
                 <div ref={el => this.outerEl = el} className={this.classes.outer} style={outerStyle}>
-                    <div
-                        ref={el => this.controlEl = el}
-                        className={controlClasses}
-                        style={this.props.popup ? {left: childStyle.left} : {left: `${this.inactiveLeftPosition}px`}}
-                    >
+                    <div ref={el => this.controlEl = el} className={controlClasses} style={controlStyle}>
                         <LeftTabCountour />
                         <div className={this.classes.controlHandle} onClick={this.toggleActive}>
                             <span className={this.classes.controlIconWrapper}>
@@ -343,12 +365,8 @@ export default class FloatingComponent extends Component {
                         </div>
                         <RightTabCountour />
                     </div>
-                    <div className={innerClasses} ref={el => this.innerEl = el}>
-                        <div
-                            ref={el => this.childWrapperEl = el}
-                            className={childClasses}
-                            style={childStyle}
-                        >
+                    <div className={innerClasses} ref={el => this.innerEl = el} style={innerStyle}>
+                        <div ref={el => this.childWrapperEl = el} className={childClasses} style={childStyle}>
                             {this.props.children}
                         </div>
                     </div>
