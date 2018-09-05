@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import Component from 'components/Component';
 import style from 'styles/controls/floating-component.css';
 
+const FLOATING_COMPONENT_FLAG = '__floating__component__';
+const FLOATING_SCROLL_LISTENER = '__floating_scroll_listener';
 
 const LeftTabCountour = () => (
     <svg version="1.1" style={{left: '1px'}} id="left-contour" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24px" height="29px" viewBox="0 0 24 29" enableBackground="new 0 0 24 29" xmlSpace="preserve">
@@ -87,9 +89,16 @@ export default class FloatingComponent extends Component {
 
     /** @type {HTMLElement} */
     controlEl = null;
+
+    /**
+     * We use this to refer to the document scrollint element 
+     *  @type {HTMLElement} */
+    scrollElement = document.scrollingElement;
     
 
     componentDidMount() {
+        // we put a flag on the document object so we can identify easily
+        this.scrollElement[FLOATING_COMPONENT_FLAG] = true;
 
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
@@ -99,35 +108,55 @@ export default class FloatingComponent extends Component {
         // Update on resize state windowWidth on resize
         // Used to determine alignment for child component
         window.addEventListener('resize', this.handleResize);
-       
-        document.addEventListener('scroll', this.handleScroll);        
 
         this.updateInactiveChild();
 
         // Set initial window width
-        this.setState({ windowWidth: window.innerWidth });
+        this.setState({ windowWidth: window.innerWidth, scrollElement: this.scrollElement } );
     }
 
     componentDidUpdate(prevProps, prevState) {
         // When the popup prows changes it will trigger update
-        const scrollElement = this.getScrollParent(this.outerEl, this.props.popupClassname);
-        if (scrollElement && !this.state.scrollElement) {
-                this.setState({ scrollElement });
+        // let scrollElement = this.getScrollParent(this.outerEl, this.props.popupClassname);
+        // determine what is scroll element based on the popup prop
+        let scrollElement;
+        if (!this.isPopupPropAnElement()) {
+            scrollElement = this.scrollElement;
+        } else if (this.isPopupPropAnElement()) {
+            // Set this to the prop itself if it is not a boolean.
+            // We do this because initialy the props.popup is a boolean
+            // and at some point it will be a HTMLElement
+            scrollElement = this.props.popup;
         }
+        
+        // This part is because of the backwards compatibility
+        if (this.props.popup === true) {
+            scrollElement = this.getScrollParent(this.outerEl, this.props.popupClassname);
+        }
+
+        // Add event listeners to respective elements
+        if (
+            this.props.popup
+            && this.props.popup !== prevProps.popup &&
+            scrollElement &&
+            !scrollElement[FLOATING_SCROLL_LISTENER]
+        ) {
+            scrollElement[FLOATING_SCROLL_LISTENER] = true;
+            scrollElement.addEventListener('scroll', this.handleScroll);
+        }
+
+
+        // Checki if scroll element has changed, update if it is
+        if (
+            this.state.scrollElement &&
+            scrollElement &&
+            scrollElement[FLOATING_COMPONENT_FLAG] !== this.state.scrollElement[FLOATING_COMPONENT_FLAG]
+        ) {
+                this.setState({ scrollElement });
+        } 
 
         if (this.props.popup !== prevProps.popup) {
             this.deactivateAndRecalculate();
-        }
-
-        // Add / remove event listeners to respective elements
-        if (this.props.popup && this.props.popup !== prevProps.popup) {
-            this.state.scrollElement.addEventListener('scroll', this.handleScroll);
-            document.removeEventListener('scroll', this.handleScroll);
-        }
-        
-        if (!this.props.popup && this.props.popup !== prevProps.popup) {
-            this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
-            document.addEventListener('scroll', this.handleScroll);
         }
 
         // Update the position of the handle when inactive so we can
@@ -147,6 +176,13 @@ export default class FloatingComponent extends Component {
         if (this.state.scrollElement) {
             this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
         }
+    }
+    isPopupPropAnElement = () => {
+        //  If exists and is not a boolean, we assume it is an html element
+        return (
+            this.props.popup &&
+            !(this.props.popup === true || this.props.popup === false)
+        );
     }
 
     /**
@@ -249,6 +285,9 @@ export default class FloatingComponent extends Component {
         // We use style when floating is active
         let outerStyle = this.state.isActive ? mergedStyle : {};
 
+        // Is component in a popup?
+        const isPopup = this.state.scrollElement && !this.state.scrollElement[FLOATING_COMPONENT_FLAG];
+
         // Determine padding which we use to align the child component
         let childPaddingLeft = 0;
         if (
@@ -267,10 +306,10 @@ export default class FloatingComponent extends Component {
         }
 
         // Case when is popup
-        if (this.props.popup && this.state.isActive) {
+        if (isPopup && this.state.isActive) {
             outerStyle = {
                 width: `${this.inactiveChildWidth}px`,
-                left: `${this.inactiveChildLeftPosition}px`,
+                left: `${this.inactiveChildLeftPosition}px`
             };
         }
 
@@ -280,13 +319,13 @@ export default class FloatingComponent extends Component {
             childStyle.height = 'auto';
         }
 
-        if (!this.props.popup) {
+        if (!isPopup) {
             childStyle.paddingLeft = `${childPaddingLeft}px`;
         }
 
         // Inner styles
         let innerStyle = {};
-        if (this.props.popup) {
+        if (isPopup) {
             innerStyle.left = childStyle.left;
         } else {
             innerStyle.left = `${this.inactiveChildLeftPosition}px`;
@@ -306,7 +345,7 @@ export default class FloatingComponent extends Component {
         if(
             this.state.windowWidth > this.props.breakpoint &&
             !this.state.isCalculatePadding &&
-            !this.props.popup
+            !isPopup
         ) {
             controlStyle = { left: `${this.inactiveChildLeftPosition}px`};
         }
