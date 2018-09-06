@@ -100,8 +100,6 @@ export default class FloatingComponent extends Component {
         // we put a flag on the document object so we can identify easily
         this.scrollElement[FLOATING_COMPONENT_FLAG] = true;
 
-        window.FloatingComponent = this;
-
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
         window.addEventListener('animationstart', this.handleAnimationStart);
@@ -138,7 +136,6 @@ export default class FloatingComponent extends Component {
 
         // Add event listeners to respective elements
         if (scrollElement && !scrollElement[FLOATING_SCROLL_LISTENER]) {
-            console.log('SCROLL EVENT LISTENER')
             scrollElement[FLOATING_SCROLL_LISTENER] = true;
             scrollElement.addEventListener('scroll', this.handleScroll);
         }
