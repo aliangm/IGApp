@@ -93,12 +93,14 @@ export default class FloatingComponent extends Component {
     /**
      * We use this to refer to the document scrollint element 
      *  @type {HTMLElement} */
-    scrollElement = document.scrollingElement;
+    scrollElement = document;
     
 
     componentDidMount() {
         // we put a flag on the document object so we can identify easily
         this.scrollElement[FLOATING_COMPONENT_FLAG] = true;
+
+        window.FloatingComponent = this;
 
         // Needed for animating the height of the component
         window.addEventListener('animationend', this.handleAnimationEnd);
@@ -127,7 +129,7 @@ export default class FloatingComponent extends Component {
             // We do this because initialy the props.popup is a boolean
             // and at some point it will be a HTMLElement
             scrollElement = this.props.popup;
-        }
+        } 
         
         // This part is because of the backwards compatibility
         if (this.props.popup === true) {
@@ -135,9 +137,9 @@ export default class FloatingComponent extends Component {
         }
 
         // Add event listeners to respective elements
-        if (
-            this.props.popup
-            && this.props.popup !== prevProps.popup &&
+        if ( 
+            !prevState.scrollElement &&
+            this.state.scrollElement &&
             scrollElement &&
             !scrollElement[FLOATING_SCROLL_LISTENER]
         ) {
@@ -427,3 +429,5 @@ const triggerScroll = () => {
     window.scrollTo(window.scrollX, window.scrollY - 1);
     window.scrollTo(window.scrollX, window.scrollY + 1);
 }
+
+window.triggerScroll = triggerScroll;
