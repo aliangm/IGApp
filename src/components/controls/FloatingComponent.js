@@ -137,12 +137,8 @@ export default class FloatingComponent extends Component {
         }
 
         // Add event listeners to respective elements
-        if ( 
-            !prevState.scrollElement &&
-            this.state.scrollElement &&
-            scrollElement &&
-            !scrollElement[FLOATING_SCROLL_LISTENER]
-        ) {
+        if (scrollElement && !scrollElement[FLOATING_SCROLL_LISTENER]) {
+            console.log('SCROLL EVENT LISTENER')
             scrollElement[FLOATING_SCROLL_LISTENER] = true;
             scrollElement.addEventListener('scroll', this.handleScroll);
         }
@@ -237,15 +233,16 @@ export default class FloatingComponent extends Component {
     }
 
     deactivateAndRecalculate = () => {
+        const childEl = this.childWrapperEl.children[0];
+        const childBoundingBox = childEl.getBoundingClientRect();
+        this.inactiveChildLeftPosition = childBoundingBox.left;
+        this.inactiveChildWidth = childBoundingBox.width;
         this.setState({
             isActive: false,
             isControlInView: false
         }, () => {
-            const childEl = this.childWrapperEl.children[0];
-            const childBoundingBox = childEl.getBoundingClientRect();
             this.inactiveChildLeftPosition = childBoundingBox.left;
             this.inactiveChildWidth = childBoundingBox.width;
-
         });
         triggerScroll();
     }
@@ -369,7 +366,15 @@ export default class FloatingComponent extends Component {
             !this.state.isCalculatePadding &&
             !isPopup
         ) {
-            controlStyle = { left: `${this.inactiveChildLeftPosition}px`};
+            controlStyle = { left: `${this.inactiveChildLeftPosition}px` };
+        }
+
+        // If popup, center it to popup
+        if(isPopup) {
+            controlStyle = {
+                left: `${this.inactiveChildLeftPosition}px`,
+                width: `${this.inactiveChildWidth}px`
+            };
         }
 
         return { outerStyle, childStyle, innerStyle, controlStyle };
