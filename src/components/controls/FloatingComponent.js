@@ -360,22 +360,11 @@ export default class FloatingComponent extends Component {
         }
 
         // Control styles
-        let controlStyle = {};
-        if(
-            this.state.windowWidth > this.props.breakpoint &&
-            !this.state.isCalculatePadding &&
-            !isPopup
-        ) {
-            controlStyle = { left: `${this.inactiveChildLeftPosition}px` };
-        }
-
-        // If popup, center it to popup
-        if(isPopup) {
-            controlStyle = {
-                left: `${this.inactiveChildLeftPosition}px`,
-                width: `${this.inactiveChildWidth}px`
-            };
-        }
+        const controlStyle = {
+            left: `${this.inactiveChildLeftPosition}px`,
+            width: `${this.inactiveChildWidth}px`
+        };
+        
 
         return { outerStyle, childStyle, innerStyle, controlStyle };
     }
