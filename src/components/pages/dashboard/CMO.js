@@ -34,7 +34,6 @@ export default class CMO extends Component {
   styles = [dashboardStyle];
 
   static defaultProps = {
-    forecastedIndicators: [],
     actualIndicators: {
       MCL: 0,
       MQL: 0,
@@ -96,20 +95,15 @@ export default class CMO extends Component {
 
   render() {
     const {
-      planDate, historyData, forecastedIndicators, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
+      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
       calculatedData: {
         committedBudgets,
+        committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
         annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
         historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
-
-    const committedForecasting = forecastedIndicators.map(month => {
-      const newMonth = {};
-      Object.keys(month).forEach(indicator => newMonth[indicator] = month[indicator].committed);
-      return newMonth;
-    });
 
     const {months, isPast, showAdvanced} = this.state;
     const merged = merge(committedBudgets, planUnknownChannels);
