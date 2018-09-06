@@ -166,6 +166,13 @@ export default class FloatingComponent extends Component {
         if (this.props.popup && !this.state.isActive) {
             this.inactiveHandleLeftPos = this.controlEl.getBoundingClientRect().left;
         }
+
+        // NOTE: This can be deleted when popup prop starts to be used with a ref of a popup element
+        if (this.props.popup === true && !this.isComponentInPopup(scrollElement)) {
+            const msg = `Component got a prop that indicates it's in a popup, however there's no popup element.`;
+            console.warn(msg);
+        }
+        
     }
     
     componentWillUnmount() {
@@ -179,13 +186,27 @@ export default class FloatingComponent extends Component {
             this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
         }
     }
+
+    /** Checks if popup prop is a boolean and assumes it's an element if it's not */
     isPopupPropAnElement = () => {
         //  If exists and is not a boolean, we assume it is an html element
         return (
             this.props.popup &&
             !(this.props.popup === true || this.props.popup === false)
         );
-    }
+    };
+
+    /** Check wheter the component is inside of a popup */
+    
+    isComponentInPopup = (scrollElement) => {
+        if (!scrollElement) {
+            return false;
+        }
+        // Is component in a popup? scrollElement can either be
+        // document element which we identify by checking against
+        // a flag we set earlier, or a popup element which doesn't have that flag
+        return !scrollElement[FLOATING_COMPONENT_FLAG];
+    };
 
     /**
      * Gets a first upward element that is scrollable
@@ -287,8 +308,7 @@ export default class FloatingComponent extends Component {
         // We use style when floating is active
         let outerStyle = this.state.isActive ? mergedStyle : {};
 
-        // Is component in a popup?
-        const isPopup = this.state.scrollElement && !this.state.scrollElement[FLOATING_COMPONENT_FLAG];
+        const isPopup = this.isComponentInPopup(this.state.scrollElement);
 
         // Determine padding which we use to align the child component
         let childPaddingLeft = 0;
