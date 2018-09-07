@@ -95,19 +95,28 @@ export default class FloatingComponent extends Component {
      *  @type {HTMLElement} */
     scrollElement = document;
     
+    /**
+    * @typedef {Object} RegisterListener
+    * @property {string} eventName name of the event (click, scroll, etc...)
+    * @property {function} cb listener callback
+    * @property {HTMLElement} element element to bind the listener to
+    **/
+    
+
+    /** @type {RegisterListener[]} */
+    registeredListeners = [];
+
 
     componentDidMount() {
+
         // we put a flag on the document object so we can identify easily
         this.scrollElement[FLOATING_COMPONENT_FLAG] = true;
 
-        // Needed for animating the height of the component
-        window.addEventListener('animationend', this.handleAnimationEnd);
-        window.addEventListener('animationstart', this.handleAnimationStart);
-
-
-        // Update on resize state windowWidth on resize
-        // Used to determine alignment for child component
-        window.addEventListener('resize', this.handleResize);
+        this.registerEventListeners([
+            {element: window, eventName: 'animationend', cb: this.handleAnimationEnd},
+            {element: window, eventName: 'animationstart', cb: this.handleAnimationStart},
+            {element: window, eventName: 'resize', cb: this.handleResize}
+        ]);
 
         this.updateInactiveChild();
 
@@ -137,7 +146,7 @@ export default class FloatingComponent extends Component {
         // Add event listeners to respective elements
         if (scrollElement && !scrollElement[FLOATING_SCROLL_LISTENER]) {
             scrollElement[FLOATING_SCROLL_LISTENER] = true;
-            scrollElement.addEventListener('scroll', this.handleScroll);
+            this.registerEventListeners({element: scrollElement, eventName: 'scroll', cb: this.handleScroll });
         }
 
 
@@ -168,16 +177,36 @@ export default class FloatingComponent extends Component {
         
     }
     
-    componentWillUnmount() {
-        // Remove all binded listeners
-        window.removeEventListener('animationend', this.handleAnimationEnd);
-        window.removeEventListener('animationstart', this.handleAnimationStart);
-        window.removeEventListener('resize', this.handleResize);
-        document.removeEventListener('scroll', this.handleScroll);
-
-        if (this.state.scrollElement) {
-            this.state.scrollElement.removeEventListener('scroll', this.handleScroll);
+    /**
+     * Register listeners so we can keep track and dispose them when needed
+     * 
+     * @param {RegisterListener[] | RegisterListener} eventListeners
+     */
+    registerEventListeners = (eventListeners) => {
+        if (!Array.isArray(eventListeners)) {
+            const { element, eventName, cb } = eventListeners;
+            element.addEventListener(eventName, cb);
+            this.registeredListeners.push({eventName, cb, element});
+            return;
         }
+
+        eventListeners.forEach(listener => {
+            const { element, eventName, cb } = listener;
+            element.addEventListener(eventName, cb);
+            this.registeredListeners.push({eventName, cb, element});
+        });
+    }
+
+    unregisterEventListeners = () => {
+        this.registeredListeners.map(registeredListener => {
+            const { eventName, cb, element } = registeredListener;
+            element.removeEventListener(eventName, cb);
+        })
+        }
+    
+    componentWillUnmount() {
+        // Remove all listeners
+        this.unregisterEventListeners();
     }
 
     /** Checks if popup prop is a boolean and assumes it's an element if it's not */
@@ -190,7 +219,6 @@ export default class FloatingComponent extends Component {
     };
 
     /** Check wheter the component is inside of a popup */
-    
     isComponentInPopup = (scrollElement) => {
         if (!scrollElement) {
             return false;
