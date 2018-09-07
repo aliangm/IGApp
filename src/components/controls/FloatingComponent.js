@@ -91,7 +91,7 @@ export default class FloatingComponent extends Component {
     controlEl = null;
 
     /**
-     * We use this to refer to the document scrollint element 
+     * We use this to refer to the document scrolling element 
      *  @type {HTMLElement} */
     scrollElement = document;
     
@@ -302,8 +302,6 @@ export default class FloatingComponent extends Component {
         // We use style when floating is active
         let outerStyle = this.state.isActive ? mergedStyle : {};
 
-        const isPopup = this.isComponentInPopup(this.state.scrollElement);
-
         // Determine padding which we use to align the child component
         let childPaddingLeft = 0;
         if (
@@ -321,8 +319,12 @@ export default class FloatingComponent extends Component {
             outerStyle.left = 0;
         }
 
-        // Case when is popup
-        if (isPopup && this.state.isActive) {
+        // Case when is popup and isActive
+        if (
+            this.state.scrollElement &&
+            this.state.scrollElement[FLOATING_COMPONENT_FLAG] &&
+            this.state.isActive
+        ) {
             outerStyle = {
                 width: `${this.inactiveChildWidth}px`,
                 left: `${this.inactiveChildLeftPosition}px`
@@ -335,13 +337,13 @@ export default class FloatingComponent extends Component {
             childStyle.height = 'auto';
         }
 
-        if (!isPopup) {
+        if (this.state.scrollElement && this.state.scrollElement[FLOATING_COMPONENT_FLAG]) {
             childStyle.paddingLeft = `${childPaddingLeft}px`;
         }
 
         // Inner styles
         let innerStyle = {};
-        if (isPopup) {
+        if (this.state.scrollElement && this.state.scrollElement[FLOATING_COMPONENT_FLAG]) {
             innerStyle.left = childStyle.left;
         } else {
             innerStyle.left = `${this.inactiveChildLeftPosition}px`;
@@ -440,5 +442,3 @@ const triggerScroll = () => {
     window.scrollTo(window.scrollX, window.scrollY - 1);
     window.scrollTo(window.scrollX, window.scrollY + 1);
 }
-
-window.triggerScroll = triggerScroll;
