@@ -249,35 +249,41 @@ export default class Welcome extends Component {
         <Label>Company Website</Label>
         <Textfield value={ this.props.userAccount.companyWebsite } onChange={ this.handleChange.bind(this, 'companyWebsite')}/>
       </div>
-      <div className={ this.classes.row }>
-        <Label>Team Members</Label>
-        <div className={ welcomeStyle.locals.innerBox }>
-          <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: 'initial', overflow: 'visible' }}>
-            <div className={ PlannedVsActualstyle.locals.box } style={{ overflow: 'visible' }}>
-              <table className={ PlannedVsActualstyle.locals.table }>
-                <thead>
-                { headRow }
-                </thead>
-                <tbody className={ PlannedVsActualstyle.locals.tableBody }>
-                { rows }
-                </tbody>
-              </table>
+      { !isPopupMode() ?
+        <div className={this.classes.row}>
+          <Label>Team Members</Label>
+          <div className={welcomeStyle.locals.innerBox}>
+            <div className={PlannedVsActualstyle.locals.wrap} ref="wrap"
+                 style={{margin: 'initial', overflow: 'visible'}}>
+              <div className={PlannedVsActualstyle.locals.box} style={{overflow: 'visible'}}>
+                <table className={PlannedVsActualstyle.locals.table}>
+                  <thead>
+                  {headRow}
+                  </thead>
+                  <tbody className={PlannedVsActualstyle.locals.tableBody}>
+                  {rows}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className={welcomeStyle.locals.center}>
+              <Button
+                type="reverse"
+                style={{width: '75px', marginTop: '20px'}}
+                onClick={() => {
+                  this.setState({showAddMemberPopup: true})
+                }}>+Add
+              </Button>
+            </div>
+            <div className={welcomeStyle.locals.inviteMessage}>
+              {this.state.inviteMessage}
             </div>
           </div>
         </div>
-        <div>
-          <div className={ welcomeStyle.locals.center }>
-            <Button
-              type="reverse"
-              style={{ width: '75px', marginTop: '20px' }}
-              onClick={ () => { this.setState({showAddMemberPopup: true}) } }>+Add
-            </Button>
-          </div>
-          <div className={ welcomeStyle.locals.inviteMessage }>
-            { this.state.inviteMessage }
-          </div>
-        </div>
-      </div>
+        : null
+      }
       <div className={ this.classes.row }>
         <Label>Enter your main competitors' website (up to 3)</Label>
         <Textfield value={ this.props.userAccount.competitorsWebsites[0] } style={{marginBottom: '16px'}}
