@@ -87,7 +87,7 @@ module.exports = function(args) {
         // { test: /\.u.css$/, loader: 'style/useable!' + cssLoader },
         // { test: /\.css$/, loader: "style?-singleton!raw" },
 
-        { test: /\.(jpg|jpeg|gif|png|svg)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
+        { test: /\.(jpg|jpeg|gif|png|svg|ttf)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
 
         { test: /\.tpl$/, loader: 'raw' },
 				{ test: /\.json$/, loader: 'json' },
