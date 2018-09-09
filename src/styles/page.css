@@ -16,7 +16,7 @@
   bottom: 0;
   overflow: auto;
   z-index: 12;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.55);
   cursor: default;
 }
 
