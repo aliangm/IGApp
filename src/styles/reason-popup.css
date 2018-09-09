@@ -1,4 +1,4 @@
-    .center {
+.center {
     display: flex;
     justify-content: center;
 }
@@ -23,8 +23,8 @@
 .sub-title {
     font-size: 20px;
     color: #53626b;
-    text-align: center;
     margin-bottom: 9px;
+    white-space: pre-line;
 }
 
 .sub-title-bold {
