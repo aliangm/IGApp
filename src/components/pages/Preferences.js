@@ -51,12 +51,12 @@ export default class Preferences extends Component {
     this.state = {
       isCheckAnnual: props.annualBudget !== null,
       isDivideEqually: props.annualBudget !==
-        null &&
-        props.annualBudgetArray.length >
-        0 &&
-        props.annualBudgetArray.every((budget) => {
-          return budget === props.annualBudgetArray[0];
-        }),
+      null &&
+      props.annualBudgetArray.length >
+      0 &&
+      props.annualBudgetArray.every((budget) => {
+        return budget === props.annualBudgetArray[0];
+      }),
       showAdvancedFields: false,
       objectivePopupData: {
         hidden: true,
@@ -666,20 +666,33 @@ export default class Preferences extends Component {
             <div style={{width: '30px'}}/>
             <PlanButton onClick={() => {
               if (this.validate()) {
-                this.props.updateUserMonthPlan({
-                  annualBudget: this.props.annualBudget,
-                  annualBudgetArray: this.props.annualBudgetArray,
-                  objectives: this.props.objectives,
-                  blockedChannels: this.props.blockedChannels,
-                  inHouseChannels: this.props.inHouseChannels,
-                  maxChannels: this.props.maxChannels,
-                  approvedBudgets: this.props.approvedBudgets,
-                  budgetConstraints: budgetConstraints,
-                  planNeedsUpdate: true
-                }, this.props.region, this.props.planDate)
-                  .then(() => {
-                    history.push('/plan/plan/annual');
+                // If user didn't define any objectives, open objectives popup
+                if (!this.props.objectives.find(item => Object.keys(item).length > 0)) {
+                  this.setState({
+                    objectivePopupData: {
+                      hidden: false,
+                      objectiveEdit: false,
+                      objective: null,
+                      objectiveMonth: null
+                    }
                   });
+                }
+                else {
+                  this.props.updateUserMonthPlan({
+                    annualBudget: this.props.annualBudget,
+                    annualBudgetArray: this.props.annualBudgetArray,
+                    objectives: this.props.objectives,
+                    blockedChannels: this.props.blockedChannels,
+                    inHouseChannels: this.props.inHouseChannels,
+                    maxChannels: this.props.maxChannels,
+                    approvedBudgets: this.props.approvedBudgets,
+                    budgetConstraints: budgetConstraints,
+                    planNeedsUpdate: true
+                  }, this.props.region, this.props.planDate)
+                    .then(() => {
+                      history.push('/plan/plan/annual');
+                    });
+                }
               }
               else {
                 this.setState({validationError: true});

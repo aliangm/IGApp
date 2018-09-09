@@ -58,6 +58,7 @@ export default class Plan extends Component {
             this.props.setDataAsState(data);
             this.setBudgetsData(data.planBudgets);
             this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
+            this.setState({interactiveMode: true});
           });
       }
       else {
@@ -555,7 +556,7 @@ export default class Plan extends Component {
                             }}>
                       Cancel
                     </Button>
-                    <Button type="secondary"
+                    <Button type="primary"
                             style={{
                               marginLeft: '15px',
                               width: '102px'

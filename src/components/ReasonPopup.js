@@ -26,6 +26,7 @@ export default class ReasonPopup extends Component {
   }
 
   render(){
+    const name = this.props.userAccount && this.props.userAccount.teamMembers[0] && this.props.userAccount.teamMembers[0].name;
     return <div hidden={ this.props.hidden }>
       <Page popup={ true } width={'952px'} contentClassName={ this.classes.content }>
         <div className={ this.classes.center }>
@@ -34,10 +35,11 @@ export default class ReasonPopup extends Component {
               Signup complete!
             </div>
             <div className={ this.classes.subTitle } >
-              So we can prepare the best experience for you...
+              {`Hey ${name},
+              You're about to begin the product onboarding. The process is critical as InfiniGrow is using that data to tailor its recommendations to fit your needs and to provide the best experience for you.`}
             </div>
             <div className={ this.classes.subTitleBold }>
-              What would you like to use InfiniGrow for?
+              Before we start, what would you like to use InfiniGrow for?
             </div>
             <div className={ this.classes.boxes }>
               <div className={ this.classes.scratch } onClick={ () => { this.addReasonToAccount("mix from scratch") } }>
