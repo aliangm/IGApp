@@ -16,7 +16,6 @@ import SignIn from './components/pages/SignIn';
 import Campaigns from './components/pages/Campaigns';
 import Attribution from './components/pages/Attribution';
 import Users from './components/pages/Users';
-import Insights from './components/pages/Insights';
 import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
 import {isAuthenticated, logout, handleAuthentication, getProfileSync} from './components/utils/AuthService';
@@ -135,7 +134,6 @@ ReactDOM.render(
         <Route path="/analyze/content" component={Content} onEnter={requireAdminAuth} tabName='Content'/>
         <Route path="/analyze/audiences" component={Users} onEnter={requireAdminAuth} tabName='Audiences'/>
       </Route>
-      <Route path="/insights" component={Insights} onEnter={requireAdminAuth}/>
       <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
       <Route path="/plan/planned-vs-actual" component={PlannedVsActual} onEnter={requireAdminAuth}/>
     </Route>
