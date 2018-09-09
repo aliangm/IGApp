@@ -91,6 +91,7 @@ export default class CurrentTab extends Component {
           </div>
           <div className={planStyles.locals.titlePrice}>{formatPrice(monthBudget)}</div>
         </div>
+        {/*
         <div className={planStyles.locals.titleButtons}>
           <Button type="accent2" style={{
             width: '106px'
@@ -111,6 +112,7 @@ export default class CurrentTab extends Component {
             </PlanPopup>
           </div>
         </div>
+        */}
       </div>
       <div className={this.classes.innerBox}>
         <Masonry className={this.classes.boxesContainer} options={{
