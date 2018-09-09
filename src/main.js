@@ -112,21 +112,16 @@ ReactDOM.render(
                  onEnter={requireAuth}
                  tabName='Site Structure'/>
         </Route>
-        <Route component={Profile} onEnter={requireAuth}>
-          <Route path="/settings/profile/product" component={Product} onEnter={requireAdminAuth} tabName='Product'/>
-          <Route path="/settings/profile/preferences"
-                 component={Preferences}
-                 onEnter={requireAdminAuth}
-                 tabName='Preferences'/>
-          <Route path="/settings/profile/target-audience"
-                 component={TargetAudience}
-                 onEnter={requireAdminAuth}
-                 tabName='Target Audience'/>
-          <Route path="/settings/profile/integrations"
-                 component={Platforms}
-                 onEnter={requireAdminAuth}
-                 tabName='Integrations'/>
-        </Route>
+        <Route path="/settings/profile/product" component={Product} onEnter={requireAdminAuth}/>
+        <Route path="/settings/profile/preferences"
+               component={Preferences}
+               onEnter={requireAdminAuth}/>
+        <Route path="/settings/profile/target-audience"
+               component={TargetAudience}
+               onEnter={requireAdminAuth}/>
+        <Route path="/settings/profile/integrations"
+               component={Platforms}
+               onEnter={requireAdminAuth}/>
       </Route>
       <Route component={Analyze} onEnter={requireAdminAuth}>
         <Route path="/analyze/overview" component={Overview} onEnter={requireAdminAuth} tabName='Overview'/>

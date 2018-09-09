@@ -1,11 +1,5 @@
 @import "../global/mixins.css";
 
-.content {
-    background: #f5f6fb;
-    padding: 40px 38px;
-    margin: 0;
-}
-
 .title {
     font-size: 26px;
     font-weight: bold;

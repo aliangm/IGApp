@@ -235,11 +235,13 @@ export default class Product extends Component {
 
 
     return <div>
-      <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}>
-        {
-          isPopupMode() ? <Title title="Product"
-                                 subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/> : ''
-        }
+      <Page popup={isPopupMode()}
+            className={!isPopupMode() ? this.classes.static : null}
+            contentClassName={this.classes.content}
+            innerClassName={this.classes.pageInner}
+            width='100%'>
+          <Title title="Product"
+                 subTitle='We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications'/>
         <div className={this.classes.error}>
           <label hidden={!this.state.serverDown}>Something is wrong... Let us check what is it and fix it for you
             :)</label>

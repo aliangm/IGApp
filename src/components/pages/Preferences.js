@@ -430,11 +430,13 @@ export default class Preferences extends Component {
     const budgetConstraintsChannels = Object.keys(budgetConstraints);
 
     return <div>
-      <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}>
-        {isPopupMode()
-          ? <Title title="Preferences"
-                   subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
-          : null}
+      <Page popup={isPopupMode()}
+            className={!isPopupMode() ? this.classes.static : null}
+            contentClassName={this.classes.content}
+            innerClassName={this.classes.pageInner}
+            width='100%'>
+        <Title title="Preferences"
+               subTitle='What are your marketing goals and constrains? Different objectives dictate different strategies'/>
         <div className={this.classes.error}>
           <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
             :)</label>

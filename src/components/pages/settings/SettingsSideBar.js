@@ -14,9 +14,24 @@ export default class SettingsSideBar extends Component {
         representivePath: '/settings/account'
       },
       {
-        name: 'Profile',
+        name: 'Product',
         path: '/settings/profile/product',
-        representivePath: '/settings/profile'
+        representivePath: '/settings/profile/product'
+      },
+      {
+        name: 'Preferences',
+        path: '/settings/profile/preferences',
+        representivePath: '/settings/profile/preferences'
+      },
+      {
+        name: 'Target Audience',
+        path: '/settings/profile/target-audience',
+        representivePath: '/settings/profile/target-audience'
+      },
+      {
+        name: 'Integrations',
+        path: '/settings/profile/integrations',
+        representivePath: '/settings/profile/integrations'
       },
       {
         name: 'Attribution',
