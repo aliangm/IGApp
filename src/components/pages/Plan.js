@@ -555,7 +555,7 @@ export default class Plan extends Component {
                             }}>
                       Cancel
                     </Button>
-                    <Button type="secondary"
+                    <Button type="primary"
                             style={{
                               marginLeft: '15px',
                               width: '102px'
