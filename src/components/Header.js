@@ -174,57 +174,58 @@ export default class Header extends Component {
             </div>
           </div>
           : null}
-        {hasUser ?
-          <div className={this.classes.dropmenuButton}
-               data-selected={this.state.suggestionsVisible ? true : null}
-               role="button"
-               onClick={this.toggleSuggestion}
-          >
-            <div className={this.classes.userLogo}
-                 style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}>
-              <Popup className={this.classes.dropmenuPopup}
-                     style={{padding: '0'}}
-                     hidden={!this.state.suggestionsVisible} onClose={() => {
-                this.setState({
-                  suggestionsVisible: false
-                });
-              }}
-              >
-              <InfiniGrowRobot company={this.props.userCompany}
-                               historyData={this.props.beforeInfiniGrowData}
-                               actualIndicators={this.props.actualIndicators}
-                               funnelFirstObjective={this.props.calculatedData.objectives.funnelFirstObjective}/>
-                <div style={{padding: '12px', backgroundColor: '#E6E6E6', borderTop: '1px solid #273142'}}>
-                  <div>
-                    <div style={{display: 'inline-block'}}>
-                      What action/investment could have the biggest impact on
-                    </div>
-                    <Select
-                      selected={this.state.indicator}
-                      select={{
-                        options: getIndicatorsWithNicknames()
-                      }}
-                      onChange={(e) => {
-                        this.setState({indicator: e.value, suggestionsVisible: true});
-                      }}
-                      style={{width: '200px', display: 'inline-block', margin: '10px 10px 20px 0'}}
-                    />
-                    <div style={{display: 'inline-block'}}>
-                      next month?
-                    </div>
-                  </div>
-                  <Button type="normalAccent"
-                          onClick={() => {
-                            this.setState({suggestionPopup: true});
-                          }}
-                          style={{width: '120px'}}>
-                    Show me
-                  </Button>
-                </div>
-              </Popup>
-            </div>
-          </div>
-          : null}
+        {/* Remove the robot from the header for now*/}
+        {/*{hasUser ?*/}
+          {/*<div className={this.classes.dropmenuButton}*/}
+               {/*data-selected={this.state.suggestionsVisible ? true : null}*/}
+               {/*role="button"*/}
+               {/*onClick={this.toggleSuggestion}*/}
+          {/*>*/}
+            {/*<div className={this.classes.userLogo}*/}
+                 {/*style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}>*/}
+              {/*<Popup className={this.classes.dropmenuPopup}*/}
+                     {/*style={{padding: '0'}}*/}
+                     {/*hidden={!this.state.suggestionsVisible} onClose={() => {*/}
+                {/*this.setState({*/}
+                  {/*suggestionsVisible: false*/}
+                {/*});*/}
+              {/*}}*/}
+              {/*>*/}
+              {/*<InfiniGrowRobot company={this.props.userCompany}*/}
+                               {/*historyData={this.props.beforeInfiniGrowData}*/}
+                               {/*actualIndicators={this.props.actualIndicators}*/}
+                               {/*funnelFirstObjective={this.props.calculatedData.objectives.funnelFirstObjective}/>*/}
+                {/*<div style={{padding: '12px', backgroundColor: '#E6E6E6', borderTop: '1px solid #273142'}}>*/}
+                  {/*<div>*/}
+                    {/*<div style={{display: 'inline-block'}}>*/}
+                      {/*What action/investment could have the biggest impact on*/}
+                    {/*</div>*/}
+                    {/*<Select*/}
+                      {/*selected={this.state.indicator}*/}
+                      {/*select={{*/}
+                        {/*options: getIndicatorsWithNicknames()*/}
+                      {/*}}*/}
+                      {/*onChange={(e) => {*/}
+                        {/*this.setState({indicator: e.value, suggestionsVisible: true});*/}
+                      {/*}}*/}
+                      {/*style={{width: '200px', display: 'inline-block', margin: '10px 10px 20px 0'}}*/}
+                    {/*/>*/}
+                    {/*<div style={{display: 'inline-block'}}>*/}
+                      {/*next month?*/}
+                    {/*</div>*/}
+                  {/*</div>*/}
+                  {/*<Button type="normalAccent"*/}
+                          {/*onClick={() => {*/}
+                            {/*this.setState({suggestionPopup: true});*/}
+                          {/*}}*/}
+                          {/*style={{width: '120px'}}>*/}
+                    {/*Show me*/}
+                  {/*</Button>*/}
+                {/*</div>*/}
+              {/*</Popup>*/}
+            {/*</div>*/}
+          {/*</div>*/}
+          {/*: null}*/}
         <div className={this.classes.dropmenuButton}
              data-selected={this.state.dropmenuVisibleBig ? true : null}
              role="button"
