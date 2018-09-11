@@ -9,10 +9,10 @@
 
 .head-tab {
   height: 100%;
-  padding: 0 16px 0 15px;
+  padding: 0 20px;
   text-transform: capitalize;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,7 +20,7 @@
   cursor: pointer;
   position: relative;
   white-space: nowrap;
-  color: #354052;
+  color: #99a4c2;
   text-decoration: none;
 }
 
@@ -30,6 +30,7 @@
 
 .head-tab-selected {
   composes: head-tab;
+  color: #182033;
 }
 
 .head-tab-selected::after {
@@ -39,8 +40,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5px;
-  background: #1889dd;
+  height: 2px;
+  background: #4d91fc;
 }
 
 .box {
@@ -81,11 +82,10 @@
 .menu {
   flex-grow: 1;
   height: 100%;
-  border-bottom: 1px solid #e6eaee;
-  padding: 0 30px;
-  box-sizing: border-box;
+  padding: 0 40px;
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 1px 2px 0 rgba(27, 35, 56, 0.07);
 }
 
 .menu-small {
