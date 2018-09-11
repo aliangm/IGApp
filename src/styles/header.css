@@ -82,7 +82,7 @@
 .menu {
   flex-grow: 1;
   height: 100%;
-  padding: 0 40px;
+  padding: 0 17px 0 40px;
   display: flex;
   justify-content: space-between;
   box-shadow: 0 1px 2px 0 rgba(27, 35, 56, 0.07);
@@ -108,7 +108,7 @@
 }
 
 .item {
-  padding: 0 15px;
+  padding: 0 23px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,12 +173,21 @@
   min-width: 85px;
 }
 
-.user {
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: -0.010em;
-  margin-left: 20px;
+.user-details{
+  margin: 0 16px;
   align-self: center;
+}
+
+.user-company{
+  font-size: 12px;
+  font-weight: 600;
+  color: #99a4c2;
+}
+
+.user {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
 }
 
 .user-logo {
@@ -190,13 +199,11 @@
 }
 
 .triangle {
-  border: 7px solid transparent;
-  border-top-color: currentColor;
-  color: #4b515e;
-  position: relative;
-  top: 5px;
-  left: 5px;
+  width: 8px;
+  height: 5px;
   align-self: center;
+  background: center center no-repeat;
+  background-size: contain;
 }
 
 .log-out-icon {
@@ -224,23 +231,28 @@
   display: inline-flex;
 }
 
-.location-icon {
-  width: 24px;
-  height: 24px;
-  background: url(../assets/location2.svg) center center no-repeat;
-  background-size: auto 24px;
+.header-icon {
+  width: 15px;
+  height: 21px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
-.notifications-icon {
-  width: 24px;
-  height: 24px;
-  background: url(../assets/notifications-button.svg) center center no-repeat;
-  background-size: auto 24px;
+.header-icon[data-active] {
+  position: absolute;
 }
 
-.notifications-icon[data-active] {
-  background: url(../assets/turn-notifications-on-button.svg) center center no-repeat;
-  background-size: auto 24px;
+.header-icon[data-active]::before{
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 21px;
+  width: 6px;
+  height: 6px;
+  background-color: #ee2032;
+  border: solid 2px #ffffff;
+  border-radius: 5px;
 }
 
 .dropmenu-popup {
@@ -407,3 +419,7 @@
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
+
+@mixin icon-nodpi header:notification , ../assets/header/notifications-icon;
+@mixin icon-nodpi header:location , ../assets/header/regions-icon;
+@mixin icon-nodpi header:triangle , ../assets/header/triangle;

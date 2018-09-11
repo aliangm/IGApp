@@ -135,7 +135,7 @@ export default class Header extends Component {
                  setTimeout(this.readNotifications.bind(this), 20000);
                }}
           >
-            <div className={this.classes.notificationsIcon} data-active={isUnreadNotifications ? true : null}>
+            <div className={this.classes.headerIcon} data-active={isUnreadNotifications ? true : null} data-icon="header:notification">
               <Popup className={this.classes.dropmenuPopup}
                      style={{padding: '0'}}
                      hidden={!this.state.notificationsVisible}
@@ -156,7 +156,7 @@ export default class Header extends Component {
                role="button"
                onClick={this.toggleRegionsBig}
           >
-            <div className={this.classes.locationIcon}>
+            <div className={this.classes.headerIcon} data-icon="header:location">
               <Popup className={this.classes.dropmenuPopup}
                      hidden={!this.state.regionsVisibleBig} ref="regionsPopup" onClose={() => {
                 this.setState({
@@ -233,10 +233,15 @@ export default class Header extends Component {
         >
           <div className={this.classes.dropmenu}>
             <Avatar member={user} className={this.classes.userLogo}/>
-            <div className={this.classes.user}>
-              {user && user.name}
+            <div className={this.classes.userDetails}>
+              <div className={this.classes.user}>
+                {user && user.name}
+              </div>
+              <div className={this.classes.userCompany}>
+                {this.props.userCompany}
+              </div>
             </div>
-            <div className={this.classes.triangle}/>
+            <div className={this.classes.triangle} data-icon="header:triangle"/>
             <Popup className={this.classes.dropmenuPopup}
                    hidden={!this.state.dropmenuVisibleBig} onClose={() => {
               this.setState({
