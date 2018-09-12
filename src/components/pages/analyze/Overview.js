@@ -362,7 +362,7 @@ export default class Overview extends Component {
                     </div>
                   </div>
                   <div className={dashboardStyle.locals.line} style={{left: '443px', bottom: '17px', height: '80%'}}/>
-                  <div style={{marginLeft: '-10px'}}>
+                  <div style={{marginLeft: '33px'}}>
                     <BarChart width={700} height={350} data={data} maxBarSize={85}>
                       <CartesianGrid vertical={false} horizontal={false}/>
                       <XAxis dataKey="name" axisLine={false} tickLine={false}/>
