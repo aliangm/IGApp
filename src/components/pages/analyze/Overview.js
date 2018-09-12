@@ -303,8 +303,8 @@ export default class Overview extends Component {
                   Business Impact across funnel
                 </div>
                 <div style={{display: 'flex'}}>
-                  <div className={dashboardStyle.locals.chart} style={{width: '443px'}}>
-                    <div className={this.classes.footerLeft}>
+                  <div className={dashboardStyle.locals.chart} style={{width: '443px', alignItems: 'center'}}>
+                    <div className={this.classes.footerLeft} style={{zIndex: 2}}>
                       <div className={dashboardStyle.locals.index}>
                         {
                           channelCategories.map((element, i) => (
@@ -328,11 +328,9 @@ export default class Overview extends Component {
                               }}>
                                 {element.name}
                               </div>
-                              <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}>
+                              <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}
+                                   data-tip={'$'+formatBudgetShortened(element.value)}>
                                 {Math.round(element.value / channelCategoriesSum * 100)}%
-                              </div>
-                              <div style={{width: '50px', fontSize: '14px', color: '#7f8fa4'}}>
-                                (${formatBudgetShortened(element.value)})
                               </div>
                             </div>
                           ))
@@ -340,16 +338,16 @@ export default class Overview extends Component {
                       </div>
                     </div>
                     <div className={this.classes.footerRight}
-                         style={{marginTop: '-30px', width: '315px', marginLeft: '-25px'}}>
-                      <PieChart width={429} height={350} onMouseEnter={(d, i) => {
+                         style={{width: '274px', marginLeft: '-25px'}}>
+                      <PieChart width={274} height={332} onMouseEnter={(d, i) => {
                         this.setState({activeIndex: i});
                       }} onMouseLeave={() => {
                         this.setState({activeIndex: void 0});
                       }}>
                         <Pie
                           data={channelCategories}
-                          cx={250}
-                          cy={150}
+                          cx='50%'
+                          cy='50%'
                           labelLine={true}
                           innerRadius={75}
                           outerRadius={100}
