@@ -1,7 +1,7 @@
 @import "./global/mixins.css";
 
 .box {
-  width: 240px;
+  width: 279px;
   position: fixed;
   top: 70px;
   left: 0;
@@ -27,7 +27,7 @@
   background: #273142 url(assets/logo.png) center center no-repeat;
   background-size: 92px auto;
 
-  width: 240px;
+  width: 279px;
   height: 80px;
   display: none;
 }
@@ -158,7 +158,7 @@
 
 @media (min-width: 561px) and (max-width: 1440px) {
   .box {
-    width: 88px;
+    width: 80px;
     transition: width 300ms;
   }
 
@@ -169,7 +169,7 @@
   }
 
   .box:hover {
-    width: 240px;
+    width: 279px;
   }
 
   .box:hover .menu-item-text {

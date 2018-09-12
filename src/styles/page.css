@@ -1,6 +1,6 @@
 .static {
   margin-top: 70px;
-  margin-left: 240px;
+  margin-left: 279px;
   position: relative;
 }
 
@@ -51,7 +51,7 @@
 
 @media (max-width: 1440px) {
   .static {
-    margin-left: 88px;
+    margin-left: 80px;
   }
 }
 

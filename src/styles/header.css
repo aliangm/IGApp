@@ -68,7 +68,7 @@
 
 .logo-wrapper {
   background-color: #273142;
-  width: 240px;
+  width: 279px;
   height: 100%;
   cursor: pointer;
   display: inline-flex;
@@ -306,10 +306,9 @@
 }
 
 @media (max-width: 1440px) {
-  .logo {
-    background-size: 40px auto;
-    /*width: 100px;*/
-    width: 88px;
+  .logo-wrapper {
+    width: 80px;
+    min-width: 80px;
     height: 100%;
   }
 }
