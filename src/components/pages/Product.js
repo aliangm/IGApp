@@ -53,12 +53,6 @@ export default class Product extends Component {
     this.props.updateState({userProfile: update});
   }
 
-  fakeChange(parameter, value) {
-    let update = Object.assign({}, this.props.userProfile);
-    update[parameter] = value;
-    this.props.updateState({userProfile: update});
-  }
-
   validate() {
     const fields = ['vertical', 'orientation', 'businessModel', 'seatsPerAccount', 'platform', 'lifeCycle', 'coverage', 'loyalty', 'differentiation'];
     const errorFields = fields.filter(field => !this.props.userProfile[field]);
@@ -273,7 +267,7 @@ export default class Product extends Component {
                 {key: 'B2C', text: 'B2C', icon: 'buttons:b2c'},
                 {key: 'B2B', text: 'B2B', icon: 'buttons:b2b'}
               ]} selectedKey={this.props.userProfile.orientation}
-                          onChange={this.fakeChange.bind(this, 'orientation', 'B2B')} ref='orientation'/>
+                          onChange={this.handleChangeButton.bind(this, 'orientation')} ref='orientation'/>
             </div>
             <div className={this.classes.row}>
               <Label question={['']}
@@ -285,7 +279,7 @@ export default class Product extends Component {
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
                 {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'}
               ]} selectedKey={this.props.userProfile.businessModel}
-                          onChange={this.fakeChange.bind(this, 'businessModel', 'SaaS')} ref='businessModel'/>
+                          onChange={this.handleChangeButton.bind(this, 'businessModel')} ref='businessModel'/>
             </div>
             <div className={this.classes.row} style={{
               width: '258px'
