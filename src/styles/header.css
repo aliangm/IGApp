@@ -196,6 +196,19 @@
   border-radius: 50%;
   background: center center no-repeat;
   background-size: contain;
+  position: relative;
+}
+
+.user-logo::before{
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: 2px;
+  width: 6px;
+  height: 6px;
+  background-color: #39d969;
+  border: solid 2px #ffffff;
+  border-radius: 5px;
 }
 
 .triangle {
