@@ -10,6 +10,11 @@ import {getDatesSpecific} from 'components/utils/date';
 export function calculatedDataExtender(data) {
 
   const committedBudgets = getCommitedBudgets(data.planBudgets);
+  const committedForecasting = data.forecastedIndicators.map(month => {
+    const newMonth = {};
+    Object.keys(month).forEach(indicator => newMonth[indicator] = month[indicator].committed);
+    return newMonth;
+  });
 
   const campaignsWithIndex = data.campaigns.map((campaign, index) => {
     return {...campaign, index: index};
@@ -39,6 +44,7 @@ export function calculatedDataExtender(data) {
     calculatedData: {
       campaignsWithIndex: campaignsWithIndex,
       committedBudgets: committedBudgets,
+      committedForecasting: committedForecasting,
       activeCampaigns: activeCampaigns,
       annualBudgetLeftToPlan: data.annualBudget -
         merged.reduce((annualSum, month) => Object.keys(month)

@@ -58,6 +58,8 @@ export default class ProjectionsTab extends Component {
         groups.push(properties[indicator].group);
       }
     });
+
+    const {committedForecasting} = this.props.calculatedData;
     groups.sort();
     const rows = groups.map((group, i) => {
       const groupIndicators = indicators
@@ -67,8 +69,8 @@ export default class ProjectionsTab extends Component {
         return <Item
           key={`row${i}-item${j}`}
           defaultState={this.calculateState({key: item, directionDown: !properties[item].isDirectionUp})}
-          defaultValue={this.props.approvedBudgetsProjection && this.props.approvedBudgetsProjection[this.monthMap[selectedTab]] && this.props.approvedBudgetsProjection[this.monthMap[selectedTab]][item]}
-          grow={this.props.actualIndicators[item] ? Math.ceil(Math.abs(((this.props.approvedBudgetsProjection[this.monthMap[selectedTab]] ? this.props.approvedBudgetsProjection[this.monthMap[selectedTab]][item] : 0) - this.props.actualIndicators[item]) / this.props.actualIndicators[item]) * 100) : this.props.approvedBudgetsProjection[this.monthMap[selectedTab]] && this.props.approvedBudgetsProjection[this.monthMap[selectedTab]][item] * 100}
+          defaultValue={committedForecasting && committedForecasting[this.monthMap[selectedTab]] && committedForecasting[this.monthMap[selectedTab]][item]}
+          grow={this.props.actualIndicators[item] ? Math.ceil(Math.abs(((committedForecasting[this.monthMap[selectedTab]] ? committedForecasting[this.monthMap[selectedTab]][item] : 0) - this.props.actualIndicators[item]) / this.props.actualIndicators[item]) * 100) : committedForecasting[this.monthMap[selectedTab]] && committedForecasting[this.monthMap[selectedTab]][item] * 100}
           icon={'indicator:' + item}
           title={properties[item].title}
           isDollar={properties[item].isDollar}

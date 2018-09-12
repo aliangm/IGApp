@@ -186,8 +186,7 @@ export default class PlanOptimizationPopup extends Component {
             ...this.initialSuggestions,
             ...suggestions
           }
-        });
-        callback();
+        }, callback);
       });
   };
 
