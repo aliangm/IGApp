@@ -290,7 +290,8 @@ export default class Overview extends Component {
                   ROI
                 </div>
                 <div className={dashboardStyle.locals.number}>
-                  {Math.round(totalRevenue / totalCost * 100)}%
+                  {/* Two digits after comma */}
+                  {(Math.round(totalRevenue / totalCost * 100)/100).toFixed(2)}X
                 </div>
               </div>
             </div>
