@@ -45,7 +45,7 @@ export default class TopSuggestions extends Component {
   render() {
 
     const {active, showPopup, item, ifApprovedMetrics} = this.state;
-    const {approveChannel, declineChannel, planDate, actualIndicators, approvedBudgetsProjection, calculatedData: {committedBudgets}} = this.props;
+    const {approveChannel, declineChannel, planDate, actualIndicators, calculatedData: {committedBudgets, committedForecasting}} = this.props;
     const zeroBudgetSuggestions = {};
     Object.keys(committedBudgets[0]).forEach(key => zeroBudgetSuggestions[key] = 0);
     const nextMonthBudgets = merge(zeroBudgetSuggestions);
@@ -84,18 +84,18 @@ export default class TopSuggestions extends Component {
     });
 
     const rows = ifApprovedMetrics && Object.keys(ifApprovedMetrics)
-      .filter(metric => ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric] !== 0 && getMetadata('isObjective', metric))
+      .filter(metric => ifApprovedMetrics[metric] - committedForecasting[0][metric] !== 0 && getMetadata('isObjective', metric))
       .map(metric => {
-        const diff = Math.round(ifApprovedMetrics[metric] - approvedBudgetsProjection[0][metric]);
+        const diff = Math.round(ifApprovedMetrics[metric] - committedForecasting[0][metric]);
         return this.getTableRow(null, [
           <b>{getIndicatorNickname(metric)}</b>,
           formatNumber(actualIndicators[metric]),
-          formatNumber(approvedBudgetsProjection[0][metric]),
+          formatNumber(committedForecasting[0][metric]),
           formatNumber(ifApprovedMetrics[metric]),
           <div style={{display: 'flex'}}>
             <div className={this.classes.historyArrow} data-decline={diff < 0 ? true : null}/>
             <div className={this.classes.historyGrow} data-decline={diff < 0 ? true : null}>
-              {formatNumber(Math.abs(diff))} ({Math.round(((ifApprovedMetrics[metric] - actualIndicators[metric]) / (approvedBudgetsProjection[0][metric] - actualIndicators[metric]) - 1) * 100)}%)
+              {formatNumber(Math.abs(diff))} ({Math.round(((ifApprovedMetrics[metric] - actualIndicators[metric]) / (committedForecasting[0][metric] - actualIndicators[metric]) - 1) * 100)}%)
             </div>
           </div>
         ], {

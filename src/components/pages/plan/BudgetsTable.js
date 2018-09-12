@@ -107,10 +107,11 @@ export default class BudgetsTable extends Component {
     //       </p>;
     //     })
     //   : null;
+    const headerWidth = `${this.props.cellWidth}px`;
     const headers = dates.map((month, index) => {
       return <td key={`head:${index}`}
                  className={this.classes.headRowCell}
-                 style={{width: `${this.props.cellWidth}px`}}
+                 style={{minWidth: headerWidth, width: headerWidth}}
                  data-history={index < numberOfPastDates ? true : null}
                  data-first-month={index === numberOfPastDates ? true : null}>
 
@@ -233,7 +234,9 @@ export default class BudgetsTable extends Component {
 
     return <tr className={this.classes.tableRow} key={titleCellKey}
                data-row-type={isCategoryRow ? 'category' : 'regular'}
-               ref={!isCategoryRow ? (ref) => { this.props.setRef(data.channel, ref) }: null}>
+               ref={!isCategoryRow ? (ref) => {
+                 this.props.setRef(data.channel, ref);
+               } : null}>
       {this.getTitleCell(isCategoryRow, data)}
       {cells}
     </tr>;
@@ -292,7 +295,8 @@ export default class BudgetsTable extends Component {
           : null}
 
         <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
-          {!isCategoryRow ? <div className={this.classes.rowIcon} data-icon={!isUnknownChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
+          {!isCategoryRow ? <div className={this.classes.rowIcon}
+                                 data-icon={!isUnknownChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
             : null}
 
           <div className={this.classes.titleText}>{data.nickname}</div>

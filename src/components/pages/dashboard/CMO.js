@@ -34,7 +34,6 @@ export default class CMO extends Component {
   styles = [dashboardStyle];
 
   static defaultProps = {
-    approvedBudgetsProjection: [],
     actualIndicators: {
       MCL: 0,
       MQL: 0,
@@ -96,9 +95,10 @@ export default class CMO extends Component {
 
   render() {
     const {
-      planDate, historyData, approvedBudgetsProjection, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
+      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
       calculatedData: {
         committedBudgets,
+        committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
         annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
         historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth, historyDataLength}
@@ -205,8 +205,8 @@ export default class CMO extends Component {
     const indicatorsProperties = getIndicatorsWithProps();
     const objectivesGauges = collapsedObjectives.map((objective, index) => {
       const target = objective.target;
-      const project = approvedBudgetsProjection[objective.monthIndex] &&
-        approvedBudgetsProjection[objective.monthIndex][objective.indicator];
+      const project = committedForecasting[objective.monthIndex] &&
+        committedForecasting[objective.monthIndex][objective.indicator];
       return <Objective
         target={target}
         value={actualIndicators[objective.indicator]}
@@ -223,8 +223,8 @@ export default class CMO extends Component {
 
     const futureBudget = committedBudgets.slice(0, months)
       .reduce((sum, month) => Object.keys(month).reduce((monthSum, channel) => month[channel] + monthSum, 0) + sum, 0);
-    const futureLTV = approvedBudgetsProjection.slice(0, months).reduce((sum, item) => sum + item.LTV, 0);
-    const furureObjective = approvedBudgetsProjection.slice(0, months)
+    const futureLTV = committedForecasting.slice(0, months).reduce((sum, item) => sum + item.LTV, 0);
+    const furureObjective = committedForecasting.slice(0, months)
       .reduce((sum, item) => sum + item[funnelFirstObjective], 0);
 
     const sumLTV = (indicators) => sumBy(indicators, (month) => month.LTV);
@@ -319,8 +319,8 @@ export default class CMO extends Component {
         json['total'] = Object.keys(month).reduce((sum, channel) =>
           sum + month[channel], 0);
 
-        Object.keys(approvedBudgetsProjection[index]).forEach(indicator => {
-          json[indicator] = approvedBudgetsProjection[index][indicator];
+        Object.keys(committedForecasting[index]).forEach(indicator => {
+          json[indicator] = committedForecasting[index][indicator];
         });
         return json;
       });

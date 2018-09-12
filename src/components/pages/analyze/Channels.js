@@ -31,7 +31,7 @@ export default class Channels extends Component {
 
   initialize(props) {
     //set objective
-    this.setState({firstObjective: this.props.calculatedData.objectives.firstObjective});
+    this.setState({firstObjective: props.calculatedData.objectives.firstObjective});
   }
 
   componentDidMount() {

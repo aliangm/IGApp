@@ -27,6 +27,8 @@ import Tabs from 'components/onboarding/Tabs';
 import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
 
+const MEMBERS_TO_SKIP = 1;
+
 export default class Welcome extends Component {
   style = style;
   styles = [welcomeStyle, PlannedVsActualstyle];
@@ -133,7 +135,7 @@ export default class Welcome extends Component {
 
   removeMember(index) {
     let update = Object.assign({}, this.props.userAccount);
-    const member = update.teamMembers.splice(index, 1);
+    const member = update.teamMembers.splice(index + MEMBERS_TO_SKIP, 1);
     this.props.updateState({userAccount: update});
     serverCommunication.serverRequest('DELETE', 'members', JSON.stringify(member[0]))
       .then((response) => {
@@ -180,7 +182,7 @@ export default class Welcome extends Component {
     ], {
       className: PlannedVsActualstyle.locals.headRow
     });
-    const rows = this.props.userAccount.teamMembers.slice(1).map((item, i) => {
+    const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
       return this.getTableRow(null, [
         <div className={ PlannedVsActualstyle.locals.cellItem }>
           { item.name }
