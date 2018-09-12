@@ -48,7 +48,7 @@ export default class Steps extends Component {
           text="Every plan starts with a first step. Take your first step by planning your first budget. Don’t take it too hard, it will adjust. A lot."
           action="Add a budget"
           done={plan}
-          onClick={()=> { history.push('/plan/plan/annual') }}
+          onClick={()=> { history.push('/plan/annual') }}
         />
         <Step
           icon="step:attribution"

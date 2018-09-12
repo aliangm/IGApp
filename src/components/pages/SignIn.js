@@ -92,7 +92,7 @@ export default class SignIn extends Component {
                 checkIfPopup()
                   .then(function (data) {
                     if (route == 'login' && !data) {
-                      history.push('/plan/plan/annual');
+                      history.push('/plan/annual');
                     }
                     else {
                       history.push('/settings');

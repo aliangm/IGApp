@@ -72,17 +72,21 @@ ReactDOM.render(
       <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
       <Route component={Plan} onEnter={requireAdminAuth}>
-        <Route path="/plan/plan/current"
+        <Route path="/plan/current"
                component={CurrentTab}
                onEnter={requireAdminAuth}
           // Special treatment for state derived tab name. The state is saved at App.js level therefore
           // can't render the name here. DefaultName is for situation where the property is still loading
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
-        <Route path="/plan/plan/annual" component={AnnualTab} onEnter={requireAdminAuth} tabName='Annual'/>
-        <Route path="/plan/plan/projections"
+        <Route path="/plan/annual" component={AnnualTab} onEnter={requireAdminAuth} tabName='Annual'/>
+        <Route path="/plan/projections"
                component={ProjectionsTab}
                onEnter={requireAdminAuth}
                tabName='Forecasting'/>
+        <Route path="/plan/planned-vs-actual"
+               component={PlannedVsActual}
+               onEnter={requireAdminAuth}
+               tabName="Planned VS Actual"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
         <Route path="/campaigns/by-channel" component={ByChannelTab} onEnter={requireAuth} tabName='By Channel'/>
@@ -130,7 +134,6 @@ ReactDOM.render(
         <Route path="/analyze/audiences" component={Users} onEnter={requireAdminAuth} tabName='Audiences'/>
       </Route>
       <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
-      <Route path="/plan/planned-vs-actual" component={PlannedVsActual} onEnter={requireAdminAuth}/>
     </Route>
   </Router>,
   document.querySelector('#main')

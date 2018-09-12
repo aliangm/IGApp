@@ -690,7 +690,7 @@ export default class Preferences extends Component {
                     planNeedsUpdate: true
                   }, this.props.region, this.props.planDate)
                     .then(() => {
-                      history.push('/plan/plan/annual');
+                      history.push('/plan/annual');
                     });
                 }
               }

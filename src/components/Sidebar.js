@@ -65,20 +65,6 @@ export default class Sidebar extends Component {
   }
 
   render() {
-    const profileSubMenu = [
-      { icon: "sidebar:company", link: "/profile/product", text: "Product", notFirstTime: true },
-      { icon: "sidebar:target-audience", link: "/profile/target-audience", text: "Target Audience", notFirstTime: true },
-      { icon: "sidebar:integrations", link: "/profile/integrations", text: "Integrations", notFirstTime: true },
-      { icon: "sidebar:preferences", link: "/profile/preferences", text: "Preferences", notFirstTime: true },
-    ];
-    const measureSubMenu = [
-      { icon: "sidebar:analyze", link: "/measure/analyze/overview", text: "Analyze", notFirstTime: true, isHighlighted: this.isHighlighted('/measure/analyze') },
-      { icon: "sidebar:attribution", link: "/measure/attribution/setup", text: "Attribution", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.attribution, isHighlighted: this.isHighlighted('/measure/attribution') },
-    ];
-    const planSubMenu =[
-      { icon: "sidebar:plan", link: "/plan/plan/annual", text: "Plan", notFirstTime: this.props.userAccount.pages && this.props.userAccount.pages.plan, isHighlighted: this.isHighlighted('/plan/plan') },
-      { icon: "sidebar:planned-vs-actual", link: "/plan/planned-vs-actual", text: "Planned VS Actual", notFirstTime: true },
-    ];
     const profile = getProfileSync();
     return <div>
       <div className={ this.classes.backface }
@@ -94,7 +80,11 @@ export default class Sidebar extends Component {
               <FeatureToggle featureName="attribution">
                 <MenuItem icon="sidebar:analyze" text="Analyze" link='/analyze/overview'  isHighlighted={this.isHighlighted('/analyze')} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
               </FeatureToggle>
-              <CollapsedMenuItem icon="sidebar:plan" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted('/plan')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
+              <MenuItem icon="sidebar:plan"
+                        text="Plan"
+                        link={"plan/annual"}
+                        isHighlighted={this.isHighlighted('/plan')}
+                        notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.plan} />
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel" isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
@@ -141,59 +131,5 @@ export class MenuItem extends Component {
       </div>
       <div className={this.classes.menuItemFirstTime} hidden={this.props.notFirstTime}/>
     </Link>
-  }
-}
-
-export class SubMenuItem extends Component {
-  style = style;
-
-  render() {
-    let className = this.classes.subMenuItem;
-
-    if (this.props.isHighlighted) {
-      className += ' ' + this.classes.subMenuItemSelected;
-    }
-
-    return <Link to={ this.props.link || '/' }
-                 activeClassName={ this.classes.subMenuItemSelected }
-                 className={ className }
-    >
-      <div className={ this.classes.subMenuItemIcon } data-icon={ this.props.icon } />
-      <div className={ this.classes.menuItemText }>
-        { this.props.text }
-      </div>
-      <div className={this.classes.menuItemFirstTime} hidden={this.props.notFirstTime}/>
-    </Link>
-  }
-}
-
-export class CollapsedMenuItem extends Component {
-  style = style;
-
-  static defaultProps = {
-    isOpen: false
-  };
-
-  render() {
-    let className = this.classes.collapsedMenuItem;
-
-    if (this.props.isHighlighted) {
-      className += ' ' + this.classes.collapsedMenuItemSelected;
-    }
-
-    const submenu = this.props.subMenu.map((item, index) =>
-      <SubMenuItem { ... item } key={ index }/>
-    );
-
-    return <div>
-      <Link className={ className } to={this.props.subMenu[0].link} onClick={ this.props.toggleSubMenu }>
-        <div className={ this.classes.menuItemIcon } data-icon={ this.props.icon } />
-        <div className={ this.classes.menuItemText }>
-          { this.props.text }
-        </div>
-        <div className={ this.classes.rowArrow } data-collapsed={ this.props.isOpen || null }/>
-      </Link>
-      { this.props.isOpen ? submenu : null }
-    </div>
   }
 }
