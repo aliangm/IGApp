@@ -262,15 +262,16 @@ export default class Campaigns extends Component {
         <div key={index} className={dashboardStyle.locals.journeyRow}>
           <div style={{width: '78%'}}>
             <div className={dashboardStyle.locals.journey}>
-              {item.journey.map((journeyItem, index) =>
-                <div className={dashboardStyle.locals.channelBox} key={index}>
+              {item.journey.map((journeyItem, index) => {
+                const journeyText = journeyItem.campaign;
+                return <div className={dashboardStyle.locals.channelBox} key={index} data-tip={journeyText}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + journeyItem.channel}
                        style={{margin: '0 5px'}}/>
                   <div className={dashboardStyle.locals.channelText}>
-                    {journeyItem.campaign}
+                    {journeyText}
                   </div>
                 </div>
-              )}
+              })}
             </div>
           </div>
           <div>
