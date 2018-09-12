@@ -59,13 +59,20 @@
 .logo {
   flex-shrink: 0;
   flex-grow: 0;
+  background: url(assets/logo.png) center center no-repeat;
+  background-size: 36px 20px;
+  width: 36px;
+  height: 20px;
+  margin-left: 22px;
+}
 
-  background: #273142 url(assets/logo.png) center center no-repeat;
-  background-size: 60px auto;
-
+.logo-wrapper {
+  background-color: #273142;
   width: 240px;
   height: 100%;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
 }
 
 .logo-menu {
