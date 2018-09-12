@@ -59,7 +59,7 @@ export default class ProjectionsTab extends Component {
       }
     });
 
-    const committedForecasting = this.props.calculatedData.committedForecasting;
+    const {committedForecasting} = this.props.calculatedData;
     groups.sort();
     const rows = groups.map((group, i) => {
       const groupIndicators = indicators
