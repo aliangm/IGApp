@@ -242,8 +242,8 @@ export default class CampaignPopup extends Component {
               <SaveButton onClick={this.save}/>
               :
               <Button
-                type="accent2"
-                icon="buttons:plan"
+                type="primary"
+                icon="buttons:save"
                 className={buttonsStyle.locals.planButton}
                 onClick={this.save}>
                 Create

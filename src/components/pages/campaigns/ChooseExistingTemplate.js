@@ -142,10 +142,10 @@ export default class ChooseExistingTemplate extends Component {
           }
         </div>
         <div className={this.classes.bottom}>
-          <Button type="normal" style={{ marginRight: '14px', marginTop: '7px' }} onClick={ this.props.close }>
+          <Button type="secondary" style={{ marginRight: '14px', marginTop: '7px' }} onClick={ this.props.close }>
             Cancel
           </Button>
-          <Button type="accent2" style={{ marginRight: '14px', marginTop: '7px' }} onClick={ this.choose.bind(this) }>
+          <Button type="primary" style={{ marginRight: '14px', marginTop: '7px' }} onClick={ this.choose.bind(this) }>
             Choose
           </Button>
         </div>

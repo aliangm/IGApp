@@ -77,13 +77,13 @@ export default class EditChannelNamePopup extends Component {
         />
       </div>
       <div className={ $.nav }>
-        <Button type="normal-accent" style={{
+        <Button type="secondary" style={{
           width: '100px',
           marginRight: '20px'
         }} onClick={ this.props.onBack }>
           Cancel
         </Button>
-        <Button type="accent" style={{
+        <Button type="primary" style={{
           width: '100px'
         }} onClick={ ()=> {this.props.onNext(this.state.name, this.state.category, this.props.channel) }}>
           Save

@@ -24,7 +24,7 @@ export default class OrientationPopup extends Component {
       </div>
 
       <div className={ $.choose }>
-        <Button type="normal" selected={ this.state.choosen } style={{
+        <Button type="secondary" selected={ this.state.choosen } style={{
           width: '64px',
           marginRight: '10px'
         }} onClick={() => {
@@ -32,7 +32,7 @@ export default class OrientationPopup extends Component {
             choosen: true
           });
         }}>Yes</Button>
-        <Button type="normal" selected={ !this.state.choosen } style={{
+        <Button type="secondary" selected={ !this.state.choosen } style={{
           width: '64px'
         }} onClick={() => {
           this.setState({
@@ -42,14 +42,14 @@ export default class OrientationPopup extends Component {
       </div>
 
       <div className={ $.nav }>
-        <Button type="normal-accent" style={{
+        <Button type="secondary" style={{
           width: '100px',
           marginRight: '20px'
         }} onClick={ this.props.onBack }>
           <div className={ $.backIcon } />
           BACK
         </Button>
-        <Button type="accent" style={{
+        <Button type="primary" style={{
           width: '100px'
         }} onClick={ this.props.onNext }>
           NEXT

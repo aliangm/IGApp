@@ -154,7 +154,7 @@ export default class TechnologyStack extends Component {
           </div>
           :
           <div className={ this.classes.footer }>
-            <Button type="normal" style={{
+            <Button type="secondary" style={{
               width: '128',
               marginRight: 'auto'
             }} onClick={() => {

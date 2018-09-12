@@ -281,14 +281,14 @@ export default class Item extends Component {
         </div>
         <div className={ this.classes.statusPopupRow }>
           <div className={ this.classes.statusButtons }>
-            <Button type="pure" style={{
+            <Button type="secondary" style={{
               paddingLeft: '0'
             }} onClick={() => {
               this.setState({
                 statusPopupHidden: true
               });
             }}>Cancel</Button>
-            <Button type="accent2" style={{
+            <Button type="primary" style={{
               width: '80px',
               textTransform: 'uppercase'
             }} onClick={ this.useStatus }>Save</Button>

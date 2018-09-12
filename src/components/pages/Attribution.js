@@ -40,7 +40,7 @@ export default class Attribution extends Component {
             <div className={this.classes.headTitle}>Attribution</div>
             <div className={this.classes.headPlan}>
               {offlineTabActive ?
-                <Button type="primary2"
+                <Button type="primary"
                         style={{width: '102px'}}
                         selected={this.state.showOfflinePopup ? true : null}
                         onClick={() => {

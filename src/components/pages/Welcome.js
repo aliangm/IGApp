@@ -271,7 +271,7 @@ export default class Welcome extends Component {
           <div>
             <div className={welcomeStyle.locals.center}>
               <Button
-                type="reverse"
+                type="primary"
                 style={{width: '75px', marginTop: '20px'}}
                 onClick={() => {
                   this.setState({showAddMemberPopup: true})
@@ -335,7 +335,7 @@ export default class Welcome extends Component {
 
           <div className={ this.classes.footerCols }>
             <div className={ this.classes.footerLeft }>
-              <Button type="normal" style={{
+              <Button type="secondary" style={{
                 letterSpacing: '0.075',
                 width: '150px'
               }} onClick={() => {

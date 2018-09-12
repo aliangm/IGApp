@@ -48,7 +48,7 @@ export default class Popup extends Component {
       </div>
       <div hidden={ !this.props.hideClose }>
         <Button className={ this.classes.hide }
-                type="normal"
+                type="secondary"
                 role="button"
                 onClick={ this.close }
         >Hide</Button>

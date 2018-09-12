@@ -70,7 +70,7 @@ export default class Assets extends Component {
       });
     return <div>
       <div className={ this.classes.uploadButton }>
-        <Button type="accent2" style={{ width: '130px' }} onClick={ this.showCloudinary.bind(this) }>
+        <Button type="primary" style={{ width: '130px' }} onClick={ this.showCloudinary.bind(this) }>
           Upload
         </Button>
       </div>

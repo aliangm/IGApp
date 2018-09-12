@@ -66,14 +66,14 @@ export default class AssetsPopup extends Component {
           <tbody>{rows}</tbody>
         </table>
         <div className={ assetsStyle.locals.add }>
-          <Button type="normal" className={ assetsStyle.locals.addButton } contClassName={ assetsStyle.locals.addButtonCont } onClick={ this.addRow.bind(this) }>Add+</Button>
+          <Button type="primary" className={ assetsStyle.locals.addButton } contClassName={ assetsStyle.locals.addButtonCont } onClick={ this.addRow.bind(this) }>Add+</Button>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>
-            <Button type="primary2" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+            <Button type="secondary" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
           </div>
           <div className={ this.classes.footerRight }>
-            <Button type="accent2" style={{ width: '100px' }} onClick={ this.saveAssets.bind(this) }>Done</Button>
+            <Button type="primary" style={{ width: '100px' }} onClick={ this.saveAssets.bind(this) }>Done</Button>
           </div>
         </div>
       </Page>

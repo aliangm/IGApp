@@ -117,7 +117,7 @@ export default class AddChannelPopup extends Component {
             }
           </ul>
           <Button
-            type="reverse"
+            type="secondary"
             style={{ width: '72px' }}
             onClick={ this.props.close }>
             Cancel
@@ -129,7 +129,7 @@ export default class AddChannelPopup extends Component {
               }}  onChange={
                 (e) => { this.setState({otherChannelName: e.target.value}) }
               }/>
-              <Button type="primary2" style={{
+              <Button type="primary" style={{
                 width: '72px',
                 margin: '0 20px'
               }} onClick={

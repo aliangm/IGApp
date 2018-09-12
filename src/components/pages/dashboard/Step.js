@@ -29,7 +29,7 @@ export default class Step extends Component {
             </div>
             :
             <div className={this.classes.center}>
-              <Button type="reverse"
+              <Button type="primary"
                       style={{ width: 'auto', alignSelf: 'center' }}
                       contClassName={this.classes.button}
                       onClick={this.props.onClick}>

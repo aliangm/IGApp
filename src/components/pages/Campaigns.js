@@ -214,7 +214,7 @@ export default class Campaigns extends Component {
         <div className={planStyle.locals.head}>
           <div className={planStyle.locals.headTitle}>Campaigns & Activities</div>
           <div className={planStyle.locals.headPlan}>
-            <Button type="reverse" style={{
+            <Button type="primary" style={{
               width: '102px'
             }} onClick={() => {
               this.setState({importSalesforceCampaigns: true});

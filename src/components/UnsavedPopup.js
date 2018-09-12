@@ -22,8 +22,8 @@ export default class UnsavedPopup extends Component {
             Are you sure you want to leave this page?
           </div>
         <div className={ this.classes.footer } style={{ justifyContent: 'center' }}>
-          <Button type="normal" style={{ width: '100px', marginRight: '9px' }} onClick={ this.callback.bind(this, true) }>Leave</Button>
-          <Button type="accent2" style={{ width: '100px', marginLeft: '9px' }} onClick={ this.callback.bind(this, false) }>Stay</Button>
+          <Button type="secondary" style={{ width: '100px', marginRight: '9px' }} onClick={ this.callback.bind(this, true) }>Leave</Button>
+          <Button type="primary" style={{ width: '100px', marginLeft: '9px' }} onClick={ this.callback.bind(this, false) }>Stay</Button>
         </div>
       </Page>
     </div>
