@@ -92,9 +92,9 @@ export default class Sidebar extends Component {
             <div>
               <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard} isHighlighted={this.isHighlighted('/dashboard')}/>
               <FeatureToggle featureName="attribution">
-                <MenuItem icon="sidebar:analyze" text="Analyze" link='analyze/overview'  isHighlighted={this.isHighlighted('analyze')} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
+                <MenuItem icon="sidebar:analyze" text="Analyze" link='/analyze/overview'  isHighlighted={this.isHighlighted('/analyze')} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}/>
               </FeatureToggle>
-              <CollapsedMenuItem icon="sidebar:planContainer" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted('/plan')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
+              <CollapsedMenuItem icon="sidebar:plan" text="Plan" subMenu={ planSubMenu } isOpen={ this.state.subMenu === 'plan' } isHighlighted={this.isHighlighted('/plan')} toggleSubMenu={ this.toggleSubMenu.bind(this, 'plan') }/>
             </div>
             : null}
           <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel" isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu} notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}/>
@@ -106,10 +106,21 @@ export default class Sidebar extends Component {
   }
 }
 
+const HIGHLITED_SUFFIX = "-selected";
+
 export class MenuItem extends Component {
   style = style;
 
+  constructor(props){
+    super(props);
+
+    this.state = {
+      hover: false
+    };
+  }
+
   render() {
+    const icon = this.props.icon + (this.props.isHighlighted || this.state.hover ? HIGHLITED_SUFFIX : "");
     let className = this.classes.menuItem;
 
     if (this.props.isHighlighted) {
@@ -121,8 +132,10 @@ export class MenuItem extends Component {
                  className={ className }
                  onClick={this.props.onClick}
                  style={this.props.style}
+                 onMouseEnter={() => this.setState({hover: true})}
+                 onMouseLeave={() => this.setState({hover: false})}
     >
-      <div className={ this.classes.menuItemIcon } data-icon={ this.props.icon } />
+      <div className={ this.classes.menuItemIcon } data-icon={ icon } />
       <div className={ this.classes.menuItemText }>
         { this.props.text }
       </div>
