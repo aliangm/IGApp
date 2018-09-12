@@ -118,7 +118,7 @@ export default class Setup extends Component {
           </pre>
       </div>
       <div className={ this.classes.codeWrap }>
-        <Button type="reverse"
+        <Button type="primary"
                 onClick={ this.copy.bind(this, this.code) }
                 icon="buttons:copy"
                 style={{
@@ -171,7 +171,7 @@ Depending on your templating language, that would look something like this:
       </pre>
         </div>
         <div className={ this.classes.codeWrap }>
-          <Button type="reverse"
+          <Button type="primary"
                   onClick={ this.copy.bind(this, identifyCode) }
                   icon="buttons:copy"
                   style={{
@@ -241,7 +241,7 @@ Depending on your templating language, that would look something like this:
           <Textfield value={ this.state.event.url } onChange={ this.handleChange.bind(this, 'url') } style={{ width: '189px' }}/>
         </div>
         <Button
-          type="accent2"
+          type="primary"
           style={{ width: '125px', marginTop: '20px' }}
           onClick={ this.addEvent.bind(this) }>Generate
         </Button>
@@ -254,7 +254,7 @@ Depending on your templating language, that would look something like this:
           </pre>
           </div>
           <div className={ this.classes.codeWrap }>
-            <Button type="reverse"
+            <Button type="primary"
                     onClick={ this.copy.bind(this, this.state.trackingCode) }
                     icon="buttons:copy"
                     style={{

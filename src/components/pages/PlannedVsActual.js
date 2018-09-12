@@ -233,7 +233,7 @@ export default class PlannedVsActual extends Component {
                   }}  onChange={(e) => {
                     this.addOtherChannel(e);
                   }}/>
-                  <Button type="primary2" style={{
+                  <Button type="primary" style={{
                     width: '72px',
                     margin: '0 20px'
                   }} onClick={() => {

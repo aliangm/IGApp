@@ -116,7 +116,7 @@ export default class CampaignTask extends Component {
           </div>
         </div>
       </div>
-      <Button className={ this.classes.addOrEdit } type="accent2" style={{ width: '80px' }} onClick={ this.addOrEditTask.bind(this) }>
+      <Button className={ this.classes.addOrEdit } type="primary" style={{ width: '80px' }} onClick={ this.addOrEditTask.bind(this) }>
         {this.props.isNew ? "Add" : "Edit"}
       </Button>
     </div>

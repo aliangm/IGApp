@@ -9,7 +9,7 @@ export default class Button extends Component {
   styles = [icons];
 
   static defaultProps = {
-    type: 'normal'
+    type: 'secondary'
   };
 
   render() {

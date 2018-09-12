@@ -230,7 +230,7 @@ export default class Tracking extends Component {
       </div>
       { sources }
       <div className={ trackingStyle.locals.rowCenter }>
-        <Button type="accent2" style={{ width: '170px' }} onClick={ this.generateLinks.bind(this) }>
+        <Button type="primary" style={{ width: '170px' }} onClick={ this.generateLinks.bind(this) }>
           Generate links
         </Button>
       </div>

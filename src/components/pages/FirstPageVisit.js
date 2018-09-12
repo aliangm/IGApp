@@ -21,7 +21,7 @@ export default class FirstPageVisit extends Component {
         <div className={this.classes.content}>
           {this.props.content}
         </div>
-        <Button type="reverse"
+        <Button type="primary"
                 style={{ width: 'max-content' }}
                 contClassName={this.classes.button}
                 onClick={this.props.onClick}>

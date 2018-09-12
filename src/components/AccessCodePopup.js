@@ -57,7 +57,7 @@ export default class AccessCodePopup extends Component {
           </Notice>
         </div>
         <div className={ this.classes.footer } style={{ justifyContent: 'center' }}>
-            <Button type="primary2" style={{ width: '100px' }} onClick={ this.createUserAccount }>Enter</Button>
+            <Button type="primary" style={{ width: '100px' }} onClick={ this.createUserAccount }>Enter</Button>
         </div>
       </Page>
     </div>

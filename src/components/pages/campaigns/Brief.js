@@ -464,7 +464,7 @@ export default class Brief extends Component {
                   onChange={this.handleChangeSelect.bind(this, 'focus')}
                   style={{width: '166px', marginBottom: '14px'}}/>
           {objectiveRows}
-          <Button type="reverse" style={{width: '100px', marginTop: '8px'}} onClick={this.addObjectivesRow.bind(this)}>
+          <Button type="secondary" style={{width: '100px', marginTop: '8px'}} onClick={this.addObjectivesRow.bind(this)}>
             Add
           </Button>
         </div>
@@ -501,20 +501,20 @@ export default class Brief extends Component {
       </div>
       <div className={this.classes.footer} style={{marginBottom: '1px'}}>
         <div className={this.classes.footerLeft}>
-          <Button type="warning" style={{width: '100px'}} onClick={this.archive.bind(this)}>Archive</Button>
-          <Button type="reverse" style={{width: '165px', marginLeft: '30px'}} onClick={this.props.openAddTemplatePopup}>Save
+          <Button type="secondary" style={{width: '100px'}} onClick={this.archive.bind(this)}>Archive</Button>
+          <Button type="secondary" style={{width: '165px', marginLeft: '30px'}} onClick={this.props.openAddTemplatePopup}>Save
             as a template</Button>
         </div>
         <div className={this.classes.footerRight}>
-          <Button type="reverse" style={{width: '100px', marginRight: '30px'}} onClick={this.exportCampaign.bind(this)}>
+          <Button type="secondary" style={{width: '100px', marginRight: '30px'}} onClick={this.exportCampaign.bind(this)}>
             Export
           </Button>
           {this.props.campaign.index !== undefined ?
             <SaveButton onClick={this.props.save}/>
             :
             <Button
-              type="accent2"
-              icon="buttons:plan"
+              type="primary"
+              icon="buttons:save"
               className={buttonsStyle.locals.planButton}
               onClick={this.props.save}>
               Create

@@ -104,7 +104,7 @@ export default class Task extends Component {
                     <div className={ this.classes.popupText }>
                       Deleting a comment is forever. There is no undo.
                     </div>
-                    <Button type="primary2" style={{ margin: '10px' }} onClick={ this.deleteComment.bind(this) }>I'm sure</Button>
+                    <Button type="primary" style={{ margin: '10px' }} onClick={ this.deleteComment.bind(this) }>I'm sure</Button>
                   </Popup>
                 </div>
               </div>

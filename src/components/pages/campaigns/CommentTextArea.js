@@ -76,7 +76,7 @@ export default class CommentTextArea extends Component {
         <Mention data={this.props.users}/>
       </MentionsInput>
       <div className={ this.classes.post }>
-        <Button type="accent2" style={{width: '72px'}}
+        <Button type="primary" style={{width: '72px'}}
                 onClick={ this.addOrEditComment.bind(this) }>POST</Button>
         <div className={ this.classes.shortcut }>
           (shift + enter)

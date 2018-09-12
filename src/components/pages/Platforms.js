@@ -93,7 +93,7 @@ export default class Platforms extends Component {
           <StripeAutomaticPopup setDataAsState={ this.props.setDataAsState } ref="stripe"/>
           <MozAutomaticPopup setDataAsState={ this.props.setDataAsState } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite } ref="moz"/>
           <GoogleSheetsAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.googleSheetsAuto} ref="googleSheets"/>
-          <Button type="reverse" style={{
+          <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'
           }} onClick={() => {

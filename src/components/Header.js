@@ -282,7 +282,7 @@ export default class Header extends Component {
       <div className={this.classes.itemsBox}>
         {hasUser ?
           <div className={this.classes.logoutItemOutside}>
-            <Button type="normalAccent" onClick={this.logout} style={{
+            <Button type="secondary" onClick={this.logout} style={{
               width: '120px'
             }}>
               Log Out
@@ -348,7 +348,7 @@ export default class Header extends Component {
                target="_blank">Support</a>
             {hasUser ?
               <div className={this.classes.logoutItemInside}>
-                <Button type="normalAccent" onClick={this.logout} style={{
+                <Button type="secondary" onClick={this.logout} style={{
                   width: '120px'
                 }}>
                   Log Out

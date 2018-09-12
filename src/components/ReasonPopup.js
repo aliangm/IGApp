@@ -84,7 +84,7 @@ export default class ReasonPopup extends Component {
             </div>
             <div className={ this.classes.center }>
               <Button
-                type="reverse"
+                type="primary"
                 style={{ width: '75px' }}
                 onClick={ () => { this.addReasonToAccount(this.state.other) } }>Send
               </Button>
