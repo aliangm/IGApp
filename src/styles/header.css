@@ -47,7 +47,7 @@
 .box {
   display: flex;
   align-items: center;
-  height: 70px;
+  height: 80px;
   background: white;
   position: fixed;
   top: 0;
