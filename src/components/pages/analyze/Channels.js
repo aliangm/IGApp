@@ -282,15 +282,16 @@ export default class Channels extends Component {
         <div key={index} className={dashboardStyle.locals.journeyRow}>
           <div style={{width: '78%'}}>
             <div className={dashboardStyle.locals.journey}>
-              {item.channels.map((channel, index) =>
-                <div className={dashboardStyle.locals.channelBox} key={index}>
+              {item.channels.map((channel, index) => {
+                const channelNickname = getChannelNickname(channel);
+                return <div className={dashboardStyle.locals.channelBox} key={index}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}
                        style={{margin: '0 5px'}}/>
-                  <div className={dashboardStyle.locals.channelText}>
-                    {getChannelNickname(channel)}
+                  <div className={dashboardStyle.locals.channelText} data-tip={channelNickname}>
+                    {channelNickname}
                   </div>
-                </div>
-              )}
+                </div>;
+              })}
             </div>
           </div>
           <div>
