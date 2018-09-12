@@ -407,9 +407,11 @@ export default class Header extends Component {
     }
     return <div className={this.classes.box}>
       <div className={this.classes.logoMenu} onClick={this.openSidebar}/>
-      <div className={this.classes.logo} onClick={() => {
+      <div className={this.classes.logoWrapper} onClick={() => {
         history.push('/dashboard/CMO');
-      }}/>
+      }}>
+        <div className={this.classes.logo} />
+      </div>
       {this.menuBig}
       {this.menuSmall}
       {popup}

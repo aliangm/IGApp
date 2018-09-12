@@ -47,7 +47,7 @@
 .box {
   display: flex;
   align-items: center;
-  height: 70px;
+  height: 80px;
   background: white;
   position: fixed;
   top: 0;
@@ -59,13 +59,20 @@
 .logo {
   flex-shrink: 0;
   flex-grow: 0;
+  background: url(assets/logo.png) center center no-repeat;
+  background-size: 36px 20px;
+  width: 36px;
+  height: 20px;
+  margin-left: 22px;
+}
 
-  background: #273142 url(assets/logo.png) center center no-repeat;
-  background-size: 60px auto;
-
-  width: 240px;
+.logo-wrapper {
+  background-color: #273142;
+  width: 279px;
   height: 100%;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
 }
 
 .logo-menu {
@@ -299,10 +306,9 @@
 }
 
 @media (max-width: 1440px) {
-  .logo {
-    background-size: 40px auto;
-    /*width: 100px;*/
-    width: 88px;
+  .logo-wrapper {
+    width: 80px;
+    min-width: 80px;
     height: 100%;
   }
 }
