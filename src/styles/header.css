@@ -200,18 +200,6 @@
   z-index: 2;
 }
 
-.user-logo::before{
-  content: "";
-  position: absolute;
-  right: -1px;
-  bottom: 2px;
-  width: 6px;
-  height: 6px;
-  background-color: #39d969;
-  border: solid 2px #ffffff;
-  border-radius: 5px;
-}
-
 .triangle {
   width: 8px;
   height: 5px;
@@ -260,7 +248,7 @@
 .header-icon[data-active]::before{
   content: "";
   position: absolute;
-  left: 13px;
+  left: 14px;
   top: 18px;
   width: 6px;
   height: 6px;

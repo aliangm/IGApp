@@ -135,18 +135,18 @@ export default class Header extends Component {
                  setTimeout(this.readNotifications.bind(this), 20000);
                }}
           >
+            <Popup className={this.classes.dropmenuPopup}
+                   style={{padding: '0'}}
+                   hidden={!this.state.notificationsVisible}
+                   onClose={() => {
+                     this.setState({
+                       notificationsVisible: false
+                     });
+                   }}
+            >
+              <Notifications {...this.props} userNotifications={userNotifications}/>
+            </Popup>
             <div className={this.classes.headerIcon} data-active={isUnreadNotifications ? true : null} data-icon="header:notification">
-              <Popup className={this.classes.dropmenuPopup}
-                     style={{padding: '0'}}
-                     hidden={!this.state.notificationsVisible}
-                     onClose={() => {
-                       this.setState({
-                         notificationsVisible: false
-                       });
-                     }}
-              >
-                <Notifications {...this.props} userNotifications={userNotifications}/>
-              </Popup>
             </div>
           </div>
           : null}
