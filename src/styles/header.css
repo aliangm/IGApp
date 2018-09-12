@@ -240,14 +240,14 @@
 }
 
 .header-icon[data-active] {
-  position: absolute;
+  position: relative;
 }
 
 .header-icon[data-active]::before{
   content: "";
   position: absolute;
-  left: 16px;
-  top: 21px;
+  left: 13px;
+  top: 18px;
   width: 6px;
   height: 6px;
   background-color: #ee2032;
