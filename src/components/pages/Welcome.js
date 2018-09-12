@@ -65,7 +65,8 @@ export default class Welcome extends Component {
         userId: getProfileSync().user_id
       }];
       const json = {
-        teamMembers: teamMembers
+        teamMembers: teamMembers,
+        'permissions.attribution': true
       };
       if (this.props.location.query.freePlan === "true") {
         json['permissions.plannerAI'] = false;
