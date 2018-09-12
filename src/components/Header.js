@@ -232,7 +232,7 @@ export default class Header extends Component {
              onClick={this.toggleDropmenuBig}
         >
           <div className={this.classes.dropmenu}>
-            <Avatar member={user} className={this.classes.userLogo}/>
+            <Avatar member={user} className={this.classes.userLogo} withShadow={true} />
             <div className={this.classes.userDetails}>
               <div className={this.classes.user}>
                 {user && user.name}
@@ -326,7 +326,7 @@ export default class Header extends Component {
               <div className={this.classes.userBoxInside}>
                 <div className={this.classes.userLogo}
                      style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}/>
-                <Avatar member={user} className={this.classes.userLogo}/>
+                <Avatar member={user} className={this.classes.userLogo} withShadow={true} />
                 <div className={this.classes.logged}>
                   {this.props.userCompany}
                   <div className={this.classes.user}>
@@ -364,7 +364,7 @@ export default class Header extends Component {
         <div className={this.classes.userBoxOutside}>
           <div className={this.classes.userLogo}
                style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}/>
-          <Avatar member={user} className={this.classes.userLogo}/>
+          <Avatar member={user} className={this.classes.userLogo} withShadow={true} />
           <div className={this.classes.logged}>
             {this.props.userCompany}
             <div className={this.classes.user}>

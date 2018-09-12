@@ -197,6 +197,7 @@
   background: center center no-repeat;
   background-size: contain;
   position: relative;
+  z-index: 2;
 }
 
 .user-logo::before{

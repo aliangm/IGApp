@@ -16,3 +16,18 @@
     box-sizing: border-box;
     align-items: center;
 }
+
+.shadow{
+    width: 40px;
+    height: 40px;
+    opacity: 0.4;
+    -webkit-filter: blur(6.3px);
+    filter: blur(6.3px);
+    position: absolute;
+    left: 0px;
+    top: 6px;
+}
+
+.outer-div{
+    position:relative;
+}
