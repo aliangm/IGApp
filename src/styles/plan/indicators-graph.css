@@ -31,13 +31,20 @@
     margin-left: 10px;
 }
 
+.objective-icon {
+    margin-left: 3px;
+}
+
 .menu-items {
     overflow-y: auto;
     height: 370px;
+    display: grid;
 }
 
 .menu-item {
     margin-bottom: 18px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .chart {

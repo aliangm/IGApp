@@ -8,8 +8,10 @@ import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
+import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import {getDates, getEndOfMonthString} from 'components/utils/date';
+import ObjectiveIcon from 'components/controls/ObjectiveIcon';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
@@ -121,6 +123,15 @@ export default class IndicatorsGraph extends Component {
     return forecastingData;
   };
 
+  getObjectiveIconFromData = (objectiveData) => {
+    const {committedForecasting} = this.props.calculatedData;
+    const project = committedForecasting[objectiveData.monthIndex] &&
+      committedForecasting[objectiveData.monthIndex][objectiveData.indicator];
+    return <ObjectiveIcon target={objectiveData.target}
+                          value={this.props.actualIndicators[objectiveData.indicator]}
+                          project={project} />;
+  };
+
   render() {
     const COLORS = [
       '#189aca',
@@ -149,8 +160,19 @@ export default class IndicatorsGraph extends Component {
 
     const areaData = this.getAreasData();
 
-    const menuItems = Object.keys(indicatorsMapping).map((indicator, index) =>
-      <div className={this.classes.menuItem} key={indicator}>
+    const {collapsedObjectives} = this.props.calculatedData.objectives;
+    const menuItems = Object.keys(indicatorsMapping).map((indicator, index) => {
+      const objectiveIndex = findIndex(collapsedObjectives, (item) => {
+        return item.indicator === indicator;
+      });
+
+      const objectiveIcon = objectiveIndex > -1
+        ? <div className={this.classes.objectiveIcon}>
+          {this.getObjectiveIconFromData(collapsedObjectives[objectiveIndex])}
+        </div>
+        : null;
+
+      return <div className={this.classes.menuItem} key={indicator}>
         <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
                         onChange={() => this.toggleCheckbox(indicator)}
                         className={this.classes.label}
@@ -158,8 +180,9 @@ export default class IndicatorsGraph extends Component {
                           backgroundColor: COLORS[index %
                           COLORS.length]
                         }}>{indicatorsMapping[indicator]}</CustomCheckbox>
-      </div>
-    );
+        {objectiveIcon}
+      </div>;
+    });
 
     const defs = this.state.checkedIndicators.map(indicator => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
