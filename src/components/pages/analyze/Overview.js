@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
-import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar} from 'recharts';
+import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar, LabelList} from 'recharts';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
@@ -213,41 +213,48 @@ export default class Overview extends Component {
       return month;
     });
 
+    const TOP_DEFAULT_OFFSET = 12;
+    const RECT_HEIGHT = 20;
+    const TOP_MINIMUM_OFFSET = 3;
     const CustomizedLabel = React.createClass({
       render() {
-        const {x, y, value} = this.props;
-        const val = value[1] - value[0];
-        return (val && val / channelCategoriesSum > 0.05) ?
-          <svg>
+        const {x, y, index: monthIndex, "data-key": channel, height} = this.props;
+
+        const topCalculatedOffset = height > (TOP_DEFAULT_OFFSET * 2 + RECT_HEIGHT)
+          ? TOP_DEFAULT_OFFSET
+          : Math.round((height - RECT_HEIGHT) / 2);
+        return topCalculatedOffset > TOP_MINIMUM_OFFSET
+          ? <svg>
             <rect
-              x={x - 25}
-              y={y + 20}
+              x={x + 17}
+              y={y + topCalculatedOffset}
               fill="#979797"
               width={50}
-              height={20}
+              height={RECT_HEIGHT}
             />
             <text
-              x={x}
-              y={y}
+              x={x + 42}
+              y={y - 20 + topCalculatedOffset}
               dy={34}
               fontSize='11'
               fill='#ffffff'
               textAnchor="middle">
-              ${formatBudgetShortened(val)}
+              ${formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}
             </text>
           </svg>
-          : null;
+          : null
       }
     });
 
     const bars = channelCategoriesForPeriod && Object.keys(channelCategoriesForPeriod).map((channel, index) =>
       <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}
-           label={<CustomizedLabel key={channel}/>}
            isAnimationActive={false} onMouseEnter={() => {
         this.setState({activeIndex: index});
       }} onMouseLeave={() => {
         this.setState({activeIndex: void 0});
-      }}/>
+      }}>
+        <LabelList data-key={channel} content={<CustomizedLabel/>}/>
+      </Bar>
     );
 
     return <div>
