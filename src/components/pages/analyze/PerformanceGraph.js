@@ -82,17 +82,17 @@ export default class PerformanceGraph extends Component {
     const indicatorsProperties = getIndicatorsWithProps();
     const settingsIndicators = Object.keys(indicatorsProperties)
       .filter(indicator => !!data.find(month => month[indicator]))
-      .map(indicator => <div key={indicator}>
+      .map(indicator => <div key={indicator} className={dashboardStyle.locals.checkbox}>
         <input type="checkbox" onChange={ this.changeIndicatorsSettings.bind(this, indicator) } checked={ indicator === advancedIndicator } style={{  }}/>
-        {indicatorsProperties[indicator].nickname}
+        <div>{indicatorsProperties[indicator].nickname}</div>
       </div>);
 
     const channelsProperties = getChannelsWithProps();
     const settingsChannels = Object.keys(channelsProperties)
       .filter(channel => !!data.find(month => month[channel]))
-      .map(channel => <div key={channel}>
+      .map(channel => <div key={channel} className={dashboardStyle.locals.checkbox}>
         <input type="checkbox" onChange={ this.changeChannelsSettings.bind(this, channel) } checked={ advancedChannels.includes(channel) } style={{  }}/>
-        {channelsProperties[channel].nickname}
+        <div>{channelsProperties[channel].nickname}</div>
       </div>);
 
     const CustomizedLabel = React.createClass({
@@ -138,14 +138,14 @@ export default class PerformanceGraph extends Component {
           }} title="Settings">
             <PopupTextContent>
               <div style={{display: 'flex'}}>
-                <div style={{width: '50%', height: '220px', overflowY: 'auto'}}>
+                <div style={{width: '50%', height: '220px', overflowY: 'auto', display: 'grid'}}>
                   {settingsIndicators}
                 </div>
-                <div style={{width: '50%', height: '220px', overflowY: 'auto'}}>
-                  <div>
+                <div style={{width: '50%', height: '220px', overflowY: 'auto', display: 'grid'}}>
+                  <div className={dashboardStyle.locals.checkbox}>
                     <input type="checkbox" onChange={this.changeChannelsSettings.bind(this, 'total')}
                            checked={advancedChannels.includes('total')} style={{}}/>
-                    Total
+                    <div>Total</div>
                   </div>
                   {settingsChannels}
                 </div>

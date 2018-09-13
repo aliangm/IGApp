@@ -1,3 +1,9 @@
+.checkbox {
+    align-items: center;
+    display: inline-flex;
+    margin: 2px 0;
+}
+
 .wrap {
     position: relative;
     max-width: 1162px;
