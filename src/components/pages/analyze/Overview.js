@@ -12,6 +12,7 @@ import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDatesSpecific} from 'components/utils/date';
+import RechartBarLabel from 'components/controls/RechartBarLabel';
 
 export default class Overview extends Component {
 
@@ -213,36 +214,15 @@ export default class Overview extends Component {
       return month;
     });
 
-    const TOP_DEFAULT_OFFSET = 12;
-    const RECT_HEIGHT = 20;
-    const TOP_MINIMUM_OFFSET = 3;
     const CustomizedLabel = React.createClass({
       render() {
-        const {x, y, index: monthIndex, "data-key": channel, height} = this.props;
+        const {x, y, index: monthIndex, "data-key": channel, height, width} = this.props;
 
-        const topCalculatedOffset = height > (TOP_DEFAULT_OFFSET * 2 + RECT_HEIGHT)
-          ? TOP_DEFAULT_OFFSET
-          : Math.round((height - RECT_HEIGHT) / 2);
-        return topCalculatedOffset > TOP_MINIMUM_OFFSET
-          ? <svg>
-            <rect
-              x={x + 17}
-              y={y + topCalculatedOffset}
-              fill="#979797"
-              width={50}
-              height={RECT_HEIGHT}
-            />
-            <text
-              x={x + 42}
-              y={y - 20 + topCalculatedOffset}
-              dy={34}
-              fontSize='11'
-              fill='#ffffff'
-              textAnchor="middle">
-              ${formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}
-            </text>
-          </svg>
-          : null
+        return <RechartBarLabel x={x}
+                                y={y}
+                                height={height}
+                                width={width}
+                                label={'$' +formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}/>
       }
     });
 

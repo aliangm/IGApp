@@ -1,13 +1,14 @@
 import React from "react";
 import Component from "components/Component";
 import dashboardStyle from "styles/dashboard/dashboard.css";
-import { ComposedChart, CartesianGrid, XAxis, YAxis, Line, Bar } from "recharts";
+import {ComposedChart, CartesianGrid, XAxis, YAxis, Line, Bar, LabelList} from 'recharts';
 import { formatBudgetShortened } from 'components/utils/budget';
 import { getIndicatorsWithProps, getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { getChannelsWithProps, getNickname as getChannelNickname } from 'components/utils/channels';
 import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
+import RechartBarLabel from 'components/controls/RechartBarLabel';
 
 export default class PerformanceGraph extends Component {
 
@@ -88,30 +89,19 @@ export default class PerformanceGraph extends Component {
 
     const CustomizedLabel = React.createClass({
       render () {
-        const {x, y, total} = this.props;
-        return <svg>
-          <rect
-            x={x-25}
-            y={y-20}
-            fill="#979797"
-            width={50}
-            height={20}
-          />
-          <text
-            x={x}
-            y={y}
-            dy={-6}
-            fontSize='11'
-            fill='#ffffff'
-            textAnchor="middle">
-            ${formatBudgetShortened(total)}
-          </text>
-        </svg>
+        const {x, y, width, height, "data-key": channel, index: monthIndex} = this.props;
+        return <RechartBarLabel x={x}
+                                y={y}
+                                width={width}
+                                height={height}
+                                label={'$' + formatBudgetShortened(data[monthIndex][channel])}/>
       }
     });
 
     const bars = advancedChannels.map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]} label={index === 0 ? <CustomizedLabel/> : false}/>
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}>
+        <LabelList data-key={channel} content={<CustomizedLabel/>}/>
+      </Bar>
     );
 
     const graphChannels = advancedChannels.map((channel, index) =>
