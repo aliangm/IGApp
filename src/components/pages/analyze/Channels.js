@@ -392,7 +392,7 @@ export default class Channels extends Component {
           </FeatureToggle>
         </div>
         <div>
-          <PerformanceGraph isPast={true} months={months || 1} data={indicatorsDataPerMonth}
+          <PerformanceGraph isPast={true} months={months ? months.length : 1} data={indicatorsDataPerMonth}
                             defaultIndicator={firstObjective}/>
         </div>
       </div>

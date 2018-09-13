@@ -121,7 +121,7 @@ export default class PerformanceGraph extends Component {
                 style={{height: '350px', width: '1110px', padding: '5px 15px', fontSize: '13px'}} data-id="analysis">
       <div className={dashboardStyle.locals.columnHeader}>
         <div className={dashboardStyle.locals.timeText}>
-          {isPast ? 'Last' : 'Next'} {months} Months
+          {isPast ? 'Last' : 'Next'} {months} {`Month${months > 1 ? "s" : ""}`}
         </div>
         <div className={dashboardStyle.locals.text}>
           {isPast ? 'Past' : 'Future'} Spend & Impact
