@@ -9,6 +9,7 @@ import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
+import remove from 'lodash/remove';
 
 export default class PerformanceGraph extends Component {
 
@@ -43,8 +44,15 @@ export default class PerformanceGraph extends Component {
     else if (channel === 'total') {
       this.setState({advancedChannels: ['total']});
     }
-    else if (advancedChannels.length < 3) {
-      advancedChannels.push(channel);
+    else {
+      const removed = remove(advancedChannels, (item) => item === channel);
+
+      if (!removed || removed.length === 0) {
+        if (advancedChannels.length < 3) {
+          advancedChannels.push(channel);
+        }
+      }
+
       this.setState({advancedChannels: advancedChannels});
     }
   }
