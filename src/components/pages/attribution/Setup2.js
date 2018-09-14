@@ -7,7 +7,7 @@ import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import Select from 'components/controls/Select';
 import Button from 'components/controls/Button';
-import buttonsStyle from 'styles/onboarding/buttons.css';
+import Toggle from 'components/controls/Toggle';
 
 export default class Setup extends Component {
 
@@ -36,8 +36,8 @@ export default class Setup extends Component {
 
   render() {
     const renderStep = (stepNumber, stepTitle, stepSubTitle, stepContent) => {
-    return <div className={this.classes.step}>
-      <div className={this.classes.stepHead}>
+      return <div className={this.classes.step}>
+        <div className={this.classes.stepHead}>
           <div className={this.classes.stepNumberWrapper}>
             <div className={this.classes.stepNumber}>{stepNumber}</div>
           </div>
@@ -49,7 +49,7 @@ export default class Setup extends Component {
         <div className={this.classes.stepContent}>
           {stepContent}
         </div>
-      </div>
+      </div>;
     };
 
     return <div className={this.classes.page}>
@@ -70,7 +70,33 @@ export default class Setup extends Component {
           </div>)
       }
       {
-        renderStep(2, 'Add it to your website', null, null)
+        renderStep(2, 'Add it to your website', null, <div>
+          <Toggle options={
+            [{
+              text: 'HTML',
+              value: 'html'
+            },
+              {
+                text: 'Google Tag Manager',
+                value: 'tag manager'
+              },
+              {
+                text: 'Word Press',
+                value: 'word press'
+              }]}
+                  selectedValue="html"
+                  style = {{width: "345px"}}
+          >
+          </Toggle>
+          <div className={this.classes.secondStepText}>
+            {'Place the script into the head (before the </head> tag) of every page of your site (or site template).'}
+          </div>
+          <Button type='secondary'
+                  className={this.classes.secondStepButton}
+                  contClassName={this.classes.buttonContent}>
+            Read the step-by-step guide
+          </Button>
+        </div>)
       }
     </div>;
   }
