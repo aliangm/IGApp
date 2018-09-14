@@ -35,29 +35,43 @@ export default class Setup extends Component {
   style = style;
 
   render() {
+    const renderStep = (stepNumber, stepTitle, stepSubTitle, stepContent) => {
     return <div className={this.classes.step}>
-      <div className={this.classes.stepNumberWrapper}>
-        <div className={this.classes.stepNumber}>1</div>
-      </div>
-      <div className={this.classes.stepContent}>
-        <div className={this.classes.titleWrapper}>
-          <div className={this.classes.contentTitle}>Copy your code</div>
-          <div className={this.classes.contentSubTitle}>or get it sent by email with a step-by-step guide</div>
-        </div>
-        <div className={this.classes.snippetBox}>
-          <div className={this.classes.snippetWrapper}>
-            <pre className={this.classes.snippet}>
-            {this.code('#userId#')}
-            </pre>
+      <div className={this.classes.stepHead}>
+          <div className={this.classes.stepNumberWrapper}>
+            <div className={this.classes.stepNumber}>{stepNumber}</div>
           </div>
-          <div className={this.classes.buttons}>
-            <Button type='secondary' className={this.classes.leftButton} contClassName={this.classes.buttonContent}>Email
-              this script and instructions</Button>
-            <Button type='primary' icon="buttons:edit" className={this.classes.rightButton}
-                    contClassName={this.classes.buttonContent}>Copy</Button>
+          <div className={this.classes.titleWrapper}>
+            <div className={this.classes.contentTitle}>{stepTitle}</div>
+            {stepSubTitle ? <div className={this.classes.contentSubTitle}>{stepSubTitle}</div> : null}
           </div>
         </div>
+        <div className={this.classes.stepContent}>
+          {stepContent}
+        </div>
       </div>
+    };
+
+    return <div className={this.classes.page}>
+      {
+        renderStep(1, 'Copy your code', 'or get it sent by email with a step-by-step guide',
+          <div className={this.classes.snippetBox}>
+            <div className={this.classes.snippetWrapper}>
+              <pre className={this.classes.snippet}>
+              {this.code('#userId#')}
+              </pre>
+            </div>
+            <div className={this.classes.buttons}>
+              <Button type='secondary' className={this.classes.leftButton} contClassName={this.classes.buttonContent}>Email
+                this script and instructions</Button>
+              <Button type='primary' icon="buttons:edit" className={this.classes.rightButton}
+                      contClassName={this.classes.buttonContent}>Copy</Button>
+            </div>
+          </div>)
+      }
+      {
+        renderStep(2, 'Add it to your website', null, null)
+      }
     </div>;
   }
 }

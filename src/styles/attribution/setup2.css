@@ -1,7 +1,17 @@
-.step {
+.page {
     margin-left: 80px;
     margin-top: 300px;
+    display: grid;
+}
+
+.step {
+    display: grid;
+    margin-bottom: 70px;
+}
+
+.step-head {
     display: inline-flex;
+    align-items: center;
 }
 
 .step-number-wrapper {
@@ -27,7 +37,7 @@
 }
 
 .step-content {
-    margin: 3px 0 0 20px;
+    margin: 27px 0 0 70px;
 }
 
 .content-title {
@@ -41,13 +51,11 @@
 }
 
 .title-wrapper {
-    height: 44px;
-    margin-bottom: 30px;
+    margin-left: 20px;
 }
 
 .content-sub-title {
     width: 232px;
-    height: 44px;
     font-size: 11px;
     font-weight: normal;
     font-style: normal;
