@@ -40,8 +40,8 @@ import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
-import Profile from 'components/pages/Profile';
 import {formatDate} from 'components/utils/date';
+import {userPermittedToPage} from 'utils';
 
 style.use();
 
@@ -60,33 +60,43 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
+// Validate permission on the page
+const requirePermission = (page, nextState, replace) => {
+  if(!isAuthenticated() || !getProfileSync().app_metadata) {
+    replace({pathname: '/'});
+  }
+  else if(!userPermittedToPage(page)){
+      replace({pathname: '/campaigns/by-channel'});
+  }
+};
+
 ReactDOM.render(
   <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
     <Route path="/" component={SignIn}/>
     <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
     <Route component={App} onEnter={requireAuth}>
-      <Route component={Dashboard} onEnter={requireAdminAuth}>
+      <Route component={Dashboard} onEnter={(...parameters) => requirePermission("dashboard", ...parameters)}>
         <Route path="/dashboard/setup" component={Setup} onEnter={requireAdminAuth} tabName='Setup'/>
-        <Route path="/dashboard/CMO" component={CMO} onEnter={requireAdminAuth} tabName='CMO'/>
-        <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAdminAuth} tabName='Metrics'/>
+        <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
+        <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>
       <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
-      <Route component={Plan} onEnter={requireAdminAuth}>
+      <Route component={Plan} onEnter={(...parameters) => requirePermission("plan", ...parameters)}>
         <Route path="/plan/current"
                component={CurrentTab}
-               onEnter={requireAdminAuth}
+               onEnter={requireAuth}
           // Special treatment for state derived tab name. The state is saved at App.js level therefore
           // can't render the name here. DefaultName is for situation where the property is still loading
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
-        <Route path="/plan/annual" component={AnnualTab} onEnter={requireAdminAuth} tabName='Annual'/>
+        <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
         <Route path="/plan/projections"
                component={ProjectionsTab}
-               onEnter={requireAdminAuth}
+               onEnter={requireAuth}
                tabName='Forecasting'/>
         <Route path="/plan/planned-vs-actual"
                component={PlannedVsActual}
-               onEnter={requireAdminAuth}
+               onEnter={requireAuth}
                tabName="Planned VS Actual"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
@@ -126,12 +136,12 @@ ReactDOM.render(
                component={Platforms}
                onEnter={requireAdminAuth}/>
       </Route>
-      <Route component={Analyze} onEnter={requireAdminAuth}>
-        <Route path="/analyze/overview" component={Overview} onEnter={requireAdminAuth} tabName='Overview'/>
-        <Route path="/analyze/channels" component={Channels} onEnter={requireAdminAuth} tabName='Channels'/>
-        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAdminAuth} tabName='campaigns'/>
-        <Route path="/analyze/content" component={Content} onEnter={requireAdminAuth} tabName='Content'/>
-        <Route path="/analyze/audiences" component={Users} onEnter={requireAdminAuth} tabName='Audiences'/>
+      <Route component={Analyze} onEnter={(...parameters) => requirePermission("analyze", ...parameters)}>
+        <Route path="/analyze/overview" component={Overview} onEnter={requireAuth} tabName='Overview'/>
+        <Route path="/analyze/channels" component={Channels} onEnter={requireAuth} tabName='Channels'/>
+        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='campaigns'/>
+        <Route path="/analyze/content" component={Content} onEnter={requireAuth} tabName='Content'/>
+        <Route path="/analyze/audiences" component={Users} onEnter={requireAuth} tabName='Audiences'/>
       </Route>
       <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
     </Route>
