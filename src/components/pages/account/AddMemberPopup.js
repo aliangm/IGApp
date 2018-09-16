@@ -15,15 +15,48 @@ export default class AddMemberPopup extends Component {
   style = style;
   styles = [popupStyle];
 
+  pagePermissions = [
+    {
+      key: "analyze",
+      label: "Analyze",
+      isDisabled: false
+    },
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      isDisabled: false
+    },
+    {
+      key: "campaigns",
+      label: "Campaigns",
+      isDisabled: true
+    },
+    {
+      key: "plan",
+      label: "Plan",
+      isDisabled: false
+    },
+    {
+      key: "settings",
+      label: "Account Settings",
+      isDisabled: false
+    }
+  ];
+
   constructor(props) {
     super(props);
+
+    const initialPermissions = {};
+    this.pagePermissions.forEach(item => initialPermissions[item.key] = true);
+
     this.state = {
       name: '',
       email: '',
       role: '',
       isAdmin: false,
       specificChannels: [],
-      isSpecificChannels: false
+      isSpecificChannels: false,
+      pagePermissions: initialPermissions
     };
   }
 
@@ -48,6 +81,17 @@ export default class AddMemberPopup extends Component {
   }
 
   render() {
+
+    const pagePermissionsLabels = this.pagePermissions.map((permissionItem) => {
+      return <Label checkboxDisabled={permissionItem.isDisabled} checkbox={this.state.pagePermissions[permissionItem.key]} onChange={() => {
+
+        const newPermissions = {...this.state.pagePermissions};
+        newPermissions[permissionItem.key] = !newPermissions[permissionItem.key];
+        this.setState({pagePermissions: newPermissions});
+
+      }}>{permissionItem.label}</Label>
+    });
+
     const channels = {
       select: {
         name: 'channels',
@@ -106,6 +150,8 @@ export default class AddMemberPopup extends Component {
         </div>
         {!this.state.isAdmin ?
           <div className={this.classes.row}>
+            <Label>Page Permissions</Label>
+            {pagePermissionsLabels}
             <Label checkbox={this.state.isSpecificChannels} onChange={() => {
               this.setState({isSpecificChannels: !this.state.isSpecificChannels});
             }}>
