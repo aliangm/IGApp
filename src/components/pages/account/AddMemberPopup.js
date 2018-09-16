@@ -46,9 +46,6 @@ export default class AddMemberPopup extends Component {
   constructor(props) {
     super(props);
 
-    const initialPermissions = {};
-    this.pagePermissions.forEach(item => initialPermissions[item.key] = true);
-
     this.state = {
       name: '',
       email: '',
@@ -56,7 +53,7 @@ export default class AddMemberPopup extends Component {
       isAdmin: false,
       specificChannels: [],
       isSpecificChannels: false,
-      pagePermissions: initialPermissions
+      pagePermissions: this.getInitialPermissions()
     };
   }
 
@@ -68,10 +65,18 @@ export default class AddMemberPopup extends Component {
         role: '',
         isAdmin: false,
         specificChannels: [],
-        isSpecificChannels: false
+        isSpecificChannels: false,
+        pagePermissions: this.getInitialPermissions()
       });
     }
   }
+
+  getInitialPermissions = () => {
+    const initialPermissions = {};
+    this.pagePermissions.forEach(item => initialPermissions[item.key] = true);
+
+    return initialPermissions;
+  };
 
   handleChangeChannels(event) {
     let update = event.map((obj) => {
