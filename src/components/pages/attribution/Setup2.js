@@ -85,10 +85,14 @@ export default class Setup extends Component {
               </pre>
             </div>
             <div className={this.classes.buttons}>
-              <Button type='secondary' className={this.classes.leftButton} contClassName={this.classes.buttonContent}>Email
-                this script and instructions</Button>
-              <Button type='primary' icon="buttons:edit" className={this.classes.rightButton}
-                      contClassName={this.classes.buttonContent} onClick={() => copy(code)}>Copy</Button>
+              <Button type='secondary' className={this.classes.secondaryButton}>
+                Email this script and instructions
+              </Button>
+              <Button type='primary' icon="buttons:edit"
+                      className={this.classes.rightButton}
+                      onClick={() => copy(code)}>
+                Copy
+              </Button>
             </div>
           </div>)
       }
@@ -118,8 +122,7 @@ export default class Setup extends Component {
             {'Place the script into the head (before the </head> tag) of every page of your site (or site template).'}
           </div>
           <Button type='secondary'
-                  className={this.classes.secondStepButton}
-                  contClassName={this.classes.buttonContent}>
+                  className={this.classes.secondaryButton}>
             Read the step-by-step guide
           </Button>
         </div>)

@@ -42,6 +42,11 @@
     align-items: center;
 }
 
+.secondary-button {
+    padding: 0 3px;
+    width: fit-content;
+}
+
 .step-number-wrapper {
     width: 50px;
     height: 50px;
@@ -96,8 +101,7 @@
 }
 
 .content-sub-title {
-    width: 232px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: normal;
     font-style: normal;
     font-stretch: normal;
@@ -107,7 +111,7 @@
 }
 
 .snippet-box {
-    width: 341px;
+    width: fit-content;
     height: 133px;
     border-radius: 0.5px;
     background-color: #e6e8f0;
@@ -127,17 +131,12 @@
     margin: 0;
 }
 
-.second-step-button {
-    width: 182px;
-    height: 38px;
-}
-
 .snippet-wrapper {
     background-color: #ffffff;
     border: solid 1px #c1cfda;
-    overflow: hidden;
+    overflow: auto;
     padding: 10px 11px;
-    width: 321px;
+    width: 331px;
     height: 67px;
     margin: 0 0 8px 0;
     box-sizing: border-box;
@@ -149,16 +148,11 @@
     width: 100%;
 }
 
-.left-button {
-    width: 207px;
-    height: 38px;
-}
-
 .button-content {
     font-size: 12px;
 }
 
 .right-button {
-    width: 103px;
-    height: 38px;
+    padding: 0 3px 0 10px;
+    margin-left: 10px;
 }
