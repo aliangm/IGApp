@@ -40,6 +40,10 @@ export function calculatedDataExtender(data) {
   const funnelObjectives = collapsedObjectives.filter(
     objective => funnelPossibleObjectives.includes(objective.indicator));
 
+  const isTrial = new Date() < new Date(data.userAccount.trialEnd);
+  const isPaid = data.userAccount.isPaid;
+  const isAccountEnabled = isTrial || isPaid;
+
   return {
     calculatedData: {
       campaignsWithIndex: campaignsWithIndex,
@@ -47,8 +51,8 @@ export function calculatedDataExtender(data) {
       committedForecasting: committedForecasting,
       activeCampaigns: activeCampaigns,
       annualBudgetLeftToPlan: data.annualBudget -
-        merged.reduce((annualSum, month) => Object.keys(month)
-          .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
+      merged.reduce((annualSum, month) => Object.keys(month)
+        .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
       monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
@@ -74,7 +78,10 @@ export function calculatedDataExtender(data) {
         funnelObjectives: funnelObjectives,
         funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator : 'newSQL'
       },
-      historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth)
+      historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
+      isTrial,
+      isPaid,
+      isAccountEnabled
     },
     ...data
   };

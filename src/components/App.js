@@ -17,8 +17,8 @@ import Popup from 'components/Popup';
 import style from 'styles/app.css';
 import {FeatureToggleProvider} from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
-import {getProfile} from 'components/utils/AuthService';
 import {calculatedDataExtender} from 'dataExtenders/calculatedDataExtender.js';
+import {getProfileSync} from 'components/utils/AuthService';
 
 class AppComponent extends Component {
 
@@ -42,7 +42,9 @@ class AppComponent extends Component {
       plan: this.plan.bind(this),
       forecast: this.forecast.bind(this),
       calculateAttributionData: this.calculateAttributionData.bind(this),
-      optimalImprovementPlan: this.optimalImprovementPlan.bind(this)
+      optimalImprovementPlan: this.optimalImprovementPlan.bind(this),
+      pay: this.pay.bind(this),
+      getUserAccount: this.getUserAccount.bind(this)
     };
   }
 
@@ -416,6 +418,7 @@ class AppComponent extends Component {
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
+      UID: data.UID,
       region: data.region,
       objectives: data.objectives || [],
       blockedChannels: data.blockedChannels || [],
@@ -515,7 +518,7 @@ class AppComponent extends Component {
       } : null,
       systemControls: {
         optimizeControl: {
-          scenario: "optimalImprovement"
+          scenario: 'optimalImprovement'
         }
       }
     };
@@ -593,17 +596,20 @@ class AppComponent extends Component {
 
   forecast(planBudgets) {
     return new Promise((resolve, reject) => {
-      serverCommunication.serverRequest('POST', 'forecast', JSON.stringify({...this.state, planBudgets: planBudgets}), this.state.region)
+      serverCommunication.serverRequest('POST', 'forecast', JSON.stringify({
+        ...this.state,
+        planBudgets: planBudgets
+      }), this.state.region)
         .then((response) => {
-          if(response.ok){
+          if (response.ok) {
             response.json()
               .then((data) => resolve(data));
           }
-          else{
+          else {
             reject();
           }
         });
-    })
+    });
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
@@ -634,6 +640,21 @@ class AppComponent extends Component {
 
     return deferred.promise;
   }
+
+  pay() {
+    const profile = getProfileSync();
+    const user = this.state.teamMembers.find(user => user.userId === profile.user_id);
+    const email = user.email;
+    return Paddle.Checkout.open({
+      product: 540119,
+      email: email,
+      passthrough: {UID: this.state.UID},
+      title: 'InfiniGrow',
+      successCallback: (data) => {
+        this.state.getUserAccount();
+      }
+    });
+  };
 
   getExtendedState(state) {
     return calculatedDataExtender(state);
@@ -677,6 +698,12 @@ class AppComponent extends Component {
     const extendedData = this.state.dataUpdated ? this.getExtendedState(this.state) : this.state;
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, extendedData));
+
+    if (extendedData.calculatedData && !extendedData.calculatedData.isAccountEnabled) {
+      this.pay();
+      return null;
+    }
+
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
         <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
