@@ -17,28 +17,28 @@ export default class AddMemberPopup extends Component {
 
   pagePermissions = [
     {
-      key: "analyze",
-      label: "Analyze",
+      key: 'analyze',
+      label: 'Analyze',
       isDisabled: false
     },
     {
-      key: "dashboard",
-      label: "Dashboard",
+      key: 'dashboard',
+      label: 'Dashboard',
       isDisabled: false
     },
     {
-      key: "campaigns",
-      label: "Campaigns",
+      key: 'campaigns',
+      label: 'Campaigns',
       isDisabled: true
     },
     {
-      key: "plan",
-      label: "Plan",
+      key: 'plan',
+      label: 'Plan',
       isDisabled: false
     },
     {
-      key: "settings",
-      label: "Account Settings",
+      key: 'settings',
+      label: 'Account Settings',
       isDisabled: false
     }
   ];
@@ -80,16 +80,24 @@ export default class AddMemberPopup extends Component {
     this.setState({specificChannels: update});
   }
 
+  inviteMember = () => {
+    const blockedPages = Object.keys(this.state.pagePermissions)
+      .filter(pageKey => !this.state.pagePermissions[pageKey]);
+
+    this.props.inviteMember({...this.state, pagePermissions: null, blockedPages});
+  };
+
   render() {
 
     const pagePermissionsLabels = this.pagePermissions.map((permissionItem) => {
-      return <Label checkboxDisabled={permissionItem.isDisabled} checkbox={this.state.pagePermissions[permissionItem.key]} onChange={() => {
+      return <Label checkboxDisabled={permissionItem.isDisabled}
+                    checkbox={this.state.pagePermissions[permissionItem.key]} onChange={() => {
 
         const newPermissions = {...this.state.pagePermissions};
         newPermissions[permissionItem.key] = !newPermissions[permissionItem.key];
         this.setState({pagePermissions: newPermissions});
 
-      }}>{permissionItem.label}</Label>
+      }}>{permissionItem.label}</Label>;
     });
 
     const channels = {
@@ -174,7 +182,7 @@ export default class AddMemberPopup extends Component {
               type="primary"
               style={{width: '110px', marginLeft: '20px'}}
               onClick={() => {
-                this.props.inviteMember(this.state);
+                this.inviteMember();
               }}>Invite User
             </Button>
           </div>
