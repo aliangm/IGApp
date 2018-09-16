@@ -28,6 +28,7 @@ import Content from 'components/pages/analyze/Content';
 import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
 import Setup from 'components/pages/dashboard/Setup';
+import AttributionLink from 'components/pages/AttributionLink';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
@@ -145,6 +146,7 @@ ReactDOM.render(
       </Route>
       <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
     </Route>
+    <Route component={AttributionLink} path='/attribution/:UID'></Route>
   </Router>,
   document.querySelector('#main')
 );

@@ -154,5 +154,9 @@
 
 .right-button {
     padding: 0 3px 0 10px;
-    margin-left: 10px;
+}
+
+.send-email-button {
+    composes: secondary-button;
+    margin-right: 10px;
 }
