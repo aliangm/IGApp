@@ -2,6 +2,10 @@
   background: #f5f6fb !important;
 }
 
+.static-no-side-bar {
+  margin-left: 0 !important;
+}
+
 .logo {
   width: 44px;
   height: 44px;

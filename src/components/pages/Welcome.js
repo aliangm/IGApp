@@ -26,6 +26,7 @@ import AddMemberPopup from 'components/pages/account/AddMemberPopup';
 import Tabs from 'components/onboarding/Tabs';
 import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
+import {userPermittedToPage} from 'utils';
 
 const MEMBERS_TO_SKIP = 1;
 
@@ -182,6 +183,9 @@ export default class Welcome extends Component {
     ], {
       className: PlannedVsActualstyle.locals.headRow
     });
+
+    const userPermittedToSettings = userPermittedToPage('settings');
+
     const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
       return this.getTableRow(null, [
         <div className={ PlannedVsActualstyle.locals.cellItem }>
@@ -298,8 +302,14 @@ export default class Welcome extends Component {
       </div>
     </div>;
 
+     const pageClass = !isPopupMode()
+       ? (userPermittedToSettings
+         ? this.classes.static
+         : welcomeStyle.locals.staticNoSideBar)
+       : null;
+
     return <div>
-      <Page popup={ isPopupMode()} className={!isPopupMode() ? this.classes.static: null} innerClassName={welcomeStyle.locals.innerPage}>
+      <Page popup={ isPopupMode()} className={pageClass} innerClassName={welcomeStyle.locals.innerPage}>
         <Title title={ title } subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
         {isPopupMode() ?
@@ -310,23 +320,25 @@ export default class Welcome extends Component {
             </div>
           </div>
           :
-          <Tabs
-            ref="tabs"
-            defaultSelected={ 0 }
-            defaultTabs={["Company Account", "User Account"]}
-          >
-            {({ name, index }) => {
-              return <div className={ this.classes.cols }>
-                <div className={ this.classes.colCenter } style={{ maxWidth: '707px' }}>
-                  { index ?
-                    userAccount
-                    :
-                    companyAccount
-                  }
+          userPermittedToSettings
+          ? <Tabs
+              ref="tabs"
+              defaultSelected={ 0 }
+              defaultTabs={["Company Account", "User Account"]}
+            >
+              {({ name, index }) => {
+                return <div className={ this.classes.cols }>
+                  <div className={ this.classes.colCenter } style={{ maxWidth: '707px' }}>
+                    { index ?
+                      userAccount
+                      :
+                      companyAccount
+                    }
+                  </div>
                 </div>
-              </div>
-            }}
-          </Tabs>
+              }}
+            </Tabs>
+            : <div>{userAccount}</div>
         }
 
         <div style={{

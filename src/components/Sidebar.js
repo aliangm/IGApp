@@ -101,7 +101,6 @@ export default class Sidebar extends Component {
           />
           <MenuItem icon="sidebar:settings" link="/settings/account" text="Settings" onClick={this.closeSubMenu}
                     notFirstTime={true} style={{position: 'absolute', width: '100%', bottom: '20px'}}
-                    page='settings'
                     isHighlighted={this.isHighlighted('/settings')}/>
         </div>
 
@@ -131,7 +130,7 @@ export class MenuItem extends Component {
       className += ' ' + this.classes.menuItemSelected;
     }
 
-    return userPermittedToPage(this.props.page)
+    return !this.props.page || userPermittedToPage(this.props.page)
       ? <Link to={this.props.link || '/'}
               activeClassName={this.classes.menuItemSelected}
               className={className}
