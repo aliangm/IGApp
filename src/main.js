@@ -27,7 +27,7 @@ import Overview from 'components/pages/analyze/Overview';
 import Content from 'components/pages/analyze/Content';
 import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
-import Setup from 'components/pages/attribution/Setup2';
+import Setup from 'components/pages/dashboard/Setup';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';

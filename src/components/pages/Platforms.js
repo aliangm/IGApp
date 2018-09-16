@@ -161,7 +161,7 @@ export default class Platforms extends Component {
             } }/>
             <div style={{ width: '30px' }} />
             <NextButton onClick={ () => {
-              history.push('/settings/profile/preferences');
+              history.push('/dashboard/setup');
             } }/>
           </div>
           :

@@ -8,7 +8,7 @@ import Page from 'components/Page';
 import {isPopupMode} from 'modules/popup-mode';
 import onBoardingStyle from 'styles/onboarding/onboarding.css';
 import planStyles from 'styles/plan/plan.css';
-import history from 'history';
+import history from 'IGApp/src/history';
 import NextButton from 'components/pages/profile/NextButton';
 import BackButton from 'components/pages/profile/BackButton';
 
@@ -26,14 +26,14 @@ export default class Setup extends Component {
   }
 
   render() {
-    const {UID: userId} = this.props.userAccount;
+    const {UID} = this.props;
 
     const code =
       `<script type="text/javascript" async=1>
         ;(function (p, l, o, w, i, n, g) {
           if (!p[i]) {
             p.GlobalInfinigrowObject = {};
-            p.GlobalInfinigrowObject.userId = '${userId}';
+            p.GlobalInfinigrowObject.userId = '${UID}';
             p.GlobalInfinigrowObject.InfinigrowNamespace = i;
       
             p[i] = function () {
@@ -133,7 +133,7 @@ export default class Setup extends Component {
       {isPopupMode() ?
         <div className={onBoardingStyle.locals.footer}>
           <BackButton onClick={() => {
-            history.push('/profile/technology-stack');
+            history.push('/profile/integrations');
           }}/>
           <div style={{width: '30px'}}/>
           <NextButton onClick={() => {
