@@ -13,10 +13,12 @@
 }
 
 .frame {
-    width: 100px;
+    min-width: 100px;
     height: 40px;
     background-color: white;
     line-height: 40px;
+    padding: 0 6.5px;
+    box-sizing: border-box;
     box-shadow: 0 1px 3px 0 rgba(54, 56, 64, 0.1);
 }
 

@@ -1,13 +1,15 @@
 import React from "react";
 import Component from "components/Component";
 import dashboardStyle from "styles/dashboard/dashboard.css";
-import { ComposedChart, CartesianGrid, XAxis, YAxis, Line, Bar } from "recharts";
+import {ComposedChart, CartesianGrid, XAxis, YAxis, Line, Bar, LabelList} from 'recharts';
 import { formatBudgetShortened } from 'components/utils/budget';
 import { getIndicatorsWithProps, getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { getChannelsWithProps, getNickname as getChannelNickname } from 'components/utils/channels';
 import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
+import RechartBarLabel from 'components/controls/RechartBarLabel';
+import remove from 'lodash/remove';
 
 export default class PerformanceGraph extends Component {
 
@@ -42,8 +44,15 @@ export default class PerformanceGraph extends Component {
     else if (channel === 'total') {
       this.setState({advancedChannels: ['total']});
     }
-    else if (advancedChannels.length < 3) {
-      advancedChannels.push(channel);
+    else {
+      const removed = remove(advancedChannels, (item) => item === channel);
+
+      if (!removed || removed.length === 0) {
+        if (advancedChannels.length < 3) {
+          advancedChannels.push(channel);
+        }
+      }
+
       this.setState({advancedChannels: advancedChannels});
     }
   }
@@ -73,45 +82,34 @@ export default class PerformanceGraph extends Component {
     const indicatorsProperties = getIndicatorsWithProps();
     const settingsIndicators = Object.keys(indicatorsProperties)
       .filter(indicator => !!data.find(month => month[indicator]))
-      .map(indicator => <div key={indicator}>
+      .map(indicator => <div key={indicator} className={dashboardStyle.locals.checkbox}>
         <input type="checkbox" onChange={ this.changeIndicatorsSettings.bind(this, indicator) } checked={ indicator === advancedIndicator } style={{  }}/>
-        {indicatorsProperties[indicator].nickname}
+        <div>{indicatorsProperties[indicator].nickname}</div>
       </div>);
 
     const channelsProperties = getChannelsWithProps();
     const settingsChannels = Object.keys(channelsProperties)
       .filter(channel => !!data.find(month => month[channel]))
-      .map(channel => <div key={channel}>
+      .map(channel => <div key={channel} className={dashboardStyle.locals.checkbox}>
         <input type="checkbox" onChange={ this.changeChannelsSettings.bind(this, channel) } checked={ advancedChannels.includes(channel) } style={{  }}/>
-        {channelsProperties[channel].nickname}
+        <div>{channelsProperties[channel].nickname}</div>
       </div>);
 
     const CustomizedLabel = React.createClass({
       render () {
-        const {x, y, total} = this.props;
-        return <svg>
-          <rect
-            x={x-25}
-            y={y-20}
-            fill="#979797"
-            width={50}
-            height={20}
-          />
-          <text
-            x={x}
-            y={y}
-            dy={-6}
-            fontSize='11'
-            fill='#ffffff'
-            textAnchor="middle">
-            ${formatBudgetShortened(total)}
-          </text>
-        </svg>
+        const {x, y, width, height, "data-key": channel, index: monthIndex} = this.props;
+        return <RechartBarLabel x={x}
+                                y={y}
+                                width={width}
+                                height={height}
+                                label={'$' + formatBudgetShortened(data[monthIndex][channel])}/>
       }
     });
 
     const bars = advancedChannels.map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]} label={index === 0 ? <CustomizedLabel/> : false}/>
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}>
+        <LabelList data-key={channel} content={<CustomizedLabel/>}/>
+      </Bar>
     );
 
     const graphChannels = advancedChannels.map((channel, index) =>
@@ -123,7 +121,7 @@ export default class PerformanceGraph extends Component {
                 style={{height: '350px', width: '1110px', padding: '5px 15px', fontSize: '13px'}} data-id="analysis">
       <div className={dashboardStyle.locals.columnHeader}>
         <div className={dashboardStyle.locals.timeText}>
-          {isPast ? 'Last' : 'Next'} {months} Months
+          {isPast ? 'Last' : 'Next'} {months} {`Month${months > 1 ? "s" : ""}`}
         </div>
         <div className={dashboardStyle.locals.text}>
           {isPast ? 'Past' : 'Future'} Spend & Impact
@@ -140,14 +138,14 @@ export default class PerformanceGraph extends Component {
           }} title="Settings">
             <PopupTextContent>
               <div style={{display: 'flex'}}>
-                <div style={{width: '50%', height: '220px', overflowY: 'auto'}}>
+                <div style={{width: '50%', height: '220px', overflowY: 'auto', display: 'grid'}}>
                   {settingsIndicators}
                 </div>
-                <div style={{width: '50%', height: '220px', overflowY: 'auto'}}>
-                  <div>
+                <div style={{width: '50%', height: '220px', overflowY: 'auto', display: 'grid'}}>
+                  <div className={dashboardStyle.locals.checkbox}>
                     <input type="checkbox" onChange={this.changeChannelsSettings.bind(this, 'total')}
                            checked={advancedChannels.includes('total')} style={{}}/>
-                    Total
+                    <div>Total</div>
                   </div>
                   {settingsChannels}
                 </div>

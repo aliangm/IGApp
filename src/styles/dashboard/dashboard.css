@@ -1,3 +1,9 @@
+.checkbox {
+    align-items: center;
+    display: inline-flex;
+    margin: 2px 0;
+}
+
 .wrap {
     position: relative;
     max-width: 1162px;
@@ -634,6 +640,7 @@
     font-size: 11px;
     font-weight: bold;
     color: #4b515e;
+    margin-bottom: 3px;
 }
 
 .graph-spend-title {
