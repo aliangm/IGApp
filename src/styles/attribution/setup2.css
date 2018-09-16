@@ -1,7 +1,35 @@
-.page {
-    margin-left: 80px;
-    margin-top: 300px;
-    display: grid;
+.head {
+    margin-bottom: 40px
+}
+
+.static {
+    margin-top: 0;
+    margin-left: 0;
+    z-index: 9;
+}
+
+.title {
+    height: 36px;
+    font-size: 36px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.2px;
+    color: #222a41;
+    margin-bottom: 10px;
+}
+
+.sub-title {
+    height: 24px;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0px;
+    color: #222a41;
+    margin-bottom: 25px;
 }
 
 .step {
