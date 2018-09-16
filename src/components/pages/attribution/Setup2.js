@@ -8,6 +8,9 @@ import Page from 'components/Page';
 import {isPopupMode} from 'modules/popup-mode';
 import onBoardingStyle from 'styles/onboarding/onboarding.css';
 import planStyles from 'styles/plan/plan.css';
+import history from 'history';
+import NextButton from 'components/pages/profile/NextButton';
+import BackButton from 'components/pages/profile/BackButton';
 
 export default class Setup extends Component {
 
@@ -126,6 +129,19 @@ export default class Setup extends Component {
             Read the step-by-step guide
           </Button>
         </div>)
+      }
+      {isPopupMode() ?
+        <div className={onBoardingStyle.locals.footer}>
+          <BackButton onClick={() => {
+            history.push('/profile/technology-stack');
+          }}/>
+          <div style={{width: '30px'}}/>
+          <NextButton onClick={() => {
+            history.push('/settings/profile/preferences');
+          }}/>
+        </div>
+        :
+        <div style={{paddingBottom: '60px'}}/>
       }
     </Page>;
   }
