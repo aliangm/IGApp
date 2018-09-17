@@ -10,6 +10,10 @@ import planStyles from 'styles/plan/plan.css';
 import history from 'history';
 import NextButton from 'components/pages/profile/NextButton';
 import BackButton from 'components/pages/profile/BackButton';
+import PlanPopup, {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
+import Label from 'components/ControlsLabel';
+
+import Textfield from 'components/controls/Textfield';
 
 export default class AttributionSetup extends Component {
 
@@ -88,11 +92,28 @@ export default class AttributionSetup extends Component {
             </div>
             <div className={this.classes.buttons}>
               {sendSnippetEmail
-                ? <Button type='secondary'
-                          className={this.classes.sendEmailButton }
-                          onClick={() => this.props.sendSnippetEmail(senderEmail, UID)}>
-                    Email this script and instructions
-                  </Button>
+                ? <div style={{position: "relative"}}>
+                    <Button type='secondary'
+                            className={this.classes.sendEmailButton }
+                            onClick={() => this.refs.sendSnippetPopup.open()}>
+                      Email this script and instructions
+                    </Button>
+                  <PlanPopup onClose={() => {this.setState({to: null})}} ref="sendSnippetPopup" style={{
+                    width: 'max-content',
+                    top: '50px'
+                  }} title="Send Snippet">
+                    <PopupTextContent>
+                      <div>
+                        <Label>Email: </Label>
+                        <Textfield type='email' value={this.state.to || ''} onChange={(e) => this.setState({to: e.target.value})}/>
+                      <Button type='primary' onClick={() => {
+                        this.props.sendSnippetEmail(senderEmail, UID, this.state.to);
+                        this.refs.sendSnippetPopup.close();
+                        }}>Send</Button>
+                      </div>
+                    </PopupTextContent>
+                  </PlanPopup>
+                  </div>
                 : null}
               <Button type='primary' icon="buttons:edit"
                       className={this.classes.rightButton}

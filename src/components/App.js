@@ -497,9 +497,9 @@ class AppComponent extends Component {
     }
   }
 
-  sendSnippetEmail(senderEmail, UID) {
+  sendSnippetEmail(senderEmail, UID, to) {
     serverCommunication.serverRequest('POST', 'snippetEmail', JSON.stringify({
-        email: "ocherfas@gmail.com",
+        email: to,
         UID: UID,
         sender: senderEmail
       }),
