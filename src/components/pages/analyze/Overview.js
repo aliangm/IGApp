@@ -13,6 +13,7 @@ import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDatesSpecific} from 'components/utils/date';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
+import {getColor} from 'components/utils/colors';
 
 export default class Overview extends Component {
 
@@ -190,24 +191,6 @@ export default class Overview extends Component {
       return {name: category, value: channelCategoriesForPeriod[category]};
     });
 
-    const COLORS = [
-      '#189aca',
-      '#3cca3f',
-      '#a8daec',
-      '#70d972',
-      '#56b5d9',
-      '#8338EC',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#FB5607',
-      '#FF006E',
-      '#76E5FC',
-      '#036D19'
-    ];
-
     const data = channelCategoriesPerMonth.map((month, index) => {
 
       month.name = months[index];
@@ -227,7 +210,7 @@ export default class Overview extends Component {
     });
 
     const bars = channelCategoriesForPeriod && Object.keys(channelCategoriesForPeriod).map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={getColor(index)}
            isAnimationActive={false} onMouseEnter={() => {
         this.setState({activeIndex: index});
       }} onMouseLeave={() => {
@@ -298,13 +281,13 @@ export default class Overview extends Component {
                           channelCategories.map((element, i) => (
                             <div key={i} style={{display: 'flex', marginTop: '5px'}}>
                               <div style={{
-                                border: '2px solid ' + COLORS[i % COLORS.length],
+                                border: '2px solid ' + getColor(i),
                                 borderRadius: '50%',
                                 height: '8px',
                                 width: '8px',
                                 display: 'inline-flex',
                                 marginTop: '2px',
-                                backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'
+                                backgroundColor: this.state.activeIndex === i ? getColor(i) : 'initial'
                               }}/>
                               <div style={{
                                 fontWeight: this.state.activeIndex === i ? 'bold' : 'initial',
@@ -342,7 +325,7 @@ export default class Overview extends Component {
                           isAnimationActive={false}
                         >
                           {
-                            channelCategories.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}
+                            channelCategories.map((entry, index) => <Cell fill={getColor(index)}
                                                                           key={index}/>)
                           }
                         </Pie>

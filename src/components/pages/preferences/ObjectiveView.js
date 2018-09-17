@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/preferences/objective-view.css';
 import {getNickname} from 'components/utils/indicators';
 import {timeFrameToDate} from 'components/utils/objective';
+import {getColor} from 'components/utils/colors';
 
 export default class ObjectiveView extends Component {
 
@@ -14,12 +15,6 @@ export default class ObjectiveView extends Component {
   }
 
   render() {
-    const colors = [
-      {start: '#1991eb', end: '#2da1f8'},
-      {start: '#9d90e4', end: '#8261e6'},
-      {start: '#2bb415', end: '#5ad946'},
-      {start: '#fdc018', end: '#f8cf5d'}
-    ];
     return <div style={{marginBottom: '40px'}}>
       <div className={this.classes.row}>
         <div className={this.classes.start}>
@@ -49,7 +44,7 @@ export default class ObjectiveView extends Component {
         <div className={this.classes.pipe}>
           <div className={this.classes.pipeFill} style={{
             width: (Math.min(1, this.props.value / this.props.target) * 360) + 'px',
-            backgroundImage: 'linear-gradient(to top,' + colors[this.props.index % colors.length].start + ', ' + colors[this.props.index % colors.length].end + ')'
+            backgroundImage: `linear-gradient(to right, #e6e8f0, ${getColor(this.props.index)})`
           }}/>
         </div>
         <div className={this.classes.timeLeft}>

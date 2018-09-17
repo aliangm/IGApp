@@ -10,6 +10,7 @@ import PlanPopup, {
 } from 'components/pages/plan/Popup';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
 import remove from 'lodash/remove';
+import {getColor} from 'components/utils/colors';
 
 export default class PerformanceGraph extends Component {
 
@@ -61,24 +62,6 @@ export default class PerformanceGraph extends Component {
     const { advancedIndicator, advancedChannels } = this.state;
     const { isPast, months, data } = this.props;
 
-    const COLORS = [
-      '#189aca',
-      '#3cca3f',
-      '#a8daec',
-      '#70d972',
-      '#56b5d9',
-      '#8338EC',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#FB5607',
-      '#FF006E',
-      '#76E5FC',
-      '#036D19'
-    ];
-
     const indicatorsProperties = getIndicatorsWithProps();
     const settingsIndicators = Object.keys(indicatorsProperties)
       .filter(indicator => !!data.find(month => month[indicator]))
@@ -107,13 +90,13 @@ export default class PerformanceGraph extends Component {
     });
 
     const bars = advancedChannels.map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}>
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={getColor(index)}>
         <LabelList data-key={channel} content={<CustomizedLabel/>}/>
       </Bar>
     );
 
     const graphChannels = advancedChannels.map((channel, index) =>
-      <div key={index} style={{ borderBottom: '6px solid ' + COLORS[index % COLORS.length], marginRight: '25px', paddingBottom: '3px' }}>
+      <div key={index} style={{ borderBottom: '6px solid ' + getColor(index), marginRight: '25px', paddingBottom: '3px' }}>
         {channel === 'total' ? 'Total' : getChannelNickname(channel)}
       </div>);
 
