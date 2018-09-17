@@ -11,9 +11,7 @@ import history from 'history';
 import NextButton from 'components/pages/profile/NextButton';
 import BackButton from 'components/pages/profile/BackButton';
 import PlanPopup, {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
-import Label from 'components/ControlsLabel';
-
-import Textfield from 'components/controls/Textfield';
+import textFieldStyles from 'styles/controls/textfield.css';
 
 export default class AttributionSetup extends Component {
 
@@ -100,12 +98,16 @@ export default class AttributionSetup extends Component {
                     </Button>
                   <PlanPopup onClose={() => {this.setState({to: null})}} ref="sendSnippetPopup" style={{
                     width: 'max-content',
-                    top: '50px'
-                  }} title="Send Snippet">
+                    left: '253px'
+                  }} title="Send Script">
                     <PopupTextContent>
-                      <div>
-                        <Label>Email: </Label>
-                        <Textfield type='email' value={this.state.to || ''} onChange={(e) => this.setState({to: e.target.value})}/>
+                      <div style={{display: 'inline-flex'}}>
+                      <input type='email'
+                             value={this.state.to || ''}
+                             onChange={(e) => this.setState({to: e.target.value})}
+                             placeholder='email'
+                             className={textFieldStyles.locals.input}
+                      />
                       <Button type='primary' onClick={() => {
                         this.props.sendSnippetEmail(senderEmail, UID, this.state.to);
                         this.refs.sendSnippetPopup.close();
