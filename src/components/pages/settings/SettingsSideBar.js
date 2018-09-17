@@ -35,7 +35,7 @@ export default class SettingsSideBar extends Component {
       },
       {
         name: 'Attribution',
-        path: '/settings/attribution/tracking-plan',
+        path: '/settings/attribution/setup',
         representivePath: '/settings/attribution'
       }];
 

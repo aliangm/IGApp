@@ -660,7 +660,7 @@ export default class Preferences extends Component {
                 planNeedsUpdate: true
               }, this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/dashboard/setup');
+                  history.push('/settings/attribution/setup');
                 });
             }}/>
             <div style={{width: '30px'}}/>

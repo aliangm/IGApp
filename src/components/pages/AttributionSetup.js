@@ -12,6 +12,7 @@ import NextButton from 'components/pages/profile/NextButton';
 import BackButton from 'components/pages/profile/BackButton';
 import PlanPopup, {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 import textFieldStyles from 'styles/controls/textfield.css';
+import Title from 'components/onboarding/Title';
 
 export default class AttributionSetup extends Component {
 
@@ -73,9 +74,7 @@ export default class AttributionSetup extends Component {
                  contentClassName={onBoardingStyle.locals.content}
                  innerClassName={onBoardingStyle.locals.pageInner}
                  width='100%'>
-      <div className={this.classes.head}>
-        <div className={planStyles.locals.headTitle}>Attribution</div>
-      </div>
+      {isPopup ? <Title title='Attribution'/> : null}
       <div className={this.classes.title}>Add the tracking script to your website</div>
       <div className={this.classes.subTitle}>Setting up InfiniGrow’s tracking is easy and takes about a minute. This is
         the first and last time you'll be asked to use code.
@@ -159,7 +158,7 @@ export default class AttributionSetup extends Component {
       {isPopup ?
         <div className={onBoardingStyle.locals.footer}>
           <BackButton onClick={() => {
-            history.push('/profile/integrations');
+            history.push('/settings/profile/integrations');
           }}/>
           <div style={{width: '30px'}}/>
           <NextButton onClick={() => {

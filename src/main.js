@@ -27,7 +27,7 @@ import Overview from 'components/pages/analyze/Overview';
 import Content from 'components/pages/analyze/Content';
 import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
-import Setup from 'components/pages/dashboard/Setup';
+import Setup from 'components/pages/attribution/Setup';
 import AttributionLink from 'components/pages/AttributionLink';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
@@ -77,7 +77,6 @@ ReactDOM.render(
     <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission("dashboard", ...parameters)}>
-        <Route path="/dashboard/setup" component={Setup} onEnter={requireAdminAuth} tabName='Setup'/>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
         <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>
@@ -112,6 +111,7 @@ ReactDOM.render(
       <Route component={Settings} onEnter={requireAuth}>
         <Route path="/settings/account" component={Welcome} onEnter={requireAuth}/>
         <Route component={Attribution} onEnter={requireAuth}>
+          <Route path="/settings/attribution/setup" component={Setup} onEnter={requireAdminAuth} tabName='Setup'/>
           <Route path="/settings/attribution/tracking-plan"
                  component={TrackingPlan}
                  onEnter={requireAuth}
