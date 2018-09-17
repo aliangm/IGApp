@@ -19,6 +19,9 @@ export default class TechnologyStack extends Component {
 
   constructor(props) {
     super(props);
+
+    this.props.updateState({technologyStack: ['googleSheets', 'moz']});
+
     this.state = {
     };
   }
@@ -107,7 +110,7 @@ export default class TechnologyStack extends Component {
               <MarketingApp onChange={this.toogleChange.bind(this, 'trello')} checked={this.isChecked('trello')} title="Trello" icon="platform:trello"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'asana')} checked={this.isChecked('asana')} title="Asana" icon="platform:asana"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'basecamp')} checked={this.isChecked('basecamp')} title="Basecamp" icon="platform:basecamp"/>
-              <MarketingApp onChange={this.toogleChange.bind(this, 'googleSheets')} checked={this.isChecked('googleSheets')} title="Google Sheets" icon="platform:googleSheets"/>
+              <MarketingApp onChange={this.toogleChange.bind(this, 'googleSheets')} disabled={true} checked={this.isChecked('googleSheets')} title="Google Sheets" icon="platform:googleSheets"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'slack')} checked={this.isChecked('slack')} title="Slack" icon="platform:slack"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'workfront')} checked={this.isChecked('workfront')} title="Workfront" icon="platform:workfront"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'wrike')} checked={this.isChecked('wrike')} title="Wrike" icon="platform:wrike"/>
@@ -119,7 +122,7 @@ export default class TechnologyStack extends Component {
               SEO
             </div>
             <div>
-              <MarketingApp onChange={this.toogleChange.bind(this, 'moz')} checked={this.isChecked('moz')} title="Moz" icon="platform:moz"/>
+              <MarketingApp onChange={this.toogleChange.bind(this, 'moz')} disabled={true} checked={this.isChecked('moz')} title="Moz" icon="platform:moz"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'serpstat')} checked={this.isChecked('serpstat')} title="Serpstat" icon="platform:serpstat"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'SERanking')} checked={this.isChecked('SERanking')} title="SE Ranking" icon="platform:SERanking"/>
               <MarketingApp onChange={this.toogleChange.bind(this, 'SEMrush')} checked={this.isChecked('SEMrush')} title="SEMrush" icon="platform:SEMrush"/>
