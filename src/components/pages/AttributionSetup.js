@@ -5,14 +5,13 @@ import copy from 'copy-to-clipboard';
 import Button from 'components/controls/Button';
 import Toggle from 'components/controls/Toggle';
 import Page from 'components/Page';
-import {isPopupMode} from 'modules/popup-mode';
 import onBoardingStyle from 'styles/onboarding/onboarding.css';
 import planStyles from 'styles/plan/plan.css';
 import history from 'history';
 import NextButton from 'components/pages/profile/NextButton';
 import BackButton from 'components/pages/profile/BackButton';
 
-export default class Setup extends Component {
+export default class AttributionSetup extends Component {
 
   style = style;
   styles = [onBoardingStyle, planStyles];
@@ -26,14 +25,14 @@ export default class Setup extends Component {
   }
 
   render() {
-    const {UID: userId} = this.props.userAccount;
+    const {UID, senderEmail, isPopup, sendSnippetEmail} = this.props;
 
     const code =
       `<script type="text/javascript" async=1>
         ;(function (p, l, o, w, i, n, g) {
           if (!p[i]) {
             p.GlobalInfinigrowObject = {};
-            p.GlobalInfinigrowObject.userId = '${userId}';
+            p.GlobalInfinigrowObject.userId = '${UID}';
             p.GlobalInfinigrowObject.InfinigrowNamespace = i;
       
             p[i] = function () {
@@ -67,8 +66,8 @@ export default class Setup extends Component {
       </div>;
     };
 
-    return <Page popup={isPopupMode()}
-                 className={!isPopupMode() ? this.classes.static : null}
+    return <Page popup={isPopup}
+                 className={!isPopup ? this.classes.static : null}
                  contentClassName={onBoardingStyle.locals.content}
                  innerClassName={onBoardingStyle.locals.pageInner}
                  width='100%'>
@@ -88,9 +87,13 @@ export default class Setup extends Component {
               </pre>
             </div>
             <div className={this.classes.buttons}>
-              <Button type='secondary' className={this.classes.secondaryButton}>
-                Email this script and instructions
-              </Button>
+              {sendSnippetEmail
+                ? <Button type='secondary'
+                          className={this.classes.sendEmailButton }
+                          onClick={() => this.props.sendSnippetEmail(senderEmail, UID)}>
+                    Email this script and instructions
+                  </Button>
+                : null}
               <Button type='primary' icon="buttons:edit"
                       className={this.classes.rightButton}
                       onClick={() => copy(code)}>
@@ -130,10 +133,10 @@ export default class Setup extends Component {
           </Button>
         </div>)
       }
-      {isPopupMode() ?
+      {isPopup ?
         <div className={onBoardingStyle.locals.footer}>
           <BackButton onClick={() => {
-            history.push('/profile/technology-stack');
+            history.push('/profile/integrations');
           }}/>
           <div style={{width: '30px'}}/>
           <NextButton onClick={() => {

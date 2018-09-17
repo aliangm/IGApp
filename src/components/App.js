@@ -44,7 +44,8 @@ class AppComponent extends Component {
       calculateAttributionData: this.calculateAttributionData.bind(this),
       optimalImprovementPlan: this.optimalImprovementPlan.bind(this),
       pay: this.pay.bind(this),
-      getUserAccount: this.getUserAccount.bind(this)
+      getUserAccount: this.getUserAccount.bind(this),
+      sendSnippetEmail: this.sendSnippetEmail.bind(this)
     };
   }
 
@@ -494,6 +495,16 @@ class AppComponent extends Component {
         false, false, true
       );
     }
+  }
+
+  sendSnippetEmail(senderEmail, UID) {
+    serverCommunication.serverRequest('POST', 'snippetEmail', JSON.stringify({
+        email: "ocherfas@gmail.com",
+        UID: UID,
+        sender: senderEmail
+      }),
+      false, false, true
+    );
   }
 
   approveChannel(month, channel, budget) {

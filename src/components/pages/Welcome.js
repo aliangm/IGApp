@@ -26,6 +26,7 @@ import AddMemberPopup from 'components/pages/account/AddMemberPopup';
 import Tabs from 'components/onboarding/Tabs';
 import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
+import {userPermittedToPage} from 'utils';
 
 const MEMBERS_TO_SKIP = 1;
 
@@ -49,7 +50,8 @@ export default class Welcome extends Component {
     super(props);
     this.state = {
       inviteMessage: null,
-      showAddMemberPopup: false
+      showAddMemberPopup: false,
+      validationError: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
@@ -121,6 +123,29 @@ export default class Welcome extends Component {
     this.props.updateState({userAccount: update});
   }
 
+  validate(mainTeamMemeber) {
+    const errorFields = [];
+
+    if(!mainTeamMemeber.name) {
+      errorFields.push('name');
+    }
+    if(!this.props.userAccount.companyName){
+      errorFields.push('companyName');
+    }
+
+    // has errors
+    if (errorFields && errorFields.length > 0) {
+      // change order so user will be focused on first error
+      errorFields.reverse().forEach(field =>
+        this.refs[field].validationError()
+      );
+      return false;
+    }
+    else  {
+      return true;
+    }
+  }
+
   removeMember(index) {
     let update = Object.assign({}, this.props.userAccount);
     const member = update.teamMembers.splice(index + MEMBERS_TO_SKIP, 1);
@@ -140,7 +165,8 @@ export default class Welcome extends Component {
   }
 
   inviteMember(newMember) {
-    serverCommunication.serverRequest('PUT', 'members', JSON.stringify({newMember,
+    serverCommunication.serverRequest('PUT', 'members', JSON.stringify({
+      newMember,
       admin: {
         name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName,
         company: this.props.userAccount.companyName
@@ -184,6 +210,9 @@ export default class Welcome extends Component {
     ], {
       className: PlannedVsActualstyle.locals.headRow
     });
+
+    const userPermittedToSettings = userPermittedToPage('settings');
+
     const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
       return this.getTableRow(null, [
         <div className={PlannedVsActualstyle.locals.cellItem}>
@@ -229,11 +258,12 @@ export default class Welcome extends Component {
     };
     const title = isPopupMode() ? 'Welcome! Let\'s get you started' : 'Account';
     const member = this.props.userAccount.teamMembers.find(member => member.userId === getProfileSync().user_id);
-    const memberIndex = this.props.userAccount.teamMembers.findIndex(member => member.userId === getProfileSync().user_id);
+    const memberIndex = this.props.userAccount.teamMembers.findIndex(
+      member => member.userId === getProfileSync().user_id);
     const userAccount = <div>
       <div className={this.classes.row}>
         <Label>Name</Label>
-        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)}/>
+        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'}/>
       </div>
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
@@ -251,7 +281,7 @@ export default class Welcome extends Component {
     const companyAccount = <div>
       <div className={this.classes.row}>
         <Label>Enter your brand/company name</Label>
-        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')}/>
+        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')} ref={'companyName'}/>
       </div>
       <div className={this.classes.row}>
         <Label>Company Website</Label>
@@ -304,9 +334,14 @@ export default class Welcome extends Component {
       </div>
     </div>;
 
+    const pageClass = !isPopupMode()
+      ? (userPermittedToSettings
+        ? this.classes.static
+        : welcomeStyle.locals.staticNoSideBar)
+      : null;
+
     return <div>
-      <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}
-            innerClassName={welcomeStyle.locals.innerPage}>
+      <Page popup={isPopupMode()} className={pageClass} innerClassName={welcomeStyle.locals.innerPage}>
         <Title title={title}
                subTitle="InfiniGrow is looking to better understand who you are so that it can adjust its recommendations to fit you"/>
 
@@ -318,23 +353,25 @@ export default class Welcome extends Component {
             </div>
           </div>
           :
-          <Tabs
-            ref="tabs"
-            defaultSelected={0}
-            defaultTabs={['Company Account', 'User Account']}
-          >
-            {({name, index}) => {
-              return <div className={this.classes.cols}>
-                <div className={this.classes.colCenter} style={{maxWidth: '707px'}}>
-                  {index ?
-                    userAccount
-                    :
-                    companyAccount
-                  }
-                </div>
-              </div>;
-            }}
-          </Tabs>
+          userPermittedToSettings
+            ? <Tabs
+              ref="tabs"
+              defaultSelected={0}
+              defaultTabs={['Company Account', 'User Account']}
+            >
+              {({name, index}) => {
+                return <div className={this.classes.cols}>
+                  <div className={this.classes.colCenter} style={{maxWidth: '707px'}}>
+                    {index ?
+                      userAccount
+                      :
+                      companyAccount
+                    }
+                  </div>
+                </div>;
+              }}
+            </Tabs>
+            : <div>{userAccount}</div>
         }
 
         <div style={{
@@ -345,40 +382,33 @@ export default class Welcome extends Component {
 
           <div className={this.classes.footerCols}>
             <div className={this.classes.footerLeft}>
-              <Button type="secondary" style={{
-                letterSpacing: '0.075',
-                width: '150px'
-              }} onClick={() => {
-                if (this.props.region) {
-                  history.push('/settings/profile/product');
-                }
-                else {
-                  if (!this.props.userAccount.reasonForUse) {
-                    this.setState({showReasonPopup: true});
-                  }
-                  else {
-                    this.setState({createNewVisible: true});
-                  }
-                }
-              }}>Skip this step</Button>
             </div>
             <div className={this.classes.footerRight}>
               <div style={{width: '30px'}}/>
+              <div className={this.classes.almostFooter}>
+                <label hidden={!this.state.validationError} style={{color: 'red'}}>Please fill all the required
+                  fields</label>
+              </div>
               <NextButton onClick={() => {
-                this.props.updateUserAccount(this.getUserAccountFields())
-                  .then(() => {
-                    if (this.props.region) {
-                      history.push('/settings/profile/product');
-                    }
-                    else {
-                      if (!this.props.userAccount.reasonForUse) {
-                        this.setState({showReasonPopup: true});
+                if(this.validate(member)) {
+                  this.props.updateUserAccount(this.getUserAccountFields())
+                    .then(() => {
+                      if (this.props.region) {
+                        history.push('/settings/profile/product');
                       }
                       else {
-                        this.setState({createNewVisible: true});
+                        if (!this.props.userAccount.reasonForUse) {
+                          this.setState({showReasonPopup: true});
+                        }
+                        else {
+                          this.setState({createNewVisible: true});
+                        }
                       }
-                    }
-                  });
+                    });
+                }
+                else  {
+                  this.setState({validationError: true})
+                }
               }}/>
             </div>
           </div>
@@ -426,7 +456,8 @@ export default class Welcome extends Component {
 
     if (typeof item !== 'object') {
       elem = <div className={PlannedVsActualstyle.locals.cellItem}>{item}</div>;
-    } else {
+    }
+    else {
       elem = item;
     }
 

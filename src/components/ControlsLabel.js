@@ -9,6 +9,10 @@ export default class Label extends Component {
     displayHelp: false
   };
 
+  defaultProps = {
+    checkboxDisabled: false
+  };
+
   render() {
     let question;
     let tooltip;
@@ -65,7 +69,7 @@ export default class Label extends Component {
     }
 
     return <div className={ className } style={ this.props.style }>
-      { (this.props.checkbox != undefined) ? <input type="checkbox" checked={ this.props.checkbox } onChange={ this.props.onChange }/> : null }
+      { (this.props.checkbox != undefined) ? <input type="checkbox" checked={ this.props.checkbox } disabled={this.props.checkboxDisabled ? true : null} onChange={ this.props.onChange }/> : null }
       { this.props.children }
       { question }
     </div>
