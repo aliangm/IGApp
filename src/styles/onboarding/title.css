@@ -5,6 +5,7 @@
   border-bottom: 1px solid #e7e9ed;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .title {
