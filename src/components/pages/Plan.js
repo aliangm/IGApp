@@ -459,7 +459,7 @@ export default class Plan extends Component {
 
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
-    const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
+    const {calculatedData: {annualBudget, annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
         return merge(object, item);

@@ -6,6 +6,8 @@ import {flattenObjectives} from 'components/utils/objective';
 import {getDates} from 'components/utils/date';
 import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
+import isNil from 'lodash/isNil';
+import sum from 'lodash/sum'
 
 export function calculatedDataExtender(data) {
 
@@ -43,6 +45,7 @@ export function calculatedDataExtender(data) {
   const isTrial = new Date() < new Date(data.userAccount.trialEnd);
   const isPaid = data.userAccount.isPaid;
   const isAccountEnabled = isTrial || isPaid;
+  const annualBudget = !isNil(data.annualBudget) ? data.annualBudget : sum(data.budgetArray);
 
   return {
     calculatedData: {
@@ -50,7 +53,8 @@ export function calculatedDataExtender(data) {
       committedBudgets: committedBudgets,
       committedForecasting: committedForecasting,
       activeCampaigns: activeCampaigns,
-      annualBudgetLeftToPlan: data.annualBudget -
+      annualBudget : annualBudget,
+      annualBudgetLeftToPlan: annualBudget -
       merged.reduce((annualSum, month) => Object.keys(month)
         .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
       monthlyBudget: monthlyBudget,
