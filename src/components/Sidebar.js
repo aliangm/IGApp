@@ -76,14 +76,12 @@ export default class Sidebar extends Component {
         <div className={this.classes.logo}/>
         <div className={this.classes.menu}>
           <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu}
-                    notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.dashboard}
                     isHighlighted={this.isHighlighted('/dashboard')}
                     page='dashboard'
           />
           <FeatureToggle featureName="attribution">
             <MenuItem icon="sidebar:analyze" text="Analyze" link='/analyze/overview'
                       isHighlighted={this.isHighlighted('/analyze')}
-                      notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.attribution}
                       page='analyze'
             />
           </FeatureToggle>
@@ -91,16 +89,14 @@ export default class Sidebar extends Component {
                     text="Plan"
                     link={'plan/annual'}
                     isHighlighted={this.isHighlighted('/plan')}
-                    notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.plan}
                     page='plan'
           />
           <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel"
                     isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu}
-                    notFirstTime={this.props.userAccount.pages && this.props.userAccount.pages.campaigns}
                     page='campaigns'
           />
           <MenuItem icon="sidebar:settings" link="/settings/account" text="Settings" onClick={this.closeSubMenu}
-                    notFirstTime={true} style={{position: 'absolute', width: '100%', bottom: '20px'}}
+                    style={{position: 'absolute', width: '100%', bottom: '20px'}}
                     isHighlighted={this.isHighlighted('/settings')}/>
         </div>
 
@@ -143,7 +139,6 @@ export class MenuItem extends Component {
         <div className={this.classes.menuItemText}>
           {this.props.text}
         </div>
-        <div className={this.classes.menuItemFirstTime} hidden={this.props.notFirstTime}/>
       </Link>
       : null;
   }

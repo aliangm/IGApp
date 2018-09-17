@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Select from 'components/controls/Select';
 
 export default class Analyze extends Component {
@@ -75,21 +74,9 @@ export default class Analyze extends Component {
             />
           </div>
         </div>
-        {this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
-          <div style={{paddingTop: '90px'}}>
-            {childrenWithProps}
-          </div>
-          :
-          <FirstPageVisit
-            title="Understanding data starts by collecting it"
-            content="You can learn and improve a lot from your data. Track leads’ and users’ interactions with your brand to better understand your investments' effectiveness."
-            action="Implement Attribution >"
-            icon="step:attribution"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.attribution': true});
-            }}
-          />
-        }
+        <div style={{paddingTop: '90px'}}>
+          {childrenWithProps}
+        </div>
       </Page>
     </div>;
   }

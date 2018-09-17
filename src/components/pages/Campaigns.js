@@ -10,7 +10,6 @@ import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
 import {getNickname, getTitle} from 'components/utils/channels';
 import Label from 'components/ControlsLabel';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import {formatNumber} from 'components/utils/budget';
@@ -238,84 +237,72 @@ export default class Campaigns extends Component {
             </Label>
           </div>
         </div>
-        {this.props.userAccount.pages && this.props.userAccount.pages.campaigns ?
-          <div style={{paddingTop: '90px'}}>
-            {selectedIndex !== 2 ?
-              <div className={this.classes.campaignsTitle}>
-                <div className={this.classes.campaignsTitleDate}>
-                  <div className={this.classes.search}>
-                    <div className={this.classes.searchIcon}/>
-                    <input value={this.state.search} onChange={(e) => {
-                      this.setState({search: e.target.value});
-                    }} className={this.classes.searchInput}/>
-                    <div className={this.classes.searchClear} onClick={() => {
-                      this.setState({search: ''});
-                    }}/>
-                  </div>
-                </div>
-                <div className={this.classes.campaignsTitleBudget}>
-                  Budget left to invest
-                  <div className={this.classes.campaignsTitleArrow}
-                       style={{color: monthlyBudgetLeftToInvest >= 0 ? '#2ecc71' : '#ce352d'}}>
-                    ${monthlyBudgetLeftToInvest ? formatNumber(monthlyBudgetLeftToInvest) : 0}
-                  </div>
-                  <div>
-                    {' / $' + formatNumber(monthlyBudget)}
-                  </div>
+        <div style={{paddingTop: '90px'}}>
+          {selectedIndex !== 2 ?
+            <div className={this.classes.campaignsTitle}>
+              <div className={this.classes.campaignsTitleDate}>
+                <div className={this.classes.search}>
+                  <div className={this.classes.searchIcon}/>
+                  <input value={this.state.search} onChange={(e) => {
+                    this.setState({search: e.target.value});
+                  }} className={this.classes.searchInput}/>
+                  <div className={this.classes.searchClear} onClick={() => {
+                    this.setState({search: ''});
+                  }}/>
                 </div>
               </div>
-              : null}
-            {childrenWithProps}
-            <div hidden={!this.state.showPopup}>
-              <CampaignPopup
-                campaign={this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign}
-                channelTitle={processedChannels.titles[this.state.index !== undefined
-                  ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source
-                  : this.state.campaign && this.state.campaign.source]}
-                closePopup={this.closePopup.bind(this)}
-                updateCampaign={this.updateCampaign}
-                teamMembers={teamMembers}
-                campaignsTemplates={campaignsTemplates}
-                updateCampaignsTemplates={this.updateCampaignsTemplates}
-                firstName={userFirstName}
-                lastName={userLastName}
-                processedChannels={processedChannels}
-                addNotification={addNotification}
-              />
+              <div className={this.classes.campaignsTitleBudget}>
+                Budget left to invest
+                <div className={this.classes.campaignsTitleArrow}
+                     style={{color: monthlyBudgetLeftToInvest >= 0 ? '#2ecc71' : '#ce352d'}}>
+                  ${monthlyBudgetLeftToInvest ? formatNumber(monthlyBudgetLeftToInvest) : 0}
+                </div>
+                <div>
+                  {' / $' + formatNumber(monthlyBudget)}
+                </div>
+              </div>
             </div>
-            <div hidden={!this.state.addNew}>
-              <ChooseExistingTemplate
-                showCampaign={(template) => this.showCampaign(merge({}, this.state.campaign, template))}
-                close={() => {
-                  this.setState({addNew: false});
-                }}
-                campaignsTemplates={this.props.campaignsTemplates}
-              />
-            </div>
-            <ImportCampaignsPopup
-              hidden={!this.state.importSalesforceCampaigns}
-              close={() => {
-                this.setState({importSalesforceCampaigns: false});
-              }}
-              setDataAsState={this.props.setDataAsState}
-              updateState={this.updateState}
-              salesforceAuto={this.props.salesforceAuto}
-              adwordsapi={this.props.adwordsapi}
-              facebookadsapi={this.props.facebookadsapi}
-              userAccount={this.props.userAccount}
+            : null}
+          {childrenWithProps}
+          <div hidden={!this.state.showPopup}>
+            <CampaignPopup
+              campaign={this.state.index !== undefined ? campaignsWithIndex[this.state.index] : this.state.campaign}
+              channelTitle={processedChannels.titles[this.state.index !== undefined
+                ? campaignsWithIndex[this.state.index] && campaignsWithIndex[this.state.index].source
+                : this.state.campaign && this.state.campaign.source]}
+              closePopup={this.closePopup.bind(this)}
+              updateCampaign={this.updateCampaign}
+              teamMembers={teamMembers}
+              campaignsTemplates={campaignsTemplates}
+              updateCampaignsTemplates={this.updateCampaignsTemplates}
+              firstName={userFirstName}
+              lastName={userLastName}
+              processedChannels={processedChannels}
+              addNotification={addNotification}
             />
           </div>
-          :
-          <FirstPageVisit
-            title="Managing campaigns & activities couldn't be easier"
-            content="Manage campaigns & activities across marketing channels. All organized in one place, without spreadsheets, email, or any other tool, so you (and your team) can focus on getting sh*t done!"
-            action="Take me to Campaigns >"
-            icon="step:campaign"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.campaigns': true});
+          <div hidden={!this.state.addNew}>
+            <ChooseExistingTemplate
+              showCampaign={(template) => this.showCampaign(merge({}, this.state.campaign, template))}
+              close={() => {
+                this.setState({addNew: false});
+              }}
+              campaignsTemplates={this.props.campaignsTemplates}
+            />
+          </div>
+          <ImportCampaignsPopup
+            hidden={!this.state.importSalesforceCampaigns}
+            close={() => {
+              this.setState({importSalesforceCampaigns: false});
             }}
+            setDataAsState={this.props.setDataAsState}
+            updateState={this.updateState}
+            salesforceAuto={this.props.salesforceAuto}
+            adwordsapi={this.props.adwordsapi}
+            facebookadsapi={this.props.facebookadsapi}
+            userAccount={this.props.userAccount}
           />
-        }
+        </div>
       </Page>
     </div>;
   }

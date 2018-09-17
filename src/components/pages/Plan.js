@@ -12,7 +12,6 @@ import history from 'history';
 import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import {output, isUnknownChannel, initialize} from 'components/utils/channels';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
@@ -667,25 +666,13 @@ export default class Plan extends Component {
                                }}
                                planWithConstraints={this.planWithConstraints}
         />
-        {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
-          <div className={this.classes.wrap}>
-            <div className={this.classes.serverDown}>
-              <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
-                :)</label>
-            </div>
-            {childrenWithProps}
+        <div className={this.classes.wrap}>
+          <div className={this.classes.serverDown}>
+            <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
+              :)</label>
           </div>
-          :
-          <FirstPageVisit
-            title="One place for understanding your route to growth"
-            content="Everything starts with planning. Plan where, when and how you're going to invest your marketing budget to achieve your goals."
-            action="Let's plan some budgets >"
-            icon="step:plan"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.plan': true});
-            }}
-          />
-        }
+          {childrenWithProps}
+        </div>
       </Page>
     </div>;
   }
