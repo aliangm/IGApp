@@ -53,6 +53,15 @@ export default class Analyze extends Component {
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Analyze</div>
           <div className={this.classes.headPlan}>
+            <div className={analyzeStyle.locals.text}>Time Frame:</div>
+            <Select
+              selected={monthsExceptThisMonth}
+              select={{options: selectOptions}}
+              onChange={(e) => {
+                this.props.calculateAttributionData(e.value, attributionModel);
+              }}
+              className={analyzeStyle.locals.dateSelect}
+            />
             <div className={analyzeStyle.locals.text}>Attribution Model:</div>
             <Select
               selected={this.props.attributionModel ? this.props.attributionModel : false}
@@ -61,14 +70,6 @@ export default class Analyze extends Component {
               }}
               onChange={(e) => {
                 this.props.calculateAttributionData(monthsExceptThisMonth, e.value);
-              }}
-              className={analyzeStyle.locals.dateSelect}
-            />
-            <Select
-              selected={monthsExceptThisMonth}
-              select={{options: selectOptions}}
-              onChange={(e) => {
-                this.props.calculateAttributionData(e.value, attributionModel);
               }}
               className={analyzeStyle.locals.dateSelect}
             />
