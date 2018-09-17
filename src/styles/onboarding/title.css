@@ -21,11 +21,11 @@
   margin-left: 1px;
   margin-top: -4px;
   min-width: 167px;
+  margin-right: 26px;
 }
 
 .text {
   /*margin-left: 50px;*/
-  margin-left: 26px;
   font-size: 18px;
   font-style: italic;
   font-weight: 300;
