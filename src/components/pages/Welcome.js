@@ -50,7 +50,8 @@ export default class Welcome extends Component {
     super(props);
     this.state = {
       inviteMessage: null,
-      showAddMemberPopup: false
+      showAddMemberPopup: false,
+      validationError: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
@@ -120,6 +121,29 @@ export default class Welcome extends Component {
     let update = Object.assign({}, this.props.userAccount);
     update.teamMembers.push({name: '', email: '', role: ''});
     this.props.updateState({userAccount: update});
+  }
+
+  validate(mainTeamMemeber) {
+    const errorFields = [];
+
+    if(!mainTeamMemeber.name) {
+      errorFields.push('name');
+    }
+    if(!this.props.userAccount.companyName){
+      errorFields.push('companyName');
+    }
+
+    // has errors
+    if (errorFields && errorFields.length > 0) {
+      // change order so user will be focused on first error
+      errorFields.reverse().forEach(field =>
+        this.refs[field].validationError()
+      );
+      return false;
+    }
+    else  {
+      return true;
+    }
   }
 
   removeMember(index) {
@@ -239,7 +263,7 @@ export default class Welcome extends Component {
     const userAccount = <div>
       <div className={this.classes.row}>
         <Label>Name</Label>
-        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)}/>
+        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'}/>
       </div>
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
@@ -257,7 +281,7 @@ export default class Welcome extends Component {
     const companyAccount = <div>
       <div className={this.classes.row}>
         <Label>Enter your brand/company name</Label>
-        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')}/>
+        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')} ref={'companyName'}/>
       </div>
       <div className={this.classes.row}>
         <Label>Company Website</Label>
@@ -358,40 +382,33 @@ export default class Welcome extends Component {
 
           <div className={this.classes.footerCols}>
             <div className={this.classes.footerLeft}>
-              <Button type="secondary" style={{
-                letterSpacing: '0.075',
-                width: '150px'
-              }} onClick={() => {
-                if (this.props.region) {
-                  history.push('/settings/profile/product');
-                }
-                else {
-                  if (!this.props.userAccount.reasonForUse) {
-                    this.setState({showReasonPopup: true});
-                  }
-                  else {
-                    this.setState({createNewVisible: true});
-                  }
-                }
-              }}>Skip this step</Button>
             </div>
             <div className={this.classes.footerRight}>
               <div style={{width: '30px'}}/>
+              <div className={this.classes.almostFooter}>
+                <label hidden={!this.state.validationError} style={{color: 'red'}}>Please fill all the required
+                  fields</label>
+              </div>
               <NextButton onClick={() => {
-                this.props.updateUserAccount(this.getUserAccountFields())
-                  .then(() => {
-                    if (this.props.region) {
-                      history.push('/settings/profile/product');
-                    }
-                    else {
-                      if (!this.props.userAccount.reasonForUse) {
-                        this.setState({showReasonPopup: true});
+                if(this.validate(member)) {
+                  this.props.updateUserAccount(this.getUserAccountFields())
+                    .then(() => {
+                      if (this.props.region) {
+                        history.push('/settings/profile/product');
                       }
                       else {
-                        this.setState({createNewVisible: true});
+                        if (!this.props.userAccount.reasonForUse) {
+                          this.setState({showReasonPopup: true});
+                        }
+                        else {
+                          this.setState({createNewVisible: true});
+                        }
                       }
-                    }
-                  });
+                    });
+                }
+                else  {
+                  this.setState({validationError: true})
+                }
               }}/>
             </div>
           </div>

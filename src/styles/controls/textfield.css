@@ -1,5 +1,8 @@
 .box {
   height: 36px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
 }
 
 .input {
@@ -15,8 +18,18 @@
   height: 36px;
   width: 100%;
   box-sizing: border-box;
+  margin-right: 15px;
 }
 
 .input:disabled {
   background: #ededed;
+}
+
+.validation-error-wrapper {
+  width: fit-content;
+  height: fit-content;
+}
+
+.validation-error-wrapper[data-disabled] {
+  visibility: hidden;
 }
