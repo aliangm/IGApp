@@ -28,6 +28,7 @@ import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
+import ReactTooltip from 'react-tooltip';
 
 export default class CMO extends Component {
 
@@ -796,7 +797,7 @@ export default class CMO extends Component {
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item} style={{height: '350px', width: '540px'}}>
-            <div className={dashboardStyle.locals.text}>
+            <div className={dashboardStyle.locals.text} data-tip="Total allocated budget for campaigns per defined focus">
               Campaigns by Focus
             </div>
             <div className={dashboardStyle.locals.chart}>
@@ -881,6 +882,7 @@ export default class CMO extends Component {
           <TopX title='content' data={topContent}/>
         </div>
       </div>
+      <ReactTooltip/>
     </div>;
   }
 }
