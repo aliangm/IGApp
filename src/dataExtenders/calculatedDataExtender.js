@@ -56,6 +56,7 @@ export function calculatedDataExtender(data) {
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
       monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
+      extarpolateRatio: extarpolateRatio,
       monthlyBudgetLeftToInvest: activeCampaigns.reduce((res, campaign) => {
         if (!campaign.isArchived) {
           if (campaign.isOneTime) {

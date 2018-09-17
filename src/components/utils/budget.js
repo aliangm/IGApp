@@ -8,8 +8,14 @@ export function formatNumber(budget) {
   return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export function formatBudget(budget) {
-  return '$' + formatNumber(budget);
+export function formatBudget(budget, withSign = false) {
+  let sign = '';
+
+  if (withSign) {
+    sign = (budget > 0) ? '+' : (budget < 0 ? '-' : '');
+
+  }
+  return `${sign}$${formatNumber(budget)}`;
 }
 
 export function formatBudgetShortened(budget) {
@@ -29,7 +35,7 @@ export function extractNumberFromBudget(budget, defaultValue = 0) {
   return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
 }
 
-export function getPlanBudgetsData(planBudgets){
+export function getPlanBudgetsData(planBudgets) {
   const committedBudgets = getCommitedBudgets(planBudgets);
 
   const sumBudgets = {};
