@@ -49,11 +49,6 @@ export default class Campaigns extends Component {
       {value: 'opps', label: getIndicatorNickname('opps')},
       {value: 'users', label: getIndicatorNickname('users')}
     ];
-    const attributionModels = [
-      {value: false, label: 'Full Journey'},
-      {value: 'firsttouch', label: 'Introducer'},
-      {value: 'lasttouch', label: 'Converter'}
-    ];
 
     const headRow = this.getTableRow(null, [
       <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}
@@ -308,18 +303,6 @@ export default class Campaigns extends Component {
                 Top Conversion Journeys
               </div>
               <div style={{display: 'flex'}}>
-                <div>
-                  <Select
-                    selected={this.props.attributionModel ? this.props.attributionModel : false}
-                    select={{
-                      options: attributionModels
-                    }}
-                    onChange={(e) => {
-                      this.props.calculateAttributionData(e.value);
-                    }}
-                    style={{width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px'}}
-                  />
-                </div>
                 <div className={dashboardStyle.locals.conversionGoal}>
                   Choose a conversion goal
                   <Select
