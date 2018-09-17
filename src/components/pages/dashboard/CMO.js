@@ -13,7 +13,6 @@ import {
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
-import Steps from 'components/pages/dashboard/Steps';
 import Label from 'components/ControlsLabel';
 import merge from 'lodash/merge';
 import PlanPopup, {
@@ -311,7 +310,6 @@ export default class CMO extends Component {
       });
 
     return <div className={dashboardStyle.locals.wrap}>
-      <Steps {...this.props}/>
       <div className={this.classes.cols}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item}

@@ -265,11 +265,8 @@ export default class Plan extends Component {
   };
 
   editUpdate = () => {
-    if (this.state.interactiveMode) {
-      return Promise.resolve();
-    }
-    else {
-      return this.forecastAndUpdateUserMonthPlan({
+    if (!this.state.interactiveMode){
+      this.forecastAndUpdateUserMonthPlan({
         planBudgets: this.getPlanBudgets(),
         unknownChannels: this.getPlanBudgets(true),
         namesMapping: this.props.namesMapping
@@ -609,11 +606,6 @@ export default class Plan extends Component {
                           onClick={() => {
                             if (editMode) {
                               this.editUpdate()
-                                .then(() => {
-                                  if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
-                                    this.props.updateUserAccount({'steps.plan': true});
-                                  }
-                                });
                             }
                             this.setState({
                               editMode: !editMode

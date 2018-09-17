@@ -307,9 +307,6 @@ export default class PlannedVsActual extends Component {
                           this.pagingUpdateState(data);
                         });
                       this.setState({saveSuccess: true});
-                      if (!this.props.userAccount.steps || !this.props.userAccount.steps.plannedVsActual) {
-                        this.props.updateUserAccount({'steps.plannedVsActual': true});
-                      }
                     });
                   }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
                 </div>
