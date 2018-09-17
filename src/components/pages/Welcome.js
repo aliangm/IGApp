@@ -111,6 +111,12 @@ export default class Welcome extends Component {
     this.props.updateState({userAccount: update});
   }
 
+  handleChangePhone(event) {
+    let update = Object.assign({}, this.props.userAccount);
+    update.teamMembers[0].phone = event.target.value;
+    this.props.updateState({userAccount: update});
+  }
+
   handleChangeArray(parameter, index, event) {
     let update = Object.assign({}, this.props.userAccount);
     update[parameter][index] = event.target.value;
@@ -268,6 +274,10 @@ export default class Welcome extends Component {
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
                 onChange={this.handleChangeRole.bind(this)}/>
+      </div>
+      <div className={this.classes.row}>
+        <Label>Phone</Label>
+        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this)} style={{width: '283px'}}/>
       </div>
       <div className={this.classes.row}>
         <Label>Email</Label>
