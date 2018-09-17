@@ -240,7 +240,8 @@ export default class Product extends Component {
                 {key: 'Security', text: 'Security', icon: 'buttons:security'},
                 {key: 'IT', text: 'IT', icon: 'buttons:IT'},
                 {key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity'},
-                {key: 'Finance', text: 'Finance', icon: 'buttons:finance'}
+                {key: 'Finance', text: 'Finance', icon: 'buttons:finance'},
+                {key: 'Other', text: 'Other', icon: 'buttons:any'}
               ]} selectedKey={this.props.userProfile.vertical}
                           onChange={this.handleChangeButton.bind(this, 'vertical')} ref='vertical'/>
             </div>
