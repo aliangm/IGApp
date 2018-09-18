@@ -3,13 +3,16 @@
   font-size: 13px;
   line-height: 14px;
   font-weight: 600;
-  text-transform: uppercase;
   height: 20px;
   display: flex;
   align-items: center;
   margin-bottom: 12px;
   letter-spacing: 0.050em;
   white-space: nowrap;
+}
+
+.label[data-capitalize] {
+  text-transform: uppercase;
 }
 
 .question-box {

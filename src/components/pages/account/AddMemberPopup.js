@@ -17,8 +17,8 @@ export default class AddMemberPopup extends Component {
 
   pagePermissions = [
     {
-      key: 'analyze',
-      label: 'Analyze',
+      key: 'settings',
+      label: 'Account Settings',
       isDisabled: false
     },
     {
@@ -27,9 +27,9 @@ export default class AddMemberPopup extends Component {
       isDisabled: false
     },
     {
-      key: 'campaigns',
-      label: 'Campaigns',
-      isDisabled: true
+      key: 'analyze',
+      label: 'Analyze',
+      isDisabled: false
     },
     {
       key: 'plan',
@@ -37,9 +37,9 @@ export default class AddMemberPopup extends Component {
       isDisabled: false
     },
     {
-      key: 'settings',
-      label: 'Account Settings',
-      isDisabled: false
+      key: 'campaigns',
+      label: 'Campaigns',
+      isDisabled: true
     }
   ];
 
@@ -96,7 +96,9 @@ export default class AddMemberPopup extends Component {
 
     const pagePermissionsLabels = this.pagePermissions.map((permissionItem) => {
       return <Label checkboxDisabled={permissionItem.isDisabled}
-                    checkbox={this.state.pagePermissions[permissionItem.key]} onChange={() => {
+                    checkbox={this.state.pagePermissions[permissionItem.key]}
+                    capitalize={false}
+                    onChange={() => {
 
         const newPermissions = {...this.state.pagePermissions};
         newPermissions[permissionItem.key] = !newPermissions[permissionItem.key];
