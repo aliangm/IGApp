@@ -9,8 +9,9 @@ export default class Label extends Component {
     displayHelp: false
   };
 
-  defaultProps = {
-    checkboxDisabled: false
+  static defaultProps = {
+    checkboxDisabled: false,
+    capitalize: true
   };
 
   render() {
@@ -68,7 +69,7 @@ export default class Label extends Component {
       className += ' ' + this.props.className;
     }
 
-    return <div className={ className } style={ this.props.style }>
+    return <div className={ className } style={ this.props.style } data-capitalize={this.props.capitalize ? true : null}>
       { (this.props.checkbox != undefined) ? <input type="checkbox" checked={ this.props.checkbox } disabled={this.props.checkboxDisabled ? true : null} onChange={ this.props.onChange }/> : null }
       { this.props.children }
       { question }
