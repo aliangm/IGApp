@@ -18,6 +18,7 @@ export default class PlanButton extends Component {
 
   render() {
     const disabled = this.props.numberOfPlanUpdates === 0;
+    const icon = 'buttons:plan' + (disabled ? '-disabled' : '');
 
     return <div style={{display: 'flex', position: 'relative'}}
                 data-tip={disabled ? this.tooltipHtml : null}
@@ -26,7 +27,7 @@ export default class PlanButton extends Component {
               disabled={disabled}
               onClick={this.props.onClick}
               style={this.props.style}
-              icon={this.props.showIcons ? 'buttons:plan' : null}
+              icon={this.props.showIcons ? icon : null}
       >
         {this.props.label}({this.props.numberOfPlanUpdates})
         {

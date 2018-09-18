@@ -15,7 +15,8 @@ export default class PlanOptimizationPopup extends Component {
   style = style;
 
   static propTypes = {
-    hidden: PropTypes.bool
+    hidden: PropTypes.bool,
+    numberOfPlanUpdates: PropTypes.number
   };
 
   initialConstraints = {
@@ -87,7 +88,8 @@ export default class PlanOptimizationPopup extends Component {
     },
     {
       id: '7',
-      component: <InsightStep getInsightData={this.getInsightData} planDate={this.props.planDate}/>
+      component: <InsightStep getInsightData={this.getInsightData} planDate={this.props.planDate}
+                              getNumberOfPlanUpdates={() => this.props.numberOfPlanUpdates}/>
     },
     {
       id: '8',
@@ -151,6 +153,15 @@ export default class PlanOptimizationPopup extends Component {
           Close
         </Button>
       </div>
+    },
+    {
+      id: '16',
+      component: <div>You've reached the plan updates limit.<br/> To
+        upgrade,
+        click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
+        target='_blank'>here</a></div>,
+      asMessage: true,
+      trigger: '15'
     }];
 
   clearState = (callback) => {

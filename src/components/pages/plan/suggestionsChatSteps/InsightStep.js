@@ -28,6 +28,11 @@ export default class InsightStep extends Component {
     e.stopPropagation();
   };
 
+  checkIfMoreUpdatesAvailiable = (trigger) => {
+    const stepToTrigger = this.props.getNumberOfPlanUpdates() === 0 ? '16' : trigger;
+    this.props.triggerNextStep({trigger: stepToTrigger});
+  };
+
   render() {
     const {planDate} = this.props;
     const {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets} = this.insightData;
@@ -38,10 +43,12 @@ export default class InsightStep extends Component {
                    forecasting={forecastedIndicators}
                    onCommit={() => {
                      commitPlanBudgets()
-                       .then(() => this.props.triggerNextStep({trigger: '8'}));
+                       .then(() => {
+                         this.checkIfMoreUpdatesAvailiable();
+                       });
                    }}
                    onDecline={() => {
-                     this.props.triggerNextStep({trigger: '11'});
+                     this.checkIfMoreUpdatesAvailiable();
                    }}
       />
     </div>;

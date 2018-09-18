@@ -658,6 +658,7 @@ export default class Plan extends Component {
                                  this.setState({showOptimizationPopup: false});
                                }}
                                planWithConstraints={this.planWithConstraints}
+                               numberOfPlanUpdates={this.props.numberOfPlanUpdates}
         />
         <div className={this.classes.wrap}>
           <div className={this.classes.serverDown}>
