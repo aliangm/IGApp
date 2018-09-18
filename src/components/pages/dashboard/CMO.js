@@ -102,11 +102,19 @@ export default class CMO extends Component {
         committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
         annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
-        historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth, historyDataLength}
+        historyData: {totalCost, historyDataWithCurrentMonth, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
 
     const {months, isPast, showAdvanced} = this.state;
+    const monthSelectOptions = Array.apply(null, new Array(historyDataLength+1)).map((item, index) => {
+      const label = index || 'Only this month';
+      return {
+        value: index,
+        label: label
+      }
+    });
+
     const merged = merge(committedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
@@ -341,7 +349,7 @@ export default class CMO extends Component {
                         <Select
                           selected={this.state.months}
                           select={{
-                            options: monthsOptions
+                            options: monthSelectOptions
                           }}
                           onChange={(e) => {
                             this.setState({months: e.value});
@@ -574,7 +582,7 @@ export default class CMO extends Component {
                         <Select
                           selected={this.state.months}
                           select={{
-                            options: monthsOptions
+                            options: monthSelectOptions
                           }}
                           onChange={(e) => {
                             this.setState({months: e.value});
