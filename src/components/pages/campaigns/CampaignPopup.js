@@ -8,7 +8,7 @@ import Checklist from 'components/pages/campaigns/Checklist';
 import Updates from 'components/pages/campaigns/Updates';
 import Tracking from 'components/pages/campaigns/Tracking';
 import Assets from 'components/pages/campaigns/Assets';
-import planStyle from 'styles/plan/plan.css';
+import headerStyle from 'styles/header.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import UnsavedPopup from 'components/UnsavedPopup';
@@ -20,7 +20,7 @@ import Button from 'components/controls/Button';
 export default class CampaignPopup extends Component {
 
   style = style;
-  styles = [campaignPopupStyle, planStyle, buttonsStyle];
+  styles = [campaignPopupStyle, headerStyle, buttonsStyle];
 
   constructor(props) {
     super(props);
@@ -221,15 +221,15 @@ export default class CampaignPopup extends Component {
           <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
         </div>
         <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
-        <div className={ planStyle.locals.headTabs } style={{ height: '85px', margin: '0 38px' }}>
+        <div className={ headerStyle.locals.headTabs } style={{ height: '85px', margin: '0 38px' }}>
           {
             tabNames.map((name, i) => {
               let className;
 
               if (i === this.state.selectedTab) {
-                className = planStyle.locals.headTabSelected;
+                className = headerStyle.locals.headTabSelected;
               } else {
-                className = planStyle.locals.headTab;
+                className = headerStyle.locals.headTab;
               }
 
               return <div className={ className } key={ i } onClick={() => {
