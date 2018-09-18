@@ -296,7 +296,9 @@ export default class Plan extends Component {
         }
       });
     this.setState({budgetsData: budgetsData, addChannelPopup: false}, () => {
-      const domElement = ReactDOM.findDOMNode(this[channelKey]);
+
+      // Scroll to the title cell
+      const domElement = ReactDOM.findDOMNode(this[channelKey]).firstChild;
       if (domElement) {
         domElement.scrollIntoView({});
       }
