@@ -19,6 +19,7 @@ import {formatDate} from 'components/utils/date';
 import insightsStyle from 'styles/insights/insights.css';
 import {Link} from 'react-router';
 import {getProfileSync, logout} from 'components/utils/AuthService';
+import PayButton from 'components/PayButton';
 
 export default class Header extends Component {
 
@@ -126,9 +127,7 @@ export default class Header extends Component {
         {tabs}
       </div>
       <div className={this.classes.itemsBox}>
-        {!this.props.calculatedData.isPaid ?
-          <Button type='primary' onClick={this.props.pay} style={{alignSelf: 'center'}}>Upgrade</Button>
-          : null}
+        <PayButton isPaid={this.props.calculatedData.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
