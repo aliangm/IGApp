@@ -8,6 +8,8 @@ export default class Button extends Component {
   style = style;
   styles = [icons];
 
+  DISABLED_ICON_SUFFIX = "-disabled";
+
   static defaultProps = {
     type: 'secondary'
   };
@@ -34,7 +36,7 @@ export default class Button extends Component {
                 data-selected={this.props.selected || null}
     >
       {this.props.icon ?
-        <div className={this.classes.icon} data-icon={this.props.icon}/>
+        <div className={this.classes.icon} data-icon={this.props.icon+ (this.props.disabled ? this.DISABLED_ICON_SUFFIX : '')}/>
         : null}
       <div className={contClassName}>{this.props.children}</div>
     </div>;
