@@ -108,10 +108,9 @@ export default class CMO extends Component {
 
     const {months, isPast, showAdvanced} = this.state;
     const monthSelectOptions = Array.apply(null, new Array(historyDataLength+1)).map((item, index) => {
-      const label = index || 'Only this month';
       return {
         value: index,
-        label: label
+        label: index || 'Only this month'
       }
     });
 
