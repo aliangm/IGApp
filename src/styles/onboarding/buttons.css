@@ -1,5 +1,9 @@
 @import "../global/mixins.css";
 
+.plan-button {
+
+}
+
 @mixin icon-nodpi buttons:plan, ../../assets/plan;
 @mixin icon-nodpi buttons:plan-disabled, ../../assets/plan-disabled;
 @mixin icon-nodpi buttons:save, ../../assets/save;
