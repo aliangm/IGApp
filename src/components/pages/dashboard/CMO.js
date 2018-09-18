@@ -19,7 +19,7 @@ import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
 import Select from 'components/controls/Select';
-import {getDates} from 'components/utils/date';
+import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
@@ -107,7 +107,8 @@ export default class CMO extends Component {
     } = this.props;
 
     const {months, isPast, showAdvanced} = this.state;
-    const monthSelectOptions = Array.apply(null, new Array(historyDataLength+1)).map((item, index) => {
+    const numberOfMonthsOptions = Math.min(historyDataLength + 1, NUMBER_OF_FUTURE_MONTHS);
+    const monthSelectOptions = Array.apply(null, new Array(numberOfMonthsOptions)).map((item, index) => {
       return {
         value: index,
         label: index || 'Only this month'
