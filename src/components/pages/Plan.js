@@ -225,6 +225,10 @@ export default class Plan extends Component {
       isSoft: !alreadyHardConstraint
     };
 
+    if(this.state.editMode) {
+      this.props.updateState({unsaved: true});
+    }
+
     this.setState({budgetsData: budgetsData}, () => {
       this.props.forecast(this.getPlanBudgets())
         .then((data) => {
@@ -607,6 +611,7 @@ export default class Plan extends Component {
                           onClick={() => {
                             if (editMode) {
                               this.editUpdate()
+                              this.props.updateState({unsaved: false});
                             }
                             this.setState({
                               editMode: !editMode
@@ -630,6 +635,7 @@ export default class Plan extends Component {
                            onClick={() => {
                              this.setState({editMode: false});
                              this.setBudgetsData();
+                             this.props.updateState({unsaved: false});
                            }}>
                         Cancel
                       </div>
