@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import ReactDOM from 'react-dom';
 import Popup from 'components/Popup';
@@ -7,7 +7,7 @@ import NotSure from 'components/onboarding/NotSure';
 
 import style from 'styles/profile/buttons-set.css';
 
-export default class ButtonsSet extends Component {
+class ButtonsSet extends Component {
   style = style;
 
   constructor(props) {
@@ -49,24 +49,40 @@ export default class ButtonsSet extends Component {
   render() {
     let selectedIndex = 0;
     const renderItem = this.props.renderItem || this.renderItem;
-    const buttons = this.props.buttons.map((params, i) => {
-      const key = params.key || i;
+    const gridColums = new Array(this.props.lines);
+    // debugger;
+    const grid = Array.apply(null, {length: this.props.lines})
+    .map((val, i) => {
+      // debugger;
+        return (
+          <div className={`${this.classes.igGridRow} ig-grid-row-${i}`}>
+            {
+              this.props.buttons
+              .slice(
+                Math.ceil(i * this.props.buttons.length / this.props.lines),
+                Math.ceil((i+1) * this.props.buttons.length / this.props.lines)
+              ).map((params, i) => {
+                const key = params.key || i;
     
-      return renderItem({
-        selected: key === this.state.selectedButton,
-        key: key,
-        params: params,
-        onClick: () => {
-          this.setState({
-            selectedButton: key
-          });
+                return renderItem({
+                  selected: key === this.state.selectedButton,
+                  key: key,
+                  params: params,
+                  onClick: () => {
+                    this.setState({
+                      selectedButton: key
+                    });
 
-          if (this.props.onChange) {
-            this.props.onChange(key);
-          }
-        }
-      });
-    });
+                    if (this.props.onChange) {
+                      this.props.onChange(key);
+                    }
+                  }
+                });
+              })
+            }
+            </div>
+        )
+    })
     
     let help;
 
@@ -79,7 +95,7 @@ export default class ButtonsSet extends Component {
 
     return <div className={ this.classes.box } ref="input">
       <div className={ this.classes.inner }>
-        { buttons }
+        { grid }
         { help }
         <div hidden={!this.state.validationError} className={this.classes.validationError}/>
       </div>
@@ -134,3 +150,9 @@ export default class ButtonsSet extends Component {
     });
   }
 }
+
+ButtonsSet.defaultProps = {
+  lines: 1
+}
+
+export default ButtonsSet;
