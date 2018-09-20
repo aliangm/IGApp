@@ -269,7 +269,7 @@ export default class Welcome extends Component {
     const userAccount = <div>
       <div className={this.classes.row}>
         <Label>Name</Label>
-        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'}/>
+        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
@@ -277,26 +277,26 @@ export default class Welcome extends Component {
       </div>
       <div className={this.classes.row}>
         <Label>Phone</Label>
-        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this)} style={{width: '283px'}}/>
+        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this)} style={{width: '283px'}} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Email</Label>
-        <Textfield value={member && member.email} readOnly={true}/>
+        <Textfield value={member && member.email} readOnly={true} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Picture</Label>
-        <Avatar member={member} className={welcomeStyle.locals.userPicture}/>
+        <Avatar member={member} className={welcomeStyle.locals.userPicture} />
       </div>
     </div>;
     const companyAccount = <div>
       <div className={this.classes.row}>
         <Label>Enter your brand/company name</Label>
-        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')} ref={'companyName'}/>
+        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')} ref={'companyName'} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Company Website</Label>
         <Textfield value={this.props.userAccount.companyWebsite}
-                   onChange={this.handleChange.bind(this, 'companyWebsite')}/>
+                   onChange={this.handleChange.bind(this, 'companyWebsite')} withValidationError={true}/>
       </div>
       {!isPopupMode() ?
         <div className={this.classes.row}>
@@ -336,11 +336,11 @@ export default class Welcome extends Component {
       <div className={this.classes.row}>
         <Label>Enter your main competitors' website (up to 3)</Label>
         <Textfield value={this.props.userAccount.competitorsWebsites[0]} style={{marginBottom: '16px'}}
-                   onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 0)}/>
+                   onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 0)} withValidationError={true}/>
         <Textfield value={this.props.userAccount.competitorsWebsites[1]} style={{marginBottom: '16px'}}
-                   onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 1)}/>
+                   onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 1)} withValidationError={true}/>
         <Textfield value={this.props.userAccount.competitorsWebsites[2]} style={{marginBottom: '16px'}}
-                   onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
+                   onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 2)} withValidationError={true}/>
       </div>
     </div>;
 
