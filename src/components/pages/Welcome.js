@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PayButton from 'components/PayButton';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import NextButton from 'components/pages/profile/NextButton';
@@ -342,6 +342,7 @@ export default class Welcome extends Component {
         <Textfield value={this.props.userAccount.competitorsWebsites[2]} style={{marginBottom: '16px'}}
                    onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 2)} withValidationError={true}/>
       </div>
+      <PayButton isPaid={this.props.calculatedData.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
     </div>;
 
     const pageClass = !isPopupMode()
