@@ -10,7 +10,6 @@
   align-items: center;
   position: absolute;
   width: calc(100% - 80px);
-  z-index: 8;
   padding: 0 40px;
 }
 
