@@ -19,6 +19,8 @@ import {FeatureToggleProvider} from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
 import {calculatedDataExtender} from 'dataExtenders/calculatedDataExtender.js';
 import {getProfileSync} from 'components/utils/AuthService';
+import isNil from 'lodash/isNil';
+import sum from 'lodash/sum';
 
 class AppComponent extends Component {
 
@@ -656,11 +658,18 @@ class AppComponent extends Component {
     const profile = getProfileSync();
     const user = this.state.teamMembers.find(user => user.userId === profile.user_id);
     const email = user.email;
+    const annualBudget = !isNil(this.state.annualBudget) ? this.state.annualBudget : sum(this.state.budgetArray);
+    let product = 540236;
+    if (annualBudget > 240000 && annualBudget < 1020000)
+      product = 540236;
+    if (annualBudget > 1020000)
+      product = 540236;
     return Paddle.Checkout.open({
-      product: 540119,
+      product: product,
       email: email,
       passthrough: {UID: this.state.UID},
       title: 'InfiniGrow',
+      allowQuantity: false,
       successCallback: (data) => {
         this.state.getUserAccount();
       }

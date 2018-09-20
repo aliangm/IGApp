@@ -10,6 +10,10 @@ export default class Textfield extends Component {
   style = style;
   styles = [buttonsSetStyle];
 
+  static defaultProps = {
+    withValidationError: false
+  };
+
   constructor(props) {
     super(props);
 
@@ -57,7 +61,7 @@ export default class Textfield extends Component {
       inputClassName = this.classes.input;
     }
 
-    return <div className={className} style={this.props.style}>
+    return <div className={className} style={this.props.style} data-with-error={this.props.withValidationError ? true : null}>
       <input type={this.props.type}
              ref="input"
              className={inputClassName}
@@ -79,10 +83,13 @@ export default class Textfield extends Component {
              onInput={this.props.onInput}
              placeholder={this.props.placeHolder}
              disabled={this.props.disabled}
+             data-with-error={this.props.withValidationError ? true : null}
       />
-      <div className={this.classes.validationErrorWrapper} data-disabled={!this.state.validationError ? true: null}>
-        <div className={buttonsSetStyle.locals.validationError}/>
-      </div>
+      { this.props.withValidationError
+        ? <div className={this.classes.validationErrorWrapper} data-disabled={!this.state.validationError ? true: null}>
+            <div className={buttonsSetStyle.locals.validationError}/>
+          </div>
+        : null}
     </div>;
   }
 }
