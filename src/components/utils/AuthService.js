@@ -7,23 +7,27 @@ const options = {
   responseType: 'token',
   clientID: config.authClientId,
   domain: config.authDomain,
-  redirectUri: window.location.origin,
-  scope: 'openid profile'
+  redirectUri: window.location.origin
 };
 
 const webAuth = new auth0.WebAuth(options);
 
 export function handleAuthentication() {
-  webAuth.parseHash({hash: window.location.hash.slice(1, window.location.hash.length - 10)}, function (err, authResult) {
-    if (authResult && authResult.accessToken && authResult.idToken) {
-      setSession(authResult);
-      history.push('/');
-    } else if (err) {
-      // navigate to the home route
-      history.push('/');
-      console.log(err);
-    }
-  });
+  const hash = window.location.hash.slice(1, window.location.hash.length - 10);
+  if (hash) {
+    webAuth.parseHash({hash: hash}, function (err, authResult) {
+      if (authResult && authResult.accessToken && authResult.idToken) {
+        setSession(authResult);
+        history.push('/');
+      } else {
+        if (err) {
+          console.log(err);
+        }
+        // navigate to the home route
+        history.push('/');
+      }
+    });
+  }
 }
 
 function setSession(authResult) {
