@@ -342,7 +342,7 @@ export default class Welcome extends Component {
         <Textfield value={this.props.userAccount.competitorsWebsites[2]} style={{marginBottom: '16px'}}
                    onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 2)}/>
       </div>
-      <PayButton isPaid={this.props.calculatedData.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
+      <PayButton isPaid={this.props.calculatedData && this.props.calculatedData.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount && this.props.userAccount.trialEnd}/>
     </div>;
 
     const pageClass = !isPopupMode()
