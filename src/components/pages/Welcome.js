@@ -105,15 +105,15 @@ export default class Welcome extends Component {
     this.props.updateState({userAccount: update});
   }
 
-  handleChangeRole(event) {
+  handleChangeRole(index, event) {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers[0].role = event.value;
+    update.teamMembers[index].role = event.value;
     this.props.updateState({userAccount: update});
   }
 
-  handleChangePhone(event) {
+  handleChangePhone(index, event) {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers[0].phone = event.target.value;
+    update.teamMembers[index].phone = event.target.value;
     this.props.updateState({userAccount: update});
   }
 
@@ -273,11 +273,11 @@ export default class Welcome extends Component {
       </div>
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
-                onChange={this.handleChangeRole.bind(this)}/>
+                onChange={this.handleChangeRole.bind(this, memberIndex)}/>
       </div>
       <div className={this.classes.row}>
         <Label>Phone</Label>
-        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this)} style={{width: '283px'}} withValidationError={true}/>
+        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this, memberIndex)} style={{width: '283px'}} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Email</Label>
