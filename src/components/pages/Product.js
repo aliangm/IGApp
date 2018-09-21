@@ -233,7 +233,7 @@ export default class Product extends Component {
             <div className={this.classes.row}>
               <Label question={['']}
                      description={['Which vertical/industry does your company work in?']}>Vertical</Label>
-              <ButtonsSet lines={3} buttons={[
+              <ButtonsSet buttons={[
                 {key: 'Martech', text: 'Martech', icon: 'buttons:martech'},
                 {key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:analytics_BI'},
                 {key: 'Sales', text: 'Sales', icon: 'buttons:sales'},
@@ -260,7 +260,7 @@ export default class Product extends Component {
               <Label question={['']}
                      description={['What is your company’s business model? \n *On-prem is a shortcut for On-premises software.']}>Business
                 Model</Label>
-              <ButtonsSet lines={2} buttons={[
+              <ButtonsSet buttons={[
                 {key: 'SaaS', text: 'SaaS', icon: 'buttons:SaaS'},
                 {key: 'On-prem', text: 'On-prem', icon: 'buttons:product'},
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},

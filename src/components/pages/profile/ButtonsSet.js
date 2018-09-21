@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import Component from 'components/Component';
 import ReactDOM from 'react-dom';
 import Popup from 'components/Popup';
@@ -7,8 +7,12 @@ import NotSure from 'components/onboarding/NotSure';
 
 import style from 'styles/profile/buttons-set.css';
 
-class ButtonsSet extends Component {
+export default class ButtonsSet extends Component {
   style = style;
+
+  static defaultProps = {
+    lines: 1
+  }
 
   constructor(props) {
     super(props);
@@ -150,9 +154,3 @@ class ButtonsSet extends Component {
     });
   }
 }
-
-ButtonsSet.defaultProps = {
-  lines: 1
-}
-
-export default ButtonsSet;
