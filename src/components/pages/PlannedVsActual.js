@@ -16,6 +16,7 @@ import {formatBudget} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import icons from 'styles/icons/plan.css';
 import annualStyle from 'styles/plan/annual-tab.css';
+import {getCommitedBudgets} from 'components/utils/budget';
 
 export default class PlannedVsActual extends Component {
 
@@ -24,7 +25,7 @@ export default class PlannedVsActual extends Component {
 
   static defaultProps = {
     planUnknownChannels: [],
-    approvedBudgets: [],
+    committedBudgets: [],
     knownChannels: {},
     unknownChannels: {},
     hoverRow: void 0,
@@ -33,7 +34,8 @@ export default class PlannedVsActual extends Component {
 
   constructor(props) {
     super(props);
-    this.state = props;
+    const committedBudgets = this.props.calculatedData.committedBudgets;
+    this.state = {...props, committedBudgets};
 
     this.keys = [''];
     this.pagingUpdateState = this.pagingUpdateState.bind(this);
@@ -41,17 +43,19 @@ export default class PlannedVsActual extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.state.updating) {
-      this.setState(nextProps);
+      const committedBudgets = this.props.calculatedData.committedBudgets;
+      this.setState({...nextProps, committedBudgets});
     }
   }
 
   pagingUpdateState(data) {
+    const committedBudgets = getCommitedBudgets(data.planBudgets);
     this.setState({
       planDate: data.planDate,
       region: data.region,
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      approvedBudgets: data.approvedBudgets || [],
+      committedBudgets: committedBudgets || [],
       planUnknownChannels: data.unknownChannels || []
     });
   }
@@ -72,7 +76,7 @@ export default class PlannedVsActual extends Component {
           this.setState({showText: true});
         }
         else {
-          var alreadyExist = Object.keys(this.state.approvedBudgets[0]);
+          var alreadyExist = Object.keys(this.state.committedBudgets[0]);
           alreadyExist =
             alreadyExist.concat(Object.keys(this.state.knownChannels), Object.keys(this.state.unknownChannels));
           if (alreadyExist.indexOf(event.value) === -1) {
@@ -176,7 +180,7 @@ export default class PlannedVsActual extends Component {
     let channelOptions = [];
     this.keys = this.getDates();
     month = this.keys[this.state.month];
-    const data = parsePlannedVsActual(this.state.approvedBudgets[0] || {},
+    const data = parsePlannedVsActual(this.state.committedBudgets[0] || {},
       this.state.planUnknownChannels[0] || {},
       this.state.knownChannels,
       this.state.unknownChannels,
@@ -221,7 +225,7 @@ export default class PlannedVsActual extends Component {
       else {
         value.disabled =
           Object.keys(this.state.knownChannels).includes(value.value) ||
-          Object.keys(this.state.approvedBudgets[0] || {}).includes(value.value);
+          Object.keys(this.state.committedBudgets[0] || {}).includes(value.value);
         return value;
       }
     };
