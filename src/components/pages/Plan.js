@@ -541,7 +541,7 @@ export default class Plan extends Component {
                 }}/>
                 : null
               }
-              {annualTabActive ?
+              {annualTabActive && !this.state.editMode ?
                 interactiveMode ?
                   <div style={{display: 'flex'}}>
                     <Button type="secondary"
