@@ -18,12 +18,13 @@
 .cols {
   display: flex;
   margin-left: 1px;
-  flex-direction: column;
 }
 
 .col-left {
   flex-grow: 1;
+  width: 50%;
 }
+
 
 .col-right {
   margin-left: auto;
