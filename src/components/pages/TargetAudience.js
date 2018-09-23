@@ -278,7 +278,7 @@ export default class TargetAudience extends Component {
                       { key: 'CPG', text: 'CPG', icon: 'buttons:cpg' },
                       { key: 'E-commerce', text: 'E-commerce', icon: 'buttons:ecommerce' },
                       { key: 'Food & Beverage', text: 'Food', icon: 'buttons:foodAndBeverage' },
-                      { key: 'Entertainment', text: 'Entertaiment', icon: 'buttons:entertaiment' },
+                      { key: 'Entertainment', text: 'Entertainment', icon: 'buttons:entertainment' },
                       { key: 'Professional Services', text: 'Pro Services', icon: 'buttons:professional' },
                       { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
                       { key: 'Healthcare', text: 'Healthcare', icon: 'buttons:healthcare' },
