@@ -209,8 +209,8 @@ export default class PlannedVsActual extends Component {
 
     headRow = this.getTableRow(null, [
       'Channels',
-      'Planned',
-      'Actual',
+      'Planned Budget',
+      'Actual Cost',
       'Difference'
     ], {
       className: this.classes.headRow
