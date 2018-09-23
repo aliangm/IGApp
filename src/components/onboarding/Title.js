@@ -43,7 +43,7 @@ export default class Title extends Component {
     let subText;
 
     if (this.props.subTitle && this.isPopup()) {
-      subText = <div className={ this.classes.text }>{ this.props.subTitle }</div>
+      subText = <div className={ this.classes.text } style={this.props.subtitleStyle}>{ this.props.subTitle }</div>
     }
 
     return <div className={ className } style={ this.props.style }>
