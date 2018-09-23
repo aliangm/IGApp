@@ -17,6 +17,7 @@ import sumBy from 'lodash/sumBy';
 import icons from 'styles/icons/plan.css';
 import annualStyle from 'styles/plan/annual-tab.css';
 import {getCommitedBudgets} from 'components/utils/budget';
+import {extractNumber} from 'components/utils/utils';
 
 export default class PlannedVsActual extends Component {
 
@@ -152,13 +153,12 @@ export default class PlannedVsActual extends Component {
             minWidth: '72px',
             width: '50%'
           }} value={actualText} onChange={(e) => {
-            let value = parseInt(e.target.value.replace(/^\$/, '').replace(',', '')) || '';
-            this.updateActual(data.key, value);
+            this.updateActual(data.key, extractNumber(e.target.value));
           }} disabled={data.isAutomatic}/>
         }
 
         {this.props.planDate === this.state.planDate
-          ? <div className={isTotalRow ? null : this.classes.expected}>
+          ? <div className={this.classes.expected} style={isTotalRow ? null : {color: '#b2bbd5'}}>
             Expected: {formatBudget(Math.round(data.actual / this.props.calculatedData.extarpolateRatio))}
           </div>
           : null
