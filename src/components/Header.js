@@ -244,7 +244,7 @@ export default class Header extends Component {
                 {this.props.userCompany}
               </div>
             </div>
-            <div className={this.classes.triangle} data-icon="header:triangle"/>
+            <div className={this.classes.triangle}/>
             <Popup className={this.classes.dropmenuPopup}
                    hidden={!this.state.dropmenuVisibleBig} onClose={() => {
               this.setState({
