@@ -61,7 +61,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact}, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {committedBudgets, months, totalCost}}} = this.props;
+    const {attribution: {channelsImpact}, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {committedBudgets, months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay}}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
@@ -134,7 +134,7 @@ export default class Overview extends Component {
       });
     });
 
-    const channelCategoriesPerMonth = indicators.map((month) => {
+    const channelCategoriesPerMonth = indicatorsForDisplay.slice(this.props.monthsExceptThisMonth).map((month) => {
       const mergedObject = {};
       const channelsWithProps = getChannelsWithProps();
       Object.keys(channelsWithProps).forEach(channel => {
