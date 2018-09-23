@@ -11,6 +11,6 @@
 
 .ig-grid-row {
     display: flex;
-    margin-bottom: 15px;
+    margin: 8px 0;
     flex-wrap: wrap;
 }

@@ -235,13 +235,13 @@ export default class Product extends Component {
                      description={['Which vertical/industry does your company work in?']}>Vertical</Label>
               <ButtonsSet buttons={[
                 {key: 'Martech', text: 'Martech', icon: 'buttons:martech'},
-                {key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:analytics_BI'},
+                {key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:bi'},
                 {key: 'Sales', text: 'Sales', icon: 'buttons:sales'},
                 {key: 'Security', text: 'Security', icon: 'buttons:security'},
                 {key: 'IT', text: 'IT', icon: 'buttons:IT'},
                 {key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity'},
-                {key: 'Finance', text: 'Finance', icon: 'buttons:finance'},
-                {key: 'Other', text: 'Other', icon: 'buttons:any'}
+                {key: 'Finance', text: 'Finance', icon: 'buttons:finance-vertical'},
+                {key: 'Other', text: 'Other', icon: 'buttons:other'}
               ]} selectedKey={this.props.userProfile.vertical}
                           onChange={this.handleChangeButton.bind(this, 'vertical')} ref='vertical'/>
             </div>
@@ -324,7 +324,7 @@ export default class Product extends Component {
                 {key: 'Mobile', text: 'Mobile', icon: 'buttons:mobile'},
                 {key: 'Web', text: 'Web', icon: 'buttons:web'},
                 {key: 'Desktop', text: 'Desktop', icon: 'buttons:desktop'},
-                {key: 'Any', text: 'Any', icon: 'buttons:any'}
+                {key: 'Any', text: 'Any', icon: 'buttons:all-devices'}
               ]} selectedKey={this.props.userProfile.platform}
                           onChange={this.handleChangeButton.bind(this, 'platform')} ref='platform'/>
             </div>
@@ -347,7 +347,7 @@ export default class Product extends Component {
                 {key: 'Worldwide', text: 'Worldwide', icon: 'buttons:worldwide'},
                 {key: 'Nationwide', text: 'Nationwide', icon: 'buttons:national'},
                 {key: 'Local', text: 'Local', icon: 'buttons:local'},
-                {key: 'Any', text: 'Any', icon: 'buttons:any2'}
+                {key: 'Any', text: 'Any', icon: 'buttons:everywhere'}
               ]} selectedKey={this.props.userProfile.coverage}
                           onChange={this.handleChangeButton.bind(this, 'coverage')} ref='coverage'/>
             </div>
