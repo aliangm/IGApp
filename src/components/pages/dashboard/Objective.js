@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/dashboard/objective.css';
 import {formatNumber} from 'components/utils/budget';
-import ObjectiveIcon from 'components/controls/ObjectiveIcon';
+import ObjectiveIcon from 'components/common/ObjectiveIcon';
 
 export default class Objective extends Component {
 
