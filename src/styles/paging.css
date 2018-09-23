@@ -6,18 +6,21 @@
     height: 60px;
 }
 
-.arrow-left {
-    width: 100%;
-    height: 100%;
-    background: url(../assets/arrow_left.svg) center center no-repeat;
+.arrow {
+    width: 20px;
+    height: 36px;
+    background: no-repeat center center;
     background-size: contain;
 }
 
+.arrow-left {
+    composes: arrow;
+    background-image: url(../assets/arrow_left.svg);
+}
+
 .arrow-right {
-    width: 100%;
-    height: 100%;
-    background: url(../assets/arrow_right.svg) center center no-repeat;
-    background-size: contain;
+    composes: arrow;
+    background-image: url(../assets/arrow_right.svg);
 }
 
 .title-text {
