@@ -9,9 +9,6 @@
   margin-bottom: 12px;
   letter-spacing: 0.050em;
   white-space: nowrap;
-}
-
-.label[data-capitalize] {
   text-transform: uppercase;
 }
 
