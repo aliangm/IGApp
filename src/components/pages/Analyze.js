@@ -4,6 +4,7 @@ import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
+import {Link} from 'react-router';
 
 export default class Analyze extends Component {
 
@@ -45,7 +46,10 @@ export default class Analyze extends Component {
       indicatorsData: indicatorsData
     };
 
-    const passedSevenDays = ((new Date() - new Date(startTime)) / (1000 * 60 * 60 * 24)) >= 7;
+    const daysToAttributionData = 7 - (new Date() - new Date(startTime)) / (1000 * 60 * 60 * 24);
+    const showAttributionData = daysToAttributionData <= 0;
+    const daysToAttributionDataInt = Math.ceil(daysToAttributionData);
+    const daysForAttributionDataText = `${daysToAttributionDataInt} day${daysToAttributionDataInt === 1 ? '' : 's'}`;
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));
@@ -53,7 +57,7 @@ export default class Analyze extends Component {
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Analyze</div>
-          {passedSevenDays
+          {showAttributionData
             ? <div className={this.classes.headPlan}>
                 <div className={analyzeStyle.locals.text}>Time Frame:</div>
                 <Select
@@ -80,9 +84,10 @@ export default class Analyze extends Component {
           }
         </div>
         <div style={{paddingTop: '90px'}}>
-          {passedSevenDays
+          {showAttributionData
             ? childrenWithProps
-            : <div>Didn't pass 7 days</div>
+            : <div>There is not enough data to show here, please come back in {daysForAttributionDataText}.<br/>
+              If you haven’t placed our tracking script into your website yet, click <Link to="/settings/attribution/setup">here</Link></div>
           }
         </div>
       </Page>
