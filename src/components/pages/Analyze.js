@@ -5,11 +5,12 @@ import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
 import {Link} from 'react-router';
+import setupStyle from 'styles/attribution/setup2.css';
 
 export default class Analyze extends Component {
 
   style = style;
-  styles = [analyzeStyle];
+  styles = [analyzeStyle, setupStyle];
 
   static defaultProps = {
     monthsExceptThisMonth: 0
@@ -86,7 +87,7 @@ export default class Analyze extends Component {
         <div style={{paddingTop: '90px'}}>
           {showAttributionData
             ? childrenWithProps
-            : <div>There is not enough data to show here, please come back in {daysForAttributionDataText}.<br/>
+            : <div className={setupStyle.locals.contentTitle} style={{margin: '40px'}}>There is not enough data to show here, please come back in {daysForAttributionDataText}.<br/>
               If you haven’t placed our tracking script into your website yet, click <Link to="/settings/attribution/setup">here</Link></div>
           }
         </div>
