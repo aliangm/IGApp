@@ -43,8 +43,7 @@ export function calculatedDataExtender(data) {
     objective => funnelPossibleObjectives.includes(objective.indicator));
 
   const isTrial = new Date() < new Date(data.userAccount.trialEnd);
-  const isPaid = data.userAccount.isPaid;
-  const isAccountEnabled = isTrial || isPaid;
+  const isAccountEnabled = isTrial || data.userAccount.isPaid;
   const annualBudget = !isNil(data.annualBudget) ? data.annualBudget : sum(data.budgetArray);
 
   return {
@@ -85,7 +84,6 @@ export function calculatedDataExtender(data) {
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
       isTrial,
-      isPaid,
       isAccountEnabled
     },
     ...data
