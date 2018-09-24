@@ -17,10 +17,8 @@ import Popup from 'components/Popup';
 import style from 'styles/app.css';
 import {FeatureToggleProvider} from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
-import {calculatedDataExtender} from 'dataExtenders/calculatedDataExtender.js';
+import {calculatedDataExtender, getAnnualBudgetFromAppData} from 'dataExtenders/calculatedDataExtender.js';
 import {getProfileSync} from 'components/utils/AuthService';
-import isNil from 'lodash/isNil';
-import sum from 'lodash/sum';
 
 class AppComponent extends Component {
 
@@ -658,7 +656,7 @@ class AppComponent extends Component {
     const profile = getProfileSync();
     const user = this.state.teamMembers.find(user => user.userId === profile.user_id);
     const email = user.email;
-    const annualBudget = !isNil(this.state.annualBudget) ? this.state.annualBudget : sum(this.state.budgetArray);
+    const annualBudget = getAnnualBudgetFromAppData(this.state);
     let product = 540236;
     if (annualBudget > 240000 && annualBudget < 1020000)
       product = 540236;

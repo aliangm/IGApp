@@ -18,14 +18,15 @@ export default class Settings extends Component {
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         {userPermittedToPage('settings')
-          ? <div><SettingsSideBar currentPath={this.props.location.pathname}/>
-            <div>
+          ? <div>
+              <SettingsSideBar currentPath={this.props.location.pathname}/>
+              <div>
+                {childrenWithProps}
+              </div>
+            </div>
+          : <div>
               {childrenWithProps}
             </div>
-          </div>
-          : <div>
-            {childrenWithProps}
-          </div>
         }
       </Page>
     </div>;

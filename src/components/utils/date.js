@@ -43,3 +43,7 @@ export function getEndOfMonthString(dateStr) {
   const date = new Date(year, month + 1, 0);
   return `${date.getDate()} ${monthStr} ${year}`;
 }
+
+export function getNumberOfDaysBetweenDates(toDate, fromDate = new Date()) {
+  return Math.max(Math.ceil((toDate.getTime() - fromDate.getTime()) / (24 * 60 * 60 * 1000)), 0);
+}

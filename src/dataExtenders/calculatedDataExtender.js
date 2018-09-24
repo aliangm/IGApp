@@ -7,7 +7,7 @@ import {getDates} from 'components/utils/date';
 import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 import isNil from 'lodash/isNil';
-import sum from 'lodash/sum'
+import sum from 'lodash/sum';
 
 export function calculatedDataExtender(data) {
 
@@ -43,9 +43,8 @@ export function calculatedDataExtender(data) {
     objective => funnelPossibleObjectives.includes(objective.indicator));
 
   const isTrial = new Date() < new Date(data.userAccount.trialEnd);
-  const isPaid = data.userAccount.isPaid;
-  const isAccountEnabled = isTrial || isPaid;
-  const annualBudget = !isNil(data.annualBudget) ? data.annualBudget : sum(data.budgetArray);
+  const isAccountEnabled = isTrial || data.userAccount.isPaid;
+  const annualBudget = getAnnualBudgetFromAppData(data);
 
   return {
     calculatedData: {
@@ -53,7 +52,7 @@ export function calculatedDataExtender(data) {
       committedBudgets: committedBudgets,
       committedForecasting: committedForecasting,
       activeCampaigns: activeCampaigns,
-      annualBudget : annualBudget,
+      annualBudget: annualBudget,
       annualBudgetLeftToPlan: annualBudget -
       merged.reduce((annualSum, month) => Object.keys(month)
         .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
@@ -85,11 +84,14 @@ export function calculatedDataExtender(data) {
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
       isTrial,
-      isPaid,
       isAccountEnabled
     },
     ...data
   };
+}
+
+export function getAnnualBudgetFromAppData(data) {
+  return !isNil(data.annualBudget) ? data.annualBudget : sum(data.budgetArray);
 }
 
 function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0) {

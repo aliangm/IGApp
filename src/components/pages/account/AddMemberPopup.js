@@ -97,7 +97,7 @@ export default class AddMemberPopup extends Component {
     const pagePermissionsLabels = this.pagePermissions.map((permissionItem) => {
       return <Label checkboxDisabled={permissionItem.isDisabled}
                     checkbox={this.state.pagePermissions[permissionItem.key]}
-                    capitalize={false}
+                    style={{textTransform: 'capitalize'}}
                     onChange={() => {
 
         const newPermissions = {...this.state.pagePermissions};

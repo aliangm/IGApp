@@ -127,7 +127,7 @@ export default class Header extends Component {
         {tabs}
       </div>
       <div className={this.classes.itemsBox}>
-        <PayButton isPaid={this.props.calculatedData.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
+        <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
@@ -244,7 +244,7 @@ export default class Header extends Component {
                 {this.props.userCompany}
               </div>
             </div>
-            <div className={this.classes.triangle} data-icon="header:triangle"/>
+            <div className={this.classes.triangle}/>
             <Popup className={this.classes.dropmenuPopup}
                    hidden={!this.state.dropmenuVisibleBig} onClose={() => {
               this.setState({

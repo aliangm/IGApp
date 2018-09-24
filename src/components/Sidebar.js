@@ -77,23 +77,23 @@ export default class Sidebar extends Component {
         <div className={this.classes.menu}>
           <MenuItem icon="sidebar:dashboard" link="/dashboard/CMO" text="Dashboard" onClick={this.closeSubMenu}
                     isHighlighted={this.isHighlighted('/dashboard')}
-                    page='dashboard'
+                    pagePermission='dashboard'
           />
           <FeatureToggle featureName="attribution">
             <MenuItem icon="sidebar:analyze" text="Analyze" link='/analyze/overview'
                       isHighlighted={this.isHighlighted('/analyze')}
-                      page='analyze'
+                      pagePermission='analyze'
             />
           </FeatureToggle>
           <MenuItem icon="sidebar:plan"
                     text="Plan"
                     link={'plan/annual'}
                     isHighlighted={this.isHighlighted('/plan')}
-                    page='plan'
+                    pagePermission='plan'
           />
           <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel"
                     isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu}
-                    page='campaigns'
+                    pagePermission='campaigns'
           />
           <MenuItem icon="sidebar:settings" link="/settings/account" text="Settings" onClick={this.closeSubMenu}
                     style={{position: 'absolute', width: '100%', bottom: '20px'}}
@@ -126,7 +126,7 @@ export class MenuItem extends Component {
       className += ' ' + this.classes.menuItemSelected;
     }
 
-    return !this.props.page || userPermittedToPage(this.props.page)
+    return !this.props.pagePermission || userPermittedToPage(this.props.pagePermission)
       ? <Link to={this.props.link || '/'}
               activeClassName={this.classes.menuItemSelected}
               className={className}
