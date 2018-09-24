@@ -10,26 +10,9 @@ export default class Button extends Component {
     const className = this.props.selected ?
       this.classes.selectedButton : this.classes.button;
 
-    const textLen = this.props.text.length;
-    let textStyle;
-
-    if (textLen > 9) {
-      textStyle = {
-        fontSize: '11px'
-      };
-    } else if (textLen > 8) {
-      textStyle = {
-        fontSize: '12px'
-      };
-    } else if (textLen > 7) {
-      textStyle = {
-        fontSize: '13px'
-      };
-    }
-
     return <div className={ className } onClick={ this.props.onClick }>
       <div className={ this.classes.icon } data-icon={ this.props.icon || null } />
-      <div className={ this.classes.text } style={ textStyle }>
+      <div className={ this.classes.text }>
         { this.props.text }
       </div>
     </div>
