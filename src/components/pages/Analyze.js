@@ -15,7 +15,7 @@ export default class Analyze extends Component {
   };
 
   render() {
-    const {attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
+    const {userAccount: {startTime}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
 
     const attributionModels = [
       {value: false, label: 'Full Journey'},
@@ -45,37 +45,45 @@ export default class Analyze extends Component {
       indicatorsData: indicatorsData
     };
 
+    const passedSevenDays = ((new Date() - new Date(startTime)) / (1000 * 60 * 60 * 24)) >= 7;
+
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Analyze</div>
-          <div className={this.classes.headPlan}>
-            <div className={analyzeStyle.locals.text}>Time Frame:</div>
-            <Select
-              selected={monthsExceptThisMonth}
-              select={{options: selectOptions}}
-              onChange={(e) => {
-                this.props.calculateAttributionData(e.value, attributionModel);
-              }}
-              className={analyzeStyle.locals.dateSelect}
-            />
-            <div className={analyzeStyle.locals.text}>Attribution Model:</div>
-            <Select
-              selected={this.props.attributionModel ? this.props.attributionModel : false}
-              select={{
-                options: attributionModels
-              }}
-              onChange={(e) => {
-                this.props.calculateAttributionData(monthsExceptThisMonth, e.value);
-              }}
-              className={analyzeStyle.locals.dateSelect}
-            />
-          </div>
+          {passedSevenDays
+            ? <div className={this.classes.headPlan}>
+                <div className={analyzeStyle.locals.text}>Time Frame:</div>
+                <Select
+                  selected={monthsExceptThisMonth}
+                  select={{options: selectOptions}}
+                  onChange={(e) => {
+                    this.props.calculateAttributionData(e.value, attributionModel);
+                  }}
+                  className={analyzeStyle.locals.dateSelect}
+                />
+                <div className={analyzeStyle.locals.text}>Attribution Model:</div>
+                <Select
+                  selected={this.props.attributionModel ? this.props.attributionModel : false}
+                  select={{
+                    options: attributionModels
+                  }}
+                  onChange={(e) => {
+                    this.props.calculateAttributionData(monthsExceptThisMonth, e.value);
+                  }}
+                  className={analyzeStyle.locals.dateSelect}
+                />
+              </div>
+            : null
+          }
         </div>
         <div style={{paddingTop: '90px'}}>
-          {childrenWithProps}
+          {passedSevenDays
+            ? childrenWithProps
+            : <div>Didn't pass 7 days</div>
+          }
         </div>
       </Page>
     </div>;
