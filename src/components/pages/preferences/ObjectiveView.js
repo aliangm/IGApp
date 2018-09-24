@@ -4,14 +4,14 @@ import style from 'styles/preferences/objective-view.css';
 import {getNickname} from 'components/utils/indicators';
 import {timeFrameToDate} from 'components/utils/objective';
 import {getColor} from 'components/utils/colors';
+import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 
 export default class ObjectiveView extends Component {
 
   style = style;
 
   getDaysLeft() {
-    const today = new Date();
-    return Math.max(Math.ceil((this.props.dueDate.getTime() - today.getTime()) / (24 * 60 * 60 * 1000)), 0) + ' days left';
+    return `${getNumberOfDaysBetweenDates(this.props.dueDate)} days left`;
   }
 
   render() {
