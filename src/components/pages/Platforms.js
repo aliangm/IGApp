@@ -75,9 +75,13 @@ export default class Platforms extends Component {
 
   render() {
     return <div>
-      <Page popup={isPopupMode()} contentClassName={ platformsStyle.locals.content } className={!isPopupMode() ? this.classes.static : null} width="100%">
+      <Page popup={isPopupMode()}
+            className={!isPopupMode() ? this.classes.static : null}
+            contentClassName={this.classes.content}
+            innerClassName={this.classes.pageInner}
+            width='100%'>
         <ReactTooltip place='right' effect='solid' id='platforms' html={ true } />
-        {isPopupMode() ? <Title title="Integrations"/> : null}
+        <Title title="Integrations"/>
         <div>
           <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.salesforceAuto} ref="salesforce"/>
           <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
@@ -89,7 +93,7 @@ export default class Platforms extends Component {
           <StripeAutomaticPopup setDataAsState={ this.props.setDataAsState } ref="stripe"/>
           <MozAutomaticPopup setDataAsState={ this.props.setDataAsState } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite } ref="moz"/>
           <GoogleSheetsAutomaticPopup setDataAsState={ this.props.setDataAsState } data={this.props.googleSheetsAuto} ref="googleSheets"/>
-          <Button type="reverse" style={{
+          <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'
           }} onClick={() => {
@@ -157,7 +161,7 @@ export default class Platforms extends Component {
             } }/>
             <div style={{ width: '30px' }} />
             <NextButton onClick={ () => {
-              history.push('/settings/profile/preferences');
+              history.push('/settings/attribution/setup');
             } }/>
           </div>
           :

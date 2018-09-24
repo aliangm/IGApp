@@ -20,7 +20,7 @@ export default class Platform extends Component {
       <div className={this.classes.platformText}>
         {this.props.title}
       </div>
-      <Button type="primary2" className={this.classes.connectButton} onClick={this.props.open}>
+      <Button type="primary" className={this.classes.connectButton} onClick={this.props.open}>
         Connect
       </Button>
       <div className={this.classes.footer}>

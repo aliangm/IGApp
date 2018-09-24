@@ -12,7 +12,6 @@ import history from 'history';
 import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import {output, isUnknownChannel, initialize} from 'components/utils/channels';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
@@ -58,6 +57,7 @@ export default class Plan extends Component {
             this.props.setDataAsState(data);
             this.setBudgetsData(data.planBudgets);
             this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
+            this.setState({interactiveMode: true});
           });
       }
       else {
@@ -265,11 +265,8 @@ export default class Plan extends Component {
   };
 
   editUpdate = () => {
-    if (this.state.interactiveMode) {
-      return Promise.resolve();
-    }
-    else {
-      return this.forecastAndUpdateUserMonthPlan({
+    if (!this.state.interactiveMode){
+      this.forecastAndUpdateUserMonthPlan({
         planBudgets: this.getPlanBudgets(),
         unknownChannels: this.getPlanBudgets(true),
         namesMapping: this.props.namesMapping
@@ -462,7 +459,7 @@ export default class Plan extends Component {
 
   render() {
     const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
-    const {annualBudget, calculatedData: {annualBudgetLeftToPlan}} = this.props;
+    const {calculatedData: {annualBudget, annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
         return merge(object, item);
@@ -554,7 +551,7 @@ export default class Plan extends Component {
                             }}>
                       Cancel
                     </Button>
-                    <Button type="secondary"
+                    <Button type="primary"
                             style={{
                               marginLeft: '15px',
                               width: '102px'
@@ -609,11 +606,6 @@ export default class Plan extends Component {
                           onClick={() => {
                             if (editMode) {
                               this.editUpdate()
-                                .then(() => {
-                                  if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
-                                    this.props.updateUserAccount({'steps.plan': true});
-                                  }
-                                });
                             }
                             this.setState({
                               editMode: !editMode
@@ -666,25 +658,13 @@ export default class Plan extends Component {
                                }}
                                planWithConstraints={this.planWithConstraints}
         />
-        {this.props.userAccount.pages && this.props.userAccount.pages.plan ?
-          <div className={this.classes.wrap}>
-            <div className={this.classes.serverDown}>
-              <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
-                :)</label>
-            </div>
-            {childrenWithProps}
+        <div className={this.classes.wrap}>
+          <div className={this.classes.serverDown}>
+            <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
+              :)</label>
           </div>
-          :
-          <FirstPageVisit
-            title="One place for understanding your route to growth"
-            content="Everything starts with planning. Plan where, when and how you're going to invest your marketing budget to achieve your goals."
-            action="Let's plan some budgets >"
-            icon="step:plan"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.plan': true});
-            }}
-          />
-        }
+          {childrenWithProps}
+        </div>
       </Page>
     </div>;
   }

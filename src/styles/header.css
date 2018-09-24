@@ -9,10 +9,10 @@
 
 .head-tab {
   height: 100%;
-  padding: 0 16px 0 15px;
+  padding: 0 20px;
   text-transform: capitalize;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,7 +20,7 @@
   cursor: pointer;
   position: relative;
   white-space: nowrap;
-  color: #354052;
+  color: #99a4c2;
   text-decoration: none;
 }
 
@@ -30,6 +30,7 @@
 
 .head-tab-selected {
   composes: head-tab;
+  color: #182033;
 }
 
 .head-tab-selected::after {
@@ -39,14 +40,14 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5px;
-  background: #1889dd;
+  height: 2px;
+  background: #4d91fc;
 }
 
 .box {
   display: flex;
   align-items: center;
-  height: 70px;
+  height: 80px;
   background: white;
   position: fixed;
   top: 0;
@@ -58,13 +59,20 @@
 .logo {
   flex-shrink: 0;
   flex-grow: 0;
+  background: url(assets/logo.png) center center no-repeat;
+  background-size: 36px 20px;
+  width: 36px;
+  height: 20px;
+}
 
-  background: #273142 url(assets/logo.png) center center no-repeat;
-  background-size: 60px auto;
-
-  width: 240px;
+.logo-wrapper {
+  background-color: #273142;
+  width: 279px;
   height: 100%;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center
 }
 
 .logo-menu {
@@ -81,11 +89,10 @@
 .menu {
   flex-grow: 1;
   height: 100%;
-  border-bottom: 1px solid #e6eaee;
-  padding: 0 30px;
-  box-sizing: border-box;
+  padding: 0 17px 0 40px;
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 1px 2px 0 rgba(27, 35, 56, 0.07);
 }
 
 .menu-small {
@@ -108,7 +115,7 @@
 }
 
 .item {
-  padding: 0 15px;
+  padding: 0 23px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,12 +180,21 @@
   min-width: 85px;
 }
 
-.user {
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: -0.010em;
-  margin-left: 20px;
+.user-details{
+  margin: 0 16px;
   align-self: center;
+}
+
+.user-company{
+  font-size: 12px;
+  font-weight: 600;
+  color: #99a4c2;
+}
+
+.user {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
 }
 
 .user-logo {
@@ -187,16 +203,17 @@
   border-radius: 50%;
   background: center center no-repeat;
   background-size: contain;
+  position: relative;
+  z-index: 2;
 }
 
 .triangle {
-  border: 7px solid transparent;
-  border-top-color: currentColor;
-  color: #4b515e;
-  position: relative;
-  top: 5px;
-  left: 5px;
+  width: 8px;
+  height: 5px;
   align-self: center;
+  background: center center no-repeat;
+  background-size: contain;
+  background-image: url("../assets/header/triangle.svg");
 }
 
 .log-out-icon {
@@ -224,23 +241,28 @@
   display: inline-flex;
 }
 
-.location-icon {
-  width: 24px;
-  height: 24px;
-  background: url(../assets/location2.svg) center center no-repeat;
-  background-size: auto 24px;
+.header-icon {
+  width: 15px;
+  height: 21px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
-.notifications-icon {
-  width: 24px;
-  height: 24px;
-  background: url(../assets/notifications-button.svg) center center no-repeat;
-  background-size: auto 24px;
+.header-icon[data-active] {
+  position: relative;
 }
 
-.notifications-icon[data-active] {
-  background: url(../assets/turn-notifications-on-button.svg) center center no-repeat;
-  background-size: auto 24px;
+.header-icon[data-active]::before{
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 18px;
+  width: 6px;
+  height: 6px;
+  background-color: #ee2032;
+  border: solid 2px #ffffff;
+  border-radius: 5px;
 }
 
 .dropmenu-popup {
@@ -285,10 +307,9 @@
 }
 
 @media (max-width: 1440px) {
-  .logo {
-    background-size: 40px auto;
-    /*width: 100px;*/
-    width: 88px;
+  .logo-wrapper {
+    width: 80px;
+    min-width: 80px;
     height: 100%;
   }
 }
@@ -407,3 +428,6 @@
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
+
+@mixin icon-nodpi header:notification , ../assets/header/notifications-icon;
+@mixin icon-nodpi header:location , ../assets/header/regions-icon;

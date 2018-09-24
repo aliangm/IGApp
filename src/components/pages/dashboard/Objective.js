@@ -2,6 +2,8 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/dashboard/objective.css';
 import {formatNumber} from 'components/utils/budget';
+import ObjectiveIcon from 'components/common/ObjectiveIcon';
+import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 
 export default class Objective extends Component {
 
@@ -12,28 +14,12 @@ export default class Objective extends Component {
     strokeWidth: 16
   };
 
-  getNumberOfDaysFromTarget(fromDate) {
-    const targetDate = this.props.timeFrame;
-    return Math.max(Math.ceil((targetDate.getTime() - fromDate.getTime()) / (24 * 60 * 60 * 1000)), 0);
-  }
-
   getDaysLeft() {
-    const today = new Date();
-    const numberOfDays = this.getNumberOfDaysFromTarget(today);
+    const numberOfDays = getNumberOfDaysBetweenDates(this.props.timeFrame);
     if (numberOfDays) {
       return `${numberOfDays} days left`;
     }
     return 'Finished!';
-  }
-
-  getObjectiveIcon() {
-    if (this.props.target <= this.props.value) {
-      return <div className={this.classes.reachedIcon} data-tip='Goal had been reached'/>;
-    }
-    else if (this.props.project >= this.props.target) {
-      return <div className={this.classes.alignedIcon} data-tip='You’re on-track to reach your goal'/>;
-    }
-    else return <div className={this.classes.notAlignedIcon} data-tip='You’re off-track to reach your goal'/>;
   }
 
   render() {
@@ -101,7 +87,9 @@ export default class Objective extends Component {
         </text>
       </svg>
       <div className={this.classes.bottom}>
-        {this.getObjectiveIcon()}
+        <ObjectiveIcon project={this.props.project}
+                       target={this.props.target}
+                       value={this.props.value}/>
         <div className={this.classes.progress}>
           <div className={this.classes.progressFill}
                style={{backgroundImage: `linear-gradient(to right, #e6e8f0, ${this.props.color})`}}/>

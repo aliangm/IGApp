@@ -1,6 +1,17 @@
 .static {
-  margin-left: 0 !important;
+  margin-left: 145px !important;
   margin-top: 0 !important;
+  position: relative;
+}
+
+.pageInner {
+  overflow: visible!important;
+}
+
+.content {
+  margin: 0 !important;
+  padding: 40px !important;
+  background: #f5f6fb;
   position: relative;
 }
 

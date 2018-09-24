@@ -178,7 +178,7 @@ export default class AddObjectivePopup extends Component {
                     </div>
                   </div>
                   <div className={navStyle.locals.nav}>
-                    <Button type="normal-accent" style={{
+                    <Button type="secondary" style={{
                       width: '100px',
                       marginRight: '20px'
                     }} onClick={() => {
@@ -187,7 +187,7 @@ export default class AddObjectivePopup extends Component {
                       <div className={navStyle.locals.backIcon}/>
                       BACK
                     </Button>
-                    <Button type="accent" style={{
+                    <Button type="primary" style={{
                       width: '100px'
                     }} onClick={() => {
                       this.setState({notSure: 2});
@@ -216,7 +216,7 @@ export default class AddObjectivePopup extends Component {
                     </div>
                   </div>
                   <div className={navStyle.locals.nav}>
-                    <Button type="normal-accent" style={{
+                    <Button type="secondary" style={{
                       width: '100px',
                       marginRight: '20px'
                     }} onClick={() => {
@@ -225,7 +225,7 @@ export default class AddObjectivePopup extends Component {
                       <div className={navStyle.locals.backIcon}/>
                       BACK
                     </Button>
-                    <Button type="accent" style={{
+                    <Button type="primary" style={{
                       width: '100px'
                     }} onClick={this.calculateObjective.bind(this)}>
                       NEXT
@@ -248,7 +248,7 @@ export default class AddObjectivePopup extends Component {
                       </Label>
                     </div>
                     <div className={navStyle.locals.nav}>
-                      <Button type="normal-accent" style={{
+                      <Button type="secondary" style={{
                         width: '100px',
                         marginRight: '20px'
                       }} onClick={() => {
@@ -263,7 +263,7 @@ export default class AddObjectivePopup extends Component {
                         <div className={navStyle.locals.backIcon}/>
                         Don't use
                       </Button>
-                      <Button type="accent" style={{
+                      <Button type="primary" style={{
                         width: '100px'
                       }} onClick={() => {
                         this.setState({notSure: 0, aggressiveLevel: ''}, () => {
@@ -453,12 +453,12 @@ export default class AddObjectivePopup extends Component {
           <div className={this.classes.footerCols}>
             <div className={this.classes.footerLeft}>
               <Button
-                type="reverse"
+                type="secondary"
                 style={{width: '72px'}}
                 onClick={this.props.close}>Cancel
               </Button>
               <Button
-                type="primary2"
+                type="primary"
                 style={{width: '110px', marginLeft: '20px'}}
                 onClick={() => {
                   this.props.createOrUpdateObjective(this.state, this.props.objectiveMonth, this.props.objective);

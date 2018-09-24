@@ -10,7 +10,7 @@ export default class NextButton extends Component {
   style = style;
 
   render() {
-    return <Button type="accent2" style={{
+    return <Button type="primary" style={{
       width: '120px',
       letterSpacing: 0.075
     }} onClick={ this.props.onClick }>

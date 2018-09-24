@@ -21,13 +21,13 @@ export default class DeleteChannelPopup extends Component {
       </div>
 
       <div className={ $.nav }>
-        <Button type="normal-accent" style={{
+        <Button type="secondary" style={{
           width: '100px',
           marginRight: '20px'
         }} onClick={ this.props.onBack }>
           No
         </Button>
-        <Button type="accent" style={{
+        <Button type="primary" style={{
           width: '100px'
         }} onClick={ this.props.onNext }>
           Yes

@@ -1,6 +1,6 @@
 .static {
-  margin-top: 70px;
-  margin-left: 240px;
+  margin-top: 80px;
+  margin-left: 279px;
   position: relative;
 }
 
@@ -10,13 +10,13 @@
 
 .popup {
   position: fixed;
-  top: 70px;
+  top: 80px;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: auto;
   z-index: 12;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.55);
   cursor: default;
 }
 
@@ -51,7 +51,7 @@
 
 @media (max-width: 1440px) {
   .static {
-    margin-left: 88px;
+    margin-left: 80px;
   }
 }
 

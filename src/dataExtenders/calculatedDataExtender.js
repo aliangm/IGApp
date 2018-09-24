@@ -6,6 +6,8 @@ import {flattenObjectives} from 'components/utils/objective';
 import {getDates} from 'components/utils/date';
 import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
+import isNil from 'lodash/isNil';
+import sum from 'lodash/sum';
 
 export function calculatedDataExtender(data) {
 
@@ -40,18 +42,24 @@ export function calculatedDataExtender(data) {
   const funnelObjectives = collapsedObjectives.filter(
     objective => funnelPossibleObjectives.includes(objective.indicator));
 
+  const isTrial = new Date() < new Date(data.userAccount.trialEnd);
+  const isAccountEnabled = isTrial || data.userAccount.isPaid;
+  const annualBudget = getAnnualBudgetFromAppData(data);
+
   return {
     calculatedData: {
       campaignsWithIndex: campaignsWithIndex,
       committedBudgets: committedBudgets,
       committedForecasting: committedForecasting,
       activeCampaigns: activeCampaigns,
-      annualBudgetLeftToPlan: data.annualBudget -
-        merged.reduce((annualSum, month) => Object.keys(month)
-          .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
+      annualBudget: annualBudget,
+      annualBudgetLeftToPlan: annualBudget -
+      merged.reduce((annualSum, month) => Object.keys(month)
+        .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
       monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
+      extarpolateRatio: extarpolateRatio,
       monthlyBudgetLeftToInvest: activeCampaigns.reduce((res, campaign) => {
         if (!campaign.isArchived) {
           if (campaign.isOneTime) {
@@ -74,10 +82,16 @@ export function calculatedDataExtender(data) {
         funnelObjectives: funnelObjectives,
         funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator : 'newSQL'
       },
-      historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth)
+      historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
+      isTrial,
+      isAccountEnabled
     },
     ...data
   };
+}
+
+export function getAnnualBudgetFromAppData(data) {
+  return !isNil(data.annualBudget) ? data.annualBudget : sum(data.budgetArray);
 }
 
 function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0) {

@@ -199,10 +199,10 @@ export default class GoogleAutomaticPopup extends Component {
           </div>
           <div className={ this.classes.footer }>
             <div className={ this.classes.footerLeft }>
-              <Button type="normal" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
+              <Button type="secondary" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
             </div>
             <div className={ this.classes.footerRight }>
-              <Button type="primary2" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
+              <Button type="primary" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
             </div>
           </div>
         </Page>

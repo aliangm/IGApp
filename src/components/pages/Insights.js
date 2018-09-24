@@ -9,7 +9,6 @@ import InsightItem from 'components/pages/insights/InsightItem';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getIndicatorsWithProps, getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { getDates } from 'components/utils/date';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import merge from 'lodash/merge';
 import { formatNumber } from 'components/utils/budget';
 import Button from 'components/controls/Button';
@@ -151,8 +150,7 @@ export default class Insights extends Component {
         <div className={ planStyle.locals.head }>
           <div className={ planStyle.locals.headTitle }>Insights & Suggestions</div>
         </div>
-        { this.props.userAccount.pages && this.props.userAccount.pages.insights ?
-          <div className={ planStyle.locals.wrap }>
+        <div className={ planStyle.locals.wrap }>
             <div className={insightsStyle.locals.inner}>
               {cubes}
               {showBalancerPopup ?
@@ -279,17 +277,6 @@ export default class Insights extends Component {
               }
             </div>
           </div>
-          :
-          <FirstPageVisit
-            title="Understand how to allocate your next $"
-            content="You have limitless of options of how to manage your marketing spend. Get insights and recommendations on your best next move."
-            action="Show me the best next action >"
-            icon="step:insights"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.insights': true})
-            }}
-          />
-        }
       </Page>
     </div>
   }

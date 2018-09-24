@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import Select from 'components/controls/Select';
 
 export default class Analyze extends Component {
@@ -16,7 +15,13 @@ export default class Analyze extends Component {
   };
 
   render() {
-    const {monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
+    const {attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
+
+    const attributionModels = [
+      {value: false, label: 'Full Journey'},
+      {value: 'firsttouch', label: 'Introducer'},
+      {value: 'lasttouch', label: 'Converter'}
+    ];
 
     const selectOptions = [];
     for (let i = 0; i < historyDataLength + 1; i++) {
@@ -37,9 +42,7 @@ export default class Analyze extends Component {
     });
 
     const historyCalculatedProps = {
-      indicatorsData: indicatorsData,
-      calculateAttributionData: (attributionModel) => this.props.calculateAttributionData(monthsExceptThisMonth,
-        attributionModel)
+      indicatorsData: indicatorsData
     };
 
     const childrenWithProps = React.Children.map(this.props.children,
@@ -49,32 +52,31 @@ export default class Analyze extends Component {
         <div className={this.classes.head}>
           <div className={this.classes.headTitle}>Analyze</div>
           <div className={this.classes.headPlan}>
+            <div className={analyzeStyle.locals.text}>Time Frame:</div>
             <Select
               selected={monthsExceptThisMonth}
               select={{options: selectOptions}}
               onChange={(e) => {
-                this.props.calculateAttributionData(e.value,
-                  this.props.attributionModel);
+                this.props.calculateAttributionData(e.value, attributionModel);
+              }}
+              className={analyzeStyle.locals.dateSelect}
+            />
+            <div className={analyzeStyle.locals.text}>Attribution Model:</div>
+            <Select
+              selected={this.props.attributionModel ? this.props.attributionModel : false}
+              select={{
+                options: attributionModels
+              }}
+              onChange={(e) => {
+                this.props.calculateAttributionData(monthsExceptThisMonth, e.value);
               }}
               className={analyzeStyle.locals.dateSelect}
             />
           </div>
         </div>
-        {this.props.userAccount.pages && this.props.userAccount.pages.attribution ?
-          <div style={{paddingTop: '90px'}}>
-            {childrenWithProps}
-          </div>
-          :
-          <FirstPageVisit
-            title="Understanding data starts by collecting it"
-            content="You can learn and improve a lot from your data. Track leads’ and users’ interactions with your brand to better understand your investments' effectiveness."
-            action="Implement Attribution >"
-            icon="step:attribution"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.attribution': true});
-            }}
-          />
-        }
+        <div style={{paddingTop: '90px'}}>
+          {childrenWithProps}
+        </div>
       </Page>
     </div>;
   }

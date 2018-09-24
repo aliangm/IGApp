@@ -53,14 +53,8 @@ export default class Product extends Component {
     this.props.updateState({userProfile: update});
   }
 
-  fakeChange(parameter, value) {
-    let update = Object.assign({}, this.props.userProfile);
-    update[parameter] = value;
-    this.props.updateState({userProfile: update});
-  }
-
   validate() {
-    const fields = ['vertical', 'orientation', 'businessModel', 'seatsPerAccount', 'platform', 'lifeCycle', 'coverage', 'loyalty', 'differentiation'];
+    const fields = ['vertical', 'orientation', 'businessModel', 'platform', 'lifeCycle', 'coverage', 'loyalty', 'differentiation'];
     const errorFields = fields.filter(field => !this.props.userProfile[field]);
     // has errors
     if (errorFields && errorFields.length > 0) {
@@ -184,23 +178,6 @@ export default class Product extends Component {
             {value: 'Other', label: 'Other'}
           ]
         }
-      },
-      seatsPerAccount: {
-        label: 'Number Of Seats Per Account',
-        labelQuestion: [''],
-        description: ['If SaaS, what is your average number of seats per account?'],
-        select: {
-          name: 'seatsPerAccount',
-          options: [
-            {value: '1', label: '1'},
-            {value: '2-5', label: '2-5'},
-            {value: '6-15', label: '6-15'},
-            {value: '16-50', label: '16-50'},
-            {value: '51-100', label: '51-100'},
-            {value: '>100', label: 'More than 100'},
-            {value: 'Any', label: 'Any'}
-          ]
-        }
       }
     };
     /*
@@ -235,11 +212,13 @@ export default class Product extends Component {
 
 
     return <div>
-      <Page popup={isPopupMode()} className={!isPopupMode() ? this.classes.static : null}>
-        {
-          isPopupMode() ? <Title title="Product"
-                                 subTitle="We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications"/> : ''
-        }
+      <Page popup={isPopupMode()}
+            className={!isPopupMode() ? this.classes.static : null}
+            contentClassName={this.classes.content}
+            innerClassName={this.classes.pageInner}
+            width='100%'>
+          <Title title="Product"
+                 subTitle='We are going to explore together your company and its basics to analyze it and create the best strategies to fit your company specifications'/>
         <div className={this.classes.error}>
           <label hidden={!this.state.serverDown}>Something is wrong... Let us check what is it and fix it for you
             :)</label>
@@ -261,7 +240,8 @@ export default class Product extends Component {
                 {key: 'Security', text: 'Security', icon: 'buttons:security'},
                 {key: 'IT', text: 'IT', icon: 'buttons:IT'},
                 {key: 'Productivity', text: 'Productivity', icon: 'buttons:productivity'},
-                {key: 'Finance', text: 'Finance', icon: 'buttons:finance'}
+                {key: 'Finance', text: 'Finance', icon: 'buttons:finance'},
+                {key: 'Other', text: 'Other', icon: 'buttons:any'}
               ]} selectedKey={this.props.userProfile.vertical}
                           onChange={this.handleChangeButton.bind(this, 'vertical')} ref='vertical'/>
             </div>
@@ -271,7 +251,7 @@ export default class Product extends Component {
                 {key: 'B2C', text: 'B2C', icon: 'buttons:b2c'},
                 {key: 'B2B', text: 'B2B', icon: 'buttons:b2b'}
               ]} selectedKey={this.props.userProfile.orientation}
-                          onChange={this.fakeChange.bind(this, 'orientation', 'B2B')} ref='orientation'/>
+                          onChange={this.handleChangeButton.bind(this, 'orientation')} ref='orientation'/>
             </div>
             <div className={this.classes.row}>
               <Label question={['']}
@@ -283,13 +263,7 @@ export default class Product extends Component {
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
                 {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'}
               ]} selectedKey={this.props.userProfile.businessModel}
-                          onChange={this.fakeChange.bind(this, 'businessModel', 'SaaS')} ref='businessModel'/>
-            </div>
-            <div className={this.classes.row} style={{
-              width: '258px'
-            }}>
-              <Select {...selects.seatsPerAccount} selected={this.props.userProfile.seatsPerAccount}
-                      onChange={this.handleChangeSelect.bind(this, 'seatsPerAccount')} ref='seatsPerAccount'/>
+                          onChange={this.handleChangeButton.bind(this, 'businessModel')} ref='businessModel'/>
             </div>
             <div className={this.classes.row}>
               <Label style={{marginBottom: '12px', fontWeight: '600'}} question={['']}

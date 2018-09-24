@@ -1,4 +1,4 @@
-    .center {
+.center {
     display: flex;
     justify-content: center;
 }
@@ -23,8 +23,8 @@
 .sub-title {
     font-size: 20px;
     color: #53626b;
-    text-align: center;
     margin-bottom: 9px;
+    white-space: pre-line;
 }
 
 .sub-title-bold {
@@ -52,25 +52,25 @@
 
 .scratch {
     composes: box;
-    background: url(assets/rocket-start.svg) center 10% no-repeat;
+    background: url(assets/reason-icons/scratch.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .optimize {
     composes: box;
-    background: url(assets/optimization.svg) center 10% no-repeat;
+    background: url(assets/reason-icons/optimize.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .control {
     composes: box;
-    background: url(assets/modern-jet.svg) center 10% no-repeat;
+    background: url(assets/reason-icons/control.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .end-to-end {
     composes: box;
-    background: url(assets/route.svg) center 10% no-repeat;
+    background: url(assets/reason-icons/end-to-end.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 

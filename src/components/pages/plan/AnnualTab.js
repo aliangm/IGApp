@@ -43,7 +43,7 @@ export default class AnnualTab extends Component {
   }
 
   render() {
-    const {budgetsData, planDate, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
+    const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
 
     const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators &&
       secondaryPlanForecastedIndicators.length > 0;
@@ -75,14 +75,14 @@ export default class AnnualTab extends Component {
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
             <FloatingComponent>
               <IndicatorsGraph objectives={parsedObjectives}
-                              dimensions={this.state.graphDimensions}
-                              changeScrollPosition={this.changeScrollPosition}
-                              scrollPosition={this.state.scrollPosition}
-                              cellWidth={CELL_WIDTH}
-                              mainLineData={showSecondaryIndicatorGraph ? secondaryPlanForecastedIndicators : primaryPlanForecastedIndicators}
-                              dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
-                              pastIndicators={indicators}
-                              planDate={planDate}
+                               dimensions={this.state.graphDimensions}
+                               changeScrollPosition={this.changeScrollPosition}
+                               scrollPosition={this.state.scrollPosition}
+                               cellWidth={CELL_WIDTH}
+                               mainLineData={showSecondaryIndicatorGraph ? secondaryPlanForecastedIndicators : primaryPlanForecastedIndicators}
+                               dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
+                               pastIndicators={indicators}
+                               {...this.props}
               />
             </FloatingComponent>
           </div>

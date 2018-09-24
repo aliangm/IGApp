@@ -56,7 +56,7 @@ export default class TrackingPlan extends Component {
           </div>
           <div>
             <div style={{ display: 'flex', marginTop: '21px', marginRight: '12px' }}>
-              <Button type="reverse"
+              <Button type="primary"
                       onClick={ this.copy.bind(this, trackingCode, i) }
                       icon="buttons:copy"
                       style={{
@@ -69,7 +69,7 @@ export default class TrackingPlan extends Component {
                 Copied!
               </div>
             </div>
-            <Button type="warning"
+            <Button type="secondary"
                     onClick={ this.deleteEvent.bind(this, i) }
                     style={{
                       width: '100px',

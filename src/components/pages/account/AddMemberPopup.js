@@ -15,15 +15,45 @@ export default class AddMemberPopup extends Component {
   style = style;
   styles = [popupStyle];
 
+  pagePermissions = [
+    {
+      key: 'settings',
+      label: 'Account Settings',
+      isDisabled: false
+    },
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      isDisabled: false
+    },
+    {
+      key: 'analyze',
+      label: 'Analyze',
+      isDisabled: false
+    },
+    {
+      key: 'plan',
+      label: 'Plan',
+      isDisabled: false
+    },
+    {
+      key: 'campaigns',
+      label: 'Campaigns',
+      isDisabled: true
+    }
+  ];
+
   constructor(props) {
     super(props);
+
     this.state = {
       name: '',
       email: '',
       role: '',
       isAdmin: false,
       specificChannels: [],
-      isSpecificChannels: false
+      isSpecificChannels: false,
+      pagePermissions: this.getInitialPermissions()
     };
   }
 
@@ -35,10 +65,18 @@ export default class AddMemberPopup extends Component {
         role: '',
         isAdmin: false,
         specificChannels: [],
-        isSpecificChannels: false
+        isSpecificChannels: false,
+        pagePermissions: this.getInitialPermissions()
       });
     }
   }
+
+  getInitialPermissions = () => {
+    const initialPermissions = {};
+    this.pagePermissions.forEach(item => initialPermissions[item.key] = true);
+
+    return initialPermissions;
+  };
 
   handleChangeChannels(event) {
     let update = event.map((obj) => {
@@ -47,7 +85,28 @@ export default class AddMemberPopup extends Component {
     this.setState({specificChannels: update});
   }
 
+  inviteMember = () => {
+    const blockedPages = Object.keys(this.state.pagePermissions)
+      .filter(pageKey => !this.state.pagePermissions[pageKey]);
+
+    this.props.inviteMember({...this.state, pagePermissions: null, blockedPages});
+  };
+
   render() {
+
+    const pagePermissionsLabels = this.pagePermissions.map((permissionItem) => {
+      return <Label checkboxDisabled={permissionItem.isDisabled}
+                    checkbox={this.state.pagePermissions[permissionItem.key]}
+                    style={{textTransform: 'capitalize'}}
+                    onChange={() => {
+
+        const newPermissions = {...this.state.pagePermissions};
+        newPermissions[permissionItem.key] = !newPermissions[permissionItem.key];
+        this.setState({pagePermissions: newPermissions});
+
+      }}>{permissionItem.label}</Label>;
+    });
+
     const channels = {
       select: {
         name: 'channels',
@@ -106,6 +165,8 @@ export default class AddMemberPopup extends Component {
         </div>
         {!this.state.isAdmin ?
           <div className={this.classes.row}>
+            <Label>Page Permissions</Label>
+            {pagePermissionsLabels}
             <Label checkbox={this.state.isSpecificChannels} onChange={() => {
               this.setState({isSpecificChannels: !this.state.isSpecificChannels});
             }}>
@@ -120,15 +181,15 @@ export default class AddMemberPopup extends Component {
         <div className={this.classes.footerCols}>
           <div className={this.classes.footerLeft}>
             <Button
-              type="reverse"
+              type="secondary"
               style={{width: '72px'}}
               onClick={this.props.close}>Cancel
             </Button>
             <Button
-              type="primary2"
+              type="primary"
               style={{width: '110px', marginLeft: '20px'}}
               onClick={() => {
-                this.props.inviteMember(this.state);
+                this.inviteMember();
               }}>Invite User
             </Button>
           </div>

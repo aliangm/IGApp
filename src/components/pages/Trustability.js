@@ -115,7 +115,7 @@ export default class Trustability extends Component {
                 }}
                 style={{width: '100px', marginRight: '10px'}}
               />
-              <Button type="primary2" style={{
+              <Button type="primary" style={{
                 width: '72px'
               }} onClick={this.analyze.bind(this)}> Analyze
               </Button>

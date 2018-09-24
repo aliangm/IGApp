@@ -73,11 +73,6 @@ export default class Channels extends Component {
       {value: 'opps', label: getIndicatorNickname('opps')},
       {value: 'users', label: getIndicatorNickname('users')}
     ];
-    const attributionModels = [
-      {value: false, label: 'Full Journey'},
-      {value: 'firsttouch', label: 'Introducer'},
-      {value: 'lasttouch', label: 'Converter'}
-    ];
 
     const headRow = this.getTableRow(null, [
       <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}
@@ -282,15 +277,16 @@ export default class Channels extends Component {
         <div key={index} className={dashboardStyle.locals.journeyRow}>
           <div style={{width: '78%'}}>
             <div className={dashboardStyle.locals.journey}>
-              {item.channels.map((channel, index) =>
-                <div className={dashboardStyle.locals.channelBox} key={index}>
+              {item.channels.map((channel, index) => {
+                const channelNickname = getChannelNickname(channel);
+                return <div className={dashboardStyle.locals.channelBox} key={index}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}
                        style={{margin: '0 5px'}}/>
-                  <div className={dashboardStyle.locals.channelText}>
-                    {getChannelNickname(channel)}
+                  <div className={dashboardStyle.locals.channelText} data-tip={channelNickname}>
+                    {channelNickname}
                   </div>
-                </div>
-              )}
+                </div>;
+              })}
             </div>
           </div>
           <div>
@@ -327,18 +323,6 @@ export default class Channels extends Component {
                 Top Conversion Journeys
               </div>
               <div style={{display: 'flex'}}>
-                <div>
-                  <Select
-                    selected={this.props.attributionModel ? this.props.attributionModel : false}
-                    select={{
-                      options: attributionModels
-                    }}
-                    onChange={(e) => {
-                      this.props.calculateAttributionData(e.value);
-                    }}
-                    style={{width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px'}}
-                  />
-                </div>
                 <div className={dashboardStyle.locals.conversionGoal}>
                   Choose a conversion goal
                   <Select
@@ -391,7 +375,7 @@ export default class Channels extends Component {
           </FeatureToggle>
         </div>
         <div>
-          <PerformanceGraph isPast={true} months={months || 1} data={indicatorsDataPerMonth}
+          <PerformanceGraph isPast={true} months={months ? months.length : 1} data={indicatorsDataPerMonth}
                             defaultIndicator={firstObjective}/>
         </div>
       </div>

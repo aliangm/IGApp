@@ -60,7 +60,7 @@ module.exports = function(args) {
 
   return {
     entry: entry,
-    devtool: isProd ? 'none' : 'source-map',
+    devtool: isProd ? 'none' : 'eval-source-map',
     output: {
       path: path.join(__dirname, env.folder),
       filename: '[name].js',
@@ -87,7 +87,7 @@ module.exports = function(args) {
         // { test: /\.u.css$/, loader: 'style/useable!' + cssLoader },
         // { test: /\.css$/, loader: "style?-singleton!raw" },
 
-        { test: /\.(jpg|jpeg|gif|png|svg)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
+        { test: /\.(jpg|jpeg|gif|png|svg|ttf)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
 
         { test: /\.tpl$/, loader: 'raw' },
 				{ test: /\.json$/, loader: 'json' },

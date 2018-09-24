@@ -19,6 +19,7 @@ import {formatDate} from 'components/utils/date';
 import insightsStyle from 'styles/insights/insights.css';
 import {Link} from 'react-router';
 import {getProfileSync, logout} from 'components/utils/AuthService';
+import PayButton from 'components/PayButton';
 
 export default class Header extends Component {
 
@@ -126,6 +127,7 @@ export default class Header extends Component {
         {tabs}
       </div>
       <div className={this.classes.itemsBox}>
+        <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
@@ -135,18 +137,19 @@ export default class Header extends Component {
                  setTimeout(this.readNotifications.bind(this), 20000);
                }}
           >
-            <div className={this.classes.notificationsIcon} data-active={isUnreadNotifications ? true : null}>
-              <Popup className={this.classes.dropmenuPopup}
-                     style={{padding: '0'}}
-                     hidden={!this.state.notificationsVisible}
-                     onClose={() => {
-                       this.setState({
-                         notificationsVisible: false
-                       });
-                     }}
-              >
-                <Notifications {...this.props} userNotifications={userNotifications}/>
-              </Popup>
+            <Popup className={this.classes.dropmenuPopup}
+                   style={{padding: '0'}}
+                   hidden={!this.state.notificationsVisible}
+                   onClose={() => {
+                     this.setState({
+                       notificationsVisible: false
+                     });
+                   }}
+            >
+              <Notifications {...this.props} userNotifications={userNotifications}/>
+            </Popup>
+            <div className={this.classes.headerIcon} data-active={isUnreadNotifications ? true : null}
+                 data-icon="header:notification">
             </div>
           </div>
           : null}
@@ -156,7 +159,7 @@ export default class Header extends Component {
                role="button"
                onClick={this.toggleRegionsBig}
           >
-            <div className={this.classes.locationIcon}>
+            <div className={this.classes.headerIcon} data-icon="header:location">
               <Popup className={this.classes.dropmenuPopup}
                      hidden={!this.state.regionsVisibleBig} ref="regionsPopup" onClose={() => {
                 this.setState({
@@ -174,66 +177,72 @@ export default class Header extends Component {
             </div>
           </div>
           : null}
-        {hasUser ?
-          <div className={this.classes.dropmenuButton}
-               data-selected={this.state.suggestionsVisible ? true : null}
-               role="button"
-               onClick={this.toggleSuggestion}
-          >
-            <div className={this.classes.userLogo}
-                 style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}>
-              <Popup className={this.classes.dropmenuPopup}
-                     style={{padding: '0'}}
-                     hidden={!this.state.suggestionsVisible} onClose={() => {
-                this.setState({
-                  suggestionsVisible: false
-                });
-              }}
-              >
-              <InfiniGrowRobot company={this.props.userCompany}
-                               historyData={this.props.beforeInfiniGrowData}
-                               actualIndicators={this.props.actualIndicators}
-                               funnelFirstObjective={this.props.calculatedData.objectives.funnelFirstObjective}/>
-                <div style={{padding: '12px', backgroundColor: '#E6E6E6', borderTop: '1px solid #273142'}}>
-                  <div>
-                    <div style={{display: 'inline-block'}}>
-                      What action/investment could have the biggest impact on
-                    </div>
-                    <Select
-                      selected={this.state.indicator}
-                      select={{
-                        options: getIndicatorsWithNicknames()
-                      }}
-                      onChange={(e) => {
-                        this.setState({indicator: e.value, suggestionsVisible: true});
-                      }}
-                      style={{width: '200px', display: 'inline-block', margin: '10px 10px 20px 0'}}
-                    />
-                    <div style={{display: 'inline-block'}}>
-                      next month?
-                    </div>
-                  </div>
-                  <Button type="normalAccent"
-                          onClick={() => {
-                            this.setState({suggestionPopup: true});
-                          }}
-                          style={{width: '120px'}}>
-                    Show me
-                  </Button>
-                </div>
-              </Popup>
-            </div>
-          </div>
-          : null}
+        {/* Remove the robot from the header for now*/}
+        {/*{hasUser ?*/}
+        {/*<div className={this.classes.dropmenuButton}*/}
+        {/*data-selected={this.state.suggestionsVisible ? true : null}*/}
+        {/*role="button"*/}
+        {/*onClick={this.toggleSuggestion}*/}
+        {/*>*/}
+        {/*<div className={this.classes.userLogo}*/}
+        {/*style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}>*/}
+        {/*<Popup className={this.classes.dropmenuPopup}*/}
+        {/*style={{padding: '0'}}*/}
+        {/*hidden={!this.state.suggestionsVisible} onClose={() => {*/}
+        {/*this.setState({*/}
+        {/*suggestionsVisible: false*/}
+        {/*});*/}
+        {/*}}*/}
+        {/*>*/}
+        {/*<InfiniGrowRobot company={this.props.userCompany}*/}
+        {/*historyData={this.props.beforeInfiniGrowData}*/}
+        {/*actualIndicators={this.props.actualIndicators}*/}
+        {/*funnelFirstObjective={this.props.calculatedData.objectives.funnelFirstObjective}/>*/}
+        {/*<div style={{padding: '12px', backgroundColor: '#E6E6E6', borderTop: '1px solid #273142'}}>*/}
+        {/*<div>*/}
+        {/*<div style={{display: 'inline-block'}}>*/}
+        {/*What action/investment could have the biggest impact on*/}
+        {/*</div>*/}
+        {/*<Select*/}
+        {/*selected={this.state.indicator}*/}
+        {/*select={{*/}
+        {/*options: getIndicatorsWithNicknames()*/}
+        {/*}}*/}
+        {/*onChange={(e) => {*/}
+        {/*this.setState({indicator: e.value, suggestionsVisible: true});*/}
+        {/*}}*/}
+        {/*style={{width: '200px', display: 'inline-block', margin: '10px 10px 20px 0'}}*/}
+        {/*/>*/}
+        {/*<div style={{display: 'inline-block'}}>*/}
+        {/*next month?*/}
+        {/*</div>*/}
+        {/*</div>*/}
+        {/*<Button type="normalAccent"*/}
+        {/*onClick={() => {*/}
+        {/*this.setState({suggestionPopup: true});*/}
+        {/*}}*/}
+        {/*style={{width: '120px'}}>*/}
+        {/*Show me*/}
+        {/*</Button>*/}
+        {/*</div>*/}
+        {/*</Popup>*/}
+        {/*</div>*/}
+        {/*</div>*/}
+        {/*: null}*/}
         <div className={this.classes.dropmenuButton}
              data-selected={this.state.dropmenuVisibleBig ? true : null}
              role="button"
              onClick={this.toggleDropmenuBig}
         >
           <div className={this.classes.dropmenu}>
-            <Avatar member={user} className={this.classes.userLogo}/>
-            <div className={this.classes.user}>
-              {user && user.name}
+            <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
+            <div className={this.classes.userDetails}>
+              <div className={this.classes.user}>
+                {user && user.name}
+              </div>
+              <div className={this.classes.userCompany}>
+                {this.props.userCompany}
+              </div>
             </div>
             <div className={this.classes.triangle}/>
             <Popup className={this.classes.dropmenuPopup}
@@ -276,7 +285,7 @@ export default class Header extends Component {
       <div className={this.classes.itemsBox}>
         {hasUser ?
           <div className={this.classes.logoutItemOutside}>
-            <Button type="normalAccent" onClick={this.logout} style={{
+            <Button type="secondary" onClick={this.logout} style={{
               width: '120px'
             }}>
               Log Out
@@ -320,7 +329,7 @@ export default class Header extends Component {
               <div className={this.classes.userBoxInside}>
                 <div className={this.classes.userLogo}
                      style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}/>
-                <Avatar member={user} className={this.classes.userLogo}/>
+                <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
                 <div className={this.classes.logged}>
                   {this.props.userCompany}
                   <div className={this.classes.user}>
@@ -342,7 +351,7 @@ export default class Header extends Component {
                target="_blank">Support</a>
             {hasUser ?
               <div className={this.classes.logoutItemInside}>
-                <Button type="normalAccent" onClick={this.logout} style={{
+                <Button type="secondary" onClick={this.logout} style={{
                   width: '120px'
                 }}>
                   Log Out
@@ -358,7 +367,7 @@ export default class Header extends Component {
         <div className={this.classes.userBoxOutside}>
           <div className={this.classes.userLogo}
                style={{backgroundImage: this.props.logoURL ? 'url(' + this.props.logoURL + ')' : ''}}/>
-          <Avatar member={user} className={this.classes.userLogo}/>
+          <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
           <div className={this.classes.logged}>
             {this.props.userCompany}
             <div className={this.classes.user}>
@@ -401,9 +410,11 @@ export default class Header extends Component {
     }
     return <div className={this.classes.box}>
       <div className={this.classes.logoMenu} onClick={this.openSidebar}/>
-      <div className={this.classes.logo} onClick={() => {
+      <div className={this.classes.logoWrapper} onClick={() => {
         history.push('/dashboard/CMO');
-      }}/>
+      }}>
+        <div className={this.classes.logo}/>
+      </div>
       {this.menuBig}
       {this.menuSmall}
       {popup}

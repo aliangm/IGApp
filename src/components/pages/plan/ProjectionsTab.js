@@ -1,55 +1,64 @@
 import React from 'react';
 import Component from 'components/Component';
-import Toggle from 'components/controls/Toggle';
-import Button from 'components/controls/Button';
 import Item from 'components/pages/plan/ProjectionItem';
-import Popup from 'components/Popup';
-import Loading from 'components/pages/plan/Loading';
 import style from 'styles/plan/projections-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import {getIndicatorsWithProps} from 'components/utils/indicators';
-import {FeatureToggle} from 'react-feature-toggles';
+import analyzeStyle from 'styles/analyze/analyze.css';
+import Select from 'components/controls/Select';
+import {getDatesSpecific} from 'components/utils/date';
+import max from 'lodash/max';
 
 export default class ProjectionsTab extends Component {
 
-  styles = [planStyles];
+  styles = [planStyles, analyzeStyle];
   style = style;
 
-  tabs = ['One', 'Three', 'Six', 'Twelve'];
+  monthAdditionOptions = [0, 2, 5, 11];
 
   constructor(props) {
     super(props);
-    this.monthMap = {
-      0: 0,
-      1: 2,
-      2: 5,
-      3: 11
-    };
+
     this.state = {
-      selectedTab: 0
+      selectedValue: 0
     };
   }
 
   calculateState(item) {
-    const projectedIndicators = this.props.forecastedIndicators[this.monthMap[this.state.selectedTab]]
-    const committedProjection = projectedIndicators && projectedIndicators[item.key] && projectedIndicators[item.key].committed;
+    const projectedIndicators = this.props.forecastedIndicators[this.state.selectedValue];
+    const committedProjection = projectedIndicators &&
+      projectedIndicators[item.key] &&
+      projectedIndicators[item.key].committed;
     if (committedProjection > (this.props.actualIndicators[item.key] > 0 ? this.props.actualIndicators[item.key] : 0)) {
       return item.directionDown ? 'decline' : 'grow';
     }
-    else if (committedProjection < (this.props.actualIndicators[item.key] > 0 ? this.props.actualIndicators[item.key] : 0)) {
+    else if (committedProjection <
+      (this.props.actualIndicators[item.key] > 0 ? this.props.actualIndicators[item.key] : 0)) {
       return item.directionDown ? 'grow' : 'decline';
     }
-    else return 'normal';
+    else {
+      return 'normal';
+    }
   }
 
-  selectTab = (index) => {
+  selectMonthAddition = (index) => {
     this.setState({
-      selectedTab: index
+      selectedValue: index
     });
   };
 
   render() {
-    const selectedTab = this.state.selectedTab;
+    // Specific date returns also the current month, so we need to add 1
+    const dates = getDatesSpecific(this.props.planDate, 0, max(this.monthAdditionOptions) + 2);
+    const selectOptions = this.monthAdditionOptions.map(addition => {
+      return {
+        value: addition,
+        // Forecasting for a specific month is relevant for the next
+        label: dates[addition + 1]
+      };
+    });
+
+    const selectedValue = this.state.selectedValue;
     let groups = [];
     const properties = getIndicatorsWithProps() || {};
     const indicators = Object.keys(properties);
@@ -69,13 +78,21 @@ export default class ProjectionsTab extends Component {
         return <Item
           key={`row${i}-item${j}`}
           defaultState={this.calculateState({key: item, directionDown: !properties[item].isDirectionUp})}
-          defaultValue={committedForecasting && committedForecasting[this.monthMap[selectedTab]] && committedForecasting[this.monthMap[selectedTab]][item]}
-          grow={this.props.actualIndicators[item] ? Math.ceil(Math.abs(((committedForecasting[this.monthMap[selectedTab]] ? committedForecasting[this.monthMap[selectedTab]][item] : 0) - this.props.actualIndicators[item]) / this.props.actualIndicators[item]) * 100) : committedForecasting[this.monthMap[selectedTab]] && committedForecasting[this.monthMap[selectedTab]][item] * 100}
+          defaultValue={committedForecasting &&
+          committedForecasting[selectedValue] &&
+          committedForecasting[selectedValue][item]}
+          grow={this.props.actualIndicators[item]
+            ? Math.ceil(Math.abs(((committedForecasting[selectedValue]
+              ? committedForecasting[selectedValue][item]
+              : 0) - this.props.actualIndicators[item]) / this.props.actualIndicators[item]) * 100)
+            : committedForecasting[selectedValue] &&
+            committedForecasting[selectedValue][item] *
+            100}
           icon={'indicator:' + item}
           title={properties[item].title}
           isDollar={properties[item].isDollar}
           isPercentage={properties[item].isPercentage}
-        />
+        />;
       });
 
       return <div className={this.classes.row} key={`row${i}`}>
@@ -91,18 +108,14 @@ export default class ProjectionsTab extends Component {
           </div>
         </div>
         <div className={planStyles.locals.titleButtons}>
-          {
-            this.tabs.map((tab, i) => {
-              return <Button
-                key={i}
-                className={this.classes.tabButton}
-                type={i === this.state.selectedTab ? 'primary2' : 'normal'}
-                onClick={() => {
-                  this.selectTab(i);
-                }}
-              >{tab}</Button>;
-            })
-          }
+          <Select
+            selected={this.state.selectedValue}
+            select={{options: selectOptions}}
+            onChange={(e) => {
+              this.selectMonthAddition(e.value);
+            }}
+            className={analyzeStyle.locals.dateSelect}
+          />
         </div>
       </div>
       <div className={planStyles.locals.innerBox}>

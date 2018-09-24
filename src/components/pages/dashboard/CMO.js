@@ -13,7 +13,6 @@ import {
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
-import Steps from 'components/pages/dashboard/Steps';
 import Label from 'components/ControlsLabel';
 import merge from 'lodash/merge';
 import PlanPopup, {
@@ -27,6 +26,8 @@ import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWi
 import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
+import {getColor} from 'components/utils/colors';
+import ReactTooltip from 'react-tooltip';
 
 export default class CMO extends Component {
 
@@ -142,23 +143,6 @@ export default class CMO extends Component {
       : null;
     const ratioContextStat = (ratio && lastMonthRatio) ? Math.round((ratio / lastMonthRatio) * 100) - 100 : null;
 
-    const COLORS = [
-      '#189aca',
-      '#3cca3f',
-      '#a8daec',
-      '#70d972',
-      '#56b5d9',
-      '#8338EC',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#FB5607',
-      '#FF006E',
-      '#76E5FC',
-      '#036D19'
-    ];
     const funnel = [];
     if (actualIndicators.MCL !== -2) {
       funnel.push({name: 'Leads', value: actualIndicators.MCL});
@@ -215,7 +199,7 @@ export default class CMO extends Component {
         key={index}
         directionDown={!indicatorsProperties[objective.indicator].isDirectionUp}
         timeFrame={objective.dueDate}
-        color={COLORS[index % COLORS.length]}
+        color={getColor(index)}
         isDollar={indicatorsProperties[objective.indicator].isDollar}
         isPercentage={indicatorsProperties[objective.indicator].isPercentage}
       />;
@@ -326,7 +310,6 @@ export default class CMO extends Component {
       });
 
     return <div className={dashboardStyle.locals.wrap}>
-      <Steps {...this.props}/>
       <div className={this.classes.cols}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item}
@@ -812,7 +795,7 @@ export default class CMO extends Component {
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item} style={{height: '350px', width: '540px'}}>
-            <div className={dashboardStyle.locals.text}>
+            <div className={dashboardStyle.locals.text} data-tip="Total allocated budget for campaigns per defined focus">
               Campaigns by Focus
             </div>
             <div className={dashboardStyle.locals.chart}>
@@ -833,13 +816,13 @@ export default class CMO extends Component {
                     fatherChannelsWithBudgets.map((element, i) => (
                       <div key={i} style={{display: 'flex', marginTop: '5px'}}>
                         <div style={{
-                          border: '2px solid ' + COLORS[i % COLORS.length],
+                          border: '2px solid ' + getColor(i),
                           borderRadius: '50%',
                           height: '8px',
                           width: '8px',
                           display: 'inline-flex',
                           marginTop: '2px',
-                          backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'
+                          backgroundColor: this.state.activeIndex === i ? getColor(i) : 'initial'
                         }}/>
                         <div style={{
                           fontWeight: this.state.activeIndex === i ? 'bold' : 'initial',
@@ -876,7 +859,7 @@ export default class CMO extends Component {
                     isAnimationActive={false}
                   >
                     {
-                      fatherChannelsWithBudgets.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}
+                      fatherChannelsWithBudgets.map((entry, index) => <Cell fill={getColor(index)}
                                                                             key={index}/>)
                     }
                   </Pie>
@@ -897,6 +880,7 @@ export default class CMO extends Component {
           <TopX title='content' data={topContent}/>
         </div>
       </div>
+      <ReactTooltip/>
     </div>;
   }
 }

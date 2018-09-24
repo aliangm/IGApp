@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
-import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar} from 'recharts';
+import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar, LabelList} from 'recharts';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
@@ -12,6 +12,8 @@ import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDatesSpecific} from 'components/utils/date';
+import RechartBarLabel from 'components/controls/RechartBarLabel';
+import {getColor} from 'components/utils/colors';
 
 export default class Overview extends Component {
 
@@ -189,24 +191,6 @@ export default class Overview extends Component {
       return {name: category, value: channelCategoriesForPeriod[category]};
     });
 
-    const COLORS = [
-      '#189aca',
-      '#3cca3f',
-      '#a8daec',
-      '#70d972',
-      '#56b5d9',
-      '#8338EC',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#FB5607',
-      '#FF006E',
-      '#76E5FC',
-      '#036D19'
-    ];
-
     const data = channelCategoriesPerMonth.map((month, index) => {
 
       month.name = months[index];
@@ -215,39 +199,25 @@ export default class Overview extends Component {
 
     const CustomizedLabel = React.createClass({
       render() {
-        const {x, y, value} = this.props;
-        const val = value[1] - value[0];
-        return (val && val / channelCategoriesSum > 0.05) ?
-          <svg>
-            <rect
-              x={x - 25}
-              y={y + 20}
-              fill="#979797"
-              width={50}
-              height={20}
-            />
-            <text
-              x={x}
-              y={y}
-              dy={34}
-              fontSize='11'
-              fill='#ffffff'
-              textAnchor="middle">
-              ${formatBudgetShortened(val)}
-            </text>
-          </svg>
-          : null;
+        const {x, y, index: monthIndex, 'data-key': channel, height, width} = this.props;
+
+        return <RechartBarLabel x={x}
+                                y={y}
+                                height={height}
+                                width={width}
+                                label={'$' + formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}/>;
       }
     });
 
     const bars = channelCategoriesForPeriod && Object.keys(channelCategoriesForPeriod).map((channel, index) =>
-      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={COLORS[(index) % COLORS.length]}
-           label={<CustomizedLabel key={channel}/>}
+      <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={getColor(index)}
            isAnimationActive={false} onMouseEnter={() => {
         this.setState({activeIndex: index});
       }} onMouseLeave={() => {
         this.setState({activeIndex: void 0});
-      }}/>
+      }}>
+        <LabelList data-key={channel} content={<CustomizedLabel/>}/>
+      </Bar>
     );
 
     return <div>
@@ -290,7 +260,8 @@ export default class Overview extends Component {
                   ROI
                 </div>
                 <div className={dashboardStyle.locals.number}>
-                  {Math.round(totalRevenue / totalCost * 100)}%
+                  {/* Two digits after comma */}
+                  {(Math.round(totalRevenue / totalCost * 100) / 100).toFixed(2)}X
                 </div>
               </div>
             </div>
@@ -303,20 +274,20 @@ export default class Overview extends Component {
                   Business Impact across funnel
                 </div>
                 <div style={{display: 'flex'}}>
-                  <div className={dashboardStyle.locals.chart} style={{width: '443px'}}>
-                    <div className={this.classes.footerLeft}>
+                  <div className={dashboardStyle.locals.chart} style={{width: '443px', alignItems: 'center'}}>
+                    <div className={this.classes.footerLeft} style={{zIndex: 2}}>
                       <div className={dashboardStyle.locals.index}>
                         {
                           channelCategories.map((element, i) => (
                             <div key={i} style={{display: 'flex', marginTop: '5px'}}>
                               <div style={{
-                                border: '2px solid ' + COLORS[i % COLORS.length],
+                                border: '2px solid ' + getColor(i),
                                 borderRadius: '50%',
                                 height: '8px',
                                 width: '8px',
                                 display: 'inline-flex',
                                 marginTop: '2px',
-                                backgroundColor: this.state.activeIndex === i ? COLORS[i % COLORS.length] : 'initial'
+                                backgroundColor: this.state.activeIndex === i ? getColor(i) : 'initial'
                               }}/>
                               <div style={{
                                 fontWeight: this.state.activeIndex === i ? 'bold' : 'initial',
@@ -328,11 +299,9 @@ export default class Overview extends Component {
                               }}>
                                 {element.name}
                               </div>
-                              <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}>
+                              <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}
+                                   data-tip={'$' + formatBudgetShortened(element.value)}>
                                 {Math.round(element.value / channelCategoriesSum * 100)}%
-                              </div>
-                              <div style={{width: '50px', fontSize: '14px', color: '#7f8fa4'}}>
-                                (${formatBudgetShortened(element.value)})
                               </div>
                             </div>
                           ))
@@ -340,23 +309,23 @@ export default class Overview extends Component {
                       </div>
                     </div>
                     <div className={this.classes.footerRight}
-                         style={{marginTop: '-30px', width: '315px', marginLeft: '-25px'}}>
-                      <PieChart width={429} height={350} onMouseEnter={(d, i) => {
+                         style={{width: '274px', marginLeft: '-25px'}}>
+                      <PieChart width={274} height={332} onMouseEnter={(d, i) => {
                         this.setState({activeIndex: i});
                       }} onMouseLeave={() => {
                         this.setState({activeIndex: void 0});
                       }}>
                         <Pie
                           data={channelCategories}
-                          cx={250}
-                          cy={150}
+                          cx='50%'
+                          cy='50%'
                           labelLine={true}
                           innerRadius={75}
                           outerRadius={100}
                           isAnimationActive={false}
                         >
                           {
-                            channelCategories.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}
+                            channelCategories.map((entry, index) => <Cell fill={getColor(index)}
                                                                           key={index}/>)
                           }
                         </Pie>
@@ -364,7 +333,7 @@ export default class Overview extends Component {
                     </div>
                   </div>
                   <div className={dashboardStyle.locals.line} style={{left: '443px', bottom: '17px', height: '80%'}}/>
-                  <div style={{marginLeft: '-10px'}}>
+                  <div style={{marginLeft: '33px'}}>
                     <BarChart width={700} height={350} data={data} maxBarSize={85}>
                       <CartesianGrid vertical={false} horizontal={false}/>
                       <XAxis dataKey="name" axisLine={false} tickLine={false}/>

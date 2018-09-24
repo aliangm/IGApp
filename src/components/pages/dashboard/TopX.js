@@ -37,7 +37,7 @@ export default class TopX extends Component {
         <div className={this.classes.xTitle}>
           {this.props.title}
         </div>
-        <div className={this.classes.scoreTitle}>
+        <div className={this.classes.scoreTitle} data-tip="Total contribution across metrics, calculated with your objectives">
           Attribution Score
         </div>
       </div>

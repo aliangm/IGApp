@@ -27,7 +27,7 @@ export default class ButtonWithSurePopup extends Component {
           Sure?
         </div>
       </Popup>
-      <Button type="primary2" className={ this.classes.button } style={ this.props.style } onClick={ ()=>{ this.setState({showPopup: true}) }}>{this.props.buttonText}</Button>
+      <Button type="primary" className={ this.classes.button } style={ this.props.style } onClick={ ()=>{ this.setState({showPopup: true}) }}>{this.props.buttonText}</Button>
     </div>
   }
 }

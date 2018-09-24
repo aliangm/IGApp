@@ -8,8 +8,11 @@ import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
+import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import {getDates, getEndOfMonthString} from 'components/utils/date';
+import ObjectiveIcon from 'components/common/ObjectiveIcon';
+import {getColor} from 'components/utils/colors';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
@@ -121,24 +124,16 @@ export default class IndicatorsGraph extends Component {
     return forecastingData;
   };
 
+  getObjectiveIconFromData = (objectiveData) => {
+    const {committedForecasting} = this.props.calculatedData;
+    const project = committedForecasting[objectiveData.monthIndex] &&
+      committedForecasting[objectiveData.monthIndex][objectiveData.indicator];
+    return <ObjectiveIcon target={objectiveData.target}
+                          value={this.props.actualIndicators[objectiveData.indicator]}
+                          project={project} />;
+  };
+
   render() {
-    const COLORS = [
-      '#189aca',
-      '#3cca3f',
-      '#a8daec',
-      '#70d972',
-      '#56b5d9',
-      '#8338EC',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#FB5607',
-      '#FF006E',
-      '#76E5FC',
-      '#036D19'
-    ];
     const indicators = getIndicatorsWithProps();
     const indicatorsMapping = {};
     Object.keys(indicators)
@@ -149,24 +144,35 @@ export default class IndicatorsGraph extends Component {
 
     const areaData = this.getAreasData();
 
-    const menuItems = Object.keys(indicatorsMapping).map((indicator, index) =>
-      <div className={this.classes.menuItem} key={indicator}>
+    const {collapsedObjectives} = this.props.calculatedData.objectives;
+    const menuItems = Object.keys(indicatorsMapping).map((indicator, index) => {
+      const objectiveIndex = findIndex(collapsedObjectives, (item) => {
+        return item.indicator === indicator;
+      });
+
+      const objectiveIcon = objectiveIndex > -1
+        ? <div className={this.classes.objectiveIcon}>
+          {this.getObjectiveIconFromData(collapsedObjectives[objectiveIndex])}
+        </div>
+        : null;
+
+      return <div className={this.classes.menuItem} key={indicator}>
         <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
                         onChange={() => this.toggleCheckbox(indicator)}
                         className={this.classes.label}
                         checkboxStyle={{
-                          backgroundColor: COLORS[index %
-                          COLORS.length]
+                          backgroundColor: getColor(index)
                         }}>{indicatorsMapping[indicator]}</CustomCheckbox>
-      </div>
-    );
+        {objectiveIcon}
+      </div>;
+    });
 
     const defs = this.state.checkedIndicators.map(indicator => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <defs key={indicator}>
         <linearGradient id={indicator} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={COLORS[index % COLORS.length]} stopOpacity={0.2}/>
-          <stop offset="100%" stopColor={COLORS[index % COLORS.length]} stopOpacity={0}/>
+          <stop offset="0%" stopColor={getColor(index)} stopOpacity={0.2}/>
+          <stop offset="100%" stopColor={getColor(index)} stopOpacity={0}/>
         </linearGradient>
       </defs>;
     });
@@ -177,7 +183,7 @@ export default class IndicatorsGraph extends Component {
                    isAnimationActive={false}
                    type='monotone'
                    dataKey={indicator}
-                   stroke={COLORS[index % COLORS.length]}
+                   stroke={getColor(index)}
                    fill={`url(#${indicator})`}
                    fillOpacity={1}
                    strokeWidth={2}/>;
@@ -189,7 +195,7 @@ export default class IndicatorsGraph extends Component {
                    type='monotone'
                    isAnimationActive={false}
                    dataKey={indicator + DASHED_KEY_SUFFIX}
-                   stroke={COLORS[index % COLORS.length]}
+                   stroke={getColor(index)}
                    strokeWidth={2}
                    fill='transparent'
                    strokeDasharray="7 11"
@@ -243,13 +249,13 @@ export default class IndicatorsGraph extends Component {
                   </div>
                   <div className={this.classes.customTooltipValues}>
                     <div className={this.classes.customTooltipValue}
-                         style={{color: COLORS[colorIndex % COLORS.length]}}>
+                         style={{color: getColor(colorIndex)}}>
                       {formatNumber(item.value)}
                     </div>
                     {item.secondaryValue ?
                       <div className={this.classes.customTooltipValue}
                            style={{
-                             color: COLORS[colorIndex % COLORS.length],
+                             color: getColor(colorIndex),
                              opacity: DASHED_OPACITY
                            }}>
                         {formatNumber(item.secondaryValue)}

@@ -39,7 +39,7 @@ export default class Paging extends Component {
 
   render() {
     return <div className={ this.classes.titleBox }>
-      <Button type="primary2" style={{
+      <Button type="primary" style={{
         width: '36px',
         // margin: '0 20px'
       }} onClick={() => {
@@ -53,7 +53,7 @@ export default class Paging extends Component {
       }}>
         { formatDate(this.props.month) }
       </div>
-      <Button type="primary2" style={{
+      <Button type="primary" style={{
         width: '36px',
         // margin: '0 20px'
       }} onClick={() => {

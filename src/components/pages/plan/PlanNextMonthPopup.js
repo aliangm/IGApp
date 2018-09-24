@@ -22,13 +22,13 @@ export default class PlanNextMonthPopup extends Component {
       </div>
 
       <div className={ $.nav } style={{ marginTop: '25px' }}>
-        <Button type="normal-accent" style={{
+        <Button type="secondary" style={{
           width: '100px',
           marginRight: '20px'
         }} onClick={ this.props.onBack }>
           Cancel
         </Button>
-        <Button type="accent" style={{
+        <Button type="primary" style={{
           width: '100px'
         }} onClick={ this.props.onNext }>
           I'm sure
