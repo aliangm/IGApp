@@ -199,13 +199,13 @@ export default class Overview extends Component {
 
     const CustomizedLabel = React.createClass({
       render() {
-        const {x, y, index: monthIndex, "data-key": channel, height, width} = this.props;
+        const {x, y, index: monthIndex, 'data-key': channel, height, width} = this.props;
 
         return <RechartBarLabel x={x}
                                 y={y}
                                 height={height}
                                 width={width}
-                                label={'$' +formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}/>
+                                label={'$' + formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}/>;
       }
     });
 
@@ -261,7 +261,7 @@ export default class Overview extends Component {
                 </div>
                 <div className={dashboardStyle.locals.number}>
                   {/* Two digits after comma */}
-                  {(Math.round(totalRevenue / totalCost * 100)/100).toFixed(2)}X
+                  {(Math.round(totalRevenue / totalCost * 100) / 100).toFixed(2)}X
                 </div>
               </div>
             </div>
@@ -300,7 +300,7 @@ export default class Overview extends Component {
                                 {element.name}
                               </div>
                               <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}
-                                   data-tip={'$'+formatBudgetShortened(element.value)}>
+                                   data-tip={'$' + formatBudgetShortened(element.value)}>
                                 {Math.round(element.value / channelCategoriesSum * 100)}%
                               </div>
                             </div>

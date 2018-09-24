@@ -11,7 +11,7 @@ import isNil from 'lodash/isNil';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import {getDates, getEndOfMonthString} from 'components/utils/date';
-import ObjectiveIcon from 'components/controls/ObjectiveIcon';
+import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
 
 const DASHED_OPACITY = '0.7';

@@ -83,7 +83,6 @@ export default class Textfield extends Component {
              onInput={this.props.onInput}
              placeholder={this.props.placeHolder}
              disabled={this.props.disabled}
-             data-with-error={this.props.withValidationError ? true : null}
       />
       { this.props.withValidationError
         ? <div className={this.classes.validationErrorWrapper} data-disabled={!this.state.validationError ? true: null}>

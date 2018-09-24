@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import style from 'styles/attribution/setup2.css';
+import style from 'styles/attribution/attribution-setp.css';
 import copy from 'copy-to-clipboard';
 import Button from 'components/controls/Button';
 import Toggle from 'components/controls/Toggle';

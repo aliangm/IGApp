@@ -2,6 +2,7 @@
     align-self: center;
     display: flex;
     align-items: center;
+    padding-right: 30px;
 }
 
 .time-left-frame {
@@ -15,5 +16,9 @@
 
 .time-left-text {
     color: white;
-    vertical-align: sub;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    align-items: center;
 }

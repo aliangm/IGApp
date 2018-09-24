@@ -127,7 +127,7 @@ ReactDOM.render(
       <Route component={Settings} onEnter={requireAuth}>
         <Route path="/settings/account" component={Welcome} onEnter={requireAuth}/>
         <Route component={Attribution} onEnter={requireAuth}>
-          <Route path="/settings/attribution/setup" component={Setup} onEnter={requireAdminAuth} tabName='Setup'/>
+          <Route path="/settings/attribution/setup" component={Setup} onEnter={requireAuth} tabName='Setup'/>
           <Route path="/settings/attribution/tracking-plan"
                  component={TrackingPlan}
                  onEnter={requireAuth}

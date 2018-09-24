@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/pay-button.css';
+import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 
 export default class PayButton extends Component {
 
@@ -14,7 +15,7 @@ export default class PayButton extends Component {
   };
 
   render() {
-    const daysLeft = Math.max(Math.ceil((new Date(this.props.trialEnd).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)), 0);
+    const daysLeft = getNumberOfDaysBetweenDates(new Date(this.props.trialEnd));
     return !this.props.isPaid ?
       <div className={this.classes.inner}>
         Days left in trial

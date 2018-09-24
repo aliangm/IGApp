@@ -213,6 +213,7 @@
   align-self: center;
   background: center center no-repeat;
   background-size: contain;
+  background-image: url("../assets/header/triangle.svg");
 }
 
 .log-out-icon {
@@ -430,4 +431,3 @@
 
 @mixin icon-nodpi header:notification , ../assets/header/notifications-icon;
 @mixin icon-nodpi header:location , ../assets/header/regions-icon;
-@mixin icon-nodpi header:triangle , ../assets/header/triangle;
