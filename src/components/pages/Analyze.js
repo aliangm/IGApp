@@ -5,7 +5,8 @@ import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
 import {Link} from 'react-router';
-import setupStyle from 'styles/attribution/setup2.css';
+import setupStyle from 'styles/attribution/attribution-setp.css';
+import {getNumberOfDaysBetweenDates} from 'components/utils/date'
 
 export default class Analyze extends Component {
 
@@ -47,10 +48,9 @@ export default class Analyze extends Component {
       indicatorsData: indicatorsData
     };
 
-    const daysToAttributionData = 7 - (new Date() - new Date(startTime)) / (1000 * 60 * 60 * 24);
+    const daysToAttributionData = 7 - getNumberOfDaysBetweenDates(new Date(), new Date(startTime));
     const showAttributionData = daysToAttributionData <= 0;
-    const daysToAttributionDataInt = Math.ceil(daysToAttributionData);
-    const daysForAttributionDataText = `${daysToAttributionDataInt} day${daysToAttributionDataInt === 1 ? '' : 's'}`;
+    const daysForAttributionDataText = `${daysToAttributionData} day${daysToAttributionData=== 1 ? '' : 's'}`;
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));
