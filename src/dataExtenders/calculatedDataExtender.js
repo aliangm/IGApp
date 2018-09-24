@@ -85,7 +85,7 @@ export function calculatedDataExtender(data) {
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
       isTrial,
       isAccountEnabled
-    }
+    },
     ...data
   };
 }
