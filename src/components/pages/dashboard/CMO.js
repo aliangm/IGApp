@@ -19,7 +19,7 @@ import PlanPopup, {
   TextContent as PopupTextContent
 } from 'components/pages/plan/Popup';
 import Select from 'components/controls/Select';
-import {getDates} from 'components/utils/date';
+import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
@@ -102,11 +102,19 @@ export default class CMO extends Component {
         committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
         annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
-        historyData: {totalCost, historyDataWithCurrentMonth, months: monthsOptions, indicatorsDataPerMonth, historyDataLength}
+        historyData: {totalCost, historyDataWithCurrentMonth, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
 
     const {months, isPast, showAdvanced} = this.state;
+    const numberOfMonthsOptions = Math.min(historyDataLength + 1, NUMBER_OF_FUTURE_MONTHS);
+    const monthSelectOptions = Array.apply(null, new Array(numberOfMonthsOptions)).map((item, index) => {
+      return {
+        value: index,
+        label: index || 'Only this month'
+      }
+    });
+
     const merged = merge(committedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
@@ -341,7 +349,7 @@ export default class CMO extends Component {
                         <Select
                           selected={this.state.months}
                           select={{
-                            options: monthsOptions
+                            options: monthSelectOptions
                           }}
                           onChange={(e) => {
                             this.setState({months: e.value});
@@ -574,7 +582,7 @@ export default class CMO extends Component {
                         <Select
                           selected={this.state.months}
                           select={{
-                            options: monthsOptions
+                            options: monthSelectOptions
                           }}
                           onChange={(e) => {
                             this.setState({months: e.value});

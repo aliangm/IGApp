@@ -16,7 +16,7 @@ export default class UsersPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showOtherPagesPopup: false
+      showOtherPagesPopup: null
     };
   }
 
@@ -143,7 +143,7 @@ export default class UsersPopup extends Component {
       <div>{item.channel === 'direct' ? 'Direct' : getChannelNickname(item.channel)}</div>
     </div>);
     const events = [];
-    user.journey && user.journey.forEach(item => {
+    user.journey && user.journey.forEach((item, index) => {
       if (item.channel !== 'direct') {
         events.push(<div className={this.classes.eventLine} key={events.length}>
           <div className={this.classes.iconCircle} data-icon={"plan:" + item.channel}/>
@@ -165,11 +165,11 @@ export default class UsersPopup extends Component {
             { otherPages && otherPages.length > 0 ?
               <span>
                and other
-                <span className={this.classes.otherPages} onClick={()=>{ this.setState({showOtherPagesPopup: true}) }}>
+                <span className={this.classes.otherPages} onClick={()=>{ this.setState({showOtherPagesPopup: index}) }}>
                   {" " + otherPages.length} page/s
                 </span>
-                <span hidden={!this.state.showOtherPagesPopup} style={{ position: 'relative' }}>
-                  <Popup className={this.classes.otherPagesPopup} onClose={() => { this.setState({showOtherPagesPopup: false}) }}>
+                <span hidden={this.state.showOtherPagesPopup !== index} style={{ position: 'relative' }}>
+                  <Popup className={this.classes.otherPagesPopup} onClose={() => { this.setState({showOtherPagesPopup: null}) }}>
                     {otherPages.map(item => <div>{item}</div>)}
                   </Popup>
                 </span>

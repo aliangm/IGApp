@@ -6,7 +6,7 @@ import Page from 'components/Page';
 import Popup from 'components/Popup';
 import style from 'styles/plan/plan.css';
 import Button from 'components/controls/Button';
-import ReplanButton from 'components/pages/plan/ReplanButton';
+import PlanButton from 'components/pages/plan/PlanButton';
 import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
 import history from 'history';
 import events from 'data/events';
@@ -225,6 +225,10 @@ export default class Plan extends Component {
       isSoft: !alreadyHardConstraint
     };
 
+    if(this.state.editMode) {
+      this.props.updateState({unsaved: true});
+    }
+
     this.setState({budgetsData: budgetsData}, () => {
       this.props.forecast(this.getPlanBudgets())
         .then((data) => {
@@ -296,7 +300,9 @@ export default class Plan extends Component {
         }
       });
     this.setState({budgetsData: budgetsData, addChannelPopup: false}, () => {
-      const domElement = ReactDOM.findDOMNode(this[channelKey]);
+
+      // Scroll to the title cell
+      const domElement = ReactDOM.findDOMNode(this[channelKey]).firstChild;
       if (domElement) {
         domElement.scrollIntoView({});
       }
@@ -504,22 +510,21 @@ export default class Plan extends Component {
                                  target='_blank'>here</a>
                       </label>
                     </div>
-                    <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
-                                  onClick={this.planAndSetBudgets}
-                                  planNeedsUpdate={this.props.planNeedsUpdate}/>
+                    <PlanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                                onClick={this.planAndSetBudgets}
+                                label={'Optimize'}
+                                style={{width: '138px'}}
+                                planNeedsUpdate={this.props.planNeedsUpdate}
+                                showIcons={true}
+                    />
                   </div>
                 </FeatureToggle>
                 :
-                <Button type="primary"
-                        style={{
-                          marginLeft: '15px',
-                          width: '135px'
-                        }}
-                        onClick={() => {
-                          this.setState({showOptimizationPopup: true});
-                        }}>
-                  Get Suggestions
-                </Button>
+                <PlanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                            onClick={() => this.setState({showOptimizationPopup: true})}
+                            style={{marginLeft: "15px", width: '140px'}}
+                            label={'Get Suggestions'}
+                            showIcons={false}/>
               : null}
           </div>
           <div className={this.classes.column} style={{justifyContent: 'center'}}>
@@ -536,7 +541,7 @@ export default class Plan extends Component {
                 }}/>
                 : null
               }
-              {annualTabActive ?
+              {annualTabActive && !this.state.editMode ?
                 interactiveMode ?
                   <div style={{display: 'flex'}}>
                     <Button type="secondary"
@@ -606,6 +611,7 @@ export default class Plan extends Component {
                           onClick={() => {
                             if (editMode) {
                               this.editUpdate()
+                              this.props.updateState({unsaved: false});
                             }
                             this.setState({
                               editMode: !editMode
@@ -629,6 +635,7 @@ export default class Plan extends Component {
                            onClick={() => {
                              this.setState({editMode: false});
                              this.setBudgetsData();
+                             this.props.updateState({unsaved: false});
                            }}>
                         Cancel
                       </div>
@@ -657,6 +664,7 @@ export default class Plan extends Component {
                                  this.setState({showOptimizationPopup: false});
                                }}
                                planWithConstraints={this.planWithConstraints}
+                               numberOfPlanUpdates={this.props.numberOfPlanUpdates}
         />
         <div className={this.classes.wrap}>
           <div className={this.classes.serverDown}>

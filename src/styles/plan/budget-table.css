@@ -65,7 +65,7 @@
 .month-buttons {
     height: inherit;
     position: absolute;
-    z-index: 7;
+    z-index: 5;
     background-color: white;
     width: 30px;
 }

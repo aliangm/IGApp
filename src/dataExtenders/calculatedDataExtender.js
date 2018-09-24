@@ -26,8 +26,8 @@ export function calculatedDataExtender(data) {
   const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0]
     ? data.planUnknownChannels[0]
     : {};
-  const monthlyBudget = Object.keys(committedBudgets[0]).reduce((sum, channel) => sum + committedBudgets[channel], 0) +
-    Object.keys(unknownChannels).reduce((sum, channel) => sum + unknownChannels[channel], 0);
+  const monthlyBudget = sumBy(Object.keys(committedBudgets[0]), (key)=> committedBudgets[0][key]) +
+    sumBy(Object.keys(Object.keys(unknownChannels)), (key) => unknownChannels[key]);
   const monthlyExtarpolatedMoneySpent = calculateActualSpent(committedBudgets[0],
     data.planUnknownChannels[0],
     data.knownChannels,

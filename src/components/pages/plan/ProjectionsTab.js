@@ -51,10 +51,11 @@ export default class ProjectionsTab extends Component {
     // Specific date returns also the current month, so we need to add 1
     const dates = getDatesSpecific(this.props.planDate, 0, max(this.monthAdditionOptions) + 2);
     const selectOptions = this.monthAdditionOptions.map(addition => {
+      const differenceFromCurrentMonth = addition + 1;
       return {
         value: addition,
         // Forecasting for a specific month is relevant for the next
-        label: dates[addition + 1]
+        label: `+${differenceFromCurrentMonth} month${differenceFromCurrentMonth > 1 ? 's' : ''} (${dates[differenceFromCurrentMonth]})`
       };
     });
 
@@ -115,6 +116,7 @@ export default class ProjectionsTab extends Component {
               this.selectMonthAddition(e.value);
             }}
             className={analyzeStyle.locals.dateSelect}
+            style={{width: '150px'}}
           />
         </div>
       </div>

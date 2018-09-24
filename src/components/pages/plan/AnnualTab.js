@@ -73,8 +73,8 @@ export default class AnnualTab extends Component {
           />
 
           <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <FloatingComponent>
-              <IndicatorsGraph objectives={parsedObjectives}
+            <FloatingComponent popup={this.props.interactiveMode}>
+              <IndicatorsGraph parsedObjectives={parsedObjectives}
                                dimensions={this.state.graphDimensions}
                                changeScrollPosition={this.changeScrollPosition}
                                scrollPosition={this.state.scrollPosition}

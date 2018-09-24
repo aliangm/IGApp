@@ -1,11 +1,11 @@
 .box {
     height: 36px;
-    display: inline-flex;
     align-items: center;
 }
 
 .box[data-with-error] {
     width: 100%;
+    display: inline-flex;
 }
 
 .input {

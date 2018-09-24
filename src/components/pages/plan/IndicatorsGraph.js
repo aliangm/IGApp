@@ -40,7 +40,7 @@ export default class IndicatorsGraph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isEqual(nextProps.objectives, this.props.objectives)) {
+    if (!isEqual(nextProps.parsedObjectives, this.props.parsedObjectives)) {
       const objectives = this.getInitialIndicators(nextProps);
       if (objectives) {
         this.setState({
@@ -62,7 +62,7 @@ export default class IndicatorsGraph extends Component {
   };
 
   getInitialIndicators = (props) => {
-    const objectives = Object.keys(props.objectives);
+    const objectives = Object.keys(props.parsedObjectives);
     const objective = objectives && objectives[0];
     return objective ? [objective] : null;
   };
@@ -135,6 +135,7 @@ export default class IndicatorsGraph extends Component {
 
   render() {
     const indicators = getIndicatorsWithProps();
+    const {parsedObjectives} = this.props;
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
@@ -211,8 +212,8 @@ export default class IndicatorsGraph extends Component {
     });
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
-      this.props.objectives[indicator] &&
-      <ReferenceDot {...this.props.objectives[indicator]}
+      parsedObjectives[indicator] &&
+      <ReferenceDot {...parsedObjectives[indicator]}
                     fill="none"
                     stroke="none"
                     key={index}
@@ -262,10 +263,10 @@ export default class IndicatorsGraph extends Component {
                       </div> : null
                     }
                   </div>
-                  {this.props.objectives[indicator] !== undefined &&
-                  this.props.objectives[indicator].x === data.label ?
+                  {parsedObjectives[indicator] !== undefined &&
+                  parsedObjectives[indicator].x === data.label ?
                     <div className={this.classes.customTooltipObjective}>
-                      Objective: {formatNumber(this.props.objectives[indicator].y)}
+                      Objective: {formatNumber(parsedObjectives[indicator].y)}
                     </div>
                     : null}
                 </div>;

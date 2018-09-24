@@ -42,7 +42,9 @@ export default class RegionPopup extends Component {
       <Page popup={ true } width={'300px'}>
         <Title title="New Region"
                subTitle='Each region/team/product that has an independent budget should have a different region in InfiniGrow'
-               popup={true}/>
+               popup={true}
+               subtitleStyle = {{fontSize: '14px', lineHeight: '18px', marginLeft: '1px'}}
+        />
         <div className={ this.classes.row }>
           <Textfield value={ this.state.regionName } required={ true } onChange={ this.handleChange.bind(this)} ref="name" placeHolder="default"/>
         </div>

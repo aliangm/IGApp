@@ -1,3 +1,5 @@
+export const NUMBER_OF_FUTURE_MONTHS = 12;
+
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export function formatDate(dateStr) {
@@ -11,7 +13,7 @@ export function formatDate(dateStr) {
 }
 
 export function getDates(dateStr, includingPast = false, includingFuture = true) {
-  return getDatesSpecific(dateStr, includingPast ? 12 : 0, includingFuture ? 12 : 0);
+  return getDatesSpecific(dateStr, includingPast ? NUMBER_OF_FUTURE_MONTHS : 0, includingFuture ? NUMBER_OF_FUTURE_MONTHS : 0);
 }
 
 export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystemDates = false) {

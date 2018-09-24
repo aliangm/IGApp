@@ -61,13 +61,23 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
+const getParameterByName = (name, url) => {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+};
+
 // Validate permission on the page
 const requirePermission = (page, nextState, replace) => {
-  if(!isAuthenticated() || !getProfileSync().app_metadata) {
+  if (!isAuthenticated() || !getProfileSync().app_metadata) {
     replace({pathname: '/'});
   }
-  else if(!userPermittedToPage(page)){
-      replace({pathname: '/campaigns/by-channel'});
+  else if (!userPermittedToPage(page)) {
+    replace({pathname: '/campaigns/by-channel'});
   }
 };
 
@@ -75,14 +85,20 @@ ReactDOM.render(
   <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
     <Route path="/" component={SignIn}/>
     <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
+    <Route path="/error=(:error)" onEnter={() => {
+      const error = getParameterByName('error_description');
+      if (error) {
+        alert(error);
+      }
+    }} component={SignIn}/>
     <Route component={App} onEnter={requireAuth}>
-      <Route component={Dashboard} onEnter={(...parameters) => requirePermission("dashboard", ...parameters)}>
+      <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
         <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>
       <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
-      <Route component={Plan} onEnter={(...parameters) => requirePermission("plan", ...parameters)}>
+      <Route component={Plan} onEnter={(...parameters) => requirePermission('plan', ...parameters)}>
         <Route path="/plan/current"
                component={CurrentTab}
                onEnter={requireAuth}
@@ -137,7 +153,7 @@ ReactDOM.render(
                component={Platforms}
                onEnter={requireAuth}/>
       </Route>
-      <Route component={Analyze} onEnter={(...parameters) => requirePermission("analyze", ...parameters)}>
+      <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>
         <Route path="/analyze/overview" component={Overview} onEnter={requireAuth} tabName='Overview'/>
         <Route path="/analyze/channels" component={Channels} onEnter={requireAuth} tabName='Channels'/>
         <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='campaigns'/>

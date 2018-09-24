@@ -659,12 +659,13 @@ class AppComponent extends Component {
     const annualBudget = getAnnualBudgetFromAppData(this.state);
     let product = 540236;
     if (annualBudget > 240000 && annualBudget < 1020000)
-      product = 540236;
+      product = 540408;
     if (annualBudget > 1020000)
-      product = 540236;
+      product = 540409;
     return Paddle.Checkout.open({
       product: product,
       email: email,
+      message: 'If you wish to pay annually and get ~22.5% discount, please send us an email to support@infinigrow.com',
       passthrough: {UID: this.state.UID},
       title: 'InfiniGrow',
       allowQuantity: false,

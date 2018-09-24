@@ -8,7 +8,8 @@ export default class InsightStep extends Component {
 
   static PropTypes = {
     getInsightData: PropTypes.func.isRequired,
-    plan: PropTypes.any.isRequired
+    planDate: PropTypes.string.isRequired,
+    getNumberOfPlanUpdates: PropTypes.func.isRequired
   };
 
   componentWillMount() {
@@ -28,6 +29,11 @@ export default class InsightStep extends Component {
     e.stopPropagation();
   };
 
+  checkIfMoreUpdatesAvailable = (trigger) => {
+    const stepToTrigger = this.props.getNumberOfPlanUpdates() === 0 ? '16' : trigger;
+    this.props.triggerNextStep({trigger: stepToTrigger});
+  };
+
   render() {
     const {planDate} = this.props;
     const {fromChannels, toChannels, forecastedIndicators, commitPlanBudgets} = this.insightData;
@@ -38,10 +44,12 @@ export default class InsightStep extends Component {
                    forecasting={forecastedIndicators}
                    onCommit={() => {
                      commitPlanBudgets()
-                       .then(() => this.props.triggerNextStep({trigger: '8'}));
+                       .then(() => {
+                         this.checkIfMoreUpdatesAvailable('8');
+                       });
                    }}
                    onDecline={() => {
-                     this.props.triggerNextStep({trigger: '11'});
+                     this.checkIfMoreUpdatesAvailable('11');
                    }}
       />
     </div>;
