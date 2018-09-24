@@ -22,6 +22,7 @@ import intersection from 'lodash/intersection';
 import union from 'lodash/union';
 import maxBy from 'lodash/maxBy';
 import isNil from 'lodash/isNil';
+import AnnualTab from 'components/pages/plan/AnnualTab';
 
 export default class Plan extends Component {
 
@@ -490,7 +491,7 @@ export default class Plan extends Component {
         }));
       });
 
-    const annualTabActive = this.props.children ? this.props.children.type.name === 'AnnualTab' : null;
+    const annualTabActive = this.props.children ? this.props.children.type === AnnualTab : null;
 
     return <div>
       <ReactTooltip/>
