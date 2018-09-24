@@ -285,20 +285,18 @@ export default class TargetAudience extends Component {
                   <div className={this.classes.row}>
                     <Label>Company Type</Label>
                     <ButtonsSet buttons={[
-                      {key: 'B2B Software', text: 'B2B Software', icon: 'buttons:b2bSoftware'},
-                      {key: 'B2C Software', text: 'B2C Software', icon: 'buttons:b2cSoftware'},
-                      {key: 'Consumer Services & Retail', text: 'Retailer', icon: 'buttons:retailer'},
-                      {key: 'CPG', text: 'CPG', icon: 'buttons:cpg'},
-                      {key: 'E-commerce', text: 'E-commerce', icon: 'buttons:ecommerce'},
-                      {key: 'Food & Beverage', text: 'Food', icon: 'buttons:foodAndBeverage'},
-                      {key: 'Entertainment', text: 'Entertaiment', icon: 'buttons:entertaiment'},
-                      {key: 'Professional Services', text: 'Pro Services', icon: 'buttons:professional'},
-                      {key: 'Finance', text: 'Finance', icon: 'buttons:finance'},
-                      {key: 'Healthcare', text: 'Healthcare', icon: 'buttons:healthcare'},
-                      {key: 'Any', text: 'Any', icon: 'buttons:any'}
-                    ]} selectedKey={this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.companyType}
-                                onChange={this.handleChangeButton.bind(this, 'companyType', index)}
-                                ref={'companyType' + index}/>
+                      { key: 'B2B Software', text: 'B2B Software', icon: 'buttons:b2bSoftware' },
+                      { key: 'B2C Software', text: 'B2C Software', icon: 'buttons:b2cSoftware' },
+                      { key: 'Consumer Services & Retail', text: 'Retailer', icon: 'buttons:retailer' },
+                      { key: 'CPG', text: 'CPG', icon: 'buttons:cpg' },
+                      { key: 'E-commerce', text: 'E-commerce', icon: 'buttons:ecommerce' },
+                      { key: 'Food & Beverage', text: 'Food', icon: 'buttons:foodAndBeverage' },
+                      { key: 'Entertainment', text: 'Entertainment', icon: 'buttons:entertainment' },
+                      { key: 'Professional Services', text: 'Pro Services', icon: 'buttons:professional' },
+                      { key: 'Finance', text: 'Finance', icon: 'buttons:finance' },
+                      { key: 'Healthcare', text: 'Healthcare', icon: 'buttons:healthcare' },
+                      { key: 'Any', text: 'Any', icon: 'buttons:companyServiceAll' },
+                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.companyType } onChange = {this.handleChangeButton.bind(this, 'companyType', index)} ref={'companyType' + index}/>
                   </div>
                   <div className={this.classes.row} style={{
                     width: '258px'
@@ -319,19 +317,19 @@ export default class TargetAudience extends Component {
                   <div className={this.classes.row}>
                     <Label>Role</Label>
                     <ButtonsSet buttons={[
-                      {key: 'General', text: 'General', icon: 'buttons:general'},
-                      {key: 'Sales', text: 'Sales', icon: 'buttons:sales-role'},
-                      {key: 'Marketing', text: 'Marketing', icon: 'buttons:marketing'},
-                      {key: 'R&D', text: 'R&D', icon: 'buttons:rd'},
-                      {key: 'IT', text: 'IT', icon: 'buttons:IT'},
-                      {key: 'Security', text: 'Security', icon: 'buttons:security'},
-                      {key: 'Finance', text: 'Finance', icon: 'buttons:finance2'},
-                      {key: 'HR', text: 'HR', icon: 'buttons:hr'},
-                      {key: 'Design', text: 'Design', icon: 'buttons:design'},
-                      {key: 'BizDev', text: 'BizDev', icon: 'buttons:bizdev'},
-                      {key: 'Other', text: 'Other', icon: 'buttons:any'}
-                    ]} selectedKey={this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.role}
-                                onChange={this.handleChangeButton.bind(this, 'role', index)} ref={'role' + index}/>
+                      { key: 'General', text: 'General', icon: 'buttons:general' },
+                      { key: 'Sales', text: 'Sales', icon: 'buttons:sales-role' },
+                      { key: 'Marketing', text: 'Marketing', icon: 'buttons:marketing' },
+                      { key: 'R&D', text: 'R&D', icon: 'buttons:rd' },
+                      { key: 'IT', text: 'IT', icon: 'buttons:it-role' },
+                      { key: 'Security', text: 'Security', icon: 'buttons:security-role' },
+                      { key: 'Finance', text: 'Finance', icon: 'buttons:finance-role' },
+                      { key: 'HR', text: 'HR', icon: 'buttons:hr' },
+                      { key: 'Design', text: 'Design', icon: 'buttons:design' },
+                      { key: 'BizDev', text: 'BizDev', icon: 'buttons:bizdev' },
+                      { key: 'Product', text: 'Product', icon: 'buttons:product' },
+                      { key: 'Other', text: 'Other', icon: 'buttons:other' },
+                    ]} selectedKey={ this.hasTargetInIndex(index) && this.props.targetAudience[index].fields.role } onChange = {this.handleChangeButton.bind(this, 'role', index)} ref={'role' + index}/>
                   </div>
                   <div className={this.classes.row}>
                     <Label>Management Level</Label>
