@@ -5,6 +5,7 @@ import style from 'styles/plan/plan.css';
 import UploadOfflinePopup from 'components/pages/attribution/UploadOfflinePopup';
 import {FeatureToggle} from 'react-feature-toggles';
 import Button from 'components/controls/Button';
+import Offline from 'components/pages/attribution/Offline';
 
 export default class Attribution extends Component {
 
@@ -25,7 +26,7 @@ export default class Attribution extends Component {
   }
 
   render() {
-    const offlineTabActive = this.props.children ? this.props.children.type.name === 'Offline' : null;
+    const offlineTabActive = this.props.children ? this.props.children.type === Offline : null;
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, this.props));

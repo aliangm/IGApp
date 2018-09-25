@@ -19,6 +19,7 @@ import {FeatureToggleProvider} from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
 import {calculatedDataExtender, getAnnualBudgetFromAppData} from 'dataExtenders/calculatedDataExtender.js';
 import {getProfileSync} from 'components/utils/AuthService';
+import Settings from 'components/pages/Settings';
 
 class AppComponent extends Component {
 
@@ -680,7 +681,7 @@ class AppComponent extends Component {
   }
 
   isSettingsOpen = () => {
-    return this.props.children.type.name.toLowerCase() === 'settings';
+    return this.props.children.type === Settings;
   };
 
   getTabNameFromRoute = (routeElementTabName) => {
@@ -696,15 +697,15 @@ class AppComponent extends Component {
   };
 
   getTabsToRender = () => {
-    let fatherPageComponentName = this.props.children.type.name;
+    let fatherPageComponentType = this.props.children.type;
     let childRoutes = this.props.route.childRoutes;
 
     if (this.isSettingsOpen()) {
-      childRoutes = childRoutes.find(item => item.component.name === fatherPageComponentName).childRoutes;
-      fatherPageComponentName = this.props.children.props.children.type.name;
+      childRoutes = childRoutes.find(item => item.component === fatherPageComponentType).childRoutes;
+      fatherPageComponentType = this.props.children.props.children.type;
     }
 
-    const childRoute = childRoutes.find(item => item.component.name === fatherPageComponentName);
+    const childRoute = childRoutes.find(item => item.component === fatherPageComponentType);
     return childRoute.childRoutes ? childRoute.childRoutes.map((item) => {
         return {name: this.getTabNameFromRoute(item.tabName), path: item.path};
       })
