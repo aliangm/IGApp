@@ -670,7 +670,9 @@ class AppComponent extends Component {
       title: 'InfiniGrow',
       allowQuantity: false,
       successCallback: (data) => {
-        this.state.getUserAccount();
+        setTimeout(() => {
+          this.state.getUserAccount();
+        }, 2000);
       }
     });
   };
