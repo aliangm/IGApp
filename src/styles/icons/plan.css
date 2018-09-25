@@ -1,7 +1,7 @@
 @import "../global/mixins.css";
 
 @mixin icon-nodpi plan:advertising_searchMarketing_SEM_googleAdwords, ../../assets/channels-icons/ppc-google-ad-words-icon;
-@mixin icon-nodpi plan:advertising_displayAds_other, ../../assets/channels-icons/display-ads-generic-icon;
+@mixin icon-nodpi plan:advertising_displayAds_other, ../../assets/channels-icons/dagi;
 @mixin icon-nodpi plan:advertising_displayAds_googleAdwords, ../../assets/channels-icons/display-ads-google-ad-words-icon;
 @mixin icon-nodpi plan:advertising_searchMarketing_SEM_other, ../../assets/channels-icons/ppc-generic-icon;
 @mixin icon-nodpi plan:General, ../../assets/channels-icons/other-icon;
