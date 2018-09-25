@@ -48,7 +48,7 @@ export default class Analyze extends Component {
       indicatorsData: indicatorsData
     };
 
-    const daysToAttributionData = 7 - getNumberOfDaysBetweenDates(new Date(), new Date(startTime));
+    const daysToAttributionData = 4 - getNumberOfDaysBetweenDates(new Date(), new Date(startTime));
     const showAttributionData = daysToAttributionData <= 0;
     const daysForAttributionDataText = `${daysToAttributionData} day${daysToAttributionData=== 1 ? '' : 's'}`;
 

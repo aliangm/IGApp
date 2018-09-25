@@ -20,10 +20,20 @@ export default class TechnologyStack extends Component {
   constructor(props) {
     super(props);
 
-    this.props.updateState({technologyStack: ['googleSheets', 'moz']});
-
     this.state = {
     };
+  }
+
+  componentDidMount() {
+    const technologyStack = [...this.props.technologyStack];
+    if (!technologyStack.includes('googleSheets')) {
+      technologyStack.push('googleSheets');
+      this.props.updateState({technologyStack: technologyStack});
+    }
+    if (!technologyStack.includes('moz')) {
+      technologyStack.push('moz');
+      this.props.updateState({technologyStack: technologyStack});
+    }
   }
 
   toogleChange(platform) {
