@@ -38,20 +38,19 @@
   line-height: 28px;
 }
 
-@mixin icon-nodpi buttons:b2c, ../../assets/button-icons/b2c;
-@mixin icon-nodpi buttons:b2b, ../../assets/button-icons/b2b;
-@mixin icon-nodpi buttons:product, ../../assets/button-icons/product;
-@mixin icon-nodpi buttons:service, ../../assets/button-icons/proservice;
-@mixin icon-nodpi buttons:intro, ../../assets/button-icons/intro;
-@mixin icon-nodpi buttons:growth, ../../assets/button-icons/growth;
-@mixin icon-nodpi buttons:mature, ../../assets/button-icons/mature;
-@mixin icon-nodpi buttons:decline, ../../assets/button-icons/decline;
-@mixin icon-nodpi buttons:worldwide, ../../assets/button-icons/worldwide;
-@mixin icon-nodpi buttons:national, ../../assets/button-icons/nationwide;
-@mixin icon-nodpi buttons:local, ../../assets/button-icons/local;
+@mixin icon-nodpi buttons:b2c, ../../assets/button-icons/B2C;
+@mixin icon-nodpi buttons:b2b, ../../assets/button-icons/B2B;
+@mixin icon-nodpi buttons:service, ../../assets/button-icons/ProService;
+@mixin icon-nodpi buttons:intro, ../../assets/button-icons/Intro;
+@mixin icon-nodpi buttons:growth, ../../assets/button-icons/Growth;
+@mixin icon-nodpi buttons:mature, ../../assets/button-icons/Mature;
+@mixin icon-nodpi buttons:decline, ../../assets/button-icons/Decline;
+@mixin icon-nodpi buttons:worldwide, ../../assets/button-icons/Worldwide;
+@mixin icon-nodpi buttons:national, ../../assets/button-icons/Nationwide;
+@mixin icon-nodpi buttons:local, ../../assets/button-icons/Local;
 @mixin icon-nodpi buttons:everywhere, ../../assets/button-icons/everywhere;
 @mixin icon buttons:purchase, ../../assets/button-icons/purchase-icon;
-@mixin icon-nodpi buttons:SaaS, ../../assets/button-icons/saas;
+@mixin icon-nodpi buttons:SaaS, ../../assets/button-icons/Saas;
 @mixin icon-nodpi buttons:freemium, ../../assets/button-icons/freemium;
 @mixin icon-nodpi buttons:marketplace, ../../assets/button-icons/marketplace;
 @mixin icon-nodpi buttons:martech, ../../assets/button-icons/martech;

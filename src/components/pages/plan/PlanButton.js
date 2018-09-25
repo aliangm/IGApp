@@ -29,7 +29,7 @@ export default class PlanButton extends Component {
               style={this.props.style}
               icon={this.props.showIcons ? icon : null}
       >
-        {this.props.label}({this.props.numberOfPlanUpdates})
+        {this.props.label} ({this.props.numberOfPlanUpdates})
         {
           this.props.showIcons && this.props.planNeedsUpdate ?
             <div className={planStyle.locals.planCircle}/>
