@@ -86,7 +86,16 @@ export default class Preferences extends Component {
     let filterNanArray = this.props.annualBudgetArray.filter((value) => {
       return !!value;
     });
-    return filterNanArray.length == 12;
+
+    if(filterNanArray.length !== 12){
+      return 'Please fill all the required fields'
+    }
+    else if(this.props.calculatedData.annualBudget < 50000){
+      return 'Please insert an annual budget higher than $50K';
+    }
+    else {
+      return null;
+    }
   }
 
   handleChangeBudget(parameter, event) {
@@ -644,7 +653,7 @@ export default class Preferences extends Component {
           <div className={this.classes.footer}>
             <div className={this.classes.almostFooter}>
               <label hidden={!this.state.validationError} style={{color: 'red'}}>
-                Please fill all the required fields
+                {this.state.validationError}
               </label>
             </div>
             <BackButton onClick={() => {
@@ -665,7 +674,8 @@ export default class Preferences extends Component {
             }}/>
             <div style={{width: '30px'}}/>
             <PlanButton onClick={() => {
-              if (this.validate()) {
+              const validationText = this.validate();
+              if (!validationText) {
                 // If user didn't define any objectives, open objectives popup
                 if (!this.props.objectives.find(item => Object.keys(item).length > 0)) {
                   this.setState({
@@ -695,7 +705,7 @@ export default class Preferences extends Component {
                 }
               }
               else {
-                this.setState({validationError: true});
+                this.setState({validationError: validationText});
               }
             }
             }/>
@@ -703,8 +713,16 @@ export default class Preferences extends Component {
 
           :
           <div className={this.classes.footer}>
+            <div className={this.classes.almostFooter}>
+              <label hidden={!this.state.validationError} style={{color: 'red'}}>
+                {this.state.validationError}
+              </label>
+            </div>
             <SaveButton onClick={() => {
-              if (this.validate()) {
+              const validationText = this.validate();
+              this.setState({validationError: validationText});
+
+              if (!validationText) {
                 this.setState({saveFail: false, saveSuccess: false});
                 this.props.updateUserMonthPlan({
                   annualBudget: this.props.annualBudget,
