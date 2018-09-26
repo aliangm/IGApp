@@ -150,7 +150,9 @@ export default class AttributionSetup extends Component {
             {'Place the script into the head (before the </head> tag) of every page of your site (or site template).'}
           </div>
           <Button type='secondary'
-                  className={this.classes.secondaryButton}>
+                  className={this.classes.secondaryButton}
+                  onClick={() => window.open('https://intercom.help/infinigrow/analyze/attribution-setup/add-the-tracking-script-to-your-website', '_blank')}
+          >
             Read the step-by-step guide
           </Button>
         </div>)

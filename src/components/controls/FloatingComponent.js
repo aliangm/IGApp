@@ -255,9 +255,17 @@ export default class FloatingComponent extends Component {
   toggleActive = () => {
     this.updateInactiveChild();
     this.setState({
-      isActive: !this.state.isActive,
-      isControlInView: false
-    });
+        isActive: !this.state.isActive,
+        isControlInView: false
+      },
+      () => {
+        // Patch. Making it scroll to bottom to view the xAxis.
+        // Also only works if it has one child
+        if (this.state.isActive) {
+          this.childWrapperEl.scrollTop = this.childWrapperEl.firstChild.offsetHeight;
+        }
+      }
+    );
     triggerScroll();
   };
 
