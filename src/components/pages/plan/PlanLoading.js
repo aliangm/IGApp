@@ -8,7 +8,7 @@ export default class PlanLoading extends Component {
   style = style;
 
   static defaultProps = {
-    totalTime: 10000,
+    totalTime: 12000,
     interval: 100,
     showPopup: false
   };
