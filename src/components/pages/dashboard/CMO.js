@@ -724,7 +724,7 @@ export default class CMO extends Component {
           contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
           contextText=''
           isPositive={isOnTrack}
-          tooltipText={isOnTrack ? 'Actual spend on-track' : 'Actual spend off-track. Forecasted: ' +
+          tooltipText={isOnTrack ? 'Actual spent on-track' : 'Actual spent off-track. Forecasted: ' +
             '$' +
             formatBudgetShortened(monthlyExtapolatedTotalSpending)}
           statWithArrow={false}

@@ -544,7 +544,7 @@ export default class Preferences extends Component {
                     <Notice warning style={{
                       margin: '12px 0'
                     }}>
-                      * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+                      * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning engine.
                     </Notice>
                   </div>
                   <div className={this.classes.row}>
