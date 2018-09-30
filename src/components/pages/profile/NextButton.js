@@ -10,12 +10,16 @@ export default class NextButton extends Component {
   style = style;
 
   render() {
-    return <Button type="primary" style={{
-      width: '120px',
-      letterSpacing: 0.075
-    }} onClick={ this.props.onClick }>
+    return <Button type="primary"
+                   style={{
+                      width: '120px',
+                      letterSpacing: 0.075
+                    }}
+                   onClick={this.props.onClick}
+                   icon='profile:next-button'
+                   iconPosition='right'
+    >
       NEXT
-      <div className={ this.classes.nextIcon }></div>
     </Button>;
   }
 }

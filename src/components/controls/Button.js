@@ -9,7 +9,8 @@ export default class Button extends Component {
   styles = [icons];
 
   static defaultProps = {
-    type: 'secondary'
+    type: 'secondary',
+    iconPosition: 'left'
   };
 
   render() {
@@ -33,10 +34,13 @@ export default class Button extends Component {
                 data-disabled={this.props.disabled ? true : null}
                 data-selected={this.props.selected || null}
     >
-      {this.props.icon ?
+      {this.props.icon && this.props.iconPosition === 'left' ?
         <div className={this.classes.icon} data-icon={this.props.icon}/>
         : null}
       <div className={contClassName}>{this.props.children}</div>
+      {this.props.icon && this.props.iconPosition === 'right' ?
+        <div className={this.classes.icon} data-icon={this.props.icon}/>
+        : null}
     </div>;
   }
 }
