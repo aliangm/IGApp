@@ -1,6 +1,7 @@
 .channels-row {
   display: flex;
   margin-bottom: 16px;
+  align-items: center;
 }
 
 .channels-remove {
@@ -50,6 +51,5 @@
 }
 
 .objective-text {
-  margin-top: 7px;
   font-weight: 600;
 }

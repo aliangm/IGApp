@@ -309,7 +309,7 @@ export default class Product extends Component {
                         value={this.props.pricingTiers[index] && this.props.pricingTiers[index].weight ? this.props.pricingTiers[index].weight + '%' : ''}
                         style={{width: '80px', marginLeft: '10px'}}
                         onChange={this.handleChangePricing.bind(this, 'weight', index)} placeHolder="%"/>
-                      <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '5px'}}>
+                      <div className={preferencesStyle.locals.channelsRemove} style={{marginTop: '0px'}}>
                         {removeButton}
                       </div>
                     </div>
