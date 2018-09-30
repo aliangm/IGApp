@@ -270,7 +270,7 @@ export default class Product extends Component {
             </div>
             <div className={this.classes.row}>
               <Label style={{marginBottom: '12px', fontWeight: '600'}} question={['']}
-                     description={['What is your main pricing point? \n *In case of SaaS, which annual subscription option is the most popular?']}>
+                     description={['What is your main pricing point? \nIn case of SaaS, which annual subscription option is the most popular?']}>
                 Price
               </Label>
               <MultiRow numOfRows={this.props.pricingTiers.length || 1} rowRemoved={this.pricingTierRemove}>
