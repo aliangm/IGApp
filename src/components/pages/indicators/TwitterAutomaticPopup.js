@@ -52,12 +52,12 @@ export default class TwitterAutomaticPopup extends Component {
 
   render(){
     return <div hidden={ this.state.hidden }>
-      <Page popup={ true } width={'400px'}>
+      <Page popup={ true } width={'450px'}>
         <div className={ this.classes.row }>
-          <Label>Please enter your Twitter page name</Label>
+          <Label>Please enter your company Twitter page name</Label>
         </div>
         <div className={ this.classes.row }>
-          <Textfield value={this.state.identifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="ExamplePage"/>
+          <Textfield value={this.state.identifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="@ExamplePage"/>
         </div>
         <div className={ this.classes.footer }>
           <div className={ this.classes.footerLeft }>
