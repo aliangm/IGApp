@@ -1,14 +1,13 @@
 .label {
   color: #273142;
   font-size: 13px;
-  line-height: 13px;
+  line-height: 17px;
   font-weight: 600;
   height: 20px;
   display: flex;
   align-items: center;
   margin-bottom: 12px;
   letter-spacing: 0.050em;
-  white-space: nowrap;
   text-transform: uppercase;
 }
 

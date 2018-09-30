@@ -54,7 +54,7 @@ export default class FacebookAutomaticPopup extends Component {
     return <div hidden={ this.state.hidden }>
       <Page popup={ true } width={'400px'}>
         <div className={ this.classes.row }>
-          <Label>Please enter your Facebook page name/URL</Label>
+          <Label>Please enter your Facebook company page name/URL</Label>
         </div>
         <div className={ this.classes.row }>
           <Textfield value={this.state.identifier} onChange={ this.handleChangeIdentifier.bind(this)} placeHolder="https://www.facebook.com/ExamplePage"/>

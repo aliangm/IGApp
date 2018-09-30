@@ -114,7 +114,7 @@ export default class AddMemberPopup extends Component {
       }
     };
     return <div hidden={this.props.hidden}>
-      <Page popup={true} width={'400px'} contentClassName={popupStyle.locals.content}
+      <Page popup={true} width={'410px'} contentClassName={popupStyle.locals.content}
             innerClassName={popupStyle.locals.inner}>
         <div className={popupStyle.locals.title}>
           Invite Users
