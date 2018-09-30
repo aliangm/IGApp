@@ -132,10 +132,10 @@ export default class Welcome extends Component {
   validate(mainTeamMemeber) {
     const errorFields = [];
 
-    if(!mainTeamMemeber.name) {
+    if (!mainTeamMemeber.name) {
       errorFields.push('name');
     }
-    if(!this.props.userAccount.companyName){
+    if (!this.props.userAccount.companyName) {
       errorFields.push('companyName');
     }
 
@@ -147,7 +147,7 @@ export default class Welcome extends Component {
       );
       return false;
     }
-    else  {
+    else {
       return true;
     }
   }
@@ -269,7 +269,8 @@ export default class Welcome extends Component {
     const userAccount = <div>
       <div className={this.classes.row}>
         <Label>Name</Label>
-        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'} withValidationError={true}/>
+        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'}
+                   withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
@@ -277,7 +278,8 @@ export default class Welcome extends Component {
       </div>
       <div className={this.classes.row}>
         <Label>Phone</Label>
-        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this, memberIndex)} style={{width: '283px'}} withValidationError={true}/>
+        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this, memberIndex)}
+                   style={{width: '283px'}} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Email</Label>
@@ -285,13 +287,14 @@ export default class Welcome extends Component {
       </div>
       <div className={this.classes.row}>
         <Label>Picture</Label>
-        <Avatar member={member} className={welcomeStyle.locals.userPicture} />
+        <Avatar member={member} className={welcomeStyle.locals.userPicture}/>
       </div>
     </div>;
     const companyAccount = <div>
       <div className={this.classes.row}>
         <Label>Enter your brand/company name</Label>
-        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')} ref={'companyName'} withValidationError={true}/>
+        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')}
+                   ref={'companyName'} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Company Website</Label>
@@ -342,7 +345,8 @@ export default class Welcome extends Component {
         <Textfield value={this.props.userAccount.competitorsWebsites[2]} style={{marginBottom: '16px'}}
                    onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 2)} withValidationError={true}/>
       </div>
-      <PayButton isPaid={this.props.userAccount && this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount && this.props.userAccount.trialEnd}/>
+      <PayButton isPaid={this.props.userAccount && this.props.userAccount.isPaid} pay={this.props.pay}
+                 trialEnd={this.props.userAccount && this.props.userAccount.trialEnd}/>
     </div>;
 
     const pageClass = !isPopupMode()
@@ -401,7 +405,7 @@ export default class Welcome extends Component {
                   fields</label>
               </div>
               <NextButton onClick={() => {
-                if(this.validate(member)) {
+                if (this.validate(member)) {
                   this.props.updateUserAccount(this.getUserAccountFields())
                     .then(() => {
                       if (this.props.region) {
@@ -417,8 +421,8 @@ export default class Welcome extends Component {
                       }
                     });
                 }
-                else  {
-                  this.setState({validationError: true})
+                else {
+                  this.setState({validationError: true});
                 }
               }}/>
             </div>
@@ -441,9 +445,12 @@ export default class Welcome extends Component {
                    userAccount={this.props.userAccount} close={() => {
         this.setState({showReasonPopup: false, createNewVisible: true});
       }}/>
-      <AddMemberPopup hidden={!this.state.showAddMemberPopup} close={() => {
-        this.setState({showAddMemberPopup: false});
-      }} inviteMember={this.inviteMember.bind(this)}/>
+      <AddMemberPopup hidden={!this.state.showAddMemberPopup}
+                      roleOptions={selects.role}
+                      close={() => {
+                        this.setState({showAddMemberPopup: false});
+                      }}
+                      inviteMember={this.inviteMember.bind(this)}/>
     </div>;
   }
 

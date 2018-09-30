@@ -9,6 +9,7 @@ import {formatChannels} from 'components/utils/channels';
 import Toggle from 'components/controls/Toggle';
 import style from 'styles/onboarding/onboarding.css';
 import popupStyle from 'styles/welcome/add-member-popup.css';
+import Select from 'components/controls/Select';
 
 export default class AddMemberPopup extends Component {
 
@@ -100,11 +101,11 @@ export default class AddMemberPopup extends Component {
                     style={{textTransform: 'capitalize'}}
                     onChange={() => {
 
-        const newPermissions = {...this.state.pagePermissions};
-        newPermissions[permissionItem.key] = !newPermissions[permissionItem.key];
-        this.setState({pagePermissions: newPermissions});
+                      const newPermissions = {...this.state.pagePermissions};
+                      newPermissions[permissionItem.key] = !newPermissions[permissionItem.key];
+                      this.setState({pagePermissions: newPermissions});
 
-      }}>{permissionItem.label}</Label>;
+                    }}>{permissionItem.label}</Label>;
     });
 
     const channels = {
@@ -139,12 +140,8 @@ export default class AddMemberPopup extends Component {
         </div>
         <div className={this.classes.row}>
           <Label>Role</Label>
-          <Textfield
-            value={this.state.role}
-            onChange={(e) => {
-              this.setState({role: e.target.value});
-            }}
-          />
+          <Select select={this.props.roleOptions.select} selected={this.state.role}
+                  onChange={e => this.setState({role: e.value})}/>
         </div>
         <div className={this.classes.row} style={{display: 'inline-block'}}>
           <Label>Permissions</Label>
