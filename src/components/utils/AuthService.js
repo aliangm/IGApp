@@ -48,8 +48,11 @@ function setSession(authResult) {
   history.push('/');
 }
 
-export function login() {
-  webAuth.authorize();
+export function login(isSignup, email) {
+  webAuth.authorize({
+    initialScreen: isSignup ? 'signUp' : 'login',
+    prefill: email ? {email: email} : null
+  });
 }
 
 export function getToken() {
@@ -103,6 +106,6 @@ export function getProfile() {
 }
 
 export function getProfileSync() {
-    const profile = localStorage.getItem('profile');
-    return profile ? JSON.parse(profile) : {};
+  const profile = localStorage.getItem('profile');
+  return profile ? JSON.parse(profile) : {};
 }

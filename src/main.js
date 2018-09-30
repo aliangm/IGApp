@@ -42,7 +42,7 @@ import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
 import {formatDate} from 'components/utils/date';
-import {userPermittedToPage} from 'utils';
+import {userPermittedToPage, getParameterByName} from 'utils';
 
 style.use();
 
@@ -59,16 +59,6 @@ const requireAuth = (nextState, replace) => {
   if (!isAuthenticated()) {
     replace({pathname: '/'});
   }
-};
-
-const getParameterByName = (name, url) => {
-  if (!url) url = window.location.href;
-  name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-    results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
 
 // Validate permission on the page
