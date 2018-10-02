@@ -19,12 +19,11 @@ export default class IntegrationPopup extends Component {
 
     this.state = {
       error: false,
-      hidden: true
     };
   }
 
   close = () => {
-    this.setState({error: false, hidden: false});
+    this.setState({error: false});
     this.props.close();
   };
 
