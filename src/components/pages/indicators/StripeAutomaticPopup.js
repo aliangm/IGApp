@@ -20,7 +20,7 @@ export default class StripeAutomaticPopup extends Component {
   afterDataRetrieved = (data) => {
     return new Promise((resolve, reject) => {
       this.props.setDataAsState(data);
-      resolve();
+      resolve(false);
     });
   };
 
