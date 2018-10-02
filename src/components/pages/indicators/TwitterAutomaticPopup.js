@@ -26,7 +26,7 @@ export default class TwitterAutomaticPopup extends Component {
   }
 
   render() {
-    return <SimpleIntegrationPopup width='450px'
+    return <SimpleIntegrationPopup width='400px'
                                    getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'twitterapi',
@@ -34,7 +34,7 @@ export default class TwitterAutomaticPopup extends Component {
                                      localStorage.getItem('region'))}
                                    isOpen={!this.state.hidden}
                                    close={this.close}
-                                   title='Please enter your company Twitter page name'
+                                   title='Please enter your Twitter company page name'
                                    placeHolder='@ExamplePage'
                                    onChange={this.handleChangeIdentifier.bind(this)}
                                    value={this.state.identifier}
