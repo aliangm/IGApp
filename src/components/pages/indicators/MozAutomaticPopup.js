@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import serverCommunication from 'data/serverCommunication';
-import SimpleIntegrationPopup from 'components/pages/indicators/SimpleIntegrationPopup';
+import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
 
 export default class MozAutomaticPopup extends Component {
 
@@ -32,7 +32,7 @@ export default class MozAutomaticPopup extends Component {
   }
 
   render() {
-    return <SimpleIntegrationPopup getDataSuccess={this.props.setDataAsState}
+    return <IntegrationPopup getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'mozapi',
                                      JSON.stringify({url: this.state.url}),
