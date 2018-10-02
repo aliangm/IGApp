@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import serverCommunication from 'data/serverCommunication';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import SimpleIntegrationPopup from 'components/pages/indicators/SimpleIntegrationPopup';
 
 export default class YoutubeAutomaticPopup extends Component {
 
@@ -40,7 +40,7 @@ export default class YoutubeAutomaticPopup extends Component {
   }
 
   render() {
-    return <IntegrationPopup getDataSuccess={this.props.setDataAsState}
+    return <SimpleIntegrationPopup getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'youtubeapi',
                                      JSON.stringify({type: this.state.type, id: this.state.id}),

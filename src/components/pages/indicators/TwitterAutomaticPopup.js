@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import serverCommunication from 'data/serverCommunication';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import SimpleIntegrationPopup from 'components/pages/indicators/SimpleIntegrationPopup';
 
 export default class TwitterAutomaticPopup extends Component {
 
@@ -26,7 +26,7 @@ export default class TwitterAutomaticPopup extends Component {
   }
 
   render() {
-    return <IntegrationPopup width='400px'
+    return <SimpleIntegrationPopup width='400px'
                                    getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'twitterapi',
