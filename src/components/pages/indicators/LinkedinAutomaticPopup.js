@@ -1,11 +1,10 @@
 import React from 'react';
 import Component from 'components/Component';
-import Page from 'components/Page';
 import Select from 'components/controls/Select';
 import style from 'styles/onboarding/onboarding.css';
-import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import CRMStyle from 'styles/indicators/crm-popup.css';
+import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
 
 export default class LinkedinAutomaticPopup extends Component {
 
@@ -44,9 +43,9 @@ export default class LinkedinAutomaticPopup extends Component {
     this.getAuthorization();
   }
 
-  close() {
+  close = () => {
     this.setState({hidden: true});
-  }
+  };
 
   getAuthorization() {
     const win = window.open(this.state.url);
@@ -58,7 +57,10 @@ export default class LinkedinAutomaticPopup extends Component {
         if (code) {
           localStorage.removeItem('code');
           this.setState({code: code});
-          serverCommunication.serverRequest('post', 'linkedinapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+          serverCommunication.serverRequest('post',
+            'linkedinapi',
+            JSON.stringify({code: code}),
+            localStorage.getItem('region'))
             .then((response) => {
               if (response.ok) {
                 response.json()
@@ -87,26 +89,7 @@ export default class LinkedinAutomaticPopup extends Component {
     this.setState({selectedAccount: event.value});
   }
 
-  getUserData() {
-    serverCommunication.serverRequest('put', 'linkedinapi', JSON.stringify({accountId: this.state.selectedAccount}), localStorage.getItem('region'))
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              this.props.setDataAsState(data);
-              this.close();
-            });
-        }
-        else if (response.status == 401) {
-          history.push('/');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  }
-
-  render(){
+  render() {
     const selects = {
       account: {
         label: 'Account',
@@ -114,31 +97,30 @@ export default class LinkedinAutomaticPopup extends Component {
           name: 'account',
           options: this.state.accounts
             .map(account => {
-              return {value: account.id, label: account.name}
+              return {value: account.id, label: account.name};
             })
         }
       }
     };
-    return <div style={{ width: '100%' }}>
+    return <div style={{width: '100%'}}>
       <div hidden={this.state.hidden}>
-        { this.state.accounts.length > 0 ?
-          <Page popup={ true } width={'340px'}>
-            <div className={ this.classes.row }>
-              <Select { ... selects.account } selected={ this.state.selectedAccount}
-                      onChange={ this.handleChangeAccount.bind(this) }/>
+        {this.state.accounts.length > 0 ?
+          <IntegrationPopup width='340px'
+                            isOpen={!this.state.hidden}
+                            getDateSuccess={this.props.setDateAsState}
+                            close={this.close}
+                            serverRequest={() => serverCommunication.serverRequest('put',
+                              'linkedinapi',
+                              JSON.stringify({accountId: this.state.selectedAccount}),
+                              localStorage.getItem('region'))}>
+            <div className={this.classes.row}>
+              <Select {...selects.account} selected={this.state.selectedAccount}
+                      onChange={this.handleChangeAccount.bind(this)}/>
             </div>
-            <div className={ this.classes.footer }>
-              <div className={ this.classes.footerLeft }>
-                <Button type="secondary" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
-              </div>
-              <div className={ this.classes.footerRight }>
-                <Button type="primary" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
-              </div>
-            </div>
-          </Page>
-          : null }
+          </IntegrationPopup>
+          : null}
       </div>
-    </div>
+    </div>;
   }
 
 }

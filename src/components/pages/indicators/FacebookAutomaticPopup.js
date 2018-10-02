@@ -1,7 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import serverCommunication from 'data/serverCommunication';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import SimpleIntegrationPopup from 'components/pages/indicators/SimpleIntegrationPopup';
 
 export default class FacebookAutomaticPopup extends Component {
 
@@ -26,15 +26,16 @@ export default class FacebookAutomaticPopup extends Component {
   }
 
   render() {
-    return <IntegrationPopup getDataSuccess={this.props.setDataAsState}
-                             serverRequest={() => serverCommunication.serverRequest('post',
-                               'facebookapi',
-                               JSON.stringify({identifier: this.state.identifier}),
-                               localStorage.getItem('region'))}
-                             isOpen={!this.state.hidden}
-                             close={this.close}
-                             onChange={this.handleChangeIdentifier.bind(this)}
-                             title='Please enter your Facebook company page name/URL'
-                             placeHolder='https://www.facebook.com/ExamplePage'/>;
+    return <SimpleIntegrationPopup getDataSuccess={this.props.setDataAsState}
+                                   serverRequest={() => serverCommunication.serverRequest('post',
+                                     'facebookapi',
+                                     JSON.stringify({identifier: this.state.identifier}),
+                                     localStorage.getItem('region'))}
+                                   isOpen={!this.state.hidden}
+                                   close={this.close}
+                                   onChange={this.handleChangeIdentifier.bind(this)}
+                                   title='Please enter your Facebook company page name/URL'
+                                   placeHolder='https://www.facebook.com/ExamplePage'
+                                   value={this.state.identifier}/>;
   }
 }

@@ -3,16 +3,10 @@ import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/onboarding/onboarding.css';
 import Page from 'components/Page';
-import Label from 'components/ControlsLabel';
-import Textfield from 'components/controls/Textfield';
 
 export default class IntegrationPopup extends Component {
 
   style = style;
-
-  static defaultProps = {
-    placeHolder: ''
-  };
 
   constructor(props) {
     super(props);
@@ -51,13 +45,7 @@ export default class IntegrationPopup extends Component {
     return <div hidden={!this.props.isOpen}>
       <Page popup={true} width={this.props.width || '400px'}>
         <div style={{display: 'grid'}}>
-          <div className={this.classes.row}>
-            <Label>{this.props.title}</Label>
-          </div>
-          <div className={this.classes.row}>
-            <Textfield value={this.state.identifier} onChange={this.props.onChange}
-                       placeHolder={this.props.placeHolder}/>
-          </div>
+          {this.props.children}
           <div className={this.classes.footer}>
             <div className={this.classes.footerLeft}>
               <Button type="secondary" style={{width: '100px'}} onClick={this.close}>Cancel</Button>

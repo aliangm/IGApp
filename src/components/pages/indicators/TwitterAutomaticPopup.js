@@ -1,8 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
-import style from 'styles/onboarding/onboarding.css';
 import serverCommunication from 'data/serverCommunication';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import SimpleIntegrationPopup from 'components/pages/indicators/SimpleIntegrationPopup';
 
 export default class TwitterAutomaticPopup extends Component {
 
@@ -27,16 +26,18 @@ export default class TwitterAutomaticPopup extends Component {
   }
 
   render() {
-    return <IntegrationPopup width='450px'
-                             getDataSuccess={this.props.setDataAsState}
-                             serverRequest={() => serverCommunication.serverRequest('post',
-                               'twitterapi',
-                               JSON.stringify({identifier: this.state.identifier}),
-                               localStorage.getItem('region'))}
-                             isOpen={!this.state.hidden}
-                             close={this.close}
-                             title='Please enter your company Twitter page name'
-                             placeHolder='@ExamplePage'
-                             onChange={this.handleChangeIdentifier.bind(this)}/>;
+    return <SimpleIntegrationPopup width='450px'
+                                   getDataSuccess={this.props.setDataAsState}
+                                   serverRequest={() => serverCommunication.serverRequest('post',
+                                     'twitterapi',
+                                     JSON.stringify({identifier: this.state.identifier}),
+                                     localStorage.getItem('region'))}
+                                   isOpen={!this.state.hidden}
+                                   close={this.close}
+                                   title='Please enter your company Twitter page name'
+                                   placeHolder='@ExamplePage'
+                                   onChange={this.handleChangeIdentifier.bind(this)}
+                                   value={this.state.identifier}
+    />;
   }
 }
