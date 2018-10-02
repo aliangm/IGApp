@@ -38,6 +38,9 @@ export default class IntegrationPopup extends Component {
               this.close();
             });
         }
+        else if (response.status == 401) {
+          history.push('/');
+        }
         else {
           this.setState({error: true});
         }
