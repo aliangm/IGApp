@@ -251,13 +251,27 @@ export default class Welcome extends Component {
           options: [
             {value: 'CMO', label: 'CMO'},
             {value: 'VP Marketing', label: 'VP Marketing'},
+            {value: 'VP Growth', label: 'VP Growth'},
             {value: 'Chief Marketing Technologist', label: 'Chief Marketing Technologist'},
-            {value: 'Director of Marketing', label: 'Director of Marketing'},
             {value: 'Head of Marketing', label: 'Head of Marketing'},
+            {value: 'Marketing Director', label: 'Marketing Director'},
             {value: 'Marketing Manager', label: 'Marketing Manager'},
+            {value: 'Channel Manager', label: 'Channel Manager'},
+            {value: 'Region Manager', label: 'Region Manager'},
+            {value: 'Marketer', label: 'Marketer'},
+            {value: 'Growth Hacker', label: 'Growth Hacker'},
+            {value: 'Marketing Ops', label: 'Marketing Ops'},
+            {value: 'Analyst', label: 'Analyst'},
+            {value: 'Data Scientist', label: 'Data Scientist'},
             {value: 'CEO', label: 'CEO'},
             {value: 'CRO', label: 'CRO'},
-            {value: 'Marketer', label: 'Marketer'}
+            {value: 'CFO', label: 'CFO'},
+            {value: 'COO', label: 'COO'},
+            {value: 'Sales', label: 'Sales'},
+            {value: 'Consultant', label: 'Consultant'},
+            {value: 'Designer', label: 'Designer'},
+            {value: 'Product Manager', label: 'Product Manager'},
+            {value: 'Other', label: 'Other'}
           ]
         }
       }
