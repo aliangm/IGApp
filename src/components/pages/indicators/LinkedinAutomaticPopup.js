@@ -136,7 +136,7 @@ export default class LinkedinAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup ref='authPopup'
                                           initialServerRequest={this.initialServerRequest}
                                           getAuthorization={this.getAuthorization}
-                                          doneServerRequest={this.getUserData()}
+                                          doneServerRequest={this.getUserData}
                                           width='340px'
     >
       {this.state.accounts.length > 0

@@ -70,6 +70,9 @@ export default class SalesforceAutomaticPopup extends Component {
             }
           });
       }
+      else {
+        resolve();
+      }
     });
   };
 
