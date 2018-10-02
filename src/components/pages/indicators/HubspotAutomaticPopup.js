@@ -18,37 +18,10 @@ export default class HubspotAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      code: null,
       mapping: {},
       owners: []
     };
   }
-
-  initialServerRequest = () => {
-    return new Promise((resolve, reject) => {
-      if (!this.props.data) {
-        serverCommunication.serverRequest('get', 'hubspotapi')
-          .then((response) => {
-            if (response.ok) {
-              response.json()
-                .then((data) => {
-                  this.setState({url: data});
-                  resolve();
-                });
-            }
-            else if (response.status == 401) {
-              history.push('/');
-            }
-            else {
-              reject(new Error('Falied getting hubspot data'));
-            }
-          });
-      }
-      else {
-        resolve();
-      }
-    });
-  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data && nextProps.data.mapping) {
@@ -60,57 +33,12 @@ export default class HubspotAutomaticPopup extends Component {
     this.refs.authPopup.open();
   }
 
-  getAuthorization = () => {
+  afterDataRetrieved = (data) => {
     return new Promise((resolve, reject) => {
-      if (!this.props.data) {
-        const win = window.open(this.state.url);
-        const timer = setInterval(() => {
-          if (win.closed) {
-            clearInterval(timer);
-            const code = localStorage.getItem('code');
-            if (code) {
-              localStorage.removeItem('code');
-              this.setState({code: code});
-              this.getOwners(code)
-                .then(() => {
-                  resolve(true);
-                });
-            }
-          }
-        }, 1000);
-      }
-      else {
-        this.getOwners()
-          .then(() => {
-            resolve(true);
-          });
-      }
+      this.setState({owners: data});
+      resolve(true);
     });
   };
-
-  getOwners(code) {
-    return new Promise((resolve, reject) => {
-      serverCommunication.serverRequest('post',
-        'hubspotapi',
-        JSON.stringify({code: code}),
-        localStorage.getItem('region'))
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                this.setState({owners: data});
-                resolve();
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-          else {
-            reject(new Error('Error retreiving Hubspot data'));
-          }
-        });
-    });
-  }
 
   getUserData = () => {
     this.props.updateState({loading: true});
@@ -203,8 +131,8 @@ export default class HubspotAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup width={'680px'}
                                           innerClassName={salesForceStyle.locals.inner}
                                           contentClassName={salesForceStyle.locals.content}
-                                          getAuthorization={this.getAuthorization}
-                                          initialServerRequest={this.initialServerRequest}
+                                          afterDataRetrieved={this.afterDataRetrieved}
+                                          api='hubspotapi'
                                           doneServerRequest={this.getUserData}
                                           ref='authPopup'
     >

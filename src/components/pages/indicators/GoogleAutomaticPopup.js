@@ -21,38 +21,10 @@ export default class GoogleAutomaticPopup extends Component {
       selectedProfile: null,
       selectedBlogAccount: null,
       selectedBlogProfile: null,
-      code: null,
       isWebsiteEnabled: true,
       isBlogEnabled: false
     };
   }
-
-
-  initialServerRequest = () => {
-    return new Promise((resolve, reject) => {
-      if (!this.props.data) {
-        serverCommunication.serverRequest('get', 'googleapi')
-          .then((response) => {
-            if (response.ok) {
-              response.json()
-                .then((data) => {
-                  this.setState({url: data});
-                  resolve();
-                });
-            }
-            else if (response.status == 401) {
-              history.push('/');
-            }
-            else {
-              reject(new Error('Falied getting google analytics data'));
-            }
-          });
-      }
-      else {
-        resolve();
-      }
-    });
-  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data) {
@@ -69,54 +41,12 @@ export default class GoogleAutomaticPopup extends Component {
     this.refs.authPopup.open();
   }
 
-  getAuthorization = () => {
+  afterDataRetrieved = (data) => {
     return new Promise((resolve, reject) => {
-      if (!this.props.data) {
-        const win = window.open(this.state.url);
-
-        const timer = setInterval(() => {
-          if (win.closed) {
-            clearInterval(timer);
-            const code = localStorage.getItem('code');
-            if (code) {
-              localStorage.removeItem('code');
-              this.setState({code: code});
-              this.getAccounts(code)
-                .then(() => resolve(true));
-            }
-          }
-        }, 1000);
-      }
-      else {
-        this.getAccounts()
-          .then(() => resolve(true));
-      }
+      this.setState({accounts: data.accounts, profiles: data.profiles});
+      resolve(true);
     });
   };
-
-  getAccounts(code) {
-    return new Promise((resolve, reject) => {
-      serverCommunication.serverRequest('post',
-        'googleapi',
-        JSON.stringify({code: code}),
-        localStorage.getItem('region'))
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                this.setState({accounts: data.accounts, profiles: data.profiles});
-                resolve();
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-          else {
-            reject(new Error('Falied getting google analytics data'));
-          }
-        });
-    });
-  }
 
   getUserData = () => {
     return new Promise((resolve, reject) => {
@@ -140,7 +70,7 @@ export default class GoogleAutomaticPopup extends Component {
           }
         });
     });
-  }
+  };
 
   close() {
     this.refs.authPopup.close();
@@ -189,8 +119,8 @@ export default class GoogleAutomaticPopup extends Component {
       }
     };
     return <AuthorizationIntegrationPopup ref='authPopup'
-                                          initialServerRequest={this.initialServerRequest}
-                                          getAuthorization={this.getAuthorization}
+                                          api='googleapi'
+                                          afterDataRetrieved={this.afterDataRetrieved}
                                           doneServerRequest={this.getUserData}
                                           width='340px'>
       <div className={this.classes.row}>

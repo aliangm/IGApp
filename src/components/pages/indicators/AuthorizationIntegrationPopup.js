@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/onboarding/onboarding.css';
 import Page from 'components/Page';
+import serverCommunication from 'data/serverCommunication';
 
 export default class AuthorizationIntegrationPopup extends Component {
 
@@ -18,10 +19,23 @@ export default class AuthorizationIntegrationPopup extends Component {
   }
 
   componentDidMount() {
-    this.props.initialServerRequest()
-      .catch((error) => {
-        console.log(error);
-      });
+    if (!this.props.data) {
+      serverCommunication.serverRequest('get', this.props.api)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.setState({url: data});
+              });
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+          else {
+            console.log('error getting data from for api: ' + api);
+          }
+        });
+    }
   }
 
   open() {
@@ -29,12 +43,48 @@ export default class AuthorizationIntegrationPopup extends Component {
   }
 
   getAuthorization = () => {
-    this.props.getAuthorization()
-      .then((showPopup) => {
-        this.setState({error: false, hidden: !showPopup});
-      })
-      .catch((error) => {
-        this.setState({error: true, hidden: false});
+    if (!this.props.data) {
+      const win = window.open(this.state.url);
+      const timer = setInterval(() => {
+        if (win.closed) {
+          clearInterval(timer);
+          const code = localStorage.getItem('code');
+          if (code) {
+            localStorage.removeItem('code');
+            this.afterAuthorization(code);
+          }
+        }
+      }, 1000);
+    }
+    else {
+      this.afterAuthorization();
+    }
+  };
+
+  afterAuthorization = (code) => {
+    serverCommunication.serverRequest('post',
+      this.props.api,
+      JSON.stringify({code: code}),
+      localStorage.getItem('region'))
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.props.afterDataRetrieved(data)
+                .then((showPopup) => {
+                  this.setState({error: false, hidden: !showPopup});
+                })
+                .catch((error) => {
+                  this.setState({error: true, hidden: false});
+                });
+            });
+        }
+        else if (response.status == 401) {
+          history.push('/');
+        }
+        else {
+          this.setState({error: true, hidden: false});
+        }
       });
   };
 

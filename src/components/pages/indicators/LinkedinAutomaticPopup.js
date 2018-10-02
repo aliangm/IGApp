@@ -16,33 +16,8 @@ export default class LinkedinAutomaticPopup extends Component {
     this.state = {
       accounts: [],
       selectedAccount: null,
-      code: null,
     };
   }
-
-  initialServerRequest = () => {
-    return new Promise((resolve, reject) => {
-      serverCommunication.serverRequest('get', 'linkedinapi')
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                this.setState({url: data});
-                resolve();
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-          else {
-            reject(new Error('Error getting LinkedIn data'));
-          }
-        })
-        .catch(function (err) {
-          reject(err);
-        });
-    });
-  };
 
   open() {
     this.refs.authPopup.open();
@@ -52,46 +27,18 @@ export default class LinkedinAutomaticPopup extends Component {
     this.refs.authPopup.close();
   }
 
-  getAuthorization = () => {
-    const win = window.open(this.state.url);
-
+  afterDataRetrieved = (data) => {
     return new Promise((resolve, reject) => {
-      const timer = setInterval(() => {
-        if (win.closed) {
-          clearInterval(timer);
-          const code = localStorage.getItem('code');
-          if (code) {
-            localStorage.removeItem('code');
-            this.setState({code: code});
-            serverCommunication.serverRequest('post',
-              'linkedinapi',
-              JSON.stringify({code: code}),
-              localStorage.getItem('region'))
-              .then((response) => {
-                if (response.ok) {
-                  response.json()
-                    .then((data) => {
-                      if (data.values.length > 1) {
-                        this.setState({accounts: data.values});
-                        resolve(true);
-                      }
-                      else {
-                        this.setState({selectedAccount: data.values[0].id},
-                          this.getUserData()
-                          .then(() => resolve(false)));
-                      }
-                    });
-                }
-                else if (response.status == 401) {
-                  history.push('/');
-                }
-                else {
-                  reject(new Error('error retrieving data from LinkedIn'));
-                }
-              })
-          }
-        }
-      }, 1000);
+      if (data.values.length > 1) {
+        this.setState({accounts: data.values});
+        resolve(true);
+      }
+      else {
+        this.setState({selectedAccount: data.values[0].id},
+          () => this.getUserData()
+            .then(() => resolve(false))
+            .catch((error) => reject(error)));
+      }
     });
   };
 
@@ -116,8 +63,11 @@ export default class LinkedinAutomaticPopup extends Component {
           else if (response.status == 401) {
             history.push('/');
           }
-        })
-    })
+          else {
+            reject(new Error('error to get LinkedIn data'));
+          }
+        });
+    });
   };
 
   render() {
@@ -134,8 +84,8 @@ export default class LinkedinAutomaticPopup extends Component {
       }
     };
     return <AuthorizationIntegrationPopup ref='authPopup'
-                                          initialServerRequest={this.initialServerRequest}
-                                          getAuthorization={this.getAuthorization}
+                                          api='linkedinapi'
+                                          afterDataRetrieved={this.afterDataRetrieved}
                                           doneServerRequest={this.getUserData}
                                           width='340px'
     >

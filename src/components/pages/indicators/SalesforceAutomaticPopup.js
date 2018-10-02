@@ -24,7 +24,6 @@ export default class SalesforceAutomaticPopup extends Component {
       stages: [],
       owners: [],
       fields: [],
-      code: null,
       mapping: {
         MCL: [],
         MQL: [],
@@ -50,32 +49,6 @@ export default class SalesforceAutomaticPopup extends Component {
     };
   }
 
-  initialServerRequest = () => {
-    return new Promise((resolve, reject) => {
-      if (!this.props.data) {
-        serverCommunication.serverRequest('get', 'salesforceapi')
-          .then((response) => {
-            if (response.ok) {
-              response.json()
-                .then((data) => {
-                  this.setState({url: data});
-                  resolve();
-                });
-            }
-            else if (response.status == 401) {
-              history.push('/');
-            }
-            else {
-              reject(new Error('Falied getting salesforce data'));
-            }
-          });
-      }
-      else {
-        resolve();
-      }
-    });
-  };
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.data && nextProps.data.mapping) {
       this.setState({mapping: nextProps.data.mapping});
@@ -86,58 +59,17 @@ export default class SalesforceAutomaticPopup extends Component {
     this.refs.authPopup.open();
   }
 
-  getAuthorization = () => {
+  afterDataRetrieved = (data) => {
     return new Promise((resolve, reject) => {
-      if (!this.props.data) {
-        const win = window.open(this.state.url);
-        const timer = setInterval(() => {
-          if (win.closed) {
-            clearInterval(timer);
-            const code = localStorage.getItem('code');
-            if (code) {
-              localStorage.removeItem('code');
-              this.setState({code: code});
-              this.getMapping(code)
-                .then(() => resolve(true));
-            }
-          }
-        }, 1000);
-      }
-      else {
-        this.getMapping()
-          .then(() => resolve(true));
-      }
-    });
+      this.setState({
+        statuses: data.statuses,
+        stages: data.stages,
+        owners: data.owners,
+        fields: data.fields,
+      });
+      resolve(true);
+    })
   };
-
-  getMapping(code) {
-    return new Promise((resolve, reject) => {
-      serverCommunication.serverRequest('post',
-        'salesforceapi',
-        JSON.stringify({code: code}),
-        localStorage.getItem('region'))
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                this.setState({
-                  statuses: data.statuses,
-                  stages: data.stages,
-                  owners: data.owners,
-                  fields: data.fields,
-                });
-                resolve();
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-          else {
-            reject(new Error('Error retreiving salesforce data'));
-          }
-        });
-    });
-  }
 
   getUserData = () => {
     let valid = true;
@@ -293,8 +225,8 @@ export default class SalesforceAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup width='680px'
                                           innerClassName={salesForceStyle.locals.inner}
                                           contentClassName={salesForceStyle.locals.content}
-                                          getAuthorization={this.getAuthorization}
-                                          initialServerRequest={this.initialServerRequest}
+                                          afterDataRetrieved={this.afterDataRetrieved}
+                                          api='salesforceapi'
                                           doneServerRequest={this.getUserData}
                                           ref='authPopup'
     >
