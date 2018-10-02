@@ -132,7 +132,7 @@ export default class HubspotAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(Error('error retreiveing hubspot data'));
+            reject(new Error('error retreiveing hubspot data'));
           }
           this.props.updateState({loading: false});
         })
