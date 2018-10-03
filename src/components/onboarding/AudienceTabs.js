@@ -38,7 +38,8 @@ export default class AudienceTabs extends Component {
         nextProps.defaultTabs.forEach((name) => {
           this.generateTab({ name });
         });
-        this.selectTab(this.state.selectedIndex);
+        const selectedIndex = Math.min(this.state.selectedIndex, nextProps.defaultTabs.length - 1);
+        this.selectTab(selectedIndex);
       });
     }
   }
@@ -104,6 +105,9 @@ export default class AudienceTabs extends Component {
         this.selectTab(i);
       }}>
         { tab.name }
+        {this.state.tabs.length > 1
+          ? <div className={this.classes.removeTab} onClick={() => this.props.removeTab(i)} />
+          : null}
       </div>
     });
 

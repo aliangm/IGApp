@@ -68,3 +68,19 @@
 .content-box {
   margin: 24px 0;
 }
+
+.remove-tab {
+  width: 20px;
+  height: 20px;
+  background-size: 12px 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("../../assets/remove.svg");
+  cursor: pointer;
+  margin-left: 20px;
+  border-radius: 20px;
+}
+
+.remove-tab:hover {
+  background-color: #E6E8F0;
+}
