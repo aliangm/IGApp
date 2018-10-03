@@ -39,6 +39,8 @@ export default class Product extends Component {
 
     this.handleChangeSelect = this.handleChangeSelect.bind(this);
     this.handleChangeButton = this.handleChangeButton.bind(this);
+
+    this.pricingTiers = [];
   }
 
   handleChangeSelect(parameter, event) {
@@ -64,11 +66,31 @@ export default class Product extends Component {
       );
       return false;
     }
-    if (this.props.pricingTiers && this.props.pricingTiers.length > 0 && this.props.pricingTiers[0] && this.props.pricingTiers[0].price) {
-      return true;
+    if (this.props.pricingTiers && this.props.pricingTiers.length > 0) {
+      this.refs.price.noValidationError();
+
+      const notFilledIndicies = this.props.pricingTiers.map((tier, i) => {
+        return {tier, i};
+      })
+        .filter(item => !item.tier.price)
+        .map(item => item.i);
+
+      this.props.pricingTiers.map((tier, i) => {
+        return {tier, i};
+      })
+        .filter(item => item.tier.price)
+        .forEach(item => this.pricingTiers[item.i].noValidationError());
+
+      if(notFilledIndicies.length > 0 ){
+        notFilledIndicies.forEach(index => this.pricingTiers[index].validationError());
+        return false;
+      }
+      else {
+        return true;
+      }
     }
     else {
-      this.refs.price0.focus();
+      this.refs.price.validationError();
       return false;
     }
   }
@@ -91,7 +113,7 @@ export default class Product extends Component {
     this.props.updateState({pricingTiers: pricingTiers});
   }
 
-  pricingTierRemove(index) {
+  pricingTierRemove = (index) => {
     let pricingTiers = this.props.pricingTiers || [];
     pricingTiers.splice(index, 1);
     this.props.updateState({pricingTiers: pricingTiers});
@@ -269,7 +291,7 @@ export default class Product extends Component {
                           onChange={this.handleChangeButton.bind(this, 'businessModel')} ref='businessModel'/>
             </div>
             <div className={this.classes.row}>
-              <Label style={{marginBottom: '12px', fontWeight: '600'}} question={['']}
+              <Label ref='price' style={{marginBottom: '12px', fontWeight: '600'}} question={['']}
                      description={['What is your main pricing point? \nIn case of SaaS, which annual subscription option is the most popular?']}>
                 Price
               </Label>
@@ -277,7 +299,7 @@ export default class Product extends Component {
                 {({index, data, update, removeButton}) => {
                   return <div>
                     <div className={preferencesStyle.locals.channelsRow}>
-                      <Label style={{
+                      <Label ref={(ref) => this.pricingTiers[index] = ref} style={{
                         marginBottom: '0',
                         fontWeight: '600'
                       }}>{`Tier ${ index + 1 }`} </Label>
