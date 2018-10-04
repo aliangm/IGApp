@@ -3,6 +3,7 @@ var fs = require('fs');
 
 var minimist = require('minimist');
 var webpack = require('webpack');
+var WebpackDevServer = require("webpack-dev-server");
 var gulp = require('gulp');
 
 var gutil = require('gulp-util');
@@ -57,6 +58,20 @@ gulp.task('webpack-watch', function(callback) {
   callback();
 });
 
+gulp.task('webpack-dev-server', function(callback) {
+  const port = 7272;
+  webpackConfig.entry.main.unshift(`webpack-dev-server/client?http://localhost:${port}/`);
+  var compiler = webpack(webpackConfig);
+  var server = new WebpackDevServer(compiler, {
+    historyApiFallback: true,
+    contentBase: 'output',
+    inline: true
+  });
+  server.listen(port, "localhost", function() {});
+  callback();
+});
+
 gulp.task('build', gulp.series('webpack'));
 gulp.task('watch', gulp.series('clean-dist', 'webpack-watch'));
 gulp.task('default', gulp.series('clean-dist', 'build'));
+gulp.task('dev', gulp.series('watch', 'webpack-dev-server'));

@@ -73,8 +73,7 @@ const requirePermission = (page, nextState, replace) => {
 
 ReactDOM.render(
   <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
-    <Route path="/" component={SignIn}/>
-    <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
+    <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
     <Route path="/error=(:error)" onEnter={() => {
       const error = getParameterByName('error_description');
       if (error) {

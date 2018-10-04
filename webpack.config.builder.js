@@ -113,10 +113,6 @@ module.exports = function(args) {
       root: srcRoot,
       extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.ts', '.tsx']
     },
-    devServer: {
-      // Currently not working
-      historyApiFallback: true
-    },
     plugins: plugins,
     postcss: function() {
       return [

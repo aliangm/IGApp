@@ -75,7 +75,7 @@
   background-size: 60% 60%;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url("../../assets/remove.svg");
+  background-image: url("/assets/remove.svg");
   cursor: pointer;
   margin-left: 20px;
   border-radius: 20px;

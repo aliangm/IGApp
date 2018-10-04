@@ -12,21 +12,24 @@ const options = {
 
 const webAuth = new auth0.WebAuth(options);
 
-export function handleAuthentication() {
-  const hash = window.location.hash.slice(1, window.location.hash.length - 10);
+export function handleAuthentication(nextState, replace, callback) {
+  const hash = window.location.hash.slice(1);
   if (hash) {
     webAuth.parseHash({hash: hash}, function (err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult);
-        history.push('/');
+        replace({pathname: '/'});
       } else {
         if (err) {
           console.log(err);
         }
         // navigate to the home route
-        history.push('/');
+        replace({pathname: '/'});
       }
     });
+  }
+  else {
+    callback();
   }
 }
 
