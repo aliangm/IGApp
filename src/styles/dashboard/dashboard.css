@@ -142,7 +142,7 @@
 }
 
 .budget-left-to-plan-ok {
-    background: url(../../assets/success_bltp.svg) center center no-repeat;
+    background: url(/assets/success_bltp.svg) center center no-repeat;
     background-size: contain;
     height: 64px;
     width:64px;
@@ -155,7 +155,7 @@
 }
 
 .sad-icon {
-    background: url(../../assets/sad-smiley.svg) center center no-repeat;
+    background: url(/assets/sad-smiley.svg) center center no-repeat;
     background-size: contain;
     height: 35px;
     width: 35px;
@@ -249,7 +249,7 @@
 }
 
 .check-mark {
-    background: url(../../assets/check-mark-clean.svg) center center no-repeat;
+    background: url(/assets/check-mark-clean.svg) center center no-repeat;
     background-size: contain;
     width: 15px;
     height: 15px;
@@ -598,7 +598,7 @@
 }
 
 .curved-arrow {
-    background: url(../../assets/curve-arrow.svg) center center no-repeat;
+    background: url(/assets/curve-arrow.svg) center center no-repeat;
     background-size: contain;
     width: 21px;
     height: 21px;
@@ -606,7 +606,7 @@
 }
 
 .advanced {
-    background: url(../../assets/mode-circular-button.svg) center center no-repeat;
+    background: url(/assets/mode-circular-button.svg) center center no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;
@@ -618,7 +618,7 @@
 }
 
 .settings {
-    background: url(../../assets/settings-hollow.svg) center center no-repeat;
+    background: url(/assets/settings-hollow.svg) center center no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;

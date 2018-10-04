@@ -10,7 +10,7 @@
   width: 44px;
   height: 44px;
   border-radius: 4px;
-  background: #e6eaee url(../../assets/gdrive_logo.svg) center center no-repeat;
+  background: #e6eaee url(/assets/gdrive_logo.svg) center center no-repeat;
   background-size: auto 28px;
   flex-shrink: 0;
 }
@@ -70,7 +70,7 @@
   height: 28px;
   width: 28px;
   cursor: pointer;
-  background: url(../../assets/trash.svg) center center no-repeat;
+  background: url(/assets/trash.svg) center center no-repeat;
   background-size: 24px auto;
   flex-grow: 0;
   flex-shrink: 0

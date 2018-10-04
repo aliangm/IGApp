@@ -45,13 +45,13 @@
 
 .scratch {
     composes: box;
-    background: url(assets/play-button.svg) center 10% no-repeat;
+    background: url(/assets/play-button.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .committed {
     composes: box;
-    background: url(assets/continuous.svg) center 10% no-repeat;
+    background: url(/assets/continuous.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 

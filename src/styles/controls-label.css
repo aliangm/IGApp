@@ -20,7 +20,7 @@
   width: 20px;
   height: 20px;
   margin-left: 12px;
-  background: url(../assets/question-icon.png) center center no-repeat;
+  background: url(/assets/question-icon.png) center center no-repeat;
 }
 
 .tooltip {

@@ -5,7 +5,7 @@
 }
 
 .sad-icon {
-    background: url(../../assets/sad-smiley.svg) center center no-repeat;
+    background: url(/assets/sad-smiley.svg) center center no-repeat;
     background-size: contain;
     height: 35px;
     width: 35px;

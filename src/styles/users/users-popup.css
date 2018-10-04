@@ -22,7 +22,7 @@
 .close {
     height: 20px;
     width: 20px;
-    background: url(../../assets/error.svg) center center no-repeat;
+    background: url(/assets/error.svg) center center no-repeat;
     cursor: pointer;
     min-width: 20px;
     min-height: 20px;
@@ -165,6 +165,6 @@
     width: max-content;
 }
 
-@mixin icon-nodpi event:conversion, ../../assets/event;
-@mixin icon-nodpi event:page, ../../assets/eye;
-@mixin icon-nodpi event:status, ../../assets/flag;
+@mixin icon-nodpi event:conversion, /assets/event;
+@mixin icon-nodpi event:page, /assets/eye;
+@mixin icon-nodpi event:status, /assets/flag;

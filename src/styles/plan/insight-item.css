@@ -19,7 +19,7 @@
 
 .forecasting-icon {
     margin-left: 20px;
-    background: white url(../../assets/forecast.svg) center center no-repeat;
+    background: white url(/assets/forecast.svg) center center no-repeat;
     background-size: contain;
     width: 15px;
     height: 15px;
@@ -32,7 +32,7 @@
 }
 
 .arrow-icon {
-    background: url(../../assets/green-arrow.svg) center center no-repeat;
+    background: url(/assets/green-arrow.svg) center center no-repeat;
     background-size: contain;
     width: 42px;
     height: 32px;
@@ -93,7 +93,7 @@
 }
 
 .shift-icon {
-    background: url(../../assets/budget-shift.svg) center center no-repeat;
+    background: url(/assets/budget-shift.svg) center center no-repeat;
     background-size: contain;
     width: 8px;
     height: 13px;

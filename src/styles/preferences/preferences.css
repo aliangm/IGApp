@@ -43,7 +43,7 @@
 }
 
 .add-objective {
-  background: url(../../assets/plus.svg) center center no-repeat;
+  background: url(/assets/plus.svg) center center no-repeat;
   background-size: 24px auto;
   width: 28px;
   height: 28px;

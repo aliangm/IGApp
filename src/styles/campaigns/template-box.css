@@ -31,7 +31,7 @@
 .back-icon {
     width: 30px;
     height: 23px;
-    background: url('../../assets/back.svg') center center no-repeat;
+    background: url('/assets/back.svg') center center no-repeat;
     background-size: contain;
     position: absolute;
 }

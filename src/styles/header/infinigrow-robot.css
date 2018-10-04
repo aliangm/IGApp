@@ -5,7 +5,7 @@
 }
 
 .robot {
-    background: url(../../assets/robotForUI.svg) center center no-repeat;
+    background: url(/assets/robotForUI.svg) center center no-repeat;
     width: 250px;
     height: 200px;
     background-size: contain;

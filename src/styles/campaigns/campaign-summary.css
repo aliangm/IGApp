@@ -91,7 +91,7 @@
     position: relative;
 }
 
-@mixin icon-nodpi campaign:menu, ../../assets/more;
+@mixin icon-nodpi campaign:menu, /assets/more;
 
 .cols {
     display: flex;

@@ -28,7 +28,7 @@
 }
 
 .Dropdown-arrow {
-  background: url(../../assets/dropdown-icon.png) center center no-repeat;
+  background: url(/assets/dropdown-icon.png) center center no-repeat;
   width: 11px;
   height: 100%;
   display: block;

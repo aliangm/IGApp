@@ -68,7 +68,7 @@
 }
 
 .check-icon {
-    background: url(../../assets/check-circle-white.svg) center center no-repeat;
+    background: url(/assets/check-circle-white.svg) center center no-repeat;
     width: 20px;
     height: 20px;
     margin-right: 10px;
@@ -78,7 +78,7 @@
     width: 40px;
     height: 100%;
     cursor: pointer;
-    background: url(../../assets/menu-button-white.svg) 50% no-repeat;
+    background: url(/assets/menu-button-white.svg) 50% no-repeat;
     background-size: 20px auto;
     left: 200px;
     position: absolute;

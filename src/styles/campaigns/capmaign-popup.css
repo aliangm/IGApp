@@ -14,7 +14,7 @@
 .close {
     height: 25px;
     width: 25px;
-    background: url(../../assets/x.svg) center center no-repeat;
+    background: url(/assets/x.svg) center center no-repeat;
     cursor: pointer;
     min-width: 25px;
     min-height: 25px;
@@ -95,7 +95,7 @@
 }
 
 .assets-icon {
-    background: url(../../assets/link.svg) center center no-repeat;
+    background: url(/assets/link.svg) center center no-repeat;
     background-size: contain;
     height: 25px;
     width: 25px;

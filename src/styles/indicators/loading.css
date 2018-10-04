@@ -38,7 +38,7 @@
 }
 
 .icon {
-    background: url(../../assets/hubspot.png) center center no-repeat;
+    background: url(/assets/hubspot.png) center center no-repeat;
     background-size: contain;
     height: 59px;
     margin-top: -14px;
@@ -51,7 +51,7 @@
 }
 
 .gif {
-    background: url(../../assets/giphy-downsized.gif) center center no-repeat;
+    background: url(/assets/giphy-downsized.gif) center center no-repeat;
     background-size: contain;
     width: 76px;
     height: 76px;

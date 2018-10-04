@@ -53,10 +53,10 @@
     box-sizing: border-box;
 }
 
-@mixin icon-nodpi plan:none, ../../assets/plan_icons/clear-state;
-@mixin icon-nodpi plan:like, ../../assets/plan_icons/like;
-@mixin icon-nodpi plan:lock, ../../assets/plan_icons/lockChannel;
-@mixin icon-nodpi plan:acceptSuggestion , ../../assets/plan_icons/redo;
-@mixin icon-nodpi plan:edit , ../../assets/plan_icons/edit-per-cell;
-@mixin icon-nodpi plan:approveEdit , ../../assets/plan_icons/accept;
-@mixin icon-nodpi plan:declineEdit , ../../assets/plan_icons/decline;
+@mixin icon-nodpi plan:none, /assets/plan_icons/clear-state;
+@mixin icon-nodpi plan:like, /assets/plan_icons/like;
+@mixin icon-nodpi plan:lock, /assets/plan_icons/lockChannel;
+@mixin icon-nodpi plan:acceptSuggestion , /assets/plan_icons/redo;
+@mixin icon-nodpi plan:edit , /assets/plan_icons/edit-per-cell;
+@mixin icon-nodpi plan:approveEdit , /assets/plan_icons/accept;
+@mixin icon-nodpi plan:declineEdit , /assets/plan_icons/decline;

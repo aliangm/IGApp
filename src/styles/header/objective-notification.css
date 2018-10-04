@@ -20,7 +20,7 @@
 .objective-icon {
     width: 20px;
     height: 20px;
-    background: url(../../assets/success_bltp.svg) center center no-repeat;
+    background: url(/assets/success_bltp.svg) center center no-repeat;
     background-size: contain;
     position: relative;
     top: -10px;
@@ -28,6 +28,6 @@
 }
 
 .objective-icon[data-fail] {
-    background: url(../../assets/passed-objective.svg) center center no-repeat;
+    background: url(/assets/passed-objective.svg) center center no-repeat;
     background-size: contain;
 }
