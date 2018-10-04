@@ -88,12 +88,15 @@ export default class Preferences extends Component {
     });
 
     if(filterNanArray.length !== 12){
+      this.refs.annualBudget.validationError();
       return 'Please fill all the required fields'
     }
     else if(this.props.calculatedData.annualBudget < 50000){
+      this.refs.annualBudget.validationError();
       return 'Please insert an annual budget higher than $50K';
     }
     else {
+      this.refs.annualBudget.noValidationError();
       return null;
     }
   }
@@ -461,6 +464,7 @@ export default class Preferences extends Component {
              </div> **/}
             <div className={this.classes.row}>
               <Label checkbox={this.state.isCheckAnnual} onChange={this.toggleBudgetsCheck.bind(this)} question={['']}
+                     ref='annualBudget'
                      description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget
                 ($)</Label>
               <div className={this.classes.cell}>

@@ -55,7 +55,7 @@ module.exports = function(args) {
   }
 
   const postcssLoader = '!postcss-loader?parser=postcss-safe-parser';
-  let cssLoader = 'css?modules&camelCase&importLoaders=1&localIdentName=[folder]-[name]__[local]---[hash:base64:5]';
+  let cssLoader = 'css?modules&camelCase&importLoaders=1&localIdentName=[folder]-[name]__[local]';
   // cssLoader += (env.optimize.css ? '&minimize' : '');
   cssLoader += postcssLoader;
 

@@ -2,15 +2,28 @@ import React from 'react';
 import Component from 'components/Component';
 
 import style from 'styles/controls-label.css';
+import buttonsSetStyle from 'styles/profile/buttons-set.css';
 
 export default class Label extends Component {
   style = style;
+  styles = [buttonsSetStyle];
+
   state = {
-    displayHelp: false
+    displayHelp: false,
+    validationError: false
   };
 
   static defaultProps = {
     checkboxDisabled: false,
+  };
+
+  validationError = () => {
+    this.setState({validationError: true})
+    this.refs.label.scrollIntoView();
+  };
+
+  noValidationError = () => {
+    this.setState({validationError: false})
   };
 
   render() {
@@ -68,10 +81,13 @@ export default class Label extends Component {
       className += ' ' + this.props.className;
     }
 
-    return <div className={ className } style={ this.props.style }>
+    return <div ref='label' className={ className } style={ this.props.style }>
       { (this.props.checkbox != undefined) ? <input type="checkbox" checked={ this.props.checkbox } disabled={this.props.checkboxDisabled ? true : null} onChange={ this.props.onChange }/> : null }
       { this.props.children }
       { question }
+      <div className={this.classes.iconMargin}>
+        <div hidden={!this.state.validationError} className={buttonsSetStyle.locals.validationError}/>
+      </div>
     </div>
   }
 }

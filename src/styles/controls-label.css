@@ -16,10 +16,14 @@
   height: 20px;
 }
 
+.icon-margin {
+  margin-left: 12px;
+}
+
 .question {
+  composes: icon-margin;
   width: 20px;
   height: 20px;
-  margin-left: 12px;
   background: url(/assets/question-icon.png) center center no-repeat;
 }
 
