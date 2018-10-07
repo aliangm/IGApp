@@ -30,7 +30,7 @@ export default class AuthorizationIntegrationPopup extends Component {
             history.push('/');
           }
           else {
-            console.log('error getting data from for api: ' + api);
+            console.log('error getting data for api: ' + api);
           }
         });
     }
@@ -95,7 +95,7 @@ export default class AuthorizationIntegrationPopup extends Component {
       <IntegrationPopup width={this.props.width}
                         innerClassName={this.props.innerClassName}
                         contentClassName={this.props.contentClassName}
-                        doneRequest ={this.props.doneServerRequest}
+                        doneRequest={this.props.doneServerRequest}
                         isOpen={!this.state.hidden}
                         close={this.close}
       >
