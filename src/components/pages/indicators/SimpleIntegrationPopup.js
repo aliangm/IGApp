@@ -10,7 +10,8 @@ export default class SimpleIntegrationPopup extends Component {
   style = style;
 
   static defaultProps = {
-    placeHolder: ''
+    placeHolder: '',
+    width: '400px'
   };
 
   constructor(props) {
@@ -42,7 +43,7 @@ export default class SimpleIntegrationPopup extends Component {
   };
 
   render() {
-    return <IntegrationPopup width={this.props.width || '400px'}
+    return <IntegrationPopup width={this.props.width}
                              doneRequest={this.doneRequest}
                              isOpen={this.props.isOpen}
                              close={this.props.close}
