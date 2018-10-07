@@ -13,7 +13,7 @@ const options = {
 const webAuth = new auth0.WebAuth(options);
 
 export function handleAuthentication(nextState, replace, callback) {
-  const hash = window.location.hash.slice(1);
+  const hash = window.location.hash;
   if (hash) {
     webAuth.parseHash({hash: hash}, function (err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
