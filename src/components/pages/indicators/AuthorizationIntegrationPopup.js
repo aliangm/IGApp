@@ -30,7 +30,7 @@ export default class AuthorizationIntegrationPopup extends Component {
             history.push('/');
           }
           else {
-            console.log('error getting data from for api: ' + api);
+            console.log('error getting data for api: ' + api);
           }
         });
     }
