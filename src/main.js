@@ -74,8 +74,8 @@ const requirePermission = (page, nextState, replace) => {
 const onUpdate = () => {
   window.scrollTo(0, 0);
   if (analytics) {
-    analytics.identify(getProfileSync().email);
     analytics.page();
+    analytics.identify(getProfileSync().email);
   }
 };
 
