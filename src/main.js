@@ -75,7 +75,7 @@ const onUpdate = () => {
   window.scrollTo(0, 0);
   if (analytics) {
     analytics.identify();
-    analytics.page();
+    analytics.page(getProfileSync().email);
   }
 };
 
