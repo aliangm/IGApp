@@ -128,6 +128,9 @@ export default class Header extends Component {
       </div>
       <div className={this.classes.itemsBox}>
         <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
+        <div className={this.classes.hiddenEmail}>
+          {user && user.email}
+        </div>
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
