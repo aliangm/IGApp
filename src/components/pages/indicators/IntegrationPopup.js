@@ -25,9 +25,11 @@ export default class IntegrationPopup extends Component {
     this.props.doneRequest()
       .then(() => {
         this.setState({error: false});
+        this.props.loadingStarted && this.props.loadingFinished();
         this.props.close();
       })
       .catch((error) => {
+        this.props.loadingStarted && this.props.loadingFinished();
         this.setState({error: true});
       });
   };

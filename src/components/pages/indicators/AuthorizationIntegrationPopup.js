@@ -97,6 +97,8 @@ export default class AuthorizationIntegrationPopup extends Component {
                         contentClassName={this.props.contentClassName}
                         doneRequest={this.props.doneServerRequest}
                         isOpen={!this.state.hidden}
+                        loadingStarted={this.props.loadingStarted}
+                        loadingFinished={this.props.loadingFinished}
                         close={this.close}
       >
         {this.props.children}
