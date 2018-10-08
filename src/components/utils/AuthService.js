@@ -2,6 +2,7 @@ import auth0 from 'auth0-js';
 import history from 'history';
 import config from 'components/utils/Configuration';
 import q from 'q';
+import {getParameterByName} from 'utils';
 
 const options = {
   responseType: 'token',
@@ -13,6 +14,12 @@ const options = {
 const webAuth = new auth0.WebAuth(options);
 
 export function handleAuthentication(nextState, replace, callback) {
+  const error = getParameterByName('error_description');
+  if (error) {
+    alert(error);
+    history.push('/');
+  }
+
   const hash = window.location.hash;
   if (hash) {
     webAuth.parseHash({hash: hash}, function (err, authResult) {
@@ -24,7 +31,7 @@ export function handleAuthentication(nextState, replace, callback) {
           console.log(err);
         }
         // navigate to the home route
-        replace({pathname: '/'});
+        history.push('/');
       }
     });
   }
