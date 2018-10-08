@@ -128,6 +128,7 @@ export default class Header extends Component {
       </div>
       <div className={this.classes.itemsBox}>
         <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
+        {/* Hidden Email, so we'll have the user id in customer labs */}
         <div className={this.classes.hiddenEmail}>
           {user && user.email}
         </div>
