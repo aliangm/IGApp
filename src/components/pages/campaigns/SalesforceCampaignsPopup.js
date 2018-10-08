@@ -178,7 +178,7 @@ export default class SalesforceAutomaticPopup extends Component {
           name: 'owners',
           options: this.props.userAccount.teamMembers
             .map(member => {
-              return {value: member.userId, label: member.name}
+              return {value: member.userId, label: member.firstName + ' ' + member.lastName}
             })
         }
       },

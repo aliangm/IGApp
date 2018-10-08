@@ -127,7 +127,7 @@ export default class Campaigns extends Component {
 
   render() {
     const {selectedIndex, campaigns} = this.state;
-    const {planUnknownChannels, teamMembers, campaignsTemplates, userFirstName, userLastName, inHouseChannels, addNotification, calculatedData: {committedBudgets, monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
+    const {planUnknownChannels, teamMembers, campaignsTemplates, inHouseChannels, addNotification, calculatedData: {committedBudgets, monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0]
       ? planUnknownChannels[0]
@@ -272,8 +272,6 @@ export default class Campaigns extends Component {
               teamMembers={teamMembers}
               campaignsTemplates={campaignsTemplates}
               updateCampaignsTemplates={this.updateCampaignsTemplates}
-              firstName={userFirstName}
-              lastName={userLastName}
               processedChannels={processedChannels}
               addNotification={addNotification}
             />

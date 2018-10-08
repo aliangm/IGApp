@@ -238,7 +238,7 @@ export default class Header extends Component {
             <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
             <div className={this.classes.userDetails}>
               <div className={this.classes.user}>
-                {user && user.name}
+                {user ? user.firstName + ' ' + user.lastName : ''}
               </div>
               <div className={this.classes.userCompany}>
                 {this.props.userCompany}
@@ -371,7 +371,7 @@ export default class Header extends Component {
           <div className={this.classes.logged}>
             {this.props.userCompany}
             <div className={this.classes.user}>
-              {user && user.name}
+              {user ? user.firstName + ' ' + user.lastName : ''}
             </div>
           </div>
         </div>

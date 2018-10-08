@@ -48,7 +48,8 @@ export default class AddMemberPopup extends Component {
     super(props);
 
     this.state = {
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       role: '',
       isAdmin: false,
@@ -61,7 +62,8 @@ export default class AddMemberPopup extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.hidden !== this.props.hidden) {
       this.setState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         role: '',
         isAdmin: false,
@@ -121,11 +123,20 @@ export default class AddMemberPopup extends Component {
           Invite Users
         </div>
         <div className={this.classes.row}>
-          <Label>Name</Label>
+          <Label>First Name</Label>
           <Textfield
-            value={this.state.name}
+            value={this.state.firstName}
             onChange={(e) => {
-              this.setState({name: e.target.value});
+              this.setState({firstName: e.target.value});
+            }}
+          />
+        </div>
+        <div className={this.classes.row}>
+          <Label>Last Name</Label>
+          <Textfield
+            value={this.state.lastName}
+            onChange={(e) => {
+              this.setState({lastName: e.target.value});
             }}
           />
         </div>

@@ -64,7 +64,8 @@ export default class Welcome extends Component {
     if (this.props.location.query.new) {
       const teamMembers = [{
         email: getProfileSync().email,
-        name: '',
+        firstName: '',
+        lastName: '',
         role: '',
         userId: getProfileSync().user_id
       }];
@@ -83,9 +84,9 @@ export default class Welcome extends Component {
     this.props.updateState({userAccount: update});
   }
 
-  handleChangeName(index, event) {
+  handleChangeName(property, index, event) {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers[index].name = event.target.value;
+    update.teamMembers[index][property] = event.target.value;
     this.props.updateState({userAccount: update});
   }
 
@@ -125,15 +126,18 @@ export default class Welcome extends Component {
 
   addMember() {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers.push({name: '', email: '', role: ''});
+    update.teamMembers.push({firstName: '', lastName: '', email: '', role: ''});
     this.props.updateState({userAccount: update});
   }
 
   validate(mainTeamMemeber) {
     const errorFields = [];
 
-    if (!mainTeamMemeber.name) {
-      errorFields.push('name');
+    if (!mainTeamMemeber.firstName) {
+      errorFields.push('firstName');
+    }
+    if (!mainTeamMemeber.lastName) {
+      errorFields.push('lastName');
     }
     if (!this.props.userAccount.companyName) {
       errorFields.push('companyName');
@@ -174,7 +178,7 @@ export default class Welcome extends Component {
     serverCommunication.serverRequest('PUT', 'members', JSON.stringify({
       newMember,
       admin: {
-        name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName,
+        name: this.props.userAccount.teamMembers[0].firstName + ' ' + this.props.userAccount.teamMembers[0].lastName,
         company: this.props.userAccount.companyName
       }
     }))
@@ -208,7 +212,8 @@ export default class Welcome extends Component {
 
   render() {
     const headRow = this.getTableRow(null, [
-      'Name',
+      'First Name',
+      'Last Name',
       'Email',
       'Role',
       'Admin',
@@ -222,7 +227,10 @@ export default class Welcome extends Component {
     const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
       return this.getTableRow(null, [
         <div className={PlannedVsActualstyle.locals.cellItem}>
-          {item.name}
+          {item.firstName}
+        </div>,
+        <div className={PlannedVsActualstyle.locals.cellItem}>
+          {item.lastName}
         </div>,
         <div className={PlannedVsActualstyle.locals.cellItem}>
           {item.email}
@@ -282,8 +290,13 @@ export default class Welcome extends Component {
       member => member.userId === getProfileSync().user_id);
     const userAccount = <div>
       <div className={this.classes.row}>
-        <Label>Name</Label>
-        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'}
+        <Label>First Name</Label>
+        <Textfield value={member && member.firstName} onChange={this.handleChangeName.bind(this, 'firstName', memberIndex)} ref={'firstName'}
+                   withValidationError={true}/>
+      </div>
+      <div className={this.classes.row}>
+        <Label>Last Name</Label>
+        <Textfield value={member && member.lastName} onChange={this.handleChangeName.bind(this, 'lastName', memberIndex)} ref={'lastName'}
                    withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
