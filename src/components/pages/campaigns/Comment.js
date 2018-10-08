@@ -74,7 +74,7 @@ export default class Task extends Component {
           <div className={ this.classes.content }>
             <Avatar member ={this.props.member} className={ this.classes.initials }/>
             <div className={ this.classes.name }>
-              {this.props.member && this.props.member.name}
+              {this.props.member ? this.props.member.firstName + ' ' + this.props.member.lastName : ''}
             </div>
             <div className={ this.classes.commentText }>
               {this.props.comment}

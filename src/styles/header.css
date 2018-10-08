@@ -429,5 +429,9 @@
   transform: rotate(-45deg);
 }
 
+.hidden-email {
+  display: none;
+}
+
 @mixin icon-nodpi header:notification , /assets/header/notifications-icon;
 @mixin icon-nodpi header:location , /assets/header/regions-icon;

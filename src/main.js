@@ -43,6 +43,7 @@ import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
 import {formatDate} from 'components/utils/date';
 import {userPermittedToPage, getParameterByName} from 'utils';
+import config from 'components/utils/Configuration';
 
 style.use();
 
@@ -71,8 +72,16 @@ const requirePermission = (page, nextState, replace) => {
   }
 };
 
+const onUpdate = () => {
+  window.scrollTo(0, 0);
+  if (config.sendEvents && analytics) {
+    analytics.page();
+    analytics.identify(getProfileSync().email);
+  }
+};
+
 ReactDOM.render(
-  <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
+  <Router onUpdate={onUpdate} history={history}>
     <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>

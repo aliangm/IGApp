@@ -12,7 +12,7 @@ export default class Avatar extends Component {
 
   getInitials() {
     const member = this.props.member;
-    const [firstName = '', lastName = ''] = member.name.split(' ');
+    const {firstName = '', lastName = ''} = member;
     return (firstName[0] || '') + (lastName[0] || '');
   }
 
@@ -50,7 +50,7 @@ export default class Avatar extends Component {
         :
         <div className={this.classes.outerDiv}>
           <div className={className}
-               style={{backgroundColor: "#" + this.intToRGB(this.hashCode(member.name))}}>
+               style={{backgroundColor: "#" + this.intToRGB(this.hashCode(member.firstName + ' ' + member.lastName))}}>
             {this.getInitials()}
           </div>
           {this.props.withShadow ? <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/>: null }

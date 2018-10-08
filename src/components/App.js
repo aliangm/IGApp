@@ -206,8 +206,6 @@ class AppComponent extends Component {
               if (data) {
                 this.setState({
                   userAccount: data,
-                  userFirstName: data.firstName,
-                  userLastName: data.lastName,
                   userCompany: data.companyName,
                   companyWebsite: data.companyWebsite,
                   logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
@@ -241,8 +239,6 @@ class AppComponent extends Component {
             .then((data) => {
               this.setState({
                 userAccount: data,
-                userFirstName: data.firstName,
-                userLastName: data.lastName,
                 userCompany: data.companyName,
                 logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
@@ -273,8 +269,6 @@ class AppComponent extends Component {
             .then((data) => {
               this.setState({
                 userAccount: data,
-                userFirstName: data.firstName,
-                userLastName: data.lastName,
                 userCompany: data.companyName,
                 logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
@@ -487,9 +481,9 @@ class AppComponent extends Component {
     if (isSendEmail) {
       serverCommunication.serverRequest('POST', 'email', JSON.stringify({
           email: this.state.teamMembers.find(member => member.userId === userId).email,
-          name: this.state.teamMembers.find(member => member.userId === userId).name,
+          name: this.state.teamMembers.find(member => member.userId === userId).firstName + ' ' + this.state.teamMembers.find(member => member.userId === userId).lastName,
           type: type,
-          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger).name,
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger).firstName + ' ' + this.state.teamMembers.find(member => member.userId === notification.tagger).lastName,
           campaignName: notification.campaignName,
           plainComment: notification.plainComment
         }),

@@ -21,7 +21,7 @@ export default class MentionNotification extends Component {
       <Avatar member={member} className={this.classes.initials}/>
       <div className={ this.classes.textWrap }>
         <div className={ mentionStyle.locals.tagger }>
-          { member.name }
+          { member.firstName + ' ' + member.lastName }
         </div>
         <div className={ mentionStyle.locals.text }>
           mentioned you on the campaign
