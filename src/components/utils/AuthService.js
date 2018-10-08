@@ -25,7 +25,7 @@ export function handleAuthentication(nextState, replace, callback) {
     webAuth.parseHash({hash: hash}, function (err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult);
-        replace({pathname: '/'});
+        history.push('/');
       } else {
         if (err) {
           console.log(err);
