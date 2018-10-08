@@ -96,7 +96,6 @@ export default class Preferences extends Component {
       return 'Please insert an annual budget higher than $50K';
     }
     else {
-      this.refs.annualBudget.noValidationError();
       return null;
     }
   }
@@ -104,12 +103,14 @@ export default class Preferences extends Component {
   handleChangeBudget(parameter, event) {
     let update = {};
     update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    this.refs.annualBudget.noValidationError();
     this.props.updateState(update, this.calculateBudgets);
   }
 
   handleChangeBudgetArray(index, event) {
     let update = this.props.annualBudgetArray || [];
     update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
+    this.refs.annualBudget.noValidationError();
     this.props.updateState({annualBudgetArray: update}, this.calculateBudgets);
   }
 
