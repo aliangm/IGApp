@@ -88,9 +88,11 @@ export default class Preferences extends Component {
     });
 
     if(filterNanArray.length !== 12){
+      this.refs.annualBudget.validationError();
       return 'Please fill all the required fields'
     }
     else if(this.props.calculatedData.annualBudget < 50000){
+      this.refs.annualBudget.validationError();
       return 'Please insert an annual budget higher than $50K';
     }
     else {
@@ -101,12 +103,14 @@ export default class Preferences extends Component {
   handleChangeBudget(parameter, event) {
     let update = {};
     update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    this.refs.annualBudget.noValidationError();
     this.props.updateState(update, this.calculateBudgets);
   }
 
   handleChangeBudgetArray(index, event) {
     let update = this.props.annualBudgetArray || [];
     update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
+    this.refs.annualBudget.noValidationError();
     this.props.updateState({annualBudgetArray: update}, this.calculateBudgets);
   }
 
@@ -461,6 +465,7 @@ export default class Preferences extends Component {
              </div> **/}
             <div className={this.classes.row}>
               <Label checkbox={this.state.isCheckAnnual} onChange={this.toggleBudgetsCheck.bind(this)} question={['']}
+                     ref='annualBudget'
                      description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget
                 ($)</Label>
               <div className={this.classes.cell}>
@@ -544,7 +549,7 @@ export default class Preferences extends Component {
                     <Notice warning style={{
                       margin: '12px 0'
                     }}>
-                      * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+                      * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning engine.
                     </Notice>
                   </div>
                   <div className={this.classes.row}>

@@ -1,5 +1,5 @@
 import { browserHistory, hashHistory } from 'react-router';
 
-const history = hashHistory;
+const history = browserHistory;
 
 export default history;

@@ -237,7 +237,7 @@ export default class PlanOptimizationPopup extends Component {
                                borderRadius: 'inherit',
                                boxShadow: 'none'
                              }}
-                             botAvatar='icons/InfiniGrow - white logo SVG.svg'
+                             botAvatar='/icons/InfiniGrow - white logo SVG.svg'
                              avatarStyle={{
                                backgroundColor: '#6c7482',
                                borderRadius: '50%',

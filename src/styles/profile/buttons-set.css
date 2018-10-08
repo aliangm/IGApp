@@ -3,7 +3,7 @@
 }
 
 .validation-error {
-    background: url(../../assets/attention.svg) center center no-repeat;
+    background: url(/assets/attention.svg) center center no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;

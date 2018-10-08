@@ -15,12 +15,12 @@
 
 .arrow-left {
     composes: arrow;
-    background-image: url(../assets/arrow_left.svg);
+    background-image: url(/assets/arrow_left.svg);
 }
 
 .arrow-right {
     composes: arrow;
-    background-image: url(../assets/arrow_right.svg);
+    background-image: url(/assets/arrow_right.svg);
 }
 
 .title-text {

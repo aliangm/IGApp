@@ -128,6 +128,10 @@ export default class Header extends Component {
       </div>
       <div className={this.classes.itemsBox}>
         <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
+        {/* Hidden Email, so we'll have the user id in customer labs */}
+        <div className={this.classes.hiddenEmail}>
+          {user && user.email}
+        </div>
         {hasUser ?
           <div className={this.classes.dropmenuButton}
                data-selected={this.state.notificationsVisible ? true : null}
@@ -238,7 +242,7 @@ export default class Header extends Component {
             <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
             <div className={this.classes.userDetails}>
               <div className={this.classes.user}>
-                {user && user.name}
+                {user ? user.firstName + ' ' + user.lastName : ''}
               </div>
               <div className={this.classes.userCompany}>
                 {this.props.userCompany}
@@ -371,7 +375,7 @@ export default class Header extends Component {
           <div className={this.classes.logged}>
             {this.props.userCompany}
             <div className={this.classes.user}>
-              {user && user.name}
+              {user ? user.firstName + ' ' + user.lastName : ''}
             </div>
           </div>
         </div>

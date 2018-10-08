@@ -34,7 +34,7 @@
     font-size: 26px;
     font-weight: 600;
     padding-left: 41px;
-    background: url(../../assets/plan_icons/arrow.svg) 12px 60% no-repeat;
+    background: url(/assets/plan_icons/arrow.svg) 12px 60% no-repeat;
     background-size: 17px auto;
 }
 
@@ -69,7 +69,7 @@
 .search-icon {
     width: 18px;
     height: 18px;
-    background: url(../../assets/search.svg) center center no-repeat;
+    background: url(/assets/search.svg) center center no-repeat;
     background-size: contain;
     z-index: 2;
     margin-right: -25px;
@@ -79,7 +79,7 @@
 .search-clear {
     width: 18px;
     height: 18px;
-    background: url(../../assets/delete-button.svg) center center no-repeat;
+    background: url(/assets/delete-button.svg) center center no-repeat;
     background-size: contain;
     z-index: 2;
     margin-left: -25px;

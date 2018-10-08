@@ -73,6 +73,12 @@ export default class TargetAudience extends Component {
     this.props.updateState({targetAudience: update});
   }
 
+  removeTab = (index) => {
+    const update = [...this.props.targetAudience];
+    update.splice(index, 1);
+    this.props.updateState({targetAudience: update});
+  };
+
   changeWeight(index, event) {
     let update = this.props.targetAudience.slice();
     const value = parseInt(event.target.value);
@@ -260,6 +266,7 @@ export default class TargetAudience extends Component {
               getTabName={(index) => `Persona ${index + 1}`}
               defaultTabs={defaultTabs.length > 0 ? defaultTabs : [null]}
               addTab={this.addTab.bind(this)}
+              removeTab={this.removeTab}
             >
               {({name, index}) => {
                 return <div>

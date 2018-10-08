@@ -87,7 +87,7 @@ export default class Sidebar extends Component {
           </FeatureToggle>
           <MenuItem icon="sidebar:plan"
                     text="Plan"
-                    link={'plan/annual'}
+                    link={'/plan/annual'}
                     isHighlighted={this.isHighlighted('/plan')}
                     pagePermission='plan'
           />

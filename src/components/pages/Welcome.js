@@ -64,7 +64,8 @@ export default class Welcome extends Component {
     if (this.props.location.query.new) {
       const teamMembers = [{
         email: getProfileSync().email,
-        name: '',
+        firstName: '',
+        lastName: '',
         role: '',
         userId: getProfileSync().user_id
       }];
@@ -83,9 +84,9 @@ export default class Welcome extends Component {
     this.props.updateState({userAccount: update});
   }
 
-  handleChangeName(index, event) {
+  handleChangeName(property, index, event) {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers[index].name = event.target.value;
+    update.teamMembers[index][property] = event.target.value;
     this.props.updateState({userAccount: update});
   }
 
@@ -125,17 +126,20 @@ export default class Welcome extends Component {
 
   addMember() {
     let update = Object.assign({}, this.props.userAccount);
-    update.teamMembers.push({name: '', email: '', role: ''});
+    update.teamMembers.push({firstName: '', lastName: '', email: '', role: ''});
     this.props.updateState({userAccount: update});
   }
 
   validate(mainTeamMemeber) {
     const errorFields = [];
 
-    if(!mainTeamMemeber.name) {
-      errorFields.push('name');
+    if (!mainTeamMemeber.firstName) {
+      errorFields.push('firstName');
     }
-    if(!this.props.userAccount.companyName){
+    if (!mainTeamMemeber.lastName) {
+      errorFields.push('lastName');
+    }
+    if (!this.props.userAccount.companyName) {
       errorFields.push('companyName');
     }
 
@@ -147,7 +151,7 @@ export default class Welcome extends Component {
       );
       return false;
     }
-    else  {
+    else {
       return true;
     }
   }
@@ -174,7 +178,7 @@ export default class Welcome extends Component {
     serverCommunication.serverRequest('PUT', 'members', JSON.stringify({
       newMember,
       admin: {
-        name: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName,
+        name: this.props.userAccount.teamMembers[0].firstName + ' ' + this.props.userAccount.teamMembers[0].lastName,
         company: this.props.userAccount.companyName
       }
     }))
@@ -208,7 +212,8 @@ export default class Welcome extends Component {
 
   render() {
     const headRow = this.getTableRow(null, [
-      'Name',
+      'First Name',
+      'Last Name',
       'Email',
       'Role',
       'Admin',
@@ -222,7 +227,10 @@ export default class Welcome extends Component {
     const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
       return this.getTableRow(null, [
         <div className={PlannedVsActualstyle.locals.cellItem}>
-          {item.name}
+          {item.firstName}
+        </div>,
+        <div className={PlannedVsActualstyle.locals.cellItem}>
+          {item.lastName}
         </div>,
         <div className={PlannedVsActualstyle.locals.cellItem}>
           {item.email}
@@ -251,13 +259,27 @@ export default class Welcome extends Component {
           options: [
             {value: 'CMO', label: 'CMO'},
             {value: 'VP Marketing', label: 'VP Marketing'},
+            {value: 'VP Growth', label: 'VP Growth'},
             {value: 'Chief Marketing Technologist', label: 'Chief Marketing Technologist'},
-            {value: 'Director of Marketing', label: 'Director of Marketing'},
             {value: 'Head of Marketing', label: 'Head of Marketing'},
+            {value: 'Marketing Director', label: 'Marketing Director'},
             {value: 'Marketing Manager', label: 'Marketing Manager'},
+            {value: 'Channel Manager', label: 'Channel Manager'},
+            {value: 'Region Manager', label: 'Region Manager'},
+            {value: 'Marketer', label: 'Marketer'},
+            {value: 'Growth Hacker', label: 'Growth Hacker'},
+            {value: 'Marketing Ops', label: 'Marketing Ops'},
+            {value: 'Analyst', label: 'Analyst'},
+            {value: 'Data Scientist', label: 'Data Scientist'},
             {value: 'CEO', label: 'CEO'},
             {value: 'CRO', label: 'CRO'},
-            {value: 'Marketer', label: 'Marketer'}
+            {value: 'CFO', label: 'CFO'},
+            {value: 'COO', label: 'COO'},
+            {value: 'Sales', label: 'Sales'},
+            {value: 'Consultant', label: 'Consultant'},
+            {value: 'Designer', label: 'Designer'},
+            {value: 'Product Manager', label: 'Product Manager'},
+            {value: 'Other', label: 'Other'}
           ]
         }
       }
@@ -268,8 +290,14 @@ export default class Welcome extends Component {
       member => member.userId === getProfileSync().user_id);
     const userAccount = <div>
       <div className={this.classes.row}>
-        <Label>Name</Label>
-        <Textfield value={member && member.name} onChange={this.handleChangeName.bind(this, memberIndex)} ref={'name'} withValidationError={true}/>
+        <Label>First Name</Label>
+        <Textfield value={member && member.firstName} onChange={this.handleChangeName.bind(this, 'firstName', memberIndex)} ref={'firstName'}
+                   withValidationError={true}/>
+      </div>
+      <div className={this.classes.row}>
+        <Label>Last Name</Label>
+        <Textfield value={member && member.lastName} onChange={this.handleChangeName.bind(this, 'lastName', memberIndex)} ref={'lastName'}
+                   withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Select {...selects.role} className={welcomeStyle.locals.select} selected={member && member.role}
@@ -277,7 +305,8 @@ export default class Welcome extends Component {
       </div>
       <div className={this.classes.row}>
         <Label>Phone</Label>
-        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this, memberIndex)} style={{width: '283px'}} withValidationError={true}/>
+        <Textfield value={member && member.phone} onChange={this.handleChangePhone.bind(this, memberIndex)}
+                   style={{width: '283px'}} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Email</Label>
@@ -285,13 +314,14 @@ export default class Welcome extends Component {
       </div>
       <div className={this.classes.row}>
         <Label>Picture</Label>
-        <Avatar member={member} className={welcomeStyle.locals.userPicture} />
+        <Avatar member={member} className={welcomeStyle.locals.userPicture}/>
       </div>
     </div>;
     const companyAccount = <div>
       <div className={this.classes.row}>
         <Label>Enter your brand/company name</Label>
-        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')} ref={'companyName'} withValidationError={true}/>
+        <Textfield value={this.props.userAccount.companyName} onChange={this.handleChange.bind(this, 'companyName')}
+                   ref={'companyName'} withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Company Website</Label>
@@ -342,7 +372,8 @@ export default class Welcome extends Component {
         <Textfield value={this.props.userAccount.competitorsWebsites[2]} style={{marginBottom: '16px'}}
                    onChange={this.handleChangeArray.bind(this, 'competitorsWebsites', 2)} withValidationError={true}/>
       </div>
-      <PayButton isPaid={this.props.userAccount && this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount && this.props.userAccount.trialEnd}/>
+      <PayButton isPaid={this.props.userAccount && this.props.userAccount.isPaid} pay={this.props.pay}
+                 trialEnd={this.props.userAccount && this.props.userAccount.trialEnd}/>
     </div>;
 
     const pageClass = !isPopupMode()
@@ -401,7 +432,7 @@ export default class Welcome extends Component {
                   fields</label>
               </div>
               <NextButton onClick={() => {
-                if(this.validate(member)) {
+                if (this.validate(member)) {
                   this.props.updateUserAccount(this.getUserAccountFields())
                     .then(() => {
                       if (this.props.region) {
@@ -417,8 +448,8 @@ export default class Welcome extends Component {
                       }
                     });
                 }
-                else  {
-                  this.setState({validationError: true})
+                else {
+                  this.setState({validationError: true});
                 }
               }}/>
             </div>
@@ -441,9 +472,12 @@ export default class Welcome extends Component {
                    userAccount={this.props.userAccount} close={() => {
         this.setState({showReasonPopup: false, createNewVisible: true});
       }}/>
-      <AddMemberPopup hidden={!this.state.showAddMemberPopup} close={() => {
-        this.setState({showAddMemberPopup: false});
-      }} inviteMember={this.inviteMember.bind(this)}/>
+      <AddMemberPopup hidden={!this.state.showAddMemberPopup}
+                      roleOptions={selects.role}
+                      close={() => {
+                        this.setState({showAddMemberPopup: false});
+                      }}
+                      inviteMember={this.inviteMember.bind(this)}/>
     </div>;
   }
 

@@ -2,6 +2,7 @@ import auth0 from 'auth0-js';
 import history from 'history';
 import config from 'components/utils/Configuration';
 import q from 'q';
+import {getParameterByName} from 'utils';
 
 const options = {
   responseType: 'token',
@@ -12,13 +13,19 @@ const options = {
 
 const webAuth = new auth0.WebAuth(options);
 
-export function handleAuthentication() {
-  const hash = window.location.hash.slice(1, window.location.hash.length - 10);
+export function handleAuthentication(nextState, replace, callback) {
+  const error = getParameterByName('error_description');
+  if (error) {
+    alert(error);
+    history.push('/');
+  }
+
+  const hash = window.location.hash;
   if (hash) {
     webAuth.parseHash({hash: hash}, function (err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult);
-        history.push('/');
+        replace({pathname: '/'});
       } else {
         if (err) {
           console.log(err);
@@ -27,6 +34,9 @@ export function handleAuthentication() {
         history.push('/');
       }
     });
+  }
+  else {
+    callback();
   }
 }
 
@@ -48,8 +58,11 @@ function setSession(authResult) {
   history.push('/');
 }
 
-export function login() {
-  webAuth.authorize();
+export function login(isSignup, email) {
+  webAuth.authorize({
+    initialScreen: isSignup ? 'signUp' : 'login',
+    prefill: email ? {email: email} : null
+  });
 }
 
 export function getToken() {
@@ -103,6 +116,6 @@ export function getProfile() {
 }
 
 export function getProfileSync() {
-    const profile = localStorage.getItem('profile');
-    return profile ? JSON.parse(profile) : {};
+  const profile = localStorage.getItem('profile');
+  return profile ? JSON.parse(profile) : {};
 }

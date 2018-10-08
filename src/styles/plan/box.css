@@ -128,13 +128,13 @@
 
 .info-icon-i {
   composes: info-icon;
-  background: url(../../assets/plan_icons/i.svg) center center no-repeat;
+  background: url(/assets/plan_icons/i.svg) center center no-repeat;
   background-size: 20px;
 }
 
 .info-icon-e {
   composes: info-icon;
-  background: url(../../assets/plan_icons/e.svg) center center no-repeat;
+  background: url(/assets/plan_icons/e.svg) center center no-repeat;
   background-size: 20px;
 }
 
@@ -177,7 +177,7 @@
   width: 33px;
   height: 33px;
 
-  background: url(../../assets/in-house.svg) center center no-repeat;
+  background: url(/assets/in-house.svg) center center no-repeat;
   background-size: contain;
 }
 

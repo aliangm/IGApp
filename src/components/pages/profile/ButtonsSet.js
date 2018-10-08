@@ -58,35 +58,38 @@ export default class ButtonsSet extends Component {
     const grid = Array.apply(null, {length: this.props.lines})
     .map((val, i) => {
       // debugger;
+      const lineItems = this.props.buttons
+        .slice(
+          Math.ceil(i * this.props.buttons.length / this.props.lines),
+          Math.ceil((i+1) * this.props.buttons.length / this.props.lines)
+        ).map((params, i) => {
+          const key = params.key || i;
+
+          return renderItem({
+            selected: key === this.state.selectedButton,
+            key: key,
+            params: params,
+            onClick: () => {
+              this.setState({
+                selectedButton: key
+              });
+
+              if (this.props.onChange) {
+                this.props.onChange(key);
+              }
+            }
+          });
+        });
+
+      if( i === this.props.lines - 1) {
+        lineItems.push(<div hidden={!this.state.validationError} className={this.classes.validationError}/>);
+      }
         return (
           <div className={`${this.classes.igGridRow} ig-grid-row-${i}`}>
-            {
-              this.props.buttons
-              .slice(
-                Math.ceil(i * this.props.buttons.length / this.props.lines),
-                Math.ceil((i+1) * this.props.buttons.length / this.props.lines)
-              ).map((params, i) => {
-                const key = params.key || i;
-    
-                return renderItem({
-                  selected: key === this.state.selectedButton,
-                  key: key,
-                  params: params,
-                  onClick: () => {
-                    this.setState({
-                      selectedButton: key
-                    });
-
-                    if (this.props.onChange) {
-                      this.props.onChange(key);
-                    }
-                  }
-                });
-              })
-            }
+            {lineItems}
             </div>
         )
-    })
+    });
     
     let help;
 
@@ -101,7 +104,6 @@ export default class ButtonsSet extends Component {
       <div className={ this.classes.inner }>
         { grid }
         { help }
-        <div hidden={!this.state.validationError} className={this.classes.validationError}/>
       </div>
     </div>
   }

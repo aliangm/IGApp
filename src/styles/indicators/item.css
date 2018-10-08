@@ -168,7 +168,7 @@
   width: 40px;
   height: 100%;
   cursor: pointer;
-  background: url(../../assets/indicator-icons/menu_button.svg) center center no-repeat;
+  background: url(/assets/indicator-icons/menu_button.svg) center center no-repeat;
   background-size: 20px auto;
 }
 
@@ -329,7 +329,7 @@ a:link {
 .add-new-plus {
   width: 98px;
   height: 98px;
-  background: url(../../assets/add-square-button.svg) center center no-repeat;
+  background: url(/assets/add-square-button.svg) center center no-repeat;
   background-size: contain;
   position: absolute;
   cursor: pointer;

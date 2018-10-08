@@ -7,6 +7,7 @@ import history from 'history';
 import serverCommunication from 'data/serverCommunication';
 import {isPopupMode, disablePopupMode, checkIfPopup} from 'modules/popup-mode';
 import {isAuthenticated, login, getProfile} from 'components/utils/AuthService';
+import {getParameterByName} from 'utils';
 
 export default class SignIn extends Component {
 
@@ -64,7 +65,9 @@ export default class SignIn extends Component {
         });
     }
     else {
-      login();
+      const isSignup = getParameterByName('signup');
+      const email = getParameterByName('email');
+      login(isSignup, email);
     }
   }
 

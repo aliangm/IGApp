@@ -24,7 +24,7 @@ export default class ReasonPopup extends Component {
   }
 
   render() {
-    const name = this.props.userAccount && this.props.userAccount.teamMembers[0] && this.props.userAccount.teamMembers[0].name;
+    const name = this.props.userAccount && this.props.userAccount.teamMembers[0] && (this.props.userAccount.teamMembers[0].firstName + ' ' + this.props.userAccount.teamMembers[0].lastName);
     return <div hidden={this.props.hidden}>
       <Page popup={true} width={'952px'} contentClassName={this.classes.content}>
         <div className={this.classes.center}>

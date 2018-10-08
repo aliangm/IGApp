@@ -1,14 +1,13 @@
 .label {
   color: #273142;
   font-size: 13px;
-  line-height: 13px;
+  line-height: 17px;
   font-weight: 600;
   height: 20px;
   display: flex;
   align-items: center;
   margin-bottom: 12px;
   letter-spacing: 0.050em;
-  white-space: nowrap;
   text-transform: uppercase;
 }
 
@@ -17,11 +16,15 @@
   height: 20px;
 }
 
+.icon-margin {
+  margin-left: 12px;
+}
+
 .question {
+  composes: icon-margin;
   width: 20px;
   height: 20px;
-  margin-left: 12px;
-  background: url(../assets/question-icon.png) center center no-repeat;
+  background: url(/assets/question-icon.png) center center no-repeat;
 }
 
 .tooltip {

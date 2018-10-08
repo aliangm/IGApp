@@ -57,7 +57,7 @@ export default class Select extends Component {
           }}/>
         </div>
         <div hidden={!this.state.validationError} style={{
-          background: 'url(../../assets/attention.svg) center center no-repeat',
+          background: 'url(/assets/attention.svg) center center no-repeat',
           backgroundSize: 'contain',
           minWidth: '20px',
           minHeight: '20px',

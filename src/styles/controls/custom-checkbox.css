@@ -37,7 +37,7 @@
 
 .check-mark {
     composes: size;
-    background: url('../../assets/checked.svg') center center no-repeat;
+    background: url('/assets/checked.svg') center center no-repeat;
     background-size: 7px auto;
 }
 

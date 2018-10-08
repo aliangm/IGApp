@@ -52,25 +52,25 @@
 
 .scratch {
     composes: box;
-    background: url(assets/reason-icons/scratch.svg) center 10% no-repeat;
+    background: url(/assets/reason-icons/scratch.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .optimize {
     composes: box;
-    background: url(assets/reason-icons/optimize.svg) center 10% no-repeat;
+    background: url(/assets/reason-icons/optimize.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .control {
     composes: box;
-    background: url(assets/reason-icons/control.svg) center 10% no-repeat;
+    background: url(/assets/reason-icons/control.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 
 .end-to-end {
     composes: box;
-    background: url(assets/reason-icons/end-to-end.svg) center 10% no-repeat;
+    background: url(/assets/reason-icons/end-to-end.svg) center 10% no-repeat;
     background-size: 95px 85px;
 }
 

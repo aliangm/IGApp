@@ -6,9 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp",
-    "start": "http-server -p 7272 ./output -c-1",
-    "watch": "node node_modules\\gulp\\bin\\gulp.js watch",
-    "watch-mac": "gulp watch"
+    "dev": "gulp dev"
   },
   "author": "",
   "license": "ISC",
@@ -63,6 +61,7 @@
     "strict-loader": "^1.1.0",
     "style-loader": "git+https://github.com/NekR/style-loader.git",
     "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.13.1",
     "whatwg-fetch": "^2.0.2",
     "js-search": "latest",
     "copy-to-clipboard": "^3.0.8",
@@ -75,7 +74,7 @@
     "react-input-range": "^1.3.0"
   },
   "dependencies": {
-    "auth0-js": "9.7.2",
+    "auth0-js": "9.8",
     "react-simple-chatbot": "0.2.3",
     "styled-components": "^3.4.2"
   }

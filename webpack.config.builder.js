@@ -42,6 +42,7 @@ module.exports = function(args) {
     }),
     new CopyWebpackPlugin([
       { from: 'src/icons', to: 'icons' },
+      { from: 'src/assets', to: 'assets' },
       { from: 'src/googleapi', to: 'googleapi' },
       { from: 'src/icons/favicon.ico', to: 'favicon.ico' },
       { from: 'src/icons/apple-touch-icon.png', to: 'apple-touch-icon.png' },
@@ -54,7 +55,7 @@ module.exports = function(args) {
   }
 
   const postcssLoader = '!postcss-loader?parser=postcss-safe-parser';
-  let cssLoader = 'css?modules&camelCase&importLoaders=1&localIdentName=[folder]-[name]__[local]---[hash:base64:5]';
+  let cssLoader = 'css?modules&camelCase&importLoaders=1&localIdentName=[folder]-[name]__[local]';
   // cssLoader += (env.optimize.css ? '&minimize' : '');
   cssLoader += postcssLoader;
 

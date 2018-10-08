@@ -75,7 +75,7 @@ export default class Plan extends Component {
       const newMonth = {};
 
       Object.keys(month).forEach((indicator) => {
-        if (month[indicator].planner) {
+        if (!isNil(month[indicator].planner)) {
           newMonth[indicator] = {
             committed: month[indicator].planner
           };

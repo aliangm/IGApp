@@ -280,10 +280,8 @@ export default class Brief extends Component {
     });
     if (this.props.teamMembers) {
       this.props.teamMembers.forEach((member) => {
-        if (member.name !== '') {
-          const label = getProfileSync().app_metadata && getProfileSync().user_id === member.userId ? member.name + ' (me)' : member.name;
+          const label = getProfileSync().app_metadata && getProfileSync().user_id === member.userId ? member.firstName + ' ' + member.lastName + ' (me)' : member.firstName + ' ' + member.lastName;
           selects.owner.select.options.push({value: member.userId, label: label});
-        }
       });
     }
 

@@ -1,42 +1,42 @@
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-Thin.ttf);
+  src: url(/assets/fonts/FaktPro-Thin.ttf);
   font-weight: 100;
 }
 
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-Light.ttf);
+  src: url(/assets/fonts/FaktPro-Light.ttf);
   font-weight: 200;
 }
 
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-Blond.ttf);
+  src: url(/assets/fonts/FaktPro-Blond.ttf);
   font-weight: 300;
 }
 
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-Normal.ttf);
+  src: url(/assets/fonts/FaktPro-Normal.ttf);
   font-weight: normal;
 }
 
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-Medium.ttf);
+  src: url(/assets/fonts/FaktPro-Medium.ttf);
   font-weight: 500;
 }
 
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-SemiBold.ttf);
+  src: url(/assets/fonts/FaktPro-SemiBold.ttf);
   font-weight: 600;
 }
 
 @font-face {
   font-family: FaktPro;
-  src: url(../../assets/fonts/FaktPro-Bold.ttf);
+  src: url(/assets/fonts/FaktPro-Bold.ttf);
   font-weight: bold;
 }
 

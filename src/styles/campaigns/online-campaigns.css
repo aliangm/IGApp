@@ -52,8 +52,8 @@
     background-color: white;
 }
 
-@mixin icon-nodpi status:On Hold, ../../assets/on-hold;
-@mixin icon-nodpi status:In Progress, ../../assets/in-progress;
+@mixin icon-nodpi status:On Hold, /assets/on-hold;
+@mixin icon-nodpi status:In Progress, /assets/in-progress;
 
 .status-icon {
     composes: icon;

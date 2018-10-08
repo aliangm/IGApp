@@ -59,7 +59,7 @@
 }
 
 .copy-to-clipboard {
-    background: url(../../assets/copy-documents-option.svg) center center no-repeat;
+    background: url(/assets/copy-documents-option.svg) center center no-repeat;
     background-size: contain;
     height: 17px;
     width: 25px;
@@ -70,7 +70,7 @@
 }
 
 .copy-to-clipboard[data-checked] {
-    background: url(../../assets/copy-documents-option-checked.svg) center center no-repeat;
+    background: url(/assets/copy-documents-option-checked.svg) center center no-repeat;
     background-size: contain;
 }
 
