@@ -10,26 +10,25 @@ export default class AddChannelPopup extends Component {
 
   style = style;
 
+  initialState = {
+    visibleChannels: this.props.channels.root.children,
+    expandedChannels: [],
+    otherChannel: false,
+    otherChannelName: ''
+  };
+
   constructor(props) {
     super(props);
-
-    const { channels } = props;
-
-    this.state = {
-      visibleChannels: channels.root.children,
-      expandedChannels: [],
-      otherChannel: false,
-      otherChannelName: ''
-    };
+    this.state = this.initialState;
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
-      const { channels } = nextProps;
+      this.setState(this.initialState);
 
-      this.setState({
-        visibleChannels: channels.root.children
-      });
+      if(nextProps.initialExpandedChannel){
+        this.toggleChannel(nextProps.initialExpandedChannel);
+      }
     }
   }
 

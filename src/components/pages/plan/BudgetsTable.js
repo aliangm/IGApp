@@ -301,15 +301,22 @@ export default class BudgetsTable extends Component {
 
           <div className={this.classes.titleText}>{data.nickname}</div>
 
-          {!isCategoryRow && this.props.isEditMode ? <div
-            className={this.classes.channelEditIconsWrapper}>
-            <div className={this.classes.channelEditIcons}>
-              <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
-                   onClick={() => this.setState({editChannelName: data.channel})}/>
-              <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
-                   onClick={() => this.setState({deletePopup: data.channel})}/>
+          {this.props.isEditMode ? <div
+              className={this.classes.channelEditIconsWrapper}>
+              {isCategoryRow ? <div className={this.classes.channelEditIcons}>
+                  <div className={this.classes.channelActionIcon} data-icon={'plan:addChannel'}
+                       onClick={() => this.props.openAddChannelPopup(data.channel)}/>
+                </div>
+                : <div className={this.classes.channelEditIcons}>
+                  <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
+                       onClick={() => this.setState({editChannelName: data.channel})}/>
+                  <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
+                       onClick={() => this.setState({deletePopup: data.channel})}/>
+                </div>
+              }
             </div>
-          </div> : null}
+            : null
+          }
         </div>
       </div>
     </td>;
