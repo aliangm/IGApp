@@ -227,7 +227,7 @@ export default class SalesforceAutomaticPopup extends Component {
                                           contentClassName={salesForceStyle.locals.content}
                                           afterDataRetrieved={this.afterDataRetrieved}
                                           api='salesforceapi'
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           ref='authPopup'
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}

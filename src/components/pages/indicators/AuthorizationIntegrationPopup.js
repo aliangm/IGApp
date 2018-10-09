@@ -91,10 +91,10 @@ export default class AuthorizationIntegrationPopup extends Component {
       });
   };
 
-  doneServerRequest = () => {
+  makeServerRequest = () => {
     this.props.loadingStarted && this.props.loadingStarted();
     this.setState({hidden: true});
-    return this.props.doneServerRequest();
+    return this.props.makeServerRequest();
   };
 
   onDoneServerRequest = (isError) => {
@@ -113,7 +113,7 @@ export default class AuthorizationIntegrationPopup extends Component {
       <IntegrationPopup width={this.props.width}
                         innerClassName={this.props.innerClassName}
                         contentClassName={this.props.contentClassName}
-                        doneRequest={this.doneServerRequest}
+                        makeServerRequest={this.makeServerRequest}
                         isOpen={!this.state.hidden}
                         loadingStarted={this.props.loadingStarted}
                         loadingFinished={this.props.loadingFinished}

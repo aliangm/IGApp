@@ -86,8 +86,10 @@ export default class LinkedinAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup ref='authPopup'
                                           api='linkedinapi'
                                           afterDataRetrieved={this.afterDataRetrieved}
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           width='340px'
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
     >
       {this.state.accounts.length > 0
         ? <div>

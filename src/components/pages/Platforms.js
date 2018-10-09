@@ -120,7 +120,10 @@ export default class Platforms extends Component {
                                 loadingStarted={() => this.setLoading('google', true)}
                                 loadingFinished={() => this.setLoading('google', false)}
           />
-          <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState} ref="linkedin"/>
+          <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState} ref="linkedin"
+                                  loadingStarted={() => this.setLoading('linkedin', true)}
+                                  loadingFinished={() => this.setLoading('linkedin', false)}
+          />
           <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState} ref="facebook"/>
           <TwitterAutomaticPopup setDataAsState={this.props.setDataAsState} ref="twitter"/>
           <YoutubeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="youtube"/>
@@ -179,6 +182,7 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="social">
               <Platform connected={this.props.isLinkedinAuto} title="LinkedIn"
+                        loading={this.isLoading('linkedin')}
                         indicators={PLATFORM_INDICATORS_MAPPING['LinkedIn']} icon="platform:linkedin" open={() => {
                 this.refs.linkedin.open();
               }} hidden={this.isHidden('linkedin')}/>

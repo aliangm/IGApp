@@ -30,7 +30,7 @@ export default class IntegrationPopup extends Component {
   };
 
   done = () => {
-    this.props.doneRequest()
+    this.props.makeServerRequest()
       .then(() => {
         this.setState({error: false});
         this.props.onDoneServerRequest(false);

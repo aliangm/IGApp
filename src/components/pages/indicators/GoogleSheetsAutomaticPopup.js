@@ -109,7 +109,7 @@ export default class GoogleSheetsAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup ref='authPopup'
                                           api='googlesheetsapi'
                                           afterDataRetrieved={this.afterDataRetrieved}
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           width='600px'
                                           contentClassName={loadTemplateStyle.locals.content}
                                           loadingStarted={this.props.loadingStarted}
