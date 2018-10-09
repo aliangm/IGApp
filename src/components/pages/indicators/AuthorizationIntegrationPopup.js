@@ -60,6 +60,7 @@ export default class AuthorizationIntegrationPopup extends Component {
   };
 
   afterAuthorization = (code) => {
+    this.props.loadingStarted && this.props.loadingStarted();
     serverCommunication.serverRequest('post',
       this.props.api,
       JSON.stringify({code: code}),
@@ -70,17 +71,21 @@ export default class AuthorizationIntegrationPopup extends Component {
             .then((data) => {
               this.props.afterDataRetrieved(data)
                 .then((showPopup) => {
+                  this.props.loadingFinished && this.props.loadingFinished();
                   this.setState({hidden: !showPopup});
                 })
                 .catch((error) => {
+                  this.props.loadingFinished && this.props.loadingFinished();
                   window.alert('Error occurred');
                 });
             });
         }
         else if (response.status == 401) {
+          this.props.loadingFinished && this.props.loadingFinished();
           history.push('/');
         }
         else {
+          this.props.loadingFinished && this.props.loadingFinished();
           window.alert('Error occurred');
         }
       });

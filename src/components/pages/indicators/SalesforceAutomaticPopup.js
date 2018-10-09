@@ -229,6 +229,8 @@ export default class SalesforceAutomaticPopup extends Component {
                                           api='salesforceapi'
                                           doneServerRequest={this.getUserData}
                                           ref='authPopup'
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
     >
       <Title title="SalesForce"
              subTitle="Define your pipeline stages"/>

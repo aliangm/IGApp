@@ -122,6 +122,8 @@ export default class GoogleAutomaticPopup extends Component {
                                           api='googleapi'
                                           afterDataRetrieved={this.afterDataRetrieved}
                                           doneServerRequest={this.getUserData}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
                                           width='340px'>
       <div className={this.classes.row}>
         <Label style={{fontSize: '16px', color: '#24B10E'}} checkbox={this.state.isWebsiteEnabled} onChange={() => {

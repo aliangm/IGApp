@@ -106,16 +106,28 @@ export default class Platforms extends Component {
         <Title title="Integrations"/>
         <div>
           <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.salesforceAuto}
-                                    ref="salesforce"/>
+                                    ref="salesforce"
+                                    loadingStarted={() => this.setLoading('salesforce', true)}
+                                    loadingFinished={() => this.setLoading('salesforce', false)}
+          />
           <HubspotAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.hubspotAuto}
-                                 updateState={this.props.updateState} ref="hubspot"/>
+                                 updateState={this.props.updateState} ref="hubspot"
+                                 loadingStarted={() => this.setLoading('hubspot', true)}
+                                 loadingFinished={() => this.setLoading('hubspot', false)}
+          />
           <GoogleAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleAuto}
-                                ref="googleAnalytics"/>
+                                ref="googleAnalytics"
+                                loadingStarted={() => this.setLoading('google', true)}
+                                loadingFinished={() => this.setLoading('google', false)}
+          />
           <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState} ref="linkedin"/>
           <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState} ref="facebook"/>
           <TwitterAutomaticPopup setDataAsState={this.props.setDataAsState} ref="twitter"/>
           <YoutubeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="youtube"/>
-          <StripeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="stripe"/>
+          <StripeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="stripe"
+                                loadingStarted={() => this.setLoading('stripe', true)}
+                                loadingFinished={() => this.setLoading('stripe', false)}
+          />
           <MozAutomaticPopup setDataAsState={this.props.setDataAsState} defaultUrl={this.props.mozapi
             ? this.props.mozapi.url
             : this.props.userAccount.companyWebsite} ref="moz"/>
@@ -137,10 +149,12 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="crm">
               <Platform connected={this.props.salesforceAuto} title="Salesforce"
+                        loading={this.isLoading('salesforce')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {
                 this.refs.salesforce.open();
               }} hidden={this.isHidden('salesforce')}/>
               <Platform connected={this.props.hubspotAuto} title="Hubspot"
+                        loading={this.isLoading('hubspot')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Hubspot']} icon="platform:hubspot" open={() => {
                 this.refs.hubspot.open();
               }} hidden={this.isHidden('hubspot')}/>
@@ -152,6 +166,7 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="webAnalytics">
               <Platform connected={this.props.googleAuto} title="Google Analytics"
+                        loading={this.isLoading('google')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']} icon="platform:googleAnalytics"
                         open={() => {
                           this.refs.googleAnalytics.open();
@@ -187,6 +202,7 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="payment">
               <Platform connected={this.props.isStripeAuto} title="Stripe"
+                        loading={this.isLoading('stripe')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Stripe']} icon="platform:stripe" open={() => {
                 this.refs.stripe.open();
               }} hidden={this.isHidden('stripe')}/>
