@@ -3,6 +3,8 @@ import Component from 'components/Component';
 import style from 'styles/controls/button.css';
 import icons from 'styles/onboarding/buttons.css';
 
+const ICON_MARGIN = '8px';
+
 export default class Button extends Component {
 
   style = style;
@@ -35,11 +37,11 @@ export default class Button extends Component {
                 data-selected={this.props.selected || null}
     >
       {this.props.icon && this.props.iconPosition === 'left' ?
-        <div className={this.classes.icon} data-icon={this.props.icon}/>
+        <div className={this.classes.icon} style={{marginRight: ICON_MARGIN}} data-icon={this.props.icon}/>
         : null}
       <div className={contClassName}>{this.props.children}</div>
       {this.props.icon && this.props.iconPosition === 'right' ?
-        <div className={this.classes.icon} data-icon={this.props.icon}/>
+        <div className={this.classes.icon} style={{marginLeft: ICON_MARGIN}} data-icon={this.props.icon}/>
         : null}
     </div>;
   }
