@@ -223,7 +223,8 @@ export default class Content extends Component {
             </div>
           </div>
           <div className={this.classes.colCenter}>
-            <div className={dashboardStyle.locals.item}>
+            <div className={dashboardStyle.locals.item}
+                 data-tip='How many out of those who started to read the content piece, actually read/finished it.'>
               <div className={dashboardStyle.locals.text}>
                 Avg. Read Ratio
               </div>
@@ -233,7 +234,8 @@ export default class Content extends Component {
             </div>
           </div>
           <div className={this.classes.colRight}>
-            <div className={dashboardStyle.locals.item}>
+            <div className={dashboardStyle.locals.item}
+                 data-tip='How many out of those who saw/read the content piece, moved to another page in the website afterward.'>
               <div className={dashboardStyle.locals.text}>
                 Avg. Proceed ratio
               </div>
