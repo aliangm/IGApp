@@ -20,27 +20,28 @@ export default class Platform extends Component {
   };
 
   render() {
-    return <div>{this.props.loading ? <Loading hidden={false} icon={this.props.icon}
-                                               className={this.classes.defaultDimensions}/>
-      : <div className={this.classes.square} hidden={this.props.hidden}
-             data-connected={this.props.connected ? true : null}>
-        <div className={this.classes.platformIcon} data-tip={this.getTooltipHtml()} data-for='platforms'
-             data-icon={this.props.icon}/>
-        <div className={this.classes.platformText}>
-          {this.props.title}
-        </div>
-        <Button type="primary" className={this.classes.connectButton} onClick={this.props.open}>
-          Connect
-        </Button>
-        <div className={this.classes.footer}>
-          <div className={this.classes.checkIcon}/>
-          <div>
-            Connected
+    return <div>
+      {this.props.loading ? <Loading hidden={false} icon={this.props.icon}
+                                     className={this.classes.defaultDimensions}/>
+        : <div className={this.classes.square} hidden={this.props.hidden}
+               data-connected={this.props.connected ? true : null}>
+          <div className={this.classes.platformIcon} data-tip={this.getTooltipHtml()} data-for='platforms'
+               data-icon={this.props.icon}/>
+          <div className={this.classes.platformText}>
+            {this.props.title}
           </div>
-          <div className={this.classes.footerButton} onClick={this.props.open}/>
+          <Button type="primary" className={this.classes.connectButton} onClick={this.props.open}>
+            Connect
+          </Button>
+          <div className={this.classes.footer}>
+            <div className={this.classes.checkIcon}/>
+            <div>
+              Connected
+            </div>
+            <div className={this.classes.footerButton} onClick={this.props.open}/>
+          </div>
         </div>
-      </div>
-    }
+      }
     </div>;
   }
 };
