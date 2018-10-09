@@ -309,8 +309,7 @@ export default class BudgetsTable extends Component {
 
           <div className={this.classes.titleText}>{data.nickname}</div>
 
-          {this.props.isEditMode ? <div
-              className={this.classes.channelEditIconsWrapper}>
+          {this.props.isEditMode ? <div className={this.classes.channelEditIconsWrapper}>
               {isCategoryRow ? <div className={this.classes.channelEditIcons}>
                   {this.state.categoryOnHover === data.channel
                     ? <Button icon='plan:addChannel'
