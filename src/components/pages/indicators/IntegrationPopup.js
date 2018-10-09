@@ -16,13 +16,11 @@ export default class IntegrationPopup extends Component {
     };
   }
 
-
   componentWillReceiveProps(nextProps) {
     if(!nextProps.isOpen) {
       this.setState({error: false});
     }
   }
-
 
   close = () => {
     this.setState({error: false});
