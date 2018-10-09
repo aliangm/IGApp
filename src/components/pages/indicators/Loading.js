@@ -10,7 +10,7 @@ export default class Loading extends Component {
   style = style;
 
   render() {
-    return <div className={ this.classes.frame }>
+    return <div className={ this.classes.frame + ' ' +(this.props.className || '') }>
         <div className={ this.classes.top }>
           <div className={ this.classes.topInner }>
             <div className={ this.classes.title }>

@@ -20,7 +20,8 @@ export default class Platform extends Component {
   };
 
   render() {
-    return <div>{this.props.loading ? <Loading hidden={false} icon={this.props.icon}/>
+    return <div>{this.props.loading ? <Loading hidden={false} icon={this.props.icon}
+                                               className={this.classes.defaultDimensions}/>
       : <div className={this.classes.square} hidden={this.props.hidden}
              data-connected={this.props.connected ? true : null}>
         <div className={this.classes.platformIcon} data-tip={this.getTooltipHtml()} data-for='platforms'
