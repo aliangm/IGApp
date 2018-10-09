@@ -17,6 +17,8 @@ import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import {getDatesSpecific} from 'components/utils/date';
+import Button from 'components/controls/Button';
+import history from 'history';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -304,8 +306,13 @@ export default class BudgetsTable extends Component {
           {this.props.isEditMode ? <div
               className={this.classes.channelEditIconsWrapper}>
               {isCategoryRow ? <div className={this.classes.channelEditIcons}>
-                  <div className={this.classes.channelActionIcon} data-icon={'plan:addChannel'}
-                       onClick={() => this.props.openAddChannelPopup(data.channel)}/>
+                  <Button icon='plan:addChannel'
+                          type="secondary"
+                          style={{width:'80px'}}
+                          onClick={() => {
+                            this.props.openAddChannelPopup(data.channel)
+                          }}> Add
+                  </Button>
                 </div>
                 : <div className={this.classes.channelEditIcons}>
                   <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
