@@ -245,7 +245,13 @@ export default class BudgetsTable extends Component {
   };
 
   getTitleCell = (isCategoryRow, data) => {
-    return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}>
+    return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}
+               onMouseEnter={isCategoryRow ? () => {
+                 this.setState({categoryOnHover: data.channel});
+               } : null}
+               onMouseLeave={isCategoryRow ? () => {
+                 this.setState({categoryOnHover: null});
+               } : null}>
       <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true : null}>
         {isCategoryRow ?
           <div className={this.classes.rowArrowBox}>
@@ -306,13 +312,14 @@ export default class BudgetsTable extends Component {
           {this.props.isEditMode ? <div
               className={this.classes.channelEditIconsWrapper}>
               {isCategoryRow ? <div className={this.classes.channelEditIcons}>
-                  <Button icon='plan:addChannel'
-                          type="secondary"
-                          style={{width:'80px'}}
-                          onClick={() => {
-                            this.props.openAddChannelPopup(data.channel)
-                          }}> Add
-                  </Button>
+                  {this.state.categoryOnHover === data.channel
+                    ? <Button icon='plan:addChannel'
+                              type="primary"
+                              style={{width: '80px'}}
+                              onClick={() => {
+                                this.props.openAddChannelPopup(data.channel);
+                              }}> Add
+                    </Button> : null}
                 </div>
                 : <div className={this.classes.channelEditIcons}>
                   <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
