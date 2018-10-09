@@ -47,6 +47,7 @@ export default class SimpleIntegrationPopup extends Component {
                              doneRequest={this.doneRequest}
                              isOpen={this.props.isOpen}
                              close={this.props.close}
+                             onDoneServerRequest={this.props.close}
     >
       <div style={{display: 'grid'}}>
         <div className={this.classes.row}>

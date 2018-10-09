@@ -1,16 +1,9 @@
 .frame {
-    z-index: 2;
-    display: block;
-    bottom: 75px;
-    position: fixed;
-    right: 25px;
     background: white;
     height: 191px;
     width: 255px;
     box-sizing: border-box;
     user-select: none;
-    flex-shrink: 0;
-    flex-grow: 0;
     border: 1px #f8f8f8;
     border-radius: 5px;
     -moz-box-sizing: border-box;
@@ -38,7 +31,8 @@
 }
 
 .icon {
-    background: url(/assets/hubspot.png) center center no-repeat;
+    background-repeat: no-repeat;
+    background-position: center;
     background-size: contain;
     height: 59px;
     margin-top: -14px;

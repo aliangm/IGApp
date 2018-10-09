@@ -16,6 +16,14 @@ export default class IntegrationPopup extends Component {
     };
   }
 
+
+  componentWillReceiveProps(nextProps) {
+    if(!nextProps.isOpen) {
+      this.setState({error: false});
+    }
+  }
+
+
   close = () => {
     this.setState({error: false});
     this.props.close();
@@ -25,12 +33,11 @@ export default class IntegrationPopup extends Component {
     this.props.doneRequest()
       .then(() => {
         this.setState({error: false});
-        this.props.loadingStarted && this.props.loadingFinished();
-        this.props.close();
+        this.props.onDoneServerRequest(false);
       })
       .catch((error) => {
-        this.props.loadingStarted && this.props.loadingFinished();
         this.setState({error: true});
+        this.props.onDoneServerRequest(true);
       });
   };
 

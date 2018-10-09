@@ -73,7 +73,7 @@ export default class AuthorizationIntegrationPopup extends Component {
                   this.setState({hidden: !showPopup});
                 })
                 .catch((error) => {
-                  window.alert('error getting data');
+                  window.alert('Error occurred');
                 });
             });
         }
@@ -81,9 +81,22 @@ export default class AuthorizationIntegrationPopup extends Component {
           history.push('/');
         }
         else {
-          window.alert('error getting data');
+          window.alert('Error occurred');
         }
       });
+  };
+
+  doneServerRequest = () => {
+    this.props.loadingStarted && this.props.loadingStarted();
+    this.setState({hidden: true});
+    return this.props.doneServerRequest();
+  };
+
+  onDoneServerRequest = (isError) => {
+    if(isError) {
+      window.alert('Error occurred');
+    }
+    this.props.loadingFinished && this.props.loadingFinished();
   };
 
   close = () => {
@@ -95,11 +108,12 @@ export default class AuthorizationIntegrationPopup extends Component {
       <IntegrationPopup width={this.props.width}
                         innerClassName={this.props.innerClassName}
                         contentClassName={this.props.contentClassName}
-                        doneRequest={this.props.doneServerRequest}
+                        doneRequest={this.doneServerRequest}
                         isOpen={!this.state.hidden}
                         loadingStarted={this.props.loadingStarted}
                         loadingFinished={this.props.loadingFinished}
                         close={this.close}
+                        onDoneServerRequest={this.onDoneServerRequest}
       >
         {this.props.children}
       </IntegrationPopup>
