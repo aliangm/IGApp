@@ -14,6 +14,7 @@ import {formatChannels} from 'components/utils/channels';
 import Page from 'components/Page';
 import Button from 'components/controls/Button';
 import Title from 'components/onboarding/Title';
+import {extractNumberFromBudget} from 'components/utils/budget';
 
 export default class PlanFromExcel extends Component {
 
@@ -102,8 +103,7 @@ export default class PlanFromExcel extends Component {
           if (channels[channelKey]) {
             // Remove letters
             const row = channels[channelKey].replace(/\D/g, '');
-            const value = worksheet[column + row] && worksheet[column + row].v;
-            const budget = value || 0;
+            const budget = extractNumberFromBudget(worksheet[column + row] && worksheet[column + row].v);
             planBudgets[monthIndex][channelKey] = {
               isSoft: false,
               committedBudget: budget,
