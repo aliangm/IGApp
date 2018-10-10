@@ -32,7 +32,10 @@ export function formatBudgetShortened(budget) {
 }
 
 export function extractNumberFromBudget(budget, defaultValue = 0) {
-  return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
+  if (budget) {
+    return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
+  }
+  return defaultValue;
 }
 
 export function getPlanBudgetsData(planBudgets) {

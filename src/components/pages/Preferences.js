@@ -82,16 +82,30 @@ export default class Preferences extends Component {
     }
   }
 
+  getDataToUpdate = () => {
+    return {
+      annualBudget: this.props.annualBudget,
+      annualBudgetArray: this.props.annualBudgetArray,
+      objectives: this.props.objectives,
+      blockedChannels: this.props.blockedChannels,
+      inHouseChannels: this.props.inHouseChannels,
+      maxChannels: this.props.maxChannels,
+      planBudgets: this.props.planBudgets,
+      budgetConstraints: this.props.budgetConstraints,
+      planNeedsUpdate: true
+    };
+  };
+
   validate() {
     let filterNanArray = this.props.annualBudgetArray.filter((value) => {
       return !!value;
     });
 
-    if(filterNanArray.length !== 12){
+    if (filterNanArray.length !== 12) {
       this.refs.annualBudget.validationError();
-      return 'Please fill all the required fields'
+      return 'Please fill all the required fields';
     }
-    else if(this.props.calculatedData.annualBudget < 50000){
+    else if (this.props.calculatedData.annualBudget < 50000) {
       this.refs.annualBudget.validationError();
       return 'Please insert an annual budget higher than $50K';
     }
@@ -372,19 +386,8 @@ export default class Preferences extends Component {
     const channels = {
       select: {
         name: 'channels',
-        options: formatChannels()
+        options: formatChannels(channel => this.props.blockedChannels.includes(channel) || this.props.inHouseChannels.includes(channel) || Object.keys(budgetConstraints).includes(channel))
       }
-    };
-
-    let preventDuplicates = (value) => {
-      if (value.options) {
-        value.options.map(preventDuplicates);
-      }
-      value.disabled =
-        this.props.blockedChannels.includes(value.value) ||
-        this.props.inHouseChannels.includes(value.value) ||
-        Object.keys(budgetConstraints).includes(value.value);
-      return value;
     };
 
     let maxChannels = (value) => {
@@ -397,7 +400,6 @@ export default class Preferences extends Component {
       }
     };
 
-    channels.select.options.map(preventDuplicates);
     // Deep copy
     const blockedChannels = JSON.parse(JSON.stringify(channels));
     // We allow only 3 blocked channels.
@@ -662,17 +664,7 @@ export default class Preferences extends Component {
               </label>
             </div>
             <BackButton onClick={() => {
-              this.props.updateUserMonthPlan({
-                annualBudget: this.props.annualBudget,
-                annualBudgetArray: this.props.annualBudgetArray,
-                objectives: this.props.objectives,
-                blockedChannels: this.props.blockedChannels,
-                inHouseChannels: this.props.inHouseChannels,
-                maxChannels: this.props.maxChannels,
-                approvedBudgets: this.props.approvedBudgets,
-                budgetConstraints: budgetConstraints,
-                planNeedsUpdate: true
-              }, this.props.region, this.props.planDate)
+              this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate)
                 .then(() => {
                   history.push('/settings/attribution/setup');
                 });
@@ -693,17 +685,7 @@ export default class Preferences extends Component {
                   });
                 }
                 else {
-                  this.props.updateUserMonthPlan({
-                    annualBudget: this.props.annualBudget,
-                    annualBudgetArray: this.props.annualBudgetArray,
-                    objectives: this.props.objectives,
-                    blockedChannels: this.props.blockedChannels,
-                    inHouseChannels: this.props.inHouseChannels,
-                    maxChannels: this.props.maxChannels,
-                    approvedBudgets: this.props.approvedBudgets,
-                    budgetConstraints: budgetConstraints,
-                    planNeedsUpdate: true
-                  }, this.props.region, this.props.planDate)
+                  this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate)
                     .then(() => {
                       history.push('/plan/annual');
                     });
@@ -729,17 +711,7 @@ export default class Preferences extends Component {
 
               if (!validationText) {
                 this.setState({saveFail: false, saveSuccess: false});
-                this.props.updateUserMonthPlan({
-                  annualBudget: this.props.annualBudget,
-                  annualBudgetArray: this.props.annualBudgetArray,
-                  objectives: this.props.objectives,
-                  blockedChannels: this.props.blockedChannels,
-                  inHouseChannels: this.props.inHouseChannels,
-                  maxChannels: this.props.maxChannels,
-                  approvedBudgets: this.props.approvedBudgets,
-                  budgetConstraints: budgetConstraints,
-                  planNeedsUpdate: true
-                }, this.props.region, this.props.planDate);
+                this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate);
                 this.setState({saveSuccess: true});
               }
               else {
