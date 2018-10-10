@@ -6,7 +6,7 @@ import Label from 'components/ControlsLabel';
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
-import {getDates} from 'components/utils/date';
+import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import XLSX from 'xlsx';
 import offlineStyle from 'styles/attribution/upload-offline-popup.css';
 import MultiRow from 'components/MultiRow';
@@ -90,7 +90,7 @@ export default class PlanFromExcel extends Component {
 
   upload = () => {
     const {worksheet, monthsCells, channels} = this.state;
-    let planBudgets = this.props.planBudgets.length > 0 ? this.props.planBudgets : new Array(12).fill(null);
+    let planBudgets = this.props.planBudgets.length > 0 ? this.props.planBudgets : new Array(NUMBER_OF_FUTURE_MONTHS).fill(null);
 
     const channelsKeys = Object.keys(channels);
 
