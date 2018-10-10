@@ -29,7 +29,7 @@ export default class PlanFromExcel extends Component {
     super(props);
     this.state = {
       monthsCells: ['B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1', 'J1', 'K1', 'L1', 'M1'],
-      channels: {},
+      channelsRowMapping: {},
       worksheet: {},
       fileName: ''
     };
@@ -42,35 +42,35 @@ export default class PlanFromExcel extends Component {
   };
 
   channelRemove = (index) => {
-    const channels = {...this.state.channels};
-    const channel = Object.keys(channels)[index];
-    delete channels[channel];
-    this.setState({channels: channels});
+    const channelsRowMapping = {...this.state.channelsRowMapping};
+    const channel = Object.keys(channelsRowMapping)[index];
+    delete channelsRowMapping[channel];
+    this.setState({channelsRowMapping: channelsRowMapping});
   };
 
   handleChangeChannelKey = (channel, index) => {
-    const channels = {...this.state.channels};
-    const existingChannels = Object.keys(channels);
+    const channelsRowMapping = {...this.state.channelsRowMapping};
+    const existingChannels = Object.keys(channelsRowMapping);
     const numOfChannels = existingChannels.length;
     // New line
     if (index === numOfChannels) {
-      if (!channels[channel]) {
-        channels[channel] = `A${index + 2}`;
+      if (!channelsRowMapping[channel]) {
+        channelsRowMapping[channel] = `A${index + 2}`;
       }
     }
     else {
       // Existing line
       const oldChannel = existingChannels[index];
-      channels[channel] = channels[oldChannel];
-      delete channels[oldChannel];
+      channelsRowMapping[channel] = channelsRowMapping[oldChannel];
+      delete channelsRowMapping[oldChannel];
     }
-    this.setState({channels: channels});
+    this.setState({channelsRowMapping: channelsRowMapping});
   };
 
   handleChangeChannelCell = (value, channel) => {
-    const channels = {...this.state.channels};
-    channels[channel] = value;
-    this.setState({channels: channels});
+    const channelsRowMapping = {...this.state.channelsRowMapping};
+    channelsRowMapping[channel] = value;
+    this.setState({channelsRowMapping: channelsRowMapping});
   };
 
   parseExcel = (files) => {
@@ -90,19 +90,19 @@ export default class PlanFromExcel extends Component {
   };
 
   upload = () => {
-    const {worksheet, monthsCells, channels} = this.state;
+    const {worksheet, monthsCells, channelsRowMapping} = this.state;
     let planBudgets = this.props.planBudgets.length > 0 ? this.props.planBudgets : new Array(NUMBER_OF_FUTURE_MONTHS).fill(null);
 
-    const channelsKeys = Object.keys(channels);
+    const channelsKeys = Object.keys(channelsRowMapping);
 
     monthsCells.forEach((month, monthIndex) => {
       if (month) {
         const column = month.replace(/[0-9]/g, '');
 
         channelsKeys.forEach(channelKey => {
-          if (channels[channelKey]) {
+          if (channelsRowMapping[channelKey]) {
             // Remove letters
-            const row = channels[channelKey].replace(/\D/g, '');
+            const row = channelsRowMapping[channelKey].replace(/\D/g, '');
             const budget = extractNumberFromBudget(worksheet[column + row] && worksheet[column + row].v);
             planBudgets[monthIndex][channelKey] = {
               isSoft: false,
@@ -123,11 +123,11 @@ export default class PlanFromExcel extends Component {
   };
 
   render() {
-    const {worksheet, monthsCells, channels, fileName} = this.state;
+    const {worksheet, monthsCells, channelsRowMapping, fileName} = this.state;
     const {planDate} = this.props;
     const dates = getDates(planDate);
-    const channelKeys = Object.keys(channels);
-    const channelsCells = Object.values(channels);
+    const channelKeys = Object.keys(channelsRowMapping);
+    const channelsCells = Object.values(channelsRowMapping);
     const channelsOptions = formatChannels();
     const monthsRows = dates
       .map((month, index) => <div className={offlineStyle.locals.row} key={index}>
