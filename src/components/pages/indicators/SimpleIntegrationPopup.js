@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import IntegrationPopup from 'components/common/IntegrationPopup';
 
 export default class SimpleIntegrationPopup extends Component {
 

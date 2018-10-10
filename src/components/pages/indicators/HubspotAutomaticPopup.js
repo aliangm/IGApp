@@ -8,7 +8,7 @@ import Title from 'components/onboarding/Title';
 import Label from 'components/ControlsLabel';
 import MultiSelect from 'components/controls/MultiSelect';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class HubspotAutomaticPopup extends Component {
 

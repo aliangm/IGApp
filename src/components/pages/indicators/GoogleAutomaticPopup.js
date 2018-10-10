@@ -5,7 +5,7 @@ import style from 'styles/onboarding/onboarding.css';
 import serverCommunication from 'data/serverCommunication';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import Label from 'components/ControlsLabel';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class GoogleAutomaticPopup extends Component {
 

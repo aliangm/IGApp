@@ -10,7 +10,7 @@ import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import Textfield from 'components/controls/Textfield';
 import {formatNumber} from 'components/utils/budget';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class SalesforceAutomaticPopup extends Component {
 

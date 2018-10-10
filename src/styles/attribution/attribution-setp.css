@@ -36,7 +36,6 @@
 }
 
 .secondary-button {
-    padding: 0 3px;
     width: fit-content;
 }
 
@@ -74,6 +73,11 @@
     color: #222a41;
 }
 
+.second-step-container {
+    width: 345px;
+    margin: 22px 0 15px 0;
+}
+
 .second-step-text {
     width: 345px;
     height: 44px;
@@ -83,7 +87,6 @@
     line-height: 1.82;
     letter-spacing: 0px;
     color: #222a41;
-    margin: 22px 0 15px 0;
 }
 
 .title-wrapper {
