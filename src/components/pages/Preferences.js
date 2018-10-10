@@ -93,7 +93,7 @@ export default class Preferences extends Component {
       planBudgets: this.props.planBudgets,
       budgetConstraints: this.props.budgetConstraints,
       planNeedsUpdate: true
-    }
+    };
   };
 
   validate() {
@@ -101,11 +101,11 @@ export default class Preferences extends Component {
       return !!value;
     });
 
-    if(filterNanArray.length !== 12){
+    if (filterNanArray.length !== 12) {
       this.refs.annualBudget.validationError();
-      return 'Please fill all the required fields'
+      return 'Please fill all the required fields';
     }
-    else if(this.props.calculatedData.annualBudget < 50000){
+    else if (this.props.calculatedData.annualBudget < 50000) {
       this.refs.annualBudget.validationError();
       return 'Please insert an annual budget higher than $50K';
     }
@@ -386,19 +386,8 @@ export default class Preferences extends Component {
     const channels = {
       select: {
         name: 'channels',
-        options: formatChannels()
+        options: formatChannels(channel => this.props.blockedChannels.includes(channel) || this.props.inHouseChannels.includes(channel) || Object.keys(budgetConstraints).includes(channel))
       }
-    };
-
-    let preventDuplicates = (value) => {
-      if (value.options) {
-        value.options.map(preventDuplicates);
-      }
-      value.disabled =
-        this.props.blockedChannels.includes(value.value) ||
-        this.props.inHouseChannels.includes(value.value) ||
-        Object.keys(budgetConstraints).includes(value.value);
-      return value;
     };
 
     let maxChannels = (value) => {
@@ -411,7 +400,6 @@ export default class Preferences extends Component {
       }
     };
 
-    channels.select.options.map(preventDuplicates);
     // Deep copy
     const blockedChannels = JSON.parse(JSON.stringify(channels));
     // We allow only 3 blocked channels.

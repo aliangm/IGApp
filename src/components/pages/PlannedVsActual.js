@@ -216,21 +216,7 @@ export default class PlannedVsActual extends Component {
       className: this.classes.headRow
     });
 
-    channelOptions = formatChannels();
-
-    let preventDuplicates = (value) => {
-      if (value.options) {
-        value.options.map(preventDuplicates);
-      }
-      else {
-        value.disabled =
-          Object.keys(this.state.knownChannels).includes(value.value) ||
-          Object.keys(this.state.committedBudgets[0] || {}).includes(value.value);
-        return value;
-      }
-    };
-
-    channelOptions.map(preventDuplicates);
+    channelOptions = formatChannels(channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel));
 
     return <div>
       <div className={this.classes.wrap}>

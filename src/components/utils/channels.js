@@ -74,7 +74,7 @@ export function getChannelsWithProps() {
   }
 }
 
-export function formatChannels() {
+export function formatChannels(isDisabled = () => false) {
   let returnObject = [];
   const categories = Object.keys(schema.properties).map(channel => schema.properties[channel].category);
   categories.forEach(category =>
@@ -84,7 +84,7 @@ export function formatChannels() {
     const nickname = schema.properties[channel].nickname;
     const category = schema.properties[channel].category;
     const categoryObject = returnObject.find(item => item.label === category);
-    categoryObject.options.push({label: nickname, value: channel});
+    categoryObject.options.push({label: nickname, value: channel, disabled: isDisabled(channel)});
   });
   return returnObject;
 }

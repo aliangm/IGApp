@@ -128,7 +128,7 @@ export default class PlanFromExcel extends Component {
     const dates = getDates(planDate);
     const channelKeys = Object.keys(channelsRowMapping);
     const channelsCells = Object.values(channelsRowMapping);
-    const channelsOptions = formatChannels();
+    const channelsOptions = formatChannels(channel => Object.keys(channelsRowMapping).includes(channel));
     const monthsRows = dates
       .map((month, index) => <div className={offlineStyle.locals.row} key={index}>
         <div className={offlineStyle.locals.field} style={{width: '100px'}}>
