@@ -363,6 +363,10 @@ export default class Plan extends Component {
     });
   };
 
+  openAddChannelPopup = (channel) => {
+    this.setState({addChannelPopup: true, initialChannelToOpen: channel});
+  };
+
   planWithConstraints = (constraints) => {
     return new Promise((resolve, reject) => {
       const planBudgets = this.getPlanBudgets();
@@ -465,7 +469,7 @@ export default class Plan extends Component {
   };
 
   render() {
-    const {interactiveMode, editMode, addChannelPopup, showNewScenarioPopup} = this.state;
+    const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
     const {calculatedData: {annualBudget, annualBudgetLeftToPlan}} = this.props;
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
@@ -487,7 +491,8 @@ export default class Plan extends Component {
             : null,
           onPageScrollEventRegister: ((onPageScroll) => {
             this.setState({scrollEvent: onPageScroll});
-          })
+          }),
+          openAddChannelPopup: this.openAddChannelPopup
         }));
       });
 
@@ -628,7 +633,7 @@ export default class Plan extends Component {
                     <div>
                       <div className={this.classes.dropmenuItem}
                            onClick={() => {
-                             this.setState({addChannelPopup: true});
+                             this.openAddChannelPopup(null);
                            }}>
                         Add Channel
                       </div>
@@ -653,6 +658,7 @@ export default class Plan extends Component {
                       this.setState({addChannelPopup: false});
                     }}
                     addUnknownChannel={this.addUnknownChannel}
+                    initialExpandedChannel={initialChannelToOpen}
                   />
                 </div>
                 : null}

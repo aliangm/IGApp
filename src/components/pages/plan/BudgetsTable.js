@@ -17,6 +17,8 @@ import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import {getDatesSpecific} from 'components/utils/date';
+import Button from 'components/controls/Button';
+import history from 'history';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -243,7 +245,13 @@ export default class BudgetsTable extends Component {
   };
 
   getTitleCell = (isCategoryRow, data) => {
-    return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}>
+    return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}
+               onMouseEnter={isCategoryRow ? () => {
+                 this.setState({categoryOnHover: data.channel});
+               } : null}
+               onMouseLeave={isCategoryRow ? () => {
+                 this.setState({categoryOnHover: null});
+               } : null}>
       <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true : null}>
         {isCategoryRow ?
           <div className={this.classes.rowArrowBox}>
@@ -301,15 +309,27 @@ export default class BudgetsTable extends Component {
 
           <div className={this.classes.titleText}>{data.nickname}</div>
 
-          {!isCategoryRow && this.props.isEditMode ? <div
-            className={this.classes.channelEditIconsWrapper}>
-            <div className={this.classes.channelEditIcons}>
-              <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
-                   onClick={() => this.setState({editChannelName: data.channel})}/>
-              <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
-                   onClick={() => this.setState({deletePopup: data.channel})}/>
+          {this.props.isEditMode ? <div className={this.classes.channelEditIconsWrapper}>
+              {isCategoryRow ? <div className={this.classes.channelEditIcons}>
+                  {this.state.categoryOnHover === data.channel
+                    ? <Button icon='plan:addChannel'
+                              type="primary"
+                              style={{width: '80px'}}
+                              onClick={() => {
+                                this.props.openAddChannelPopup(data.channel);
+                              }}> Add
+                    </Button> : null}
+                </div>
+                : <div className={this.classes.channelEditIcons}>
+                  <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
+                       onClick={() => this.setState({editChannelName: data.channel})}/>
+                  <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
+                       onClick={() => this.setState({deletePopup: data.channel})}/>
+                </div>
+              }
             </div>
-          </div> : null}
+            : null
+          }
         </div>
       </div>
     </td>;
