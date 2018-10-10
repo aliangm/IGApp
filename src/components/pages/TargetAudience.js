@@ -114,14 +114,20 @@ export default class TargetAudience extends Component {
     return this.props.targetAudience[index] && this.props.targetAudience[index].fields;
   }
 
+  selectFieldNotEmpty = (field) => {
+    return field && field !== 'Any';
+  };
+
   tabSelected = (index) => {
     const tabData = this.props.targetAudience[index];
     this.setState({
       showAdvancedFields: tabData &&
-        (tabData.fields.teamSize ||
-          tabData.fields.salary ||
-          tabData.fields.education ||
-          tabData.fields.dailyOnlinePresence)
+        (
+          this.selectFieldNotEmpty(tabData.fields.teamSize) ||
+          this.selectFieldNotEmpty(tabData.fields.salary) ||
+          this.selectFieldNotEmpty(tabData.fields.education) ||
+          this.selectFieldNotEmpty(tabData.fields.dailyOnlinePresence)
+        )
     });
   };
 
@@ -218,7 +224,8 @@ export default class TargetAudience extends Component {
             {value: '$100,000 to $149,999', label: '$100,000 to $149,999'},
             {value: '$150,000 to $199,999', label: '$150,000 to $199,999'},
             {value: '$200,000 to $499,999', label: '$200,000 to $499,999'},
-            {value: '>$500,000', label: '$500,000 or more'}
+            {value: '>$500,000', label: '$500,000 or more'},
+            {value: 'Any', label: 'Any'}
           ]
         }
       },
@@ -268,7 +275,8 @@ export default class TargetAudience extends Component {
             {value: '10%-30%', label: '10%-30%'},
             {value: '31%-50%', label: '31%-50%'},
             {value: '51%-75%', label: '51%-75%'},
-            {value: '>75%', label: 'More than 75%'}
+            {value: '>75%', label: 'More than 75%'},
+            {value: 'Any', label: 'Any'}
           ]
         }
       }
