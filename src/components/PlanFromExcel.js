@@ -128,6 +128,7 @@ export default class PlanFromExcel extends Component {
     const dates = getDates(planDate);
     const channelKeys = Object.keys(channels);
     const channelsCells = Object.values(channels);
+    const channelsOptions = formatChannels();
     const monthsRows = dates
       .map((month, index) => <div className={offlineStyle.locals.row} key={index}>
         <div className={offlineStyle.locals.field} style={{width: '100px'}}>
@@ -171,7 +172,7 @@ export default class PlanFromExcel extends Component {
                   style={{width: '230px'}}
                   selected={channelKeys[index]}
                   select={{
-                    options: formatChannels()
+                    options: channelsOptions
                   }}
                   onChange={(e) => this.handleChangeChannelKey(e.value, index)}
                 />
