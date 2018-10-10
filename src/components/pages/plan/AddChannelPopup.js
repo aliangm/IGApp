@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import Component from 'components/Component';
 import classnames from 'classnames';
 import style from 'styles/plan/add-channel-popup.css';
@@ -10,31 +10,33 @@ export default class AddChannelPopup extends Component {
 
   style = style;
 
-  initialState = {
-    visibleChannels: this.props.channels.root.children,
-    expandedChannels: [],
-    otherChannel: false,
-    otherChannelName: ''
-  };
-
   constructor(props) {
     super(props);
-    this.state = this.initialState;
+    this.state = this.initialState();
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps !== this.props) {
-      this.setState(this.initialState);
+      this.setState(this.initialState());
 
-      if(nextProps.initialExpandedChannel){
+      if (nextProps.initialExpandedChannel) {
         this.toggleChannel(nextProps.initialExpandedChannel);
       }
     }
   }
 
+  initialState = () => {
+    return {
+      visibleChannels: this.props.channels.root.children,
+      expandedChannels: [],
+      otherChannel: false,
+      otherChannelName: ''
+    };
+  };
+
   toggleChannel(channelId) {
-    const { channels } = this.props;
-    const { visibleChannels, expandedChannels } = this.state;
+    const {channels} = this.props;
+    const {visibleChannels, expandedChannels} = this.state;
     const channelExpandedIndex = expandedChannels.indexOf(channelId);
     const channelVisibleIndex = visibleChannels.indexOf(channelId);
     const channel = channels[channelId];
@@ -46,7 +48,8 @@ export default class AddChannelPopup extends Component {
       newVisibleChannels = visibleChannels.slice();
       newVisibleChannels.splice(channelVisibleIndex + 1, 0, ...channel.children);
       newExpandedChannels = expandedChannels.concat(channelId);
-    } else {
+    }
+    else {
       newExpandedChannels = expandedChannels.slice();
       newExpandedChannels.splice(channelExpandedIndex, 1);
       newVisibleChannels = visibleChannels.slice();
@@ -70,7 +73,9 @@ export default class AddChannelPopup extends Component {
 
     if (channel.isOther) {
       this.setState({otherChannel: channelId},
-        () => { this.refs.otherChannelTextbox.focus() }
+        () => {
+          this.refs.otherChannelTextbox.focus();
+        }
       );
       return;
     }
@@ -84,17 +89,18 @@ export default class AddChannelPopup extends Component {
   }
 
   render() {
-    const { visibleChannels, expandedChannels } = this.state;
+    const {visibleChannels, expandedChannels} = this.state;
     return (
-      <div hidden={ this.props.hidden }>
-        <Page popup={ true } width={'400px'}>
-          <div className={ this.classes.title }>
+      <div hidden={this.props.hidden}>
+        <Page popup={true} width={'400px'}>
+          <div className={this.classes.title}>
             Add a channel
           </div>
           <ul className={this.classes.channels}>
             {
               visibleChannels
-                .filter(channelId => !this.props.planChannels.some(pChannel => pChannel.id === this.props.channels[channelId].id))
+                .filter(channelId => !this.props.planChannels.some(
+                  pChannel => pChannel.id === this.props.channels[channelId].id))
                 .map((channelId) => {
                   const channel = this.props.channels[channelId];
                   const className = classnames(this.classes.channel, {
@@ -105,7 +111,7 @@ export default class AddChannelPopup extends Component {
                   return (
                     <li
                       key={channelId}
-                      style={{ marginLeft: `${20 * (channel.level - 1)}px` }}
+                      style={{marginLeft: `${20 * (channel.level - 1)}px`}}
                       className={className}
                       onClick={() => this.handleChannelClick(channelId)}
                     >
@@ -117,16 +123,18 @@ export default class AddChannelPopup extends Component {
           </ul>
           <Button
             type="secondary"
-            style={{ width: '72px' }}
-            onClick={ this.props.close }>
+            style={{width: '72px'}}
+            onClick={this.props.close}>
             Cancel
           </Button>
-          <div hidden={ !this.state.otherChannel }>
-            <div style={{ display: 'flex', marginTop: '20px' }}>
-              <Textfield ref="otherChannelTextbox" value={ this.state.otherChannelName } style={{
+          <div hidden={!this.state.otherChannel}>
+            <div style={{display: 'flex', marginTop: '20px'}}>
+              <Textfield ref="otherChannelTextbox" value={this.state.otherChannelName} style={{
                 width: '292px'
-              }}  onChange={
-                (e) => { this.setState({otherChannelName: e.target.value}) }
+              }} onChange={
+                (e) => {
+                  this.setState({otherChannelName: e.target.value});
+                }
               }/>
               <Button type="primary" style={{
                 width: '72px',
@@ -134,7 +142,8 @@ export default class AddChannelPopup extends Component {
               }} onClick={
                 () => {
                   if (this.state.otherChannelName) {
-                    this.props.addUnknownChannel(this.state.otherChannelName, this.props.channels[this.state.otherChannel].path);
+                    this.props.addUnknownChannel(this.state.otherChannelName,
+                      this.props.channels[this.state.otherChannel].path);
                     this.setState({otheChannel: false, otherChannelName: ''});
                   }
                 }
