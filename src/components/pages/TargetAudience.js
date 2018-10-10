@@ -17,13 +17,11 @@ import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 import preferencesStyle from 'styles/preferences/preferences.css';
 
-const getDefaultAudienceFields = () => {
-  return {
-    teamSize: null,
-    salary: null,
-    education: null,
-    dailyOnlinePresence: null
-  };
+const DEFAULT_AUDIENCE_FIELDS = {
+  teamSize: null,
+  salary: null,
+  education: null,
+  dailyOnlinePresence: null
 };
 
 export default class TargetAudience extends Component {
@@ -32,12 +30,13 @@ export default class TargetAudience extends Component {
 
   static defaultProps = {
     targetAudience: [{
-      fields: getDefaultAudienceFields(),
+      fields: {...DEFAULT_AUDIENCE_FIELDS},
       info: {
         weight: 100
       }
     }]
   };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -87,7 +86,7 @@ export default class TargetAudience extends Component {
 
   addTab() {
     let update = this.props.targetAudience.slice();
-    update.push({fields: getDefaultAudienceFields(), info: {weight: 100}});
+    update.push({fields: {...DEFAULT_AUDIENCE_FIELDS}, info: {weight: 100}});
     this.props.updateState({targetAudience: update});
   }
 
