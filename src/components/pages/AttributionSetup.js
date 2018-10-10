@@ -117,7 +117,6 @@ export default class AttributionSetup extends Component {
                   </div>
                 : null}
               <Button type='primary' icon="buttons:edit"
-                      className={this.classes.rightButton}
                       onClick={() => copy(code)}>
                 Copy
               </Button>
