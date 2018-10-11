@@ -82,10 +82,10 @@ export default class ButtonsSet extends Component {
         });
 
       if( i === this.props.lines - 1) {
-        lineItems.push(<div hidden={!this.state.validationError} className={this.classes.validationError}/>);
+        lineItems.push(<div key='validation' hidden={!this.state.validationError} className={this.classes.validationError}/>);
       }
         return (
-          <div className={`${this.classes.igGridRow} ig-grid-row-${i}`}>
+          <div key={''+i} className={`${this.classes.igGridRow} ig-grid-row-${i}`}>
             {lineItems}
             </div>
         )
