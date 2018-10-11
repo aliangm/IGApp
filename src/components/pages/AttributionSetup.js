@@ -29,7 +29,7 @@ export default class AttributionSetup extends Component {
   }
 
   render() {
-    const {UID, senderEmail, isPopup, sendSnippetEmail, isConnectedToServer} = this.props;
+    const {UID, senderEmail, isPopup, sendSnippetEmail, isStaticPage} = this.props;
 
     const code =
       `<script type="text/javascript" async=1>
@@ -128,7 +128,7 @@ export default class AttributionSetup extends Component {
               </div>
             </div>
             {
-              isConnectedToServer ? <div className={this.classes.firstStepCont}>
+              isStaticPage ? <div className={this.classes.firstStepCont}>
                   <div className={this.classes.or}>OR</div>
                   <Button className={this.classes.secondaryButton} type='primary' onClick={() => {
                     this.refs.popup.open();
@@ -160,7 +160,7 @@ export default class AttributionSetup extends Component {
                   }}
           >
           </Toggle>
-          {this.state.tab === 1 && isConnectedToServer ?
+          {this.state.tab === 1 && isStaticPage ?
             <div className={this.classes.secondStepContainer}>
               <Button className={this.classes.secondaryButton} type='primary' onClick={() => {
                 this.refs.popup.open();
