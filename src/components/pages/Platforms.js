@@ -22,6 +22,7 @@ import MozAutomaticPopup from './indicators/MozAutomaticPopup';
 import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
+import remove from 'lodash/remove';
 
 const PLATFORM_INDICATORS_MAPPING = {
   'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
@@ -44,7 +45,8 @@ export default class Platforms extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visibleSections: {}
+      visibleSections: {},
+      loading: []
     };
   }
 
@@ -60,6 +62,26 @@ export default class Platforms extends Component {
   isHidden(platform) {
     return !this.props.technologyStack.includes(platform);
   }
+
+  isLoading = (platform) => {
+    return this.state.loading.indexOf(platform) >= 0;
+  };
+
+  setLoading = (platform, isLoading) => {
+    if (isLoading) {
+      this.setState({
+        loading: [...this.state.loading, platform]
+      });
+    }
+    else {
+      const newLoadingArray = [...this.state.loading];
+      remove(newLoadingArray, (item) => item === platform);
+
+      this.setState({
+        loading: newLoadingArray
+      });
+    }
+  };
 
   isTitleHidden = (title) => {
     const domElement = ReactDOM.findDOMNode(this.refs[title]);
@@ -85,18 +107,30 @@ export default class Platforms extends Component {
         <div>
           <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.salesforceAuto}
                                     ref="salesforce" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Salesforce}
-                                    actualIndicators={this.props.actualIndicators}/>
+                                    actualIndicators={this.props.actualIndicators}
+                                    loadingStarted={() => this.setLoading('salesforce', true)}
+                                    loadingFinished={() => this.setLoading('salesforce', false)}
+          />
           <HubspotAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.hubspotAuto}
                                  updateState={this.props.updateState} ref="hubspot"
                                  affectedIndicators={PLATFORM_INDICATORS_MAPPING.Hubspot}
-                                 actualIndicators={this.props.actualIndicators}/>
+                                 actualIndicators={this.props.actualIndicators}
+                                 loadingStarted={() => this.setLoading('hubspot', true)}
+                                 loadingFinished={() => this.setLoading('hubspot', false)}
+          />
           <GoogleAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleAuto}
                                 ref="googleAnalytics"
                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']}
-                                actualIndicators={this.props.actualIndicators}/>
+                                actualIndicators={this.props.actualIndicators}
+                                loadingStarted={() => this.setLoading('google', true)}
+                                loadingFinished={() => this.setLoading('google', false)}
+          />
           <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState} ref="linkedin"
                                   affectedIndicators={PLATFORM_INDICATORS_MAPPING.LinkedIn}
-                                  actualIndicators={this.props.actualIndicators}/>
+                                  actualIndicators={this.props.actualIndicators}
+                                  loadingStarted={() => this.setLoading('linkedin', true)}
+                                  loadingFinished={() => this.setLoading('linkedin', false)}
+          />
           <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState} ref="facebook"
                                   affectedIndicators={PLATFORM_INDICATORS_MAPPING.Facebook}
                                   actualIndicators={this.props.actualIndicators}/>
@@ -108,15 +142,23 @@ export default class Platforms extends Component {
                                  actualIndicators={this.props.actualIndicators}/>
           <StripeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="stripe"
                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING.Stripe}
-                                actualIndicators={this.props.actualIndicators}/>
+                                actualIndicators={this.props.actualIndicators}
+                                loadingStarted={() => this.setLoading('stripe', true)}
+                                loadingFinished={() => this.setLoading('stripe', false)}
+          />
           <MozAutomaticPopup setDataAsState={this.props.setDataAsState}
                              defaultUrl={this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite}
                              ref="moz" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Moz}
-                             actualIndicators={this.props.actualIndicators}/>
+                             actualIndicators={this.props.actualIndicators}
+
+          />
           <GoogleSheetsAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleSheetsAuto}
                                       ref="googleSheets"
                                       affectedIndicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']}
-                                      actualIndicators={this.props.actualIndicators}/>
+                                      actualIndicators={this.props.actualIndicators}
+                                      loadingStarted={() => this.setLoading('sheets', true)}
+                                      loadingFinished={() => this.setLoading('sheets', false)}
+          />
           <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'
@@ -131,10 +173,12 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="crm">
               <Platform connected={this.props.salesforceAuto} title="Salesforce"
+                        loading={this.isLoading('salesforce')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {
                 this.refs.salesforce.open();
               }} hidden={this.isHidden('salesforce')}/>
               <Platform connected={this.props.hubspotAuto} title="Hubspot"
+                        loading={this.isLoading('hubspot')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Hubspot']} icon="platform:hubspot" open={() => {
                 this.refs.hubspot.open();
               }} hidden={this.isHidden('hubspot')}/>
@@ -146,6 +190,7 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="webAnalytics">
               <Platform connected={this.props.googleAuto} title="Google Analytics"
+                        loading={this.isLoading('google')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']} icon="platform:googleAnalytics"
                         open={() => {
                           this.refs.googleAnalytics.open();
@@ -158,6 +203,7 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="social">
               <Platform connected={this.props.isLinkedinAuto} title="LinkedIn"
+                        loading={this.isLoading('linkedin')}
                         indicators={PLATFORM_INDICATORS_MAPPING['LinkedIn']} icon="platform:linkedin" open={() => {
                 this.refs.linkedin.open();
               }} hidden={this.isHidden('linkedin')}/>
@@ -181,6 +227,7 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="payment">
               <Platform connected={this.props.isStripeAuto} title="Stripe"
+                        loading={this.isLoading('stripe')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Stripe']} icon="platform:stripe" open={() => {
                 this.refs.stripe.open();
               }} hidden={this.isHidden('stripe')}/>
@@ -191,7 +238,7 @@ export default class Platforms extends Component {
               Productivity
             </div>
             <div style={{display: 'flex'}} ref="productivity">
-              <Platform connected={this.props.googleSheetsAuto} title="Google Sheets"
+              <Platform connected={this.props.googleSheetsAuto} title="Google Sheets" loading={this.isLoading('sheets')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']} icon="platform:googleSheets"
                         open={() => {
                           this.refs.googleSheets.open();

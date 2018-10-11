@@ -8,7 +8,7 @@ import Textfield from 'components/controls/Textfield';
 import Title from 'components/onboarding/Title';
 import loadTemplateStyle from 'styles/campaigns/load-template-popup.css';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class GoogleSheetsAutomaticPopup extends Component {
 
@@ -109,9 +109,11 @@ export default class GoogleSheetsAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup ref='authPopup'
                                           api='googlesheetsapi'
                                           afterDataRetrieved={this.afterDataRetrieved}
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           width='600px'
                                           contentClassName={loadTemplateStyle.locals.content}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
                                           innerClassName={loadTemplateStyle.locals.inner}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}

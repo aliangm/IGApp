@@ -10,7 +10,7 @@ import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import Textfield from 'components/controls/Textfield';
 import {formatNumber} from 'components/utils/budget';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class SalesforceAutomaticPopup extends Component {
 
@@ -227,8 +227,10 @@ export default class SalesforceAutomaticPopup extends Component {
                                           contentClassName={salesForceStyle.locals.content}
                                           afterDataRetrieved={this.afterDataRetrieved}
                                           api='salesforceapi'
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           ref='authPopup'
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
     >

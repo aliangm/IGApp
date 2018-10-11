@@ -90,6 +90,8 @@ export default class AudienceTabs extends Component {
     tab.selected = true;
     this.state.selectedTab = tab;
     this.state.selectedIndex = index;
+
+    this.props.tabSelected(index);
   }
 
   setTabName = (index, name) => {

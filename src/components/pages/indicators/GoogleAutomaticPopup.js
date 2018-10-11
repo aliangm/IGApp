@@ -5,7 +5,7 @@ import style from 'styles/onboarding/onboarding.css';
 import serverCommunication from 'data/serverCommunication';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import Label from 'components/ControlsLabel';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class GoogleAutomaticPopup extends Component {
 
@@ -121,10 +121,13 @@ export default class GoogleAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup ref='authPopup'
                                           api='googleapi'
                                           afterDataRetrieved={this.afterDataRetrieved}
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
                                           width='340px'
                                           affectedIndicators={this.props.affectedIndicators}
-                                          actualIndicators={this.props.actualIndicators}>
+                                          actualIndicators={this.props.actualIndicators}
+    >
       <div className={this.classes.row}>
         <Label style={{fontSize: '16px', color: '#24B10E'}} checkbox={this.state.isWebsiteEnabled} onChange={() => {
           this.setState({isWebsiteEnabled: !this.state.isWebsiteEnabled});

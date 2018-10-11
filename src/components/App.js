@@ -408,8 +408,15 @@ class AppComponent extends Component {
       dataUpdated: true,
       userProfile: data.userProfile,
       targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{
-        fields: {},
-        info: {weight: 100}
+        fields: {
+          teamSize: null,
+          salary: null,
+          education: null,
+          dailyOnlinePresence: null
+        },
+        info: {
+          weight: 100
+        }
       }],
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],

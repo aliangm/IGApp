@@ -4,7 +4,7 @@ import Select from 'components/controls/Select';
 import style from 'styles/onboarding/onboarding.css';
 import serverCommunication from 'data/serverCommunication';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class LinkedinAutomaticPopup extends Component {
 
@@ -86,8 +86,10 @@ export default class LinkedinAutomaticPopup extends Component {
     return <AuthorizationIntegrationPopup ref='authPopup'
                                           api='linkedinapi'
                                           afterDataRetrieved={this.afterDataRetrieved}
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           width='340px'
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
     >

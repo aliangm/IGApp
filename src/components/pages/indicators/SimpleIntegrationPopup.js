@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
 import Textfield from 'components/controls/Textfield';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import IntegrationPopup from 'components/common/IntegrationPopup';
 
 export default class SimpleIntegrationPopup extends Component {
 
@@ -18,7 +18,7 @@ export default class SimpleIntegrationPopup extends Component {
     super(props);
   }
 
-  doneRequest = () => {
+  makeServerRequest = () => {
     return new Promise((resolve, reject) => {
       this.props.serverRequest()
         .then((response) => {
@@ -42,11 +42,18 @@ export default class SimpleIntegrationPopup extends Component {
     });
   };
 
+  onDoneServerRequest = (isError) => {
+    if (!isError) {
+      this.props.close();
+    }
+  };
+
   render() {
     return <IntegrationPopup width={this.props.width}
-                             doneRequest={this.doneRequest}
+                             makeServerRequest={this.makeServerRequest}
                              hidden={this.props.hidden}
                              close={this.props.close}
+                             onDoneServerRequest={this.onDoneServerRequest}
                              affectedIndicators={this.props.affectedIndicators}
                              actualIndicators={this.props.actualIndicators}
     >

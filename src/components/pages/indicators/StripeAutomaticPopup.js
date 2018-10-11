@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class StripeAutomaticPopup extends Component {
 
@@ -30,6 +30,8 @@ export default class StripeAutomaticPopup extends Component {
         <AuthorizationIntegrationPopup ref='authPopup'
                                        api='stripeapi'
                                        afterDataRetrieved={this.afterDataRetrieved}
+                                       loadingStarted={this.props.loadingStarted}
+                                       loadingFinished={this.props.loadingFinished}
                                        affectedIndicators={this.props.affectedIndicators}
                                        actualIndicators={this.props.actualIndicators}
         />

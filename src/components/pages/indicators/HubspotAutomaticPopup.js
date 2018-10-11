@@ -8,7 +8,7 @@ import Title from 'components/onboarding/Title';
 import Label from 'components/ControlsLabel';
 import MultiSelect from 'components/controls/MultiSelect';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class HubspotAutomaticPopup extends Component {
 
@@ -133,8 +133,10 @@ export default class HubspotAutomaticPopup extends Component {
                                           contentClassName={salesForceStyle.locals.content}
                                           afterDataRetrieved={this.afterDataRetrieved}
                                           api='hubspotapi'
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           ref='authPopup'
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
     >
