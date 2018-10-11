@@ -133,8 +133,10 @@ export default class HubspotAutomaticPopup extends Component {
                                           contentClassName={salesForceStyle.locals.content}
                                           afterDataRetrieved={this.afterDataRetrieved}
                                           api='hubspotapi'
-                                          doneServerRequest={this.getUserData}
+                                          makeServerRequest={this.getUserData}
                                           ref='authPopup'
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
     >
       <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>
       <div className={this.classes.row}>

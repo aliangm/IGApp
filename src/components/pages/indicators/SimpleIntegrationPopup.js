@@ -18,7 +18,7 @@ export default class SimpleIntegrationPopup extends Component {
     super(props);
   }
 
-  doneRequest = () => {
+  makeServerRequest = () => {
     return new Promise((resolve, reject) => {
       this.props.serverRequest()
         .then((response) => {
@@ -42,11 +42,18 @@ export default class SimpleIntegrationPopup extends Component {
     });
   };
 
+  onDoneServerRequest = (isError) => {
+    if(!isError) {
+      this.props.close();
+    }
+  };
+
   render() {
     return <IntegrationPopup width={this.props.width}
-                             doneRequest={this.doneRequest}
+                             makeServerRequest={this.makeServerRequest}
                              isOpen={this.props.isOpen}
                              close={this.props.close}
+                             onDoneServerRequest={this.onDoneServerRequest}
     >
       <div style={{display: 'grid'}}>
         <div className={this.classes.row}>

@@ -29,7 +29,10 @@ export default class StripeAutomaticPopup extends Component {
       <div>
         <AuthorizationIntegrationPopup ref='authPopup'
                                        api='stripeapi'
-                                       afterDataRetrieved={this.afterDataRetrieved}/>
+                                       afterDataRetrieved={this.afterDataRetrieved}
+                                       loadingStarted={this.props.loadingStarted}
+                                       loadingFinished={this.props.loadingFinished}
+        />
       </div>
     </div>
   }

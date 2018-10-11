@@ -59,7 +59,16 @@ export default class AuthorizationIntegrationPopup extends Component {
     }
   };
 
+  loadingStarted = () => {
+    this.props.loadingStarted && this.props.loadingStarted();
+  };
+
+  loadingFinished = () => {
+    this.props.loadingFinished && this.props.loadingFinished();
+  };
+
   afterAuthorization = (code) => {
+    this.loadingStarted();
     serverCommunication.serverRequest('post',
       this.props.api,
       JSON.stringify({code: code}),
@@ -70,20 +79,37 @@ export default class AuthorizationIntegrationPopup extends Component {
             .then((data) => {
               this.props.afterDataRetrieved(data)
                 .then((showPopup) => {
+                  this.loadingFinished();
                   this.setState({hidden: !showPopup});
                 })
                 .catch((error) => {
-                  window.alert('error getting data');
+                  this.loadingFinished();
+                  window.alert('Error occurred');
                 });
             });
         }
         else if (response.status == 401) {
+          this.loadingFinished();
           history.push('/');
         }
         else {
-          window.alert('error getting data');
+          this.loadingFinished();
+          window.alert('Error occurred');
         }
       });
+  };
+
+  makeServerRequest = () => {
+    this.loadingStarted();
+    this.setState({hidden: true});
+    return this.props.makeServerRequest();
+  };
+
+  onDoneServerRequest = (isError) => {
+    if(isError) {
+      window.alert('Error occurred');
+    }
+    this.loadingFinished();
   };
 
   close = () => {
@@ -95,9 +121,10 @@ export default class AuthorizationIntegrationPopup extends Component {
       <IntegrationPopup width={this.props.width}
                         innerClassName={this.props.innerClassName}
                         contentClassName={this.props.contentClassName}
-                        doneRequest={this.props.doneServerRequest}
+                        makeServerRequest={this.makeServerRequest}
                         isOpen={!this.state.hidden}
                         close={this.close}
+                        onDoneServerRequest={this.onDoneServerRequest}
       >
         {this.props.children}
       </IntegrationPopup>

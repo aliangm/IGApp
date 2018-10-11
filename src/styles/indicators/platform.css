@@ -1,11 +1,15 @@
-.square {
+.default-dimensions {
     width: 245px;
     height: 215px;
+    margin: 20px;
+}
+
+.square {
+    composes: default-dimensions;
     border-radius: 4px;
     background-color: #ffffff;
     position: relative;
     border: solid 1px #e3e6f4;
-    margin: 20px;
 }
 
 .square:not([data-connected]):hover {
