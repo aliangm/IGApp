@@ -76,54 +76,66 @@ export default class AttributionSetup extends Component {
                  innerClassName={onBoardingStyle.locals.pageInner}
                  width='100%'>
       {isPopup ? <Title title='Attribution'/> : null}
+      <TagManagerAutomaticPopup ref='popup' snippetScript={code}/>
       <div className={this.classes.title}>Add the tracking script to your website</div>
       <div className={this.classes.subTitle}>Setting up InfiniGrow’s tracking is easy and takes about a minute. This is
         the first and last time you'll be asked to use code.
       </div>
       {
         renderStep(1, 'Copy your code', 'or get it sent by email with a step-by-step guide',
-          <div className={this.classes.snippetBox}>
-            <div className={this.classes.snippetWrapper}>
+          <div className={this.classes.firstStepCont}>
+            <div className={this.classes.snippetBox}>
+              <div className={this.classes.snippetWrapper}>
               <pre className={this.classes.snippet}>
               {code}
               </pre>
+              </div>
+              <div className={this.classes.buttons}>
+                {sendSnippetEmail
+                  ? <div style={{position: 'relative'}}>
+                    <Button type='secondary'
+                            className={this.classes.sendEmailButton}
+                            onClick={() => this.refs.sendSnippetPopup.open()}>
+                      Email this script and instructions
+                    </Button>
+                    <PlanPopup onClose={() => {
+                      this.setState({to: null});
+                    }} ref="sendSnippetPopup" style={{
+                      width: 'max-content',
+                      left: '253px'
+                    }} title="Send Script">
+                      <PopupTextContent>
+                        <div style={{display: 'inline-flex'}}>
+                          <input type='email'
+                                 value={this.state.to || ''}
+                                 onChange={(e) => this.setState({to: e.target.value})}
+                                 placeholder='email'
+                                 className={textFieldStyles.locals.input}
+                          />
+                          <Button type='primary' onClick={() => {
+                            this.props.sendSnippetEmail(senderEmail, UID, this.state.to);
+                            this.refs.sendSnippetPopup.close();
+                          }}>Send</Button>
+                        </div>
+                      </PopupTextContent>
+                    </PlanPopup>
+                  </div>
+                  : null}
+                <Button type='primary' icon="buttons:edit"
+                        onClick={() => copy(code)}>
+                  Copy
+                </Button>
+              </div>
             </div>
-            <div className={this.classes.buttons}>
-              {sendSnippetEmail
-                ? <div style={{position: 'relative'}}>
-                  <Button type='secondary'
-                          className={this.classes.sendEmailButton}
-                          onClick={() => this.refs.sendSnippetPopup.open()}>
-                    Email this script and instructions
-                  </Button>
-                  <PlanPopup onClose={() => {
-                    this.setState({to: null});
-                  }} ref="sendSnippetPopup" style={{
-                    width: 'max-content',
-                    left: '253px'
-                  }} title="Send Script">
-                    <PopupTextContent>
-                      <div style={{display: 'inline-flex'}}>
-                        <input type='email'
-                               value={this.state.to || ''}
-                               onChange={(e) => this.setState({to: e.target.value})}
-                               placeholder='email'
-                               className={textFieldStyles.locals.input}
-                        />
-                        <Button type='primary' onClick={() => {
-                          this.props.sendSnippetEmail(senderEmail, UID, this.state.to);
-                          this.refs.sendSnippetPopup.close();
-                        }}>Send</Button>
-                      </div>
-                    </PopupTextContent>
-                  </PlanPopup>
+            {
+              isConnectedToServer ? <div className={this.classes.firstStepCont}>
+                  <div className={this.classes.or}>OR</div>
+                  <Button className={this.classes.secondaryButton} type='primary' onClick={() => {
+                    this.refs.popup.open();
+                  }}>Add To Tag Manager</Button>
                 </div>
-                : null}
-              <Button type='primary' icon="buttons:edit"
-                      onClick={() => copy(code)}>
-                Copy
-              </Button>
-            </div>
+                : null
+            }
           </div>)
       }
       {
@@ -153,7 +165,12 @@ export default class AttributionSetup extends Component {
               <Button className={this.classes.secondaryButton} type='primary' onClick={() => {
                 this.refs.popup.open();
               }}>Add To Tag Manager</Button>
-              <TagManagerAutomaticPopup ref='popup' snippetScript={code}/>
+              <div style={{marginTop: '5px'}} className={this.classes.secondStepText}>
+                <div>Or <a
+                  href='https://intercom.help/infinigrow/analyze/attribution-setup/add-the-tracking-script-to-your-website'
+                  target='_blank'>learn more</a>
+                </div>
+              </div>
             </div> :
             <div className={this.classes.secondStepContainer}>
               <div className={this.classes.secondStepText}>

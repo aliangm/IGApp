@@ -146,3 +146,13 @@
 .send-email-button {
     margin-right: 10px;
 }
+
+.first-step-cont {
+    display: flex;
+    align-items: center;
+}
+
+.or {
+    composes: content-title;
+    margin: 0 50px;
+}
