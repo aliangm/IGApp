@@ -16,12 +16,8 @@ export default class YoutubeAutomaticPopup extends Component {
   }
 
   open() {
-    this.setState({hidden: false});
+    this.refs.simpleIntegrationPopup.open();
   }
-
-  close = () => {
-    this.setState({hidden: true});
-  };
 
   handleChangeIdentifier(event) {
     this.setState({fullIdentifier: event.target.value});
@@ -40,18 +36,19 @@ export default class YoutubeAutomaticPopup extends Component {
   }
 
   render() {
-    return <SimpleIntegrationPopup getDataSuccess={this.props.setDataAsState}
+    return <SimpleIntegrationPopup ref="simpleIntegrationPopup"
+                                   getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'youtubeapi',
                                      JSON.stringify({type: this.state.type, id: this.state.id}),
                                      localStorage.getItem('region'))}
-                                   isOpen={!this.state.hidden}
-                                   close={this.close}
                                    width='410px'
                                    title='Please enter your youtube channel id/URL'
                                    onChange={this.handleChangeIdentifier.bind(this)}
                                    placeHolder='https://www.youtube.com/channel/channel_id'
                                    value={this.state.fullIdentifier}
+                                   affectedIndicators={this.props.affectedIndicators}
+                                   actualIndicators={this.props.actualIndicators}
     />;
   }
 }

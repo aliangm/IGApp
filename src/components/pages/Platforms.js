@@ -18,7 +18,7 @@ import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticP
 import YoutubeAutomaticPopup from 'components/pages/indicators/YoutubeAutomaticPopup';
 import StripeAutomaticPopup from 'components/pages/indicators/StripeAutomaticPopup';
 import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheetsAutomaticPopup';
-import MozAutomaticPopup from './indicators/MozAutomaticPopup';
+import MozAutomaticPopup from 'components/pages/indicators/MozAutomaticPopup';
 import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
@@ -26,7 +26,7 @@ import remove from 'lodash/remove';
 
 const PLATFORM_INDICATORS_MAPPING = {
   'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
-  'Salesforce': ['users', 'opps', 'SQL', 'MQL', 'MCL', 'CAC', 'MRR', 'ARPA'],
+  'Salesforce': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'CAC', 'MRR', 'ARPA', 'newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'],
   'Google Analytics': ['sessions', 'bounceRate', 'averageSessionDuration', 'blogVisits'],
   'LinkedIn': ['linkedinEngagement', 'linkedinFollowers'],
   'Facebook': ['facebookEngagement', 'facebookLikes'],
@@ -106,38 +106,59 @@ export default class Platforms extends Component {
         <Title title="Integrations"/>
         <div>
           <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.salesforceAuto}
-                                    ref="salesforce"
+                                    ref="salesforce" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Salesforce}
+                                    actualIndicators={this.props.actualIndicators}
                                     loadingStarted={() => this.setLoading('salesforce', true)}
                                     loadingFinished={() => this.setLoading('salesforce', false)}
           />
           <HubspotAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.hubspotAuto}
                                  updateState={this.props.updateState} ref="hubspot"
+                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING.Hubspot}
+                                 actualIndicators={this.props.actualIndicators}
                                  loadingStarted={() => this.setLoading('hubspot', true)}
                                  loadingFinished={() => this.setLoading('hubspot', false)}
           />
           <GoogleAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleAuto}
                                 ref="googleAnalytics"
+                                affectedIndicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']}
+                                actualIndicators={this.props.actualIndicators}
                                 loadingStarted={() => this.setLoading('google', true)}
                                 loadingFinished={() => this.setLoading('google', false)}
           />
           <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState} ref="linkedin"
+                                  affectedIndicators={PLATFORM_INDICATORS_MAPPING.LinkedIn}
+                                  actualIndicators={this.props.actualIndicators}
                                   loadingStarted={() => this.setLoading('linkedin', true)}
                                   loadingFinished={() => this.setLoading('linkedin', false)}
           />
-          <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState} ref="facebook"/>
-          <TwitterAutomaticPopup setDataAsState={this.props.setDataAsState} ref="twitter"/>
-          <YoutubeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="youtube"/>
+          <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState} ref="facebook"
+                                  affectedIndicators={PLATFORM_INDICATORS_MAPPING.Facebook}
+                                  actualIndicators={this.props.actualIndicators}/>
+          <TwitterAutomaticPopup setDataAsState={this.props.setDataAsState} ref="twitter"
+                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING.Twitter}
+                                 actualIndicators={this.props.actualIndicators}/>
+          <YoutubeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="youtube"
+                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING.Youtube}
+                                 actualIndicators={this.props.actualIndicators}/>
           <StripeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="stripe"
+                                affectedIndicators={PLATFORM_INDICATORS_MAPPING.Stripe}
+                                actualIndicators={this.props.actualIndicators}
                                 loadingStarted={() => this.setLoading('stripe', true)}
                                 loadingFinished={() => this.setLoading('stripe', false)}
           />
-          <MozAutomaticPopup setDataAsState={this.props.setDataAsState} defaultUrl={this.props.mozapi
-            ? this.props.mozapi.url
-            : this.props.userAccount.companyWebsite} ref="moz"/>
+          <MozAutomaticPopup setDataAsState={this.props.setDataAsState}
+                             defaultUrl={this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite}
+                             ref="moz" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Moz}
+                             actualIndicators={this.props.actualIndicators}
+
+          />
           <GoogleSheetsAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleSheetsAuto}
+                                      ref="googleSheets"
+                                      affectedIndicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']}
+                                      actualIndicators={this.props.actualIndicators}
                                       loadingStarted={() => this.setLoading('sheets', true)}
                                       loadingFinished={() => this.setLoading('sheets', false)}
-                                      ref="googleSheets"/>
+          />
           <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'

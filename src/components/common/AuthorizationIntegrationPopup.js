@@ -8,14 +8,6 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   style = style;
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      hidden: true
-    };
-  }
-
   componentDidMount() {
     if (!this.props.data) {
       serverCommunication.serverRequest('get', this.props.api)
@@ -80,7 +72,7 @@ export default class AuthorizationIntegrationPopup extends Component {
               this.props.afterDataRetrieved(data)
                 .then((showPopup) => {
                   this.loadingFinished();
-                  this.setState({hidden: !showPopup});
+                  this.refs.integrationPopup.propogateStep(!showPopup);
                 })
                 .catch((error) => {
                   this.loadingFinished();
@@ -101,19 +93,15 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   makeServerRequest = () => {
     this.loadingStarted();
-    this.setState({hidden: true});
+    this.refs.integrationPopup.close();
     return this.props.makeServerRequest();
   };
 
   onDoneServerRequest = (isError) => {
-    if(isError) {
+    if (isError) {
       window.alert('Error occurred');
     }
     this.loadingFinished();
-  };
-
-  close = () => {
-    this.setState({hidden: true});
   };
 
   render() {
@@ -122,8 +110,9 @@ export default class AuthorizationIntegrationPopup extends Component {
                         innerClassName={this.props.innerClassName}
                         contentClassName={this.props.contentClassName}
                         makeServerRequest={this.makeServerRequest}
-                        isOpen={!this.state.hidden}
-                        close={this.close}
+                        ref="integrationPopup"
+                        affectedIndicators={this.props.affectedIndicators}
+                        actualIndicators={this.props.actualIndicators}
                         onDoneServerRequest={this.onDoneServerRequest}
       >
         {this.props.children}

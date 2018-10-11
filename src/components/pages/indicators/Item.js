@@ -18,8 +18,8 @@ export default class Item extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) :  (props.defaultStatus === 0 ? 'inactive' : undefined),
-      status: props.defaultStatus <= 0 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus  || '' : props.defaultStatus || '')),
+      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) : (props.defaultStatus === 0 ? 'inactive' : undefined),
+      status: props.defaultStatus <= 0 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus || '' : props.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
       name: props.name,
@@ -30,8 +30,8 @@ export default class Item extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      state: nextProps.defaultStatus ? (nextProps.defaultStatus === -2 ? 'irrelevant' : (nextProps.automaticIndicators ? 'auto' : 'manual')) :  (nextProps.defaultStatus === 0 ? 'inactive' : undefined),
-      status: nextProps.defaultStatus <= 0 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus  || '' : nextProps.defaultStatus || '')),
+      state: nextProps.defaultStatus ? (nextProps.defaultStatus === -2 ? 'irrelevant' : (nextProps.automaticIndicators ? 'auto' : 'manual')) : (nextProps.defaultStatus === 0 ? 'inactive' : undefined),
+      status: nextProps.defaultStatus <= 0 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus || '' : nextProps.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
       name: nextProps.name,
@@ -42,12 +42,17 @@ export default class Item extends Component {
 
   getStateText() {
     switch (this.state.state) {
-      case 'auto': return 'Automatic';
-      case 'manual': return 'Manual';
-      case 'inactive': return 'Inactive';
-      case 'irrelevant': return 'Irrelevant';
+      case 'auto':
+        return 'Automatic';
+      case 'manual':
+        return 'Manual';
+      case 'inactive':
+        return 'Inactive';
+      case 'irrelevant':
+        return 'Irrelevant';
 
-      default: return 'Inactive';
+      default:
+        return 'Inactive';
     }
   }
 
@@ -56,11 +61,11 @@ export default class Item extends Component {
     if (typeof this.state.status === 'string' || this.state.status instanceof String) {
       const percents = this.state.status.match(/^(\d+)%/);
       if (percents) {
-        value =  +percents[1];
+        value = +percents[1];
       }
       const dollars = this.state.status.match(/^\$(\d+)/);
       if (dollars) {
-        value =  +dollars[1];
+        value = +dollars[1];
         return value / this.state.maxValue;
       }
       value = parseInt(this.state.status) / this.state.maxValue || 0;
@@ -75,11 +80,11 @@ export default class Item extends Component {
 
   getStatusText() {
     const status = this.state.status;
-    if (status == ''){
+    if (status == '') {
       return '';
     }
 
-    if (status == 0){
+    if (status == 0) {
       return '0';
     }
 
@@ -105,31 +110,31 @@ export default class Item extends Component {
   selectState = (state) => {
     this.setState({
       state: state,
-      menuShown: false,
+      menuShown: false
       //status: this.props.status || ''
     });
     if (state === 'inactive' || state === 'irrelevant') {
       this.setState({status: ''});
     }
-  }
+  };
 
   showMenu = () => {
     this.setState({
       menuShown: true
     });
-  }
+  };
 
   useStatus = () => {
     let status = this.refs.statusText.getValue();
     status = parseInt(status.replace(/[%$,]/g, ''));
-    if ((status && status>0) || status == 0) {
+    if ((status && status > 0) || status == 0) {
       this.setState({
         status: this.props.isPercentage ? (status > 100 ? 100 : status) + '%' : (this.props.isDollar ? '$' + status : status),
         statusPopupHidden: true
       });
       this.props.updateIndicator(this.props.name, status);
     }
-  }
+  };
 
   showSocialPopup = () => {
     const url = require('assets/social-popup.png');
@@ -156,105 +161,110 @@ export default class Item extends Component {
       e.target.onclick = null;
       win.close();
     };
-  }
+  };
 
   render() {
     let tooltip = null;
     if (this.state.displayHelp) {
-      tooltip = <div className={ tooltipStyle.locals.tooltip } style={{ left: '75%', top: '71px', width: '222px', zIndex: '3'}}>
-        <div className={ tooltipStyle.locals.ttLabel }>
-          { this.props.title }
-        </div>
-        <div className={ tooltipStyle.locals.ttContent }>
-          <div>
-            <div className={ tooltipStyle.locals.ttSubText }>
-              { this.props.description }
-            </div>
-            <div className={ tooltipStyle.locals.ttSubText } style={{ fontWeight: 'bold' }}>
-              { this.props.formula }
+      tooltip =
+        <div className={tooltipStyle.locals.tooltip} style={{left: '75%', top: '71px', width: '222px', zIndex: '3'}}>
+          <div className={tooltipStyle.locals.ttLabel}>
+            {this.props.title}
+          </div>
+          <div className={tooltipStyle.locals.ttContent}>
+            <div>
+              <div className={tooltipStyle.locals.ttSubText}>
+                {this.props.description}
+              </div>
+              <div className={tooltipStyle.locals.ttSubText} style={{fontWeight: 'bold'}}>
+                {this.props.formula}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div>;
     }
-    return <div className={ this.classes.item } data-state={ this.state.state ? this.state.state : 'start'}
+    return <div className={this.classes.item} data-state={this.state.state ? this.state.state : 'start'}
                 onMouseOver={() => {
                   this.setState({
                     hover: true
-                  })
+                  });
                 }}
                 onMouseOut={() => {
                   this.setState({
                     hover: false
-                  })
+                  });
                 }}>
-      <div className={ this.classes.inner }>
-        <div className={ this.classes.head }>{ this.props.title }</div>
-        { this.props.automaticIndicators && this.props.automaticIndicators !== true ?
-          <div className={ this.classes.providerIcon } data-icon={this.props.automaticIndicators}/>
-          : null }
-        <div className={ this.classes.content }>
-          <div className={ this.classes.iconWrap }
+      <div className={this.classes.inner}>
+        <div className={this.classes.head}>{this.props.title}</div>
+        {this.props.automaticIndicators && this.props.automaticIndicators !== true ?
+          <div className={this.classes.providerIcon} data-icon={this.props.automaticIndicators}/>
+          : null}
+        <div className={this.classes.content}>
+          <div className={this.classes.iconWrap}
                onMouseOver={() => {
                  this.setState({
                    displayHelp: true
-                 })
+                 });
                }}
                onMouseOut={() => {
                  this.setState({
                    displayHelp: false
-                 })
+                 });
                }}>
-            { this.needProgress() ?
-              <ProgressCircle progress={ this.getStatusProgress() } />
-              : null }
-            <div className={ this.classes.icon } data-icon={ this.props.icon } />
-            <div hidden={ !this.state.hover || this.state.state } className={ this.classes.addNewPlus } onClick={ ()=>{ this.setState({menuShown: true}) } }/>
+            {this.needProgress() ?
+              <ProgressCircle progress={this.getStatusProgress()}/>
+              : null}
+            <div className={this.classes.icon} data-icon={this.props.icon}/>
+            <div hidden={!this.state.hover || this.state.state} className={this.classes.addNewPlus} onClick={() => {
+              this.setState({menuShown: true});
+            }}/>
           </div>
-          { this.state.state ?
-            <div className={ this.classes.status }>{ this.getStatusText() }</div>
-            : null }
+          {this.state.state ?
+            <div className={this.classes.status}>{this.getStatusText()}</div>
+            : null}
         </div>
-        <div className={ this.classes.footer }>
-          <div className={ this.classes.footerButton } onClick={ this.showMenu } />
-          <div className={ this.classes.footerState }>{ this.getStateText() }</div>
+        <div className={this.classes.footer}>
+          <div className={this.classes.footerButton} onClick={this.showMenu} hidden={this.props.isMenuHidden}/>
+          <div className={this.classes.footerState}>{this.getStateText()}</div>
         </div>
-        <Popup className={ this.classes.menu } hidden={ !this.state.menuShown } onClose={() => {
+        <Popup className={this.classes.menu} hidden={!this.state.menuShown} onClose={() => {
           this.setState({
             menuShown: false
           });
         }}>
           {/* <div className={ this.classes.menu } hidden={ !this.state.menuShown } > */}
-          { this.props.showAutomaticPopup ?
-            <div className={ this.classes.menuItem } onClick={() => {
+          {this.props.showAutomaticPopup ?
+            <div className={this.classes.menuItem} onClick={() => {
               this.selectState('auto');
               this.props.showAutomaticPopup();
             }}>
               Automatic
             </div>
-            : null }
-          <div className={ this.classes.menuItem } style={{ fontWeight: this.props.defaultStatus && this.props.defaultStatus > 0 ? 'bold' : '600' }} onClick={() => {
-            this.selectState('manual');
-            this.setState({
-              statusPopupHidden: false
-            });
+            : null}
+          <div className={this.classes.menuItem}
+               style={{fontWeight: this.props.defaultStatus && this.props.defaultStatus > 0 ? 'bold' : '600'}}
+               onClick={() => {
+                 this.selectState('manual');
+                 this.setState({
+                   statusPopupHidden: false
+                 });
 
-            setTimeout(() => {
-              this.refs.statusText.focus();
-            }, 1);
-          }}>
+                 setTimeout(() => {
+                   this.refs.statusText.focus();
+                 }, 1);
+               }}>
             {this.props.defaultStatus && this.props.defaultStatus > 0 ? 'Edit' : 'Manual'}
           </div>
-          {this.props.isFunnel?
-            <div className={ this.classes.menuItem } onClick={() => {
+          {this.props.isFunnel ?
+            <div className={this.classes.menuItem} onClick={() => {
               this.selectState('irrelevant');
               this.props.updateIndicator(this.props.name, -2);
 
             }}>
               Irrelevant
             </div>
-            : null }
-          <div className={ this.classes.menuItem } onClick={() => {
+            : null}
+          <div className={this.classes.menuItem} onClick={() => {
             this.selectState('inactive');
             this.props.updateIndicator(this.props.name, 0);
 
@@ -265,22 +275,26 @@ export default class Item extends Component {
       </div>
 
       <Popup
-        className={ this.classes.statusPopup }
-        hidden={ this.state.statusPopupHidden }
+        className={this.classes.statusPopup}
+        hidden={this.state.statusPopupHidden}
         onClose={() => {
           this.setState({
             statusPopupHidden: true
-          })}}>
-        <div className={ this.classes.statusPopupRow }>
-          <div className={ this.classes.statusPopupTitle }>
+          });
+        }}>
+        <div className={this.classes.statusPopupRow}>
+          <div className={this.classes.statusPopupTitle}>
             Indicator current status
           </div>
         </div>
-        <div className={ this.classes.statusPopupRow }>
-          <Textfield defaultValue={ this.props.defaultStatus && this.props.defaultStatus > 0 ? this.props.defaultStatus : '' } onChange={() => { }} ref="statusText" />
+        <div className={this.classes.statusPopupRow}>
+          <Textfield
+            defaultValue={this.props.defaultStatus && this.props.defaultStatus > 0 ? this.props.defaultStatus : ''}
+            onChange={() => {
+            }} ref="statusText"/>
         </div>
-        <div className={ this.classes.statusPopupRow }>
-          <div className={ this.classes.statusButtons }>
+        <div className={this.classes.statusPopupRow}>
+          <div className={this.classes.statusButtons}>
             <Button type="secondary" style={{
               paddingLeft: '0'
             }} onClick={() => {
@@ -291,12 +305,12 @@ export default class Item extends Component {
             <Button type="primary" style={{
               width: '80px',
               textTransform: 'uppercase'
-            }} onClick={ this.useStatus }>Save</Button>
+            }} onClick={this.useStatus}>Save</Button>
           </div>
         </div>
       </Popup>
-      { tooltip }
-    </div>
+      {tooltip}
+    </div>;
   }
 }
 
@@ -305,7 +319,7 @@ class ProgressCircle extends Component {
 
   static defaultProps = {
     progress: 0
-  }
+  };
 
   _RADIUS = 47;
   _FULL_CIRCLE = this._RADIUS * Math.PI * 2;
@@ -319,19 +333,19 @@ class ProgressCircle extends Component {
   }
 
   render() {
-    return <div className={ this.classes.progressBox }>
-      <svg className={ this.classes.progressSvg } viewBox="0 0 100 100">
-        <circle r={ this._RADIUS } cx="50" cy="50"
-                className={ this.classes.progressCircleBack }
+    return <div className={this.classes.progressBox}>
+      <svg className={this.classes.progressSvg} viewBox="0 0 100 100">
+        <circle r={this._RADIUS} cx="50" cy="50"
+                className={this.classes.progressCircleBack}
                 fill="transparent"
-                strokeDasharray={ this._FULL_CIRCLE }
-                strokeDashoffset={ 0 }
+                strokeDasharray={this._FULL_CIRCLE}
+                strokeDashoffset={0}
         ></circle>
-        <circle r={ this._RADIUS } cx="50" cy="50"
-                className={ this.classes.progressCircle }
+        <circle r={this._RADIUS} cx="50" cy="50"
+                className={this.classes.progressCircle}
                 fill="transparent"
-                strokeDasharray={ this._FULL_CIRCLE }
-                strokeDashoffset={ this.getOffset() }
+                strokeDasharray={this._FULL_CIRCLE}
+                strokeDashoffset={this.getOffset()}
         ></circle>
 
         {/*<path d="M3,50a47,47 0 1,0 94,0a47,47 0 1,0 -94,0"
@@ -341,6 +355,6 @@ class ProgressCircle extends Component {
          strokeDashoffset={ this.getOffset() }
          />*/}
       </svg>
-    </div>
+    </div>;
   }
 }

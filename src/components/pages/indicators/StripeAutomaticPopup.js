@@ -24,17 +24,19 @@ export default class StripeAutomaticPopup extends Component {
     });
   };
 
-  render(){
-    return <div style={{ width: '100%' }}>
+  render() {
+    return <div style={{width: '100%'}}>
       <div>
         <AuthorizationIntegrationPopup ref='authPopup'
                                        api='stripeapi'
                                        afterDataRetrieved={this.afterDataRetrieved}
                                        loadingStarted={this.props.loadingStarted}
                                        loadingFinished={this.props.loadingFinished}
+                                       affectedIndicators={this.props.affectedIndicators}
+                                       actualIndicators={this.props.actualIndicators}
         />
       </div>
-    </div>
+    </div>;
   }
 
 }

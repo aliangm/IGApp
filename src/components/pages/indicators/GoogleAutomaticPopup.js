@@ -72,13 +72,6 @@ export default class GoogleAutomaticPopup extends Component {
     });
   };
 
-  close() {
-    this.refs.authPopup.close();
-    if (this.props.close) {
-      this.props.close();
-    }
-  }
-
   render() {
     const selects = {
       account: {
@@ -124,7 +117,10 @@ export default class GoogleAutomaticPopup extends Component {
                                           makeServerRequest={this.getUserData}
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
-                                          width='340px'>
+                                          width='340px'
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
+    >
       <div className={this.classes.row}>
         <Label style={{fontSize: '16px', color: '#24B10E'}} checkbox={this.state.isWebsiteEnabled} onChange={() => {
           this.setState({isWebsiteEnabled: !this.state.isWebsiteEnabled});

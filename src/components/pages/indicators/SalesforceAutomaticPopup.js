@@ -65,10 +65,10 @@ export default class SalesforceAutomaticPopup extends Component {
         statuses: data.statuses,
         stages: data.stages,
         owners: data.owners,
-        fields: data.fields,
+        fields: data.fields
       });
       resolve(true);
-    })
+    });
   };
 
   getUserData = () => {
@@ -167,13 +167,6 @@ export default class SalesforceAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
-  close() {
-    this.refs.authPopup.close();
-    if (this.props.close) {
-      this.props.close();
-    }
-  }
-
   render() {
     const selects = {
       statuses: {
@@ -231,6 +224,8 @@ export default class SalesforceAutomaticPopup extends Component {
                                           ref='authPopup'
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
     >
       <Title title="SalesForce"
              subTitle="Define your pipeline stages"/>

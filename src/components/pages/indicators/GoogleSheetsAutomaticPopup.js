@@ -87,13 +87,6 @@ export default class GoogleSheetsAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
-  close() {
-    this.refs.authPopup.close();
-    if (this.props.close) {
-      this.props.close();
-    }
-  }
-
   render() {
     const selects = {
       sheets: {
@@ -114,7 +107,10 @@ export default class GoogleSheetsAutomaticPopup extends Component {
                                           contentClassName={loadTemplateStyle.locals.content}
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
-                                          innerClassName={loadTemplateStyle.locals.inner}>
+                                          innerClassName={loadTemplateStyle.locals.inner}
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
+    >
 
       <Title title="Google Sheets" subTitle="Define which metrics should be taken from Google Sheets"/>
       <div className={this.classes.row}>

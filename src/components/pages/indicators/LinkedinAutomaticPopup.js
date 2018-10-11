@@ -15,16 +15,12 @@ export default class LinkedinAutomaticPopup extends Component {
     super(props);
     this.state = {
       accounts: [],
-      selectedAccount: null,
+      selectedAccount: null
     };
   }
 
   open() {
     this.refs.authPopup.open();
-  }
-
-  close() {
-    this.refs.authPopup.close();
   }
 
   afterDataRetrieved = (data) => {
@@ -90,6 +86,8 @@ export default class LinkedinAutomaticPopup extends Component {
                                           width='340px'
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
     >
       {this.state.accounts.length > 0
         ? <div>

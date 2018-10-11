@@ -137,6 +137,8 @@ export default class HubspotAutomaticPopup extends Component {
                                           ref='authPopup'
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
     >
       <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>
       <div className={this.classes.row}>
