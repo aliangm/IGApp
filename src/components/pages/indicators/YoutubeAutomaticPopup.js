@@ -19,10 +19,6 @@ export default class YoutubeAutomaticPopup extends Component {
     this.refs.simpleIntegrationPopup.open();
   }
 
-  close = () => {
-    this.refs.simpleIntegrationPopup.close();
-  };
-
   handleChangeIdentifier(event) {
     this.setState({fullIdentifier: event.target.value});
     if (event.target.value.match(/.*youtube.com\/channel\/.*/)) {

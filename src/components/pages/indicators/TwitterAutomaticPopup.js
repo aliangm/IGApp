@@ -16,10 +16,6 @@ export default class TwitterAutomaticPopup extends Component {
     this.refs.simpleIntegrationPopup.open();
   }
 
-  close = () => {
-    this.refs.simpleIntegrationPopup.close();
-  };
-
   handleChangeIdentifier(event) {
     this.setState({identifier: event.target.value});
   }

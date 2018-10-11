@@ -16,10 +16,6 @@ export default class MozAutomaticPopup extends Component {
     this.refs.simpleIntegrationPopup.open();
   }
 
-  close = () => {
-    this.refs.simpleIntegrationPopup.close();
-  };
-
   componentWillReceiveProps(nextProps) {
     if (this.props.defaultUrl !== nextProps.defaultUrl) {
       this.setState({url: nextProps.defaultUrl});

@@ -22,7 +22,7 @@ export default class IntegrationPopup extends Component {
   }
 
   open = () => {
-    this.setState({hidden: false});
+    this.setState({indicatorsPopup: false, hidden: false, error: false});
   };
 
   close = () => {
@@ -41,7 +41,7 @@ export default class IntegrationPopup extends Component {
   done = () => {
     this.props.makeServerRequest()
       .then(() => {
-        this.setState({error: false, indicatorsPopup: true});
+        this.setState({indicatorsPopup: true});
         this.props.onDoneServerRequest(false);
       })
       .catch((error) => {
@@ -93,9 +93,7 @@ export default class IntegrationPopup extends Component {
       </div>
       {this.state.indicatorsPopup ?
         <PopupFrame primaryClick={this.close}
-                    secondaryClick={() => {
-                      this.setState({indicatorsPopup: false});
-                    }}
+                    secondaryClick={this.open}
                     primaryButtonText="Done"
                     secondaryButtonText="Edit"
                     title="Affected Indicators">

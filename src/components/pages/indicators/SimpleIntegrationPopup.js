@@ -40,12 +40,8 @@ export default class SimpleIntegrationPopup extends Component {
 
   onDoneServerRequest = (isError) => {
     if (!isError) {
-      this.close();
+      this.refs.propogateStep(true);
     }
-  };
-
-  close = () => {
-    this.refs.integrationPopup.close();
   };
 
   open = () => {

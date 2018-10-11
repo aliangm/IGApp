@@ -93,7 +93,7 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   makeServerRequest = () => {
     this.loadingStarted();
-    this.setState({hidden: true});
+    this.refs.integrationPopup.close();
     return this.props.makeServerRequest();
   };
 
