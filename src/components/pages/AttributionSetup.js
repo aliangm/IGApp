@@ -173,9 +173,10 @@ export default class AttributionSetup extends Component {
               </div>
             </div> :
             <div className={this.classes.secondStepContainer}>
-              <div className={this.classes.secondStepText}>
-                {'Place the script into the head (before the </head> tag) of every page of your site (or site template).'}
-              </div>
+              {this.state.tab === 0 ?
+                <div className={this.classes.secondStepText}>
+                  {'Place the script into the head (before the </head> tag) of every page of your site (or site template).'}
+                </div> : null}
               <Button type='secondary'
                       className={this.classes.secondaryButton}
                       onClick={() => window.open(
