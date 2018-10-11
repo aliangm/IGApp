@@ -71,7 +71,7 @@ export default class TagManagerAutomaticPopup extends Component {
     this.refs.popup.open();
   }
 
-  doneServerRequest = () => {
+  makeServerRequest = () => {
     return new Promise((resolve, reject) => {
       serverCommunication.serverRequest('put',
         'tagmanager',
@@ -83,7 +83,7 @@ export default class TagManagerAutomaticPopup extends Component {
         localStorage.getItem('region'))
         .then((response) => {
           if (response.ok) {
-            resolve();
+            resolve(false);
           }
           else if (response.status == 401) {
             history.push('/');
@@ -145,7 +145,7 @@ export default class TagManagerAutomaticPopup extends Component {
         });
       }}
 
-      doneServerRequest={this.doneServerRequest}>
+      makeServerRequest={this.makeServerRequest}>
 
       <div className={ this.classes.row }>
         <Select {...selects.account} selected={this.state.selectedAccount}
