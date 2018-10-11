@@ -83,7 +83,7 @@ export default class TagManagerAutomaticPopup extends Component {
         localStorage.getItem('region'))
         .then((response) => {
           if (response.ok) {
-            resolve();
+            resolve(false);
           }
           else if (response.status == 401) {
             history.push('/');

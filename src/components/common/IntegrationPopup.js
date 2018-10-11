@@ -40,8 +40,8 @@ export default class IntegrationPopup extends Component {
 
   done = () => {
     this.props.makeServerRequest()
-      .then(() => {
-        this.setState({indicatorsPopup: true});
+      .then((shouldShowIndicatorsPopup = true) => {
+        this.setState({indicatorsPopup: shouldShowIndicatorsPopup});
         this.props.onDoneServerRequest(false);
       })
       .catch((error) => {
