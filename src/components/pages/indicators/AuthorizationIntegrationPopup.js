@@ -59,8 +59,16 @@ export default class AuthorizationIntegrationPopup extends Component {
     }
   };
 
-  afterAuthorization = (code) => {
+  loadingStarted = () => {
     this.props.loadingStarted && this.props.loadingStarted();
+  };
+
+  loadingFinished = () => {
+    this.props.loadingFinished && this.props.loadingFinished();
+  };
+
+  afterAuthorization = (code) => {
+    this.loadingStarted();
     serverCommunication.serverRequest('post',
       this.props.api,
       JSON.stringify({code: code}),
@@ -71,28 +79,28 @@ export default class AuthorizationIntegrationPopup extends Component {
             .then((data) => {
               this.props.afterDataRetrieved(data)
                 .then((showPopup) => {
-                  this.props.loadingFinished && this.props.loadingFinished();
+                  this.loadingFinished();
                   this.setState({hidden: !showPopup});
                 })
                 .catch((error) => {
-                  this.props.loadingFinished && this.props.loadingFinished();
+                  this.loadingFinished();
                   window.alert('Error occurred');
                 });
             });
         }
         else if (response.status == 401) {
-          this.props.loadingFinished && this.props.loadingFinished();
+          this.loadingFinished();
           history.push('/');
         }
         else {
-          this.props.loadingFinished && this.props.loadingFinished();
+          this.loadingFinished();
           window.alert('Error occurred');
         }
       });
   };
 
   makeServerRequest = () => {
-    this.props.loadingStarted && this.props.loadingStarted();
+    this.loadingStarted();
     this.setState({hidden: true});
     return this.props.makeServerRequest();
   };
@@ -101,7 +109,7 @@ export default class AuthorizationIntegrationPopup extends Component {
     if(isError) {
       window.alert('Error occurred');
     }
-    this.props.loadingFinished && this.props.loadingFinished();
+    this.loadingFinished();
   };
 
   close = () => {
