@@ -18,7 +18,7 @@ import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticP
 import YoutubeAutomaticPopup from 'components/pages/indicators/YoutubeAutomaticPopup';
 import StripeAutomaticPopup from 'components/pages/indicators/StripeAutomaticPopup';
 import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheetsAutomaticPopup';
-import MozAutomaticPopup from './indicators/MozAutomaticPopup';
+import MozAutomaticPopup from 'components/pages/indicators/MozAutomaticPopup';
 import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
