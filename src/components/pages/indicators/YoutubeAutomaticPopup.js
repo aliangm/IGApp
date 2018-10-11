@@ -45,13 +45,15 @@ export default class YoutubeAutomaticPopup extends Component {
                                      'youtubeapi',
                                      JSON.stringify({type: this.state.type, id: this.state.id}),
                                      localStorage.getItem('region'))}
-                                   isOpen={!this.state.hidden}
+                                   hidden={this.state.hidden}
                                    close={this.close}
                                    width='410px'
                                    title='Please enter your youtube channel id/URL'
                                    onChange={this.handleChangeIdentifier.bind(this)}
                                    placeHolder='https://www.youtube.com/channel/channel_id'
                                    value={this.state.fullIdentifier}
+                                   affectedIndicators={this.props.affectedIndicators}
+                                   actualIndicators={this.props.actualIndicators}
     />;
   }
 }

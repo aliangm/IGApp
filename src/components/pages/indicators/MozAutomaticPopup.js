@@ -37,11 +37,13 @@ export default class MozAutomaticPopup extends Component {
                                      'mozapi',
                                      JSON.stringify({url: this.state.url}),
                                      localStorage.getItem('region'))}
-                                   isOpen={!this.state.hidden}
+                                   hidden={this.state.hidden}
                                    close={this.close}
                                    title='Please enter your website'
                                    onChange={this.handleChange.bind(this)}
                                    value={this.state.url}
+                                   affectedIndicators={this.props.affectedIndicators}
+                                   actualIndicators={this.props.actualIndicators}
     />;
   }
 }

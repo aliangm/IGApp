@@ -112,7 +112,10 @@ export default class GoogleSheetsAutomaticPopup extends Component {
                                           doneServerRequest={this.getUserData}
                                           width='600px'
                                           contentClassName={loadTemplateStyle.locals.content}
-                                          innerClassName={loadTemplateStyle.locals.inner}>
+                                          innerClassName={loadTemplateStyle.locals.inner}
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
+    >
 
       <Title title="Google Sheets" subTitle="Define which metrics should be taken from Google Sheets"/>
       <div className={this.classes.row}>

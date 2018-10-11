@@ -15,7 +15,7 @@ export default class LinkedinAutomaticPopup extends Component {
     super(props);
     this.state = {
       accounts: [],
-      selectedAccount: null,
+      selectedAccount: null
     };
   }
 
@@ -88,6 +88,8 @@ export default class LinkedinAutomaticPopup extends Component {
                                           afterDataRetrieved={this.afterDataRetrieved}
                                           doneServerRequest={this.getUserData}
                                           width='340px'
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
     >
       {this.state.accounts.length > 0
         ? <div>

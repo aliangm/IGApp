@@ -32,12 +32,14 @@ export default class TwitterAutomaticPopup extends Component {
                                      'twitterapi',
                                      JSON.stringify({identifier: this.state.identifier}),
                                      localStorage.getItem('region'))}
-                                   isOpen={!this.state.hidden}
+                                   hidden={this.state.hidden}
                                    close={this.close}
                                    title='Please enter your Twitter company page name'
                                    placeHolder='@ExamplePage'
                                    onChange={this.handleChangeIdentifier.bind(this)}
                                    value={this.state.identifier}
+                                   affectedIndicators={this.props.affectedIndicators}
+                                   actualIndicators={this.props.actualIndicators}
     />;
   }
 }

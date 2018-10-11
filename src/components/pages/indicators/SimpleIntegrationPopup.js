@@ -45,8 +45,10 @@ export default class SimpleIntegrationPopup extends Component {
   render() {
     return <IntegrationPopup width={this.props.width}
                              doneRequest={this.doneRequest}
-                             isOpen={this.props.isOpen}
+                             hidden={this.props.hidden}
                              close={this.props.close}
+                             affectedIndicators={this.props.affectedIndicators}
+                             actualIndicators={this.props.actualIndicators}
     >
       <div style={{display: 'grid'}}>
         <div className={this.classes.row}>

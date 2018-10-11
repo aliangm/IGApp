@@ -31,11 +31,14 @@ export default class FacebookAutomaticPopup extends Component {
                                      'facebookapi',
                                      JSON.stringify({identifier: this.state.identifier}),
                                      localStorage.getItem('region'))}
-                                   isOpen={!this.state.hidden}
+                                   hidden={this.state.hidden}
                                    close={this.close}
                                    onChange={this.handleChangeIdentifier.bind(this)}
                                    title='Please enter your Facebook company page name/URL'
                                    placeHolder='https://www.facebook.com/ExamplePage'
-                                   value={this.state.identifier}/>;
+                                   value={this.state.identifier}
+                                   affectedIndicators={this.props.affectedIndicators}
+                                   actualIndicators={this.props.actualIndicators}
+    />;
   }
 }

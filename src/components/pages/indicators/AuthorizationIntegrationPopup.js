@@ -8,14 +8,6 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   style = style;
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      hidden: true
-    };
-  }
-
   componentDidMount() {
     if (!this.props.data) {
       serverCommunication.serverRequest('get', this.props.api)
@@ -70,7 +62,7 @@ export default class AuthorizationIntegrationPopup extends Component {
             .then((data) => {
               this.props.afterDataRetrieved(data)
                 .then((showPopup) => {
-                  this.setState({hidden: !showPopup});
+                  this.refs.integrationPopup.propogateStep(!showPopup);
                 })
                 .catch((error) => {
                   window.alert('error getting data');
@@ -87,7 +79,7 @@ export default class AuthorizationIntegrationPopup extends Component {
   };
 
   close = () => {
-    this.setState({hidden: true});
+    this.refs.integrationPopup.close();
   };
 
   render() {
@@ -96,8 +88,9 @@ export default class AuthorizationIntegrationPopup extends Component {
                         innerClassName={this.props.innerClassName}
                         contentClassName={this.props.contentClassName}
                         doneRequest={this.props.doneServerRequest}
-                        isOpen={!this.state.hidden}
-                        close={this.close}
+                        ref="integrationPopup"
+                        affectedIndicators={this.props.affectedIndicators}
+                        actualIndicators={this.props.actualIndicators}
       >
         {this.props.children}
       </IntegrationPopup>

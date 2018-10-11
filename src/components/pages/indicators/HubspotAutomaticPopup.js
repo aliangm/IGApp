@@ -135,6 +135,8 @@ export default class HubspotAutomaticPopup extends Component {
                                           api='hubspotapi'
                                           doneServerRequest={this.getUserData}
                                           ref='authPopup'
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
     >
       <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>
       <div className={this.classes.row}>

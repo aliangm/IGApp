@@ -65,10 +65,10 @@ export default class SalesforceAutomaticPopup extends Component {
         statuses: data.statuses,
         stages: data.stages,
         owners: data.owners,
-        fields: data.fields,
+        fields: data.fields
       });
       resolve(true);
-    })
+    });
   };
 
   getUserData = () => {
@@ -229,6 +229,8 @@ export default class SalesforceAutomaticPopup extends Component {
                                           api='salesforceapi'
                                           doneServerRequest={this.getUserData}
                                           ref='authPopup'
+                                          affectedIndicators={this.props.affectedIndicators}
+                                          actualIndicators={this.props.actualIndicators}
     >
       <Title title="SalesForce"
              subTitle="Define your pipeline stages"/>
