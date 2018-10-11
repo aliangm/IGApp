@@ -29,8 +29,8 @@ export default class IntegrationPopup extends Component {
     this.setState({error: false, hidden: true, indicatorsPopup: false});
   };
 
-  propogateStep = (isFinalStep) => {
-    if (isFinalStep) {
+  propogateStep = (openIndicatorsPopup) => {
+    if (openIndicatorsPopup) {
       this.setState({indicatorsPopup: true});
     }
     else {
