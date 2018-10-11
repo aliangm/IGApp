@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AuthorizationIntegrationPopup from 'components/pages/indicators/AuthorizationIntegrationPopup';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class StripeAutomaticPopup extends Component {
 

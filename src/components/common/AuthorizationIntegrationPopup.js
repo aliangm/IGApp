@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import serverCommunication from 'data/serverCommunication';
-import IntegrationPopup from 'components/pages/indicators/IntegrationPopup';
+import IntegrationPopup from 'components/common/IntegrationPopup';
 
 export default class AuthorizationIntegrationPopup extends Component {
 
