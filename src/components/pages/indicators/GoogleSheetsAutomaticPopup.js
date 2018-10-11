@@ -87,13 +87,6 @@ export default class GoogleSheetsAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
-  close() {
-    this.refs.authPopup.close();
-    if (this.props.close) {
-      this.props.close();
-    }
-  }
-
   render() {
     const selects = {
       sheets: {

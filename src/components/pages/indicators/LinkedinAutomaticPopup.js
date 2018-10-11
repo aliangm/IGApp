@@ -23,10 +23,6 @@ export default class LinkedinAutomaticPopup extends Component {
     this.refs.authPopup.open();
   }
 
-  close() {
-    this.refs.authPopup.close();
-  }
-
   afterDataRetrieved = (data) => {
     return new Promise((resolve, reject) => {
       if (data.values.length > 1) {

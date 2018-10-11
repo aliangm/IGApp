@@ -72,13 +72,6 @@ export default class GoogleAutomaticPopup extends Component {
     });
   };
 
-  close() {
-    this.refs.authPopup.close();
-    if (this.props.close) {
-      this.props.close();
-    }
-  }
-
   render() {
     const selects = {
       account: {

@@ -167,13 +167,6 @@ export default class SalesforceAutomaticPopup extends Component {
     this.setState({mapping: mapping});
   }
 
-  close() {
-    this.refs.authPopup.close();
-    if (this.props.close) {
-      this.props.close();
-    }
-  }
-
   render() {
     const selects = {
       statuses: {
