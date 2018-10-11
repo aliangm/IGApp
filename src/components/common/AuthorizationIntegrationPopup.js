@@ -104,10 +104,6 @@ export default class AuthorizationIntegrationPopup extends Component {
     this.loadingFinished();
   };
 
-  close = () => {
-    this.refs.integrationPopup.close();
-  };
-
   render() {
     return <div style={{width: '100%'}}>
       <IntegrationPopup width={this.props.width}
