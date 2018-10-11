@@ -364,10 +364,11 @@
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
     margin-right: 5px;
-    display: block;
     text-overflow: ellipsis;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
 }
 
 .father-channel-box {
