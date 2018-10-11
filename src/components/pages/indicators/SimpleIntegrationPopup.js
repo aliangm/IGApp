@@ -14,10 +14,6 @@ export default class SimpleIntegrationPopup extends Component {
     width: '400px'
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   makeServerRequest = () => {
     return new Promise((resolve, reject) => {
       this.props.serverRequest()
@@ -44,15 +40,22 @@ export default class SimpleIntegrationPopup extends Component {
 
   onDoneServerRequest = (isError) => {
     if (!isError) {
-      this.props.close();
+      this.close();
     }
   };
 
+  close = () => {
+    this.refs.integrationPopup.close();
+  };
+
+  open = () => {
+    this.refs.integrationPopup.open();
+  };
+
   render() {
-    return <IntegrationPopup width={this.props.width}
+    return <IntegrationPopup ref="integrationPopup"
+                             width={this.props.width}
                              makeServerRequest={this.makeServerRequest}
-                             hidden={this.props.hidden}
-                             close={this.props.close}
                              onDoneServerRequest={this.onDoneServerRequest}
                              affectedIndicators={this.props.affectedIndicators}
                              actualIndicators={this.props.actualIndicators}

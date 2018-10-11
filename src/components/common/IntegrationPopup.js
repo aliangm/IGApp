@@ -21,24 +21,11 @@ export default class IntegrationPopup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!isNil(nextProps.hidden) && nextProps.hidden !== this.state.hidden) {
-      this.setState({
-        hidden: nextProps.hidden
-      });
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if(!nextProps.isOpen) {
-      this.setState({error: false});
-    }
-  }
+  open = () => {
+    this.setState({hidden: false});
+  };
 
   close = () => {
-    if (this.props.close) {
-      this.props.close();
-    }
     this.setState({error: false, hidden: true, indicatorsPopup: false});
   };
 

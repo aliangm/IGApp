@@ -8,17 +8,16 @@ export default class TwitterAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: '',
-      hidden: true
+      identifier: ''
     };
   }
 
   open() {
-    this.setState({hidden: false});
+    this.refs.simpleIntegrationPopup.open();
   }
 
   close = () => {
-    this.setState({hidden: true});
+    this.refs.simpleIntegrationPopup.close();
   };
 
   handleChangeIdentifier(event) {
@@ -26,14 +25,13 @@ export default class TwitterAutomaticPopup extends Component {
   }
 
   render() {
-    return <SimpleIntegrationPopup width='400px'
+    return <SimpleIntegrationPopup ref="simpleIntegrationPopup"
+                                   width='400px'
                                    getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'twitterapi',
                                      JSON.stringify({identifier: this.state.identifier}),
                                      localStorage.getItem('region'))}
-                                   hidden={this.state.hidden}
-                                   close={this.close}
                                    title='Please enter your Twitter company page name'
                                    placeHolder='@ExamplePage'
                                    onChange={this.handleChangeIdentifier.bind(this)}

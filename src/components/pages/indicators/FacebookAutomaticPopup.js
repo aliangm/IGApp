@@ -8,17 +8,16 @@ export default class FacebookAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      identifier: '',
-      hidden: true
+      identifier: ''
     };
   }
 
   open() {
-    this.setState({hidden: false});
+    this.refs.simpleIntegrationPopup.open();
   }
 
   close = () => {
-    this.setState({hidden: true, identifier: ''});
+    this.refs.simpleIntegrationPopup.close();
   };
 
   handleChangeIdentifier(event) {
@@ -26,13 +25,12 @@ export default class FacebookAutomaticPopup extends Component {
   }
 
   render() {
-    return <SimpleIntegrationPopup getDataSuccess={this.props.setDataAsState}
+    return <SimpleIntegrationPopup ref="simpleIntegrationPopup"
+                                   getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'facebookapi',
                                      JSON.stringify({identifier: this.state.identifier}),
                                      localStorage.getItem('region'))}
-                                   hidden={this.state.hidden}
-                                   close={this.close}
                                    onChange={this.handleChangeIdentifier.bind(this)}
                                    title='Please enter your Facebook company page name/URL'
                                    placeHolder='https://www.facebook.com/ExamplePage'

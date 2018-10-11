@@ -8,17 +8,16 @@ export default class MozAutomaticPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      url: props.defaultUrl || '',
-      hidden: true
+      url: props.defaultUrl || ''
     };
   }
 
   open() {
-    this.setState({hidden: false});
+    this.refs.simpleIntegrationPopup.open();
   }
 
   close = () => {
-    this.setState({hidden: true});
+    this.refs.simpleIntegrationPopup.close();
   };
 
   componentWillReceiveProps(nextProps) {
@@ -32,13 +31,12 @@ export default class MozAutomaticPopup extends Component {
   }
 
   render() {
-    return <SimpleIntegrationPopup getDataSuccess={this.props.setDataAsState}
+    return <SimpleIntegrationPopup ref="simpleIntegrationPopup"
+                                   getDataSuccess={this.props.setDataAsState}
                                    serverRequest={() => serverCommunication.serverRequest('post',
                                      'mozapi',
                                      JSON.stringify({url: this.state.url}),
                                      localStorage.getItem('region'))}
-                                   hidden={this.state.hidden}
-                                   close={this.close}
                                    title='Please enter your website'
                                    onChange={this.handleChange.bind(this)}
                                    value={this.state.url}

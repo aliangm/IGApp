@@ -98,7 +98,7 @@ export default class AuthorizationIntegrationPopup extends Component {
   };
 
   onDoneServerRequest = (isError) => {
-    if(isError) {
+    if (isError) {
       window.alert('Error occurred');
     }
     this.loadingFinished();
@@ -117,7 +117,6 @@ export default class AuthorizationIntegrationPopup extends Component {
                         ref="integrationPopup"
                         affectedIndicators={this.props.affectedIndicators}
                         actualIndicators={this.props.actualIndicators}
-                        close={this.close}
                         onDoneServerRequest={this.onDoneServerRequest}
       >
         {this.props.children}
