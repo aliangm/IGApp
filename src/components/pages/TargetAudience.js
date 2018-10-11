@@ -47,7 +47,7 @@ export default class TargetAudience extends Component {
   }
 
   validate() {
-    const fields = ['companyType',
+    const mandatoryFields = ['companyType',
       'annualRevenue',
       'employees',
       'role',
@@ -56,7 +56,7 @@ export default class TargetAudience extends Component {
       'gender',
       'location'];
     return this.props.targetAudience.reduce((isValue, target, index) => {
-      const errorFields = fields.filter(field => !target.fields[field]);
+      const errorFields = mandatoryFields.filter(field => !target.fields[field]);
       // has errors
       if (errorFields && errorFields.length > 0) {
         // change order so user will be focused on first error
