@@ -323,7 +323,7 @@ export default class Indicators extends Component {
       <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
       <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
       <YoutubeAutomaticPopup hidden={ !this.state.showYoutubePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showYoutubePopup: false}) }}/>
-      <Loading hidden={ !this.state.loading }/>
+      {/*<Loading hidden={ !this.state.loading }/>*/}
       <div className={ this.classes.cols }>
         <div className={ this.classes.colLeft }>
           { page }
