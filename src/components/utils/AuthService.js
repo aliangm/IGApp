@@ -10,8 +10,15 @@ const options = {
   domain: config.authDomain,
   redirectUri: window.location.origin
 };
-
 const webAuth = new auth0.WebAuth(options);
+
+export function newLogin(email, password, callback) {
+  webAuth.login({email: email, password: password}, callback)
+}
+
+export function crossOriginVerification() {
+  webAuth.crossOriginVerification();
+}
 
 export function handleAuthentication(nextState, replace, callback) {
   const error = getParameterByName('error_description');

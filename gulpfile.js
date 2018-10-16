@@ -65,7 +65,8 @@ gulp.task('webpack-dev-server', function(callback) {
   var server = new WebpackDevServer(compiler, {
     historyApiFallback: true,
     contentBase: 'output',
-    inline: true
+    inline: true,
+    https: true
   });
   server.listen(port, "localhost", function() {});
   callback();

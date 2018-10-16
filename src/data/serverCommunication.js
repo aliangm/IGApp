@@ -16,7 +16,7 @@ export default {
     const deferred = q.defer();
     getProfile()
       .then((profile) => {
-        let URL = window.location.protocol + '//' + window.location.hostname + (window.location.protocol === 'https:' ? '/api/' : ':' + config.port + '/') + route;
+        let URL = window.location.protocol + '//' + window.location.hostname + config.apiBaseURI + route;
         if (profile && !withoutUID) {
           URL += '/' + profile.app_metadata.UID + '/';
         }
