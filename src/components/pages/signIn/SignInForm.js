@@ -2,9 +2,9 @@ import React from 'react';
 import Component from 'components/Component';
 import {newLogin} from 'components/utils/AuthService';
 import Button from 'components/controls/Button';
-import style from 'styles/login/login.css';
+import style from 'styles/signin/login.css';
 
-export default class Login extends Component {
+export default class SignInForm extends Component {
 
   style = style;
 
@@ -20,8 +20,8 @@ export default class Login extends Component {
 
   render() {
     return <div className={this.classes.page}>
-      <div className={this.classes.title}>Welcome back!</div>
-      <div className={this.classes.subTitle}>Don't have an account? Sign Up</div>
+      <div className={this.classes.title}>{this.props.title}</div>
+      <div className={this.classes.subTitle}>{this.props.subTitle}</div>
       <div className={this.classes.loginWrapper}>
         <div className={this.classes.inputField}>
           <div className={this.classes.inputLabel}>Work email</div>
@@ -42,10 +42,10 @@ export default class Login extends Component {
         <div>
         </div>
         <Button style={{width: 'min-content'}} type='primary'
-                onClick={() => newLogin(this.state.email, this.state.password, (result) => {
+                onClick={() => this.props.buttonAction(this.state.email, this.state.password, (result) => {
                   console.log(result);
                 })}>
-          Sign in
+          {this.props.buttonText}
         </Button>
       </div>
     </div>;

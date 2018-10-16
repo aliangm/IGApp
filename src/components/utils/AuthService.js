@@ -16,6 +16,10 @@ export function newLogin(email, password, callback) {
   webAuth.login({email: email, password: password}, callback)
 }
 
+export function signup(email, password, callback) {
+  webAuth.signup({email: email, password: password, connection: 'Username-Password-Authentication'}, callback);
+}
+
 export function crossOriginVerification() {
   webAuth.crossOriginVerification();
 }
