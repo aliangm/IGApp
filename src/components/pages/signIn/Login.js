@@ -7,7 +7,7 @@ export default class Login extends Component {
 
   render() {
     return <SignInForm title='Welcome back!'
-                       subTitle="Don't have an account? Sign Up"
+                       subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
                        buttonAction={(...parameters) => newLogin(...parameters)}
                        buttonText='Sign in'
                        buttonDisabled={false}

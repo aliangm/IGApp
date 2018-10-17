@@ -42,13 +42,13 @@
 }
 
 .checkbox {
-
 }
 
 .checkbox-label {
     font-size: 16px;
     font-weight: normal;
     margin-left: 15px;
+    text-align: left;
 }
 
 .input {
