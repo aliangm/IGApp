@@ -41,8 +41,6 @@ export default class HubspotAutomaticPopup extends Component {
   };
 
   getUserData = () => {
-    this.props.updateState({loading: true});
-
     return new Promise((resolve, reject) => {
       serverCommunication.serverRequest('put',
         'hubspotapi',
@@ -62,10 +60,8 @@ export default class HubspotAutomaticPopup extends Component {
           else {
             reject(new Error('error retreiveing hubspot data'));
           }
-          this.props.updateState({loading: false});
         })
         .catch(function (err) {
-          this.props.updateState({loading: false});
           reject(err);
         });
     });
