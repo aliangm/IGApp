@@ -8,7 +8,11 @@ export default class Login extends Component {
   render() {
     return <SignInForm title='Welcome back!'
                        subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
-                       buttonAction={(...parameters) => newLogin(...parameters)}
+                       buttonAction={(...parameters) => newLogin(...parameters, (error) => {
+                         if (error) {
+                           alert(error.description);
+                         }
+                       })}
                        buttonText='Sign in'
                        buttonDisabled={false}
                        checkboxes={
