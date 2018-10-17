@@ -24,16 +24,31 @@
 
 .login-wrapper{
     width: 400px;
-    height: 340px;
+    height: fit-content;
     border-radius: 8px;
     box-shadow: 0 2px 8px 0 rgba(227, 230, 244, 0.5);
     border: solid 1px #e3e6f4;
     background-color: #ffffff;
-    padding: 0 75px;
+    padding: 0 75px 35px 75px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     text-align: center;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    margin-top: 35px;
+}
+
+.checkbox {
+
+}
+
+.checkbox-label {
+    font-size: 16px;
+    font-weight: normal;
+    margin-left: 15px;
 }
 
 .input {

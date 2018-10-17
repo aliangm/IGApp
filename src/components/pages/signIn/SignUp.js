@@ -10,6 +10,13 @@ export default class Login extends Component {
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
                        buttonAction={(...parameters) => signup(...parameters)}
                        buttonText='Create Account'
+                       checkboxes={
+                         [
+                           <div>Accept our <a href="http://infinigrow.com/terms/">Terms and
+                             Privacy Policy</a>
+                           </div>,
+                           <div>Request a demo</div>
+                         ]}
     />;
   }
 }

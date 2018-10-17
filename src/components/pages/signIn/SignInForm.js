@@ -19,6 +19,13 @@ export default class SignInForm extends Component {
   }
 
   render() {
+    const checkboxes = this.props.checkboxes.map((item) => {
+      return  <div className={this.classes.checkboxWrapper}>
+        <input type='checkbox' className={this.classes.checkbox}/>
+        <div className={this.classes.checkboxLabel}>{item}</div>
+      </div>;
+    });
+
     return <div className={this.classes.page}>
       <div className={this.classes.title}>{this.props.title}</div>
       <div className={this.classes.subTitle}>{this.props.subTitle}</div>
@@ -39,8 +46,7 @@ export default class SignInForm extends Component {
                  placeholder='Password'
           />
         </div>
-        <div>
-        </div>
+        {checkboxes}
         <Button style={{width: 'min-content'}} type='primary'
                 onClick={() => this.props.buttonAction(this.state.email, this.state.password, (result) => {
                   console.log(result);
