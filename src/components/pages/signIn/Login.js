@@ -10,6 +10,7 @@ export default class Login extends Component {
                        subTitle="Don't have an account? Sign Up"
                        buttonAction={(...parameters) => newLogin(...parameters)}
                        buttonText='Sign in'
+                       buttonDisabled={false}
                        checkboxes={
                          [
                            <div>Remember me</div>

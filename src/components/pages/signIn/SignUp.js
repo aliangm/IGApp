@@ -5,7 +5,23 @@ import {signup} from 'components/utils/AuthService';
 
 export default class Login extends Component {
 
-  render() {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      acceptedTerms: false
+    }
+  }
+
+  checkboxChanged = (index) => {
+    if(index === 0){
+      this.setState({
+        acceptedTerms: !this.state.acceptedTerms
+      })
+    };
+  };
+
+    render() {
     return <SignInForm title='Create an account with InfiniGrow'
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
                        buttonAction={(...parameters) => signup(...parameters)}
@@ -17,6 +33,8 @@ export default class Login extends Component {
                            </div>,
                            <div>Request a demo</div>
                          ]}
+                       checkboxChanged={this.checkboxChanged}
+                       buttonDisabled={!this.state.acceptedTerms}
     />;
   }
 }
