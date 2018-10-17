@@ -1,6 +1,5 @@
 import React from 'react';
 import Component from 'components/Component';
-import {newLogin} from 'components/utils/AuthService';
 import Button from 'components/controls/Button';
 import style from 'styles/signin/login.css';
 

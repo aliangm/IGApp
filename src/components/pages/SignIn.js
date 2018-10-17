@@ -55,19 +55,17 @@ export default class SignIn extends Component {
               })
               .catch((err) => {
                 console.log(err);
-                login();
+                history.push('/login')
               });
           }
         })
         .catch((err) => {
           console.log(err);
-          login();
+          history.push('/login')
         });
     }
     else {
-      const isSignup = getParameterByName('signup');
-      const email = getParameterByName('email');
-      login(isSignup, email);
+      history.push('/login')
     }
   }
 
