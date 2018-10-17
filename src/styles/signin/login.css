@@ -11,7 +11,6 @@
 
 .title {
     composes: titles;
-    margin-top: 40px;
     font-size: 36px;
     font-weight: 600
 }
@@ -39,6 +38,15 @@
 .checkbox-wrapper {
     display: flex;
     margin-top: 35px;
+}
+
+.logo {
+    background: url(/assets/logo.png) center center no-repeat;
+    background-size: 100px 56px;
+    background-color: #273142;
+    width: 150px;
+    height: 150px;
+    margin: 40px 0;
 }
 
 .checkbox {

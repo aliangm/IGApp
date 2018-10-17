@@ -28,6 +28,7 @@ export default class SignInForm extends Component {
     });
 
     return <div className={this.classes.page}>
+      <div className={this.classes.logo} />
       <div className={this.classes.title}>{this.props.title}</div>
       <div className={this.classes.subTitle}>{this.props.subTitle}</div>
       <div className={this.classes.loginWrapper}>
