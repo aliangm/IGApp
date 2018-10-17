@@ -12,7 +12,7 @@ const options = {
 };
 const webAuth = new auth0.WebAuth(options);
 
-export function newLogin(email, password, callback) {
+export function login(email, password, callback) {
   webAuth.login({email: email, password: password}, callback)
 }
 
@@ -67,13 +67,6 @@ function setSession(authResult) {
 
   // navigate to the home route
   history.push('/');
-}
-
-export function login(isSignup, email) {
-  webAuth.authorize({
-    initialScreen: isSignup ? 'signUp' : 'login',
-    prefill: email ? {email: email} : null
-  });
 }
 
 export function getToken() {
