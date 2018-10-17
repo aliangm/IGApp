@@ -49,7 +49,7 @@ export default class SignInForm extends Component {
         {checkboxes}
         <Button style={{width: 'min-content'}} type='primary'
                 onClick={() => this.props.buttonAction(this.state.email, this.state.password, (result) => {
-                  console.log(result);
+                  alert(result.description);
                 })}>
           {this.props.buttonText}
         </Button>
