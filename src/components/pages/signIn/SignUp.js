@@ -27,10 +27,15 @@ export default class Login extends Component {
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
                        buttonAction={(...parameters) => signup(...parameters, (error) => {
                          if (error) {
-                           alert(error.description);
+                           if(error.name === "PasswordStrengthError") {
+                             alert('Incorrect Password Format, password should be: \n' + error.policy);
+                           }
+                           else {
+                             alert(error.description);
+                           }
                          }
                          else {
-                           alert('User created successfuly!');
+                           alert('User created successfully!');
                          }
                        })}
                        buttonText='Create Account'
