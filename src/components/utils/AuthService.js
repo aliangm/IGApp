@@ -13,7 +13,11 @@ const options = {
 const webAuth = new auth0.WebAuth(options);
 
 export function login(email, password, callback) {
-  webAuth.login({email: email, password: password}, callback)
+  webAuth.login({email: email, password: password}, callback);
+}
+
+export function passwordReset(email, callback) {
+  webAuth.changePassword({email: email, connection: 'Username-Password-Authentication'}, callback);
 }
 
 export function signup(email, password, callback) {
@@ -37,7 +41,8 @@ export function handleAuthentication(nextState, replace, callback) {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult);
         history.push('/');
-      } else {
+      }
+      else {
         if (err) {
           console.log(err);
         }

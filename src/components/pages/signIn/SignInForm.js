@@ -20,7 +20,7 @@ export default class SignInForm extends Component {
   render() {
     const checkboxes = this.props.checkboxes.map((item, index) => {
       return <div key={index} className={this.classes.checkboxWrapper}>
-        <input type='checkbox' className={this.classes.checkbox}
+        <input type='checkbox'
                onChange={() => this.props.checkboxChanged && this.props.checkboxChanged(index)}/>
         <div className={this.classes.checkboxLabel}>{item}</div>
       </div>;
@@ -53,6 +53,9 @@ export default class SignInForm extends Component {
                 onClick={() => this.props.buttonAction(this.state.email, this.state.password)}>
           {this.props.buttonText}
         </Button>
+      </div>
+      <div onClick={()=>this.props.onClickBottomLink()} className={this.classes.bottomLink}>
+        {this.props.bottomLinkText}
       </div>
     </div>;
   }

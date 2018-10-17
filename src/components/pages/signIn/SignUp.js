@@ -2,6 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import SignInForm from 'components/pages/signIn/SignInForm';
 import {signup} from 'components/utils/AuthService';
+import history from 'history';
 
 export default class Login extends Component {
 
@@ -19,7 +20,6 @@ export default class Login extends Component {
         acceptedTerms: !this.state.acceptedTerms
       });
     }
-    ;
   };
 
   render() {
@@ -27,7 +27,7 @@ export default class Login extends Component {
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
                        buttonAction={(...parameters) => signup(...parameters, (error) => {
                          if (error) {
-                           if(error.name === "PasswordStrengthError") {
+                           if (error.name === 'PasswordStrengthError') {
                              alert('Incorrect Password Format, password should be: \n' + error.policy);
                            }
                            else {
@@ -48,6 +48,8 @@ export default class Login extends Component {
                          ]}
                        checkboxChanged={this.checkboxChanged}
                        buttonDisabled={!this.state.acceptedTerms}
+                       bottomLinkText='Already using InfiniGrow? Log in here →'
+                       onClickBottomLink={() => history.push('/login')}
     />;
   }
 }
