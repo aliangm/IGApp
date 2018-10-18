@@ -23,6 +23,8 @@ export default class Login extends Component {
   };
 
   render() {
+    const preFilledEmail = this.props.location.query.email;
+
     return <SignInForm title='Create an account with InfiniGrow'
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
                        buttonAction={(...parameters) => signup(...parameters, (error) => {
@@ -50,6 +52,7 @@ export default class Login extends Component {
                        buttonDisabled={!this.state.acceptedTerms}
                        bottomComponent={<div onClick={() => history.push('/login')}>
                          Already using InfiniGrow? Log in here →</div>}
+                       preFilledEmail = {preFilledEmail}
     />;
   }
 }

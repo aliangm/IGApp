@@ -11,7 +11,7 @@ export default class SignInForm extends Component {
     super(props);
 
     this.state = {
-      email: null,
+      email: this.props.preFilledEmail || null,
       password: null
     };
 
@@ -35,6 +35,7 @@ export default class SignInForm extends Component {
           <div className={this.classes.inputLabel}>Work email</div>
           <input className={this.classes.input}
                  type='email'
+                 value={this.state.email}
                  onChange={(e) => this.setState({email: e.target.value})}
                  placeholder='Email'
           />
