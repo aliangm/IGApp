@@ -23,11 +23,13 @@ import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
-import SalesforceCampaigns from 'components/pages/campaigns/SalesforceCampaigns';
-import AdwordsCampaigns from 'components/pages/campaigns/AdwordsCampaigns';
-import FacebookCampaigns from 'components/pages/campaigns/FacebookCampaigns';
-import LinkedinCampaigns from 'components/pages/campaigns/LinkedinCampaigns';
-import TwitterCampaigns from 'components/pages/campaigns/TwitterCampaigns';
+import ImportButton from 'components/pages/campaigns/ImportButton';
+import FacebookCampaignsPopup from 'components/pages/campaigns/importPopups/FacebookCampaignsPopup';
+import CRMStyle from 'styles/indicators/crm-popup.css';
+import AdwordsCampaignsPopup from 'components/pages/campaigns/importPopups/AdwordsCampaignsPopup';
+import SalesforceCampaignsPopup from 'components/pages/campaigns/importPopups/SalesforceCampaignsPopup';
+import LinkedinCampaignsPopup from 'components/pages/campaigns/importPopups/LinkedinCampaignsPopup';
+import TwitterCampaignsPopup from 'components/pages/campaigns/importPopups/TwitterCampaignPopup';
 
 const PLATFORM_INDICATORS_MAPPING = {
   'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
@@ -265,38 +267,48 @@ export default class Platforms extends Component {
             Campaigns
             <div className={ this.classes.inner }>
               <div className={ this.classes.row }>
-                <SalesforceCampaigns
+                <ImportButton
                   setDataAsState={ this.props.setDataAsState }
                   close={ () => {} }
                   data={this.props.salesforceAuto}
                   userAccount={this.props.userAccount}
+                  popupComponent={SalesforceCampaignsPopup}
+                  className={CRMStyle.locals.salesforce}
                 />
               </div>
               <div className={ this.classes.row }>
-                <AdwordsCampaigns
+                <ImportButton
                   setDataAsState={ this.props.setDataAsState }
                   close={ () => {} }
                   data={this.props.adwordsapi}
+                  popupComponent={AdwordsCampaignsPopup}
+                  className={CRMStyle.locals.adwords}
                 />
               </div>
               <div className={ this.classes.row }>
-                <FacebookCampaigns
+                <ImportButton
                   setDataAsState={ this.props.setDataAsState }
                   close={ () => {}}
                   data={this.props.facebookadsapi}
+                  popupComponent={FacebookCampaignsPopup}
+                  className={CRMStyle.locals.facebookads}
                 />
               </div>
               <div className={ this.classes.row }>
-                <LinkedinCampaigns
+                <ImportButton
                   setDataAsState={ this.props.setDataAsState }
                   close={ () => {} }
                   data={this.props.linkedinadsapi}
+                  popupComponent={LinkedinCampaignsPopup}
+                  className={CRMStyle.locals.linkedinads}
                 />
               </div>
               <div className={ this.classes.row }>
-                <TwitterCampaigns
+                <ImportButton
                   setDataAsState={ this.props.setDataAsState }
                   close={ () => {} }
+                  popupComponent={TwitterCampaignsPopup}
+                  className={CRMStyle.locals.twitterads}
                 />
               </div>
             </div>
