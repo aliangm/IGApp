@@ -48,7 +48,9 @@ export default class SignInForm extends Component {
                  placeholder='Password'
           />
         </div>
-        {checkboxes}
+        <div className={this.classes.checkBoxes}>
+          {checkboxes}
+        </div>
         <Button style={{width: '110px', height:'38px', alignSelf: 'center', marginTop: '20px'}} type='primary'
                 disabled={this.props.buttonDisabled}
                 onClick={() => this.props.buttonAction(this.state.email, this.state.password)}>

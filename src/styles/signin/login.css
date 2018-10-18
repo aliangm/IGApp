@@ -9,6 +9,10 @@
     margin-bottom: 25px;
 }
 
+.check-boxes {
+    align-self: center;
+}
+
 .title {
     composes: titles;
     font-size: 36px;
