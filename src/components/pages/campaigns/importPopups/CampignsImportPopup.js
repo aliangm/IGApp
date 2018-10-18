@@ -39,6 +39,7 @@ export default class CampignsImportPopup extends Component {
             response.json()
               .then((data) => {
                 this.props.setDataAsState(data);
+                this.props.close && this.props.close();
                 resolve(false);
               });
           }

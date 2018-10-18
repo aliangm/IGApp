@@ -31,6 +31,7 @@ export default class ImportCampaignsPopup extends Component {
               userAccount={this.props.userAccount}
               popupComponent={SalesforceCampaignsPopup}
               className={CRMStyle.locals.salesforce}
+              close={this.props.close}
             />
           </div>
           <div className={this.classes.row}>
@@ -40,6 +41,7 @@ export default class ImportCampaignsPopup extends Component {
               data={this.props.adwordsapi}
               popupComponent={AdwordsCampaignsPopup}
               className={CRMStyle.locals.adwords}
+              close={this.props.close}
             />
           </div>
           <div className={this.classes.row}>
@@ -49,6 +51,7 @@ export default class ImportCampaignsPopup extends Component {
               data={this.props.facebookadsapi}
               popupComponent={FacebookCampaignsPopup}
               className={CRMStyle.locals.facebookads}
+              close={this.props.close}
             />
           </div>
           <div className={this.classes.row}>
@@ -58,6 +61,7 @@ export default class ImportCampaignsPopup extends Component {
               data={this.props.linkedinadsapi}
               popupComponent={LinkedinCampaignsPopup}
               className={CRMStyle.locals.linkedinads}
+              close={this.props.close}
             />
           </div>
           <div className={this.classes.row}>
@@ -67,6 +71,7 @@ export default class ImportCampaignsPopup extends Component {
               data={this.props.twitteradsapi}
               popupComponent={TwitterCampaignsPopup}
               className={CRMStyle.locals.twitterads}
+              close={this.props.close}
             />
           </div>
         </div>
