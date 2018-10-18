@@ -48,8 +48,8 @@ export default class Login extends Component {
                          ]}
                        checkboxChanged={this.checkboxChanged}
                        buttonDisabled={!this.state.acceptedTerms}
-                       bottomLinkText='Already using InfiniGrow? Log in here →'
-                       onClickBottomLink={() => history.push('/login')}
+                       bottomComponent={<div onClick={() => history.push('/login')}>
+                         Already using InfiniGrow? Log in here →</div>}
     />;
   }
 }

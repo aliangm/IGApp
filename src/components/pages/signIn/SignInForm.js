@@ -54,8 +54,8 @@ export default class SignInForm extends Component {
           {this.props.buttonText}
         </Button>
       </div>
-      <div onClick={()=>this.props.onClickBottomLink()} className={this.classes.bottomLink}>
-        {this.props.bottomLinkText}
+      <div className={this.classes.bottom}>
+        {this.props.bottomComponent}
       </div>
     </div>;
   }

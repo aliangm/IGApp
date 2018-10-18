@@ -31,32 +31,33 @@ export default class Login extends Component {
                     [
                       <div>Remember me</div>
                     ]}
-                  bottomLinkText='Forgot your password? Send yourself a new one.'
-                  onClickBottomLink={() => this.popup.open()}
+                  bottomComponent={<div style={{position: 'relative'}}>
+                    <div onClick={() => this.popup.open()}>Forgot your password? Send yourself a new one.</div>
+                    <PlanPopup onClose={() => {
+                      this.setState({to: null});
+                    }} ref={ref => this.popup = ref} style={{
+                      width: 'max-content',
+                      left: '253px'
+                    }} title="Send email">
+                      <PopupTextContent>
+                        <div style={{display: 'inline-flex'}}>
+                          <input type='email'
+                                 value={this.state.to || ''}
+                                 onChange={(e) => this.setState({to: e.target.value})}
+                                 placeholder='email'
+                                 className={textFieldStyles.locals.input}
+                          />
+                          <Button type='primary' onClick={() => {
+                            passwordReset(this.state.to, () => {
+                              console.log('password reset mail sent');
+                            });
+                            this.popup.close();
+                          }}>Send</Button>
+                        </div>
+                      </PopupTextContent>
+                    </PlanPopup>
+                  </div>}
       />
-      <PlanPopup onClose={() => {
-        this.setState({to: null});
-      }} ref={(ref) => this.popup = ref} style={{
-        width: 'max-content',
-        left: '253px'
-      }} title="Send email">
-        <PopupTextContent>
-          <div style={{display: 'inline-flex'}}>
-            <input type='email'
-                   value={this.state.to || ''}
-                   onChange={(e) => this.setState({to: e.target.value})}
-                   placeholder='email'
-                   className={textFieldStyles.locals.input}
-            />
-            <Button type='primary' onClick={() => {
-              passwordReset(this.state.to, () => {
-                console.log('password reset mail sent');
-              });
-              this.popup.close();
-            }}>Send</Button>
-          </div>
-        </PopupTextContent>
-      </PlanPopup>
     </div>;
   }
 }
