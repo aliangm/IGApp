@@ -192,20 +192,20 @@ export default class Platforms extends Component {
                                  userAccount={this.props.userAccount}
                                  loadingStarted={() => this.setLoading('twitterCampaigns', true)}
                                  loadingFinished={() => this.setLoading('twitterCampaigns', false)}
-                                 />
+          />
           <FacebookCampaignsPopup setDataAsState={this.props.setDataAsState}
-                                 ref='facebookCampaigns'
-                                 data={this.props.facebookadsapi}
-                                 userAccount={this.props.userAccount}
-                                 loadingStarted={() => this.setLoading('facebookCampaigns', true)}
-                                 loadingFinished={() => this.setLoading('facebookCampaigns', false)}
+                                  ref='facebookCampaigns'
+                                  data={this.props.facebookadsapi}
+                                  userAccount={this.props.userAccount}
+                                  loadingStarted={() => this.setLoading('facebookCampaigns', true)}
+                                  loadingFinished={() => this.setLoading('facebookCampaigns', false)}
           />
           <AdwordsCampaignsPopup setDataAsState={this.props.setDataAsState}
-                                  ref='adwordsCampaigns'
-                                  data={this.props.adwordsapi}
-                                  userAccount={this.props.userAccount}
-                                  loadingStarted={() => this.setLoading('adwordsCampaigns', true)}
-                                  loadingFinished={() => this.setLoading('adwordsCampaigns', false)}
+                                 ref='adwordsCampaigns'
+                                 data={this.props.adwordsapi}
+                                 userAccount={this.props.userAccount}
+                                 loadingStarted={() => this.setLoading('adwordsCampaigns', true)}
+                                 loadingFinished={() => this.setLoading('adwordsCampaigns', false)}
           />
           <Button type="secondary" style={{
             width: '193px',
@@ -324,7 +324,7 @@ export default class Platforms extends Component {
               </div>
               <Platform
                 connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
-                icon="platform:googleSheets"
+                iconClass={CRMStyle.locals.adwords}
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.adwordsCampaigns.open();
@@ -332,7 +332,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
-                icon="platform:googleSheets"
+                iconClass={CRMStyle.locals.facebookads}
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.facebookCampaigns.open();
@@ -340,7 +340,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
-                icon="platform:googleSheets"
+                iconClass={CRMStyle.locals.linkedinads}
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.linkedinCampaigns.open();
@@ -348,7 +348,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
-                icon="platform:googleSheets"
+                iconClass={CRMStyle.locals.twitterads}
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.twitterCampaigns.open();

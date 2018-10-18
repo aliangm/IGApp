@@ -22,10 +22,12 @@ export default class Platform extends Component {
   render() {
     return <div>
       {this.props.loading ? <Loading icon={this.props.icon}
+                                     iconClass={this.props.iconClass}
                                      className={this.classes.defaultDimensions}/>
         : <div className={this.classes.square} hidden={this.props.hidden}
                data-connected={this.props.connected ? true : null}>
-          <div className={this.classes.platformIcon} data-tip={this.getTooltipHtml()} data-for='platforms'
+          <div className={this.classes.platformIcon + ' ' + this.props.iconClass} data-tip={this.getTooltipHtml()}
+               data-for='platforms'
                data-icon={this.props.icon}/>
           <div className={this.classes.platformText}>
             {this.props.title}
