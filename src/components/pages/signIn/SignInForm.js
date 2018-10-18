@@ -11,14 +11,14 @@ export default class SignInForm extends Component {
     super(props);
 
     this.state = {
-      email: this.props.preFilledEmail || null,
+      email: this.props.preFilledEmail || '',
       password: null
     };
 
   }
 
   render() {
-    const checkboxes = this.props.checkboxes.map((item, index) => {
+    const checkboxes = this.props.checkboxes && this.props.checkboxes.map((item, index) => {
       return <div key={index} className={this.classes.checkboxWrapper}>
         <input type='checkbox'
                onChange={() => this.props.checkboxChanged && this.props.checkboxChanged(index)}/>

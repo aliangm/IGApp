@@ -27,10 +27,6 @@ export default class Login extends Component {
                   })}
                   buttonText='Sign in'
                   buttonDisabled={false}
-                  checkboxes={
-                    [
-                      <div>Remember me</div>
-                    ]}
                   bottomComponent={<div style={{position: 'relative'}}>
                     <div onClick={() => this.popup.open()}>Forgot your password? Send yourself a new one.</div>
                     <PlanPopup onClose={() => {
