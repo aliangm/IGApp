@@ -48,6 +48,16 @@ export default class FacebookCampaignsPopup extends Component {
     this.refs.authPopup.open();
   };
 
+  afterDataRetrieved = (data) => {
+    return new Promise((resolve, reject) => {
+      this.setState({
+        accounts: data
+      });
+
+      resolve(true);
+    });
+  };
+
   render() {
     const selects = {
       accounts: {
