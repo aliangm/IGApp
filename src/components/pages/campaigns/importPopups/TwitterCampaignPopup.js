@@ -12,6 +12,7 @@ export default class TwitterCampaignsPopup extends Component {
     return <CampignsImportPopup ref='campignImportRef'
                                 api='twitteradsapi'
                                 title='Choose Twitter Account'
+                                setDataAsState={this.props.setDataAsState}
                                 loadingStarted={this.props.loadingStarted}
                                 loadingFinished={this.props.loadingFinished}
     />;

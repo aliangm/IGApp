@@ -12,6 +12,7 @@ export default class FacebookCampaignsPopup extends Component {
     return <CampignsImportPopup ref='campignImportRef'
                                 title='Choose Facebook Account'
                                 api='facebookadsapi'
+                                setDataAsState={this.props.setDataAsState}
                                 loadingStarted={this.props.loadingStarted}
                                 loadingFinished={this.props.loadingFinished}
     />;

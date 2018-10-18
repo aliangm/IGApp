@@ -12,6 +12,7 @@ export default class LinkedinCampaignsPopup extends Component {
     return <CampignsImportPopup ref='campignImportRef'
                                 title='Choose Linkedin Ads Account'
                                 api='linkedinadsapi'
+                                setDataAsState={this.props.setDataAsState}
                                 loadingStarted={this.props.loadingStarted}
                                 loadingFinished={this.props.loadingFinished}
     />;
