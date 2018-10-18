@@ -9,7 +9,7 @@ import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 
-export default class TwitterCampaignsPopup extends Component {
+export default class AdwordsCampaigns extends Component {
 
   style = style;
   styles = [salesForceStyle, CRMStyle];
@@ -17,7 +17,7 @@ export default class TwitterCampaignsPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      accounts: [],
+      customers: [],
       code: null,
       hidden: true
     };
@@ -25,7 +25,7 @@ export default class TwitterCampaignsPopup extends Component {
 
   componentDidMount() {
     if (!this.props.data) {
-      serverCommunication.serverRequest('get', 'twitteradsapi')
+      serverCommunication.serverRequest('get', 'adwordsapi')
         .then((response) => {
           if (response.ok) {
             response.json()
@@ -43,7 +43,7 @@ export default class TwitterCampaignsPopup extends Component {
     }
   }
 
-  getAuthorization() {
+  getAuthorization = () => {
     if (!this.props.data) {
       const win = window.open(this.state.url);
       const timer = setInterval(() => {
@@ -61,15 +61,18 @@ export default class TwitterCampaignsPopup extends Component {
     else {
       this.getMapping();
     }
-  }
+  };
 
   getMapping(code) {
-    serverCommunication.serverRequest('post', 'twitteradsapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('post',
+      'adwordsapi',
+      JSON.stringify({code: code}),
+      localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
-              this.setState({accounts: data, hidden: false});
+              this.setState({customers: data, hidden: false});
             });
         }
         else if (response.status == 401) {
@@ -81,8 +84,11 @@ export default class TwitterCampaignsPopup extends Component {
       });
   }
 
-  getUserData () {
-    serverCommunication.serverRequest('put', 'twitteradsapi', JSON.stringify({accountId: this.state.selectedAccount}), localStorage.getItem('region'))
+  getUserData() {
+    serverCommunication.serverRequest('put',
+      'adwordsapi',
+      JSON.stringify({customerId: this.state.selectedCustomer}),
+      localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -105,37 +111,41 @@ export default class TwitterCampaignsPopup extends Component {
     this.props.close();
   }
 
-  render(){
+  open = () => {
+    this.getAuthorization();
+  };
+
+  render() {
     const selects = {
-      accounts: {
+      customers: {
         select: {
-          name: 'accounts',
-          options: this.state.accounts
-            .map(account => {
-              return {value: account.id, label: account.name + " (" + account.id + ")"}
+          name: 'customers',
+          options: this.state.customers
+            .map(customer => {
+              return {value: customer.customerId, label: customer.descriptiveName + ' (' + customer.customerId + ')'};
             })
         }
       }
     };
-    return <div style={{ width: '100%' }}>
-      <div className={ CRMStyle.locals.twitterads } onClick={ this.getAuthorization.bind(this) }/>
-      <div hidden={this.state.hidden}>
-        <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
-          <Title title="Choose Twitter Account"/>
-          <div className={ this.classes.row }>
-            <Select { ... selects.accounts } selected={ this.state.selectedAccount} onChange={ (e)=> { this.setState({selectedAccount: e.value}); } }/>
+    return <div hidden={this.state.hidden}>
+      <Page popup={true} width={'680px'} innerClassName={salesForceStyle.locals.inner}
+            contentClassName={salesForceStyle.locals.content}>
+        <Title title="Google AdWords - choose customer"/>
+        <div className={this.classes.row}>
+          <Select {...selects.customers} selected={this.state.selectedCustomer} onChange={(e) => {
+            this.setState({selectedCustomer: e.value});
+          }}/>
+        </div>
+        <div className={this.classes.footer}>
+          <div className={this.classes.footerLeft}>
+            <Button type="secondary" style={{width: '100px'}} onClick={this.close.bind(this)}>Cancel</Button>
           </div>
-          <div className={ this.classes.footer }>
-            <div className={ this.classes.footerLeft }>
-              <Button type="secondary" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
-            </div>
-            <div className={ this.classes.footerRight }>
-              <Button type="primary" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
-            </div>
+          <div className={this.classes.footerRight}>
+            <Button type="primary" style={{width: '100px'}} onClick={this.getUserData.bind(this)}>Done</Button>
           </div>
-        </Page>
-      </div>
-    </div>
+        </div>
+      </Page>
+    </div>;
   }
 
 }

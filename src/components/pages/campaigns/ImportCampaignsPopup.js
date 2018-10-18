@@ -2,11 +2,11 @@ import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/indicators/crm-popup.css';
-import SalesforceCampaignsPopup from 'components/pages/campaigns/SalesforceCampaignsPopup';
-import AdwordsCampaignsPopup from 'components/pages/campaigns/AdwordsCampaignsPopup';
-import FacebookCampaignsPopup from 'components/pages/campaigns/FacebookCampaignsPopup';
-import LinkedinCampaignsPopup from 'components/pages/campaigns/LinkedinCampaignsPopup';
-import TwitterCampaignsPopup from 'components/pages/campaigns/TwitterCampaignsPopup';
+import SalesforceCampaigns from 'components/pages/campaigns/SalesforceCampaigns';
+import AdwordsCampaigns from 'components/pages/campaigns/AdwordsCampaigns';
+import FacebookCampaigns from 'components/pages/campaigns/FacebookCampaigns';
+import LinkedinCampaigns from 'components/pages/campaigns/LinkedinCampaigns';
+import TwitterCampaigns from 'components/pages/campaigns/TwitterCampaigns';
 
 export default class ImportCampaignsPopup extends Component {
 
@@ -21,7 +21,7 @@ export default class ImportCampaignsPopup extends Component {
         </div>
         <div className={ this.classes.inner }>
           <div className={ this.classes.row }>
-            <SalesforceCampaignsPopup
+            <SalesforceCampaigns
               setDataAsState={ this.props.setDataAsState }
               close={ this.props.close }
               data={this.props.salesforceAuto}
@@ -29,28 +29,28 @@ export default class ImportCampaignsPopup extends Component {
             />
           </div>
           <div className={ this.classes.row }>
-            <AdwordsCampaignsPopup
+            <AdwordsCampaigns
               setDataAsState={ this.props.setDataAsState }
               close={ this.props.close }
               data={this.props.adwordsapi}
             />
           </div>
           <div className={ this.classes.row }>
-            <FacebookCampaignsPopup
+            <FacebookCampaigns
               setDataAsState={ this.props.setDataAsState }
               close={ this.props.close }
               data={this.props.facebookadsapi}
             />
           </div>
           <div className={ this.classes.row }>
-            <LinkedinCampaignsPopup
+            <LinkedinCampaigns
               setDataAsState={ this.props.setDataAsState }
               close={ this.props.close }
               data={this.props.linkedinadsapi}
             />
           </div>
           <div className={ this.classes.row }>
-            <TwitterCampaignsPopup
+            <TwitterCampaigns
               setDataAsState={ this.props.setDataAsState }
               close={ this.props.close }
               data={this.props.twitteradsapi}

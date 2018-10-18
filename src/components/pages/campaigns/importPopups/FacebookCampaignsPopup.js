@@ -9,7 +9,7 @@ import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 
-export default class LinkedinCampaignsPopup extends Component {
+export default class FacebookCampaignsPopup extends Component {
 
   style = style;
   styles = [salesForceStyle, CRMStyle];
@@ -25,7 +25,7 @@ export default class LinkedinCampaignsPopup extends Component {
 
   componentDidMount() {
     if (!this.props.data) {
-      serverCommunication.serverRequest('get', 'linkedinadsapi')
+      serverCommunication.serverRequest('get', 'facebookadsapi')
         .then((response) => {
           if (response.ok) {
             response.json()
@@ -43,7 +43,7 @@ export default class LinkedinCampaignsPopup extends Component {
     }
   }
 
-  getAuthorization() {
+  getAuthorization = () => {
     if (!this.props.data) {
       const win = window.open(this.state.url);
       const timer = setInterval(() => {
@@ -61,10 +61,13 @@ export default class LinkedinCampaignsPopup extends Component {
     else {
       this.getMapping();
     }
-  }
+  };
 
   getMapping(code) {
-    serverCommunication.serverRequest('post', 'linkedinadsapi', JSON.stringify({code: code}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('post',
+      'facebookadsapi',
+      JSON.stringify({code: code}),
+      localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -81,8 +84,11 @@ export default class LinkedinCampaignsPopup extends Component {
       });
   }
 
-  getUserData () {
-    serverCommunication.serverRequest('put', 'linkedinadsapi', JSON.stringify({accountId: this.state.selectedAccount}), localStorage.getItem('region'))
+  getUserData() {
+    serverCommunication.serverRequest('put',
+      'facebookadsapi',
+      JSON.stringify({accountId: this.state.selectedAccount}),
+      localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
@@ -105,37 +111,41 @@ export default class LinkedinCampaignsPopup extends Component {
     this.props.close();
   }
 
-  render(){
+  open = () => {
+    this.getAuthorization();
+  };
+
+  render() {
     const selects = {
       accounts: {
         select: {
           name: 'accounts',
           options: this.state.accounts
             .map(account => {
-              return {value: account.id, label: account.name + " (" + account.id + ")"}
+              return {value: account.id, label: account.name + ' (' + account.id + ')'};
             })
         }
       }
     };
-    return <div style={{ width: '100%' }}>
-      <div className={ CRMStyle.locals.linkedinads } onClick={ this.getAuthorization.bind(this) }/>
-      <div hidden={this.state.hidden}>
-        <Page popup={ true } width={'680px'} innerClassName={ salesForceStyle.locals.inner } contentClassName={ salesForceStyle.locals.content }>
-          <Title title="Choose Linkedin Ads Account"/>
-          <div className={ this.classes.row }>
-            <Select { ... selects.accounts } selected={ this.state.selectedAccount} onChange={ (e)=> { this.setState({selectedAccount: e.value}); } }/>
+    return <div hidden={this.state.hidden}>
+      <Page popup={true} width={'680px'} innerClassName={salesForceStyle.locals.inner}
+            contentClassName={salesForceStyle.locals.content}>
+        <Title title="Choose Facebook Account"/>
+        <div className={this.classes.row}>
+          <Select {...selects.accounts} selected={this.state.selectedAccount} onChange={(e) => {
+            this.setState({selectedAccount: e.value});
+          }}/>
+        </div>
+        <div className={this.classes.footer}>
+          <div className={this.classes.footerLeft}>
+            <Button type="secondary" style={{width: '100px'}} onClick={this.close.bind(this)}>Cancel</Button>
           </div>
-          <div className={ this.classes.footer }>
-            <div className={ this.classes.footerLeft }>
-              <Button type="secondary" style={{ width: '100px' }} onClick={ this.close.bind(this) }>Cancel</Button>
-            </div>
-            <div className={ this.classes.footerRight }>
-              <Button type="primary" style={{ width: '100px' }} onClick={ this.getUserData.bind(this) }>Done</Button>
-            </div>
+          <div className={this.classes.footerRight}>
+            <Button type="primary" style={{width: '100px'}} onClick={this.getUserData.bind(this)}>Done</Button>
           </div>
-        </Page>
-      </div>
-    </div>
+        </div>
+      </Page>
+    </div>;
   }
 
 }

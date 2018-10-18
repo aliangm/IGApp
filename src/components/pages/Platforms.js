@@ -23,6 +23,11 @@ import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
+import SalesforceCampaigns from 'components/pages/campaigns/SalesforceCampaigns';
+import AdwordsCampaigns from 'components/pages/campaigns/AdwordsCampaigns';
+import FacebookCampaigns from 'components/pages/campaigns/FacebookCampaigns';
+import LinkedinCampaigns from 'components/pages/campaigns/LinkedinCampaigns';
+import TwitterCampaigns from 'components/pages/campaigns/TwitterCampaigns';
 
 const PLATFORM_INDICATORS_MAPPING = {
   'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
@@ -254,6 +259,46 @@ export default class Platforms extends Component {
                         icon="platform:moz" open={() => {
                 this.refs.moz.open();
               }} hidden={this.isHidden('moz')}/>
+            </div>
+          </div>
+          <div className={platformsStyle.locals.platformTitle}>
+            Campaigns
+            <div className={ this.classes.inner }>
+              <div className={ this.classes.row }>
+                <SalesforceCampaigns
+                  setDataAsState={ this.props.setDataAsState }
+                  close={ () => {} }
+                  data={this.props.salesforceAuto}
+                  userAccount={this.props.userAccount}
+                />
+              </div>
+              <div className={ this.classes.row }>
+                <AdwordsCampaigns
+                  setDataAsState={ this.props.setDataAsState }
+                  close={ () => {} }
+                  data={this.props.adwordsapi}
+                />
+              </div>
+              <div className={ this.classes.row }>
+                <FacebookCampaigns
+                  setDataAsState={ this.props.setDataAsState }
+                  close={ () => {}}
+                  data={this.props.facebookadsapi}
+                />
+              </div>
+              <div className={ this.classes.row }>
+                <LinkedinCampaigns
+                  setDataAsState={ this.props.setDataAsState }
+                  close={ () => {} }
+                  data={this.props.linkedinadsapi}
+                />
+              </div>
+              <div className={ this.classes.row }>
+                <TwitterCampaigns
+                  setDataAsState={ this.props.setDataAsState }
+                  close={ () => {} }
+                />
+              </div>
             </div>
           </div>
         </div>
