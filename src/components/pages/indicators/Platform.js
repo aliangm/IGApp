@@ -10,7 +10,8 @@ export default class Platform extends Component {
   style = style;
 
   static defaultProps = {
-    loading: false
+    loading: false,
+    connectButtonText: 'Connect'
   };
 
   getTooltipHtml = () => {
@@ -33,7 +34,7 @@ export default class Platform extends Component {
             {this.props.title}
           </div>
           <Button type="primary" className={this.classes.connectButton} onClick={this.props.open}>
-            Connect
+            {this.props.connectButtonText}
           </Button>
           <div className={this.classes.footer}>
             <div className={this.classes.checkIcon}/>

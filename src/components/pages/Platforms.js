@@ -325,6 +325,7 @@ export default class Platforms extends Component {
               <Platform
                 connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
                 iconClass={CRMStyle.locals.adwords}
+                connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.adwordsCampaigns.open();
@@ -333,6 +334,7 @@ export default class Platforms extends Component {
               <Platform
                 connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
                 iconClass={CRMStyle.locals.facebookads}
+                connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.facebookCampaigns.open();
@@ -341,6 +343,7 @@ export default class Platforms extends Component {
               <Platform
                 connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
                 iconClass={CRMStyle.locals.linkedinads}
+                connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.linkedinCampaigns.open();
@@ -349,6 +352,7 @@ export default class Platforms extends Component {
               <Platform
                 connected={false} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
                 iconClass={CRMStyle.locals.twitterads}
+                connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
                   this.refs.twitterCampaigns.open();
