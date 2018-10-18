@@ -31,7 +31,7 @@ export default class AdwordsCampaigns extends Component {
             response.json()
               .then((data) => {
                 this.props.setDataAsState(data);
-                resolve();
+                resolve(false);
               });
           }
           else if (response.status == 401) {
@@ -75,6 +75,8 @@ export default class AdwordsCampaigns extends Component {
                                           width='680px'
                                           innerClassName={salesForceStyle.locals.inner}
                                           contentClassName={salesForceStyle.locals.content}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
     >
       <Title title="Google AdWords - choose customer"/>
       <div className={this.classes.row}>

@@ -31,7 +31,7 @@ export default class TwitterCampaignsPopup extends Component {
             response.json()
               .then((data) => {
                 this.props.setDataAsState(data);
-                resolve();
+                resolve(false);
               });
           }
           else if (response.status == 401) {
@@ -74,6 +74,8 @@ export default class TwitterCampaignsPopup extends Component {
                                           width='680px'
                                           innerClassName={salesForceStyle.locals.inner}
                                           contentClassName={salesForceStyle.locals.content}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
     >
       <Title title="Choose Twitter Account"/>
       <div className={this.classes.row}>
