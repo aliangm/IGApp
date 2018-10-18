@@ -1,0 +1,97 @@
+import React from 'react';
+import Component from 'components/Component';
+import Select from 'components/controls/Select';
+import style from 'styles/onboarding/onboarding.css';
+import serverCommunication from 'data/serverCommunication';
+import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
+import Title from 'components/onboarding/Title';
+import CRMStyle from 'styles/indicators/crm-popup.css';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
+
+export default class CampignsImportPopup extends Component {
+
+  style = style;
+  styles = [salesForceStyle, CRMStyle];
+
+  static defaultProps = {
+    accountIdPropertyName: 'id',
+    accountLabelPropertyName: 'name'
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      accounts: []
+    };
+  }
+
+  getUserData = () => {
+    return new Promise((resolve, reject) => {
+      const objectToSend = {};
+      objectToSend[this.props.accountIdPropertyName] = this.state.selectedAccount;
+
+      serverCommunication.serverRequest('put',
+        this.props.api,
+        JSON.stringify(objectToSend),
+        localStorage.getItem('region'))
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.props.setDataAsState(data);
+                resolve(false);
+              });
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+          else {
+            reject(`Error getting ${this.props.api} ads data`);
+          }
+        });
+    });
+  };
+
+  open = () => {
+    this.refs.authPopup.open();
+  };
+
+  afterDataRetrieved = (data) => {
+    return new Promise((resolve, reject) => {
+      this.setState({accounts: data});
+      resolve(true);
+    });
+  };
+
+  render() {
+    const selects = {
+      accounts: {
+        select: {
+          name: 'accounts',
+          options: this.state.accounts
+            .map(account => {
+              const accountId = account[this.props.accountIdPropertyName];
+              return {value: accountId, label: account[this.props.accountLabelPropertyName] + ' (' + accountId + ')'};
+            })
+        }
+      }
+    };
+    return <AuthorizationIntegrationPopup ref='authPopup'
+                                          api={this.props.api}
+                                          afterDataRetrieved={this.afterDataRetrieved}
+                                          makeServerRequest={this.getUserData}
+                                          width='680px'
+                                          innerClassName={salesForceStyle.locals.inner}
+                                          contentClassName={salesForceStyle.locals.content}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
+    >
+      <Title title={this.props.title}/>
+      <div className={this.classes.row}>
+        <Select {...selects.accounts} selected={this.state.selectedAccount} onChange={(e) => {
+          this.setState({selectedAccount: e.value});
+        }}/>
+      </div>
+    </AuthorizationIntegrationPopup>;
+  }
+}
