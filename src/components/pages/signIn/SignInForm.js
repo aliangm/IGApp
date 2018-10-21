@@ -16,8 +16,6 @@ export default class SignInForm extends Component {
     super(props);
 
     this.state = {
-      email: this.props.preFilledEmail || '',
-      password: null,
       checkboxes: Array(this.props.checkboxes.length).fill(false)
     };
 
@@ -34,6 +32,18 @@ export default class SignInForm extends Component {
   };
 
   render() {
+    const inputs = this.props.inputs && this.props.inputs.map(({label, type, placeHolder, key, value}) => {
+      return <div key={key} className={this.classes.inputField}>
+        <div className={this.classes.inputLabel}>{label}</div>
+        <input className={this.classes.input}
+               type={type}
+               onChange={(e) => this.props.inputValueChanged(key, e.target.value)}
+               placeholder={placeHolder}
+               value={value}
+        />
+      </div>
+    });
+
     const checkboxes = this.props.checkboxes && this.props.checkboxes.map((item, index) => {
       return <div key={index} className={this.classes.checkboxWrapper}>
         <CustomCheckbox style={{alignItems: 'baseline'}}
@@ -56,29 +66,13 @@ export default class SignInForm extends Component {
       <div className={this.classes.title}>{this.props.title}</div>
       <div className={this.classes.subTitle}>{this.props.subTitle}</div>
       <div className={this.classes.loginWrapper}>
-        <div className={this.classes.inputField}>
-          <div className={this.classes.inputLabel}>Work email</div>
-          <input className={this.classes.input}
-                 type='email'
-                 value={this.state.email}
-                 onChange={(e) => this.setState({email: e.target.value})}
-                 placeholder='Email'
-          />
-        </div>
-        <div className={this.classes.inputField}>
-          <div className={this.classes.inputLabel}>Password</div>
-          <input className={this.classes.input}
-                 type='password'
-                 onChange={(e) => this.setState({password: e.target.value})}
-                 placeholder='Password'
-          />
-        </div>
+        {inputs}
         <div className={this.classes.checkBoxes}>
           {checkboxes}
         </div>
         <Button style={{width: '110px', height: '38px', alignSelf: 'center', marginTop: '20px'}} type='primary'
                 disabled={this.props.buttonDisabled}
-                onClick={() => this.props.buttonAction(this.state.email, this.state.password)}>
+                onClick={this.props.buttonAction}>
           {this.props.buttonText}
         </Button>
       </div>

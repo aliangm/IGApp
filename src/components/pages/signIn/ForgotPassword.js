@@ -1,17 +1,16 @@
 import React from 'react';
 import Component from 'components/Component';
 import SignInForm from 'components/pages/signIn/SignInForm';
-import {login} from 'components/utils/AuthService';
+import {passwordReset} from 'components/utils/AuthService';
 import history from 'history';
 
-export default class Login extends Component {
+export default class ForgotPassword extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      email: '',
-      password: '',
+      email: ''
     };
   }
 
@@ -26,12 +25,15 @@ export default class Login extends Component {
     return <div>
       <SignInForm title='Welcome back!'
                   subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
-                  buttonAction={() => login(this.state.email, this.state.password, (error) => {
+                  buttonAction={() => passwordReset(this.state.email, (error) => {
                     if (error) {
                       alert(error.description);
                     }
+                    else {
+                      history.push('/login');
+                    }
                   })}
-                  buttonText='Sign in'
+                  buttonText='Send Me A New Password'
                   buttonDisabled={false}
                   inputValueChanged={this.inputValueChanged}
                   inputs={[
@@ -41,16 +43,10 @@ export default class Login extends Component {
                       placeHolder: 'Email',
                       type: 'type',
                       value: this.state.email
-                    },
-                    {label: 'Password',
-                      key: 'password',
-                      placeHolder: 'Password',
-                      type: 'password',
-                      value: this.state.password
                     }
                   ]}
                   bottomComponent={
-                    <div onClick={() => history.push('/forgotPassword')}>Forgot your password? Send yourself a new one.</div>
+                    <div onClick={() => history.push('/login')}>Actually, I remember my password now.</div>
                   }
       />
     </div>;

@@ -4,12 +4,14 @@ import SignInForm from 'components/pages/signIn/SignInForm';
 import {signup} from 'components/utils/AuthService';
 import history from 'history';
 
-export default class Login extends Component {
+export default class SignUp extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
+      email: this.props.location.query.email || '',
+      password: '',
       acceptedTerms: false
     };
   }
@@ -22,12 +24,16 @@ export default class Login extends Component {
     }
   };
 
-  render() {
-    const preFilledEmail = this.props.location.query.email;
+  inputValueChanged = (key, value) => {
+    const state = {...state};
+    state[key] = value;
+    this.setState(state);
+  };
 
+  render() {
     return <SignInForm title='Create an account with InfiniGrow'
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
-                       buttonAction={(...parameters) => signup(...parameters, (error) => {
+                       buttonAction={() => signup(this.state.email, this.state.password, (error) => {
                          if (error) {
                            if (error.name === 'PasswordStrengthError') {
                              alert('Incorrect Password Format, password should be: \n' + error.policy);
@@ -40,6 +46,23 @@ export default class Login extends Component {
                            alert('User created successfully!');
                          }
                        })}
+                       inputs={[
+                         {
+                           label: 'Work email',
+                           key: 'email',
+                           placeHolder: 'Email',
+                           type: 'type',
+                           value: this.state.email
+                         },
+                         {
+                           label: 'Password',
+                           key: 'password',
+                           placeHolder: 'Password',
+                           type: 'password',
+                           value: this.state.password
+                         }
+                       ]}
+                       inputValueChanged={this.inputValueChanged}
                        buttonText='Create Account'
                        checkboxes={
                          [
@@ -52,7 +75,6 @@ export default class Login extends Component {
                        buttonDisabled={!this.state.acceptedTerms}
                        bottomComponent={<div onClick={() => history.push('/login')}>
                          Already using InfiniGrow? Log in here →</div>}
-                       preFilledEmail = {preFilledEmail}
     />;
   }
 }
