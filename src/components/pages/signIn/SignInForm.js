@@ -8,6 +8,10 @@ export default class SignInForm extends Component {
 
   style = style;
 
+  static defaultProps = {
+    checkboxes: []
+  };
+
   constructor(props) {
     super(props);
 
@@ -40,6 +44,7 @@ export default class SignInForm extends Component {
                           border: 'solid 2px #e3e6f4',
                           backgroundColor: 'transparent'
                         }}
+                        checkedIcon='checkbox:checked-color'
                         checked={this.state.checkboxes[index]}
                         onChange={() => this.toggleCheckBox(index)}/>
         <div className={this.classes.checkboxLabel}>{item}</div>

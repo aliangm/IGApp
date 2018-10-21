@@ -22,7 +22,7 @@ export default class CustomCheckbox extends Component {
     const {style, checkboxStyle, checked, children, onChange} = this.props;
     return <div className={this.classes.container} style={style}>
       <div className={this.classes.checkbox} style={checkboxStyle} data-checked={checked ? true : null}>
-        <div className={this.classes.checkMark} hidden={!checked}/>
+        <div className={this.classes.checkMark} hidden={!checked} data-icon={this.props.checkedIcon || "checkbox:checked"} />
         <input type='checkbox' className={this.classes.input} checked={checked} onChange={onChange}/>
       </div>
       <div className={this.classes.children} data-checked={checked ? true : null}>
