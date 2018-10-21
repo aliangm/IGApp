@@ -23,7 +23,6 @@ import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
-import ImportButton from 'components/pages/campaigns/ImportButton';
 import FacebookCampaignsPopup from 'components/pages/campaigns/importPopups/FacebookCampaignsPopup';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import AdwordsCampaignsPopup from 'components/pages/campaigns/importPopups/AdwordsCampaignsPopup';
@@ -207,6 +206,13 @@ export default class Platforms extends Component {
                                  loadingStarted={() => this.setLoading('adwordsCampaigns', true)}
                                  loadingFinished={() => this.setLoading('adwordsCampaigns', false)}
           />
+          <SalesforceCampaignsPopup setDataAsState={this.props.setDataAsState}
+                                    ref='salesForceCampaigns'
+                                    data={this.props.salesforceAuto}
+                                    userAccount={this.props.userAccount}
+                                    loadingStarted={() => this.setLoading('salesForceCampaigns', true)}
+                                    loadingFinished={() => this.setLoading('salesForceCampaigns', false)}
+          />
           <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'
@@ -310,14 +316,14 @@ export default class Platforms extends Component {
             </div>
             <div style={{display: 'flex'}} ref="crm">
               <div className={this.classes.row}>
-                <ImportButton
+                <Platform
+                  connected={false} title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
+                  iconClass={CRMStyle.locals.salesforce}
+                  connectButtonText='Import'
                   setDataAsState={this.props.setDataAsState}
-                  close={() => {
+                  open={() => {
+                    this.refs.salesForceCampaigns.open();
                   }}
-                  data={this.props.salesforceAuto}
-                  userAccount={this.props.userAccount}
-                  popupComponent={SalesforceCampaignsPopup}
-                  className={CRMStyle.locals.salesforce}
                 />
               </div>
               <div className={this.classes.row}>

@@ -79,10 +79,16 @@ export default class IntegrationPopup extends Component {
             {this.props.children}
             <div className={this.classes.footer}>
               <div className={this.classes.footerLeft}>
-                <Button type="secondary" style={{width: '100px'}} onClick={this.close}>Cancel</Button>
+                <Button type="secondary" style={{width: '100px'}}
+                        onClick={this.props.cancelButtonAction || this.close}>
+                  {this.props.cancelButtonText || 'Cancel'}
+                </Button>
               </div>
               <div className={this.classes.footerRight}>
-                <Button type="primary" style={{width: '100px'}} onClick={this.done}>Done</Button>
+                <Button type="primary" style={{width: '100px'}}
+                        onClick={this.props.doneButtonAction || this.done}>
+                  {this.props.doneButtonText || 'Done'}
+                </Button>
               </div>
             </div>
             <label hidden={!this.state.error} style={{color: 'red', marginTop: '20px'}}>

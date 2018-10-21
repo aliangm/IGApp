@@ -1,15 +1,14 @@
 import React from 'react';
 import Component from 'components/Component';
-import Page from 'components/Page';
 import Select from 'components/controls/Select';
 import style from 'styles/onboarding/onboarding.css';
-import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import Label from 'components/ControlsLabel';
 import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import {formatChannels} from 'components/utils/channels';
+import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
 export default class SalesforceCampaigns extends Component {
 
@@ -24,8 +23,6 @@ export default class SalesforceCampaigns extends Component {
       statuses: [],
       owners: [],
       campaigns: [],
-      code: null,
-      hidden: true,
       campaignsMapping: {
         statuses: {},
         types: {},
@@ -34,26 +31,6 @@ export default class SalesforceCampaigns extends Component {
       selectedCampaigns: [],
       tab: 0
     };
-  }
-
-  componentDidMount() {
-    if (!this.props.data) {
-      serverCommunication.serverRequest('get', 'salesforceapi')
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((data) => {
-                this.setState({url: data});
-              });
-          }
-          else if (response.status == 401) {
-            history.push('/');
-          }
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -72,75 +49,46 @@ export default class SalesforceCampaigns extends Component {
     });
   }
 
-  getAuthorization = () => {
-    if (!this.props.data) {
-      const win = window.open(this.state.url);
-      const timer = setInterval(() => {
-        if (win.closed) {
-          clearInterval(timer);
-          const code = localStorage.getItem('code');
-          if (code) {
-            localStorage.removeItem('code');
-            this.setState({code: code});
-            this.getMapping(code);
-          }
-        }
-      }, 1000);
-    }
-    else {
-      this.getMapping();
-    }
+  afterDataRetrieved = (data) => {
+    return new Promise((resolve, reject) => {
+      this.setState({
+        statuses: data.statuses,
+        types: data.types,
+        owners: data.owners,
+        campaigns: data.campaigns,
+        selectedCampaigns: data.campaigns.map(campaign => campaign.Id)
+      });
+      resolve(true);
+    });
   };
 
-  getMapping(code) {
-    serverCommunication.serverRequest('post',
-      'salesforcecampaignsapi',
-      JSON.stringify({code: code}),
-      localStorage.getItem('region'))
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              this.setState({
-                statuses: data.statuses,
-                types: data.types,
-                owners: data.owners,
-                campaigns: data.campaigns,
-                selectedCampaigns: data.campaigns.map(campaign => campaign.Id),
-                hidden: false
+  getUserData = () => {
+    return new Promise((resolve, reject) => {
+      serverCommunication.serverRequest('put',
+        'salesforcecampaignsapi',
+        JSON.stringify({
+          campaignsMapping: this.state.campaignsMapping,
+          selectedCampaigns: this.state.selectedCampaigns
+        }),
+        localStorage.getItem('region'))
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => {
+                this.props.setDataAsState(data);
+                this.props.close && this.props.close();
+                resolve(false);
               });
-            });
-        }
-        else if (response.status == 401) {
-          history.push('/');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  }
-
-  getUserData() {
-    serverCommunication.serverRequest('put',
-      'salesforcecampaignsapi',
-      JSON.stringify({campaignsMapping: this.state.campaignsMapping, selectedCampaigns: this.state.selectedCampaigns}),
-      localStorage.getItem('region'))
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              this.props.setDataAsState(data);
-              this.close();
-            });
-        }
-        else if (response.status == 401) {
-          history.push('/');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  }
+          }
+          else if (response.status == 401) {
+            history.push('/');
+          }
+          else {
+            reject(`Error getting salesforce campaigns data`);
+          }
+        });
+    });
+  };
 
   toggleCheckbox(campaignId) {
     let selectedCampaigns = this.state.selectedCampaigns;
@@ -160,16 +108,11 @@ export default class SalesforceCampaigns extends Component {
     this.setState({campaignsMapping: campaignsMapping});
   }
 
-  close() {
-    this.setState({hidden: true, tab: 0});
-    this.props.close();
-  }
-
   open = () => {
-    this.getAuthorization();
+    this.authPopup.open();
   };
 
-  next() {
+  next = () => {
     const isEmpty = Object.keys(this.refs).some(ref => {
       if (!this.refs[ref].props.selected) {
         this.refs[ref].focus();
@@ -180,7 +123,7 @@ export default class SalesforceCampaigns extends Component {
     if (!isEmpty) {
       this.setState({tab: 1});
     }
-  }
+  };
 
   render() {
     const selects = {
@@ -282,63 +225,58 @@ export default class SalesforceCampaigns extends Component {
         {campaign.Name}
       </Label>
     );
-    return <div hidden={this.state.hidden}>
-      <Page popup={true} width={'680px'} innerClassName={salesForceStyle.locals.inner}
-            contentClassName={salesForceStyle.locals.content}>
-        {this.state.tab === 0 ?
-          <div>
-            <Title title="SalesForce - map fields"/>
-            <div className={this.classes.row}>
-              <Label style={{fontSize: '20px'}}>Owners</Label>
-            </div>
-            {ownersRows}
-            <div className={this.classes.row}>
-              <Label style={{fontSize: '20px'}}>Types / Channels</Label>
-            </div>
-            {typesRows}
-            <div className={this.classes.row}>
-              <Label style={{fontSize: '20px'}}>Statuses</Label>
-            </div>
-            {statusesRows}
-            <div className={this.classes.footer}>
-              <div className={this.classes.footerLeft}>
-                <Button type="secondary" style={{width: '100px'}} onClick={this.close.bind(this)}>Cancel</Button>
-              </div>
-              <div className={this.classes.footerRight}>
-                <Button type="primary" style={{width: '100px'}} onClick={this.next.bind(this)}>Next</Button>
-              </div>
-            </div>
-          </div>
-          :
-          <div>
-            <Title title="SalesForce - Import Campaigns"/>
-            <div className={this.classes.row}>
-              <Label style={{fontSize: '20px'}}>Choose which campaigns to import</Label>
-            </div>
-            <div className={this.classes.row}>
-              <Label
-                style={{textTransform: 'capitalize'}}
-                checkbox={this.state.selectAll}
-                onChange={this.selectAll.bind(this)}
-              >
-                Select All
-              </Label>
-            </div>
-            {campaignsRows}
-            <div className={this.classes.footer}>
-              <div className={this.classes.footerLeft}>
-                <Button type="secondary" style={{width: '100px'}} onClick={() => {
-                  this.setState({tab: 0});
-                }}>Back</Button>
-              </div>
-              <div className={this.classes.footerRight}>
-                <Button type="primary" style={{width: '100px'}} onClick={this.getUserData.bind(this)}>Done</Button>
-              </div>
-            </div>
-          </div>
-        }
-      </Page>
-    </div>;
-  }
+    return <AuthorizationIntegrationPopup ref={ref => this.authPopup = ref}
+                                          api='salesforceapi'
+                                          afterAuthorizationApi='salesforcecampaignsapi'
+                                          afterDataRetrieved={this.afterDataRetrieved}
+                                          makeServerRequest={this.getUserData}
+                                          width='680px'
+                                          innerClassName={salesForceStyle.locals.inner}
+                                          contentClassName={salesForceStyle.locals.content}
+                                          loadingStarted={this.props.loadingStarted}
+                                          loadingFinished={this.props.loadingFinished}
+                                          cancelButtonText={this.state.tab !== 0 ? 'Back' : null}
+                                          cancelButtonAction={this.state.tab !== 0 ? () => {
+                                            this.setState({tab: 0});
+                                          } : null}
+                                          doneButtonText={this.state.tab === 0 ? 'Next' : null}
+                                          doneButtonAction={this.state.tab === 0 ? this.next : null}
 
-}
+    >
+      {this.state.tab === 0 ?
+        <div>
+          <Title title="SalesForce - map fields"/>
+          <div className={this.classes.row}>
+            <Label style={{fontSize: '20px'}}>Owners</Label>
+          </div>
+          {ownersRows}
+          <div className={this.classes.row}>
+            <Label style={{fontSize: '20px'}}>Types / Channels</Label>
+          </div>
+          {typesRows}
+          <div className={this.classes.row}>
+            <Label style={{fontSize: '20px'}}>Statuses</Label>
+          </div>
+          {statusesRows}
+        </div>
+        :
+        <div>
+          <Title title="SalesForce - Import Campaigns"/>
+          <div className={this.classes.row}>
+            <Label style={{fontSize: '20px'}}>Choose which campaigns to import</Label>
+          </div>
+          <div className={this.classes.row}>
+            <Label
+              style={{textTransform: 'capitalize'}}
+              checkbox={this.state.selectAll}
+              onChange={this.selectAll.bind(this)}
+            >
+              Select All
+            </Label>
+          </div>
+          {campaignsRows}
+        </div>
+      }
+    </AuthorizationIntegrationPopup>;
+  }
+};
