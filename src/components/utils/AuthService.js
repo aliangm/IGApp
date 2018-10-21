@@ -4,6 +4,7 @@ import config from 'components/utils/Configuration';
 import q from 'q';
 import {getParameterByName} from 'utils';
 
+const CONNECTION_TYPE = 'Username-Password-Authentication';
 const options = {
   responseType: 'token',
   clientID: config.authClientId,
@@ -17,11 +18,11 @@ export function login(email, password, callback) {
 }
 
 export function passwordReset(email, callback) {
-  webAuth.changePassword({email: email, connection: 'Username-Password-Authentication'}, callback);
+  webAuth.changePassword({email: email, connection: CONNECTION_TYPE}, callback);
 }
 
 export function signup(email, password, callback) {
-  webAuth.signup({email: email, password: password, connection: 'Username-Password-Authentication'}, callback);
+  webAuth.signup({email: email, password: password, connection: CONNECTION_TYPE}, callback);
 }
 
 export function crossOriginVerification() {
