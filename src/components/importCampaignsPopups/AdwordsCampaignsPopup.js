@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import CampignsImportPopup from 'components/pages/campaigns/importPopups/CampignsImportPopup';
+import CampignsImportPopup from 'components/importCampaignsPopups/CampignsImportPopup';
 
 export default class AdwordsCampaignsPopup extends Component {
 

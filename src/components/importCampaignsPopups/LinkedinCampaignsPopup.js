@@ -1,8 +1,8 @@
 import React from 'react';
 import Component from 'components/Component';
-import CampignsImportPopup from 'components/pages/campaigns/importPopups/CampignsImportPopup';
+import CampignsImportPopup from 'components/importCampaignsPopups/CampignsImportPopup';
 
-export default class FacebookCampaignsPopup extends Component {
+export default class LinkedinCampaignsPopup extends Component {
 
   open = () => {
     this.refs.campignImportRef.open();
@@ -10,8 +10,8 @@ export default class FacebookCampaignsPopup extends Component {
 
   render() {
     return <CampignsImportPopup ref='campignImportRef'
-                                title='Choose Facebook Account'
-                                api='facebookadsapi'
+                                title='Choose Linkedin Ads Account'
+                                api='linkedinadsapi'
                                 setDataAsState={this.props.setDataAsState}
                                 loadingStarted={this.props.loadingStarted}
                                 loadingFinished={this.props.loadingFinished}

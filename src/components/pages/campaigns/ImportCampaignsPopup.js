@@ -4,11 +4,11 @@ import Page from 'components/Page';
 import style from 'styles/indicators/crm-popup.css';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import ImportButton from 'components/pages/campaigns/ImportButton';
-import SalesforceCampaignsPopup from 'components/pages/campaigns/importPopups/SalesforceCampaignsPopup';
-import AdwordsCampaignsPopup from 'components/pages/campaigns/importPopups/AdwordsCampaignsPopup';
-import FacebookCampaignsPopup from 'components/pages/campaigns/importPopups/FacebookCampaignsPopup';
-import LinkedinCampaignsPopup from 'components/pages/campaigns/importPopups/LinkedinCampaignsPopup';
-import TwitterCampaignsPopup from 'components/pages/campaigns/importPopups/TwitterCampaignPopup';
+import SalesforceCampaignsPopup from 'components/importCampaignsPopups/SalesforceCampaignsPopup';
+import AdwordsCampaignsPopup from 'components/importCampaignsPopups/AdwordsCampaignsPopup';
+import FacebookCampaignsPopup from 'components/importCampaignsPopups/FacebookCampaignsPopup';
+import LinkedinCampaignsPopup from 'components/importCampaignsPopups/LinkedinCampaignsPopup';
+import TwitterCampaignsPopup from 'components/importCampaignsPopups/TwitterCampaignPopup';
 
 export default class ImportCampaignsPopup extends Component {
 

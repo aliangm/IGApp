@@ -23,12 +23,12 @@ import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
-import FacebookCampaignsPopup from 'components/pages/campaigns/importPopups/FacebookCampaignsPopup';
+import FacebookCampaignsPopup from 'components/importCampaignsPopups/FacebookCampaignsPopup';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import AdwordsCampaignsPopup from 'components/pages/campaigns/importPopups/AdwordsCampaignsPopup';
-import SalesforceCampaignsPopup from 'components/pages/campaigns/importPopups/SalesforceCampaignsPopup';
-import LinkedinCampaignsPopup from 'components/pages/campaigns/importPopups/LinkedinCampaignsPopup';
-import TwitterCampaignsPopup from 'components/pages/campaigns/importPopups/TwitterCampaignPopup';
+import AdwordsCampaignsPopup from 'components/importCampaignsPopups/AdwordsCampaignsPopup';
+import SalesforceCampaignsPopup from 'components/importCampaignsPopups/SalesforceCampaignsPopup';
+import LinkedinCampaignsPopup from 'components/importCampaignsPopups/LinkedinCampaignsPopup';
+import TwitterCampaignsPopup from 'components/importCampaignsPopups/TwitterCampaignPopup';
 
 const PLATFORM_INDICATORS_MAPPING = {
   'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
