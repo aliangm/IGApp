@@ -54,7 +54,7 @@ export default class SignInForm extends Component {
                           border: 'solid 2px #e3e6f4',
                           backgroundColor: 'transparent'
                         }}
-                        checkedIcon='checkbox:checked-color'
+                        checkedIcon='checkbox:checked-blue'
                         checked={this.state.checkboxes[index]}
                         onChange={() => this.toggleCheckBox(index)}/>
         <div className={this.classes.checkboxLabel}>{item}</div>

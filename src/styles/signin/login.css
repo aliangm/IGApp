@@ -91,4 +91,4 @@
     font-size: 16px;
 }
 
-@mixin icon-nodpi checkbox:checked-color, /assets/checked-color;
+@mixin icon-nodpi checkbox:checked-blue, /assets/checked-blue;
