@@ -48,8 +48,8 @@
 }
 
 .logo {
-    background: url(/assets/logo.png) center center no-repeat;
-    background-size: 100px 56px;
+    background: url(/assets/linkedin-logo-igfinal.gif) center center no-repeat;
+    background-size: contain;
     background-color: #273142;
     width: 150px;
     height: 150px;
