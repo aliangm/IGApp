@@ -41,7 +41,7 @@ export default class ForgotPassword extends Component {
                       label: 'Work email',
                       key: 'email',
                       placeHolder: 'Email',
-                      type: 'type',
+                      type: 'email',
                       value: this.state.email
                     }
                   ]}
