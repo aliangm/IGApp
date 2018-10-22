@@ -41,8 +41,11 @@
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    /* autoprefixer: off */
     -webkit-box-orient: vertical;
+    /* autoprefixer: on */
     line-height: 32px;
+    width: 200px;
 }
 
 .circle {
