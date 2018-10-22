@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/onboarding/onboarding.css';
@@ -11,6 +11,20 @@ import {isNil} from 'lodash';
 export default class IntegrationPopup extends Component {
 
   style = style;
+
+  static propTypes = {
+    cancelButtonText: PropTypes.string,
+    doneButtonText: PropTypes.string,
+    makeServerRequest: PropTypes.func.isRequired,
+    onDoneServerRequest: PropTypes.func.isRequired,
+    affectedIndicators: PropTypes.arrayOf(PropTypes.string),
+    width: PropTypes.string,
+    actualIndicators: PropTypes.object,
+    innerClassName: PropTypes.string,
+    contentClassName: PropTypes.string,
+    cancelButtonAction: PropTypes.func,
+    doneButtonAction: PropTypes.func
+  };
 
   static defaultProps = {
     cancelButtonText: 'Cancel',

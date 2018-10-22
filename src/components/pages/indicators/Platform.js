@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/indicators/platform.css';
 import Button from 'components/controls/Button';
@@ -8,6 +8,18 @@ import Loading from 'components/pages/indicators/Loading';
 export default class Platform extends Component {
 
   style = style;
+
+  static propTypes = {
+    loading: PropTypes.bool.isRequired,
+    connectButtonText: PropTypes.string.isRequired,
+    indicators: PropTypes.arrayOf(PropTypes.string),
+    icon: PropTypes.string,
+    iconClass: PropTypes.string,
+    hidden: PropTypes.bool,
+    connected: PropTypes.bool,
+    title: PropTypes.string.isRequired,
+    open: PropTypes.func.isRequired
+  };
 
   static defaultProps = {
     loading: false,
