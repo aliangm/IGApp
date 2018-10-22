@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import Select from 'components/controls/Select';
 import style from 'styles/onboarding/onboarding.css';
@@ -12,6 +12,17 @@ export default class CampignsImportPopup extends Component {
 
   style = style;
   styles = [salesForceStyle, CRMStyle];
+
+  static propTypes = {
+    accountIdPropertyName: PropTypes.string.isRequired,
+    accountLabelPropertyName: PropTypes.string.isRequired,
+    close: PropTypes.func,
+    setDataAsState: PropTypes.func.isRequired,
+    api: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    loadingStarted: PropTypes.func,
+    loadingFinished: PropTypes.func
+  };
 
   static defaultProps = {
     accountIdPropertyName: 'id',
@@ -72,7 +83,7 @@ export default class CampignsImportPopup extends Component {
           options: this.state.accounts
             .map(account => {
               const accountId = account[this.props.accountIdPropertyName];
-              return {value: accountId, label: account[this.props.accountLabelPropertyName] + ' (' + accountId + ')'};
+              return {value: accountId, label: `${account[this.props.accountLabelPropertyName]}(${accountId})`};
             })
         }
       }

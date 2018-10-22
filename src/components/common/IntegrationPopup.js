@@ -12,6 +12,11 @@ export default class IntegrationPopup extends Component {
 
   style = style;
 
+  static defaultProps = {
+    cancelButtonText: 'Cancel',
+    doneButtonText: 'Done'
+  };
+
   constructor(props) {
     super(props);
 
@@ -81,13 +86,13 @@ export default class IntegrationPopup extends Component {
               <div className={this.classes.footerLeft}>
                 <Button type="secondary" style={{width: '100px'}}
                         onClick={this.props.cancelButtonAction || this.close}>
-                  {this.props.cancelButtonText || 'Cancel'}
+                  {this.props.cancelButtonText}
                 </Button>
               </div>
               <div className={this.classes.footerRight}>
                 <Button type="primary" style={{width: '100px'}}
                         onClick={this.props.doneButtonAction || this.done}>
-                  {this.props.doneButtonText || 'Done'}
+                  {this.props.doneButtonText}
                 </Button>
               </div>
             </div>

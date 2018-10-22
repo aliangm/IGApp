@@ -235,11 +235,11 @@ export default class SalesforceCampaigns extends Component {
                                           contentClassName={salesForceStyle.locals.content}
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
-                                          cancelButtonText={this.state.tab !== 0 ? 'Back' : null}
+                                          cancelButtonText={this.state.tab !== 0 ? 'Back' : undefined}
                                           cancelButtonAction={this.state.tab !== 0 ? () => {
                                             this.setState({tab: 0});
                                           } : null}
-                                          doneButtonText={this.state.tab === 0 ? 'Next' : null}
+                                          doneButtonText={this.state.tab === 0 ? 'Next' : undefined}
                                           doneButtonAction={this.state.tab === 0 ? this.next : null}
 
     >

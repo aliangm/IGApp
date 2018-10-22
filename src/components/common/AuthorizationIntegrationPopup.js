@@ -106,18 +106,10 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   render() {
     return <div style={{width: '100%'}}>
-      <IntegrationPopup width={this.props.width}
-                        innerClassName={this.props.innerClassName}
-                        contentClassName={this.props.contentClassName}
-                        makeServerRequest={this.makeServerRequest}
+      <IntegrationPopup makeServerRequest={this.makeServerRequest}
                         ref="integrationPopup"
-                        affectedIndicators={this.props.affectedIndicators}
-                        actualIndicators={this.props.actualIndicators}
                         onDoneServerRequest={this.onDoneServerRequest}
-                        cancelButtonText={this.props.cancelButtonText}
-                        cancelButtonAction={this.props.cancelButtonAction}
-                        doneButtonText={this.props.doneButtonText}
-                        doneButtonAction={this.props.doneButtonAction}
+                        {...this.props}
       >
         {this.props.children}
       </IntegrationPopup>
