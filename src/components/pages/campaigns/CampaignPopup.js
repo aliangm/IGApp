@@ -192,7 +192,7 @@ export default class CampaignPopup extends Component {
           if (!this.state.campaign.name) {
             this.nameInput.focus();
           }
-          else if (!this.state.campaign.source) {
+          else if (!this.state.campaign.source || this.state.campaign.source.length === 0) {
             this.sourceInput.focus();
           }
           else {
