@@ -222,38 +222,42 @@ export default class Preferences extends Component {
       if (objectiveData.isRecurrent) {
         const now = new Date();
         if (objectiveData.recurrentType === 'monthly') {
-          monthIndex = 0;
-          for (let i = 0; i < 12; i++) {
-            let targetValue = -1;
-            const value = i ? recurrentArray[i - 1] : this.props.actualIndicators[objective];
-            if (objectiveData.isPercentage) {
-              targetValue = (1 + (objectiveData.amount / 100 * (isDirectionUp ? 1 : -1))) * value;
+          if (objectiveData.amount) {
+            monthIndex = 0;
+            for (let i = 0; i < 12; i++) {
+              let targetValue = -1;
+              const value = i ? recurrentArray[i - 1] : this.props.actualIndicators[objective];
+              if (objectiveData.isPercentage) {
+                targetValue = (1 + (objectiveData.amount / 100 * (isDirectionUp ? 1 : -1))) * value;
+              }
+              else {
+                targetValue = value + objectiveData.amount * (isDirectionUp ? 1 : -1);
+              }
+              recurrentArray.push(Math.round(targetValue));
             }
-            else {
-              targetValue = value + objectiveData.amount * (isDirectionUp ? 1 : -1);
-            }
-            recurrentArray.push(Math.round(targetValue));
           }
         }
         else if (objectiveData.recurrentType === 'quarterly') {
-          const quarter = Math.floor((now.getMonth() / 3));
-          const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
-          const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
-          monthIndex = endDate.getMonth() - now.getMonth();
-          recurrentArray = new Array(12).fill(-1);
-          for (let i = 0; i < 4; i++) {
-            const index = (monthIndex + (i * 3)) % 12;
-            let targetValue = -1;
-            const value = i
-              ? recurrentArray[(monthIndex + ((i - 1) * 3)) % 12]
-              : this.props.actualIndicators[objective];
-            if (objectiveData.isPercentage) {
-              targetValue = (objectiveData.amount / 100 + 1) * value;
+          if (objectiveData.amount) {
+            const quarter = Math.floor((now.getMonth() / 3));
+            const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
+            const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+            monthIndex = endDate.getMonth() - now.getMonth();
+            recurrentArray = new Array(12).fill(-1);
+            for (let i = 0; i < 4; i++) {
+              const index = (monthIndex + (i * 3)) % 12;
+              let targetValue = -1;
+              const value = i
+                ? recurrentArray[(monthIndex + ((i - 1) * 3)) % 12]
+                : this.props.actualIndicators[objective];
+              if (objectiveData.isPercentage) {
+                targetValue = (objectiveData.amount / 100 + 1) * value;
+              }
+              else {
+                targetValue = objectiveData.amount + value;
+              }
+              recurrentArray[index] = targetValue;
             }
-            else {
-              targetValue = objectiveData.amount + value;
-            }
-            recurrentArray[index] = targetValue;
           }
         }
         else {
