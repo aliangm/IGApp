@@ -54,7 +54,6 @@ export default class CMO extends Component {
       activeIndex: void 0,
       onlyThisMonth: true
     };
-    this.onPieEnter = this.onPieEnter.bind(this);
   }
 
   initialize(props) {
@@ -71,11 +70,11 @@ export default class CMO extends Component {
     this.initialize(nextProps);
   }
 
-  onPieEnter(data, index) {
+  onPieEnter = (data, index) => {
     this.setState({
       activeIndex: index
     });
-  }
+  };
 
   getDateString(stringDate) {
     if (stringDate) {
@@ -854,7 +853,7 @@ export default class CMO extends Component {
                 </div>
               </div>
               <div className={this.classes.footerRight} style={{marginTop: '-30px', width: '315px'}}>
-                <PieChart width={429} height={350} onMouseEnter={this.onPieEnter} onMouseLeave={() => {
+                <PieChart width={429} height={350} onMouseLeave={() => {
                   this.setState({activeIndex: void 0});
                 }}>
                   <Pie
@@ -865,6 +864,7 @@ export default class CMO extends Component {
                     innerRadius={75}
                     outerRadius={100}
                     isAnimationActive={false}
+                    onMouseMove={this.onPieEnter}
                   >
                     {
                       fatherChannelsWithBudgets.map((entry, index) => <Cell fill={getColor(index)}
