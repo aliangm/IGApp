@@ -7,6 +7,11 @@
     text-align: center;
 }
 
+.platform-line {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .platform-title {
     font-size: 22px;
     font-weight: bold;

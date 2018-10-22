@@ -225,7 +225,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               CRM
             </div>
-            <div style={{display: 'flex'}} ref="crm">
+            <div className={platformsStyle.locals.platformLine} ref="crm">
               <Platform connected={this.props.salesforceAuto} title="Salesforce"
                         loading={this.isLoading('salesforce')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {
@@ -242,7 +242,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               Web Analytics
             </div>
-            <div style={{display: 'flex'}} ref="webAnalytics">
+            <div className={platformsStyle.locals.platformLine} ref="webAnalytics">
               <Platform connected={this.props.googleAuto} title="Google Analytics"
                         loading={this.isLoading('google')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']} icon="platform:googleAnalytics"
@@ -255,7 +255,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               Social
             </div>
-            <div style={{display: 'flex'}} ref="social">
+            <div className={platformsStyle.locals.platformLine} ref="social">
               <Platform connected={this.props.isLinkedinAuto} title="LinkedIn"
                         loading={this.isLoading('linkedin')}
                         indicators={PLATFORM_INDICATORS_MAPPING['LinkedIn']} icon="platform:linkedin" open={() => {
@@ -279,7 +279,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               Payment Providers
             </div>
-            <div style={{display: 'flex'}} ref="payment">
+            <div className={platformsStyle.locals.platformLine} ref="payment">
               <Platform connected={this.props.isStripeAuto} title="Stripe"
                         loading={this.isLoading('stripe')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Stripe']} icon="platform:stripe" open={() => {
@@ -291,7 +291,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               Productivity
             </div>
-            <div style={{display: 'flex'}} ref="productivity">
+            <div className={platformsStyle.locals.platformLine} ref="productivity">
               <Platform connected={this.props.googleSheetsAuto} title="Google Sheets" loading={this.isLoading('sheets')}
                         indicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']} icon="platform:googleSheets"
                         open={() => {
@@ -303,7 +303,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               SEO
             </div>
-            <div style={{display: 'flex'}} ref="seo">
+            <div className={platformsStyle.locals.platformLine} ref="seo">
               <Platform connected={this.props.mozapi} title="Moz" indicators={PLATFORM_INDICATORS_MAPPING['Moz']}
                         icon="platform:moz" open={() => {
                 this.refs.moz.open();
@@ -314,7 +314,7 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformTitle}>
               Campaigns
             </div>
-            <div style={{display: 'flex'}} ref="crm">
+            <div className={platformsStyle.locals.platformLine} ref="crm">
               <div className={this.classes.row}>
                 <Platform
                   connected={false} title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
