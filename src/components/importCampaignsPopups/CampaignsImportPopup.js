@@ -8,7 +8,7 @@ import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 
-export default class CampignsImportPopup extends Component {
+export default class CampaignsImportPopup extends Component {
 
   style = style;
   styles = [salesForceStyle, CRMStyle];
@@ -16,6 +16,7 @@ export default class CampignsImportPopup extends Component {
   static propTypes = {
     accountIdPropertyName: PropTypes.string.isRequired,
     accountLabelPropertyName: PropTypes.string.isRequired,
+    serverAccountIDPropertyName: PropTypes.string.isRequired,
     close: PropTypes.func,
     setDataAsState: PropTypes.func.isRequired,
     api: PropTypes.string.isRequired,
@@ -26,7 +27,8 @@ export default class CampignsImportPopup extends Component {
 
   static defaultProps = {
     accountIdPropertyName: 'id',
-    accountLabelPropertyName: 'name'
+    accountLabelPropertyName: 'name',
+    serverAccountIDPropertyName: 'accountId'
   };
 
   constructor(props) {
@@ -39,7 +41,7 @@ export default class CampignsImportPopup extends Component {
   getUserData = () => {
     return new Promise((resolve, reject) => {
       const objectToSend = {};
-      objectToSend[this.props.accountIdPropertyName] = this.state.selectedAccount;
+      objectToSend[this.props.serverAccountIDPropertyName] = this.state.selectedAccount;
 
       serverCommunication.serverRequest('put',
         this.props.api,

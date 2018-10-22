@@ -106,10 +106,10 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   render() {
     return <div style={{width: '100%'}}>
-      <IntegrationPopup makeServerRequest={this.makeServerRequest}
-                        ref="integrationPopup"
+      <IntegrationPopup {...this.props}
                         onDoneServerRequest={this.onDoneServerRequest}
-                        {...this.props}
+                        makeServerRequest={this.makeServerRequest}
+                        ref="integrationPopup"
       >
         {this.props.children}
       </IntegrationPopup>

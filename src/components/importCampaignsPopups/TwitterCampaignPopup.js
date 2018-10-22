@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import CampignsImportPopup from 'components/importCampaignsPopups/CampignsImportPopup';
+import CampaignsImportPopup from 'components/importCampaignsPopups/CampaignsImportPopup';
 
 export default class TwitterCampaignsPopup extends Component {
 
@@ -9,10 +9,10 @@ export default class TwitterCampaignsPopup extends Component {
   };
 
   render() {
-    return <CampignsImportPopup ref='campignImportRef'
-                                api='twitteradsapi'
-                                title='Choose Twitter Account'
-                                {...this.props}
+    return <CampaignsImportPopup ref='campignImportRef'
+                                 api='twitteradsapi'
+                                 title='Choose Twitter Account'
+                                 {...this.props}
     />;
   }
 }
