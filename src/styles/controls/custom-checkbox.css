@@ -1,3 +1,5 @@
+@import "../global/mixins.css";
+
 .container {
     display: flex;
     align-items: center;
@@ -37,7 +39,8 @@
 
 .check-mark {
     composes: size;
-    background: url('/assets/checked.svg') center center no-repeat;
+    background-repeat: no-repeat;
+    background-position: center;
     background-size: 7px auto;
 }
 
@@ -52,3 +55,5 @@
 .children[data-checked] {
     color: #222a41;
 }
+
+@mixin icon-nodpi checkbox:checked, /assets/checked;

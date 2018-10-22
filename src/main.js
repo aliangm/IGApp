@@ -18,7 +18,7 @@ import Attribution from './components/pages/Attribution';
 import Users from './components/pages/Users';
 import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
-import {isAuthenticated, logout, handleAuthentication, getProfileSync} from './components/utils/AuthService';
+import {isAuthenticated, logout, handleAuthentication, getProfileSync, crossOriginVerification} from './components/utils/AuthService';
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
@@ -42,8 +42,11 @@ import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
 import {formatDate} from 'components/utils/date';
-import {userPermittedToPage, getParameterByName} from 'utils';
+import {userPermittedToPage} from 'utils';
 import config from 'components/utils/Configuration';
+import Login from 'components/pages/signIn/Login';
+import SignUp from 'components/pages/signIn/SignUp';
+import ForgotPassword from 'components/pages/signIn/ForgotPassword';
 
 style.use();
 
@@ -82,7 +85,11 @@ const onUpdate = () => {
 
 ReactDOM.render(
   <Router onUpdate={onUpdate} history={history}>
+    <Route path='/login' component={Login}/>
+    <Route path='/forgotPassword' component={ForgotPassword}/>
+    <Route path='/signup' component={SignUp}/>
     <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
+    <Route path="/loginCallBack" onEnter={crossOriginVerification} />
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>

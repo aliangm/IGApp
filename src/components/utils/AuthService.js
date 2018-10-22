@@ -4,14 +4,30 @@ import config from 'components/utils/Configuration';
 import q from 'q';
 import {getParameterByName} from 'utils';
 
+const CONNECTION_TYPE = 'Username-Password-Authentication';
 const options = {
   responseType: 'token',
   clientID: config.authClientId,
   domain: config.authDomain,
   redirectUri: window.location.origin
 };
-
 const webAuth = new auth0.WebAuth(options);
+
+export function login(email, password, callback) {
+  webAuth.login({email: email, password: password}, callback);
+}
+
+export function passwordReset(email, callback) {
+  webAuth.changePassword({email: email, connection: CONNECTION_TYPE}, callback);
+}
+
+export function signup(email, password, callback) {
+  webAuth.signup({email: email, password: password, connection: CONNECTION_TYPE}, callback);
+}
+
+export function crossOriginVerification() {
+  webAuth.crossOriginVerification();
+}
 
 export function handleAuthentication(nextState, replace, callback) {
   const error = getParameterByName('error_description');
@@ -26,7 +42,8 @@ export function handleAuthentication(nextState, replace, callback) {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult);
         history.push('/');
-      } else {
+      }
+      else {
         if (err) {
           console.log(err);
         }
@@ -56,13 +73,6 @@ function setSession(authResult) {
 
   // navigate to the home route
   history.push('/');
-}
-
-export function login(isSignup, email) {
-  webAuth.authorize({
-    initialScreen: isSignup ? 'signUp' : 'login',
-    prefill: email ? {email: email} : null
-  });
 }
 
 export function getToken() {
