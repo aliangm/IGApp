@@ -858,6 +858,7 @@ export default class CMO extends Component {
                 }}>
                   <Pie
                     data={fatherChannelsWithBudgets}
+                    dataKey='value'
                     cx={250}
                     cy={150}
                     labelLine={true}
