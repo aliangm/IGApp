@@ -86,11 +86,13 @@ export default class AddObjectivePopup extends Component {
     if (months > 11) {
       months = 11;
     }
-    const value = Math.round((this.props.forecastedIndicators[months][this.state.indicator].committedBudget - this.props.actualIndicators[this.state.indicator]) * this.state.aggressiveLevel + this.props.actualIndicators[this.state.indicator]);
+    const value = Math.round((this.props.forecastedIndicators[months][this.state.indicator].committed - this.props.actualIndicators[this.state.indicator]) * this.state.aggressiveLevel + this.props.actualIndicators[this.state.indicator]);
     this.setState({
       amount: value,
+      targetValue: value,
       isPercentage: false,
       direction: 'equals',
+      monthIndex: months,
       notSure: 3
     });
   }
@@ -158,7 +160,7 @@ export default class AddObjectivePopup extends Component {
 
     return <div hidden={this.props.hidden}>
       {this.state.notSure ?
-        <Page popup={true} width={'600px'} contentClassName={popupStyle.locals.content}
+        <Page popup={true} width={'800px'} contentClassName={popupStyle.locals.content}
               innerClassName={popupStyle.locals.inner}>
           <div className={popupStyle.locals.title}>
             Objective Assistant
