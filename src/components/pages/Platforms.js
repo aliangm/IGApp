@@ -23,10 +23,28 @@ import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
+import FacebookCampaignsPopup from 'components/importCampaignsPopups/FacebookCampaignsPopup';
+import CRMStyle from 'styles/indicators/crm-popup.css';
+import AdwordsCampaignsPopup from 'components/importCampaignsPopups/AdwordsCampaignsPopup';
+import SalesforceCampaignsPopup from 'components/importCampaignsPopups/SalesforceCampaignsPopup';
+import LinkedinCampaignsPopup from 'components/importCampaignsPopups/LinkedinCampaignsPopup';
+import TwitterCampaignsPopup from 'components/importCampaignsPopups/TwitterCampaignPopup';
 
 const PLATFORM_INDICATORS_MAPPING = {
   'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
-  'Salesforce': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'CAC', 'MRR', 'ARPA', 'newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'],
+  'Salesforce': ['MCL',
+    'MQL',
+    'SQL',
+    'opps',
+    'users',
+    'CAC',
+    'MRR',
+    'ARPA',
+    'newMCL',
+    'newMQL',
+    'newSQL',
+    'newOpps',
+    'newUsers'],
   'Google Analytics': ['sessions', 'bounceRate', 'averageSessionDuration', 'blogVisits'],
   'LinkedIn': ['linkedinEngagement', 'linkedinFollowers'],
   'Facebook': ['facebookEngagement', 'facebookLikes'],
@@ -147,7 +165,9 @@ export default class Platforms extends Component {
                                 loadingFinished={() => this.setLoading('stripe', false)}
           />
           <MozAutomaticPopup setDataAsState={this.props.setDataAsState}
-                             defaultUrl={this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite}
+                             defaultUrl={this.props.mozapi
+                               ? this.props.mozapi.url
+                               : this.props.userAccount.companyWebsite}
                              ref="moz" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Moz}
                              actualIndicators={this.props.actualIndicators}
 
@@ -158,6 +178,40 @@ export default class Platforms extends Component {
                                       actualIndicators={this.props.actualIndicators}
                                       loadingStarted={() => this.setLoading('sheets', true)}
                                       loadingFinished={() => this.setLoading('sheets', false)}
+          />
+          <LinkedinCampaignsPopup setDataAsState={this.props.setDataAsState}
+                                  ref='linkedinCampaigns'
+                                  data={this.props.linkedinadsapi}
+                                  userAccount={this.props.userAccount}
+                                  loadingStarted={() => this.setLoading('linkedinCampaigns', true)}
+                                  loadingFinished={() => this.setLoading('linkedinCampaigns', false)}/>
+          <TwitterCampaignsPopup setDataAsState={this.props.setDataAsState}
+                                 ref='twitterCampaigns'
+                                 data={this.props.twitteradsapi}
+                                 userAccount={this.props.userAccount}
+                                 loadingStarted={() => this.setLoading('twitterCampaigns', true)}
+                                 loadingFinished={() => this.setLoading('twitterCampaigns', false)}
+          />
+          <FacebookCampaignsPopup setDataAsState={this.props.setDataAsState}
+                                  ref='facebookCampaigns'
+                                  data={this.props.facebookadsapi}
+                                  userAccount={this.props.userAccount}
+                                  loadingStarted={() => this.setLoading('facebookCampaigns', true)}
+                                  loadingFinished={() => this.setLoading('facebookCampaigns', false)}
+          />
+          <AdwordsCampaignsPopup setDataAsState={this.props.setDataAsState}
+                                 ref='adwordsCampaigns'
+                                 data={this.props.adwordsapi}
+                                 userAccount={this.props.userAccount}
+                                 loadingStarted={() => this.setLoading('adwordsCampaigns', true)}
+                                 loadingFinished={() => this.setLoading('adwordsCampaigns', false)}
+          />
+          <SalesforceCampaignsPopup setDataAsState={this.props.setDataAsState}
+                                    ref='salesForceCampaigns'
+                                    data={this.props.salesforceAuto}
+                                    userAccount={this.props.userAccount}
+                                    loadingStarted={() => this.setLoading('salesForceCampaigns', true)}
+                                    loadingFinished={() => this.setLoading('salesForceCampaigns', false)}
           />
           <Button type="secondary" style={{
             width: '193px',
@@ -256,20 +310,76 @@ export default class Platforms extends Component {
               }} hidden={this.isHidden('moz')}/>
             </div>
           </div>
-        </div>
-        {isPopupMode() ?
-          <div className={this.classes.footer}>
-            <BackButton onClick={() => {
-              history.push('/profile/technology-stack');
-            }}/>
-            <div style={{width: '30px'}}/>
-            <NextButton onClick={() => {
-              history.push('/settings/attribution/setup');
-            }}/>
+          <div>
+            <div className={platformsStyle.locals.platformTitle}>
+              Campaigns
+            </div>
+            <div style={{display: 'flex'}} ref="crm">
+              <div className={this.classes.row}>
+                <Platform
+                  connected={false} title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
+                  iconClass={CRMStyle.locals.salesforce}
+                  connectButtonText='Import'
+                  setDataAsState={this.props.setDataAsState}
+                  open={() => {
+                    this.refs.salesForceCampaigns.open();
+                  }}
+                />
+              </div>
+              <div className={this.classes.row}>
+              </div>
+              <Platform
+                connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
+                iconClass={CRMStyle.locals.adwords}
+                connectButtonText='Import'
+                setDataAsState={this.props.setDataAsState}
+                open={() => {
+                  this.refs.adwordsCampaigns.open();
+                }}
+              />
+              <Platform
+                connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
+                iconClass={CRMStyle.locals.facebookads}
+                connectButtonText='Import'
+                setDataAsState={this.props.setDataAsState}
+                open={() => {
+                  this.refs.facebookCampaigns.open();
+                }}
+              />
+              <Platform
+                connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
+                iconClass={CRMStyle.locals.linkedinads}
+                connectButtonText='Import'
+                setDataAsState={this.props.setDataAsState}
+                open={() => {
+                  this.refs.linkedinCampaigns.open();
+                }}
+              />
+              <Platform
+                connected={false} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
+                iconClass={CRMStyle.locals.twitterads}
+                connectButtonText='Import'
+                setDataAsState={this.props.setDataAsState}
+                open={() => {
+                  this.refs.twitterCampaigns.open();
+                }}
+              />
+            </div>
           </div>
-          :
-          <div style={{paddingBottom: '60px'}}/>
-        }
+          {isPopupMode() ?
+            <div className={this.classes.footer}>
+              <BackButton onClick={() => {
+                history.push('/profile/technology-stack');
+              }}/>
+              <div style={{width: '30px'}}/>
+              <NextButton onClick={() => {
+                history.push('/settings/attribution/setup');
+              }}/>
+            </div>
+            :
+            <div style={{paddingBottom: '60px'}}/>
+          }
+        </div>
       </Page>
     </div>;
   }

@@ -62,7 +62,7 @@ export default class AuthorizationIntegrationPopup extends Component {
   afterAuthorization = (code) => {
     this.loadingStarted();
     serverCommunication.serverRequest('post',
-      this.props.api,
+      this.props.afterAuthorizationApi || this.props.api,
       JSON.stringify({code: code}),
       localStorage.getItem('region'))
       .then((response) => {
@@ -106,14 +106,10 @@ export default class AuthorizationIntegrationPopup extends Component {
 
   render() {
     return <div style={{width: '100%'}}>
-      <IntegrationPopup width={this.props.width}
-                        innerClassName={this.props.innerClassName}
-                        contentClassName={this.props.contentClassName}
+      <IntegrationPopup {...this.props}
+                        onDoneServerRequest={this.onDoneServerRequest}
                         makeServerRequest={this.makeServerRequest}
                         ref="integrationPopup"
-                        affectedIndicators={this.props.affectedIndicators}
-                        actualIndicators={this.props.actualIndicators}
-                        onDoneServerRequest={this.onDoneServerRequest}
       >
         {this.props.children}
       </IntegrationPopup>

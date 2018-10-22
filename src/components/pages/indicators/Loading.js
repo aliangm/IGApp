@@ -16,7 +16,7 @@ export default class Loading extends Component {
           <div className={this.classes.title}>
             Loading data from
           </div>
-          <div className={this.classes.icon} data-icon={this.props.icon}/>
+          <div className={this.classes.icon + ' ' + this.props.iconClass} data-icon={this.props.icon}/>
         </div>
       </div>
       <div className={this.classes.bottom}>

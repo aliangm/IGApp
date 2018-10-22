@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/onboarding/onboarding.css';
@@ -11,6 +11,25 @@ import {isNil} from 'lodash';
 export default class IntegrationPopup extends Component {
 
   style = style;
+
+  static propTypes = {
+    cancelButtonText: PropTypes.string,
+    doneButtonText: PropTypes.string,
+    makeServerRequest: PropTypes.func.isRequired,
+    onDoneServerRequest: PropTypes.func.isRequired,
+    affectedIndicators: PropTypes.arrayOf(PropTypes.string),
+    width: PropTypes.string,
+    actualIndicators: PropTypes.object,
+    innerClassName: PropTypes.string,
+    contentClassName: PropTypes.string,
+    cancelButtonAction: PropTypes.func,
+    doneButtonAction: PropTypes.func
+  };
+
+  static defaultProps = {
+    cancelButtonText: 'Cancel',
+    doneButtonText: 'Done'
+  };
 
   constructor(props) {
     super(props);
@@ -79,10 +98,16 @@ export default class IntegrationPopup extends Component {
             {this.props.children}
             <div className={this.classes.footer}>
               <div className={this.classes.footerLeft}>
-                <Button type="secondary" style={{width: '100px'}} onClick={this.close}>Cancel</Button>
+                <Button type="secondary" style={{width: '100px'}}
+                        onClick={this.props.cancelButtonAction || this.close}>
+                  {this.props.cancelButtonText}
+                </Button>
               </div>
               <div className={this.classes.footerRight}>
-                <Button type="primary" style={{width: '100px'}} onClick={this.done}>Done</Button>
+                <Button type="primary" style={{width: '100px'}}
+                        onClick={this.props.doneButtonAction || this.done}>
+                  {this.props.doneButtonText}
+                </Button>
               </div>
             </div>
             <label hidden={!this.state.error} style={{color: 'red', marginTop: '20px'}}>
