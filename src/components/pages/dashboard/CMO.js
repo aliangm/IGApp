@@ -720,7 +720,7 @@ export default class CMO extends Component {
         <DashboardStatWithContext
           title="Monthly Budget"
           stat={'$' + formatBudgetShortened(monthlyBudget)}
-          contextStat={isOnTrack ? 'On-Track' : 'Not On-Track'}
+          contextStat={isOnTrack ? 'On-Track' : 'Off-Track'}
           contextText=''
           isPositive={isOnTrack}
           tooltipText={isOnTrack ? 'Actual spent on-track' : 'Actual spent off-track. Forecasted: ' +
