@@ -329,7 +329,7 @@ export default class Platforms extends Component {
               <div className={this.classes.row}>
               </div>
               <Platform
-                connected={this.props.adwordsapi} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
+                connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
                 icon='platform:googleAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -338,7 +338,7 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={this.props.facebookadsapi} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
+                connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
                 icon='platform:facebookAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -347,7 +347,7 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={this.props.linkedinadsapi} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
+                connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
                 iconClass={platformsStyle.locals.linkedinLogo}
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -356,7 +356,7 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={this.props.twitteradsapi} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
+                connected={false} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
                 icon='platform:twitterAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
