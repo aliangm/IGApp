@@ -19,13 +19,6 @@
     margin: 20px 20px 0;
 }
 
-.linkedin-logo {
-    background: url(/assets/linkedin-logo.png) center center no-repeat;
-    background-size: contain;
-    width: 100%;
-    height: 65px;
-}
-
 @mixin icon-nodpi platform:salesforce, /assets/platform-icons/salesforce;
 @mixin icon platform:hubspot, /assets/platform-icons/hubspot;
 @mixin icon-nodpi platform:pipedrive, /assets/platform-icons/pipedrive;
@@ -81,3 +74,4 @@
 @mixin icon-nodpi platform:facebookAds, /assets/platform-icons/facebook-campaigns;
 @mixin icon-nodpi platform:googleAds, /assets/platform-icons/google-campaigns;
 @mixin icon-nodpi platform:twitterAds, /assets/platform-icons/twitter-campaigns;
+@mixin icon-nodpi platform:linkedInAds, /assets/linkedin-logo, png;

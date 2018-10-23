@@ -347,7 +347,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
-                iconClass={platformsStyle.locals.linkedinLogo}
+                icon='platform:linkedInAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
