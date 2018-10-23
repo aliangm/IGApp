@@ -16,6 +16,7 @@ import AddTemplatePopup from 'components/pages/campaigns/AddTemplatePopup';
 import SaveButton from 'components/pages/profile/SaveButton';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import Button from 'components/controls/Button';
+import isEmpty from 'lodash/isEmpty';
 
 export default class CampaignPopup extends Component {
 
@@ -28,7 +29,7 @@ export default class CampaignPopup extends Component {
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
-      campaign: merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign)
+      campaign: merge({}, CampaignPopup.defaultProps.campaign, this.props.campaign)
     };
     this.setRefName = this.setRefName.bind(this);
     this.setRefSource = this.setRefSource.bind(this);
@@ -66,7 +67,7 @@ export default class CampaignPopup extends Component {
       dueDate: '',
       startDate: new Date().toLocaleDateString().replace(/[/]/g, '-'),
       actualSpent: null,
-      status: "New",
+      status: 'New',
       focus: '',
       time: {
         development: 0,
@@ -77,11 +78,11 @@ export default class CampaignPopup extends Component {
         growth: '',
         kpi: '',
         actualGrowth: ''
-      },{
+      }, {
         growth: '',
         kpi: '',
         actualGrowth: ''
-      },{
+      }, {
         growth: '',
         kpi: '',
         actualGrowth: ''
@@ -188,11 +189,11 @@ export default class CampaignPopup extends Component {
     }
     else {
       this.setState({selectedTab: 0},
-        ()=> {
+        () => {
           if (!this.state.campaign.name) {
             this.nameInput.focus();
           }
-          else if (!this.state.campaign.source || this.state.campaign.source.length === 0) {
+          else if (isEmpty(this.state.campaign.source)) {
             this.sourceInput.focus();
           }
           else {
@@ -216,12 +217,12 @@ export default class CampaignPopup extends Component {
     const selectedTab = tabs[selectedName];
 
     return <div>
-      <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
-        <div className={ campaignPopupStyle.locals.topRight }>
-          <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
+      <Page popup={true} width={'800px'} contentClassName={campaignPopupStyle.locals.content}>
+        <div className={campaignPopupStyle.locals.topRight}>
+          <div className={campaignPopupStyle.locals.close} onClick={this.close}/>
         </div>
-        <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
-        <div className={ headerStyle.locals.headTabs } style={{ height: '85px', margin: '0 38px' }}>
+        <Title className={campaignPopupStyle.locals.title} title={this.state.campaign.name || 'Campaign Details'}/>
+        <div className={headerStyle.locals.headTabs} style={{height: '85px', margin: '0 38px'}}>
           {
             tabNames.map((name, i) => {
               let className;
@@ -232,13 +233,13 @@ export default class CampaignPopup extends Component {
                 className = headerStyle.locals.headTab;
               }
 
-              return <div className={ className } key={ i } onClick={() => {
+              return <div className={className} key={i} onClick={() => {
                 this.selectTab(i);
-              }}>{ name }</div>
+              }}>{name}</div>;
             })
           }
-          <div style={{ marginLeft: 'auto', alignSelf: 'center' }}>
-            { this.state.campaign.index !== undefined ?
+          <div style={{marginLeft: 'auto', alignSelf: 'center'}}>
+            {this.state.campaign.index !== undefined ?
               <SaveButton onClick={this.save}/>
               :
               <Button
@@ -251,8 +252,8 @@ export default class CampaignPopup extends Component {
             }
           </div>
         </div>
-        <div className={ campaignPopupStyle.locals.inner }>
-          { selectedTab ? React.createElement(selectedTab, merge({ }, this.state, {
+        <div className={campaignPopupStyle.locals.inner}>
+          {selectedTab ? React.createElement(selectedTab, merge({}, this.state, {
             updateState: this.updateState.bind(this),
             close: this.close,
             openAddTemplatePopup: this.openAddTemplatePopup.bind(this),
@@ -265,11 +266,13 @@ export default class CampaignPopup extends Component {
             setRefDueDate: this.setRefDueDate,
             save: this.save,
             addNotification: this.props.addNotification
-          })) : null }
+          })) : null}
         </div>
       </Page>
-      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-      <AddTemplatePopup hidden={ !this.state.showAddTemplatePopup } closeAddTemplatePopup={ this.closeAddTemplatePopup.bind(this) } createTemplate={ this.createTemplate.bind(this) } campaignName={ this.state.campaign.name }/>
-    </div>
+      <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
+      <AddTemplatePopup hidden={!this.state.showAddTemplatePopup}
+                        closeAddTemplatePopup={this.closeAddTemplatePopup.bind(this)}
+                        createTemplate={this.createTemplate.bind(this)} campaignName={this.state.campaign.name}/>
+    </div>;
   }
 }
