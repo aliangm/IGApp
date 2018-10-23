@@ -103,11 +103,12 @@ export default class Users extends Component {
     });
 
     const stagesOrder = {
-      MCL: 0,
-      MQL: 1,
-      SQL: 2,
-      opps: 3,
-      users: 4
+      blogSubscribers: 0,
+      MCL: 1,
+      MQL: 2,
+      SQL: 3,
+      opps: 4,
+      users: 5
     };
 
     const usersData = [];
