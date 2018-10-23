@@ -44,42 +44,35 @@ export default class AddMemberPopup extends Component {
     }
   ];
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      role: '',
-      isAdmin: false,
-      specificChannels: [],
-      isSpecificChannels: false,
-      pagePermissions: this.getInitialPermissions()
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.hidden !== this.props.hidden) {
-      this.setState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        role: '',
-        isAdmin: false,
-        specificChannels: [],
-        isSpecificChannels: false,
-        pagePermissions: this.getInitialPermissions()
-      });
-    }
-  }
-
   getInitialPermissions = () => {
     const initialPermissions = {};
     this.pagePermissions.forEach(item => initialPermissions[item.key] = true);
 
     return initialPermissions;
   };
+
+  initialState = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: '',
+    isAdmin: true,
+    specificChannels: [],
+    isSpecificChannels: false,
+    pagePermissions: this.getInitialPermissions()
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {...this.initialState};
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.hidden !== this.props.hidden) {
+      this.setState({...this.initialState});
+    }
+  }
 
   handleChangeChannels(event) {
     let update = event.map((obj) => {
@@ -98,7 +91,8 @@ export default class AddMemberPopup extends Component {
   render() {
 
     const pagePermissionsLabels = this.pagePermissions.map((permissionItem) => {
-      return <Label checkboxDisabled={permissionItem.isDisabled}
+      return <Label key={permissionItem.key}
+                    checkboxDisabled={permissionItem.isDisabled}
                     checkbox={this.state.pagePermissions[permissionItem.key]}
                     style={{textTransform: 'capitalize'}}
                     onChange={() => {
