@@ -318,7 +318,7 @@ export default class Platforms extends Component {
               <div className={this.classes.row}>
                 <Platform
                   connected={false} title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
-                  iconClass={CRMStyle.locals.salesforce}
+                  icon="platform:salesforce"
                   connectButtonText='Import'
                   setDataAsState={this.props.setDataAsState}
                   open={() => {
@@ -330,7 +330,7 @@ export default class Platforms extends Component {
               </div>
               <Platform
                 connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
-                iconClass={CRMStyle.locals.adwords}
+                icon='platform:googleAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
@@ -339,7 +339,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
-                iconClass={CRMStyle.locals.facebookads}
+                icon='platform:facebookAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
@@ -348,7 +348,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
-                iconClass={CRMStyle.locals.linkedinads}
+                iconClass={platformsStyle.locals.linkedinLogo}
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
@@ -357,7 +357,7 @@ export default class Platforms extends Component {
               />
               <Platform
                 connected={false} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
-                iconClass={CRMStyle.locals.twitterads}
+                icon='platform:twitterAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
                 open={() => {
