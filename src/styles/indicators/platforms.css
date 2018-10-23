@@ -70,3 +70,8 @@
 @mixin icon-nodpi platform:intercom, /assets/platform-icons/intercom-logo;
 @mixin icon-nodpi platform:zandesk, /assets/platform-icons/zendesk-wordmark;
 @mixin icon-nodpi platform:drift, /assets/platform-icons/Drift_logo_black;
+
+@mixin icon-nodpi platform:facebookAds, /assets/platform-icons/facebook-campaigns;
+@mixin icon-nodpi platform:googleAds, /assets/platform-icons/google-campaigns;
+@mixin icon-nodpi platform:twitterAds, /assets/platform-icons/twitter-campaigns;
+@mixin icon-nodpi platform:linkedInAds, /assets/linkedin-ads, png;
