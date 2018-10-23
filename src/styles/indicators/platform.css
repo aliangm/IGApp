@@ -1,11 +1,15 @@
-.square {
+.default-dimensions {
     width: 245px;
     height: 215px;
+    margin: 20px;
+}
+
+.square {
+    composes: default-dimensions;
     border-radius: 4px;
     background-color: #ffffff;
     position: relative;
     border: solid 1px #e3e6f4;
-    margin: 20px;
 }
 
 .square:not([data-connected]):hover {
@@ -36,7 +40,7 @@
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
-    width: auto;
+    width: 65%;
     height: 60px;
     margin: 30px auto;
 }
@@ -68,7 +72,7 @@
 }
 
 .check-icon {
-    background: url(../../assets/check-circle-white.svg) center center no-repeat;
+    background: url(/assets/check-circle-white.svg) center center no-repeat;
     width: 20px;
     height: 20px;
     margin-right: 10px;
@@ -78,7 +82,7 @@
     width: 40px;
     height: 100%;
     cursor: pointer;
-    background: url(../../assets/menu-button-white.svg) 50% no-repeat;
+    background: url(/assets/menu-button-white.svg) 50% no-repeat;
     background-size: 20px auto;
     left: 200px;
     position: absolute;

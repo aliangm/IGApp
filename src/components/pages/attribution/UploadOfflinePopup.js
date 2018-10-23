@@ -178,8 +178,8 @@ export default class UploadOfflinePopup extends Component {
           </div>
         </div>
         <div className={this.classes.buttons}>
-          <Button type="warning" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
-          <Button type="accent2" style={{ width: '100px', marginLeft: 'auto' }} onClick={ this.uploadOffline.bind(this) }>Done</Button>
+          <Button type="secondary" style={{ width: '100px' }} onClick={ this.props.close }>Cancel</Button>
+          <Button type="primary" style={{ width: '100px', marginLeft: 'auto' }} onClick={ this.uploadOffline.bind(this) }>Done</Button>
         </div>
       </Page>
     </div>

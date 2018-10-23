@@ -6,271 +6,325 @@ import Page from 'components/Page';
 import Popup from 'components/Popup';
 import style from 'styles/plan/plan.css';
 import Button from 'components/controls/Button';
-import ReplanButton from 'components/pages/plan/ReplanButton';
-import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
-import PlanNextMonthPopup from 'components/pages/plan/PlanNextMonthPopup';
+import PlanButton from 'components/pages/plan/PlanButton';
+import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
 import history from 'history';
 import events from 'data/events';
-import PlanPopup from 'components/pages/plan/Popup';
-import Label from 'components/ControlsLabel';
-import Textfield from 'components/controls/Textfield';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
-import { output } from 'components/utils/channels';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
-import { FeatureToggle } from 'react-feature-toggles';
+import {output, isUnknownChannel, initialize} from 'components/utils/channels';
+import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
-import { Link } from 'react-router';
-
-function formatDate(dateStr) {
-  if (dateStr) {
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const [monthNum, yearNum] = dateStr.split("/");
-
-    return `${monthNames[monthNum - 1]}/${yearNum.substr(2,2)}`;
-  }
-  else return null;
-}
+import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
+import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
+import isEqual from 'lodash/isEqual';
+import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
+import intersection from 'lodash/intersection';
+import union from 'lodash/union';
+import maxBy from 'lodash/maxBy';
+import isNil from 'lodash/isNil';
+import AnnualTab from 'components/pages/plan/AnnualTab';
 
 export default class Plan extends Component {
 
   style = style;
 
-  budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
-  monthNames = [
-    "Jan", "Feb", "Mar",
-    "Apr", "May", "Jun", "Jul",
-    "Aug", "Sep", "Oct",
-    "Nov", "Dec"
-  ];
-
   static defaultProps = {
     userProfile: {},
     targetAudience: {},
-    projectedPlan: [],
     planDate: '',
     userAccount: {}
   };
 
   constructor(props) {
     super(props);
-    this.popup = this.popup.bind(this);
     this.state = {
-      selectedTab: 1,
-      numberOfPlanUpdates: 0,
-      whatIf: this.props.plan,
+      addChannelPopup: false,
       editMode: false,
-      dropmenuVisible: false,
-      budgetField: props.budget || '',
-      budgetArrayField: props.budgetArray || [],
-      maxChannelsField: props.maxChannels || '',
-      isCheckAnnual: !!props.budget,
-      setRef: this.setRef.bind(this),
-      forecastingGraphRef: this.forecastingGraphRef.bind(this),
-      whatIfSelected: false
+      interactiveMode: false,
+      showNewScenarioPopup: false,
+      scrollEvent: null,
+      showOptimizationPopup: false,
+      primaryPlanForecastedIndicators: this.props.forecastedIndicators
     };
   }
 
   componentDidMount() {
     this.getRelevantEvents(this.props);
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      // if user didn't upload an excel
-      if (!this.props.approvedBudgets || this.props.approvedBudgets.length === 0) {
-        this.props.approveAllBudgets(true);
-      }
-    };
     if (isPopupMode()) {
       disablePopupMode();
       if (this.props.userAccount.permissions.plannerAI) {
-        this.props.plan(true, null, callback, this.props.region, false);
+        this.props.plan(true, null, this.props.region, false)
+          .then(data => {
+            this.props.setDataAsState(data);
+            this.setBudgetsData(data.planBudgets);
+            this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
+            this.setState({interactiveMode: true});
+          });
       }
       else {
         history.push('/dashboard/CMO');
       }
     }
+    else {
+      this.setBudgetsData();
+    }
   }
+
+  parsePlannerForecasting = (forecastedIndicators) => {
+    return forecastedIndicators.map((month) => {
+      const newMonth = {};
+
+      Object.keys(month).forEach((indicator) => {
+        if (!isNil(month[indicator].planner)) {
+          newMonth[indicator] = {
+            committed: month[indicator].planner
+          };
+        }
+      });
+
+      return newMonth;
+    });
+  };
+
+  setBudgetsData = (planBudgets = this.props.planBudgets, withConstraints = null, isPlannerPrimary = false) => {
+    const budgetsData = planBudgets.map(month => {
+      const channelsObject = {};
+      Object.keys(month).forEach(channelKey => {
+        const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
+        channelsObject[channelKey] = {
+          primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
+          secondaryBudget: committedBudget,
+          isConstraint: withConstraints ? !isNil(userBudgetConstraint) : false,
+          budgetConstraint: withConstraints ? committedBudget : null,
+          isSoft: withConstraints ? isSoft : false
+        };
+      });
+      return {channels: channelsObject, isHistory: false};
+    });
+    const historyBudgetsData = this.props.historyData.planBudgets.map(month => {
+      const channelsObject = {};
+      Object.keys(month).forEach(channelKey => {
+        const {committedBudget} = month[channelKey];
+        channelsObject[channelKey] = {
+          primaryBudget: committedBudget
+        };
+      });
+      return {channels: channelsObject, isHistory: true};
+    });
+    this.props.planUnknownChannels.forEach((month, index) => {
+      Object.keys(month).forEach(channelKey => {
+        const committedBudget = month[channelKey];
+        budgetsData[index].channels[channelKey] = {
+          primaryBudget: committedBudget
+        };
+      });
+    });
+    this.setState({budgetsData: [...historyBudgetsData, ...budgetsData]});
+  };
 
   componentWillReceiveProps(nextProps) {
     this.getRelevantEvents(nextProps);
-  }
-
-  getRelevantEvents(props) {
-    this.setState({events: events.filter(event => event.vertical == props.userProfile.vertical || event.companyType == props.targetAudience.companyType)});
-  }
-
-  popup() {
-    this.setState({popup: true});
-  }
-
-  toggleCheck() {
-    if (this.state.isCheckAnnual) {
-      let prevBudget = this.state.budgetField;
-      let planDate = this.props.planDate.split("/");
-      let firstMonth = parseInt(planDate[0]) - 1;
-
-      let budget = [];
-      this.budgetWeights.forEach((element, index) => {
-        budget[(index + 12 - firstMonth) % 12] = Math.round(element * prevBudget);
-      });
-
-      this.setState({budgetField: null, budgetArrayField: budget});
+    if (!isEqual(nextProps.planBudgets, this.props.planBudgets)) {
+      this.setBudgetsData(nextProps.planBudgets);
+      this.setState({primaryPlanForecastedIndicators: nextProps.forecastedIndicators});
     }
-    else {
-      let sum = this.state.budgetArrayField.reduce((a, b) => a + b, 0);
-      this.setState({budgetField: sum});
-    }
-    this.setState({isCheckAnnual: !this.state.isCheckAnnual});
   }
 
-  handleChangeBudget(event) {
-    let update = {};
-    update.budgetField = parseInt(event.target.value.replace(/[-$,]/g, ''));
+  commitChanges = () => {
+    const planBudgets = this.getPlanBudgets();
+    this.forecastAndUpdateUserMonthPlan({
+      planBudgets: planBudgets,
+      unknownChannels: this.getPlanBudgets(true),
+      namesMapping: this.props.namesMapping
+    }, this.state.primaryPlanForecastedIndicators);
+  };
 
-    let planDate = this.props.planDate.split("/");
-    let firstMonth = parseInt(planDate[0]) - 1;
-
-    let budget = [];
-    this.budgetWeights.forEach((element, index) => {
-      budget[(index + 12 - firstMonth) % 12] = Math.round(element * update.budgetField);
+  getPlanBudgets = (unknownChannels = false) => {
+    const channels = this.state.budgetsData
+      .filter(item => !item.isHistory)
+      .map(item => item.channels);
+    return channels.map(month => {
+      const object = {};
+      Object.keys(month)
+        .filter(channelKey => unknownChannels ? isUnknownChannel(channelKey) : !isUnknownChannel(channelKey))
+        .forEach(channelKey => {
+          const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
+          if (primaryBudget || isConstraint) {
+            if (unknownChannels) {
+              object[channelKey] = primaryBudget;
+            }
+            else {
+              object[channelKey] = {
+                committedBudget: primaryBudget,
+                userBudgetConstraint: isConstraint ? budgetConstraint : null,
+                isSoft: isConstraint ? isSoft : false
+              };
+            }
+          }
+        });
+      return object;
     });
-    update.budgetArrayField = budget;
-
-    this.setState(update);
-  }
-
-  getDates = () => {
-    var dates = [];
-    for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate.split("/");
-      var date = new Date(planDate[1], planDate[0]-1);
-      date.setMonth(date.getMonth() + i);
-      dates.push(this.monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2,2));
-    }
-    return dates;
-  }
-
-  monthBudgets() {
-    const datesArray = this.getDates();
-    return datesArray.map((month, index) => {
-      return <div className={ this.classes.budgetChangeBox } key={index} style={{ marginLeft: '8px', paddingBottom: '0px', paddingTop: '0px' }}>
-        <div className={ this.classes.left }>
-          <Label style={{width: '70px', marginTop: '8px'}}>{month}</Label>
-        </div>
-        <div className={ this.classes.right }>
-          <Textfield
-            value={"$" + (this.state.budgetArrayField && this.state.budgetArrayField[index] ? this.state.budgetArrayField[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-            onChange={ this.handleChangeBudgetArray.bind(this, index) } style={{
-            width: '110px'
-          }}/>
-        </div>
-      </div>
-    });
-  }
-
-  whatIf = (isCommitted, callback) => {
-    this.setState({whatIfSelected: false});
-    let preferences = {};
-
-    preferences.annualBudgetArray = this.state.budgetArrayField;
-    preferences.annualBudget = this.state.budgetField;
-    const maxChannels = parseInt(this.state.maxChannelsField);
-    if (isNaN(maxChannels)) {
-      preferences.maxChannels = -1;
-    }
-    else {
-      preferences.maxChannels = maxChannels;
-    }
-    let filterNanArray = preferences.annualBudgetArray.filter((value)=>{return !!value});
-    if (filterNanArray.length == 12 && preferences.maxChannels) {
-      this.props.plan(isCommitted, preferences, callback, this.props.region, false);
-    }
-    /**
-     this.setState({
-      budget: budget,
-      budgetField: '$'
-    });**/
   };
 
-  whatIfCommit = () => {
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      this.refs.whatIfPopup.close();
-      this.setState({whatIfSelected: false, isTemp: false});
-    };
-    this.whatIf(true, callback);
-  };
-
-  whatIfTry = () => {
-    let callback = (data) => {
-      this.props.setDataAsState(data);
-      this.refs.whatIfPopup.open();
-      this.setState({whatIfSelected: true, isTemp: true});
-    };
-    this.whatIf(false, callback);
-  };
-
-  whatIfCancel = () => {
-    this.refs.whatIfPopup.close();
-    this.setState({whatIfSelected: false, isTemp: false, budgetField: '', maxChannelsField: ''});
-    this.props.getUserMonthPlan(this.props.region);
-  };
-
-  handleChangeBudgetArray(index, event) {
-    let update = this.state.budgetArrayField || [];
-    update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
-    this.setState({budgetArrayField: update});
-  }
-
-  editUpdate() {
-    return this.props.updateUserMonthPlan({projectedPlan: this.props.projectedPlan, approvedBudgets: this.props.approvedBudgets, unknownChannels: this.props.planUnknownChannels}, this.props.region, this.props.planDate);
-  }
-
-  addChannel(newChannel) {
-    let projectedPlan = this.props.projectedPlan;
-    let approvedBudgets = this.props.approvedBudgets;
-    for (let i = 0; i < 12; i++) {
-      if (!approvedBudgets[i]) {
-        approvedBudgets[i] = {};
-      }
-      if (!projectedPlan[i] || Object.keys(projectedPlan[i]).length === 0) {
-        projectedPlan[i] = { plannedChannelBudgets: {}, projectedIndicatorValues: {} };
-      }
-      projectedPlan[i].plannedChannelBudgets[newChannel] = 0;
-      approvedBudgets[i][newChannel] = 0;
-    }
-    this.props.updateUserMonthPlan({
-      projectedPlan: projectedPlan,
-      approvedBudgets: approvedBudgets
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this[newChannel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
+  setCommittedBudgetsAsSoftConstraints = () => {
+    let planBudgets = [...this.props.planBudgets];
+    planBudgets = planBudgets.map(month => {
+      const newMonthChannels = {...month};
+      Object.keys(newMonthChannels).forEach(channelKey => {
+        if (newMonthChannels[channelKey].committedBudget) {
+          newMonthChannels[channelKey].isSoft = true;
+          newMonthChannels[channelKey].userBudgetConstraint = newMonthChannels[channelKey].committedBudget;
         }
       });
-  }
+      return newMonthChannels;
+    });
+    this.setBudgetsData(planBudgets, true);
+  };
 
-  addUnknownChannel(otherChannel, otherChannelHierarchy) {
-    const channel = otherChannelHierarchy ? otherChannelHierarchy + ' / ' + otherChannel : otherChannel
-    let planUnknownChannels = this.props.planUnknownChannels;
-    for (let i = 0; i < 12; i++) {
-      if (!planUnknownChannels[i]) {
-        planUnknownChannels[i] = {};
-      }
-      planUnknownChannels[i][channel] = 0;
-    }
-    this.props.updateUserMonthPlan({
-      unknownChannels: planUnknownChannels
-    }, this.props.region, this.props.planDate)
-      .then(() => {
-        this.setState({addChannelPopup: false});
-        const domElement = ReactDOM.findDOMNode(this[channel]);
-        if (domElement) {
-          domElement.scrollIntoView({});
+  planAndSetBudgets = () => {
+    const planBudgets = this.getPlanBudgets();
+    this.props.plan(true, {planBudgets: planBudgets}, this.props.region, false)
+      .then(data => {
+        this.setBudgetsData(data.planBudgets, true, true);
+        this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
+      });
+  };
+
+  deleteChannel = (channelKey) => {
+    const budgetsData = this.state.budgetsData
+      .map(month => {
+        if (month.isHistory) {
+          return month;
+        }
+        else {
+          const channels = {...month.channels};
+          if (channels[channelKey]) {
+            channels[channelKey].primaryBudget = 0;
+            if (!channels[channelKey].secondaryBudget && !channels[channelKey].isConstraint) {
+              delete channels[channelKey];
+            }
+          }
+          return {channels: channels, isHistory: month.isHistory};
         }
       });
-  }
+    this.setState({budgetsData: budgetsData});
+  };
+
+  editCommittedBudget = (month, channelKey, newBudget) => {
+    const budgetsData = [...this.state.budgetsData];
+    const secondary = budgetsData[month].channels[channelKey] &&
+      budgetsData[month].channels[channelKey].secondaryBudget;
+    const alreadyHardConstraint = budgetsData[month].channels[channelKey] &&
+      budgetsData[month].channels[channelKey].isConstraint &&
+      budgetsData[month].channels[channelKey].isSoft ===
+      false;
+    budgetsData[month].channels[channelKey] = {
+      secondaryBudget: secondary || 0,
+      primaryBudget: newBudget,
+      budgetConstraint: newBudget,
+      isConstraint: true,
+      isSoft: !alreadyHardConstraint
+    };
+
+    if(this.state.editMode) {
+      this.props.updateState({unsaved: true});
+    }
+
+    this.setState({budgetsData: budgetsData}, () => {
+      this.props.forecast(this.getPlanBudgets())
+        .then((data) => {
+          this.setState({primaryPlanForecastedIndicators: data},
+            () => {
+              if (!this.state.interactiveMode && !this.state.editMode) {
+                this.commitChanges();
+              }
+            });
+        });
+    });
+  };
+
+  changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = false) => {
+    const budgetsData = [...this.state.budgetsData];
+    if (!budgetsData[month].channels[channelKey]) {
+      budgetsData[month].channels[channelKey] = {
+        primaryBudget: 0,
+        secondaryBudget: 0
+      };
+    }
+    budgetsData[month].channels[channelKey].isConstraint = isConstraint;
+    budgetsData[month].channels[channelKey].isSoft = isSoft;
+    if (isConstraint) {
+      budgetsData[month].channels[channelKey].budgetConstraint = budgetsData[month].channels[channelKey].primaryBudget;
+    }
+    this.setState({budgetsData: budgetsData});
+  };
+
+  getRelevantEvents = props => {
+    this.setState({
+      events: events.filter(
+        event => event.vertical ===
+          props.userProfile.vertical ||
+          event.companyType ===
+          props.targetAudience.companyType)
+    });
+  };
+
+  editUpdate = () => {
+    if (!this.state.interactiveMode){
+      this.forecastAndUpdateUserMonthPlan({
+        planBudgets: this.getPlanBudgets(),
+        unknownChannels: this.getPlanBudgets(true),
+        namesMapping: this.props.namesMapping
+      });
+    }
+  };
+
+  addChannel = (channelKey) => {
+    let budgetsData = [...this.state.budgetsData];
+    budgetsData = budgetsData
+      .map(month => {
+        if (month.isHistory) {
+          return month;
+        }
+        else {
+          const channels = {...month.channels};
+          if (!channels[channelKey]) {
+            channels[channelKey] = {
+              secondaryBudget: 0,
+              primaryBudget: 0,
+              budgetConstraint: 0,
+              isConstraint: false,
+              isSoft: false
+            };
+          }
+          return {channels: channels, isHistory: month.isHistory};
+        }
+      });
+    this.setState({budgetsData: budgetsData, addChannelPopup: false}, () => {
+
+      // Scroll to the title cell
+      const domElement = ReactDOM.findDOMNode(this[channelKey]).firstChild;
+      if (domElement) {
+        domElement.scrollIntoView({});
+      }
+    });
+  };
+
+  addUnknownChannel = (name, category) => {
+    const namesMapping = {...this.props.namesMapping};
+    if (!namesMapping.channels) {
+      namesMapping.channels = {};
+    }
+    const channel = `${category} / ${name}`;
+    namesMapping.channels[channel] = {
+      title: channel,
+      nickname: name,
+      category: category,
+      isUnknownChannel: true
+    };
+    this.props.updateState({namesMapping: namesMapping});
+    this.addChannel(channel);
+  };
 
   setRef = (channel, ref) => {
     this[channel] = ref;
@@ -280,288 +334,353 @@ export default class Plan extends Component {
     this.forecastingGraph = ref;
   };
 
-  selectTab(index) {
-    this.setState({
-      selectedTab: index
+  applyLockOnChannels = (planBudgets, lockedChannels) => {
+    return planBudgets.map((month) => {
+      const newMonth = {...month};
+
+      lockedChannels.forEach(channelKey => {
+        const channelBudget = newMonth[channelKey] || {committedBudget: 0};
+        newMonth[channelKey] = {
+          ...channelBudget,
+          userBudgetConstraint: channelBudget.committedBudget,
+          isSoft: false
+        };
+      });
+
+      return newMonth;
     });
-  }
+  };
+
+  manipulatePlanBudgets = (planBudgets, manipulateFunctions) => {
+    return planBudgets.map((month) => {
+      const newMonth = {};
+
+      Object.keys(month).forEach(channelKey => {
+        newMonth[channelKey] = manipulateFunctions(month[channelKey]);
+      });
+
+      return newMonth;
+    });
+  };
+
+  openAddChannelPopup = (channel) => {
+    this.setState({addChannelPopup: true, initialChannelToOpen: channel});
+  };
+
+  planWithConstraints = (constraints) => {
+    return new Promise((resolve, reject) => {
+      const planBudgets = this.getPlanBudgets();
+
+      const normalizedBudgets = this.manipulatePlanBudgets(planBudgets, (channelData) => {
+        return {
+          ...channelData,
+          committedBudget: channelData.committedBudget || 0
+        };
+      });
+
+      const planWithLockedChannles = this.applyLockOnChannels(normalizedBudgets,
+        constraints.channelsToLock);
+
+      this.props.optimalImprovementPlan(false, {
+          planBudgets: planWithLockedChannles
+        },
+        this.props.region,
+        false,
+        constraints.channelsLimit)
+        .then(data => {
+          const changesObject = this.getChangesObjectFromPlan(data);
+
+          resolve({
+            ...changesObject,
+            commitPlanBudgets: () => this.forecastAndUpdateUserMonthPlan({
+              planBudgets: this.applyAllPlannerSuggestions(data.planBudgets)
+            })
+          });
+        });
+    });
+  };
+
+  applyAllPlannerSuggestions = (planBudgets) => {
+    return this.manipulatePlanBudgets(planBudgets, (channelData) => {
+      return {
+        ...channelData,
+        committedBudget: channelData.plannerBudget
+      };
+    });
+  };
+
+  forecastAndUpdateUserMonthPlan = ({planBudgets, ...userMonthPlan}, forecasting) => {
+    const updateMonthPlan = (forecasting) => {
+      return this.props.updateUserMonthPlan({
+        ...userMonthPlan,
+        planBudgets: planBudgets,
+        forecastedIndicators: forecasting
+      }, this.props.region, this.props.planDate);
+    };
+
+    return new Promise((resolve, reject) => {
+      if (!forecasting) {
+        this.props.forecast(planBudgets)
+          .then((data) => {
+            updateMonthPlan(data)
+              .then(() => resolve());
+          });
+      }
+      else {
+        updateMonthPlan(forecasting)
+          .then(() => resolve());
+      }
+    });
+  };
+
+  getChangesObjectFromPlan = ({planBudgets, forecastedIndicators}) => {
+    const suggestions = union(...planBudgets.map((month, monthKey) => {
+      return Object.keys(month).map((channelKey) => {
+        return {
+          channel: channelKey,
+          monthKey: monthKey,
+          fromBudget: month[channelKey].committedBudget || 0,
+          toBudget: month[channelKey].plannerBudget
+        };
+      })
+        .filter((data) => data.fromBudget !== data.toBudget);
+    }));
+
+    const objectivesKeys = this.props.calculatedData.objectives.collapsedObjectives.map((objective) => objective.indicator);
+    const latestMonthWithSuggestion = maxBy(suggestions, suggestion => suggestion.monthKey).monthKey;
+
+    const parsedForecasting = forecastedIndicators.map((month, monthKey) => {
+      return Object.keys(month).map((indicatorKey) => {
+        return {
+          indicator: indicatorKey,
+          monthKey: monthKey,
+          committed: month[indicatorKey].committed,
+          ifApproved: month[indicatorKey].planner
+        };
+      })
+        .filter((data) => data.ifApproved &&
+          data.committed !==
+          data.ifApproved &&
+          data.monthKey <= latestMonthWithSuggestion &&
+          objectivesKeys.includes(data.indicator));
+    });
+
+    return {channelsArray: suggestions, forecastedIndicators: union(...parsedForecasting)};
+  };
 
   render() {
-    const planChannels = merge([],
-      Object.keys(this.props.approvedBudgets.reduce((object, item) => {
-          return merge(object, item);
-        }
-        , {})),
-      Object.keys(this.props.projectedPlan.reduce((object, item) => {
-          return merge(object, item.plannedChannelBudgets)
-        }
-        , {}))
-    );
-    let tabs = {};
-    let planDate = formatDate(this.props.planDate);
-    tabs[planDate] = '/plan/plan/current';
-    tabs["Annual"] = '/plan/plan/annual';
-    tabs["Forecasting"] = '/plan/plan/projections';
+    const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
+    const {calculatedData: {annualBudget, annualBudgetLeftToPlan}} = this.props;
 
-    const tabNames = Object.keys(tabs);
+    const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
+        return merge(object, item);
+      }
+      , {}));
+
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, merge({}, this.props, this.state)));
+      (child) => {
+        return React.cloneElement(child, merge({}, this.props, this.state, {
+          whatIf: this.props.plan,
+          setRef: this.setRef,
+          forecastingGraphRef: this.forecastingGraphRef,
+          editCommittedBudget: this.editCommittedBudget,
+          changeBudgetConstraint: this.changeBudgetConstraint,
+          deleteChannel: this.deleteChannel,
+          secondaryPlanForecastedIndicators: this.state.editMode || this.state.interactiveMode
+            ? this.props.forecastedIndicators
+            : null,
+          onPageScrollEventRegister: ((onPageScroll) => {
+            this.setState({scrollEvent: onPageScroll});
+          }),
+          openAddChannelPopup: this.openAddChannelPopup
+        }));
+      });
+
+    const annualTabActive = this.props.children ? this.props.children.type === AnnualTab : null;
+
     return <div>
       <ReactTooltip/>
-      <Page contentClassName={ this.classes.content } innerClassName={ this.classes.pageInner } width="100%">
-        <div className={ this.classes.head }>
-          <div className={ this.classes.headTitle }>Plan</div>
-          <div className={ this.classes.headTabs }>
-            {
-              tabNames.map((name, i) => {
-                const link = Object.values(tabs)[i];
-                return <Link to={ link } activeClassName={this.classes.headTabSelected} className={ this.classes.headTab } key={ i } onClick={() => {
-                  this.selectTab(i);
-                }}>
-                  { name }
-                </Link>
-              })
-            }
+      <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
+            width="100%" onPageScroll={this.state.scrollEvent}>
+        <div className={this.classes.head}>
+          <div className={this.classes.column} style={{justifyContent: 'flex-start'}}>
+            <div className={this.classes.headTitle}>Plan</div>
+            {(annualTabActive && !editMode) ?
+              interactiveMode ?
+                <FeatureToggle featureName="plannerAI">
+                  <div style={{display: 'flex'}}>
+                    <div className={this.classes.error}>
+                      <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To
+                        upgrade,
+                        click <a href="mailto:support@infinigrow.com?&subject=I need replan upgrade"
+                                 target='_blank'>here</a>
+                      </label>
+                    </div>
+                    <PlanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                                onClick={this.planAndSetBudgets}
+                                label={'Optimize'}
+                                style={{width: '138px'}}
+                                planNeedsUpdate={this.props.planNeedsUpdate}
+                                showIcons={true}
+                    />
+                  </div>
+                </FeatureToggle>
+                :
+                <PlanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+                            onClick={() => this.setState({showOptimizationPopup: true})}
+                            style={{marginLeft: "15px", width: '140px'}}
+                            label={'Get Suggestions'}
+                            showIcons={false}/>
+              : null}
           </div>
-          <div className={this.classes.headPlan}>
-            <FeatureToggle featureName="plannerAI">
-              <div style={{ display: 'flex' }}>
-                <div className={this.classes.error}>
-                  <label hidden={!this.props.isPlannerError}>You've reached the plan updates limit.<br/> To upgrade, click <a
-                    href="mailto:support@infinigrow.com?&subject=I need replan upgrade" target='_blank'>here</a></label>
-                </div>
-                <div style={{ position: 'relative' }}>
-                  <ReplanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates} onClick={this.popup}
-                                planNeedsUpdate={this.props.planNeedsUpdate}/>
-                  <Popup style={{
-                    width: '265px',
-                    top: '130px',
-                    left: '-137px',
-                    transform: 'translate(0, -50%)'
-                  }} hidden={!this.state.popup} onClose={() => {
-                    this.setState({
-                      popup: false
-                    });
-                  }}>
-                    <PlanNextMonthPopup hidden={!this.state.popup} onNext={() => {
-                      this.setState({popup: false})
-                      this.props.plan(true, false, (data) => {
-                        this.props.setDataAsState(data);
-                      }, this.props.region, false)}} onBack={() => {
-                      this.setState({
-                        popup: false
-                      })
-                    }}/>
-                  </Popup>
-                </div>
-              </div>
-            </FeatureToggle>
-            { this.state.selectedTab !== 1 ? null :
-              <div className={this.classes.forecastButton} data-tip="forecasting" onClick={ () => {
-                const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
-                if (domElement) {
-                  domElement.scrollIntoView({});
-                }
-              }}/>
-            }
-            { this.state.selectedTab !== 1 ? null :
-              <FeatureToggle featureName="plannerAI">
-                <div style={{ display: 'flex', position: 'relative' }}>
-                  <div data-selected={ this.state.dropmenuVisible ? true : null }>
-                    <Button type="reverse" contClassName={ this.classes.dropButton } style={{
-                      width: '102px',
-                      marginLeft: '15px'
-                    }} onClick={() => {
-                      this.setState({dropmenuVisible: !this.state.dropmenuVisible})
-                    }}>
-                      Apply All
-                      <div className={this.classes.buttonTriangle}/>
-                    </Button>
-                    <Popup
-                      className={ this.classes.dropmenu }
-                      hidden={ !this.state.dropmenuVisible } onClose={() => {
-                      this.setState({
-                        dropmenuVisible: false
-                      });
-                    }}
-                    >
-                      <div>
-                        <div className={ this.classes.dropmenuItem } onClick={ () => {
-                          this.props.approveAllBudgets();
-                          this.setState({dropmenuVisible: false});
-                        }}>
-                          Approve all
-                        </div>
-                        <div className={ this.classes.dropmenuItem } onClick={ () => {
-                          this.props.declineAllBudgets();
-                          this.setState({dropmenuVisible: false});
-                        }}>
-                          Decline all
-                        </div>
-                      </div>
-                    </Popup>
-                  </div>
-                  <div>
-                    <Button type="reverse" style={{
-                      marginLeft: '15px',
-                      width: '102px'
-                    }} selected={ this.state.whatIfSelected ? true : null } onClick={() => {
-                      this.setState({
-                        whatIfSelected: true
-                      });
-
-                      this.refs.whatIfPopup.open();
-                    }}>What if</Button>
-                    <div style={{ position: 'relative' }}>
-                      <PlanPopup ref="whatIfPopup" style={{
-                        width: '367px',
-                        left: '-252px',
-                        top: '10px',
-                        textAlign: 'initial',
-                        cursor: 'initial'
-                      }} hideClose={ true } title="What If - Scenarios Management">
-                        <div className={ this.classes.budgetChangeBox } style={{ paddingTop: '12px' }}>
-                          <div className={ this.classes.left }>
-                            <Label checkbox={this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Annual Budget ($)</Label>
-                          </div>
-                          <div className={ this.classes.right }>
-                            <Textfield style={{ maxWidth: '110px' }}
-                                       value={ '$' + (this.state.budgetField ? this.state.budgetField.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '') }
-                                       className={ this.classes.budgetChangeField }
-                                       onChange={ this.handleChangeBudget.bind(this) }
-                                       onKeyDown={(e) => {
-                                         if (e.keyCode === 13) {
-                                           this.whatIf();
-                                         }
-                                       }}
-                                       disabled={ !this.state.isCheckAnnual }
-                            />
-                          </div>
-                        </div>
-                        <div className={ this.classes.budgetChangeBox } style={{ display: 'inline-block' }}>
-                          <div className={ this.classes.left }>
-                            <div className={ this.classes.left }>
-                              <Label checkbox={!this.state.isCheckAnnual} toggleCheck={ this.toggleCheck.bind(this) } style={{ paddingTop: '7px' }}>Plan Monthly Budget ($)</Label>
-                            </div>
-                          </div>
-                          { this.state.isCheckAnnual ? null : this.monthBudgets() }
-                        </div>
-                        <div className={ this.classes.budgetChangeBox }>
-                          <div className={ this.classes.left }>
-                            <Label style={{ paddingTop: '7px' }}>max number of Channels</Label>
-                          </div>
-                          <div className={ this.classes.right }>
-                            <Textfield style={{
-                              maxWidth: '110px' }}
-                                       value={ this.state.maxChannelsField != -1 ? this.state.maxChannelsField : '' }
-                                       className={ this.classes.budgetChangeField }
-                                       onChange={(e) => {
-                                         this.setState({
-                                           maxChannelsField: e.target.value
-                                         });
-                                       }}
-                                       onKeyDown={(e) => {
-                                         if (e.keyCode === 13) {
-                                           this.whatIf();
-                                         }
-                                       }}
-                            />
-                          </div>
-                        </div>
-                        <div className={ this.classes.budgetChangeBox }>
-                          <Button type="primary2" style={{
-                            width: '110px'
-                          }} onClick={ this.whatIfTry }>Try</Button>
-                        </div>
-                        <div className={ this.classes.budgetChangeBox } style={{ paddingBottom: '12px' }}>
-                          <div className={ this.classes.left }>
-                            <Button type="normal" style={{
-                              width: '110px'
-                            }} onClick={ this.whatIfCancel }>Cancel</Button>
-                          </div>
-                          <div className={ this.classes.right }>
-                            <Button type="accent2" style={{
-                              width: '110px'
-                            }} onClick={ this.whatIfCommit }>Commit</Button>
-                          </div>
-                        </div>
-                      </PlanPopup>
-                    </div>
-                  </div>
-                </div>
-              </FeatureToggle>
-            }
-            { this.state.selectedTab === 1 ?
-              <div style={{ position: 'relative' }}>
-                <Button type="primary2" style={{
-                  marginLeft: '15px',
-                  width: '102px'
-                }} selected={ this.state.editMode ? true : null } onClick={() => {
-                  if (this.state.editMode) {
-                    this.editUpdate()
-                      .then( () => {
-                        this.props.forecast();
-                        if (!this.props.userAccount.steps || !this.props.userAccount.steps.plan) {
-                          this.props.updateUserAccount({'steps.plan': true});
-                        }
-                      });
+          <div className={this.classes.column} style={{justifyContent: 'center'}}>
+            <BudgetLeftToPlan annualBudget={annualBudget} annualBudgetLeftToPlan={annualBudgetLeftToPlan}/>
+          </div>
+          <div className={this.classes.column} style={{justifyContent: 'flex-end'}}>
+            <div className={this.classes.headPlan}>
+              {annualTabActive ?
+                <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
+                  const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
+                  if (domElement) {
+                    domElement.scrollIntoView({});
                   }
-                  this.setState({
-                    editMode: !this.state.editMode
-                  });
-                }} icon={this.state.editMode ? "buttons:plan" : "buttons:edit"}>
-                  { this.state.editMode ? "Done" : "Edit" }
-                </Button>
-                <Popup
-                  className={ this.classes.dropmenuEdit }
-                  hidden={ !this.state.editMode }
-                >
-                  <div>
-                    <div className={ this.classes.dropmenuItemAdd } onClick={ () => {
-                      this.setState({addChannelPopup: true});
-                    }}>
-                      Add Channel
-                    </div>
-                    <div className={ this.classes.dropmenuItemCancel } onClick={ () => {
-                      this.setState({editMode: false});
-                      this.props.getUserMonthPlan(this.props.region);
-                    } }>
+                }}/>
+                : null
+              }
+              {annualTabActive && !this.state.editMode ?
+                interactiveMode ?
+                  <div style={{display: 'flex'}}>
+                    <Button type="secondary"
+                            style={{
+                              marginLeft: '15px',
+                              width: '102px'
+                            }}
+                            onClick={() => {
+                              this.setState({interactiveMode: false});
+                              this.setBudgetsData();
+                              this.setState({primaryPlanForecastedIndicators: this.props.forecastedIndicators});
+                            }}>
                       Cancel
-                    </div>
+                    </Button>
+                    <Button type="primary"
+                            style={{
+                              marginLeft: '15px',
+                              width: '102px'
+                            }}
+                            onClick={() => {
+                              this.commitChanges();
+                              this.setState({
+                                interactiveMode: false
+                              });
+                            }}>
+                      Commit
+                    </Button>
                   </div>
-                </Popup>
-                <AddChannelPopup
-                  hidden={ !this.state.addChannelPopup }
-                  onChannelChoose={ this.addChannel.bind(this) }
-                  channels={ output() }
-                  planChannels={ planChannels.map(item => { return { id: item } }) }
-                  close={ () => { this.setState({addChannelPopup: false}) } }
-                  addUnknownChannel={ this.addUnknownChannel.bind(this) }
-                />
-              </div>
-              : null }
+                  :
+                  <div>
+                    <Button type="primary"
+                            style={{
+                              marginLeft: '15px',
+                              width: '118px'
+                            }}
+                            selected={showNewScenarioPopup ? true : null}
+                            onClick={() => {
+                              this.setState({
+                                showNewScenarioPopup: true
+                              });
+                            }}>
+                      New Scenario
+                    </Button>
+                    <NewScenarioPopup hidden={!showNewScenarioPopup}
+                                      onClose={() => {
+                                        this.setState({showNewScenarioPopup: false});
+                                      }}
+                                      onCommittedClick={() => {
+                                        this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                        this.setCommittedBudgetsAsSoftConstraints();
+                                      }}
+                                      onScratchClick={() => {
+                                        this.setState({interactiveMode: true, showNewScenarioPopup: false});
+                                        this.planAndSetBudgets();
+                                      }}/>
+                  </div>
+                : null
+              }
+              {annualTabActive ?
+                <div style={{position: 'relative'}}>
+                  <Button type="primary"
+                          style={{
+                            marginLeft: '15px',
+                            width: '102px'
+                          }}
+                          selected={editMode ? true : null}
+                          onClick={() => {
+                            if (editMode) {
+                              this.editUpdate()
+                              this.props.updateState({unsaved: false});
+                            }
+                            this.setState({
+                              editMode: !editMode
+                            });
+                          }}
+                          icon={editMode ? 'buttons:done' : 'buttons:edit'}>
+                    {editMode ? (interactiveMode ? 'Done' : 'Commit') : 'Edit'}
+                  </Button>
+                  <Popup
+                    className={this.classes.dropmenuEdit}
+                    hidden={!editMode}
+                  >
+                    <div>
+                      <div className={this.classes.dropmenuItem}
+                           onClick={() => {
+                             this.openAddChannelPopup(null);
+                           }}>
+                        Add Channel
+                      </div>
+                      <div className={this.classes.dropmenuItem}
+                           onClick={() => {
+                             this.setState({editMode: false});
+                             this.setBudgetsData();
+                             this.props.updateState({unsaved: false});
+                           }}>
+                        Cancel
+                      </div>
+                    </div>
+                  </Popup>
+                  <AddChannelPopup
+                    hidden={!addChannelPopup}
+                    onChannelChoose={this.addChannel}
+                    channels={output()}
+                    planChannels={planChannels.map(item => {
+                      return {id: item};
+                    })}
+                    close={() => {
+                      this.setState({addChannelPopup: false});
+                    }}
+                    addUnknownChannel={this.addUnknownChannel}
+                    initialExpandedChannel={initialChannelToOpen}
+                  />
+                </div>
+                : null}
+            </div>
           </div>
         </div>
-        { this.props.userAccount.pages && this.props.userAccount.pages.plan ?
-          <div className={this.classes.wrap}>
-            <div className={this.classes.serverDown}>
-              <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
-                :)</label>
-            </div>
-            {childrenWithProps}
+        <PlanOptimizationPopup hidden={!this.state.showOptimizationPopup}
+                               planDate={this.props.planDate}
+                               onClose={() => {
+                                 this.setState({showOptimizationPopup: false});
+                               }}
+                               planWithConstraints={this.planWithConstraints}
+                               numberOfPlanUpdates={this.props.numberOfPlanUpdates}
+        />
+        <div className={this.classes.wrap}>
+          <div className={this.classes.serverDown}>
+            <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
+              :)</label>
           </div>
-          :
-          <FirstPageVisit
-            title="One place for understanding your route to growth"
-            content="Everything starts with planning. Plan where, when and how you're going to invest your marketing budget to achieve your goals."
-            action="Let's plan some budgets >"
-            icon="step:plan"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.plan': true})
-            }}
-          />
-        }
+          {childrenWithProps}
+        </div>
       </Page>
-    </div>
+    </div>;
   }
 }

@@ -42,6 +42,7 @@ module.exports = function(args) {
     }),
     new CopyWebpackPlugin([
       { from: 'src/icons', to: 'icons' },
+      { from: 'src/assets', to: 'assets' },
       { from: 'src/googleapi', to: 'googleapi' },
       { from: 'src/icons/favicon.ico', to: 'favicon.ico' },
       { from: 'src/icons/apple-touch-icon.png', to: 'apple-touch-icon.png' },
@@ -54,12 +55,13 @@ module.exports = function(args) {
   }
 
   const postcssLoader = '!postcss-loader?parser=postcss-safe-parser';
-  let cssLoader = 'css?modules&camelCase&importLoaders=1&localIdentName=[folder]-[name]__[local]---[hash:base64:5]';
+  let cssLoader = 'css?modules&camelCase&importLoaders=1&-autoprefixer&localIdentName=[folder]-[name]__[local]';
   // cssLoader += (env.optimize.css ? '&minimize' : '');
   cssLoader += postcssLoader;
 
   return {
     entry: entry,
+    devtool: isProd ? null : 'eval-source-map',
     output: {
       path: path.join(__dirname, env.folder),
       filename: '[name].js',
@@ -86,7 +88,7 @@ module.exports = function(args) {
         // { test: /\.u.css$/, loader: 'style/useable!' + cssLoader },
         // { test: /\.css$/, loader: "style?-singleton!raw" },
 
-        { test: /\.(jpg|jpeg|gif|png|svg)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
+        { test: /\.(jpg|jpeg|gif|png|svg|ttf)$/, loader: 'file?name=[path][name].[ext]&context=' + srcRoot },
 
         { test: /\.tpl$/, loader: 'raw' },
 				{ test: /\.json$/, loader: 'json' },

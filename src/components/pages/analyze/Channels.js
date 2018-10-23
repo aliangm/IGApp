@@ -1,15 +1,12 @@
-import React from "react";
-import Component from "components/Component";
-import style from "styles/onboarding/onboarding.css";
-import dashboardStyle from "styles/dashboard/dashboard.css";
+import React from 'react';
+import Component from 'components/Component';
+import style from 'styles/onboarding/onboarding.css';
+import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
-import { formatBudget } from 'components/utils/budget';
-import merge from 'lodash/merge';
-import { getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname } from 'components/utils/channels';
-import { getNickname as getIndicatorNickname } from 'components/utils/indicators';
-import { FeatureToggle } from 'react-feature-toggles';
-import { timeFrameToDate } from 'components/utils/objective';
-import { formatDate } from 'components/utils/date';
+import {formatNumber} from 'components/utils/budget';
+import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
+import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
@@ -18,10 +15,6 @@ export default class Channels extends Component {
 
   style = style;
   styles = [dashboardStyle, icons];
-
-  static defaultProps = {
-    previousData: []
-  };
 
   constructor(props) {
     super(props);
@@ -38,11 +31,7 @@ export default class Channels extends Component {
 
   initialize(props) {
     //set objective
-    const firstObjective = props.objectives
-      .find(item => item.isArchived !== true && timeFrameToDate(item.timeFrame) >= new Date());
-    if (firstObjective){
-      this.setState({firstObjective: firstObjective.indicator});
-    }
+    this.setState({firstObjective: props.calculatedData.objectives.firstObjective});
   }
 
   componentDidMount() {
@@ -51,23 +40,6 @@ export default class Channels extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.initialize(nextProps);
-  }
-
-  getDateString(stringDate) {
-    if (stringDate) {
-      const monthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct",
-        "Nov", "Dec"
-      ];
-      const planDate = stringDate.split("/");
-      const date = new Date(planDate[1], planDate[0] - 1);
-
-      return monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2);
-    }
-
-    return null;
   }
 
   sortBy(param) {
@@ -79,137 +51,99 @@ export default class Channels extends Component {
     }
   }
 
+  formatEffciency(dividend, divisor, indicatorName) {
+    const efficiency = Math.round(dividend / divisor);
+    if (isFinite(efficiency)) {
+      return '$' + formatNumber(efficiency) + '/' + indicatorName;
+    }
+    if (dividend === 0) {
+      return '0';
+    }
+    return '-';
+  }
+
   render() {
-    const { previousData, attribution, CEVs } = this.props;
-    const { firstObjective } = this.state;
-
-    let indicatorsData = {};
-    const sortedPreviousData = previousData.sort((a, b) => {
-      const planDate1 = a.planDate.split("/");
-      const planDate2 = b.planDate.split("/");
-      const date1 = new Date(planDate1[1], planDate1[0] - 1).valueOf();
-      const date2 = new Date(planDate2[1], planDate2[0] - 1).valueOf();
-      return (isFinite(date1) && isFinite(date2) ? (date1 > date2) - (date1 < date2) : NaN);
-    });
-    sortedPreviousData.forEach(item => {
-      const displayDate = this.getDateString(item.planDate);
-      Object.keys(item.actualIndicators).forEach(indicator => {
-        if (!indicatorsData[indicator]) {
-          indicatorsData[indicator] = [];
-        }
-        const value = item.actualIndicators[indicator];
-        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      })
-    });
-    const months = sortedPreviousData.map((item, index) => {
-      return {value: index, label: formatDate(item.planDate)}
-    });
-    const relevantData = sortedPreviousData.slice(this.props.months || sortedPreviousData.length - 1);
-    const budgets = relevantData.map(item => item.approvedBudgets && item.approvedBudgets.length > 0 && item.approvedBudgets[0] ? merge(item.approvedBudgets[0], item.actualChannelBudgets && item.actualChannelBudgets.knownChannels ? item.actualChannelBudgets.knownChannels : {}) : {});
-    let sumedBudgets = {};
-    budgets.forEach(month => {
-      Object.keys(month).forEach(channel => {
-        if (!sumedBudgets[channel]) {
-          sumedBudgets[channel] = 0;
-        }
-        sumedBudgets[channel] += month[channel];
-      })
-    });
-
-    const data = relevantData.map(month => {
-        const json = {
-          name: formatDate(month.planDate)
-        };
-        month.approvedBudgets && Object.keys(month.approvedBudgets[0]).forEach(channel => {
-          json[channel] = month.approvedBudgets[0][channel];
-        });
-
-        json['total'] = month.approvedBudgets && Object.keys(month.approvedBudgets[0]).reduce((sum, channel) =>
-          sum + month.approvedBudgets[0][channel], 0);
-
-        Object.keys(month.actualIndicators).forEach(indicator => {
-          json[indicator] = month.actualIndicators[indicator];
-        });
-
-        return json;
-      });
+    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}} = this.props;
+    const {firstObjective} = this.state;
 
     const metrics = [
       {value: 'MCL', label: getIndicatorNickname('MCL')},
       {value: 'MQL', label: getIndicatorNickname('MQL')},
       {value: 'SQL', label: getIndicatorNickname('SQL')},
       {value: 'opps', label: getIndicatorNickname('opps')},
-      {value: 'users', label: getIndicatorNickname('users')},
-    ];
-    const attributionModels = [
-      {value: false, label: 'Full Journey'},
-      {value: 'firsttouch', label: 'Introducer'},
-      {value: 'lasttouch', label: 'Converter'}
+      {value: 'users', label: getIndicatorNickname('users')}
     ];
 
     const headRow = this.getTableRow(null, [
-      <div style={{ fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer' }} onClick={this.sortBy.bind(this, 'label')}>
+      <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}
+           onClick={this.sortBy.bind(this, 'label')}>
         Channel
       </div>,
-      <div onClick={this.sortBy.bind(this, 'budget')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
         Cost
       </div>,
       <div style={{display: 'inline-flex'}}>
-        { this.state.editRevenueMetric ?
+        {this.state.editRevenueMetric ?
           <Select
             selected={this.state.attributionTableRevenueMetric}
             select={{
-              options: [{value: 'revenue', label: 'revenue'}, {value: 'pipeline', label: 'pipeline'}, {value: 'LTV', label: 'LTV'}]
+              options: [{value: 'revenue', label: 'revenue'},
+                {value: 'pipeline', label: 'pipeline'},
+                {value: 'LTV', label: 'LTV'}]
             }}
             onChange={(e) => {
-              this.setState({attributionTableRevenueMetric: e.value})
+              this.setState({attributionTableRevenueMetric: e.value});
             }}
-            style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
+            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
           />
           :
-          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
+               data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
             {this.state.attributionTableRevenueMetric}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editRevenueMetric: !this.state.editRevenueMetric})
+          this.setState({editRevenueMetric: !this.state.editRevenueMetric});
         }}>
-          { this.state.editRevenueMetric ? 'Done' : 'Edit' }
+          {this.state.editRevenueMetric ? 'Done' : 'Edit'}
         </div>
       </div>,
-      <div onClick={this.sortBy.bind(this, 'ROI')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'ROI')} style={{cursor: 'pointer'}}>
         ROI
       </div>,
-      <div onClick={this.sortBy.bind(this, 'webVisits')} style={{ cursor: 'pointer' }}>
+      <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
         Web Visits
       </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{ cursor: 'pointer', display: 'flex' }} data-tip="number of times the channel/campaign led to a direct online conversion event on your website or landing pages.">
+      <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}
+           data-tip="number of times the channel/campaign led to a direct online conversion event on your website or landing pages.">
         Conv.
       </div>,
       <div style={{display: 'inline-flex'}}>
-        { this.state.editMetric ?
+        {this.state.editMetric ?
           <Select
             selected={this.state.attributionTableIndicator}
             select={{
               options: metrics
             }}
             onChange={(e) => {
-              this.setState({attributionTableIndicator: e.value})
+              this.setState({attributionTableIndicator: e.value});
             }}
-            style={{ width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial' }}
+            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
           />
           :
-          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{ cursor: 'pointer' }}>
+          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}}
+               data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
             {getIndicatorNickname(this.state.attributionTableIndicator)}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editMetric: !this.state.editMetric})
+          this.setState({editMetric: !this.state.editMetric});
         }}>
-          { this.state.editMetric ? 'Done' : 'Edit' }
+          {this.state.editMetric ? 'Done' : 'Edit'}
         </div>
       </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{ cursor: 'pointer', display: 'flex' }} data-tip={'Cost per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
+      <div onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}}
+           data-tip={'Cost per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
         Efficiency
       </div>
     ], {
@@ -220,91 +154,111 @@ export default class Channels extends Component {
     channelsArray.push({value: 'direct', label: 'Direct'});
 
     let channelsWithData = channelsArray.map(item => {
-      const json =  {
+      const json = {
         channel: item.value,
         label: item.label,
-        budget: sumedBudgets[item.value] || 0,
-        revenueMetric:(CEVs && CEVs[this.state.attributionTableRevenueMetric] ? CEVs[this.state.attributionTableRevenueMetric][item.value] : 0),
-        webVisits: (CEVs && CEVs["webVisits"] ? CEVs["webVisits"][item.value] : 0),
-        conversion: (CEVs && CEVs["conversion"] ? CEVs["conversion"][item.value] : 0),
-        funnelIndicator: (CEVs && CEVs[this.state.attributionTableIndicator] ? CEVs[this.state.attributionTableIndicator][item.value] : 0),
+        budget: sumBudgets[item.value] || 0,
+        revenueMetric: (channelsImpact && channelsImpact[this.state.attributionTableRevenueMetric] && channelsImpact[this.state.attributionTableRevenueMetric][item.value])
+          ? channelsImpact[this.state.attributionTableRevenueMetric][item.value]
+          : 0,
+        webVisits: (channelsImpact && channelsImpact['webVisits'] && channelsImpact['webVisits'][item.value])
+          ? channelsImpact['webVisits'][item.value]
+          : 0,
+        conversion: (channelsImpact && channelsImpact['conversion'] && channelsImpact['conversion'][item.value])
+          ? channelsImpact['conversion'][item.value]
+          : 0,
+        funnelIndicator: (channelsImpact && channelsImpact[this.state.attributionTableIndicator] && channelsImpact[this.state.attributionTableIndicator][item.value])
+          ? channelsImpact[this.state.attributionTableIndicator][item.value]
+          : 0
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
       json.CPX = json.budget / json.funnelIndicator;
       return json;
-    }) ;
+    });
 
-    channelsWithData = channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
+    channelsWithData =
+      channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const rows = channelsWithData
       .sort((item1, item2) =>
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
       )
       .map(item => {
-        const { channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX } = item;
+        const {channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX} = item;
         return this.getTableRow(null,
           [
-            <div style={{ display: 'flex' }}>
-              <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel}/>
+            <div style={{display: 'flex'}}>
+              <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}/>
               <div className={dashboardStyle.locals.channelTable}>
                 {label}
               </div>
             </div>,
-            '$' + formatBudget(budget),
-            '$' + formatBudget(revenueMetric),
+            '$' + formatNumber(budget),
+            '$' + formatNumber(revenueMetric),
             Math.round(ROI * 100) + '%',
-            formatBudget(webVisits),
-            formatBudget(conversion),
+            formatNumber(webVisits),
+            formatNumber(conversion),
             Math.round(funnelIndicator * 100) / 100,
-            '$' + (isFinite(CPX) ? formatBudget(Math.round(CPX) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0)
+            this.formatEffciency(budget,
+              funnelIndicator,
+              getIndicatorNickname(this.state.attributionTableIndicator, true))
           ], {
             key: channel,
             className: dashboardStyle.locals.tableRow
-          })
+          });
       });
 
     const sumData = channelsWithData;
 
+    const totalBudget = sumData.reduce((sum, item) => sum + item.budget, 0);
+    const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) /
+      100;
     const footRow = this.getTableRow(null, [
       'Total',
-      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.budget, 0)),
-      '$' + formatBudget(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
+      '$' + formatNumber(totalBudget),
+      '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
       Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-      formatBudget(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-      formatBudget(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-      Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-      '$' + formatBudget(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + "/" + getIndicatorNickname(this.state.attributionTableIndicator, true))
+      formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
+      formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
+      totalIndicatorGenerated,
+      this.formatEffciency(totalBudget,
+        totalIndicatorGenerated,
+        getIndicatorNickname(this.state.attributionTableIndicator, true))
     ], {
       className: dashboardStyle.locals.footRow
     });
 
-    const CEV = CEVs && CEVs[this.state.conversionIndicator];
+    const convIndicatorImpact = channelsImpact && channelsImpact[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
     let fatherChannelsSum = 0;
-    Object.keys(CEV).forEach(channel => {
+    convIndicatorImpact && Object.keys(convIndicatorImpact).forEach(channel => {
       const channelCategory = getMetadata('category', channel);
-      if (channelCategory && CEV[channel]) {
-        fatherChannelsSum += CEV[channel];
+      if (channelCategory && convIndicatorImpact[channel]) {
+        fatherChannelsSum += convIndicatorImpact[channel];
         const existsFather = fatherChannelsWithBudgets.find(item => item.name === channelCategory);
         if (existsFather) {
-          existsFather.value += CEV[channel];
+          existsFather.value += convIndicatorImpact[channel];
         }
         else {
-          fatherChannelsWithBudgets.push({name: channelCategory, value: CEV[channel]});
+          fatherChannelsWithBudgets.push({name: channelCategory, value: convIndicatorImpact[channel]});
         }
       }
     });
 
-    const users = attribution && attribution.users;
     const journeys = [];
     let journeysSum = 0;
     users.forEach(user => {
       const journey = user.journey
-        .filter(item => item.channel && item.channel !== 'direct' && item.funnelStage.includes(this.state.conversionIndicator))
+        .filter(item => item.channel &&
+          item.channel !==
+          'direct' &&
+          item.funnelStage.includes(this.state.conversionIndicator))
         .map(item => item.channel);
       if (journey && journey.length > 0) {
         journeysSum++;
-        const alreadyExists = journeys.find(item => item.channels.length === journey.length && item.channels.every((item, index) => item === journey[index]));
+        const alreadyExists = journeys.find(item => item.channels.length ===
+          journey.length &&
+          item.channels.every((item, index) => item === journey[index]));
         if (alreadyExists) {
           alreadyExists.count++;
         }
@@ -312,7 +266,7 @@ export default class Channels extends Component {
           journeys.push({
             channels: journey,
             count: 1
-          })
+          });
         }
       }
     });
@@ -321,47 +275,31 @@ export default class Channels extends Component {
       .sort((a, b) => b.count - a.count)
       .map((item, index) =>
         <div key={index} className={dashboardStyle.locals.journeyRow}>
-          <div style={{ width: '78%' }}>
+          <div style={{width: '78%'}}>
             <div className={dashboardStyle.locals.journey}>
-              { item.channels.map((channel, index) =>
-                <div className={dashboardStyle.locals.channelBox} key={index}>
-                  <div className={dashboardStyle.locals.channelIcon} data-icon={"plan:" + channel} style={{ margin: '0 5px' }}/>
-                  <div className={dashboardStyle.locals.channelText}>
-                    {getChannelNickname(channel)}
+              {item.channels.map((channel, index) => {
+                const channelNickname = getChannelNickname(channel);
+                return <div className={dashboardStyle.locals.channelBox} key={index}>
+                  <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}
+                       style={{margin: '0 5px'}}/>
+                  <div className={dashboardStyle.locals.channelText} data-tip={channelNickname}>
+                    {channelNickname}
                   </div>
-                </div>
-              )}
+                </div>;
+              })}
             </div>
           </div>
           <div>
             {item.count}
           </div>
-          <div style={{ marginLeft: '48px' }}>
+          <div style={{marginLeft: '48px'}}>
             {Math.round(item.count / journeysSum * 100)}%
           </div>
         </div>
       );
 
     return <div>
-      <div className={ this.classes.wrap }>
-        <div className={dashboardStyle.locals.upperPanel}>
-          <div className={dashboardStyle.locals.historyConfigText}>
-            Date range:
-          </div>
-          <Select
-            selected={this.props.months === undefined ? previousData.length - 1 : this.props.months}
-            select={{
-              options: months
-            }}
-            onChange={(e) => {
-              this.props.calculateAttributionData(previousData.length - e.value - 1, this.props.attributionModel)
-            }}
-            style={{ width: '75px', margin: '0 8px' }}
-          />
-          <div className={dashboardStyle.locals.historyConfigText} style={{ fontWeight: 'bold' }}>
-            - {formatDate(this.props.planDate)}
-          </div>
-        </div>
+      <div className={this.classes.wrap}>
         <div>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item}
@@ -384,19 +322,7 @@ export default class Channels extends Component {
               <div className={dashboardStyle.locals.text}>
                 Top Conversion Journeys
               </div>
-              <div style={{ display: 'flex' }}>
-                <div>
-                  <Select
-                    selected={this.props.attributionModel ? this.props.attributionModel : false}
-                    select={{
-                      options: attributionModels
-                    }}
-                    onChange={(e) => {
-                      this.props.calculateAttributionData(this.props.months ? previousData.length - this.props.months - 1 : 0, e.value)
-                    }}
-                    style={{ width: '130px', marginTop: '13px', position: 'absolute', marginLeft: '20px' }}
-                  />
-                </div>
+              <div style={{display: 'flex'}}>
                 <div className={dashboardStyle.locals.conversionGoal}>
                   Choose a conversion goal
                   <Select
@@ -405,7 +331,7 @@ export default class Channels extends Component {
                       options: metrics
                     }}
                     onChange={(e) => {
-                      this.setState({conversionIndicator: e.value})
+                      this.setState({conversionIndicator: e.value});
                     }}
                     style={{width: '143px', marginLeft: '10px'}}
                   />
@@ -418,7 +344,8 @@ export default class Channels extends Component {
                       .sort((a, b) => b.value - a.value)
                       .map((element, i) => (
                         <div key={i} className={dashboardStyle.locals.fatherChannelBox}>
-                          <div className={dashboardStyle.locals.fatherChannelBoxFill} style={{ width: Math.round(element.value / fatherChannelsSum * 400) + 'px' }}/>
+                          <div className={dashboardStyle.locals.fatherChannelBoxFill}
+                               style={{width: Math.round(element.value / fatherChannelsSum * 400) + 'px'}}/>
                           <div className={dashboardStyle.locals.fatherChannelTitle}>
                             {element.name}
                           </div>
@@ -448,11 +375,12 @@ export default class Channels extends Component {
           </FeatureToggle>
         </div>
         <div>
-          <PerformanceGraph isPast={true} months={this.props.months || 1} data={data} defaultIndicator={firstObjective}/>
+          <PerformanceGraph isPast={true} months={months ? months.length : 1} data={indicatorsDataPerMonth}
+                            defaultIndicator={firstObjective}/>
         </div>
       </div>
       <ReactTooltip/>
-    </div>
+    </div>;
   }
 
   getTableRow(title, items, props) {
@@ -464,18 +392,19 @@ export default class Channels extends Component {
         items.map((item, i) => {
           return <td className={this.classes.valueCell} key={i}>{
             this.getCellItem(item)
-          }</td>
+          }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
   getCellItem(item) {
     let elem;
 
     if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>
-    } else {
+      elem = <div className={this.classes.cellItem}>{item}</div>;
+    }
+    else {
       elem = item;
     }
 

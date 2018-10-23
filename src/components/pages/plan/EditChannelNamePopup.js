@@ -17,8 +17,7 @@ export default class EditChannelNamePopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shortName: '',
-      longName: '',
+      name: '',
       category: ''
     };
   }
@@ -26,8 +25,7 @@ export default class EditChannelNamePopup extends Component {
   componentWillReceiveProps(nextProps) {
     if ((nextProps.channel !== this.props.channel) && nextProps.channel) {
       this.setState({
-        longName: getTitle(nextProps.channel),
-        shortName: getNickname(nextProps.channel),
+        name: getNickname(nextProps.channel),
         category: getMetadata('category', nextProps.channel)
       });
     }
@@ -60,18 +58,10 @@ export default class EditChannelNamePopup extends Component {
       </div>
 
       <div className={ $.choose }>
-        <Label style={{width: '100px', marginTop: '8px', marginRight: '20px' }}>Channel Name</Label>
+        <Label style={{width: '100px', marginTop: '8px', marginRight: '20px' }}>Name</Label>
         <Textfield
-          value={ this.state.longName }
-          onChange={ e => this.setState({longName: e.target.value}) }
-          style={{ width: '230px' }}
-        />
-      </div>
-      <div className={ $.choose }>
-        <Label style={{width: '100px', marginTop: '8px', marginRight: '20px' }}>Nickname</Label>
-        <Textfield
-          value={ this.state.shortName }
-          onChange={ (e)=> {this.setState({shortName: e.target.value})} }
+          value={ this.state.name }
+          onChange={ (e)=> {this.setState({name: e.target.value})} }
           style={{ width: '230px' }}
         />
       </div>
@@ -87,15 +77,15 @@ export default class EditChannelNamePopup extends Component {
         />
       </div>
       <div className={ $.nav }>
-        <Button type="normal-accent" style={{
+        <Button type="secondary" style={{
           width: '100px',
           marginRight: '20px'
         }} onClick={ this.props.onBack }>
           Cancel
         </Button>
-        <Button type="accent" style={{
+        <Button type="primary" style={{
           width: '100px'
-        }} onClick={ ()=> {this.props.onNext(this.state.longName, this.state.shortName, this.state.category, this.props.channel) }}>
+        }} onClick={ ()=> {this.props.onNext(this.state.name, this.state.category, this.props.channel) }}>
           Save
         </Button>
       </div>

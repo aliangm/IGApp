@@ -16,7 +16,7 @@ export default class UsersPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showOtherPagesPopup: false
+      showOtherPagesPopup: null
     };
   }
 
@@ -143,7 +143,7 @@ export default class UsersPopup extends Component {
       <div>{item.channel === 'direct' ? 'Direct' : getChannelNickname(item.channel)}</div>
     </div>);
     const events = [];
-    user.journey && user.journey.forEach(item => {
+    user.journey && user.journey.forEach((item, index) => {
       if (item.channel !== 'direct') {
         events.push(<div className={this.classes.eventLine} key={events.length}>
           <div className={this.classes.iconCircle} data-icon={"plan:" + item.channel}/>
@@ -165,11 +165,11 @@ export default class UsersPopup extends Component {
             { otherPages && otherPages.length > 0 ?
               <span>
                and other
-                <span className={this.classes.otherPages} onClick={()=>{ this.setState({showOtherPagesPopup: true}) }}>
+                <span className={this.classes.otherPages} onClick={()=>{ this.setState({showOtherPagesPopup: index}) }}>
                   {" " + otherPages.length} page/s
                 </span>
-                <span hidden={!this.state.showOtherPagesPopup} style={{ position: 'relative' }}>
-                  <Popup className={this.classes.otherPagesPopup} onClose={() => { this.setState({showOtherPagesPopup: false}) }}>
+                <span hidden={this.state.showOtherPagesPopup !== index} style={{ position: 'relative' }}>
+                  <Popup className={this.classes.otherPagesPopup} onClose={() => { this.setState({showOtherPagesPopup: null}) }}>
                     {otherPages.map(item => <div>{item}</div>)}
                   </Popup>
                 </span>
@@ -182,21 +182,17 @@ export default class UsersPopup extends Component {
           </div>
         </div>);
       }
-      if (item.event && item.event.length > 0) {
-        item.event.forEach(event => {
-          if (event) {
+      if (item.isConv) {
             events.push(<div className={this.classes.eventLine} key={events.length}>
               <div className={this.classes.iconCircleSmall} data-icon="event:conversion"/>
               <div className={this.classes.eventText}>
-                Conversion Event - <b>{event}</b>
+                Conversion Event
                 <div className={this.classes.eventTime}>
                   {this.stringifyDate(item.startTime)}
                   {emails.length > 1 ? ", " + item.email : null}
                 </div>
               </div>
             </div>)
-          }
-        });
       }
       if (item.funnelStage && item.funnelStage.length > 1) {
         item.funnelStage.sort((a, b) => stagesOrder[a] - stagesOrder[b]);
@@ -251,11 +247,11 @@ export default class UsersPopup extends Component {
             </div>
             <div className={this.classes.headerBigText}>
               Country
-              { user.countries && user.countries.map(item => <div key={item.code} className={this.classes.container} style={{ height: '20px', width: '45px', marginTop: '5px' }}><ReactCountryFlag code={item.code} svg/><div className={this.classes.headerSmallText} style={{ marginLeft: '5px' }}>{item.code}</div></div>) }
+              { user.countries && user.countries.length > 0 && user.countries.map(item => <div key={item} className={this.classes.container} style={{ height: '20px', width: '45px', marginTop: '5px' }}><ReactCountryFlag code={item} svg/><div className={this.classes.headerSmallText} style={{ marginLeft: '5px' }}>{item}</div></div>) }
             </div>
             <div className={this.classes.headerBigText}>
               Device
-              { user.devices && user.devices.map(item => <div key={item} className={this.classes.device} data-icon={"device:" + item}/>) }
+              { user.devices && user.devices.length > 0 && user.devices.map(item => <div key={item} className={this.classes.device} data-icon={"device:" + item}/>) }
             </div>
           </div>
           <div className={this.classes.channels}>

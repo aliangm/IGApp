@@ -5,6 +5,7 @@
   border-bottom: 1px solid #e7e9ed;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .title {
@@ -20,11 +21,11 @@
   margin-left: 1px;
   margin-top: -4px;
   min-width: 167px;
+  margin-right: 26px;
 }
 
 .text {
   /*margin-left: 50px;*/
-  margin-left: 26px;
   font-size: 18px;
   font-style: italic;
   font-weight: 300;

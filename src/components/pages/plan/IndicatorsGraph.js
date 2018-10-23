@@ -1,54 +1,74 @@
-import React from "react";
-import Component from "components/Component";
-import { XAxis, Tooltip, LineChart , Line, YAxis, CartesianGrid, ReferenceDot  } from "recharts";
-import style from "styles/plan/indicators-graph.css";
+import React from 'react';
+import Component from 'components/Component';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
+import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
-import Label from 'components/ControlsLabel';
-import { getNickname, getIndicatorsWithProps } from 'components/utils/indicators';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
-import { formatBudgetShortened } from 'components/utils/budget';
+import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
+import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
+import isEqual from 'lodash/isEqual';
+import CustomCheckbox from 'components/controls/CustomCheckbox';
+import isNil from 'lodash/isNil';
+import findIndex from 'lodash/findIndex';
+import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
+import {getDates, getEndOfMonthString} from 'components/utils/date';
+import ObjectiveIcon from 'components/common/ObjectiveIcon';
+import {getColor} from 'components/utils/colors';
+
+const DASHED_OPACITY = '0.7';
+const DASHED_KEY_SUFFIX = '_DASEHD';
 
 export default class IndicatorsGraph extends Component {
 
   style = style;
   styles = [onboardingStyle];
 
-  static defaultProps = {
-    dimensions: {
-      width: 0,
-      marginLeft: 0,
-    }
-  };
-
   constructor(props) {
     super(props);
+
+    const initialIndicators = this.getInitialIndicators(this.props);
     this.state = {
-      checkedIndicators: []
+      checkedIndicators: initialIndicators ? initialIndicators : []
     };
   }
 
+  componentDidMount() {
+    this.refs.chart.addEventListener('scroll', this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    this.refs.chart.removeEventListener('scroll', this.handleScroll);
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.objectives !== this.props.objectives) {
-      const objectives = Object.keys(nextProps.objectives);
-      const objective = objectives && objectives[0];
-      if (objective) {
-        this.setState({checkedIndicators: [objective]});
+    if (!isEqual(nextProps.parsedObjectives, this.props.parsedObjectives)) {
+      const objectives = this.getInitialIndicators(nextProps);
+      if (objectives) {
+        this.setState({
+          checkedIndicators: objectives
+        });
       }
+    }
+    if (!isNil(nextProps.scrollPosition)) {
+      this.refs.chart.scrollLeft = nextProps.scrollPosition;
     }
   }
 
-  get width() {
-    return this.props.dimensions.width - this.marginLeft + 5
+  shouldComponentUpdate(nextProps, nextState) {
+    return shouldUpdateComponent(nextProps, nextState, this.props, this.state, 'scrollPosition');
   }
 
-  get marginLeft() {
-    return this.props.dimensions.marginLeft - 65
-  }
+  handleScroll = () => {
+    this.props.changeScrollPosition(this.refs.chart.scrollLeft);
+  };
 
-  toggleCheckbox(indicator) {
-    let checkedIndicators = this.state.checkedIndicators;
+  getInitialIndicators = (props) => {
+    const objectives = Object.keys(props.parsedObjectives);
+    const objective = objectives && objectives[0];
+    return objective ? [objective] : null;
+  };
+
+  toggleCheckbox = (indicator) => {
+    let checkedIndicators = [...this.state.checkedIndicators];
     const index = checkedIndicators.indexOf(indicator);
     if (index !== -1) {
       checkedIndicators.splice(index, 1);
@@ -57,129 +77,269 @@ export default class IndicatorsGraph extends Component {
       checkedIndicators.push(indicator);
     }
     this.setState({checkedIndicators: checkedIndicators});
-  }
+  };
 
-  getTooltipContent() {
-  }
+  getTooltipContent = () => {
+  };
 
-  render () {
-    const COLORS = [
-      '#189aca',
-      '#3cca3f',
-      '#a8daec',
-      '#70d972',
-      '#56b5d9',
-      '#8338EC',
-      '#40557d',
-      '#f0b499',
-      '#ffd400',
-      '#3373b4',
-      '#72c4b9',
-      '#FB5607',
-      '#FF006E',
-      '#76E5FC',
-      '#036D19'
-    ];
+  getAreasData = () => {
+    const forecastingData = [];
+
+    const futureDates = getDates(this.props.planDate);
+    this.props.mainLineData.forEach((month, monthIndex) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].committed;
+      });
+
+      if (this.props.dashedLineData) {
+        Object.keys(this.props.dashedLineData[monthIndex]).forEach((key) => {
+          json[key + DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
+        });
+      }
+
+      forecastingData.push({...json, name: getEndOfMonthString(futureDates[monthIndex])});
+    });
+
+    const pastDates = getDates(this.props.planDate, true, false);
+    this.props.pastIndicators.forEach((month, index) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key];
+
+        if (this.props.dashedLineData) {
+          json[key + DASHED_KEY_SUFFIX] = json[key];
+        }
+      });
+
+      forecastingData.unshift({...json, name: getEndOfMonthString(pastDates[pastDates.length - 1 - index])});
+    });
+
+    const zeroedIndicators = {};
+    Object.keys(getIndicatorsWithProps()).forEach(key => {
+      zeroedIndicators[key] = 0;
+    });
+    forecastingData.unshift({...zeroedIndicators, name: ''});
+
+    return forecastingData;
+  };
+
+  getObjectiveIconFromData = (objectiveData) => {
+    const {committedForecasting} = this.props.calculatedData;
+    const project = committedForecasting[objectiveData.monthIndex] &&
+      committedForecasting[objectiveData.monthIndex][objectiveData.indicator];
+    return <ObjectiveIcon target={objectiveData.target}
+                          value={this.props.actualIndicators[objectiveData.indicator]}
+                          project={project} />;
+  };
+
+  render() {
     const indicators = getIndicatorsWithProps();
+    const {parsedObjectives} = this.props;
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
       .forEach(item =>
         indicatorsMapping[item] = indicators[item].nickname
       );
-    const popupItems = Object.keys(indicatorsMapping).map(indicator =>
-      <div className={ this.classes.menuItem } key={indicator}>
-        <Label checkbox={ this.state.checkedIndicators.indexOf(indicator) !== -1 } onChange={ this.toggleCheckbox.bind(this, indicator) } style={{ marginBottom: '3px', fontSize: '12px', textTransform: 'capitalize' }}>{indicatorsMapping[indicator]}</Label>
-      </div>
-    );
-    const menuItems = this.state.checkedIndicators.map((indicator, index) =>
-      <div className={ this.classes.menuItem } key={indicator}>
-        <Label style={{ marginBottom: '3px', fontSize: '12px', textTransform: 'capitalize' }}>{indicatorsMapping[indicator]}</Label>
-        <div className={ this.classes.coloredCircle } style={{ background: COLORS[index % COLORS.length] }}/>
-      </div>
-    );
-    const lines = this.state.checkedIndicators.map((indicator, index) =>
-      <Line key={indicator} type='monotone' dataKey={indicator} stroke={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} strokeWidth={3}/>
-    );
-    const suggestedLines = this.state.checkedIndicators.map((indicator, index) =>
-      <Line key={indicator+1} type='monotone' dataKey={indicator + 'Suggested'} stroke={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} strokeWidth={3} strokeDasharray="7 11" dot={{ strokeDasharray:"initial", fill: 'white' }}/>
-    );
+
+    const areaData = this.getAreasData();
+
+    const {collapsedObjectives} = this.props.calculatedData.objectives;
+    const menuItems = Object.keys(indicatorsMapping).map((indicator, index) => {
+      const objectiveIndex = findIndex(collapsedObjectives, (item) => {
+        return item.indicator === indicator;
+      });
+
+      const objectiveIcon = objectiveIndex > -1
+        ? <div className={this.classes.objectiveIcon}>
+          {this.getObjectiveIconFromData(collapsedObjectives[objectiveIndex])}
+        </div>
+        : null;
+
+      return <div className={this.classes.menuItem} key={indicator}>
+        <CustomCheckbox checked={this.state.checkedIndicators.indexOf(indicator) !== -1}
+                        onChange={() => this.toggleCheckbox(indicator)}
+                        className={this.classes.label}
+                        checkboxStyle={{
+                          backgroundColor: getColor(index)
+                        }}>{indicatorsMapping[indicator]}</CustomCheckbox>
+        {objectiveIcon}
+      </div>;
+    });
+
+    const defs = this.state.checkedIndicators.map(indicator => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <defs key={indicator}>
+        <linearGradient id={indicator} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={getColor(index)} stopOpacity={0.2}/>
+          <stop offset="100%" stopColor={getColor(index)} stopOpacity={0}/>
+        </linearGradient>
+      </defs>;
+    });
+
+    const areas = this.state.checkedIndicators.map(indicator => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <Area key={indicator}
+                   isAnimationActive={false}
+                   type='monotone'
+                   dataKey={indicator}
+                   stroke={getColor(index)}
+                   fill={`url(#${indicator})`}
+                   fillOpacity={1}
+                   strokeWidth={2}/>;
+    });
+
+    const dashedAreas = this.state.checkedIndicators.map((indicator) => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <Area key={indicator + 1}
+                   type='monotone'
+                   isAnimationActive={false}
+                   dataKey={indicator + DASHED_KEY_SUFFIX}
+                   stroke={getColor(index)}
+                   strokeWidth={2}
+                   fill='transparent'
+                   strokeDasharray="7 11"
+                   style={{opacity: DASHED_OPACITY}}
+      />;
+    });
+
+    const CustomizedLabel = React.createClass({
+      render() {
+        const {viewBox} = this.props;
+        return <image x={viewBox.x} y={viewBox.y} width="24" height="24" href="/assets/objective-dot.svg"/>;
+      }
+    });
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
-      this.props.objectives[indicator] && <ReferenceDot {... this.props.objectives[indicator]} r={10} fill="#e60000" stroke="white" stroke-width={2} key={index} label="O" alwaysShow={true}/>
+      parsedObjectives[indicator] &&
+      <ReferenceDot {...parsedObjectives[indicator]}
+                    fill="none"
+                    stroke="none"
+                    key={index}
+                    label={<CustomizedLabel/>}
+                    alwaysShow={true}
+                    isFront={true}/>
     );
+
     const tooltip = (data) => {
-      const currentIndex = this.props.data.findIndex(month => month.name === data.label);
+      const currentIndex = areaData.findIndex(month => month.name === data.label);
       const prevIndex = currentIndex - 1;
       if (data.active && data.payload && data.payload.length > 0) {
+        const parsedIndicators = data.payload.filter((item) => !item.dataKey.includes(DASHED_KEY_SUFFIX))
+          .map((item) => {
+            const secondaryItem = data.payload.find((secondaryItem) => secondaryItem.dataKey ==
+              item.dataKey +
+              DASHED_KEY_SUFFIX);
+            return {
+              ...item,
+              secondaryValue: secondaryItem ? secondaryItem.value : null
+            };
+          });
+
         return <div className={this.classes.customTooltip}>
-          <div style={{ fontWeight: 'bold' }}>
-            {data.label}
-          </div>
           {
-            data.payload.map((item, index) => {
-              if (item.value && !item.dataKey.includes('Suggested')) {
+
+            parsedIndicators.map((item, index) => {
+              const indicator = item.dataKey;
+              const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
+              if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
                 return <div key={index}>
-                  {indicatorsMapping[item.dataKey]}: {item.value}
-                  {prevIndex >= 0 ?
-                    <div style={{ color: item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                      {' (' + (item.value - this.props.data[prevIndex][item.dataKey] >= 0 ? '+' : '-') + Math.abs(item.value - this.props.data[prevIndex][item.dataKey]) + ')'}
-                    </div>
-                    : null}
-                  <div>
-                    { prevIndex >= 0 && this.props.data[prevIndex][item.dataKey + 'Suggested'] ?
-                      <div>
-                        {indicatorsMapping[item.dataKey] + ' (InfiniGrow)'}: {this.props.data[currentIndex][item.dataKey + 'Suggested']}
-                        <div style={{ color: this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '#30b024' : '#d50a2e', display: 'inline', fontWeight: 'bold' }}>
-                          {' (' + (this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested'] >= 0 ? '+' : '-') + Math.abs(this.props.data[currentIndex][item.dataKey + 'Suggested'] - this.props.data[prevIndex][item.dataKey + 'Suggested']) + ')'}
-                        </div>
-                      </div>
-                      : null }
+                  <div className={this.classes.customTooltipIndicator}>
+                    {indicatorsMapping[indicator]}
                   </div>
-                  {this.props.objectives[item.dataKey] !== undefined && this.props.objectives[item.dataKey].x === data.label ?
-                    <div>
-                      {indicatorsMapping[item.dataKey]} (objective): {this.props.objectives[item.dataKey].y}
+                  <div className={this.classes.customTooltipValues}>
+                    <div className={this.classes.customTooltipValue}
+                         style={{color: getColor(colorIndex)}}>
+                      {formatNumber(item.value)}
+                    </div>
+                    {item.secondaryValue ?
+                      <div className={this.classes.customTooltipValue}
+                           style={{
+                             color: getColor(colorIndex),
+                             opacity: DASHED_OPACITY
+                           }}>
+                        {formatNumber(item.secondaryValue)}
+                      </div> : null
+                    }
+                  </div>
+                  {parsedObjectives[indicator] !== undefined &&
+                  parsedObjectives[indicator].x === data.label ?
+                    <div className={this.classes.customTooltipObjective}>
+                      Objective: {formatNumber(parsedObjectives[indicator].y)}
                     </div>
                     : null}
-                </div>
+                </div>;
               }
             })
           }
-        </div>
+        </div>;
       }
       return null;
     };
-    return <div className={ this.classes.inner }>
-      <div className={ this.classes.menuPosition }>
-        <div className={ this.classes.menu }>
-          <div className={ this.classes.menuTitle }>
-            Forecasting
-            <div style={{ position: 'relative' }}>
-              <div className={ this.classes.settings } onClick={ ()=>{ this.refs.settingsPopup.open() } } />
-              <PlanPopup ref="settingsPopup" style={{
-                top: '20px'
-              }} title="Settings">
-                <PopupTextContent>
-                  {popupItems}
-                </PopupTextContent>
-              </PlanPopup>
-            </div>
-          </div>
-          { menuItems }
+
+    return <div className={this.classes.inner}>
+      <div className={this.classes.menu}>
+        <div className={this.classes.menuTitle}>
+          Forecasting
+        </div>
+        <div className={this.classes.menuItems}>
+          {menuItems}
         </div>
       </div>
-      <div className={ this.classes.chart } style={{ width: this.width, marginLeft: this.marginLeft, marginTop: '30px' }}>
-        <LineChart width={this.width} height={400} data={ this.props.data }>
-          <XAxis dataKey="name" style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }}/>
-          <YAxis tickFormatter={ (tick) => formatBudgetShortened(tick) } style={{ fontSize: '12px', color: '#354052', opacity: '0.5' }} domain={['dataMin', 'dataMax']}/>
-          <CartesianGrid vertical={ false }/>
-          { dots }
-          <Tooltip content={ tooltip.bind(this) }/>
-          { lines }
-          { suggestedLines }
-        </LineChart >
+      <div className={this.classes.chart} ref='chart'>
+        <AreaChart data={areaData} height={400} width={70 + this.props.cellWidth * (areaData.length - 1)}
+                   margin={{top: 10, right: 25, left: 10, bottom: 21}}>
+          <YAxis axisLine={false}
+                 tickLine={false}
+                 tickFormatter={formatBudgetShortened}
+                 tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
+                 tickMargin={21}
+                 domain={['auto', 'auto']}/>
+          <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
+          <XAxis dataKey="name"
+                 style={{textTransform: 'uppercase'}}
+                 tick={{
+                   fontSize: '11px',
+                   fill: '#99a4c2',
+                   fontWeight: 600,
+                   letterSpacing: '0.1px'
+                 }}
+                 tickLine={false}
+                 tickMargin={21}
+                 interval={0}/>
+          {dots}
+          <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
+                  wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
+          <Tooltip content={tooltip} offset={0}/>
+          {defs}
+          {areas}
+          {dashedAreas}
+        </AreaChart>
       </div>
-    </div>
+    </div>;
   }
+};
 
+class CustomizedLegend extends Component {
+
+  style = style;
+
+  render() {
+    return this.props.hidden ? null :
+      <div style={{display: 'flex'}}>
+        <div style={{display: 'flex'}}>
+          <div className={this.classes.legendIcon}/>
+          <div className={this.classes.legendText}>
+            Committed
+          </div>
+        </div>
+        <div style={{display: 'flex'}}>
+          <div className={this.classes.legendIconDashed}/>
+          <div className={this.classes.legendText}>
+            New Scenario
+          </div>
+        </div>
+      </div>;
+  }
 }

@@ -18,10 +18,10 @@ export default class SaveButton extends Component {
 
   render() {
     return <div>
-			<Button type="accent2"
+			<Button type="primary"
 							onClick={ this.props.onClick }
 							className={ this.classes.planButton }
-							icon="buttons:plan"
+							icon="buttons:save"
 							style={ this.props.style }
 			>
 				Save

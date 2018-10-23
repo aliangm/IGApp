@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import names from 'classnames';
 
@@ -13,19 +13,19 @@ export default class AudienceTabs extends Component {
     defaultSelected: 0
   };
 
-  style = style
+  style = style;
   state = {
     tabs: []
-  }
+  };
 
-  _uid = 0
+  _uid = 0;
 
   constructor(props) {
     super(props);
 
     if (this.props.defaultTabs) {
       this.props.defaultTabs.forEach((name) => {
-        this.generateTab({ name });
+        this.generateTab({name});
       });
     }
 
@@ -33,12 +33,17 @@ export default class AudienceTabs extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.defaultTabs && nextProps.defaultTabs.length > 0 && nextProps.defaultTabs.length !== this.props.defaultTabs.length) {
-      this.setState({tabs: []}, ()=> {
+    if (nextProps.defaultTabs &&
+      nextProps.defaultTabs.length >
+      0 &&
+      nextProps.defaultTabs.length !==
+      this.props.defaultTabs.length) {
+      this.setState({tabs: []}, () => {
         nextProps.defaultTabs.forEach((name) => {
-          this.generateTab({ name });
+          this.generateTab({name});
         });
-        this.selectTab(this.state.selectedIndex);
+        const selectedIndex = Math.min(this.state.selectedIndex, nextProps.defaultTabs.length - 1);
+        this.selectTab(selectedIndex);
       });
     }
   }
@@ -49,9 +54,9 @@ export default class AudienceTabs extends Component {
     this.selectTab(this.state.tabs.length - 1);
     // Forced in selectTab()
     // this.forceUpdate();
-  }
+  };
 
-  generateTab({ name } = {}) {
+  generateTab({name} = {}) {
     const tabs = this.state.tabs;
     const index = tabs.length;
 
@@ -72,7 +77,9 @@ export default class AudienceTabs extends Component {
 
   _selectTab(index) {
     const tab = this.state.tabs[index];
-    if (tab.selected) return
+    if (tab.selected) {
+      return;
+    }
 
     const selected = this.state.selectedTab;
 
@@ -83,6 +90,8 @@ export default class AudienceTabs extends Component {
     tab.selected = true;
     this.state.selectedTab = tab;
     this.state.selectedIndex = index;
+
+    this.props.tabSelected(index);
   }
 
   setTabName = (index, name) => {
@@ -92,50 +101,54 @@ export default class AudienceTabs extends Component {
       tab.name = name + '';
       this.forceUpdate();
     }
-  }
+  };
 
   render() {
     const renderContent = this.props.children;
+    const shouldShowRemoveOption = this.state.tabs.length > 1;
     const tabs = this.state.tabs.map((tab, i) => {
       const className = tab.selected ?
         this.classes.tabSelected : this.classes.tab;
 
-      return <div className={ className } key={ tab.key } onClick={() => {
+      return <div className={className} key={tab.key} onClick={() => {
         this.selectTab(i);
       }}>
-        { tab.name }
-      </div>
+        {tab.name}
+        {shouldShowRemoveOption && i === this.state.selectedIndex
+          ? <div className={this.classes.removeTab} onClick={() => this.props.removeTab(i)}/>
+          : null}
+      </div>;
     });
 
     const content = this.state.tabs.map((tab, i) => {
       return <div
-        className={ this.classes.content }
-        key={ tab.key }
-        style={ tab.selected ? null : {
+        className={this.classes.content}
+        key={tab.key}
+        style={tab.selected ? null : {
           display: 'none'
         }}
       >
-        { /*tab.component*/ }
-        { this.props.children({
+        {/*tab.component*/}
+        {this.props.children({
           name: tab.name,
           index: i
-        }) }
-      </div>
+        })}
+      </div>;
     });
 
-    return <div className={ this.classes.box }>
-      <div className={ this.classes.tabs }>
-        { tabs }
-        <div className={ this.classes.addTab }
-          role="button"
-          onClick={ this.addTab }
+    return <div className={this.classes.box}>
+      <div className={this.classes.tabs}>
+        {tabs}
+        <div className={this.classes.addTab}
+             role="button"
+             onClick={this.addTab}
         >
           + Add
         </div>
       </div>
-      <div className={ this.classes.contentBox }>
-        { content }
+      <div className={this.classes.contentBox}>
+        {content}
       </div>
-    </div>
+    </div>;
   }
 }

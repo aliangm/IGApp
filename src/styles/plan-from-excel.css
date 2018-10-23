@@ -18,7 +18,7 @@
 }
 
 .icon {
-    background: url(../assets/upload.svg) center center no-repeat;
+    background: url(/assets/upload.svg) center center no-repeat;
     height: 80px;
     width: 90px;
     background-size: contain;

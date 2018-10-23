@@ -115,7 +115,7 @@ export default class Manual extends Component {
 
         <div className={ this.classes.footerCols }>
           <div className={ this.classes.footerLeft }>
-            <Button type="normal" style={{
+            <Button type="secondary" style={{
               letterSpacing: '0.075',
               width: '150px'
             }} onClick={() => {

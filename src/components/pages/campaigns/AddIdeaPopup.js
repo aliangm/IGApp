@@ -80,12 +80,12 @@ export default class AddIdeaPopup extends Component {
         <div className={ this.classes.footerCols }>
           <div className={ this.classes.footerLeft }>
             <Button
-              type="reverse"
+              type="secondary"
               style={{ width: '72px' }}
               onClick={ this.props.close }>Cancel
             </Button>
             <Button
-              type="primary2"
+              type="primary"
               style={{ width: '110px', marginLeft: '20px' }}
               onClick={ this.addIdea.bind(this) }>Add Idea
             </Button>

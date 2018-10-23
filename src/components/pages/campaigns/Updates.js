@@ -24,7 +24,7 @@ export default class Updates extends Component {
   }
 
   getMembersNames() {
-    return this.props.teamMembers.map(member => {return {display: member.name, id: member.userId} });
+    return this.props.teamMembers.map(member => {return {display: member.firstName + ' ' + member.lastName, id: member.userId} });
   }
 
   addComment(comment) {

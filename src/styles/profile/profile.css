@@ -1,41 +1,4 @@
-.cols {
-  display: flex;
-  margin-left: 1px;
-}
+@import "../global/mixins.css";
 
-.col {
-  
-}
-
-.col-left {
-  flex-grow: 1;
-}
-
-.col-right {
-  margin-left: auto;
-  width: 270px;
-  flex-shrink: 0;
-}
-
-.row {
-  margin-bottom: 32px;
-}
-
-.footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.next-icon {
-  background: url(../../assets/next-icon.png) center center no-repeat;
-  width: 7px;
-  height: 11px;
-  margin-left: 12px;
-}
-
-.prev-icon {
-  background: url(../../assets/prev-icon.png) center center no-repeat;
-  width: 6px;
-  height: 12px;
-  margin-right: 12px;
-}
+@mixin icon-nodpi profile:next-button, /assets/next;
+@mixin icon-nodpi profile:back-button, /assets/prev-icon;

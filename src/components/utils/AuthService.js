@@ -2,28 +2,59 @@ import auth0 from 'auth0-js';
 import history from 'history';
 import config from 'components/utils/Configuration';
 import q from 'q';
+import {getParameterByName} from 'utils';
 
+const CONNECTION_TYPE = 'Username-Password-Authentication';
 const options = {
   responseType: 'token',
   clientID: config.authClientId,
   domain: config.authDomain,
-  redirectUri: window.location.origin,
-  scope: 'openid profile'
+  redirectUri: window.location.origin
 };
-
 const webAuth = new auth0.WebAuth(options);
 
-export function handleAuthentication() {
-  webAuth.parseHash({hash: window.location.hash.slice(1, window.location.hash.length - 10)}, function (err, authResult) {
-    if (authResult && authResult.accessToken && authResult.idToken) {
-      setSession(authResult);
-      history.push('/');
-    } else if (err) {
-      // navigate to the home route
-      history.push('/');
-      console.log(err);
-    }
-  });
+export function login(email, password, callback) {
+  webAuth.login({email: email, password: password}, callback);
+}
+
+export function passwordReset(email, callback) {
+  webAuth.changePassword({email: email, connection: CONNECTION_TYPE}, callback);
+}
+
+export function signup(email, password, callback) {
+  webAuth.signup({email: email, password: password, connection: CONNECTION_TYPE}, callback);
+}
+
+export function crossOriginVerification() {
+  webAuth.crossOriginVerification();
+}
+
+export function handleAuthentication(nextState, replace, callback) {
+  const error = getParameterByName('error_description');
+  if (error) {
+    alert(error);
+    history.push('/');
+  }
+
+  const hash = window.location.hash;
+  if (hash) {
+    webAuth.parseHash({hash: hash}, function (err, authResult) {
+      if (authResult && authResult.accessToken && authResult.idToken) {
+        setSession(authResult);
+        history.push('/');
+      }
+      else {
+        if (err) {
+          console.log(err);
+        }
+        // navigate to the home route
+        history.push('/');
+      }
+    });
+  }
+  else {
+    callback();
+  }
 }
 
 function setSession(authResult) {
@@ -42,10 +73,6 @@ function setSession(authResult) {
 
   // navigate to the home route
   history.push('/');
-}
-
-export function login() {
-  webAuth.authorize();
 }
 
 export function getToken() {
@@ -99,6 +126,6 @@ export function getProfile() {
 }
 
 export function getProfileSync() {
-    const profile = localStorage.getItem('profile');
-    return profile ? JSON.parse(profile) : {};
+  const profile = localStorage.getItem('profile');
+  return profile ? JSON.parse(profile) : {};
 }

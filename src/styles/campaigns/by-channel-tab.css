@@ -40,6 +40,6 @@
     font-size: 30px;
     font-weight: 600;
     padding-left: 41px;
-    background: url(../../assets/plan_icons/arrow.svg) 12px 60% no-repeat;
+    background: url(/assets/plan_icons/arrow.svg) 12px 60% no-repeat;
     background-size: 17px auto;
 }

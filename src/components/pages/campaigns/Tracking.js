@@ -2,7 +2,7 @@ import React from 'react';
 import Component from 'components/Component';
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import Button from 'components/controls/Button';
 import copy from 'copy-to-clipboard';
 import style from 'styles/onboarding/onboarding.css';
@@ -230,7 +230,7 @@ export default class Tracking extends Component {
       </div>
       { sources }
       <div className={ trackingStyle.locals.rowCenter }>
-        <Button type="accent2" style={{ width: '170px' }} onClick={ this.generateLinks.bind(this) }>
+        <Button type="primary" style={{ width: '170px' }} onClick={ this.generateLinks.bind(this) }>
           Generate links
         </Button>
       </div>

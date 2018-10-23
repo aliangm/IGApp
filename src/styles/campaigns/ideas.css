@@ -1,5 +1,5 @@
 .like {
-    background: url(../../assets/like-campaign.svg) center center no-repeat;
+    background: url(/assets/like-campaign.svg) center center no-repeat;
     background-size: contain;
     width: 30px;
     height: 30px;
@@ -7,7 +7,7 @@
 }
 
 .like[data-disabled] {
-    background: url(../../assets/like-disabled.svg) center center no-repeat;
+    background: url(/assets/like-disabled.svg) center center no-repeat;
     background-size: contain;
     cursor: default;
 }

@@ -8,7 +8,7 @@ import Checklist from 'components/pages/campaigns/Checklist';
 import Updates from 'components/pages/campaigns/Updates';
 import Tracking from 'components/pages/campaigns/Tracking';
 import Assets from 'components/pages/campaigns/Assets';
-import planStyle from 'styles/plan/plan.css';
+import headerStyle from 'styles/header.css';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import UnsavedPopup from 'components/UnsavedPopup';
@@ -16,11 +16,12 @@ import AddTemplatePopup from 'components/pages/campaigns/AddTemplatePopup';
 import SaveButton from 'components/pages/profile/SaveButton';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import Button from 'components/controls/Button';
+import isEmpty from 'lodash/isEmpty';
 
 export default class CampaignPopup extends Component {
 
   style = style;
-  styles = [campaignPopupStyle, planStyle, buttonsStyle];
+  styles = [campaignPopupStyle, headerStyle, buttonsStyle];
 
   constructor(props) {
     super(props);
@@ -28,7 +29,7 @@ export default class CampaignPopup extends Component {
     this.state = {
       selectedTab: 0,
       visible: this.props.visible || false,
-      campaign: merge({}, CampaignPopup.defaultProps.campaign ,this.props.campaign)
+      campaign: merge({}, CampaignPopup.defaultProps.campaign, this.props.campaign)
     };
     this.setRefName = this.setRefName.bind(this);
     this.setRefSource = this.setRefSource.bind(this);
@@ -66,7 +67,7 @@ export default class CampaignPopup extends Component {
       dueDate: '',
       startDate: new Date().toLocaleDateString().replace(/[/]/g, '-'),
       actualSpent: null,
-      status: "New",
+      status: 'New',
       focus: '',
       time: {
         development: 0,
@@ -77,11 +78,11 @@ export default class CampaignPopup extends Component {
         growth: '',
         kpi: '',
         actualGrowth: ''
-      },{
+      }, {
         growth: '',
         kpi: '',
         actualGrowth: ''
-      },{
+      }, {
         growth: '',
         kpi: '',
         actualGrowth: ''
@@ -188,11 +189,11 @@ export default class CampaignPopup extends Component {
     }
     else {
       this.setState({selectedTab: 0},
-        ()=> {
+        () => {
           if (!this.state.campaign.name) {
             this.nameInput.focus();
           }
-          else if (!this.state.campaign.source) {
+          else if (isEmpty(this.state.campaign.source)) {
             this.sourceInput.focus();
           }
           else {
@@ -216,34 +217,34 @@ export default class CampaignPopup extends Component {
     const selectedTab = tabs[selectedName];
 
     return <div>
-      <Page popup={ true } width={'800px'} contentClassName={ campaignPopupStyle.locals.content }>
-        <div className={ campaignPopupStyle.locals.topRight }>
-          <div className={ campaignPopupStyle.locals.close } onClick={ this.close }/>
+      <Page popup={true} width={'800px'} contentClassName={campaignPopupStyle.locals.content}>
+        <div className={campaignPopupStyle.locals.topRight}>
+          <div className={campaignPopupStyle.locals.close} onClick={this.close}/>
         </div>
-        <Title className={ campaignPopupStyle.locals.title } title={ this.state.campaign.name || "Campaign Details" }/>
-        <div className={ planStyle.locals.headTabs } style={{ height: '85px', margin: '0 38px' }}>
+        <Title className={campaignPopupStyle.locals.title} title={this.state.campaign.name || 'Campaign Details'}/>
+        <div className={headerStyle.locals.headTabs} style={{height: '85px', margin: '0 38px'}}>
           {
             tabNames.map((name, i) => {
               let className;
 
               if (i === this.state.selectedTab) {
-                className = planStyle.locals.headTabSelected;
+                className = headerStyle.locals.headTabSelected;
               } else {
-                className = planStyle.locals.headTab;
+                className = headerStyle.locals.headTab;
               }
 
-              return <div className={ className } key={ i } onClick={() => {
+              return <div className={className} key={i} onClick={() => {
                 this.selectTab(i);
-              }}>{ name }</div>
+              }}>{name}</div>;
             })
           }
-          <div style={{ marginLeft: 'auto', alignSelf: 'center' }}>
-            { this.state.campaign.index !== undefined ?
+          <div style={{marginLeft: 'auto', alignSelf: 'center'}}>
+            {this.state.campaign.index !== undefined ?
               <SaveButton onClick={this.save}/>
               :
               <Button
-                type="accent2"
-                icon="buttons:plan"
+                type="primary"
+                icon="buttons:save"
                 className={buttonsStyle.locals.planButton}
                 onClick={this.save}>
                 Create
@@ -251,27 +252,27 @@ export default class CampaignPopup extends Component {
             }
           </div>
         </div>
-        <div className={ campaignPopupStyle.locals.inner }>
-          { selectedTab ? React.createElement(selectedTab, merge({ }, this.state, {
+        <div className={campaignPopupStyle.locals.inner}>
+          {selectedTab ? React.createElement(selectedTab, merge({}, this.state, {
             updateState: this.updateState.bind(this),
             close: this.close,
             openAddTemplatePopup: this.openAddTemplatePopup.bind(this),
             updateCampaign: this.props.updateCampaign,
             closePopup: this.props.closePopup,
             teamMembers: this.props.teamMembers,
-            firstName: this.props.firstName,
-            lastName: this.props.lastName,
             processedChannels: this.props.processedChannels,
             setRefName: this.setRefName,
             setRefSource: this.setRefSource,
             setRefDueDate: this.setRefDueDate,
             save: this.save,
             addNotification: this.props.addNotification
-          })) : null }
+          })) : null}
         </div>
       </Page>
-      <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-      <AddTemplatePopup hidden={ !this.state.showAddTemplatePopup } closeAddTemplatePopup={ this.closeAddTemplatePopup.bind(this) } createTemplate={ this.createTemplate.bind(this) } campaignName={ this.state.campaign.name }/>
-    </div>
+      <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
+      <AddTemplatePopup hidden={!this.state.showAddTemplatePopup}
+                        closeAddTemplatePopup={this.closeAddTemplatePopup.bind(this)}
+                        createTemplate={this.createTemplate.bind(this)} campaignName={this.state.campaign.name}/>
+    </div>;
   }
 }

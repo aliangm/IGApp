@@ -81,21 +81,21 @@
 }
 
 .edit-icon {
-    background: url(../../assets/edit_task.svg) center center no-repeat;
+    background: url(/assets/edit_task.svg) center center no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;
 }
 
 .delete-icon {
-    background: url(../../assets/delete-task.svg) center center no-repeat;
+    background: url(/assets/delete-task.svg) center center no-repeat;
     background-size: contain;
     width: 20px;
     height: 20px;
 }
 
 .priority {
-    background: url(../../assets/star.svg) center center no-repeat;
+    background: url(/assets/star.svg) center center no-repeat;
     background-size: contain;
     width: 30px;
     height: 30px;

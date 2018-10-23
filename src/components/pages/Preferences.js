@@ -1,14 +1,11 @@
 import React from 'react';
-
 import Component from 'components/Component';
 import Page from 'components/Page';
-
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import Notice from 'components/Notice';
 import MultiRow from 'components/MultiRow';
-
 import Title from 'components/onboarding/Title';
 import ProfileProgress from 'components/pages/profile/Progress';
 import ProfileInsights from 'components/pages/profile/Insights';
@@ -17,18 +14,19 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import NotSure from 'components/onboarding/NotSure';
 import MultiSelect from 'components/controls/MultiSelect';
 import PlanButton from 'components/pages/indicators/PlanButton';
-
 import style from 'styles/onboarding/onboarding.css';
 import preferencesStyle from 'styles/preferences/preferences.css';
-
-import { isPopupMode } from 'modules/popup-mode';
+import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 import PlanFromExcel from 'components/PlanFromExcel';
-import { formatChannels } from 'components/utils/channels';
+import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
-import { getNickname } from 'components/utils/indicators';
-import { FeatureToggle } from 'react-feature-toggles';
+import {getIndicatorsWithProps, getMetadata} from 'components/utils/indicators';
+import {FeatureToggle} from 'react-feature-toggles';
+import Range from 'components/controls/Range';
+import {getDates, getEndOfMonthDate} from 'components/utils/date';
+import isNil from 'lodash/isNil';
 
 export default class Preferences extends Component {
   style = style;
@@ -37,14 +35,9 @@ export default class Preferences extends Component {
   budgetWeights = [0.05, 0.1, 0.19, 0.09, 0.09, 0.09, 0.04, 0.08, 0.1, 0.06, 0.07, 0.04];
 
   static defaultProps = {
-    goals: {
-      primary: 'InfiniGrow Recommended',
-      secondary: 'InfiniGrow Recommended'
-    },
     objectives: [],
     isCheckAnnual: true,
     maxChannels: -1,
-    userMinMonthBudgets: [],
     blockedChannels: [],
     inHouseChannels: [],
     planDate: null,
@@ -56,97 +49,82 @@ export default class Preferences extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userMinMonthBudgetsLines: [],
       isCheckAnnual: props.annualBudget !== null,
-      isDivideEqually: props.annualBudget !== null && props.annualBudgetArray.length > 0 && props.annualBudgetArray.every((budget)=> {return budget === props.annualBudgetArray[0]}),
-      showAdvancedFields: false
+      isDivideEqually: props.annualBudget !==
+      null &&
+      props.annualBudgetArray.length >
+      0 &&
+      props.annualBudgetArray.every((budget) => {
+        return budget === props.annualBudgetArray[0];
+      }),
+      showAdvancedFields: false,
+      objectivePopupData: {
+        hidden: true,
+        objective: null,
+        objectiveMonth: null,
+        objectiveEdit: false
+      }
     };
-    this.handleChangeGoals = this.handleChangeGoals.bind(this);
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
-    this.minimumBudgetRemove = this.minimumBudgetRemove.bind(this);
-    this.objectiveRemove = this.objectiveRemove.bind(this);
+    this.budgetConstraintRemove = this.budgetConstraintRemove.bind(this);
     this.toggleBudgetsCheck = this.toggleBudgetsCheck.bind(this);
     this.calculateBudgets = this.calculateBudgets.bind(this);
   }
 
   componentDidMount() {
-    this.getUserMinMonthBudgetsLines(this.props.userMinMonthBudgets, this.props.planDate);
     // Advanced toggle open?
     if (this.props.maxChannels !== -1 ||
-      this.state.userMinMonthBudgetsLines.length > 0 ||
+      Object.keys(this.props.budgetConstraints).length > 0 ||
       this.props.inHouseChannels.length > 0 ||
       this.props.blockedChannels.length > 0) {
       this.setState({showAdvancedFields: true});
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.userMinMonthBudgets.length == 0 && nextProps.userMinMonthBudgets.length > 0) {
-      this.getUserMinMonthBudgetsLines(nextProps.userMinMonthBudgets, nextProps.planDate);
-    }
-    /**
-     if (nextProps.annualBudget != this.props.annualBudget) {
-      this.setState({isCheckAnnual: nextProps.annualBudget !== null,
-        isDivideEqually: nextProps.annualBudget !== null && nextProps.annualBudgetArray.every((budget)=> {return budget === nextProps.annualBudgetArray[0]})});
-    }
-     **/
-  }
-
-  getUserMinMonthBudgetsLines(userMinMonthBudgets, planDate) {
-    if (planDate) {
-      let planDateArray = planDate.split("/");
-      let firstMonth = parseInt(planDateArray[0]) - 1;
-      let userMinMonthBudgetsLines = [];
-      userMinMonthBudgets.forEach((month, index) => {
-        if (month) {
-          const normalizedMonth = (index + firstMonth) % 12;
-          Object.keys(month).forEach((channel) => {
-            let isExist = false;
-            userMinMonthBudgetsLines.forEach((line) => {
-              if (line.channel == channel) {
-                line.months.push(normalizedMonth);
-                isExist = true;
-              }
-            });
-            if (!isExist) {
-              userMinMonthBudgetsLines.push({channel: channel, budget: month[channel], months: [normalizedMonth]})
-            }
-          });
-        }
-      });
-      this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
-    }
-  }
+  getDataToUpdate = () => {
+    return {
+      annualBudget: this.props.annualBudget,
+      annualBudgetArray: this.props.annualBudgetArray,
+      objectives: this.props.objectives,
+      blockedChannels: this.props.blockedChannels,
+      inHouseChannels: this.props.inHouseChannels,
+      maxChannels: this.props.maxChannels,
+      planBudgets: this.props.planBudgets,
+      budgetConstraints: this.props.budgetConstraints,
+      planNeedsUpdate: true
+    };
+  };
 
   validate() {
-    let filterNanArray = this.props.annualBudgetArray.filter((value)=>{return !!value});
-    return filterNanArray.length == 12;
-  }
+    let filterNanArray = this.props.annualBudgetArray.filter((value) => {
+      return !!value;
+    });
 
-  handleChangeGoals(parameter, event) {
-    let update = this.props.goals || {};
-    update[parameter] = event.value;
-    this.props.updateState({goals: update});
-    if (this.props.goals.primary == 'InfiniGrow Recommended' && this.props.goals.secondary != 'InfiniGrow Recommended') {
-      this.props.updateState({
-        goals: {
-          primary: this.props.goals.secondary,
-          secondary: 'InfiniGrow Recommended'
-        }
-      })
+    if (filterNanArray.length !== 12) {
+      this.refs.annualBudget.validationError();
+      return 'Please fill all the required fields';
+    }
+    else if (this.props.calculatedData.annualBudget < 50000) {
+      this.refs.annualBudget.validationError();
+      return 'Please insert an annual budget higher than $50K';
+    }
+    else {
+      return null;
     }
   }
 
   handleChangeBudget(parameter, event) {
     let update = {};
     update[parameter] = parseInt(event.target.value.replace(/[-$,]/g, ''));
+    this.refs.annualBudget.noValidationError();
     this.props.updateState(update, this.calculateBudgets);
   }
 
   handleChangeBudgetArray(index, event) {
     let update = this.props.annualBudgetArray || [];
     update.splice(index, 1, parseInt(event.target.value.replace(/[-$,]/g, '')));
+    this.refs.annualBudget.noValidationError();
     this.props.updateState({annualBudgetArray: update}, this.calculateBudgets);
   }
 
@@ -186,130 +164,187 @@ export default class Preferences extends Component {
     this.props.updateState({blockedChannels: update});
   }
 
-  minimumBudgetRemove(index) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    userMinMonthBudgetsLines.splice(index, 1);
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
+  budgetConstraintRemove(index) {
+    const budgetConstraints = {...this.props.budgetConstraints};
+    const channel = Object.keys(budgetConstraints)[index];
+    delete budgetConstraints[channel];
+    this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
-  handleChangeMinChannel(index, event) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    if (!userMinMonthBudgetsLines[index]) {
-      userMinMonthBudgetsLines[index] = {
-        budget: 0
-      };
-    }
-    userMinMonthBudgetsLines[index].channel = event.value;
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
-  }
-
-  handleChangeMinBudget(index, event) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    if (!userMinMonthBudgetsLines[index]) {
-      userMinMonthBudgetsLines[index] = {};
-    }
-    userMinMonthBudgetsLines[index].budget = parseInt(event.target.value.replace(/[-$,]/g, ''));
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
-  }
-
-  handleChangeMinMonths(index, event) {
-    const userMinMonthBudgetsLines = this.state.userMinMonthBudgetsLines;
-    userMinMonthBudgetsLines[index].months = event.map((month) => { return month.value });
-    this.setState({userMinMonthBudgetsLines: userMinMonthBudgetsLines});
-  }
-
-  objectiveRemove(index) {
-    let update = this.props.objectives || [];
-    update.splice(index,1);
-    this.props.updateState({objectives: update});
-  }
-
-  createOrUpdateObjective(objective, index) {
-    const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-    objective.target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-    objective.nickname = getNickname(objective.indicator);
-    objective.alreadyNotified = false;
-    if (objective.isRecurrent) {
-      const now = new Date();
-      let endDate;
-      if (objective.isMonthly) {
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      }
-      else {
-        const quarter = Math.floor((now.getMonth() / 3));
-        const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
-        endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
-      }
-      objective.timeFrame = (endDate.getMonth()+1) + "-" + endDate.getDate() + "-" + endDate.getFullYear();
-
-    }
-    let objectives = this.props.objectives || [];
-    if (index !== undefined) {
-      if (index === objective.order) {
-        objectives[index] = objective;
-      }
-      else {
-        objectives.splice(objective.order, 0, objective);
+  addBudgetConstraintChannel(index, event) {
+    const budgetConstraints = {...this.props.budgetConstraints};
+    const channel = event.value;
+    const existingChannels = Object.keys(budgetConstraints);
+    const numOfConstrains = existingChannels.length;
+    // New line
+    if (index === numOfConstrains) {
+      if (!budgetConstraints[channel]) {
+        budgetConstraints[channel] = {
+          range: {
+            min: 0,
+            max: -1
+          }
+        };
       }
     }
     else {
-      if (objective.order === objectives.length) {
-        objectives.push(objective);
-      }
-      else {
-        objectives.splice(objective.order, 0, objective);
-      }
+      // Existing line
+      const oldChannel = existingChannels[index];
+      budgetConstraints[channel] = budgetConstraints[oldChannel];
+      delete budgetConstraints[oldChannel];
+    }
+    this.props.updateState({budgetConstraints: budgetConstraints});
+  }
+
+  handleRangeChange(index, event) {
+    const budgetConstraints = {...this.props.budgetConstraints};
+    const channel = Object.keys(budgetConstraints)[index];
+    budgetConstraints[channel].range = event;
+    this.props.updateState({budgetConstraints: budgetConstraints});
+  }
+
+  objectiveRemove = (objective, monthIndex) => {
+    let objectives = [...this.props.objectives];
+    if (objectives[monthIndex][objective]) {
+      delete objectives[monthIndex][objective];
     }
     this.props.updateState({objectives: objectives});
-    this.setState({showObjectivesPopup: false, objectiveIndex: undefined});
-  }
+  };
 
-  createUserMinMonthBudgetJson(){
-    let userMinMonthBudgets = new Array(12).fill(null);
-    const planDate = this.props.planDate.split("/");
-    const firstMonth = parseInt(planDate[0]) - 1;
-    this.state.userMinMonthBudgetsLines.forEach((line) => {
-      line.months.forEach((month) => {
-        const index = (month + 12 - firstMonth) % 12;
-        if (!userMinMonthBudgets[index]) {
-          userMinMonthBudgets[index] = {};
+  createOrUpdateObjective = (objectiveData, originalMonthIndex, originalObjective) => {
+    let monthIndex = objectiveData.monthIndex;
+    const objective = objectiveData.indicator;
+    if (objective) {
+      const isDirectionUp = getMetadata('isDirectionUp', objective);
+      let objectives = [...this.props.objectives];
+      let recurrentArray = [];
+
+      if (objectiveData.isRecurrent) {
+        const now = new Date();
+        if (objectiveData.recurrentType === 'monthly') {
+          if (objectiveData.amount) {
+            monthIndex = 0;
+            for (let i = 0; i < 12; i++) {
+              let targetValue = -1;
+              const value = i ? recurrentArray[i - 1] : this.props.actualIndicators[objective];
+              if (objectiveData.isPercentage) {
+                targetValue = (1 + (objectiveData.amount / 100 * (isDirectionUp ? 1 : -1))) * value;
+              }
+              else {
+                targetValue = value + objectiveData.amount * (isDirectionUp ? 1 : -1);
+              }
+              recurrentArray.push(Math.round(targetValue));
+            }
+          }
         }
-        userMinMonthBudgets[index][line.channel] = line.budget;
-      });
-    });
-    return userMinMonthBudgets;
-  }
+        else if (objectiveData.recurrentType === 'quarterly') {
+          if (objectiveData.amount) {
+            const quarter = Math.floor((now.getMonth() / 3));
+            const firstDate = new Date(now.getFullYear(), quarter * 3, 1);
+            const endDate = new Date(firstDate.getFullYear(), firstDate.getMonth() + 3, 0);
+            monthIndex = endDate.getMonth() - now.getMonth();
+            recurrentArray = new Array(12).fill(-1);
+            for (let i = 0; i < 4; i++) {
+              const index = (monthIndex + (i * 3)) % 12;
+              let targetValue = -1;
+              const value = i
+                ? recurrentArray[(monthIndex + ((i - 1) * 3)) % 12]
+                : this.props.actualIndicators[objective];
+              if (objectiveData.isPercentage) {
+                targetValue = (objectiveData.amount / 100 + 1) * value;
+              }
+              else {
+                targetValue = objectiveData.amount + value;
+              }
+              recurrentArray[index] = targetValue;
+            }
+          }
+        }
+        else {
+          monthIndex = objectiveData.recurrentArray.findIndex(item => item !== -1);
+          recurrentArray = objectiveData.recurrentArray;
+        }
+      }
 
-  getDates = () => {
-    var monthNames = [
-      "Jan", "Feb", "Mar",
-      "Apr", "May", "Jun", "Jul",
-      "Aug", "Sep", "Oct",
-      "Nov", "Dec"
-    ];
-    var dates = [];
-    for (var i = 0; i < 12; i++) {
-      var planDate = this.props.planDate ? this.props.planDate.split("/") : null;
-      if (planDate) {
-        var date = new Date(planDate[1], planDate[0] - 1);
-        date.setMonth(date.getMonth() + i);
-        dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
+      const isEdit = !!originalObjective && !isNil(originalMonthIndex);
+
+      // objective edit of month or indicator
+      if (isEdit && (originalMonthIndex !== monthIndex || originalObjective !== objective)) {
+        objectives[monthIndex][objective] = objectives[originalMonthIndex][originalObjective];
+        delete objectives[originalMonthIndex][originalObjective];
+      }
+
+      if (!objectives[monthIndex]) {
+        objectives[monthIndex] = {};
+      }
+
+      if (!objectives[monthIndex][objective]) {
+        objectives[monthIndex][objective] = {
+          target: {},
+          userInput: {
+            startDate: new Date()
+          }
+        };
+      }
+
+      // not the expected priority, need to replace
+      const expectedPriority = isEdit
+        ? objectives[monthIndex][objective].target.priority
+        : this.props.calculatedData.objectives.objectivesData.length;
+      if (objectiveData.priority !== expectedPriority) {
+        const previous = this.props.calculatedData.objectives.objectivesData.find(
+          item => item.priority === objectiveData.priority);
+        if (previous) {
+          const {monthIndex, indicator} = previous;
+          objectives[monthIndex][indicator].target.priority = expectedPriority;
+        }
+      }
+      const targetValue = objectiveData.isRecurrent
+        ? recurrentArray.find(item => item !== -1)
+        : objectiveData.targetValue;
+      if (!isNil(monthIndex) && targetValue) {
+        objectives[monthIndex][objective] = {
+          target: {
+            ...objectives[monthIndex][objective].target,
+            value: targetValue,
+            priority: objectiveData.priority
+          },
+          userInput: {
+            ...objectives[monthIndex][objective].userInput,
+            isRecurrent: objectiveData.isRecurrent,
+            isPercentage: objectiveData.isPercentage,
+            isTarget: objectiveData.isTarget,
+            amount: objectiveData.amount,
+            recurrentType: objectiveData.recurrentType,
+            recurrentArray: recurrentArray
+          }
+        };
+        this.props.updateState({objectives: objectives});
+        this.setState({
+          objectivePopupData: {
+            objective: null,
+            objectiveMonth: null,
+            objectiveEdit: false,
+            hidden: true
+          }
+        });
       }
     }
-    return dates;
-  }
+  };
 
   monthBudgets() {
-    const datesArray = this.getDates();
+    const datesArray = getDates(this.props.planDate);
     return datesArray.map((month, index) => {
-      return <div className={ this.classes.cell } key={index}>
+      return <div className={this.classes.cell} key={index}>
         <Label style={{width: '70px', marginTop: '12px'}}>{month}</Label>
         <Textfield
-          value={"$" + (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-          onChange={ this.handleChangeBudgetArray.bind(this, index)} style={{
+          value={'$' +
+          (this.props.annualBudgetArray[index] ? this.props.annualBudgetArray[index].toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+          onChange={this.handleChangeBudgetArray.bind(this, index)} style={{
           width: '166px'
         }}/>
-      </div>
+      </div>;
     });
   }
 
@@ -319,21 +354,21 @@ export default class Preferences extends Component {
     }
   }
 
-  handleBudgetDivideChange(){
+  handleBudgetDivideChange() {
     this.setState({isDivideEqually: !this.state.isDivideEqually}, this.calculateBudgets);
   }
 
   calculateBudgets() {
     if (this.state.isCheckAnnual) {
       let prevBudget = this.props.annualBudget || this.props.annualBudgetArray.reduce((a, b) => a + b, 0);
-      let planDate = this.props.planDate.split("/");
+      let planDate = this.props.planDate.split('/');
       let firstMonth = parseInt(planDate[0]) - 1;
 
       let budget = [];
       if (this.state.isDivideEqually) {
         let numOfMonth = 12;
         const value = Math.round(prevBudget / numOfMonth);
-        while(numOfMonth--) {
+        while (numOfMonth--) {
           budget.push(value);
         }
       }
@@ -350,103 +385,13 @@ export default class Preferences extends Component {
   }
 
   render() {
-    const selects = {
-      /**     plan: {
-        label: 'Plan Resolution',
-        select: {
-          name: 'plan',
-          onChange: () => {},
-          options: [
-            { val: 'days', label: 'Days' },
-            { val: 'months', label: 'Months' },
-            { val: 'years', label: 'Years' }
-          ]
-        }
-      }, **/
-      months: {
-        label: '',
-        select: {
-          name: 'months',
-          onChange: () => {
-          },
-          placeholder: 'Choose specific months',
-          options: [
-            {label: 'Jan', value: 0},
-            {label: 'Feb', value: 1},
-            {label: 'Mar', value: 2},
-            {label: 'Apr', value: 3},
-            {label: 'May', value: 4},
-            {label: 'Jun', value: 5},
-            {label: 'Jul', value: 6},
-            {label: 'Aug', value: 7},
-            {label: 'Sep', value: 8},
-            {label: 'Oct', value: 9},
-            {label: 'Nov', value: 10},
-            {label: 'Dec', value: 11},
-          ]
-        }
-      },
-      primary_goal: {
-        label: 'Primary Focus',
-        labelQuestion: [''],
-        description: ['What is your company main focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
-        select: {
-          name: 'primary_goal',
-          onChange: () => {},
-          options: [
-            {value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended'},
-            {value: 'Revenue - Long Term', label: 'Revenue - Long Term'},
-            {value: 'Revenue - Short Term', label: 'Revenue - Short Term'},
-            {value: 'Reputation', label: 'Reputation'},
-            {value: 'Marketing ROI', label: 'Marketing ROI'},
-            {value: 'Market Share', label: 'Market Share'},
-            {value: 'Brand Awareness', label: 'Brand Awareness'},
-            {value: 'Better Quality Customers', label: 'Better Quality Customers'},
-            {value: 'Lead Generation', label: 'Lead Generation'},
-            {value: 'Retention Rates', label: 'Retention Rates'},
-            {value: 'Number Of Job Applicants', label: 'Number Of Job Applicants'},
-            {value: 'Thought Leadership', label: 'Thought Leadership'}
-          ]
-        }
-      },
-      secondary_goal: {
-        label: 'Secondary Focus',
-        labelQuestion: [''],
-        description: ['What is your company secondary focus for marketing? The focus should be aligned with and support your business goals. By default, InfiniGrow will choose the focus it thinks is the most relevant, based on your data.'],
-        select: {
-          name: 'secondary_goal',
-          onChange: () => {},
-          options: [
-            {value: 'InfiniGrow Recommended', label: 'InfiniGrow Recommended'},
-            {value: 'Revenue - Long Term', label: 'Revenue - Long Term'},
-            {value: 'Revenue - Short Term', label: 'Revenue - Short Term'},
-            {value: 'Reputation', label: 'Reputation'},
-            {value: 'Marketing ROI', label: 'Marketing ROI'},
-            {value: 'Market Share', label: 'Market Share'},
-            {value: 'Brand Awareness', label: 'Brand Awareness'},
-            {value: 'Better Quality Customers', label: 'Better Quality Customers'},
-            {value: 'Lead Generation', label: 'Lead Generation'},
-            {value: 'Retention Rates', label: 'Retention Rates'},
-            {value: 'Number Of Job Applicants', label: 'Number Of Job Applicants'},
-            {value: 'Thought Leadership', label: 'Thought Leadership'}
-          ]
-        }
-      }
-    };
+    const {budgetConstraints, annualBudgetArray, calculatedData: {objectives: {objectivesData}}} = this.props;
 
     const channels = {
       select: {
-        name: "channels",
-        options: formatChannels()
+        name: 'channels',
+        options: formatChannels(channel => this.props.blockedChannels.includes(channel) || this.props.inHouseChannels.includes(channel) || Object.keys(budgetConstraints).includes(channel))
       }
-    };
-
-    let preventDuplicates = (value) => {
-      if (value.options) {
-        value.options.map(preventDuplicates);
-      }
-      value.disabled = this.props.blockedChannels.includes(value.value) || this.props.inHouseChannels.includes(value.value) || this.state.userMinMonthBudgetsLines.map(line => line.channel).includes(value.value);
-      return value;
     };
 
     let maxChannels = (value) => {
@@ -459,7 +404,6 @@ export default class Preferences extends Component {
       }
     };
 
-    channels.select.options.map(preventDuplicates);
     // Deep copy
     const blockedChannels = JSON.parse(JSON.stringify(channels));
     // We allow only 3 blocked channels.
@@ -468,39 +412,56 @@ export default class Preferences extends Component {
       blockedChannels.select.options.map(maxChannels);
     }
 
-    const objectivesOrder = this.props.objectives.map((item, index) => {
-      return {value: index, label: '#' + (index + 1)}
-    });
+    const dates = getDates(this.props.planDate);
 
-    const objectives = this.props.objectives.map((objective, index) => {
-      if (!objective.isArchived) {
-        const delta = objective.isPercentage ? objective.amount * (objective.currentValue || 0) / 100 : objective.amount;
-        const target = Math.round(objective.direction === "equals" ? objective.amount : (objective.direction === "increase" ? delta + (objective.currentValue || 0) : (objective.currentValue || 0) - delta));
-        return <ObjectiveView
-          value={this.props.actualIndicators[objective.indicator]}
-          index={index}
-          key={index}
-          target={target}
-          {...objective}
-          editObjective={() => {
-            this.setState({showObjectivesPopup: true, objectiveIndex: index})
-          }}
-          deleteObjective={() => {
-            this.objectiveRemove(index)
-          }}
-        />
-      }
-    });
+    const objectiveViews = objectivesData
+      .sort((item1, item2) => item1.priority - item2.priority)
+      .map((item, index) =>
+        <ObjectiveView key={index}
+                       index={index}
+                       {...item}
+                       editObjective={() => {
+                         this.setState({
+                           objectivePopupData: {
+                             hidden: false,
+                             objectiveMonth: item.monthIndex,
+                             objective: item.indicator,
+                             objectiveEdit: true
+                           }
+                         });
+                       }}
+                       deleteObjective={() => {
+                         this.objectiveRemove(item.indicator, item.monthIndex);
+                       }}/>);
+
+    const indicatorsWithProps = getIndicatorsWithProps();
+    const objectiveOptions = Object.keys(indicatorsWithProps)
+      .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective &&
+        !objectivesData.find(item => item.indicator ===
+          indicatorKey &&
+          (this.state.objectivePopupData.objective
+            ? item.indicator !== this.state.objectivePopupData.objective
+            : true)))
+      .map(indicatorKey => {
+        return {value: indicatorKey, label: indicatorsWithProps[indicatorKey].nickname};
+      });
+
+    const budgetConstraintsChannels = Object.keys(budgetConstraints);
 
     return <div>
-      <Page popup={ isPopupMode() }>
+      <Page popup={isPopupMode()}
+            className={!isPopupMode() ? this.classes.static : null}
+            contentClassName={this.classes.content}
+            innerClassName={this.classes.pageInner}
+            width='100%'>
         <Title title="Preferences"
-               subTitle="What are your marketing goals and constrains? Different objectives dictate different strategies"/>
-        <div className={ this.classes.error }>
-          <label hidden={ !this.props.serverDown }>Something is wrong... Let us check what is it and fix it for you :)</label>
+               subTitle='What are your marketing goals and constrains? Different objectives dictate different strategies'/>
+        <div className={this.classes.error}>
+          <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
+            :)</label>
         </div>
-        <div className={ this.classes.cols }>
-          <div className={ this.classes.colLeft }>
+        <div className={this.classes.cols}>
+          <div className={this.classes.colLeft}>
             {/**
              <div className={ this.classes.row } style={{
               width: '258px'
@@ -508,27 +469,32 @@ export default class Preferences extends Component {
              <Label question>Start Date</Label>
              <Calendar />
              </div> **/}
-            <div className={ this.classes.row }>
-              <Label checkbox={this.state.isCheckAnnual} onChange={ this.toggleBudgetsCheck.bind(this) } question={['']}
+            <div className={this.classes.row}>
+              <Label checkbox={this.state.isCheckAnnual} onChange={this.toggleBudgetsCheck.bind(this)} question={['']}
+                     ref='annualBudget'
                      description={['What is your marketing budget for the next 12 months?']}>Plan Annual Budget
                 ($)</Label>
-              <div className={ this.classes.cell }>
+              <div className={this.classes.cell}>
                 <Textfield disabled={!this.state.isCheckAnnual}
-                           value={"$" + (this.props.annualBudget ? this.props.annualBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                           onChange={ this.handleChangeBudget.bind(this, 'annualBudget')} style={{
+                           value={'$' +
+                           (this.props.annualBudget ? this.props.annualBudget.toString()
+                             .replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                           onChange={this.handleChangeBudget.bind(this, 'annualBudget')} style={{
                   width: '166px'
                 }}/>
-                <Label className={ preferencesStyle.locals.divideEqually } checkbox={this.state.isDivideEqually} onChange={ this.handleBudgetDivideChange.bind(this) }>Divide Equally</Label>
+                <Label className={preferencesStyle.locals.divideEqually} checkbox={this.state.isDivideEqually}
+                       onChange={this.handleBudgetDivideChange.bind(this)}>Divide Equally</Label>
                 {/** <NotSure style={{
                   marginLeft: '10px'
                 }} /> **/}
               </div>
             </div>
-            <div className={ this.classes.row }>
-              <Label checkbox={!this.state.isCheckAnnual} onChange={ this.toggleBudgetsCheck.bind(this) } question={['']}
+            <div className={this.classes.row}>
+              <Label checkbox={!this.state.isCheckAnnual} onChange={this.toggleBudgetsCheck.bind(this)}
+                     question={['']}
                      description={['What is your marketing budget for the next 12 months?']}>Plan Monthly Budgets
                 ($)</Label>
-              { this.state.isCheckAnnual ? null : this.monthBudgets() }
+              {this.state.isCheckAnnual ? null : this.monthBudgets()}
             </div>
             {/**
              <div className={ this.classes.row } style={{
@@ -539,43 +505,48 @@ export default class Preferences extends Component {
              <Select { ... selects.plan } />
              </div>
              **/}
-            <div className={ this.classes.row } style={{
-              // maxWidth: '440px',
-              // minWidth: '200px',
-              width: '258px'
-            }}>
-              <Select { ... selects.primary_goal } selected={ this.props.goals.primary }
-                      onChange={ this.handleChangeGoals.bind(this, 'primary') }/>
-            </div>
-            <div className={ this.classes.row } style={{
-              // maxWidth: '440px',
-              // minWidth: '200px',
-              width: '258px'
-            }}>
-              <Select { ... selects.secondary_goal } selected={ this.props.goals.secondary }
-                      onChange={ this.handleChangeGoals.bind(this, 'secondary') }/>
-            </div>
-            <div className={ this.classes.row } style={{}}>
+            <div className={this.classes.row} style={{}}>
               <Label style={{
                 marginBottom: '12px',
                 fontWeight: '600'
               }} question={['']}
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
-              {objectives}
-              <div className={ preferencesStyle.locals.addObjective } onClick={() => { this.setState({showObjectivesPopup: true, objectiveIndex: undefined}) }}/>
-              <AddObjectivePopup
-                hidden={ !this.state.showObjectivesPopup }
-                index={ this.state.objectiveIndex }
-                objectives={this.props.objectives}
-                close={() => { this.setState({showObjectivesPopup: false}) } }
-                createOrUpdateObjective={this.createOrUpdateObjective.bind(this)}
-                actualIndicators={ this.props.actualIndicators }
-                projectedPlan={ this.props.projectedPlan }
+              {objectiveViews}
+              <div className={preferencesStyle.locals.addObjective} onClick={() => {
+                this.setState({
+                  objectivePopupData: {
+                    hidden: false,
+                    objectiveEdit: false,
+                    objective: null,
+                    objectiveMonth: null
+                  }
+                });
+              }}/>
+              <AddObjectivePopup objectives={this.props.objectives}
+                                 {...this.state.objectivePopupData}
+                                 numOfPriorities={objectivesData.length}
+                                 close={() => {
+                                   this.setState({
+                                     objectivePopupData: {
+                                       hidden: true,
+                                       objectiveEdit: false,
+                                       objective: null,
+                                       objectiveMonth: null
+                                     }
+                                   });
+                                 }}
+                                 dates={dates}
+                                 objectivesOptions={objectiveOptions}
+                                 createOrUpdateObjective={this.createOrUpdateObjective}
+                                 actualIndicators={this.props.actualIndicators}
+                                 forecastedIndicators={this.props.forecastedIndicators}
               />
             </div>
             <FeatureToggle featureName="plannerAI">
               <div>
-                <div className={ preferencesStyle.locals.advancedButton } onClick={()=>{ this.setState({showAdvancedFields: !this.state.showAdvancedFields}) }}>
+                <div className={preferencesStyle.locals.advancedButton} onClick={() => {
+                  this.setState({showAdvancedFields: !this.state.showAdvancedFields});
+                }}>
                   Advanced
                 </div>
                 <div hidden={!this.state.showAdvancedFields}>
@@ -584,7 +555,7 @@ export default class Preferences extends Component {
                     <Notice warning style={{
                       margin: '12px 0'
                     }}>
-                      * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning.
+                      * Please notice that adding channel constrains is limiting the InfiniGrow’s ideal planning engine.
                     </Notice>
                   </div>
                   <div className={this.classes.row}>
@@ -601,22 +572,17 @@ export default class Preferences extends Component {
                 }} /> **/}
                     </div>
                   </div>
-                  <div className={this.classes.row} style={{}}>
-                    <Label style={{
-                      marginBottom: '12px',
-                      fontWeight: '600'
-                    }} question={['']}
-                           description={['Are there any channels that you’re going to use in any case? Please provide their minimum budgets.']}>Minimum
-                      Budgets</Label>
-                    <MultiRow numOfRows={this.state.userMinMonthBudgetsLines.length}
-                              rowRemoved={this.minimumBudgetRemove}>
+                  <div className={this.classes.row}>
+                    <Label question={['']}
+                           description={['Are there any channels that you’re going to use in any case? Please provide their min/max budgets.']}>
+                      Monthly Budget Constraints
+                    </Label>
+                    <MultiRow numOfRows={budgetConstraintsChannels.length} rowRemoved={this.budgetConstraintRemove}>
                       {({index, data, update, removeButton}) => {
-                        return <div style={{
-                          width: '700px'
-                        }} className={preferencesStyle.locals.channelsRow}>
+                        return <div className={preferencesStyle.locals.channelsRow}>
                           <Select
-                            className={preferencesStyle.locals.channelsSelect}
-                            selected={this.state.userMinMonthBudgetsLines[index] != undefined && this.state.userMinMonthBudgetsLines[index].channel}
+                            style={{width: '230px'}}
+                            selected={budgetConstraintsChannels[index]}
                             select={{
                               menuTop: true,
                               name: 'channels',
@@ -627,25 +593,26 @@ export default class Preferences extends Component {
                               },
                               options: channels.select.options
                             }}
-                            onChange={this.handleChangeMinChannel.bind(this, index)}
-                            label={`#${ index + 1 } (optional)`}
+                            onChange={this.addBudgetConstraintChannel.bind(this, index)}
                           />
-                          <Textfield className={preferencesStyle.locals.channelsBudget}
-                                     value={"$" + (this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].budget ? this.state.userMinMonthBudgetsLines[index].budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
-                                     onChange={this.handleChangeMinBudget.bind(this, index)} style={{
-                            width: '82px'
-                          }}
-                                     disabled={!this.state.userMinMonthBudgetsLines[index] || this.state.userMinMonthBudgetsLines[index].budget == undefined}/>
-                          <div style={{marginTop: '32px'}}>
-                            <MultiSelect {...selects.months}
-                                         selected={this.state.userMinMonthBudgetsLines[index] && this.state.userMinMonthBudgetsLines[index].months}
-                                         onChange={this.handleChangeMinMonths.bind(this, index)}
-                                         style={{width: '240px'}}/>
-                          </div>
-                          <div className={preferencesStyle.locals.channelsRemove}>
+                          <Range
+                            disabled={!budgetConstraintsChannels[index]}
+                            step={50}
+                            allowSameValues={true}
+                            minValue={0}
+                            maxValue={Math.min(...annualBudgetArray)}
+                            value={budgetConstraints[budgetConstraintsChannels[index]]
+                              ? budgetConstraints[budgetConstraintsChannels[index]].range
+                              : {
+                                min: 0,
+                                max: -1
+                              }}
+                            onChange={this.handleRangeChange.bind(this, index)}
+                          />
+                          <div style={{marginLeft: '25px', alignSelf: 'center'}}>
                             {removeButton}
                           </div>
-                        </div>
+                        </div>;
                       }}
                     </MultiRow>
                   </div>
@@ -664,16 +631,20 @@ export default class Preferences extends Component {
                 </div>
               </div>
             </FeatureToggle>
-            <div className={ this.classes.row } style={{ marginTop: '55px' }}>
-              <PlanFromExcel {... this.props}/>
-            </div>
+            {
+              isPopupMode() ?
+                <div className={this.classes.row} style={{marginTop: '55px'}}>
+                  <PlanFromExcel {...this.props}/>
+                </div>
+                : null
+            }
           </div>
 
-          { isPopupMode() ?
+          {isPopupMode() ?
 
-            <div className={ this.classes.colRight }>
-              <div className={ this.classes.row }>
-                <ProfileProgress progress={ 101 } image={
+            <div className={this.classes.colRight}>
+              <div className={this.classes.row}>
+                <ProfileProgress progress={101} image={
                   require('assets/flower/5.png')
                 }
                                  text="Seems you got some new super powers. Now the journey for GROWTH really begins!"/>
@@ -685,86 +656,75 @@ export default class Preferences extends Component {
                **/}
             </div>
 
-            : null }
+            : null}
         </div>
 
-        { isPopupMode() ?
+        {isPopupMode() ?
 
-          <div className={ this.classes.footer }>
-            <div className={ this.classes.almostFooter }>
-              <label hidden={ !this.state.validationError} style={{color: 'red'}}>
-                Please fill all the required fields
+          <div className={this.classes.footer}>
+            <div className={this.classes.almostFooter}>
+              <label hidden={!this.state.validationError} style={{color: 'red'}}>
+                {this.state.validationError}
               </label>
             </div>
             <BackButton onClick={() => {
-              this.props.updateUserMonthPlan({
-                annualBudget: this.props.annualBudget,
-                annualBudgetArray: this.props.annualBudgetArray,
-                goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
-                objectives: this.props.objectives,
-                blockedChannels: this.props.blockedChannels,
-                inHouseChannels: this.props.inHouseChannels,
-                userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
-                maxChannels: this.props.maxChannels,
-                approvedBudgets: this.props.approvedBudgets,
-                planNeedsUpdate: true
-              }, this.props.region, this.props.planDate)
+              this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate)
                 .then(() => {
-                  history.push('/profile/integrations');
+                  history.push('/settings/attribution/setup');
                 });
             }}/>
             <div style={{width: '30px'}}/>
             <PlanButton onClick={() => {
-              if (this.validate()) {
-                this.props.updateUserMonthPlan({
-                  annualBudget: this.props.annualBudget,
-                  annualBudgetArray: this.props.annualBudgetArray,
-                  goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
-                  objectives: this.props.objectives,
-                  blockedChannels: this.props.blockedChannels,
-                  inHouseChannels: this.props.inHouseChannels,
-                  userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
-                  maxChannels: this.props.maxChannels,
-                  approvedBudgets: this.props.approvedBudgets,
-                  planNeedsUpdate: true
-                }, this.props.region, this.props.planDate)
-                  .then(() => {
-                    history.push('/plan/plan/annual');
+              const validationText = this.validate();
+              if (!validationText) {
+                // If user didn't define any objectives, open objectives popup
+                if (!this.props.objectives.find(item => Object.keys(item).length > 0)) {
+                  this.setState({
+                    objectivePopupData: {
+                      hidden: false,
+                      objectiveEdit: false,
+                      objective: null,
+                      objectiveMonth: null
+                    }
                   });
+                }
+                else {
+                  this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate)
+                    .then(() => {
+                      history.push('/plan/annual');
+                    });
+                }
               }
               else {
-                this.setState({validationError: true});
+                this.setState({validationError: validationText});
               }
             }
             }/>
           </div>
 
           :
-          <div className={ this.classes.footer }>
+          <div className={this.classes.footer}>
+            <div className={this.classes.almostFooter}>
+              <label hidden={!this.state.validationError} style={{color: 'red'}}>
+                {this.state.validationError}
+              </label>
+            </div>
             <SaveButton onClick={() => {
-              if (this.validate()) {
+              const validationText = this.validate();
+              this.setState({validationError: validationText});
+
+              if (!validationText) {
                 this.setState({saveFail: false, saveSuccess: false});
-                this.props.updateUserMonthPlan({
-                  annualBudget: this.props.annualBudget,
-                  annualBudgetArray: this.props.annualBudgetArray,
-                  goals: {primary: this.props.goals.primary, secondary: this.props.goals.secondary},
-                  objectives: this.props.objectives,
-                  blockedChannels: this.props.blockedChannels,
-                  inHouseChannels: this.props.inHouseChannels,
-                  userMinMonthBudgets: this.createUserMinMonthBudgetJson(),
-                  maxChannels: this.props.maxChannels,
-                  approvedBudgets: this.props.approvedBudgets,
-                  planNeedsUpdate: true
-                }, this.props.region, this.props.planDate);
+                this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate);
                 this.setState({saveSuccess: true});
               }
               else {
                 this.setState({saveFail: true});
               }
-            }} success={ this.state.saveSuccess } fail={ this.state.saveFail }/>
+            }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
           </div>
         }
       </Page>
-    </div>
+    </div>;
   }
-}
+};

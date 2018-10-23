@@ -73,7 +73,7 @@ export default class SignIn extends Component {
             <div style={{
               marginTop: '32px'
             }}>
-              <Button type="normal-accent" onClick={() => {
+              <Button type="secondary" onClick={() => {
                 window.location.href = '/?popup';
               }}>Enable Popup Mode</Button>
             </div>
@@ -82,7 +82,7 @@ export default class SignIn extends Component {
             <div style={{
               marginTop: '32px'
             }}>
-              <Button type="normal-accent" onClick={() => {
+              <Button type="secondary" onClick={() => {
                 window.location.href = '/';
               }}>Disable Popup Mode</Button>
             </div>

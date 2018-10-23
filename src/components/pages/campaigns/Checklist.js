@@ -4,7 +4,7 @@ import Component from 'components/Component';
 import ProgressBar from 'components/pages/campaigns/ProgressBar';
 import Task from 'components/pages/campaigns/Task';
 import CampaignTask from 'components/pages/campaigns/CampaignTask';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 
 import style from 'styles/campaigns/check-list.css';
 
@@ -66,7 +66,7 @@ export default class Checklist extends Component {
           Budget -
         </div>
         <div className={ this.classes.budgetNumber }>
-          {" $" + formatBudget(this.props.campaign.actualSpent || this.props.campaign.budget)}
+          {" $" + formatNumber(this.props.campaign.actualSpent || this.props.campaign.budget)}
         </div>
       </div>
       <ProgressBar progress={(completedTasksCount / this.props.campaign.tasks.length) || 0}/>

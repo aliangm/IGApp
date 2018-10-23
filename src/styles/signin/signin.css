@@ -116,8 +116,8 @@
   margin-right: 16px;
 }
 
-@mixin icon-nodpi signin:linkedin, ../../assets/linkedin_logo;
-@mixin icon-nodpi signin:google, ../../assets/google_logo;
+@mixin icon-nodpi signin:linkedin, /assets/linkedin_logo;
+@mixin icon-nodpi signin:google, /assets/google_logo;
 
 .social-button-cont {
   white-space: nowrap;

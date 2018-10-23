@@ -9,9 +9,8 @@ import InsightItem from 'components/pages/insights/InsightItem';
 import { getNickname as getChannelNickname } from 'components/utils/channels';
 import { getIndicatorsWithProps, getNickname as getIndicatorNickname } from 'components/utils/indicators';
 import { getDates } from 'components/utils/date';
-import FirstPageVisit from 'components/pages/FirstPageVisit';
 import merge from 'lodash/merge';
-import { formatBudget } from 'components/utils/budget';
+import { formatNumber } from 'components/utils/budget';
 import Button from 'components/controls/Button';
 import ReactDOM from "react-dom";
 
@@ -151,8 +150,7 @@ export default class Insights extends Component {
         <div className={ planStyle.locals.head }>
           <div className={ planStyle.locals.headTitle }>Insights & Suggestions</div>
         </div>
-        { this.props.userAccount.pages && this.props.userAccount.pages.insights ?
-          <div className={ planStyle.locals.wrap }>
+        <div className={ planStyle.locals.wrap }>
             <div className={insightsStyle.locals.inner}>
               {cubes}
               {showBalancerPopup ?
@@ -197,11 +195,11 @@ export default class Insights extends Component {
                           })
                           }
                           Suggested budget
-                          ({getChannelNickname(suggestedChannel)}): <b>${formatBudget(nextMonthBudgets[suggestedChannel])}</b> (${formatBudget(nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0))}).<br/>
+                          ({getChannelNickname(suggestedChannel)}): <b>${formatNumber(nextMonthBudgets[suggestedChannel])}</b> (${formatNumber(nextMonthBudgets[suggestedChannel] - (approvedBudgets[0][suggestedChannel] || 0))}).<br/>
                           Suggested budget
-                          ({getChannelNickname(balancingChannel)}): <b>${formatBudget(nextMonthBudgets[balancingChannel])}</b> (${formatBudget(nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0))}).<br/>
+                          ({getChannelNickname(balancingChannel)}): <b>${formatNumber(nextMonthBudgets[balancingChannel])}</b> (${formatNumber(nextMonthBudgets[balancingChannel] - (approvedBudgets[0][balancingChannel] || 0))}).<br/>
                           Total budget change: <b
-                          style={{color: '#2fae23'}}>${formatBudget((approvedBudgets[0][suggestedChannel] || 0) + (approvedBudgets[0][balancingChannel] || 0) - nextMonthBudgets[suggestedChannel] - nextMonthBudgets[balancingChannel])}</b>.
+                          style={{color: '#2fae23'}}>${formatNumber((approvedBudgets[0][suggestedChannel] || 0) + (approvedBudgets[0][balancingChannel] || 0) - nextMonthBudgets[suggestedChannel] - nextMonthBudgets[balancingChannel])}</b>.
                         </div>
                         <div className={this.classes.buttons} style={{top: '243px'}}>
                           <Button className={this.classes.approveButton} onClick={() => {
@@ -279,17 +277,6 @@ export default class Insights extends Component {
               }
             </div>
           </div>
-          :
-          <FirstPageVisit
-            title="Understand how to allocate your next $"
-            content="You have limitless of options of how to manage your marketing spend. Get insights and recommendations on your best next move."
-            action="Show me the best next action >"
-            icon="step:insights"
-            onClick={() => {
-              this.props.updateUserAccount({'pages.insights': true})
-            }}
-          />
-        }
       </Page>
     </div>
   }

@@ -74,7 +74,7 @@ export default class Task extends Component {
           <div className={ this.classes.content }>
             <Avatar member ={this.props.member} className={ this.classes.initials }/>
             <div className={ this.classes.name }>
-              {this.props.member && this.props.member.name}
+              {this.props.member ? this.props.member.firstName + ' ' + this.props.member.lastName : ''}
             </div>
             <div className={ this.classes.commentText }>
               {this.props.comment}
@@ -104,7 +104,7 @@ export default class Task extends Component {
                     <div className={ this.classes.popupText }>
                       Deleting a comment is forever. There is no undo.
                     </div>
-                    <Button type="primary2" style={{ margin: '10px' }} onClick={ this.deleteComment.bind(this) }>I'm sure</Button>
+                    <Button type="primary" style={{ margin: '10px' }} onClick={ this.deleteComment.bind(this) }>I'm sure</Button>
                   </Popup>
                 </div>
               </div>

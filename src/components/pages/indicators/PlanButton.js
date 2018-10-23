@@ -8,7 +8,7 @@ export default class NextButton extends Component {
   style = style;
 
   render() {
-    return <Button type="accent2"
+    return <Button type="primary"
       onClick={ this.props.onClick }
       className={ this.classes.planButton }
       icon="buttons:plan"

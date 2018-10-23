@@ -1,9 +1,21 @@
-export function formatBudget(budget) {
-	if (budget == null) {
-		return ''
-	}
+import sumBy from 'lodash/sumBy';
 
-	return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+export function formatNumber(budget) {
+  if (budget == null) {
+    return '';
+  }
+
+  return String(budget).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+export function formatBudget(budget, withSign = false) {
+  let sign = '';
+
+  if (withSign) {
+    sign = (budget > 0) ? '+' : (budget < 0 ? '-' : '');
+
+  }
+  return `${sign}$${formatNumber(Math.abs(budget))}`;
 }
 
 export function formatBudgetShortened(budget) {
@@ -17,4 +29,45 @@ export function formatBudgetShortened(budget) {
     return (budget / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
   }
   return budget;
+}
+
+export function extractNumberFromBudget(budget, defaultValue = 0) {
+  if (budget) {
+    return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
+  }
+  return defaultValue;
+}
+
+export function getPlanBudgetsData(planBudgets) {
+  const committedBudgets = getCommitedBudgets(planBudgets);
+
+  const sumBudgets = {};
+  committedBudgets.forEach(month => {
+    Object.keys(month).forEach(channel => {
+      if (!sumBudgets[channel]) {
+        sumBudgets[channel] = 0;
+      }
+      sumBudgets[channel] += month[channel];
+    });
+  });
+
+  const totalCost = sumBy(Object.keys(sumBudgets), key => sumBudgets[key]);
+
+  return {
+    committedBudgets,
+    sumBudgets,
+    totalCost
+  };
+}
+
+export function getCommitedBudgets(planBudgets) {
+  return planBudgets.map((month) => {
+    const newMonth = {};
+    Object.keys(month).map((key) => {
+      const committedBudget = month[key].committedBudget;
+      newMonth[key] = committedBudget || 0;
+    });
+
+    return newMonth;
+  });
 }

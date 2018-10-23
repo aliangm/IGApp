@@ -1,81 +1,79 @@
 .inner {
     padding: 15px 25px;
     display: inline-block;
+    position: relative;
 }
 
-.center {
-    justify-content: center;
-    display: flex;
+.bottom {
+    left: 0;
+    right: 0;
+    position: absolute;
+    top: 158px;
 }
 
 .title {
-    composes: center;
-    font-size: 12px;
-    font-weight: bold;
-    color: #4b515e;
-    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    fill: #99a4c2;
 }
 
 .current {
-    font-size: 22px;
-    font-weight: bold;
-    fill: #9b9b9b;
+    font-size: 24px;
+    font-weight: 600;
+    fill: #222a41;
+    letter-spacing: 0.1px;
+}
+
+.current-mark {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    fill: #99a4c2;
+    text-anchor: middle;
 }
 
 .target {
-    font-size: 12px;
-    fill: #9b9b9b;
-}
-
-.text-bottom {
-    composes: center;
-    font-size: 12px;
-    font-weight: 500;
-    color: #4b515e;
-    margin-top: 9px;
-}
-
-.success-text {
-    font-weight: bold;
-    color: #33cc33;
-}
-
-.fail-text {
-    font-weight: bold;
-    color: #d80027;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    fill: #b2bbd5;
 }
 
 .time-left {
-    composes: center;
+    margin-top: 8px;
     font-size: 12px;
-    color: #4b515e;
-    font-weight: 500;
-    margin-top: 7px;
-    font-style: italic;
-}
-
-.objective-icon {
-    width: 15px;
-    height: 15px;
-}
-
-.objective-icon[data-active="success"] {
-    background: url(../../assets/success_bltp.svg) center center no-repeat;
-    background-size: contain;
-}
-
-.objective-icon[data-active="fail"] {
-    background: url(../../assets/passed-objective.svg) center center no-repeat;
-    background-size: contain;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    text-align: right;
+    color: #99a4c2;
 }
 
 .circle-background {
     fill: none;
-    stroke: #e2e7ee;
+    stroke: #e6e8f0;
 }
 
 .circle-progress {
+    /*
+    use this properties for round end
     stroke-linecap: round;
     stroke-linejoin: round;
+    */
     fill: none;
+}
+
+.progress {
+    width: 200px;
+    height: 6px;
+    border-radius: 4px;
+    background-color: #e6e8f0;
+    margin: 16px auto 0;
+}
+
+.progress-fill {
+    width: 136px;
+    height: 6px;
+    border-radius: 4px;
+    background-image: linear-gradient(to right, #e6e8f0, #2fcf5f);
 }

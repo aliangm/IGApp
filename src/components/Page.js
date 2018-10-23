@@ -1,6 +1,5 @@
 import React from 'react';
 import Component from 'components/Component';
-
 import style from 'styles/page.css';
 
 export default class Page extends Component {
@@ -8,7 +7,30 @@ export default class Page extends Component {
 
   static defaultProps = {
     sidebar: true
+  };
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.props.onPageScroll);
+    window.addEventListener('keydown', this.handleKeyPress);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.props.onPageScroll);
+    window.removeEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.onPageScroll !== this.props.onPageScroll) {
+      window.removeEventListener('scroll', this.props.onPageScroll);
+      window.addEventListener('scroll', newProps.onPageScroll);
+    }
+  }
+
+  handleKeyPress = (e) => {
+    if (this.props.onClose && e.key === 'Escape') {
+      this.props.onClose();
+    }
+  };
 
   render() {
     let className = this.props.popup ?
@@ -43,18 +65,24 @@ export default class Page extends Component {
       innerClassName += ' ' + this.props.innerClassName;
     }
 
-    return <div
-      className={ className }
-      style={ this.props.style }
-      data-sidebar={ this.props.sidebar }
-    >
-      <div className={ this.classes.box } style={ boxStyle }>
-        <div className={ innerClassName }>
-          <div className={ contentClassName }>
-            { this.props.children }
+    return <div className={className}
+                style={this.props.style}
+                data-sidebar={this.props.sidebar}
+                onScroll={() => {
+                  if (this.props.popup && this.props.onPageScroll) {
+                    this.props.onPageScroll();
+                  }
+                }}>
+      <div className={this.classes.box} style={boxStyle}>
+        <div className={innerClassName}>
+          {this.props.popup && this.props.onClose ?
+            <div className={this.classes.closeButton} onClick={this.props.onClose}/>
+            : null}
+          <div className={contentClassName}>
+            {this.props.children}
           </div>
         </div>
       </div>
-    </div>
+    </div>;
   }
 }

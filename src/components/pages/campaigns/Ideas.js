@@ -36,9 +36,6 @@ export default class Ideas extends Component {
       endorsements: []
     });
     this.setState({showAddIdeaPopup: false});
-    if (!this.props.userAccount.steps || !this.props.userAccount.steps.campaignIdea) {
-      this.props.updateUserAccount({'steps.campaignIdea': true});
-    }
     return this.props.updateUserMonthPlan({ campaignIdeas: update }, this.props.region, this.props.planDate);
   }
 
@@ -120,7 +117,7 @@ export default class Ideas extends Component {
       </div>
       <div style={{ justifyContent: 'center', display: 'flex' }}>
         <Button
-          type="reverse"
+          type="primary"
           style={{ width: '75px', marginTop: '20px' }}
           onClick={ () => { this.setState({showAddIdeaPopup: true}) } }>+Add
         </Button>

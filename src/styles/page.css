@@ -1,8 +1,7 @@
 .static {
-  margin-top: 70px;
-  margin-left: 240px;
+  margin-top: 80px;
+  margin-left: 279px;
   position: relative;
-  z-index: 9;
 }
 
 .static[data-sidebar="false"] {
@@ -11,13 +10,13 @@
 
 .popup {
   position: fixed;
-  top: 70px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: auto;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.75);
+  z-index: 12;
+  background: rgba(0, 0, 0, 0.55);
   cursor: default;
 }
 
@@ -38,6 +37,7 @@
   background: white;
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
 }
 
 .content {
@@ -51,7 +51,7 @@
 
 @media (max-width: 1440px) {
   .static {
-    margin-left: 88px;
+    margin-left: 80px;
   }
 }
 
@@ -97,4 +97,16 @@
   .box {
     padding: 10px 0 0 0 !important;
   }
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  background: url(/assets/x.svg) center center no-repeat;
+  background-size: contain;
+  cursor: pointer;
+  z-index: 9999999;
 }

@@ -129,18 +129,18 @@
 
 .approve-icon {
     composes: icon;
-    background: url(../../assets/check-mark.svg) center center no-repeat;
+    background: url(/assets/check-mark.svg) center center no-repeat;
     background-size: contain;
 }
 
 .decline-icon {
     composes: icon;
-    background: url(../../assets/cancel-music.svg) center center no-repeat;
+    background: url(/assets/cancel-music.svg) center center no-repeat;
     background-size: contain;
 }
 
 .balancer-icon {
     composes: icon;
-    background: url(../../assets/yin-yang.svg) center center no-repeat;
+    background: url(/assets/yin-yang.svg) center center no-repeat;
     background-size: contain;
 }

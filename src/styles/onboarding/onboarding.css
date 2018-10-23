@@ -1,3 +1,20 @@
+.static {
+  margin-left: 145px !important;
+  margin-top: 0 !important;
+  position: relative;
+}
+
+.pageInner {
+  overflow: visible!important;
+}
+
+.content {
+  margin: 0 !important;
+  padding: 40px !important;
+  background: #f5f6fb;
+  position: relative;
+}
+
 .cols {
   display: flex;
   margin-left: 1px;
@@ -6,6 +23,7 @@
 .col-left {
   flex-grow: 1;
 }
+
 
 .col-right {
   margin-left: auto;
@@ -54,20 +72,6 @@
   justify-content: flex-end;
 }
 
-.next-icon {
-  background: url(../../assets/next-icon.png) center center no-repeat;
-  width: 7px;
-  height: 11px;
-  margin-left: 12px;
-}
-
-.prev-icon {
-  background: url(../../assets/prev-icon.png) center center no-repeat;
-  width: 6px;
-  height: 12px;
-  margin-right: 12px;
-}
-
 @media (max-width: 700px) {
   .footer-cols {
     flex-direction: column-reverse;
@@ -97,4 +101,12 @@
 .error {
   color: red;
   font-size: 20px;
+}
+
+.text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: #99a4c2;
+  align-self: center;
 }

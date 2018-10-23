@@ -6,9 +6,13 @@ export default class Avatar extends Component {
 
   style = style;
 
+  static defaultProps = {
+    withShadow: false
+  };
+
   getInitials() {
     const member = this.props.member;
-    const [firstName = '', lastName = ''] = member.name.split(' ');
+    const {firstName = '', lastName = ''} = member;
     return (firstName[0] || '') + (lastName[0] || '');
   }
 
@@ -37,12 +41,19 @@ export default class Avatar extends Component {
     }
     return member ?
       member.pictureUrl ?
-        <div className={className}
-             style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/>
+        <div className={this.classes.outerDiv}>
+          <div className={className}
+               style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}>
+          </div>
+          {this.props.withShadow ? <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/> : null }
+        </div>
         :
-        <div className={className}
-             style={{backgroundColor: "#" + this.intToRGB(this.hashCode(member.name))}}>
-          {this.getInitials()}
+        <div className={this.classes.outerDiv}>
+          <div className={className}
+               style={{backgroundColor: "#" + this.intToRGB(this.hashCode(member.firstName + ' ' + member.lastName))}}>
+            {this.getInitials()}
+          </div>
+          {this.props.withShadow ? <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/>: null }
         </div>
       : null;
   }

@@ -7,6 +7,7 @@ import history from 'history';
 import serverCommunication from 'data/serverCommunication';
 import {isPopupMode, disablePopupMode, checkIfPopup} from 'modules/popup-mode';
 import {isAuthenticated, login, getProfile} from 'components/utils/AuthService';
+import {getParameterByName} from 'utils';
 
 export default class SignIn extends Component {
 
@@ -36,7 +37,7 @@ export default class SignIn extends Component {
                 // No user Account
                 if (popup === null) {
                   history.push({
-                    pathname: '/settings',
+                    pathname: '/settings/account',
                     query: {new: true, freePlan: !!profile.app_metadata.freePlan}
                   });
                 }
@@ -45,7 +46,7 @@ export default class SignIn extends Component {
                 }
                 else {
                   if (popup) {
-                    history.push('/settings');
+                    history.push('/settings/account');
                   }
                   else {
                     history.push('/dashboard/CMO');
@@ -54,17 +55,17 @@ export default class SignIn extends Component {
               })
               .catch((err) => {
                 console.log(err);
-                login();
+                history.push('/login')
               });
           }
         })
         .catch((err) => {
           console.log(err);
-          login();
+          history.push('/login')
         });
     }
     else {
-      login();
+      history.push('/login')
     }
   }
 
@@ -92,7 +93,7 @@ export default class SignIn extends Component {
                 checkIfPopup()
                   .then(function (data) {
                     if (route == 'login' && !data) {
-                      history.push('/plan/plan/annual');
+                      history.push('/plan/annual');
                     }
                     else {
                       history.push('/settings');

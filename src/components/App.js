@@ -1,23 +1,25 @@
 import React from 'react';
-import { DragDropContext } from 'react-dnd';
+import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Component from 'components/Component';
 import Header from 'components/Header';
 import Sidebar from 'components/Sidebar';
-import { isPopupMode ,disablePopupMode, checkIfPopup } from 'modules/popup-mode';
+import {isPopupMode, disablePopupMode, checkIfPopup} from 'modules/popup-mode';
 import serverCommunication from 'data/serverCommunication';
 import q from 'q';
 import history from 'history';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 import UnsavedPopup from 'components/UnsavedPopup';
-import { initialize as initializeIndicators } from 'components/utils/indicators';
-import { initialize as initializeChannels } from 'components/utils/channels';
+import {initialize as initializeIndicators} from 'components/utils/indicators';
+import {initialize as initializeChannels} from 'components/utils/channels';
 import Loading from 'components/pages/plan/Loading';
 import Popup from 'components/Popup';
 import style from 'styles/app.css';
-import { FeatureToggleProvider } from 'react-feature-toggles';
+import {FeatureToggleProvider} from 'react-feature-toggles';
 import PlanLoading from 'components/pages/plan/PlanLoading';
-import {getProfile} from 'components/utils/AuthService';
+import {calculatedDataExtender, getAnnualBudgetFromAppData} from 'dataExtenders/calculatedDataExtender.js';
+import {getProfileSync} from 'components/utils/AuthService';
+import Settings from 'components/pages/Settings';
 
 class AppComponent extends Component {
 
@@ -40,21 +42,17 @@ class AppComponent extends Component {
       addNotification: this.addNotification.bind(this),
       plan: this.plan.bind(this),
       forecast: this.forecast.bind(this),
-      approveAllBudgets: this.approveAllBudgets.bind(this),
-      approveChannel: this.approveChannel.bind(this),
-      approveWholeChannel: this.approveWholeChannel.bind(this),
-      approveWholeMonth: this.approveWholeMonth.bind(this),
-      declineAllBudgets: this.declineAllBudgets.bind(this),
-      declineChannel: this.declineChannel.bind(this),
-      declineWholeChannel: this.declineWholeChannel.bind(this),
-      declineWholeMonth: this.declineWholeMonth.bind(this),
-      calculateAttributionData: this.calculateAttributionData.bind(this)
+      calculateAttributionData: this.calculateAttributionData.bind(this),
+      optimalImprovementPlan: this.optimalImprovementPlan.bind(this),
+      pay: this.pay.bind(this),
+      getUserAccount: this.getUserAccount.bind(this),
+      sendSnippetEmail: this.sendSnippetEmail.bind(this)
     };
   }
 
   // Asynchronous version of `setRouteLeaveHook`.
-// Instead of synchronously returning a result, the hook is expected to
-// return a promise.
+  // Instead of synchronously returning a result, the hook is expected to
+  // return a promise.
   setAsyncRouteLeaveHook(router, hook) {
     let withinHook = false;
     let finalResult = undefined;
@@ -68,24 +66,25 @@ class AppComponent extends Component {
           finalResultSet = true;
           if (!withinHook && nextLocation) {
             // Re-schedule the navigation
-            router.push(nextLocation)
+            router.push(nextLocation);
           }
-        })
+        });
       }
       let result = finalResultSet ? finalResult : false;
       withinHook = false;
       finalResult = undefined;
       finalResultSet = false;
-      return result
-    })
+      return result;
+    });
   }
 
   routerWillLeave() {
     return new Promise((resolve, reject) => {
       if (!this.state.unsaved) {
         // No unsaved changes -- leave
-        resolve(true)
-      } else {
+        resolve(true);
+      }
+      else {
         // Unsaved changes -- ask for confirmation
         /**
          vex.dialog.confirm({
@@ -95,7 +94,7 @@ class AppComponent extends Component {
          **/
         this.setState({showUnsavedPopup: true, callback: resolve});
       }
-    })
+    });
   }
 
   handleCallback(userAnswer) {
@@ -118,17 +117,22 @@ class AppComponent extends Component {
     ];
 
     Promise.all(tasks)
-      .then( () => {
-        setTimeout(() => { this.setState({loaded: true}); }, 1000);
+      .then(() => {
+        setTimeout(() => {
+          this.setState({loaded: true});
+        }, 1000);
       })
-      .catch( (err) => {
+      .catch((err) => {
           console.log(err);
         }
-      )
+      );
 
   }
 
-  updateState(newState, callback){
+  updateState(newState, callback) {
+    if (newState.namesMapping) {
+      initializeChannels(this.state.channelsSchema, newState.namesMapping.channels);
+    }
     this.setState(newState, callback);
     this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
   }
@@ -143,14 +147,13 @@ class AppComponent extends Component {
             .then((data) => {
               if (!dontSetState) {
                 this.setDataAsState(data);
-                this.getPreviousData();
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
               deferred.resolve(data);
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -174,14 +177,13 @@ class AppComponent extends Component {
             .then((data) => {
               if (data) {
                 this.setDataAsState(data);
-                this.getPreviousData();
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
                 initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
               }
               deferred.resolve();
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -194,28 +196,6 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  getPreviousData() {
-    serverCommunication.serverRequest('GET', 'previousdata', null, this.state.region)
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              if (data) {
-                this.setState({
-                  previousData: data
-                });
-              }
-            })
-        }
-        else if (response.status == 401){
-          history.push('/');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   getUserAccount() {
     const deferred = q.defer();
     serverCommunication.serverRequest('GET', 'useraccount')
@@ -226,19 +206,17 @@ class AppComponent extends Component {
               if (data) {
                 this.setState({
                   userAccount: data,
-                  userFirstName: data.firstName,
-                  userLastName: data.lastName,
                   userCompany: data.companyName,
                   companyWebsite: data.companyWebsite,
-                  logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                  logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                   teamMembers: data.teamMembers,
                   permissions: data.permissions
                 });
               }
               deferred.resolve();
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -261,17 +239,15 @@ class AppComponent extends Component {
             .then((data) => {
               this.setState({
                 userAccount: data,
-                userFirstName: data.firstName,
-                userLastName: data.lastName,
                 userCompany: data.companyName,
-                logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
                 permissions: data.permissions
               });
               deferred.resolve();
             });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -293,10 +269,8 @@ class AppComponent extends Component {
             .then((data) => {
               this.setState({
                 userAccount: data,
-                userFirstName: data.firstName,
-                userLastName: data.lastName,
                 userCompany: data.companyName,
-                logoURL: data.companyWebsite ? "https://logo.clearbit.com/" + data.companyWebsite : '',
+                logoURL: data.companyWebsite ? 'https://logo.clearbit.com/' + data.companyWebsite : '',
                 teamMembers: data.teamMembers,
                 permissions: data.permissions,
                 unsaved: false
@@ -304,7 +278,7 @@ class AppComponent extends Component {
               deferred.resolve();
             });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -328,9 +302,9 @@ class AppComponent extends Component {
                 this.setDataAsState(data);
                 deferred.resolve();
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -357,9 +331,9 @@ class AppComponent extends Component {
                 initializeChannels(data);
                 deferred.resolve();
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -386,9 +360,9 @@ class AppComponent extends Component {
                 initializeIndicators(data);
                 deferred.resolve();
               }
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -414,9 +388,9 @@ class AppComponent extends Component {
                 });
               }
               deferred.resolve();
-            })
+            });
         }
-        else if (response.status == 401){
+        else if (response.status == 401) {
           history.push('/');
           deferred.reject();
         }
@@ -431,33 +405,36 @@ class AppComponent extends Component {
 
   setDataAsState(data) {
     this.setState({
+      dataUpdated: true,
       userProfile: data.userProfile,
-      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{fields: {}, info: { weight: 100 }}],
+      targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{
+        fields: {
+          teamSize: null,
+          salary: null,
+          education: null,
+          dailyOnlinePresence: null
+        },
+        info: {
+          weight: 100
+        }
+      }],
       annualBudget: data.annualBudget,
       annualBudgetArray: data.annualBudgetArray || [],
       planDate: data.planDate,
+      UID: data.UID,
       region: data.region,
-      goals: {
-        primary: data.goals && data.goals.primary || 'InfiniGrow Recommended',
-        secondary: data.goals && data.goals.secondary || 'InfiniGrow Recommended'
-      },
       objectives: data.objectives || [],
       blockedChannels: data.blockedChannels || [],
       inHouseChannels: data.inHouseChannels || [],
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
       actualIndicators: data.actualIndicators || {},
-      plannedChannelBudgets: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].plannedChannelBudgets : {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      monthBudget: data.projectedPlan && data.projectedPlan.length>0 ? data.projectedPlan[0].monthBudget : null,
       campaigns: data.campaigns || [],
       campaignsTemplates: data.campaignsTemplates || {},
       campaignIdeas: data.campaignIdeas || [],
       numberOfPlanUpdates: data.numberOfPlanUpdates,
-      projectedPlan: data.projectedPlan || [],
-      approvedBudgets: data.approvedBudgets || [],
-      approvedBudgetsProjection: data.approvedBudgetsProjection || [],
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray || [],
@@ -476,14 +453,25 @@ class AppComponent extends Component {
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
       twitteradsapi: data.twitteradsapi,
-      attribution: data.attribution || { events: [] },
-      pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{price: '', isMonthly: false, weight: 100}],
+      attribution: data.attribution || {events: [], channelsImpact: {}},
+      pricingTiers: data.pricingTiers && data.pricingTiers.length > 0 ? data.pricingTiers : [{
+        price: '',
+        isMonthly: false,
+        weight: 100
+      }],
       planNeedsUpdate: data.planNeedsUpdate,
       notifications: data.notifications || [],
-      CEVs: data.CEVs || {},
       CIM: data.CIM || {},
       technologyStack: data.technologyStack || [],
-      historyData: data.historyData || {}
+      historyData: data.historyData || {},
+      beforeInfiniGrowData: data.beforeInfiniGrowData || {},
+      budgetConstraints: data.budgetConstraints || {},
+      planBudgets: data.planBudgets || [],
+      forecastedIndicators: data.forecastedIndicators || [],
+      namesMapping: data.namesMapping && Object.keys(data.namesMapping).length > 0 ? data.namesMapping : {
+        channels: {},
+        indicators: {}
+      }
     });
   }
 
@@ -500,9 +488,9 @@ class AppComponent extends Component {
     if (isSendEmail) {
       serverCommunication.serverRequest('POST', 'email', JSON.stringify({
           email: this.state.teamMembers.find(member => member.userId === userId).email,
-          name: this.state.teamMembers.find(member => member.userId === userId).name,
+          name: this.state.teamMembers.find(member => member.userId === userId).firstName + ' ' + this.state.teamMembers.find(member => member.userId === userId).lastName,
           type: type,
-          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger).name,
+          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger).firstName + ' ' + this.state.teamMembers.find(member => member.userId === notification.tagger).lastName,
           campaignName: notification.campaignName,
           plainComment: notification.plainComment
         }),
@@ -511,27 +499,17 @@ class AppComponent extends Component {
     }
   }
 
-  approveAllBudgets(withProjections) {
-    const json = {approvedBudgets: this.state.projectedPlan.map(projectedMonth => projectedMonth.plannedChannelBudgets)};
-    if (withProjections) {
-      json.approvedBudgetsProjection = this.state.projectedPlan.map(projectedMonth => projectedMonth.projectedIndicatorValues);
-    }
-    return this.state.updateUserMonthPlan(json, this.state.region, this.state.planDate)
-      .then(() => {
-        this.forecast();
-      })
+  sendSnippetEmail(senderEmail, UID, to) {
+    serverCommunication.serverRequest('POST', 'snippetEmail', JSON.stringify({
+        email: to,
+        UID: UID,
+        sender: senderEmail
+      }),
+      false, false, true
+    );
   }
 
-  declineAllBudgets() {
-    const projectedPlan = this.state.projectedPlan;
-    projectedPlan.forEach((month, index) => {
-      month.plannedChannelBudgets = this.state.approvedBudgets[index];
-    });
-    // this.setState({dropmenuVisible: false});
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
-  approveChannel(month, channel, budget){
+  approveChannel(month, channel, budget) {
     let approvedBudgets = this.state.approvedBudgets;
     let approvedMonth = this.state.approvedBudgets[month] || {};
     approvedMonth[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
@@ -539,53 +517,31 @@ class AppComponent extends Component {
     return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
       .then(() => {
         this.forecast();
-      })
+      });
   }
 
-  approveWholeChannel(channel) {
-    const approvedBudgets = this.state.approvedBudgets;
-    approvedBudgets.forEach((month, index) => {
-      month[channel] = this.state.projectedPlan[index].plannedChannelBudgets[channel] || 0;
-    });
-    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
-      .then(() => {
-        this.forecast();
-      })
+  optimalImprovementPlan(isCommitted, preferences, region, silent, improveMaxChanges) {
+    const plannerControls = {
+      optimizeScenarios: improveMaxChanges ? {
+        optimalImprovement: {
+          params: {
+            improveMaxChanges: improveMaxChanges
+          }
+        }
+      } : null,
+      systemControls: {
+        optimizeControl: {
+          scenario: 'optimalImprovement'
+        }
+      }
+    };
+
+    return this.plan(isCommitted, preferences, region, silent, plannerControls);
   }
 
-  declineWholeChannel(channel) {
-    const projectedPlan = this.state.projectedPlan;
-    projectedPlan.forEach((month, index) => {
-      month.plannedChannelBudgets[channel] = this.state.approvedBudgets[index][channel] || 0;
-    });
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
-  approveWholeMonth(month) {
-    const approvedBudgets = this.state.approvedBudgets;
-    approvedBudgets[month] = this.state.projectedPlan[month].plannedChannelBudgets;
-    return this.state.updateUserMonthPlan({approvedBudgets: approvedBudgets}, this.state.region, this.state.planDate)
-      .then(() => {
-        this.forecast();
-      })
-  }
-
-  declineWholeMonth(month) {
-    const projectedPlan = this.state.projectedPlan;
-    projectedPlan[month].plannedChannelBudgets = this.state.approvedBudgets[month];
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
-  declineChannel(month, channel, budget){
-    let projectedPlan = this.state.projectedPlan;
-    let projectedMonth = this.state.projectedPlan[month];
-    projectedMonth.plannedChannelBudgets[channel] = parseInt(budget.toString().replace(/[-$,]/g, ''));
-    projectedPlan[month] = projectedMonth;
-    return this.state.updateUserMonthPlan({projectedPlan: projectedPlan}, this.state.region, this.state.planDate);
-  }
-
-  plan(isCommitted, preferences, callback, region, silent){
-    let body = preferences ? JSON.stringify(preferences) : null;
+  plan(isCommitted, preferences, region, silent, plannerControls = null) {
+    const deferred = q.defer();
+    let body = preferences || plannerControls ? JSON.stringify({preferences, plannerControls}) : null;
     let func = isCommitted ? (body ? 'PUT' : 'GET') : 'POST';
     if (!silent) {
       this.setState({
@@ -610,22 +566,24 @@ class AppComponent extends Component {
                       isPlannerError: false
                     });
                   }
-                  if (callback) {
-                    callback(data);
-                  }
+                  this.updateState({
+                    numberOfPlanUpdates: data.numberOfPlanUpdates,
+                    unsaved: false
+                  });
+                  deferred.resolve(data);
                 }
               }
               else {
               }
-            })
+            });
         }
         else {
-          if (response.status == 401){
+          if (response.status == 401) {
             if (!silent) {
               history.push('/');
             }
           }
-          if (response.status == 400){
+          if (response.status == 400) {
             if (!silent) {
               this.setState({isPlannerError: true, isPlannerLoading: false});
             }
@@ -635,6 +593,7 @@ class AppComponent extends Component {
               this.setState({serverDown: true, isPlannerLoading: false});
             }
           }
+          deferred.reject();
         }
       })
       .catch((err) => {
@@ -643,35 +602,46 @@ class AppComponent extends Component {
             serverDown: true, isPlannerLoading: false
           });
         }
+        deferred.reject();
       });
+    return deferred.promise;
   }
 
-  forecast() {
-    const callback = (data) => {
-      // PATCH
-      // Update user month plan using another request
-      const approvedBudgetsProjection = this.state.approvedBudgetsProjection;
-      data.projectedPlan.forEach((month, index) => {
-        if (!approvedBudgetsProjection[index]) {
-          approvedBudgetsProjection[index] = {};
-        }
-        approvedBudgetsProjection[index] = month.projectedIndicatorValues;
-      });
-      this.state.updateUserMonthPlan({approvedBudgetsProjection: approvedBudgetsProjection}, this.state.region, this.state.planDate);
-    };
-    this.plan(false, {useApprovedBudgets: true}, callback, this.state.region, true);
+  forecast(planBudgets) {
+    return new Promise((resolve, reject) => {
+      serverCommunication.serverRequest('POST', 'forecast', JSON.stringify({
+        ...this.state,
+        planBudgets: planBudgets
+      }), this.state.region)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((data) => resolve(data));
+          }
+          else {
+            reject();
+          }
+        });
+    });
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
     const deferred = q.defer();
     this.setState({loaded: false});
-    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({monthsExceptThisMonth: monthsExceptThisMonth, attributionModel: attributionModel}), localStorage.getItem('region'))
+    serverCommunication.serverRequest('POST', 'attribution', JSON.stringify({
+      monthsExceptThisMonth: monthsExceptThisMonth,
+      attributionModel: attributionModel
+    }), localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
             .then((data) => {
               this.setDataAsState(data);
-              this.setState({loaded: true, months: this.state.previousData.length - 1 - monthsExceptThisMonth, attributionModel: attributionModel});
+              this.setState({
+                loaded: true,
+                monthsExceptThisMonth: monthsExceptThisMonth,
+                attributionModel: attributionModel
+              });
               deferred.resolve();
             });
         }
@@ -684,29 +654,102 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
+  pay() {
+    const profile = getProfileSync();
+    const user = this.state.teamMembers.find(user => user.userId === profile.user_id);
+    const email = user.email;
+    const annualBudget = getAnnualBudgetFromAppData(this.state);
+    let product = 540236;
+    if (annualBudget > 240000 && annualBudget < 1020000)
+      product = 540408;
+    if (annualBudget > 1020000)
+      product = 540409;
+    return Paddle.Checkout.open({
+      product: product,
+      email: email,
+      message: 'If you wish to pay annually and get ~22.5% discount, please send us an email to support@infinigrow.com',
+      passthrough: {UID: this.state.UID},
+      title: 'InfiniGrow',
+      allowQuantity: false,
+      successCallback: (data) => {
+        setTimeout(() => {
+          this.state.getUserAccount();
+        }, 2000);
+      }
+    });
+  };
+
+  getExtendedState(state) {
+    return calculatedDataExtender(state);
+  }
+
+  isSettingsOpen = () => {
+    return this.props.children.type === Settings;
+  };
+
+  getTabNameFromRoute = (routeElementTabName) => {
+    if (typeof routeElementTabName === 'string') {
+      return routeElementTabName;
+    }
+    else if (this.state[routeElementTabName.fromProp]) {
+      return routeElementTabName.formatter(this.state[routeElementTabName.fromProp]);
+    }
+    else {
+      return routeElementTabName.defaultName;
+    }
+  };
+
+  getTabsToRender = () => {
+    let fatherPageComponentType = this.props.children.type;
+    let childRoutes = this.props.route.childRoutes;
+
+    if (this.isSettingsOpen()) {
+      childRoutes = childRoutes.find(item => item.component === fatherPageComponentType).childRoutes;
+      fatherPageComponentType = this.props.children.props.children.type;
+    }
+
+    const childRoute = childRoutes.find(item => item.component === fatherPageComponentType);
+    return childRoute.childRoutes ? childRoute.childRoutes.map((item) => {
+        return {name: this.getTabNameFromRoute(item.tabName), path: item.path};
+      })
+      : [];
+  };
+
   render() {
+    const tabs = this.getTabsToRender();
+
+    const extendedData = this.state.dataUpdated ? this.getExtendedState(this.state) : this.state;
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, this.state));
+      (child) => React.cloneElement(child, extendedData));
+
+    if (extendedData.calculatedData && !extendedData.calculatedData.isAccountEnabled) {
+      this.pay();
+      return null;
+    }
+
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
-        <Header {... this.state} path={this.props.location.pathname}/>
-        <Sidebar userAccount={this.state.userAccount} path={this.props.location.pathname}/>
-        <UnsavedPopup hidden={ !this.state.showUnsavedPopup } callback={ this.state.callback }/>
-        <PlanLoading showPopup={this.state.isPlannerLoading} close={ ()=> { this.setState({isPlannerLoading: false}) } }/>
-        { this.state.loaded ?
+        <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
+        <Sidebar userAccount={this.state.userAccount}
+                 path={this.props.location.pathname}/>
+        <UnsavedPopup hidden={!this.state.showUnsavedPopup} callback={this.state.callback}/>
+        <PlanLoading showPopup={this.state.isPlannerLoading} close={() => {
+          this.setState({isPlannerLoading: false});
+        }}/>
+        {this.state.loaded ?
           <div className={this.classes.wrap} data-loading={this.state.isPlannerLoading ? true : null}>
             {childrenWithProps}
           </div>
-          : <div className={ this.classes.loading }>
-            <Popup className={ this.classes.popup }>
+          : <div className={this.classes.loading}>
+            <Popup className={this.classes.popup}>
               <div>
-                <Loading />
+                <Loading/>
               </div>
             </Popup>
-          </div> }
+          </div>}
       </div>
-    </FeatureToggleProvider>
+    </FeatureToggleProvider>;
   }
 }
 
-export default withRouter(DragDropContext(HTML5Backend)(AppComponent))
+export default withRouter(DragDropContext(HTML5Backend)(AppComponent));

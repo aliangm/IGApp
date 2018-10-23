@@ -43,7 +43,7 @@
 }
 
 .close-popup {
-    background: url(../../assets/x-wight.svg) center center no-repeat;
+    background: url(/assets/x-wight.svg) center center no-repeat;
     background-size: contain;
     width: 15px;
     height: 15px;

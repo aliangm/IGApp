@@ -4,6 +4,10 @@
     margin: 38px 15px;
 }
 
+.toggle {
+    margin: 12px 15px 5px;
+}
+
 .table {
     width: 100%;
     table-layout: auto;
@@ -32,9 +36,9 @@
     cursor: pointer;
 }
 
-@mixin icon-nodpi device:desktop, ../../assets/desktop;
-@mixin icon-nodpi device:tablet, ../../assets/tablet;
-@mixin icon-nodpi device:phone, ../../assets/phone;
+@mixin icon-nodpi device:Computer, /assets/desktop;
+@mixin icon-nodpi device:Tablet, /assets/tablet;
+@mixin icon-nodpi device:Mobile, /assets/phone;
 
 .icon {
     background-repeat: no-repeat;

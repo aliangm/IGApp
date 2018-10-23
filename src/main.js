@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route } from 'react-router';
+import {Router, Route} from 'react-router';
 import history from 'history';
 import CMO from 'components/pages/dashboard/CMO';
 import Dashboard from './components/pages/Dashboard';
-import Profile from './components/pages/Profile';
+import Product from './components/pages/Product';
 import Welcome from './components/pages/Welcome';
 import Preferences from './components/pages/Preferences';
 import TargetAudience from './components/pages/TargetAudience';
@@ -16,10 +16,9 @@ import SignIn from './components/pages/SignIn';
 import Campaigns from './components/pages/Campaigns';
 import Attribution from './components/pages/Attribution';
 import Users from './components/pages/Users';
-import Insights from './components/pages/Insights';
 import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
-import {isAuthenticated, logout, handleAuthentication, getProfileSync} from './components/utils/AuthService'
+import {isAuthenticated, logout, handleAuthentication, getProfileSync, crossOriginVerification} from './components/utils/AuthService';
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
@@ -29,6 +28,7 @@ import Content from 'components/pages/analyze/Content';
 import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
 import Setup from 'components/pages/attribution/Setup';
+import AttributionLink from 'components/pages/AttributionLink';
 import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
@@ -40,68 +40,128 @@ import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
+import Settings from 'components/pages/Settings';
+import {formatDate} from 'components/utils/date';
+import {userPermittedToPage} from 'utils';
+import config from 'components/utils/Configuration';
+import Login from 'components/pages/signIn/Login';
+import SignUp from 'components/pages/signIn/SignUp';
+import ForgotPassword from 'components/pages/signIn/ForgotPassword';
+
 style.use();
 
 // validate authentication for private routes
 const requireAdminAuth = (nextState, replace) => {
   if (!isAuthenticated() || !getProfileSync().app_metadata || !getProfileSync().app_metadata.isAdmin) {
     logout();
-    replace({ pathname: '/' })
+    replace({pathname: '/'});
   }
 };
 
 // validate authentication for private routes
 const requireAuth = (nextState, replace) => {
   if (!isAuthenticated()) {
-    replace({ pathname: '/' })
+    replace({pathname: '/'});
+  }
+};
+
+// Validate permission on the page
+const requirePermission = (page, nextState, replace) => {
+  if (!isAuthenticated() || !getProfileSync().app_metadata) {
+    replace({pathname: '/'});
+  }
+  else if (!userPermittedToPage(page)) {
+    replace({pathname: '/campaigns/by-channel'});
+  }
+};
+
+const onUpdate = () => {
+  window.scrollTo(0, 0);
+  if (config.sendEvents && analytics) {
+    analytics.page();
+    analytics.identify(getProfileSync().email);
   }
 };
 
 ReactDOM.render(
-  <Router onUpdate={() => window.scrollTo(0, 0)} history={ history }>
-    <Route path="/" component={ SignIn } />
-    <Route path="/access_token=(:token)" onEnter={handleAuthentication}/>
-    <Route component={ App } onEnter={ requireAuth }>
-      <Route component={ Dashboard } onEnter={ requireAdminAuth }>
-        <Route path="/dashboard/CMO" component={ CMO } onEnter={ requireAdminAuth }/>
-        <Route path="/dashboard/metrics" component={ Indicators } onEnter={ requireAdminAuth }/>
+  <Router onUpdate={onUpdate} history={history}>
+    <Route path='/login' component={Login}/>
+    <Route path='/forgotPassword' component={ForgotPassword}/>
+    <Route path='/signup' component={SignUp}/>
+    <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
+    <Route path="/loginCallBack" onEnter={crossOriginVerification} />
+    <Route component={App} onEnter={requireAuth}>
+      <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
+        <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
+        <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>
-      <Route path="/profile/product" component={ Profile } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/preferences" component={ Preferences } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/target-audience" component={ TargetAudience } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/technology-stack" component={ TechnologyStack } onEnter={ requireAdminAuth }/>
-      <Route path="/profile/integrations" component={ Platforms } onEnter={ requireAdminAuth }/>
-      <Route path="/manual" component={ Manual } onEnter={ requireAdminAuth }/>
-      <Route path="/settings" component={ Welcome } onEnter={ requireAdminAuth }/>
-      <Route component={ Plan } onEnter={ requireAdminAuth }>
-        <Route path="/plan/plan/current" component={ CurrentTab } onEnter={ requireAdminAuth }/>
-        <Route path="/plan/plan/annual" component={ AnnualTab } onEnter={ requireAdminAuth }/>
-        <Route path="/plan/plan/projections" component={ ProjectionsTab } onEnter={ requireAdminAuth }/>
+      <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
+      <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
+      <Route component={Plan} onEnter={(...parameters) => requirePermission('plan', ...parameters)}>
+        <Route path="/plan/current"
+               component={CurrentTab}
+               onEnter={requireAuth}
+          // Special treatment for state derived tab name. The state is saved at App.js level therefore
+          // can't render the name here. DefaultName is for situation where the property is still loading
+               tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
+        <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
+        <Route path="/plan/projections"
+               component={ProjectionsTab}
+               onEnter={requireAuth}
+               tabName='Forecasting'/>
+        <Route path="/plan/planned-vs-actual"
+               component={PlannedVsActual}
+               onEnter={requireAuth}
+               tabName="Planned VS Actual"/>
       </Route>
-      <Route component={ Campaigns } onEnter={ requireAuth }>
-        <Route path="/campaigns/by-channel" component={ ByChannelTab } onEnter={ requireAuth }/>
-        <Route path="/campaigns/by-status" component={ ByStatusTab } onEnter={ requireAuth }/>
-        <Route path="/campaigns/online-performance" component={ OnlineTab } onEnter={ requireAuth }/>
-        <Route path="/campaigns/ideas" component={ IdeasTab } onEnter={ requireAuth }/>
+      <Route component={Campaigns} onEnter={requireAuth}>
+        <Route path="/campaigns/by-channel" component={ByChannelTab} onEnter={requireAuth} tabName='By Channel'/>
+        <Route path="/campaigns/by-status" component={ByStatusTab} onEnter={requireAuth} tabName='By Status'/>
+        <Route path="/campaigns/online-performance"
+               component={OnlineTab}
+               onEnter={requireAuth}
+               tabName='Online Performance'/>
+        <Route path="/campaigns/ideas" component={IdeasTab} onEnter={requireAuth} tabName='Ideas'/>
       </Route>
-      <Route component={ Attribution } onEnter={ requireAuth }>
-        <Route path="/measure/attribution/setup" component={ Setup } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/tracking-plan" component={ TrackingPlan } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/tracking-urls" component={ TrackingUrls } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/offline" component={ Offline } onEnter={ requireAuth }/>
-        <Route path="/measure/attribution/site-structure" component={ SiteStructure } onEnter={ requireAuth }/>
+      <Route component={Settings} onEnter={requireAuth}>
+        <Route path="/settings/account" component={Welcome} onEnter={requireAuth}/>
+        <Route component={Attribution} onEnter={requireAuth}>
+          <Route path="/settings/attribution/setup" component={Setup} onEnter={requireAuth} tabName='Setup'/>
+          <Route path="/settings/attribution/tracking-plan"
+                 component={TrackingPlan}
+                 onEnter={requireAuth}
+                 tabName='Tracking Plan'/>
+          <Route path="/settings/attribution/tracking-urls"
+                 component={TrackingUrls}
+                 onEnter={requireAuth}
+                 tabName='Campaign URLs'/>
+          <Route path="/settings/attribution/offline" component={Offline} onEnter={requireAuth} tabName='Offline'/>
+          <Route path="/settings/attribution/site-structure"
+                 component={SiteStructure}
+                 onEnter={requireAuth}
+                 tabName='Site Structure'/>
+        </Route>
+        <Route path="/settings/profile/product" component={Product} onEnter={requireAuth}/>
+        <Route path="/settings/profile/preferences"
+               component={Preferences}
+               onEnter={requireAuth}/>
+        <Route path="/settings/profile/target-audience"
+               component={TargetAudience}
+               onEnter={requireAuth}/>
+        <Route path="/settings/profile/integrations"
+               component={Platforms}
+               onEnter={requireAuth}/>
       </Route>
-      <Route path="/measure/audiences" component={ Users } onEnter={ requireAdminAuth }/>
-      <Route component={ Analyze } onEnter={ requireAdminAuth }>
-        <Route path="/measure/analyze/overview" component={ Overview } onEnter={ requireAdminAuth }/>
-        <Route path="/measure/analyze/channels" component={ Channels } onEnter={ requireAdminAuth }/>
-        <Route path="/measure/analyze/campaigns" component={ CampaignsMeasure } onEnter={ requireAdminAuth }/>
-        <Route path="/measure/analyze/content" component={ Content } onEnter={ requireAdminAuth }/>
+      <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>
+        <Route path="/analyze/overview" component={Overview} onEnter={requireAuth} tabName='Overview'/>
+        <Route path="/analyze/channels" component={Channels} onEnter={requireAuth} tabName='Channels'/>
+        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='campaigns'/>
+        <Route path="/analyze/content" component={Content} onEnter={requireAuth} tabName='Content'/>
+        <Route path="/analyze/audiences" component={Users} onEnter={requireAuth} tabName='Audiences'/>
       </Route>
-      <Route path="/plan/insights" component={ Insights } onEnter={ requireAdminAuth }/>
-      <Route path="/trustability" component={ Trustability } onEnter={ requireAdminAuth }/>
-      <Route path="/plan/planned-vs-actual" component={ PlannedVsActual } onEnter={ requireAdminAuth }/>
+      <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
     </Route>
+    <Route component={AttributionLink} path='/attribution/:UID'></Route>
   </Router>,
   document.querySelector('#main')
 );

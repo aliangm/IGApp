@@ -1,40 +1,33 @@
-.head {
-  height: 90px;
-  border-bottom: 2px solid #e7e9ed;
-  display: flex;
-  align-items: center;
-  background: #fafbfd;
-  position: fixed;
-  top: 70px;
-  width: calc(100% - 240px);
-  z-index: 9;
+.static {
+  margin-left: 145px;
+  margin-top: 0;
+  position: relative;
 }
 
-@media (max-width: 1440px) {
-  .head {
-    width: calc(100% - 88px);
-  }
+.head {
+  height: 114px;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  width: calc(100% - 80px);
+  padding: 0 40px;
+}
+
+.column {
+  width: 33.33%;
+  display: flex;
 }
 
 .head-title {
   text-transform: capitalize;
-  font-size: 32px;
-  /*line-height: 36px;*/
-  letter-spacing: -0.01em;
-  overflow: hidden;
+  font-size: 24px;
   font-weight: 500;
-  color: #0099CC;
+  letter-spacing: 0.1px;
+  color: #222a41;
+  overflow: hidden;
   flex-shrink: 0;
   flex-grow: 0;
-  padding-left: 32px;
-}
-
-.head-tabs {
-  margin-left: 30px;
-  flex-shrink: 0;
-  flex-grow: 0;
-  height: 100%;
-  display: flex;
+  align-self: center;
 }
 
 .head-plan {
@@ -50,47 +43,10 @@
   text-align: center;
   position: relative;
   white-space: nowrap;
-  margin-right: 30px;
-}
-
-.head-tab {
-  height: 100%;
-  padding: 0 16px 0 15px;
-  text-transform: capitalize;
-  font-size: 16px;
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-  white-space: nowrap;
-  color: #354052;
-  text-decoration: none;
-}
-
-.head-tab:hover {
-  background-color: #f2f9fc;
-}
-
-.head-tab-selected {
-  composes: head-tab;
-}
-
-.head-tab-selected::after {
-  content: '';
-
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: #1889dd;
 }
 
 .wrap {
-  padding-top: 90px;
+  padding-top: 110px;
 }
 
 .pageInner {
@@ -101,6 +57,7 @@
   margin: 0 !important;
   padding: 0 !important;
   background: #f5f6fb;
+  position: relative;
 }
 
 .title {
@@ -131,7 +88,7 @@
   padding-left: 41px;
   margin-right: auto;
 
-  background: url(../../assets/plan_icons/arrow.svg) 12px 60% no-repeat;
+  background: url(/assets/plan_icons/arrow.svg) 12px 60% no-repeat;
   background-size: 17px auto;
 }
 
@@ -217,7 +174,7 @@
 }
 
 .budget-left-to-plan-ok {
-  background: url(../../assets/success_bltp.svg) center center no-repeat;
+  background: url(/assets/success_bltp.svg) center center no-repeat;
   background-size: contain;
   height: 24px;
   width:24px;
@@ -242,9 +199,8 @@
 }
 
 .dropmenu {
-  width: 100px;
   left: 15px !important;
-  padding: 4px 0 !important;
+  padding: 8px !important;
   min-height: inherit !important;
   top: 45px !important;
   text-transform: capitalize;
@@ -252,6 +208,9 @@
 
 .dropmenu-edit {
   width: 110px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 6px 0 rgba(27, 35, 56, 0.04);
   composes: dropmenu;
 }
 
@@ -266,42 +225,26 @@
 }
 
 .dropmenu-item {
-  padding: 0 13px;
+  padding-left: 10px;
   display: -webkit-box;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   position: relative;
   cursor: pointer;
-  color: #273142;
-  font-size: 14px;
-  height: 33px;
   text-decoration: none;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: #707ea7;
 }
 
 .dropmenu-item:hover, .dropmenu-item[data-selected] {
-  background-color: #E5F5F8;
-}
-
-.dropmenu-item-add {
-  composes: dropmenu-item;
-  background-color: #259af2;
-  color: white;
-  justify-content: center;
-}
-
-.dropmenu-item-cancel {
-  composes: dropmenu-item;
-  color: #259af2;
-  justify-content: center;
-}
-
-.dropmenu-item-cancel:hover, .dropmenu-item-cancel[data-selected] {
-  background-color: initial;
-}
-
-.dropmenu-item-add:hover, .dropmenu-item-add[data-selected] {
-  background-color: #259af2;
+  border-radius: 3px;
+  background-color: #f5f6fa;
+  font-weight: 600;
+  color: #4d91fc;
 }
 
 .dropButton {
@@ -312,13 +255,6 @@
   padding: 5px 12px;
   display: flex;
   justify-content: flex-end;
-}
-
-.left {
-  width: 50%;
-  display: flex;
-  justify-content: flex-start;
-  -webkit-box-pack: start;
 }
 
 .right {
@@ -335,11 +271,11 @@
 
 .forecast-button {
   margin-left: 15px;
-  background: url(../../assets/graph.svg) center center no-repeat;
-  background-size: 26px auto;
+  background: white url(/assets/forecast.svg) center center no-repeat;
+  background-size: 14px 14px;
   width: 36px;
   height: 36px;
-  box-shadow: inset 0 0 0 2px #2ea1f8;
   border-radius: 4px;
   cursor: pointer;
+  box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
 }
