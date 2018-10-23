@@ -24,7 +24,6 @@ import Button from 'components/controls/Button';
 import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
 import FacebookCampaignsPopup from 'components/importCampaignsPopups/FacebookCampaignsPopup';
-import CRMStyle from 'styles/indicators/crm-popup.css';
 import AdwordsCampaignsPopup from 'components/importCampaignsPopups/AdwordsCampaignsPopup';
 import SalesforceCampaignsPopup from 'components/importCampaignsPopups/SalesforceCampaignsPopup';
 import LinkedinCampaignsPopup from 'components/importCampaignsPopups/LinkedinCampaignsPopup';
@@ -356,7 +355,7 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="Twitter Campigns" loading={this.isLoading('twitterCampaigns')}
+                connected={false} title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
                 icon='platform:twitterAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
