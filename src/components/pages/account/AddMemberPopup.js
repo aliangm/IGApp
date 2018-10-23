@@ -65,12 +65,12 @@ export default class AddMemberPopup extends Component {
   constructor(props) {
     super(props);
 
-    this.state = this.initialState;
+    this.state = {...this.initialState};
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.hidden !== this.props.hidden) {
-      this.setState(this.initialState);
+      this.setState({...this.initialState});
     }
   }
 
