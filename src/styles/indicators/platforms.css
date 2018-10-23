@@ -74,4 +74,4 @@
 @mixin icon-nodpi platform:facebookAds, /assets/platform-icons/facebook-campaigns;
 @mixin icon-nodpi platform:googleAds, /assets/platform-icons/google-campaigns;
 @mixin icon-nodpi platform:twitterAds, /assets/platform-icons/twitter-campaigns;
-@mixin icon-nodpi platform:linkedInAds, /assets/linkedin-logo, png;
+@mixin icon-nodpi platform:linkedInAds, /assets/linkedin-ads, png;
