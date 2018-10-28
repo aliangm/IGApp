@@ -16,7 +16,6 @@ export default class SimpleIntegrationPopup extends Component {
 
   makeServerRequest = () => {
     return new Promise((resolve, reject) => {
-      this.props.closeWhileWaitingForRequest && this.refs.integrationPopup.close();
       this.props.serverRequest()
         .then((response) => {
           if (response.ok) {
