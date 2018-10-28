@@ -3,17 +3,22 @@ import history from 'history';
 import config from 'components/utils/Configuration';
 import q from 'q';
 import {getParameterByName} from 'utils';
+import randomstring from 'randomstring';
+
+const state = randomstring.generate();
 
 const CONNECTION_TYPE = 'Username-Password-Authentication';
 const options = {
   responseType: 'token',
   clientID: config.authClientId,
   domain: config.authDomain,
-  redirectUri: window.location.origin
+  redirectUri: window.location.origin,
+  state: state
 };
 const webAuth = new auth0.WebAuth(options);
 
 export function login(email, password, callback) {
+  localStorage.setItem('state', state);
   webAuth.login({email: email, password: password}, callback);
 }
 
@@ -38,7 +43,7 @@ export function handleAuthentication(nextState, replace, callback) {
 
   const hash = window.location.hash;
   if (hash) {
-    webAuth.parseHash({hash: hash}, function (err, authResult) {
+    webAuth.parseHash({hash: hash, state: localStorage.getItem('state')}, function (err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
         setSession(authResult);
         history.push('/');

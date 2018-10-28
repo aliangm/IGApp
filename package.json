@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "auth0-js": "9.8",
+    "randomstring": "^1.1.5",
     "react-simple-chatbot": "0.2.3",
     "styled-components": "^3.4.2"
   }
