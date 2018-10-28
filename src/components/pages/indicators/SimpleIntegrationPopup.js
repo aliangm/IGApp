@@ -44,6 +44,9 @@ export default class SimpleIntegrationPopup extends Component {
     if (!isError) {
       this.refs.propogateStep(true);
     }
+    else {
+      this.props.closeWhileWaitingForRequest && window.alert('Error Occurred');
+    }
   };
 
   open = () => {
