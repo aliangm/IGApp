@@ -331,7 +331,8 @@ export default class Platforms extends Component {
               <div className={this.classes.row}>
               </div>
               <Platform
-                connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
+                connected={!!this.props.adwordsapi} title="Adwords Campaigns"
+                loading={this.isLoading('adwordsCampaigns')}
                 icon='platform:googleAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -340,7 +341,8 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
+                connected={!!this.props.facebookadsapi}
+                title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
                 icon='platform:facebookAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -349,7 +351,8 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
+                connected={!!this.props.linkedinadsapi} title="LinkedIn Campaigns"
+                loading={this.isLoading('linkedinCampaigns')}
                 icon='platform:linkedInAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -358,7 +361,8 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
+                connected={!!this.props.twitteradsapi}
+                title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
                 icon='platform:twitterAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
