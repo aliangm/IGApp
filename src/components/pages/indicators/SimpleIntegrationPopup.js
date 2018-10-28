@@ -11,11 +11,13 @@ export default class SimpleIntegrationPopup extends Component {
 
   static defaultProps = {
     placeHolder: '',
-    width: '400px'
+    width: '400px',
+    closeWhileWaitingForRequest: false
   };
 
   makeServerRequest = () => {
     return new Promise((resolve, reject) => {
+      this.props.closeWhileWaitingForRequest && this.refs.integrationPopup.close();
       this.props.serverRequest()
         .then((response) => {
           if (response.ok) {
