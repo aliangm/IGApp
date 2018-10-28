@@ -14,25 +14,38 @@ export default class SimpleIntegrationPopup extends Component {
     width: '400px'
   };
 
+  loadingStarted = () => {
+    this.props.loadingStarted && this.props.loadingStarted();
+  };
+
+  loadingFinished = () => {
+    this.props.loadingFinished && this.props.loadingFinished();
+  };
+
   makeServerRequest = () => {
     return new Promise((resolve, reject) => {
+      this.loadingStarted();
       this.props.serverRequest()
         .then((response) => {
           if (response.ok) {
             response.json()
               .then(data => {
+                this.loadingFinished();
                 this.props.getDataSuccess(data);
                 resolve();
               });
           }
           else if (response.status == 401) {
+            this.loadingFinished();
             history.push('/');
           }
           else {
+            this.loadingFinished();
             reject(new Error('error getting data'));
           }
         })
         .catch((error) => {
+          this.loadingFinished();
           reject(new Error('error getting data'));
         });
     });

@@ -169,6 +169,8 @@ export default class Platforms extends Component {
                                : this.props.userAccount.companyWebsite}
                              ref="moz" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Moz}
                              actualIndicators={this.props.actualIndicators}
+                             loadingStarted={() => this.setLoading('moz', true)}
+                             loadingFinished={() => this.setLoading('moz', false)}
 
           />
           <GoogleSheetsAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleSheetsAuto}
@@ -304,9 +306,11 @@ export default class Platforms extends Component {
             </div>
             <div className={platformsStyle.locals.platformLine} ref="seo">
               <Platform connected={this.props.mozapi} title="Moz" indicators={PLATFORM_INDICATORS_MAPPING['Moz']}
+                        loading={this.isLoading('moz')}
                         icon="platform:moz" open={() => {
                 this.refs.moz.open();
-              }} hidden={this.isHidden('moz')}/>
+              }} hidden={this.isHidden('moz')}
+              />
             </div>
           </div>
           <div>
