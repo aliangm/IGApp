@@ -48,6 +48,14 @@ export default class IntegrationPopup extends Component {
     this.setState({error: false, hidden: true, indicatorsPopup: false});
   };
 
+  loadingStarted = () => {
+    this.props.loadingStarted && this.props.loadingStarted();
+  };
+
+  loadingFinished = () => {
+    this.props.loadingFinished && this.props.loadingFinished();
+  };
+
   propogateStep = (openIndicatorsPopup) => {
     if (openIndicatorsPopup) {
       this.setState({indicatorsPopup: true});
@@ -58,12 +66,15 @@ export default class IntegrationPopup extends Component {
   };
 
   done = () => {
+    this.loadingStarted();
     this.props.makeServerRequest()
       .then((shouldShowIndicatorsPopup = true) => {
         this.setState({indicatorsPopup: shouldShowIndicatorsPopup});
+        this.loadingFinished();
         this.props.onDoneServerRequest(false);
       })
       .catch((error) => {
+        this.loadingFinished();
         this.setState({error: true});
         this.props.onDoneServerRequest(true);
       });

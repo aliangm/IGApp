@@ -92,7 +92,6 @@ export default class AuthorizationIntegrationPopup extends Component {
   };
 
   makeServerRequest = () => {
-    this.loadingStarted();
     this.refs.integrationPopup.close();
     return this.props.makeServerRequest();
   };
@@ -101,7 +100,6 @@ export default class AuthorizationIntegrationPopup extends Component {
     if (isError) {
       window.alert('Error occurred');
     }
-    this.loadingFinished();
   };
 
   render() {
