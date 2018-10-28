@@ -15,7 +15,7 @@ export default class IntegrationPopup extends Component {
   static propTypes = {
     cancelButtonText: PropTypes.string,
     doneButtonText: PropTypes.string,
-    makeServerRequest: PropTypes.func.isRequired,
+    makeServerRequest: PropTypes.func,
     affectedIndicators: PropTypes.arrayOf(PropTypes.string),
     width: PropTypes.string,
     actualIndicators: PropTypes.object,
