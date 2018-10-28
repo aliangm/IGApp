@@ -444,7 +444,7 @@ class AppComponent extends Component {
       isFacebookAuto: !!data.facebookapi,
       isYoutubeAuto: !!data.youtubeapi,
       mozapi: data.mozapi,
-      salesforceAuto: data.salesforceapi,
+      salesforceapi: data.salesforceapi,
       isLinkedinAuto: !!data.linkedinapi,
       isTwitterAuto: !!data.twitterapi,
       googleSheetsAuto: data.googlesheetsapi,
