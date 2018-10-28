@@ -89,11 +89,11 @@ export default class TagManagerAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(err);
+            reject(new Error('Error creating tag in Tag Manager'));
           }
         })
         .catch(function (err) {
-          reject(err);
+          reject(new Error('Error creating tag in Tag manager'));
         });
     });
   };
@@ -144,22 +144,23 @@ export default class TagManagerAutomaticPopup extends Component {
           resolve(true);
         });
       }}
+      makeServerRequest={this.makeServerRequest}
+      platformTitle='Tag Manager'
+    >
 
-      makeServerRequest={this.makeServerRequest}>
-
-      <div className={ this.classes.row }>
+      <div className={this.classes.row}>
         <Select {...selects.account} selected={this.state.selectedAccount}
                 onChange={(e) => {
                   this.setState({selectedAccount: e.value}, this.getContainersForUser);
                 }}/>
       </div>
-      <div className={ this.classes.row }>
+      <div className={this.classes.row}>
         <Select {...selects.container} selected={this.state.selectedContainer}
                 onChange={(e) => {
                   this.setState({selectedContainer: e.value}, this.getWorkspacesForUser);
                 }}/>
       </div>
-      <div className={ this.classes.row }>
+      <div className={this.classes.row}>
         <Select {...selects.workspace} selected={this.state.selectedWorkspace}
                 onChange={(e) => {
                   this.setState({selectedWorkspace: e.value});

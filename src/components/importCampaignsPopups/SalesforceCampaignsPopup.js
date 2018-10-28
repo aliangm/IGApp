@@ -241,6 +241,7 @@ export default class SalesforceCampaigns extends Component {
                                           } : null}
                                           doneButtonText={this.state.tab === 0 ? 'Next' : undefined}
                                           doneButtonAction={this.state.tab === 0 ? this.next : null}
+                                          platformTitle='Salesforce'
 
     >
       {this.state.tab === 0 ?

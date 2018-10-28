@@ -60,7 +60,7 @@ export default class LinkedinAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(new Error('error to get LinkedIn data'));
+            reject(new Error('error getting LinkedIn data'));
           }
         });
     });
@@ -88,6 +88,7 @@ export default class LinkedinAutomaticPopup extends Component {
                                           loadingFinished={this.props.loadingFinished}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
+                                          platformTitle='LinkedIn'
     >
       {this.state.accounts.length > 0
         ? <div>

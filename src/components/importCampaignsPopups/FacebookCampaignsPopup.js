@@ -12,6 +12,7 @@ export default class FacebookCampaignsPopup extends Component {
     return <CampaignsImportPopup ref='campignImportRef'
                                  title='Choose Facebook Account'
                                  api='facebookadsapi'
+                                 platformTitle='Facebook Ads'
                                  {...this.props}
     />;
   }

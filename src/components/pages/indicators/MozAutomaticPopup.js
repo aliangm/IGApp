@@ -41,6 +41,7 @@ export default class MozAutomaticPopup extends Component {
                                    loadingStarted={this.props.loadingStarted}
                                    loadingFinished={this.props.loadingFinished}
                                    closeWhileWaitingForRequest={true}
+                                   platformTitle='Moz'
     />;
   }
 }
