@@ -11,8 +11,7 @@ export default class SimpleIntegrationPopup extends Component {
 
   static defaultProps = {
     placeHolder: '',
-    width: '400px',
-    closeWhileWaitingForRequest: false
+    width: '400px'
   };
 
   makeServerRequest = () => {
@@ -40,15 +39,6 @@ export default class SimpleIntegrationPopup extends Component {
     });
   };
 
-  onDoneServerRequest = (isError) => {
-    if (!isError) {
-      this.refs.propogateStep(true);
-    }
-    else {
-      this.props.closeWhileWaitingForRequest && window.alert('Error Occurred');
-    }
-  };
-
   open = () => {
     this.refs.integrationPopup.open();
   };
@@ -57,11 +47,11 @@ export default class SimpleIntegrationPopup extends Component {
     return <IntegrationPopup ref="integrationPopup"
                              width={this.props.width}
                              makeServerRequest={this.makeServerRequest}
-                             onDoneServerRequest={this.onDoneServerRequest}
                              affectedIndicators={this.props.affectedIndicators}
                              actualIndicators={this.props.actualIndicators}
                              loadingStarted={this.props.loadingStarted}
                              loadingFinished={this.props.loadingFinished}
+                             closeWhileWaitingForRequest={this.props.closeWhileWaitingForRequest}
     >
       <div style={{display: 'grid'}}>
         <div className={this.classes.row}>

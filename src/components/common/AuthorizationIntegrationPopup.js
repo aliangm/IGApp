@@ -92,22 +92,15 @@ export default class AuthorizationIntegrationPopup extends Component {
   };
 
   makeServerRequest = () => {
-    this.refs.integrationPopup.close();
     return this.props.makeServerRequest();
-  };
-
-  onDoneServerRequest = (isError) => {
-    if (isError) {
-      window.alert('Error occurred');
-    }
   };
 
   render() {
     return <div style={{width: '100%'}}>
       <IntegrationPopup {...this.props}
-                        onDoneServerRequest={this.onDoneServerRequest}
                         makeServerRequest={this.makeServerRequest}
                         ref="integrationPopup"
+                        closeWhileWaitingForRequest={true}
       >
         {this.props.children}
       </IntegrationPopup>

@@ -16,19 +16,20 @@ export default class IntegrationPopup extends Component {
     cancelButtonText: PropTypes.string,
     doneButtonText: PropTypes.string,
     makeServerRequest: PropTypes.func.isRequired,
-    onDoneServerRequest: PropTypes.func.isRequired,
     affectedIndicators: PropTypes.arrayOf(PropTypes.string),
     width: PropTypes.string,
     actualIndicators: PropTypes.object,
     innerClassName: PropTypes.string,
     contentClassName: PropTypes.string,
     cancelButtonAction: PropTypes.func,
-    doneButtonAction: PropTypes.func
+    doneButtonAction: PropTypes.func,
+    closeWhileWaitingForRequest: PropTypes.bool
   };
 
   static defaultProps = {
     cancelButtonText: 'Cancel',
-    doneButtonText: 'Done'
+    doneButtonText: 'Done',
+    closeWhileWaitingForRequest: false
   };
 
   constructor(props) {
@@ -67,16 +68,21 @@ export default class IntegrationPopup extends Component {
 
   done = () => {
     this.loadingStarted();
+    this.props.closeWhileWaitingForRequest && this.close();
     this.props.makeServerRequest()
       .then((shouldShowIndicatorsPopup = true) => {
         this.setState({indicatorsPopup: shouldShowIndicatorsPopup});
         this.loadingFinished();
-        this.props.onDoneServerRequest(false);
       })
       .catch((error) => {
+        if (this.props.closeWhileWaitingForRequest) {
+          window.alert('Error Occurred');
+        }
+        else {
+          this.setState({error: true});
+        }
+
         this.loadingFinished();
-        this.setState({error: true});
-        this.props.onDoneServerRequest(true);
       });
   };
 
