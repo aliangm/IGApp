@@ -11,7 +11,8 @@ export default class Login extends Component {
 
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      error: undefined
     };
   }
 
@@ -26,11 +27,15 @@ export default class Login extends Component {
     return <div>
       <SignInForm title='Welcome back!'
                   subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
-                  buttonAction={() => login(this.state.email, this.state.password, (error) => {
-                    if (error) {
-                      this.setState({error: error.description});
-                    }
-                  })}
+                  buttonAction={() => {
+                    this.setState({error: undefined});
+
+                    login(this.state.email, this.state.password, (error) => {
+                      if (error) {
+                        this.setState({error: error.description});
+                      }
+                    })
+                  }}
                   buttonText='Sign in'
                   buttonDisabled={false}
                   inputValueChanged={this.inputValueChanged}
