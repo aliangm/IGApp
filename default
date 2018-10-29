@@ -8,6 +8,12 @@ server {
         rewrite ^ https://$host$request_uri? permanent;
     }
 
+     location ~* ^/$ {
+        add_header Cache-Control must-revalidate;
+
+        etag on;
+    }
+
     location /api/ {
             rewrite ^/api/(.*) /$1 break;
              proxy_pass http://localhost:3000;
