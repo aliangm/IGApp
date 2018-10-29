@@ -42,7 +42,10 @@ export default class SignUp extends Component {
                          signup(this.state.email, this.state.password, (error) => {
                            if (error) {
                              if (error.name === 'PasswordStrengthError') {
-                               this.setState({error: 'Incorrect Password Format, password should be: \n' + error.policy});
+                               this.setState({
+                                 error: 'Incorrect Password Format, password should be: \n' +
+                                   error.policy
+                               });
                              }
                              else {
                                this.setState({error: error.description});
@@ -51,7 +54,7 @@ export default class SignUp extends Component {
                            else {
                              alert('User created successfully!');
                            }
-                         })
+                         });
                        }}
                        inputs={[
                          {

@@ -34,7 +34,7 @@ export default class Login extends Component {
                       if (error) {
                         this.setState({error: error.description});
                       }
-                    })
+                    });
                   }}
                   buttonText='Sign in'
                   buttonDisabled={false}
