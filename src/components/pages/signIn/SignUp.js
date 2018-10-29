@@ -36,10 +36,10 @@ export default class SignUp extends Component {
                        buttonAction={() => signup(this.state.email, this.state.password, (error) => {
                          if (error) {
                            if (error.name === 'PasswordStrengthError') {
-                             alert('Incorrect Password Format, password should be: \n' + error.policy);
+                             this.setState({error: 'Incorrect Password Format, password should be: \n' + error.policy});
                            }
                            else {
-                             alert(error.description);
+                             this.setState({error: error.description});
                            }
                          }
                          else {
@@ -75,6 +75,7 @@ export default class SignUp extends Component {
                        buttonDisabled={!this.state.acceptedTerms}
                        bottomComponent={<div onClick={() => history.push('/login')}>
                          Already using InfiniGrow? Log in here →</div>}
+                       error={this.state.error}
     />;
   }
 }
