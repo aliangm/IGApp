@@ -83,6 +83,7 @@ export default class TagManagerAutomaticPopup extends Component {
         localStorage.getItem('region'))
         .then((response) => {
           if (response.ok) {
+            window.alert('Tag was created and published successfully');
             resolve(false);
           }
           else if (response.status == 401) {
@@ -147,19 +148,19 @@ export default class TagManagerAutomaticPopup extends Component {
 
       makeServerRequest={this.makeServerRequest}>
 
-      <div className={ this.classes.row }>
+      <div className={this.classes.row}>
         <Select {...selects.account} selected={this.state.selectedAccount}
                 onChange={(e) => {
                   this.setState({selectedAccount: e.value}, this.getContainersForUser);
                 }}/>
       </div>
-      <div className={ this.classes.row }>
+      <div className={this.classes.row}>
         <Select {...selects.container} selected={this.state.selectedContainer}
                 onChange={(e) => {
                   this.setState({selectedContainer: e.value}, this.getWorkspacesForUser);
                 }}/>
       </div>
-      <div className={ this.classes.row }>
+      <div className={this.classes.row}>
         <Select {...selects.workspace} selected={this.state.selectedWorkspace}
                 onChange={(e) => {
                   this.setState({selectedWorkspace: e.value});
