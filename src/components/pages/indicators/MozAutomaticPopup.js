@@ -38,6 +38,9 @@ export default class MozAutomaticPopup extends Component {
                                    value={this.state.url}
                                    affectedIndicators={this.props.affectedIndicators}
                                    actualIndicators={this.props.actualIndicators}
+                                   loadingStarted={this.props.loadingStarted}
+                                   loadingFinished={this.props.loadingFinished}
+                                   closeWhileWaitingForRequest={true}
     />;
   }
 }
