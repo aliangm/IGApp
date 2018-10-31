@@ -30,7 +30,7 @@ import LinkedinCampaignsPopup from 'components/importCampaignsPopups/LinkedinCam
 import TwitterCampaignsPopup from 'components/importCampaignsPopups/TwitterCampaignPopup';
 
 const PLATFORM_INDICATORS_MAPPING = {
-  'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers'],
+  'Hubspot': ['MCL', 'MQL', 'SQL', 'opps', 'users', 'blogSubscribers', 'newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'],
   'Salesforce': ['MCL',
     'MQL',
     'SQL',
