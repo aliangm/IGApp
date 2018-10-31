@@ -30,6 +30,9 @@ location /payment/ {
 
 	location / {
 		try_files $uri /index.html;
+
+		add_header Cache-Control must-revalidate;
+        etag on;
 	}
 
 }
