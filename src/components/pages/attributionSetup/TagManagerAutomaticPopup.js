@@ -83,6 +83,7 @@ export default class TagManagerAutomaticPopup extends Component {
         localStorage.getItem('region'))
         .then((response) => {
           if (response.ok) {
+            window.alert('Tag was created and published successfully');
             resolve(false);
           }
           else if (response.status == 401) {
