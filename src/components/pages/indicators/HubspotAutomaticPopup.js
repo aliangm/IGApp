@@ -58,11 +58,11 @@ export default class HubspotAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(new Error('error retreiveing hubspot data'));
+            reject(new Error('Error retrieving Hubspot data'));
           }
         })
         .catch(function (err) {
-          reject(err);
+          reject(new Error('Error retrieving Hubspot data'));
         });
     });
   };
@@ -135,6 +135,7 @@ export default class HubspotAutomaticPopup extends Component {
                                           loadingFinished={this.props.loadingFinished}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
+                                          platformTitle='Hubspot'
     >
       <Title title="Hubspot" subTitle="Define which stages should be taken from Hubspot"/>
       <div className={this.classes.row}>

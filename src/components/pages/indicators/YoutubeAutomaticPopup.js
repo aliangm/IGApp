@@ -49,6 +49,7 @@ export default class YoutubeAutomaticPopup extends Component {
                                    value={this.state.fullIdentifier}
                                    affectedIndicators={this.props.affectedIndicators}
                                    actualIndicators={this.props.actualIndicators}
+                                   platformTitle='Youtube'
     />;
   }
 }

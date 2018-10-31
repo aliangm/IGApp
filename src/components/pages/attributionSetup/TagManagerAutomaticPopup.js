@@ -90,11 +90,11 @@ export default class TagManagerAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(err);
+            reject(new Error('Error creating tag in Tag Manager'));
           }
         })
         .catch(function (err) {
-          reject(err);
+          reject(new Error('Error creating tag in Tag manager'));
         });
     });
   };
@@ -145,8 +145,9 @@ export default class TagManagerAutomaticPopup extends Component {
           resolve(true);
         });
       }}
-
-      makeServerRequest={this.makeServerRequest}>
+      makeServerRequest={this.makeServerRequest}
+      platformTitle='Tag Manager'
+    >
 
       <div className={this.classes.row}>
         <Select {...selects.account} selected={this.state.selectedAccount}

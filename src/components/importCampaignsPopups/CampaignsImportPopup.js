@@ -22,7 +22,8 @@ export default class CampaignsImportPopup extends Component {
     api: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     loadingStarted: PropTypes.func,
-    loadingFinished: PropTypes.func
+    loadingFinished: PropTypes.func,
+    platformTitle: PropTypes.string.isRequired
   };
 
   static defaultProps = {
@@ -60,7 +61,7 @@ export default class CampaignsImportPopup extends Component {
             history.push('/');
           }
           else {
-            reject(`Error getting ${this.props.api} ads data`);
+            reject(new Error(`Error getting ${this.props.platformTitle} data`));
           }
         });
     });
@@ -99,6 +100,7 @@ export default class CampaignsImportPopup extends Component {
                                           contentClassName={salesForceStyle.locals.content}
                                           loadingStarted={this.props.loadingStarted}
                                           loadingFinished={this.props.loadingFinished}
+                                          platformTitle={this.props.platformTitle}
     >
       <Title title={this.props.title}/>
       <div className={this.classes.row}>

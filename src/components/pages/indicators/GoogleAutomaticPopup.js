@@ -66,7 +66,7 @@ export default class GoogleAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(new Error('Falied getting google analytics data'));
+            reject(new Error('Failed getting google analytics data'));
           }
         });
     });
@@ -120,6 +120,7 @@ export default class GoogleAutomaticPopup extends Component {
                                           width='340px'
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
+                                          platformTitle='Google Analytics'
     >
       <div className={this.classes.row}>
         <Label style={{fontSize: '16px', color: '#24B10E'}} checkbox={this.state.isWebsiteEnabled} onChange={() => {

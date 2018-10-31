@@ -76,7 +76,7 @@ export default class IntegrationPopup extends Component {
       })
       .catch((error) => {
         if (this.props.closeWhileWaitingForRequest) {
-          window.alert('Error Occurred');
+          window.alert(error.message);
         }
         else {
           this.setState({error: true});
