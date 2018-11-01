@@ -18,7 +18,13 @@ import Attribution from './components/pages/Attribution';
 import Users from './components/pages/Users';
 import Trustability from './components/pages/Trustability';
 import Plan from './components/pages/Plan';
-import {isAuthenticated, logout, handleAuthentication, getProfileSync, crossOriginVerification} from './components/utils/AuthService';
+import {
+  isAuthenticated,
+  logout,
+  handleAuthentication,
+  getProfileSync,
+  crossOriginVerification
+} from './components/utils/AuthService';
 import App from './components/App';
 import PlannedVsActual from './components/pages/PlannedVsActual';
 import style from 'styles/global/main.css';
@@ -47,6 +53,7 @@ import config from 'components/utils/Configuration';
 import Login from 'components/pages/signIn/Login';
 import SignUp from 'components/pages/signIn/SignUp';
 import ForgotPassword from 'components/pages/signIn/ForgotPassword';
+import ManualPlan from 'components/pages/ManualPlan';
 
 style.use();
 
@@ -89,7 +96,7 @@ ReactDOM.render(
     <Route path='/forgotPassword' component={ForgotPassword}/>
     <Route path='/signup' component={SignUp}/>
     <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
-    <Route path="/loginCallBack" onEnter={crossOriginVerification} />
+    <Route path="/loginCallBack" onEnter={crossOriginVerification}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
@@ -97,6 +104,7 @@ ReactDOM.render(
       </Route>
       <Route path="/profile/technology-stack" component={TechnologyStack} onEnter={requireAdminAuth}/>
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
+      <Route path="/build-first-plan" component={ManualPlan} onEnter={requireAdminAuth}/>
       <Route component={Plan} onEnter={(...parameters) => requirePermission('plan', ...parameters)}>
         <Route path="/plan/current"
                component={CurrentTab}
