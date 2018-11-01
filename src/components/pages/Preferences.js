@@ -18,7 +18,6 @@ import style from 'styles/onboarding/onboarding.css';
 import preferencesStyle from 'styles/preferences/preferences.css';
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
-import PlanFromExcel from 'components/PlanFromExcel';
 import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
