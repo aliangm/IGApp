@@ -122,7 +122,7 @@ export default class Platforms extends Component {
         <ReactTooltip place='right' effect='solid' id='platforms' html={true}/>
         <Title title="Integrations"/>
         <div>
-          <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.salesforceAuto}
+          <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.salesforceapi}
                                     ref="salesforce" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Salesforce}
                                     actualIndicators={this.props.actualIndicators}
                                     loadingStarted={() => this.setLoading('salesforce', true)}
@@ -209,7 +209,7 @@ export default class Platforms extends Component {
           />
           <SalesforceCampaignsPopup setDataAsState={this.props.setDataAsState}
                                     ref='salesForceCampaigns'
-                                    data={this.props.salesforceAuto}
+                                    data={this.props.salesforceapi}
                                     userAccount={this.props.userAccount}
                                     loadingStarted={() => this.setLoading('salesForceCampaigns', true)}
                                     loadingFinished={() => this.setLoading('salesForceCampaigns', false)}
@@ -227,9 +227,11 @@ export default class Platforms extends Component {
               CRM
             </div>
             <div className={platformsStyle.locals.platformLine} ref="crm">
-              <Platform connected={this.props.salesforceAuto} title="Salesforce"
-                        loading={this.isLoading('salesforce')}
-                        indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {
+              <Platform
+                connected={!!(this.props.salesforceapi && this.props.salesforceapi.tokens && this.props.salesforceapi.mapping)}
+                title="Salesforce"
+                loading={this.isLoading('salesforce')}
+                indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {
                 this.refs.salesforce.open();
               }} hidden={this.isHidden('salesforce')}/>
               <Platform connected={this.props.hubspotAuto} title="Hubspot"
@@ -320,7 +322,8 @@ export default class Platforms extends Component {
             <div className={platformsStyle.locals.platformLine} ref="crm">
               <div className={this.classes.row}>
                 <Platform
-                  connected={false} title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
+                  connected={!!(this.props.salesforceapi && this.props.salesforceapi.tokens && this.props.salesforceapi.selectedCampaigns && this.props.salesforceapi.selectedCampaigns.length > 0)}
+                  title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
                   icon="platform:salesforce"
                   connectButtonText='Import'
                   setDataAsState={this.props.setDataAsState}
@@ -332,7 +335,8 @@ export default class Platforms extends Component {
               <div className={this.classes.row}>
               </div>
               <Platform
-                connected={false} title="Adwords Campaigns" loading={this.isLoading('adwordsCampaigns')}
+                connected={!!this.props.adwordsapi} title="Adwords Campaigns"
+                loading={this.isLoading('adwordsCampaigns')}
                 icon='platform:googleAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -341,7 +345,8 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
+                connected={!!(this.props.facebookadsapi && this.props.facebookadsapi.accountId && this.props.facebookadsapi.token)}
+                title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
                 icon='platform:facebookAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -350,7 +355,9 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="LinkedIn Campaigns" loading={this.isLoading('linkedinCampaigns')}
+                connected={!!(this.props.linkedinadsapi && this.props.linkedinadsapi.tokens && this.props.linkedinadsapi.accountId)}
+                title="LinkedIn Campaigns"
+                loading={this.isLoading('linkedinCampaigns')}
                 icon='platform:linkedInAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}
@@ -359,7 +366,8 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={false} title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
+                connected={!!(this.props.twitteradsapi && this.props.twitteradsapi.oauthAccessToken && this.props.twitteradsapi.oauthAccessTokenSecret && this.props.twitteradsapi.accountId)}
+                title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
                 icon='platform:twitterAds'
                 connectButtonText='Import'
                 setDataAsState={this.props.setDataAsState}

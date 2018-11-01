@@ -27,7 +27,7 @@ export default class ImportCampaignsPopup extends Component {
             <ImportButton
               setDataAsState={this.props.setDataAsState}
               close={this.props.close}
-              data={this.props.salesforceAuto}
+              data={this.props.salesforceapi}
               userAccount={this.props.userAccount}
               popupComponent={SalesforceCampaignsPopup}
               className={CRMStyle.locals.salesforce}
