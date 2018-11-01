@@ -38,7 +38,7 @@ export default class ManualPlan extends Component {
   }
 
   initializeWithConstraints = (budgetConstraints) => {
-    const manualChannels = mapValues(budgetConstraints, o => o.range.min);
+    const manualChannels = mapValues(budgetConstraints, constraint => constraint.range.min);
     this.setState({manualChannels: manualChannels});
   };
 
@@ -81,15 +81,13 @@ export default class ManualPlan extends Component {
     }
     else {
       planBudgets = this.props.planBudgets.map(() => {
-        const newMonth = {};
-        Object.keys(this.state.manualChannels).forEach(channel => {
-          newMonth[channel] = {
+        return mapValues(this.state.manualChannels, budget => {
+          return {
             isSoft: false,
-            committedBudget: this.state.manualChannels[channel],
-            userBudgetConstraint: this.state.manualChannels[channel]
+            committedBudget: budget,
+            userBudgetConstraint: budget
           };
         });
-        return newMonth;
       });
     }
     this.props.forecast(planBudgets)
