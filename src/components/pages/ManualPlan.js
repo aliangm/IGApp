@@ -49,7 +49,7 @@ export default class ManualPlan extends Component {
     this.setState({manualChannels: manualChannels});
   };
 
-  addManualChannel = (index, channel) => {
+  addOrOverrideManualChannel = (index, channel) => {
     const manualChannels = {...this.state.manualChannels};
     const existingChannels = Object.keys(manualChannels);
     const numOfChannels = existingChannels.length;
@@ -160,7 +160,7 @@ export default class ManualPlan extends Component {
                         },
                         options: channels.select.options
                       }}
-                      onChange={(e) => this.addManualChannel(index, e.value)}
+                      onChange={(e) => this.addOrOverrideManualChannel(index, e.value)}
                     />
                     <Textfield disabled={!manualChannelsKeys[index]}
                                value={formatBudget(manualChannels[manualChannelsKeys[index]])}
