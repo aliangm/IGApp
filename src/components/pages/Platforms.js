@@ -351,7 +351,8 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={!!(this.props.linkedinadsapi && this.props.linkedinadsapi.tokens && this.props.linkedinadsapi.accountId)} title="LinkedIn Campaigns"
+                connected={!!(this.props.linkedinadsapi && this.props.linkedinadsapi.tokens && this.props.linkedinadsapi.accountId)}
+                title="LinkedIn Campaigns"
                 loading={this.isLoading('linkedinCampaigns')}
                 icon='platform:linkedInAds'
                 connectButtonText='Import'
@@ -361,7 +362,7 @@ export default class Platforms extends Component {
                 }}
               />
               <Platform
-                connected={!!this.props.twitteradsapi}
+                connected={!!(this.props.twitteradsapi && this.props.twitteradsapi.oauthAccessToken && this.props.twitteradsapi.oauthAccessTokenSecret && this.props.twitteradsapi.accountId)}
                 title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
                 icon='platform:twitterAds'
                 connectButtonText='Import'
