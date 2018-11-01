@@ -34,7 +34,7 @@
     box-shadow: 0 2px 8px 0 rgba(227, 230, 244, 0.5);
     border: solid 1px #e3e6f4;
     background-color: #ffffff;
-    padding: 0 75px 35px 75px;
+    padding: 0 75px 3px 75px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -89,6 +89,17 @@
     color: #4b515e;
     cursor: pointer;
     font-size: 16px;
+}
+
+.error {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 2.08;
+    color: #ee2032;
+    white-space: pre;
+    text-align: left;
+    align-self: center;
 }
 
 @mixin icon-nodpi checkbox:checked-blue, /assets/checked-blue;

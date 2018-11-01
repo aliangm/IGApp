@@ -12,6 +12,7 @@ export default class Login extends Component {
     this.state = {
       email: '',
       password: '',
+      error: undefined
     };
   }
 
@@ -26,11 +27,15 @@ export default class Login extends Component {
     return <div>
       <SignInForm title='Welcome back!'
                   subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
-                  buttonAction={() => login(this.state.email, this.state.password, (error) => {
-                    if (error) {
-                      alert(error.description);
-                    }
-                  })}
+                  buttonAction={() => {
+                    this.setState({error: undefined});
+
+                    login(this.state.email, this.state.password, (error) => {
+                      if (error) {
+                        this.setState({error: error.description});
+                      }
+                    });
+                  }}
                   buttonText='Sign in'
                   buttonDisabled={false}
                   inputValueChanged={this.inputValueChanged}
@@ -42,7 +47,8 @@ export default class Login extends Component {
                       type: 'email',
                       value: this.state.email
                     },
-                    {label: 'Password',
+                    {
+                      label: 'Password',
                       key: 'password',
                       placeHolder: 'Password',
                       type: 'password',
@@ -50,8 +56,10 @@ export default class Login extends Component {
                     }
                   ]}
                   bottomComponent={
-                    <div onClick={() => history.push('/forgotPassword')}>Forgot your password? Send yourself a new one.</div>
+                    <div onClick={() => history.push('/forgotPassword')}>Forgot your password? Send yourself a new
+                      one.</div>
                   }
+                  error={this.state.error}
       />
     </div>;
   }

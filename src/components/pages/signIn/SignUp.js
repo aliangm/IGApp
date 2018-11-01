@@ -12,7 +12,8 @@ export default class SignUp extends Component {
     this.state = {
       email: this.props.location.query.email || '',
       password: '',
-      acceptedTerms: false
+      acceptedTerms: false,
+      error: undefined
     };
   }
 
@@ -33,19 +34,28 @@ export default class SignUp extends Component {
   render() {
     return <SignInForm title='Create an account with InfiniGrow'
                        subTitle="Join the leading B2B SaaS marketing organizations already using InfiniGrow to hit their KPIs."
-                       buttonAction={() => signup(this.state.email, this.state.password, (error) => {
-                         if (error) {
-                           if (error.name === 'PasswordStrengthError') {
-                             alert('Incorrect Password Format, password should be: \n' + error.policy);
+                       buttonAction={() => {
+                         this.setState({
+                           error: undefined
+                         });
+
+                         signup(this.state.email, this.state.password, (error) => {
+                           if (error) {
+                             if (error.name === 'PasswordStrengthError') {
+                               this.setState({
+                                 error: 'Incorrect Password Format, password should be: \n' +
+                                   error.policy
+                               });
+                             }
+                             else {
+                               this.setState({error: error.description});
+                             }
                            }
                            else {
-                             alert(error.description);
+                             alert('User created successfully!');
                            }
-                         }
-                         else {
-                           alert('User created successfully!');
-                         }
-                       })}
+                         });
+                       }}
                        inputs={[
                          {
                            label: 'Work email',
@@ -75,6 +85,7 @@ export default class SignUp extends Component {
                        buttonDisabled={!this.state.acceptedTerms}
                        bottomComponent={<div onClick={() => history.push('/login')}>
                          Already using InfiniGrow? Log in here →</div>}
+                       error={this.state.error}
     />;
   }
 }
