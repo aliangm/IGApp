@@ -1,4 +1,5 @@
 import sumBy from 'lodash/sumBy';
+import isNil from 'lodash/isNil';
 
 export function formatNumber(budget) {
   if (budget == null) {
@@ -9,6 +10,10 @@ export function formatNumber(budget) {
 }
 
 export function formatBudget(budget, withSign = false) {
+  if (isNil(budget)) {
+    return '';
+  }
+
   let sign = '';
 
   if (withSign) {
