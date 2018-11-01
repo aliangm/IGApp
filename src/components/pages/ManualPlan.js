@@ -11,6 +11,7 @@ import {extractNumberFromBudget, formatBudget} from 'components/utils/budget';
 import PlanFromExcel from 'components/PlanFromExcel';
 import Toggle from 'components/controls/Toggle';
 import isEqual from 'lodash/isEqual';
+import mapValues from 'lodash/mapValues';
 import PlanButton from 'components/pages/indicators/PlanButton';
 import history from 'history';
 
@@ -37,10 +38,7 @@ export default class ManualPlan extends Component {
   }
 
   initializeWithConstraints = (budgetConstraints) => {
-    const manualChannels = {};
-    Object.keys(budgetConstraints).forEach(channel => {
-      manualChannels[channel] = budgetConstraints[channel].range.min;
-    });
+    const manualChannels = mapValues(budgetConstraints, o => o.range.min);
     this.setState({manualChannels: manualChannels});
   };
 
