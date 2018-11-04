@@ -440,6 +440,11 @@ export default class Preferences extends Component {
           (this.state.objectivePopupData.objective
             ? item.indicator !== this.state.objectivePopupData.objective
             : true)))
+      .sort((indicator1, indicator2) => {
+        const indicator1props = indicatorsWithProps[indicator1];
+        const indicator2props = indicatorsWithProps[indicator2];
+        return indicator1props.group === indicator2props.group ? indicator1props.orderInGroup - indicator2props.orderInGroup : indicator1props.group - indicator2props.group;
+      })
       .map(indicatorKey => {
         return {value: indicatorKey, label: indicatorsWithProps[indicatorKey].nickname};
       });
