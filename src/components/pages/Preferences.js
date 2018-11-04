@@ -13,12 +13,11 @@ import BackButton from 'components/pages/profile/BackButton';
 import SaveButton from 'components/pages/profile/SaveButton';
 import NotSure from 'components/onboarding/NotSure';
 import MultiSelect from 'components/controls/MultiSelect';
-import PlanButton from 'components/pages/indicators/PlanButton';
+import Button from 'components/controls/Button';
 import style from 'styles/onboarding/onboarding.css';
 import preferencesStyle from 'styles/preferences/preferences.css';
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
-import PlanFromExcel from 'components/PlanFromExcel';
 import {formatChannels} from 'components/utils/channels';
 import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 import AddObjectivePopup from 'components/pages/preferences/AddObjectivePopup';
@@ -90,7 +89,6 @@ export default class Preferences extends Component {
       blockedChannels: this.props.blockedChannels,
       inHouseChannels: this.props.inHouseChannels,
       maxChannels: this.props.maxChannels,
-      planBudgets: this.props.planBudgets,
       budgetConstraints: this.props.budgetConstraints,
       planNeedsUpdate: true
     };
@@ -631,13 +629,6 @@ export default class Preferences extends Component {
                 </div>
               </div>
             </FeatureToggle>
-            {
-              isPopupMode() ?
-                <div className={this.classes.row} style={{marginTop: '55px'}}>
-                  <PlanFromExcel {...this.props}/>
-                </div>
-                : null
-            }
           </div>
 
           {isPopupMode() ?
@@ -674,7 +665,7 @@ export default class Preferences extends Component {
                 });
             }}/>
             <div style={{width: '30px'}}/>
-            <PlanButton onClick={() => {
+            <Button type="primary" onClick={() => {
               const validationText = this.validate();
               if (!validationText) {
                 // If user didn't define any objectives, open objectives popup
@@ -691,7 +682,7 @@ export default class Preferences extends Component {
                 else {
                   this.props.updateUserMonthPlan(this.getDataToUpdate(), this.props.region, this.props.planDate)
                     .then(() => {
-                      history.push('/plan/annual');
+                      history.push('/build-first-plan');
                     });
                 }
               }
@@ -699,7 +690,9 @@ export default class Preferences extends Component {
                 this.setState({validationError: validationText});
               }
             }
-            }/>
+            }>
+              Build your first budget
+            </Button>
           </div>
 
           :

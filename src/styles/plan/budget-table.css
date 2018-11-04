@@ -160,6 +160,7 @@
     color: #222a41;
     display: table-cell;
     vertical-align: middle;
+    text-transform: capitalize;
 }
 
 .title-text[data-bottom-row] {

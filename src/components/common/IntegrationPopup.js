@@ -15,20 +15,21 @@ export default class IntegrationPopup extends Component {
   static propTypes = {
     cancelButtonText: PropTypes.string,
     doneButtonText: PropTypes.string,
-    makeServerRequest: PropTypes.func.isRequired,
-    onDoneServerRequest: PropTypes.func.isRequired,
+    makeServerRequest: PropTypes.func,
     affectedIndicators: PropTypes.arrayOf(PropTypes.string),
     width: PropTypes.string,
     actualIndicators: PropTypes.object,
     innerClassName: PropTypes.string,
     contentClassName: PropTypes.string,
     cancelButtonAction: PropTypes.func,
-    doneButtonAction: PropTypes.func
+    doneButtonAction: PropTypes.func,
+    closeWhileWaitingForRequest: PropTypes.bool
   };
 
   static defaultProps = {
     cancelButtonText: 'Cancel',
-    doneButtonText: 'Done'
+    doneButtonText: 'Done',
+    closeWhileWaitingForRequest: false
   };
 
   constructor(props) {
@@ -48,6 +49,14 @@ export default class IntegrationPopup extends Component {
     this.setState({error: false, hidden: true, indicatorsPopup: false});
   };
 
+  loadingStarted = () => {
+    this.props.loadingStarted && this.props.loadingStarted();
+  };
+
+  loadingFinished = () => {
+    this.props.loadingFinished && this.props.loadingFinished();
+  };
+
   propogateStep = (openIndicatorsPopup) => {
     if (openIndicatorsPopup) {
       this.setState({indicatorsPopup: true});
@@ -58,14 +67,22 @@ export default class IntegrationPopup extends Component {
   };
 
   done = () => {
+    this.loadingStarted();
+    this.props.closeWhileWaitingForRequest && this.close();
     this.props.makeServerRequest()
       .then((shouldShowIndicatorsPopup = true) => {
         this.setState({indicatorsPopup: shouldShowIndicatorsPopup});
-        this.props.onDoneServerRequest(false);
+        this.loadingFinished();
       })
       .catch((error) => {
-        this.setState({error: true});
-        this.props.onDoneServerRequest(true);
+        if (this.props.closeWhileWaitingForRequest) {
+          window.alert(error.message);
+        }
+        else {
+          this.setState({error: true});
+        }
+
+        this.loadingFinished();
       });
   };
 

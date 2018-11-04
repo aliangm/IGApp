@@ -9,7 +9,8 @@ export default class SignInForm extends Component {
   style = style;
 
   static defaultProps = {
-    checkboxes: []
+    checkboxes: [],
+    error: '\n'
   };
 
   constructor(props) {
@@ -41,7 +42,7 @@ export default class SignInForm extends Component {
                placeholder={placeHolder}
                value={value}
         />
-      </div>
+      </div>;
     });
 
     const checkboxes = this.props.checkboxes && this.props.checkboxes.map((item, index) => {
@@ -75,6 +76,9 @@ export default class SignInForm extends Component {
                 onClick={this.props.buttonAction}>
           {this.props.buttonText}
         </Button>
+        <div className={this.classes.error}>
+          {this.props.error}
+        </div>
       </div>
       <div className={this.classes.bottom}>
         {this.props.bottomComponent}

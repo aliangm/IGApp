@@ -76,7 +76,7 @@ export default class AuthorizationIntegrationPopup extends Component {
                 })
                 .catch((error) => {
                   this.loadingFinished();
-                  window.alert('Error occurred');
+                  window.alert(error.message);
                 });
             });
         }
@@ -86,30 +86,18 @@ export default class AuthorizationIntegrationPopup extends Component {
         }
         else {
           this.loadingFinished();
-          window.alert('Error occurred');
+          window.alert(`Error authorizing connection to ${this.props.platformTitle}`);
         }
       });
-  };
-
-  makeServerRequest = () => {
-    this.loadingStarted();
-    this.refs.integrationPopup.close();
-    return this.props.makeServerRequest();
-  };
-
-  onDoneServerRequest = (isError) => {
-    if (isError) {
-      window.alert('Error occurred');
-    }
-    this.loadingFinished();
   };
 
   render() {
     return <div style={{width: '100%'}}>
       <IntegrationPopup {...this.props}
-                        onDoneServerRequest={this.onDoneServerRequest}
-                        makeServerRequest={this.makeServerRequest}
+                        makeServerRequest={this.props.makeServerRequest}
                         ref="integrationPopup"
+                        closeWhileWaitingForRequest={true}
+                        platformTitle={this.props.platformTitle}
       >
         {this.props.children}
       </IntegrationPopup>

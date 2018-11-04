@@ -106,7 +106,7 @@ export default class SalesforceAutomaticPopup extends Component {
               history.push('/');
             }
             else {
-              reject(new Error('Error retreiving salesforce data'));
+              reject(new Error('Error retrieving salesforce data'));
             }
           });
       }
@@ -226,6 +226,7 @@ export default class SalesforceAutomaticPopup extends Component {
                                           loadingFinished={this.props.loadingFinished}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
+                                          platformTitle='Salesforce'
     >
       <Title title="SalesForce"
              subTitle="Define your pipeline stages"/>

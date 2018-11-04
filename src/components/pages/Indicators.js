@@ -84,7 +84,7 @@ export default class Indicators extends Component {
     if (this.props.hubspotAuto && this.props.hubspotAuto.mapping && this.props.hubspotAuto.mapping[indicator]) {
       return "provider:hubspot";
     }
-    if (this.props.salesforceAuto && this.props.salesforceAuto.mapping && this.props.salesforceAuto.mapping[indicator]) {
+    if (this.props.salesforceapi && this.props.salesforceapi.mapping && this.props.salesforceapi.mapping[indicator]) {
       return "provider:salesforce";
     }
     return false;
@@ -236,7 +236,7 @@ export default class Indicators extends Component {
       },
       CAC: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
-        automaticIndicators: this.isSheetAuto('CAC') || (this.props.salesforceAuto && this.props.salesforceAuto.isCACAuto)
+        automaticIndicators: this.isSheetAuto('CAC') || (this.props.salesforceapi && this.props.salesforceapi.isCACAuto)
       },
       users: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
@@ -271,7 +271,7 @@ export default class Indicators extends Component {
       },
       MRR: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
-        automaticIndicators: this.isFinanceAuto('MRR') || (this.props.salesforceAuto && this.props.salesforceAuto.isMRRAuto)
+        automaticIndicators: this.isFinanceAuto('MRR') || (this.props.salesforceapi && this.props.salesforceapi.isMRRAuto)
       },
       churnRate: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
@@ -318,7 +318,7 @@ export default class Indicators extends Component {
       <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
       <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
       <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
-      <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceAuto={this.props.salesforceAuto} hubspotAuto={this.props.hubspotAuto}/>
+      <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceapi={this.props.salesforceapi} hubspotAuto={this.props.hubspotAuto}/>
       <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
       <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
       <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>

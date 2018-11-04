@@ -34,6 +34,7 @@ export default class StripeAutomaticPopup extends Component {
                                        loadingFinished={this.props.loadingFinished}
                                        affectedIndicators={this.props.affectedIndicators}
                                        actualIndicators={this.props.actualIndicators}
+                                       platformTitle='Stripe'
         />
       </div>
     </div>;

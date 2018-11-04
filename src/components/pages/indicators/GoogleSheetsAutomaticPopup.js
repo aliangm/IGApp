@@ -70,7 +70,7 @@ export default class GoogleSheetsAutomaticPopup extends Component {
             history.push('/');
           }
           else {
-            reject(new Error('Falied getting google sheets data'));
+            reject(new Error('Failed getting google sheets data'));
           }
         });
     });
@@ -110,6 +110,7 @@ export default class GoogleSheetsAutomaticPopup extends Component {
                                           innerClassName={loadTemplateStyle.locals.inner}
                                           affectedIndicators={this.props.affectedIndicators}
                                           actualIndicators={this.props.actualIndicators}
+                                          platformTitle='Google Sheets'
     >
 
       <Title title="Google Sheets" subTitle="Define which metrics should be taken from Google Sheets"/>

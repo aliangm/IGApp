@@ -52,22 +52,10 @@ export default class Plan extends Component {
     this.getRelevantEvents(this.props);
     if (isPopupMode()) {
       disablePopupMode();
-      if (this.props.userAccount.permissions.plannerAI) {
-        this.props.plan(true, null, this.props.region, false)
-          .then(data => {
-            this.props.setDataAsState(data);
-            this.setBudgetsData(data.planBudgets);
-            this.setState({primaryPlanForecastedIndicators: this.parsePlannerForecasting(data.forecastedIndicators)});
-            this.setState({interactiveMode: true});
-          });
-      }
-      else {
-        history.push('/dashboard/CMO');
-      }
+      this.setState({interactiveMode: true});
     }
-    else {
-      this.setBudgetsData();
-    }
+    this.setBudgetsData();
+    this.setState({primaryPlanForecastedIndicators: this.props.forecastedIndicators});
   }
 
   parsePlannerForecasting = (forecastedIndicators) => {
@@ -226,7 +214,7 @@ export default class Plan extends Component {
       isSoft: !alreadyHardConstraint
     };
 
-    if(this.state.editMode) {
+    if (this.state.editMode) {
       this.props.updateState({unsaved: true});
     }
 
@@ -270,7 +258,7 @@ export default class Plan extends Component {
   };
 
   editUpdate = () => {
-    if (!this.state.interactiveMode){
+    if (!this.state.interactiveMode) {
       this.forecastAndUpdateUserMonthPlan({
         planBudgets: this.getPlanBudgets(),
         unknownChannels: this.getPlanBudgets(true),
@@ -528,7 +516,7 @@ export default class Plan extends Component {
                 :
                 <PlanButton numberOfPlanUpdates={this.props.numberOfPlanUpdates}
                             onClick={() => this.setState({showOptimizationPopup: true})}
-                            style={{marginLeft: "15px", width: '140px'}}
+                            style={{marginLeft: '15px', width: '140px'}}
                             label={'Get Suggestions'}
                             showIcons={false}/>
               : null}
@@ -616,7 +604,7 @@ export default class Plan extends Component {
                           selected={editMode ? true : null}
                           onClick={() => {
                             if (editMode) {
-                              this.editUpdate()
+                              this.editUpdate();
                               this.props.updateState({unsaved: false});
                             }
                             this.setState({

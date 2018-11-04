@@ -14,7 +14,7 @@ export default class CRMPopup extends Component {
   render(){
     return <div hidden={ this.props.hidden }>
       <HubspotAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.hubspotAuto} updateState={ this.props.updateState } ref="hubspot"/>
-      <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.salesforceAuto} ref="salesforce"/>
+      <SalesforceAutomaticPopup setDataAsState={ this.props.setDataAsState } close={ this.props.close } data={this.props.salesforceapi} ref="salesforce"/>
         <Page popup={ true } width={'340px'} style={{ zIndex: '9' }}>
           <div className={ this.classes.close } onClick={ this.props.close }/>
           <div className={ this.classes.title }>

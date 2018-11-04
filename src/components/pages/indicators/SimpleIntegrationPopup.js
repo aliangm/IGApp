@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import Label from 'components/ControlsLabel';
@@ -8,6 +8,10 @@ import IntegrationPopup from 'components/common/IntegrationPopup';
 export default class SimpleIntegrationPopup extends Component {
 
   style = style;
+
+  static propTypes = {
+    platformTitle: PropTypes.string.isRequired
+  };
 
   static defaultProps = {
     placeHolder: '',
@@ -29,19 +33,13 @@ export default class SimpleIntegrationPopup extends Component {
             history.push('/');
           }
           else {
-            reject(new Error('error getting data'));
+            reject(new Error(`Error getting data from ${this.props.platformTitle}`));
           }
         })
         .catch((error) => {
-          reject(new Error('error getting data'));
+          reject(new Error(`Error getting data from ${this.props.platformTitle}`));
         });
     });
-  };
-
-  onDoneServerRequest = (isError) => {
-    if (!isError) {
-      this.refs.propogateStep(true);
-    }
   };
 
   open = () => {
@@ -52,9 +50,11 @@ export default class SimpleIntegrationPopup extends Component {
     return <IntegrationPopup ref="integrationPopup"
                              width={this.props.width}
                              makeServerRequest={this.makeServerRequest}
-                             onDoneServerRequest={this.onDoneServerRequest}
                              affectedIndicators={this.props.affectedIndicators}
                              actualIndicators={this.props.actualIndicators}
+                             loadingStarted={this.props.loadingStarted}
+                             loadingFinished={this.props.loadingFinished}
+                             closeWhileWaitingForRequest={this.props.closeWhileWaitingForRequest}
     >
       <div style={{display: 'grid'}}>
         <div className={this.classes.row}>

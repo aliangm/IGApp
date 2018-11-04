@@ -33,6 +33,7 @@ export default class FacebookAutomaticPopup extends Component {
                                    value={this.state.identifier}
                                    affectedIndicators={this.props.affectedIndicators}
                                    actualIndicators={this.props.actualIndicators}
+                                   platformTitle='Facebook'
     />;
   }
 }

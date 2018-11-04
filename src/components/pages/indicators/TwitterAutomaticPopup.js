@@ -34,6 +34,7 @@ export default class TwitterAutomaticPopup extends Component {
                                    value={this.state.identifier}
                                    affectedIndicators={this.props.affectedIndicators}
                                    actualIndicators={this.props.actualIndicators}
+                                   platformTitle='Twitter'
     />;
   }
 }

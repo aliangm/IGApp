@@ -15,6 +15,7 @@ export default class AdwordsCampaignsPopup extends Component {
                                  accountIdPropertyName='customerId'
                                  accountLabelPropertyName='descriptiveName'
                                  serverAccountIDPropertyName='customerId'
+                                 platformTitle='Google Adwords'
                                  {...this.props}
     />;
   }
