@@ -283,7 +283,7 @@ export default class Product extends Component {
                      description={['What is your company’s business model? \n *On-prem is a shortcut for On-premises software.']}>Business
                 Model</Label>
               <ButtonsSet buttons={[
-                {key: 'SaaS', text: 'SaaS', icon: 'buttons:SaaS'},
+                {key: 'SaaS', text: 'Subscription', icon: 'buttons:SaaS'},
                 {key: 'On-prem', text: 'On-prem', icon: 'buttons:product'},
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
                 {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'}
