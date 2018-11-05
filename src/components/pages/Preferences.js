@@ -26,6 +26,7 @@ import {FeatureToggle} from 'react-feature-toggles';
 import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
 import isNil from 'lodash/isNil';
+import sortBy from 'lodash/sortBy';
 
 export default class Preferences extends Component {
   style = style;
@@ -433,22 +434,18 @@ export default class Preferences extends Component {
                        }}/>);
 
     const indicatorsWithProps = getIndicatorsWithProps();
-    const objectiveOptions = Object.keys(indicatorsWithProps)
+    const filteredObjectives = Object.keys(indicatorsWithProps)
       .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective &&
         !objectivesData.find(item => item.indicator ===
           indicatorKey &&
           (this.state.objectivePopupData.objective
             ? item.indicator !== this.state.objectivePopupData.objective
-            : true)))
-      .sort((indicator1, indicator2) => {
-        const indicator1props = indicatorsWithProps[indicator1];
-        const indicator2props = indicatorsWithProps[indicator2];
-        return indicator1props.group === indicator2props.group ? indicator1props.orderInGroup - indicator2props.orderInGroup : indicator1props.group - indicator2props.group;
-      })
+            : true)));
+    const sortedFilteredObjectives = sortBy(filteredObjectives, [key => indicatorsWithProps[key].group, key => indicatorsWithProps[key].orderInGroup]);
+    const objectiveOptions = sortedFilteredObjectives
       .map(indicatorKey => {
         return {value: indicatorKey, label: indicatorsWithProps[indicatorKey].nickname};
       });
-
     const budgetConstraintsChannels = Object.keys(budgetConstraints);
 
     return <div>
