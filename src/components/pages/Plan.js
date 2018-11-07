@@ -205,15 +205,7 @@ export default class Plan extends Component {
   editCommittedBudget = (month, channelKey, newBudget, region) => {
     const budgetsData = [...this.state.budgetsData];
     if (region) {
-      if (!budgetsData[month].channels[channelKey]) {
-        budgetsData[month].channels[channelKey] = {
-          secondaryBudget: 0,
-          primaryBudget: 0,
-          budgetConstraint: 0,
-          isConstraint: false,
-          isSoft: false
-        };
-      }
+      this.initializeChannelIfNeeded(budgetsData[month].channels, channelKey);
       if (!budgetsData[month].channels[channelKey].regions) {
         budgetsData[month].channels[channelKey].regions = {};
       }
@@ -304,15 +296,7 @@ export default class Plan extends Component {
         }
         else {
           const channels = {...month.channels};
-          if (!channels[channelKey]) {
-            channels[channelKey] = {
-              secondaryBudget: 0,
-              primaryBudget: 0,
-              budgetConstraint: 0,
-              isConstraint: false,
-              isSoft: false
-            };
-          }
+          this.initializeChannelIfNeeded(channels, channelKey);
           return {channels: channels, isHistory: month.isHistory};
         }
       });
@@ -493,15 +477,7 @@ export default class Plan extends Component {
         }
         else {
           const channels = {...month.channels};
-          if (!channels[channel]) {
-            channels[channel] = {
-              secondaryBudget: 0,
-              primaryBudget: 0,
-              budgetConstraint: 0,
-              isConstraint: false,
-              isSoft: false
-            };
-          }
+          this.initializeChannelIfNeeded(channels, channel);
           if (!channels[channel].regions) {
             channels[channel].regions = {};
           }
@@ -510,6 +486,18 @@ export default class Plan extends Component {
         }
       });
     this.setState({budgetsData: budgetsData});
+  };
+
+  initializeChannelIfNeeded = (channels, channelKey) => {
+    if (!channels[channelKey]) {
+      channels[channelKey] = {
+        secondaryBudget: 0,
+        primaryBudget: 0,
+        budgetConstraint: 0,
+        isConstraint: false,
+        isSoft: false
+      };
+    }
   };
 
   render() {
