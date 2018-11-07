@@ -471,7 +471,8 @@ class AppComponent extends Component {
       namesMapping: data.namesMapping && Object.keys(data.namesMapping).length > 0 ? data.namesMapping : {
         channels: {},
         indicators: {}
-      }
+      },
+      userRegions: data.userRegions
     });
   }
 

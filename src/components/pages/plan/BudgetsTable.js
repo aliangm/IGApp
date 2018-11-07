@@ -7,7 +7,8 @@ import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
 import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
-//import {ContextMenu, SubMenu, MenuItem} from 'react-contextmenu';
+import {ContextMenu, ContextMenuTrigger, SubMenu, MenuItem} from 'react-contextmenu';
+import contextStyle from 'react-contextmenu/public/styles.css';
 import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 import {getChannelsWithProps, isUnknownChannel} from 'components/utils/channels';
 import groupBy from 'lodash/groupBy';
@@ -26,9 +27,16 @@ const COLLAPSE_OPTIONS = {
   SHOW_ALL: 2
 };
 
+const ROW_TYPE = {
+  CATEGORY: 0,
+  CHANNEL: 1,
+  REGION: 2
+};
+
 export default class BudgetsTable extends Component {
 
   style = style;
+  styles = [contextStyle];
 
   static propTypes = {
     isEditMode: PropTypes.bool,
@@ -154,11 +162,37 @@ export default class BudgetsTable extends Component {
 
   getCategoryRows = (category, channels, numberOfPastDates) => {
     const categoryData = this.sumChannels(channels);
-    const categoryRow = this.getTableRow({channel: category, nickname: category, values: categoryData},
-      true, numberOfPastDates);
+    const categoryRow = this.getTableRow({
+      channel: category,
+      nickname: category,
+      values: categoryData
+    }, ROW_TYPE.CATEGORY, numberOfPastDates);
 
     return !this.state.collapsedCategories[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
-      [categoryRow, ...channels.map((channel) => this.getTableRow(channel, false, numberOfPastDates))]
+      [categoryRow, ...channels.map((channel) => {
+        const channelRegions = [];
+        channel.values.forEach(item => {
+          if (item.regions) {
+            Object.keys(item.regions).forEach(region => {
+              if (!channelRegions.includes(region)) {
+                channelRegions.push(region);
+              }
+            });
+          }
+        });
+        return [this.getTableRow(channel, ROW_TYPE.CHANNEL, numberOfPastDates),
+          ...(channelRegions.map(region => this.getTableRow({
+            channel: channel.channel,
+            region: region,
+            nickname: `${channel.nickname} - ${region}`,
+            values: channel.values.map(item => {
+              const value = (item.regions && item.regions[region]) ? item.regions[region] : 0;
+              return {primaryBudget: value};
+            })
+          }, ROW_TYPE.REGION, numberOfPastDates)))
+        ];
+      })
+      ]
       : categoryRow;
   };
 
@@ -195,15 +229,16 @@ export default class BudgetsTable extends Component {
     </tr>;
   };
 
-  getTableRow = (data, isCategoryRow, numberOfPastDates) => {
-    const titleCellKey = (isCategoryRow ? 'category' : '') + data.channel;
+  getTableRow = (data, rowType, numberOfPastDates) => {
+    const titleCellKey = (rowType === ROW_TYPE.REGION ? data.region : rowType) + data.channel;
 
     const cells = data.values.map((monthData, key) => {
       const isHistory = key < numberOfPastDates;
 
-      return isCategoryRow || isHistory ?
-        (isCategoryRow ? <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}
-                             data-history={isHistory ? true : null}>
+      return rowType === ROW_TYPE.CATEGORY || isHistory ?
+        (rowType === ROW_TYPE.CATEGORY ?
+          <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}
+              data-history={isHistory ? true : null}>
             {formatBudget(monthData.primaryBudget)}
           </td> :
           <td key={`${data.channel}:${key}`} className={this.classes.historyCell}>
@@ -222,8 +257,8 @@ export default class BudgetsTable extends Component {
             isConstraint,
             isSoft)}
           isEditMode={this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue)}
-          isConstraitsEnabled={this.props.isConstraintsEnabled && !isUnknownChannel(data.channel)}
+          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue, data.region)}
+          isConstraitsEnabled={this.props.isConstraintsEnabled && !isUnknownChannel(data.channel) && rowType !== ROW_TYPE.REGION}
           dragEnter={() => this.dragEnter(key, data.channel)}
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
@@ -235,104 +270,113 @@ export default class BudgetsTable extends Component {
     });
 
     return <tr className={this.classes.tableRow} key={titleCellKey}
-               data-row-type={isCategoryRow ? 'category' : 'regular'}
-               ref={!isCategoryRow ? (ref) => {
+               data-row-type={rowType === ROW_TYPE.CATEGORY ? 'category' : 'regular'}
+               ref={rowType === ROW_TYPE.CHANNEL ? (ref) => {
                  this.props.setRef(data.channel, ref);
                } : null}>
-      {this.getTitleCell(isCategoryRow, data)}
+      {this.getTitleCell(rowType, data)}
       {cells}
     </tr>;
   };
 
-  getTitleCell = (isCategoryRow, data) => {
-    return <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}
-               onMouseEnter={isCategoryRow ? () => {
-                 this.setState({categoryOnHover: data.channel});
-               } : null}
-               onMouseLeave={isCategoryRow ? () => {
-                 this.setState({categoryOnHover: null});
-               } : null}>
-      <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true : null}>
-        {isCategoryRow ?
-          <div className={this.classes.rowArrowBox}>
-            <div
-              className={this.classes.rowArrowWrap}
-              data-collapsed={this.state.collapsedCategories[data.channel] ? true : null}
-              onClick={() => {
-                this.setState({
-                  collapsedCategories: {
-                    ...this.state.collapsedCategories,
-                    [data.channel]: !this.state.collapsedCategories[data.channel]
-                  }
-                });
-              }}>
-              <div className={this.classes.rowArrow}/>
-            </div>
-          </div> : null}
+  getTitleCell = (rowType, data) => {
+    const isCategoryRow = rowType === ROW_TYPE.CATEGORY;
+    return <ContextMenuTrigger id="rightClickEdit" collect={() => {
+      return {channel: data.channel};
+    }} disable={rowType !== ROW_TYPE.CHANNEL || !this.props.editMode}>
+      <td className={this.classes.titleCell} data-row-type={isCategoryRow ? 'category' : 'regular'}
+          onMouseEnter={isCategoryRow ? () => {
+            this.setState({categoryOnHover: data.channel});
+          } : null}
+          onMouseLeave={isCategoryRow ? () => {
+            this.setState({categoryOnHover: null});
+          } : null}>
+        <div className={this.classes.rowTitle} data-category-row={isCategoryRow ? true : null}>
+          {isCategoryRow ?
+            <div className={this.classes.rowArrowBox}>
+              <div
+                className={this.classes.rowArrowWrap}
+                data-collapsed={this.state.collapsedCategories[data.channel] ? true : null}
+                onClick={() => {
+                  this.setState({
+                    collapsedCategories: {
+                      ...this.state.collapsedCategories,
+                      [data.channel]: !this.state.collapsedCategories[data.channel]
+                    }
+                  });
+                }}>
+                <div className={this.classes.rowArrow}/>
+              </div>
+            </div> : null}
 
-        {this.props.isEditMode && !isCategoryRow ?
-          <div>
-            <div className={this.classes.editChannelNameWrapper}>
-              <div className={this.classes.editChannelName} onClick={() => {
-                this.setState({editChannelName: data.channel});
-              }}/>
+          {this.props.isEditMode && rowType === ROW_TYPE.CHANNEL ?
+            <div>
+              <div className={this.classes.editChannelNameWrapper}>
+                <div className={this.classes.editChannelName} onClick={() => {
+                  this.setState({editChannelName: data.channel});
+                }}/>
+              </div>
+              <div
+                className={this.classes.rowDelete}
+                onClick={() => this.setState({deletePopup: data.channel})}
+              />
+              <Popup hidden={data.channel !== this.state.deletePopup}
+                     style={{top: '-72px', left: '130px', cursor: 'initial'}}>
+                <DeleteChannelPopup
+                  onNext={() => {
+                    this.props.deleteChannel(data.channel);
+                    this.setState({deletePopup: ''});
+                  }}
+                  onBack={() => this.setState({deletePopup: ''})}
+                />
+              </Popup>
+              <Popup hidden={data.channel !== this.state.editChannelName}
+                     style={{top: '-72px', left: '130px', cursor: 'initial'}}>
+                <EditChannelNamePopup
+                  channel={this.state.editChannelName}
+                  onNext={this.editChannelName}
+                  onBack={() => this.setState({editChannelName: ''})}
+                />
+              </Popup>
             </div>
-            <div
-              className={this.classes.rowDelete}
-              onClick={() => this.setState({deletePopup: data.channel})}
-            />
-            <Popup hidden={data.channel !== this.state.deletePopup}
-                   style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-              <DeleteChannelPopup
-                onNext={() => {
-                  this.props.deleteChannel(data.channel);
-                  this.setState({deletePopup: ''});
-                }}
-                onBack={() => this.setState({deletePopup: ''})}
-              />
-            </Popup>
-            <Popup hidden={data.channel !== this.state.editChannelName}
-                   style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-              <EditChannelNamePopup
-                channel={this.state.editChannelName}
-                onNext={this.editChannelName}
-                onBack={() => this.setState({editChannelName: ''})}
-              />
-            </Popup>
-          </div>
-          : null}
-
-        <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
-          {!isCategoryRow ? <div className={this.classes.rowIcon}
-                                 data-icon={!isUnknownChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
             : null}
 
-          <div className={this.classes.titleText}>{data.nickname}</div>
+          <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
+            {rowType === ROW_TYPE.CHANNEL ? <div className={this.classes.rowIcon}
+                                                 data-icon={!isUnknownChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
+              : null}
 
-          {this.props.isEditMode ? <div className={this.classes.channelEditIconsWrapper}>
-              {isCategoryRow ? <div className={this.classes.channelEditIcons}>
-                  {this.state.categoryOnHover === data.channel
-                    ? <Button icon='plan:addChannel'
-                              type="primary"
-                              style={{width: '80px'}}
-                              onClick={() => {
-                                this.props.openAddChannelPopup(data.channel);
-                              }}> Add
-                    </Button> : null}
-                </div>
-                : <div className={this.classes.channelEditIcons}>
-                  <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
-                       onClick={() => this.setState({editChannelName: data.channel})}/>
-                  <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
-                       onClick={() => this.setState({deletePopup: data.channel})}/>
-                </div>
-              }
-            </div>
-            : null
-          }
+            <div className={this.classes.titleText}>{data.nickname}</div>
+
+            {this.props.isEditMode ? <div className={this.classes.channelEditIconsWrapper}>
+                {isCategoryRow ? <div className={this.classes.channelEditIcons}>
+                    {this.state.categoryOnHover === data.channel
+                      ? <Button icon='plan:addChannel'
+                                type="primary"
+                                style={{width: '80px'}}
+                                onClick={() => {
+                                  this.props.openAddChannelPopup(data.channel);
+                                }}> Add
+                      </Button> : null}
+                  </div>
+                  :
+                  rowType === ROW_TYPE.CHANNEL ?
+                    <div className={this.classes.channelEditIcons}>
+                      <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
+                           onClick={() => this.setState({editChannelName: data.channel})}/>
+                      <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
+                           onClick={() => this.setState({deletePopup: data.channel})}/>
+                    </div>
+                    :
+                    null
+                }
+              </div>
+              : null
+            }
+          </div>
         </div>
-      </div>
-    </td>;
+      </td>
+    </ContextMenuTrigger>;
   };
 
   editChannelName = (name, category, channel) => {
@@ -348,28 +392,6 @@ export default class BudgetsTable extends Component {
     this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
     this.setState({editChannelName: ''});
   };
-
-  // handleChangeContextMenu = (event, data) => {
-  //   const channel = data.channel;
-  //   const percent = data.percent;
-  //   let planUnknownChannels = this.props.planUnknownChannels;
-  //   let projectedPlan = this.props.projectedPlan;
-  //   let approvedBudgets = this.props.approvedBudgets;
-  //   for (let i = 0; i < 12; i++) {
-  //     if (planUnknownChannels.length > 0 && planUnknownChannels[i] && planUnknownChannels[i][channel] !== undefined)
-  // { planUnknownChannels[i][channel] = Math.round(planUnknownChannels[i][channel] * percent); } else { const
-  // newBudget = Math.round((projectedPlan[i].plannedChannelBudgets[channel] || 0) * percent);
-  // projectedPlan[i].plannedChannelBudgets[channel] = newBudget; if (!approvedBudgets[i]) { approvedBudgets[i] = {}; }
-  // approvedBudgets[i][channel] = newBudget; } this.props.updateState({ projectedPlan: projectedPlan, approvedBudgets:
-  // approvedBudgets, planUnknownChannels: planUnknownChannels }); } };
-
-  // approveChannel = (event, data) => {
-  //   this.props.approveWholeChannel(data.channel);
-  // };
-  //
-  // declineChannel = (event, data) => {
-  //   this.props.declineWholeChannel(data.channel);
-  // };
 
   getDataByChannel = (data, channelsProps) => {
     const channels = union(...data.map(month => Object.keys(month.channels)));
@@ -461,6 +483,23 @@ export default class BudgetsTable extends Component {
         : this.refs.tableScroller.scrollLeft - this.props.cellWidth;
   };
 
+  getContextMenu = () => {
+    const regionsMenu = this.props.userRegions && this.props.userRegions.map(region =>
+      <MenuItem key={region}
+                data={{region: region}}
+                onClick={(event, data) => this.props.addRegionToChannel(data.channel, data.region)}>
+        {region}
+      </MenuItem>);
+    return <ContextMenu id="rightClickEdit">
+      <SubMenu title="Segment by" hoverDelay={250}>
+        {regionsMenu}
+        <MenuItem data={{percent: 1.5}} onClick={(event, data) => this.props.addNewRegion(data.channel)}>
+          Add new
+        </MenuItem>
+      </SubMenu>
+    </ContextMenu>;
+  };
+
   render() {
     const channelsProps = getChannelsWithProps();
     const parsedData = this.getDataByChannel(this.props.data, channelsProps);
@@ -502,97 +541,8 @@ export default class BudgetsTable extends Component {
             </tfoot>
           </table>
         </div>
+        {this.getContextMenu()}
       </div>
     </div>;
-
-    {/*<ContextMenu id="rightClickEdit">*/
-    }
-    {/*<SubMenu title="Increase by" hoverDelay={250}>*/
-    }
-    {/*<MenuItem data={{percent: 1.1}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*10%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 1.2}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*20%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 1.3}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*30%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 1.4}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*40%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 1.5}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*50%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*</SubMenu>*/
-    }
-    {/*<SubMenu title="Decrease by" hoverDelay={250}>*/
-    }
-    {/*<MenuItem data={{percent: 0.9}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*10%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 0.8}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*20%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 0.7}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*30%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 0.6}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*40%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem data={{percent: 0.5}} onClick={this.handleChangeContextMenu}>*/
-    }
-    {/*50%*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*</SubMenu>*/
-    }
-    {/*</ContextMenu>*/
-    }
-
-    {/*<ContextMenu id="rightClickNormal">*/
-    }
-    {/*<MenuItem onClick={this.approveChannel}>*/
-    }
-    {/*Approve all suggestions*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*<MenuItem onClick={this.declineChannel}>*/
-    }
-    {/*Decline all suggestions*/
-    }
-    {/*</MenuItem>*/
-    }
-    {/*</ContextMenu>*/
-    }
   }
 }

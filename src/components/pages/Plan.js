@@ -23,6 +23,7 @@ import union from 'lodash/union';
 import maxBy from 'lodash/maxBy';
 import isNil from 'lodash/isNil';
 import AnnualTab from 'components/pages/plan/AnnualTab';
+import UserRegionsPopup from 'components/pages/plan/UserRegionsPopup';
 
 export default class Plan extends Component {
 
@@ -44,6 +45,7 @@ export default class Plan extends Component {
       showNewScenarioPopup: false,
       scrollEvent: null,
       showOptimizationPopup: false,
+      createNewRegion: false,
       primaryPlanForecastedIndicators: this.props.forecastedIndicators
     };
   }
@@ -78,13 +80,14 @@ export default class Plan extends Component {
     const budgetsData = planBudgets.map(month => {
       const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
-        const {committedBudget, plannerBudget, isSoft, userBudgetConstraint} = month[channelKey];
+        const {committedBudget, plannerBudget, isSoft, userBudgetConstraint, regions} = month[channelKey];
         channelsObject[channelKey] = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: committedBudget,
           isConstraint: withConstraints ? !isNil(userBudgetConstraint) : false,
           budgetConstraint: withConstraints ? committedBudget : null,
-          isSoft: withConstraints ? isSoft : false
+          isSoft: withConstraints ? isSoft : false,
+          regions: regions
         };
       });
       return {channels: channelsObject, isHistory: false};
@@ -136,8 +139,8 @@ export default class Plan extends Component {
       Object.keys(month)
         .filter(channelKey => unknownChannels ? isUnknownChannel(channelKey) : !isUnknownChannel(channelKey))
         .forEach(channelKey => {
-          const {primaryBudget, isConstraint, isSoft, budgetConstraint} = month[channelKey];
-          if (primaryBudget || isConstraint) {
+          const {primaryBudget, isConstraint, isSoft, budgetConstraint, regions} = month[channelKey];
+          if (primaryBudget || isConstraint || (regions && Object.keys(regions).find(region => regions[region]))) {
             if (unknownChannels) {
               object[channelKey] = primaryBudget;
             }
@@ -145,7 +148,8 @@ export default class Plan extends Component {
               object[channelKey] = {
                 committedBudget: primaryBudget,
                 userBudgetConstraint: isConstraint ? budgetConstraint : null,
-                isSoft: isConstraint ? isSoft : false
+                isSoft: isConstraint ? isSoft : false,
+                regions: regions
               };
             }
           }
@@ -198,22 +202,38 @@ export default class Plan extends Component {
     this.setState({budgetsData: budgetsData});
   };
 
-  editCommittedBudget = (month, channelKey, newBudget) => {
+  editCommittedBudget = (month, channelKey, newBudget, region) => {
     const budgetsData = [...this.state.budgetsData];
-    const secondary = budgetsData[month].channels[channelKey] &&
-      budgetsData[month].channels[channelKey].secondaryBudget;
-    const alreadyHardConstraint = budgetsData[month].channels[channelKey] &&
-      budgetsData[month].channels[channelKey].isConstraint &&
-      budgetsData[month].channels[channelKey].isSoft ===
-      false;
-    budgetsData[month].channels[channelKey] = {
-      secondaryBudget: secondary || 0,
-      primaryBudget: newBudget,
-      budgetConstraint: newBudget,
-      isConstraint: true,
-      isSoft: !alreadyHardConstraint
-    };
-
+    if (region) {
+      if (!budgetsData[month].channels[channelKey]) {
+        budgetsData[month].channels[channelKey] = {
+          secondaryBudget: 0,
+          primaryBudget: 0,
+          budgetConstraint: 0,
+          isConstraint: false,
+          isSoft: false
+        };
+      }
+      if (!budgetsData[month].channels[channelKey].regions) {
+        budgetsData[month].channels[channelKey].regions = {};
+      }
+      budgetsData[month].channels[channelKey].regions[region] = newBudget;
+    }
+    else {
+      const secondary = budgetsData[month].channels[channelKey] &&
+        budgetsData[month].channels[channelKey].secondaryBudget;
+      const alreadyHardConstraint = budgetsData[month].channels[channelKey] &&
+        budgetsData[month].channels[channelKey].isConstraint &&
+        budgetsData[month].channels[channelKey].isSoft ===
+        false;
+      budgetsData[month].channels[channelKey] = {
+        secondaryBudget: secondary || 0,
+        primaryBudget: newBudget,
+        budgetConstraint: newBudget,
+        isConstraint: true,
+        isSoft: !alreadyHardConstraint
+      };
+    }
     if (this.state.editMode) {
       this.props.updateState({unsaved: true});
     }
@@ -229,6 +249,14 @@ export default class Plan extends Component {
             });
         });
     });
+  };
+
+  addNewRegion = (channel) => {
+    this.setState({createNewRegion: true, contextMenuChannel: channel});
+  };
+
+  afterRegionCreation = (region) => {
+    this.addRegionToChannel(this.state.contextMenuChannel, region);
   };
 
   changeBudgetConstraint = (month, channelKey, isConstraint, isSoft = false) => {
@@ -456,6 +484,34 @@ export default class Plan extends Component {
     return {channelsArray: suggestions, forecastedIndicators: union(...parsedForecasting)};
   };
 
+  addRegionToChannel = (channel, region) => {
+    let budgetsData = [...this.state.budgetsData];
+    budgetsData = budgetsData
+      .map(month => {
+        if (month.isHistory) {
+          return month;
+        }
+        else {
+          const channels = {...month.channels};
+          if (!channels[channel]) {
+            channels[channel] = {
+              secondaryBudget: 0,
+              primaryBudget: 0,
+              budgetConstraint: 0,
+              isConstraint: false,
+              isSoft: false
+            };
+          }
+          if (!channels[channel].regions) {
+            channels[channel].regions = {};
+          }
+          channels[channel].regions[region] = 0;
+          return {channels: channels, isHistory: month.isHistory};
+        }
+      });
+    this.setState({budgetsData: budgetsData});
+  };
+
   render() {
     const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
     const {calculatedData: {annualBudget, annualBudgetLeftToPlan}} = this.props;
@@ -474,6 +530,8 @@ export default class Plan extends Component {
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
+          addRegionToChannel: this.addRegionToChannel,
+          addNewRegion: this.addNewRegion,
           secondaryPlanForecastedIndicators: this.state.editMode || this.state.interactiveMode
             ? this.props.forecastedIndicators
             : null,
@@ -661,6 +719,12 @@ export default class Plan extends Component {
                                planWithConstraints={this.planWithConstraints}
                                numberOfPlanUpdates={this.props.numberOfPlanUpdates}
         />
+        <UserRegionsPopup hidden={!this.state.createNewRegion}
+                          close={() => {
+                            this.setState({createNewRegion: false});
+                          }}
+                          afterRegionCreation={this.afterRegionCreation}
+                          {...this.props}/>
         <div className={this.classes.wrap}>
           <div className={this.classes.serverDown}>
             <label hidden={!this.props.serverDown}>Something is wrong... Let us check what is it and fix it for you
