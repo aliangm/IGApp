@@ -5,8 +5,6 @@ import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
 import setupStyle from 'styles/attribution/attribution-setp.css';
-import {getNumberOfDaysBetweenDates} from 'components/utils/date';
-import history from 'history';
 
 export default class Analyze extends Component {
 
