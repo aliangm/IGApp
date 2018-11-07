@@ -91,7 +91,7 @@ export default class Sidebar extends Component {
                     isHighlighted={this.isHighlighted('/plan')}
                     pagePermission='plan'
           />
-          <MenuItem icon="sidebar:campaigns" link="/campaigns/by-channel"
+          <MenuItem icon="sidebar:campaigns" link="/campaigns/by-status"
                     isHighlighted={this.isHighlighted('/campaigns')} text="Campaigns" onClick={this.closeSubMenu}
                     pagePermission='campaigns'
           />
