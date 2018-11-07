@@ -207,9 +207,7 @@ export default class Plan extends Component {
     const budgetsData = [...this.state.budgetsData];
     if (region) {
       this.initializeChannelIfNeeded(budgetsData[month].channels, channelKey);
-      if (!budgetsData[month].channels[channelKey].regions) {
-        budgetsData[month].channels[channelKey].regions = {};
-      }
+      this.initializeRegionsIfNeeded(budgetsData[month].channels, channelKey);
       budgetsData[month].channels[channelKey].regions[region] = newBudget;
     }
     else {
@@ -479,9 +477,7 @@ export default class Plan extends Component {
         else {
           const channels = {...month.channels};
           this.initializeChannelIfNeeded(channels, channel);
-          if (!channels[channel].regions) {
-            channels[channel].regions = {};
-          }
+          this.initializeRegionsIfNeeded(channels, channel);
           channels[channel].regions[region] = 0;
           return {channels: channels, isHistory: month.isHistory};
         }
@@ -498,6 +494,12 @@ export default class Plan extends Component {
         isConstraint: false,
         isSoft: false
       };
+    }
+  };
+
+  initializeRegionsIfNeeded = (channels, channelKey) => {
+    if (!channels[channelKey].regions) {
+      channels[channelKey].regions = {};
     }
   };
 
