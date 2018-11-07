@@ -50,7 +50,8 @@ export default class UserRegionsPopup extends Component {
             <Button type="secondary" style={{width: '100px'}} onClick={this.props.close}>Cancel</Button>
           </div>
           <div className={this.classes.footerRight}>
-            <Button type="primary" style={{width: '100px'}} onClick={this.createNewRegion}>Create</Button>
+            <Button type="primary" style={{width: '100px'}} disabled={!this.state.regionName}
+                    onClick={this.createNewRegion}>Create</Button>
           </div>
         </div>
       </Page>
