@@ -54,7 +54,7 @@ import Login from 'components/pages/signIn/Login';
 import SignUp from 'components/pages/signIn/SignUp';
 import ForgotPassword from 'components/pages/signIn/ForgotPassword';
 import ManualPlan from 'components/pages/ManualPlan';
-import NotReadyAnalyze from 'components/pages/analyze/NotReadyAnalyze';
+import NoAnalyzeData from 'components/pages/analyze/NotReadyAnalyze';
 
 style.use();
 
@@ -168,7 +168,7 @@ ReactDOM.render(
         <Route path="/analyze/content" component={Content} onEnter={requireAuth} tabName='Content'/>
         <Route path="/analyze/audiences" component={Users} onEnter={requireAuth} tabName='Audiences'/>
       </Route>
-      <Route path="/analyze-not-ready" component={NotReadyAnalyze} onEnter={requireAdminAuth}/>
+      <Route path="/analyze-not-ready" component={NoAnalyzeData} onEnter={requireAdminAuth}/>
       <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
     </Route>
     <Route component={AttributionLink} path='/attribution/:UID'></Route>

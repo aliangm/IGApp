@@ -7,7 +7,7 @@ import {Link} from 'react-router';
 import setupStyle from 'styles/attribution/attribution-setp.css';
 import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 
-export default class NotReadyAnalyze extends Component {
+export default class NoAnalyzeData extends Component {
 
   style = style;
   styles = [analyzeStyle, setupStyle];
