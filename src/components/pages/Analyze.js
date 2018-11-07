@@ -18,7 +18,7 @@ export default class Analyze extends Component {
   };
 
   render() {
-    const {userAccount: {startTime}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
+    const {attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
 
     const attributionModels = [
       {value: false, label: 'Full Journey'},
@@ -47,13 +47,6 @@ export default class Analyze extends Component {
     const historyCalculatedProps = {
       indicatorsData: indicatorsData
     };
-
-    const daysToAttributionData = 4 - getNumberOfDaysBetweenDates(new Date(), new Date(startTime));
-    const showAttributionData = daysToAttributionData <= 0;
-
-    if (!showAttributionData) {
-      history.push('/analyze-not-ready');
-    }
 
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));

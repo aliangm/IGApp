@@ -7,6 +7,7 @@ import {getProfileSync} from 'components/utils/AuthService';
 import {userPermittedToPage} from 'utils';
 
 import style from 'styles/sidebar.css';
+import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 
 export default class Sidebar extends Component {
   style = style;
@@ -65,8 +66,15 @@ export default class Sidebar extends Component {
     }
   }
 
+  isShowAttributionData() {
+    const {userAccount: {startTime}} = this.props;
+    const daysToAttributionData = 4 - getNumberOfDaysBetweenDates(new Date(), new Date(startTime));
+    return daysToAttributionData <= 0;
+  }
+
   render() {
     const profile = getProfileSync();
+    const showAttributionData = this.isShowAttributionData();
     return <div>
       <div className={this.classes.backface}
            onClick={this.close}
@@ -80,7 +88,7 @@ export default class Sidebar extends Component {
                     pagePermission='dashboard'
           />
           <FeatureToggle featureName="attribution">
-            <MenuItem icon="sidebar:analyze" text="Analyze" link='/analyze/overview'
+            <MenuItem icon="sidebar:analyze" text="Analyze" link={showAttributionData ? '/analyze/overview' : '/no-analyze-data'}
                       isHighlighted={this.isHighlighted('/analyze')}
                       pagePermission='analyze'
             />
