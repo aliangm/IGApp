@@ -23,15 +23,15 @@ export default class UserRegionsPopup extends Component {
       const userRegions = [...this.props.userRegions];
       if (!userRegions.includes(regionName)) {
         userRegions.push(regionName);
-        this.props.updateUserMonthPlan({userRegions: userRegions}, this.props.region, this.props.planDate)
-          .then(() => {
-            this.props.close();
-            this.props.afterRegionCreation(regionName);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
+      this.props.updateUserMonthPlan({userRegions: userRegions}, this.props.region, this.props.planDate)
+        .then(() => {
+          this.props.close();
+          this.props.afterRegionCreation(regionName);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
