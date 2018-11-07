@@ -123,8 +123,8 @@ ReactDOM.render(
                tabName="Planned VS Actual"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
-        <Route path="/campaigns/by-channel" component={ByChannelTab} onEnter={requireAuth} tabName='By Channel'/>
         <Route path="/campaigns/by-status" component={ByStatusTab} onEnter={requireAuth} tabName='By Status'/>
+        <Route path="/campaigns/by-channel" component={ByChannelTab} onEnter={requireAuth} tabName='By Channel'/>
         <Route path="/campaigns/online-performance"
                component={OnlineTab}
                onEnter={requireAuth}
