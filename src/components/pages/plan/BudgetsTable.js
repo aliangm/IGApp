@@ -170,16 +170,9 @@ export default class BudgetsTable extends Component {
 
     return !this.state.collapsedCategories[category] && this.state.tableCollapsed === COLLAPSE_OPTIONS.SHOW_ALL ?
       [categoryRow, ...channels.map((channel) => {
-        const channelRegions = [];
-        channel.values.forEach(item => {
-          if (item.regions) {
-            Object.keys(item.regions).forEach(region => {
-              if (!channelRegions.includes(region)) {
-                channelRegions.push(region);
-              }
-            });
-          }
-        });
+        const regionArrays = channel.values.filter(item => item.regions).map(item => Object.keys(item.regions));
+        const channelRegions = union(...regionArrays);
+
         return [this.getTableRow(channel, ROW_TYPE.CHANNEL, numberOfPastDates),
           ...(channelRegions.map(region => this.getTableRow({
             channel: channel.channel,
