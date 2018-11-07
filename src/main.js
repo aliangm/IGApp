@@ -51,7 +51,6 @@ import {formatDate} from 'components/utils/date';
 import {userPermittedToPage} from 'utils';
 import config from 'components/utils/Configuration';
 import Login from 'components/pages/signIn/Login';
-import SignUp from 'components/pages/signIn/SignUp';
 import ForgotPassword from 'components/pages/signIn/ForgotPassword';
 import ManualPlan from 'components/pages/ManualPlan';
 
@@ -94,7 +93,6 @@ ReactDOM.render(
   <Router onUpdate={onUpdate} history={history}>
     <Route path='/login' component={Login}/>
     <Route path='/forgotPassword' component={ForgotPassword}/>
-    <Route path='/signup' component={SignUp}/>
     <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
     <Route path="/loginCallBack" onEnter={crossOriginVerification}/>
     <Route component={App} onEnter={requireAuth}>
