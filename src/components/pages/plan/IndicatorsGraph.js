@@ -28,7 +28,8 @@ export default class IndicatorsGraph extends Component {
 
     const initialIndicators = this.getInitialIndicators(this.props);
     this.state = {
-      checkedIndicators: initialIndicators ? initialIndicators : []
+      checkedIndicators: initialIndicators ? initialIndicators : [],
+      activeTooltipIndex: 0,
     };
   }
 
@@ -61,6 +62,12 @@ export default class IndicatorsGraph extends Component {
   handleScroll = () => {
     this.props.changeScrollPosition(this.refs.chart.scrollLeft);
   };
+
+  handleMouseMove = ({ activeTooltipIndex }) => {
+    if (Number.isInteger(activeTooltipIndex) && this.state.activeTooltipIndex !== activeTooltipIndex) {
+      this.setState({ activeTooltipIndex })
+    }
+  }
 
   getInitialIndicators = (props) => {
     const objectives = Object.keys(props.parsedObjectives);
@@ -125,6 +132,15 @@ export default class IndicatorsGraph extends Component {
     return forecastingData;
   };
 
+  getAreasMaxValue = (areaData) =>
+    Math.max(
+      ...areaData.map((month) => Math.max(
+        ...Object.keys(month)
+          .filter((key) => this.state.checkedIndicators.includes(key))
+          .map((key) => month[key])
+      ))
+    );
+
   getObjectiveIconFromData = (objectiveData) => {
     const {committedForecasting} = this.props.calculatedData;
     const project = committedForecasting[objectiveData.monthIndex] &&
@@ -137,6 +153,7 @@ export default class IndicatorsGraph extends Component {
   render() {
     const indicators = getIndicatorsWithProps();
     const {parsedObjectives, floating} = this.props;
+    const {activeTooltipIndex, checkedIndicators} = this.state;
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
@@ -145,6 +162,10 @@ export default class IndicatorsGraph extends Component {
       );
 
     const areaData = this.getAreasData();
+    const maxValue = this.getAreasMaxValue(areaData);
+    const currentValue = areaData[activeTooltipIndex][checkedIndicators[0]] || 0;
+    const areaHeight = floating ? 230 : 400;
+    const tooltipPosition = Math.min((maxValue - currentValue) / maxValue * areaHeight, areaHeight - 80);
 
     const {collapsedObjectives} = this.props.calculatedData.objectives;
     const menuItems = Object.keys(indicatorsMapping).map((indicator, index) => {
@@ -289,8 +310,11 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart} ref='chart'>
-        <AreaChart data={areaData} height={floating ? 230 : 400} width={70 + this.props.cellWidth * (areaData.length - 1)}
-                   margin={{top: 10, right: 25, left: 10, bottom: 21}}>
+        <AreaChart
+          data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
+          margin={{top: 10, right: 25, left: 10, bottom: 21}}
+          onMouseMove={this.handleMouseMove}
+        >
           <YAxis axisLine={false}
                  tickLine={false}
                  tickFormatter={formatBudgetShortened}
@@ -312,7 +336,11 @@ export default class IndicatorsGraph extends Component {
           {dots}
           <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
                   wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
-          <Tooltip content={tooltip} offset={0}/>
+          <Tooltip
+            content={tooltip}
+            offset={0}
+            position={{ y: tooltipPosition }}
+          />
           {defs}
           {areas}
           {dashedAreas}
