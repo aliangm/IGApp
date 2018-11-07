@@ -66,8 +66,8 @@ export default class Campaigns extends Component {
     }
   }
 
-  openCampaign = index => {
-    this.setState({showPopup: true, index: index});
+  openCampaign = platformIndex => {
+    this.setState({showPopup: true, index: platformIndex});
   };
 
   componentWillReceiveProps({campaigns}) {
