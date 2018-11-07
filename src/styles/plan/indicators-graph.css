@@ -8,6 +8,10 @@
     display: flex;
 }
 
+.floating .menu-items {
+    height: 230px;
+}
+
 .menu {
     min-width: 196px;
     height: 100%;

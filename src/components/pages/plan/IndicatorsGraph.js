@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import Component from 'components/Component';
 import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
@@ -135,7 +136,7 @@ export default class IndicatorsGraph extends Component {
 
   render() {
     const indicators = getIndicatorsWithProps();
-    const {parsedObjectives} = this.props;
+    const {parsedObjectives, floating} = this.props;
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
@@ -278,7 +279,7 @@ export default class IndicatorsGraph extends Component {
       return null;
     };
 
-    return <div className={this.classes.inner}>
+    return <div className={classnames(this.classes.inner, { [this.classes.floating]: floating })}>
       <div className={this.classes.menu}>
         <div className={this.classes.menuTitle}>
           Forecasting
@@ -288,7 +289,7 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart} ref='chart'>
-        <AreaChart data={areaData} height={400} width={70 + this.props.cellWidth * (areaData.length - 1)}
+        <AreaChart data={areaData} height={floating ? 230 : 400} width={70 + this.props.cellWidth * (areaData.length - 1)}
                    margin={{top: 10, right: 25, left: 10, bottom: 21}}>
           <YAxis axisLine={false}
                  tickLine={false}
