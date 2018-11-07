@@ -93,8 +93,7 @@ export default class OnlineCampaigns extends Component {
     });
 
     const campaignsWithAttribution = campaigns
-      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId)
-      .map(campaign => {
+      .map((campaign, index) => {
         const attributionData = attributionCampaigns && attributionCampaigns.find(item =>
           item.name === campaign.name || (campaign.tracking && campaign.tracking.campaignUTM && item.name === campaign.tracking.campaignUTM)
         );
@@ -108,9 +107,11 @@ export default class OnlineCampaigns extends Component {
           conversions: conversionsObj ? conversionsObj.actualGrowth : 0,
           ...attributionData,
           ...campaign,
-          user: user
+          user: user,
+          platformIndex: index
         };
-      });
+      })
+      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId);
 
     const rows = campaignsWithAttribution
       .sort((item1, item2) =>
@@ -136,7 +137,10 @@ export default class OnlineCampaigns extends Component {
           campaign[selectedAttributionMetric] || 0
         ], {
           key: index,
-          className: this.classes.tableRow
+          className: this.classes.tableRow,
+          onClick: () => {
+            this.props.openCampaign(campaign.platformIndex);
+          }
         })
       );
 

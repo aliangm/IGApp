@@ -62,9 +62,13 @@ export default class Campaigns extends Component {
 
   componentDidMount() {
     if (this.props.location.query.campaign) {
-      this.setState({showPopup: true, index: this.props.location.query.campaign});
+      this.openCampaign(this.props.location.query.campaign);
     }
   }
+
+  openCampaign = index => {
+    this.setState({showPopup: true, index: index});
+  };
 
   componentWillReceiveProps({campaigns}) {
     if (this.props.campaigns !== campaigns) {
@@ -126,7 +130,7 @@ export default class Campaigns extends Component {
   };
 
   render() {
-    const {selectedIndex, campaigns} = this.state;
+    const {selectedIndex campaigns} = this.state;
     const {planUnknownChannels, teamMembers, campaignsTemplates, inHouseChannels, addNotification, calculatedData: {committedBudgets, monthlyBudget, monthlyBudgetLeftToInvest, activeCampaigns, campaignsWithIndex}} = this.props;
 
     const unknownChannels = planUnknownChannels && planUnknownChannels.length > 0 && planUnknownChannels[0]
@@ -202,7 +206,8 @@ export default class Campaigns extends Component {
         filteredCampaigns: filteredCampaigns,
         updateCampaigns: this.updateCampaigns,
         showCampaign: this.showCampaign,
-        addNewCampaign: this.addNewCampaign
+        addNewCampaign: this.addNewCampaign,
+        openCampaign: this.openCampaign
       })));
 
     return <div>
