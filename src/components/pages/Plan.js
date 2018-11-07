@@ -140,7 +140,8 @@ export default class Plan extends Component {
         .filter(channelKey => unknownChannels ? isUnknownChannel(channelKey) : !isUnknownChannel(channelKey))
         .forEach(channelKey => {
           const {primaryBudget, isConstraint, isSoft, budgetConstraint, regions} = month[channelKey];
-          if (primaryBudget || isConstraint || (regions && Object.keys(regions).find(region => regions[region]))) {
+          const hasRegions = regions && Object.keys(regions).find(region => regions[region]);
+          if (primaryBudget || isConstraint || hasRegions) {
             if (unknownChannels) {
               object[channelKey] = primaryBudget;
             }
