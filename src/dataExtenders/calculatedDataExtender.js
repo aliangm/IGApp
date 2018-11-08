@@ -22,12 +22,8 @@ export function calculatedDataExtender(data) {
     return {...campaign, index: index};
   });
   const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
-  const merged = merge(committedBudgets, data.planUnknownChannels);
-  const unknownChannels = data.planUnknownChannels && data.planUnknownChannels.length > 0 && data.planUnknownChannels[0]
-    ? data.planUnknownChannels[0]
-    : {};
-  const monthlyBudget = sumBy(Object.keys(committedBudgets[0]), (key)=> committedBudgets[0][key]) +
-    sumBy(Object.keys(Object.keys(unknownChannels)), (key) => unknownChannels[key]);
+  const allBudgets = merge([], committedBudgets, data.planUnknownChannels);
+  const monthlyBudget = sumBy(Object.keys(allBudgets[0]), (key)=> allBudgets[0][key]);
   const monthlyExtarpolatedMoneySpent = calculateActualSpent(committedBudgets[0],
     data.planUnknownChannels[0],
     data.knownChannels,
@@ -54,7 +50,7 @@ export function calculatedDataExtender(data) {
       activeCampaigns: activeCampaigns,
       annualBudget: annualBudget,
       annualBudgetLeftToPlan: annualBudget -
-      merged.reduce((annualSum, month) => Object.keys(month)
+      allBudgets.reduce((annualSum, month) => Object.keys(month)
         .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
