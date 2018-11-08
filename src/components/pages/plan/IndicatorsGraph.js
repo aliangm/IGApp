@@ -22,6 +22,7 @@ export default class IndicatorsGraph extends Component {
 
   style = style;
   styles = [onboardingStyle];
+  areas = { } // area refs
 
   constructor(props) {
     super(props);
@@ -30,6 +31,7 @@ export default class IndicatorsGraph extends Component {
     this.state = {
       checkedIndicators: initialIndicators ? initialIndicators : [],
       activeTooltipIndex: 0,
+      tooltipPosition: 0,
     };
   }
 
@@ -64,8 +66,15 @@ export default class IndicatorsGraph extends Component {
   };
 
   handleMouseMove = ({ activeTooltipIndex }) => {
-    if (Number.isInteger(activeTooltipIndex) && this.state.activeTooltipIndex !== activeTooltipIndex) {
-      this.setState({ activeTooltipIndex })
+    if (this.areas && Number.isInteger(activeTooltipIndex) && this.state.activeTooltipIndex !== activeTooltipIndex) {
+      this.setState({
+        activeTooltipIndex,
+        tooltipPosition: Math.min(
+          ...Object.values(this.areas)
+            .filter((a) => !!a)
+            .map((a) => a.props.points[activeTooltipIndex].y)
+        ),
+      })
     }
   }
 
@@ -132,15 +141,6 @@ export default class IndicatorsGraph extends Component {
     return forecastingData;
   };
 
-  getAreasMaxValue = (areaData) =>
-    Math.max(
-      ...areaData.map((month) => Math.max(
-        ...Object.keys(month)
-          .filter((key) => this.state.checkedIndicators.includes(key))
-          .map((key) => month[key])
-      ))
-    );
-
   getObjectiveIconFromData = (objectiveData) => {
     const {committedForecasting} = this.props.calculatedData;
     const project = committedForecasting[objectiveData.monthIndex] &&
@@ -153,7 +153,7 @@ export default class IndicatorsGraph extends Component {
   render() {
     const indicators = getIndicatorsWithProps();
     const {parsedObjectives, floating} = this.props;
-    const {activeTooltipIndex, checkedIndicators} = this.state;
+    const {tooltipPosition} = this.state;
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
@@ -162,10 +162,7 @@ export default class IndicatorsGraph extends Component {
       );
 
     const areaData = this.getAreasData();
-    const maxValue = this.getAreasMaxValue(areaData);
-    const currentValue = areaData[activeTooltipIndex][checkedIndicators[0]] || 0;
     const areaHeight = floating ? 230 : 400;
-    const tooltipPosition = Math.min((maxValue - currentValue) / maxValue * areaHeight, areaHeight - 80);
 
     const {collapsedObjectives} = this.props.calculatedData.objectives;
     const menuItems = Object.keys(indicatorsMapping).map((indicator, index) => {
@@ -200,9 +197,10 @@ export default class IndicatorsGraph extends Component {
       </defs>;
     });
 
-    const areas = this.state.checkedIndicators.map(indicator => {
+    const areas = this.state.checkedIndicators.map((indicator) => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator}
+                   ref={ref => this.areas[indicator] = ref }
                    isAnimationActive={false}
                    type='monotone'
                    dataKey={indicator}
