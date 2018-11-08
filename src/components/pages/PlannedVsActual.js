@@ -184,12 +184,7 @@ export default class PlannedVsActual extends Component {
       this.state.planUnknownChannels[0] || {},
       this.state.knownChannels,
       this.state.unknownChannels,
-      {
-        facebookadsapi: this.state.facebookadsapi,
-        adwordsapi: this.state.adwordsapi,
-        linkedinapi: this.state.linkedinapi,
-        twitterapi: this.state.twitterapi
-      }
+      this.props.calculatedData.integrations
     );
     if (data) {
 

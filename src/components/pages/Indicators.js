@@ -8,7 +8,7 @@ import NextButton from 'components/pages/profile/NextButton';
 import Item from 'components/pages/indicators/Item';
 import style from 'styles/onboarding/onboarding.css';
 import indiStyle from 'styles/indicators/indicators.css';
-import { isPopupMode, disablePopupMode } from 'modules/popup-mode';
+import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
 import history from 'history';
 import FacebookAutomaticPopup from 'components/pages/indicators/FacebookAutomaticPopup';
 import CRMPopup from 'components/pages/indicators/CRMPopup';
@@ -17,8 +17,8 @@ import FinancePopup from 'components/pages/indicators/FinancePopup';
 import SocialPopup from 'components/pages/indicators/SocialPopup';
 import TwitterAutomaticPopup from 'components/pages/indicators/TwitterAutomaticPopup';
 import Loading from 'components/pages/indicators/Loading';
-import { getIndicatorsWithProps } from 'components/utils/indicators';
-import MozAutomaticPopup from "./indicators/MozAutomaticPopup";
+import {getIndicatorsWithProps} from 'components/utils/indicators';
+import MozAutomaticPopup from './indicators/MozAutomaticPopup';
 import YoutubeAutomaticPopup from 'components/pages/indicators/YoutubeAutomaticPopup';
 
 export default class Indicators extends Component {
@@ -39,7 +39,7 @@ export default class Indicators extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(name, value){
+  handleChange(name, value) {
     let update = Object.assign({}, this.props.actualIndicators);
     value = parseInt(value);
     if (!isNaN(value)) {
@@ -81,35 +81,31 @@ export default class Indicators extends Component {
   }
 
   isFunnelAuto(indicator) {
-    if (this.props.hubspotAuto && this.props.hubspotAuto.mapping && this.props.hubspotAuto.mapping[indicator]) {
-      return "provider:hubspot";
+    if (this.props.calculatedData.integrations.isHubspotAuto && this.props.hubspotapi.mapping[indicator]) {
+      return 'provider:hubspot';
     }
-    if (this.props.salesforceapi && this.props.salesforceapi.mapping && this.props.salesforceapi.mapping[indicator]) {
-      return "provider:salesforce";
+    if (this.props.calculatedData.integrations.isSalesforceAuto && this.props.salesforceapi.mapping[indicator]) {
+      return 'provider:salesforce';
     }
     return false;
   }
 
   isSheetAuto(indicator) {
-    return this.props.googleSheetsAuto && this.props.googleSheetsAuto.mapping && this.props.googleSheetsAuto.mapping[indicator]
+    return this.props.calculatedData.integrations.isGoogleSheetsAuto && this.props.googlesheetsapi.mapping[indicator];
   }
 
   isFinanceAuto(indicator) {
     if (this.isSheetAuto(indicator)) {
-      return "provider:sheets";
+      return 'provider:sheets';
     }
-    if (this.props.isStripeAuto) {
-      return "provider:stripe";
+    if (this.props.calculatedData.integrations.isStripeAuto) {
+      return 'provider:stripe';
     }
     return false;
   }
 
-  isGoogleAuto() {
-    return !!this.props.googleAuto;
-  }
-
   isBlogAuto() {
-    return this.props.googleAuto && this.props.googleAuto.blogProfileId;
+    return this.props.googleapi && this.props.googleapi.blogProfileId;
   }
 
   updateState = (newState) => {
@@ -120,35 +116,35 @@ export default class Indicators extends Component {
     const indicatorsSpecialProp = {
       facebookLikes: {
         showAutomaticPopup: this.showFacebookPopup.bind(this),
-        automaticIndicators: this.props.isFacebookAuto
+        automaticIndicators: this.props.calculatedData.integrations.isFacebookAuto
       },
       facebookEngagement: {
         showAutomaticPopup: this.showFacebookPopup.bind(this),
-        automaticIndicators: this.props.isFacebookAuto
+        automaticIndicators: this.props.calculatedData.integrations.isFacebookAuto
       },
       twitterFollowers: {
         showAutomaticPopup: this.showTwitterPopup.bind(this),
-        automaticIndicators: this.props.isTwitterAuto
+        automaticIndicators: this.props.calculatedData.integrations.isTwitterAuto
       },
       twitterEngagement: {
         showAutomaticPopup: this.showTwitterPopup.bind(this),
-        automaticIndicators: this.props.isTwitterAuto
+        automaticIndicators: this.props.calculatedData.integrations.isTwitterAuto
       },
       linkedinFollowers: {
         showAutomaticPopup: this.showSocialPopup.bind(this),
-        automaticIndicators: this.props.isLinkedinAuto
+        automaticIndicators: this.props.calculatedData.integrations.isLinkedinAuto
       },
       linkedinEngagement: {
         showAutomaticPopup: this.showSocialPopup.bind(this),
-        automaticIndicators: this.props.isLinkedinAuto
+        automaticIndicators: this.props.calculatedData.integrations.isLinkedinAuto
       },
       youtubeSubscribers: {
         showAutomaticPopup: this.showYoutubePopup.bind(this),
-        automaticIndicators: this.props.isYoutubeAuto
+        automaticIndicators: this.props.calculatedData.integrations.isYoutubeAuto
       },
       youtubeEngagement: {
         showAutomaticPopup: this.showYoutubePopup.bind(this),
-        automaticIndicators: this.props.isYoutubeAuto
+        automaticIndicators: this.props.calculatedData.integrations.isYoutubeAuto
       },
       MCL: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
@@ -248,19 +244,19 @@ export default class Indicators extends Component {
       },
       domainAuthority: {
         showAutomaticPopup: this.showMozPopup.bind(this),
-        automaticIndicators: this.props.mozapi && this.props.mozapi.url
+        automaticIndicators: this.props.calculatedData.integrations.isMozAuto
       },
       sessions: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
-        automaticIndicators: this.isGoogleAuto()
+        automaticIndicators: this.props.calculatedData.integrations.isGoogleAuto
       },
       averageSessionDuration: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
-        automaticIndicators: this.isGoogleAuto()
+        automaticIndicators: this.props.calculatedData.integrations.isGoogleAuto
       },
       bounceRate: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
-        automaticIndicators: this.isGoogleAuto()
+        automaticIndicators: this.props.calculatedData.integrations.isGoogleAuto
       },
       blogVisits: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
@@ -278,7 +274,7 @@ export default class Indicators extends Component {
         automaticIndicators: this.isFinanceAuto('churnRate')
       }
     };
-    const { actualIndicators } = this.props;
+    const {actualIndicators} = this.props;
     let groups = [];
     const properties = getIndicatorsWithProps() || {};
     const indicators = Object.keys(properties);
@@ -296,44 +292,64 @@ export default class Indicators extends Component {
       const indicatorsItems = groupIndicators.map(indicator =>
         <Item
           key={indicator}
-          icon={"indicator:" + indicator}
-          title={ properties[indicator].title }
+          icon={'indicator:' + indicator}
+          title={properties[indicator].title}
           name={indicator}
-          updateIndicator={ this.handleChange }
-          defaultStatus = { actualIndicators[indicator] }
-          maxValue={ properties[indicator].range.max }
-          isPercentage={ properties[indicator].isPercentage }
-          description ={ properties[indicator].description }
-          formula ={ properties[indicator].formula }
-          isDirectionDown={ !properties[indicator].isDirectionUp }
-          isDollar={ properties[indicator].isDollar }
+          updateIndicator={this.handleChange}
+          defaultStatus={actualIndicators[indicator]}
+          maxValue={properties[indicator].range.max}
+          isPercentage={properties[indicator].isPercentage}
+          description={properties[indicator].description}
+          formula={properties[indicator].formula}
+          isDirectionDown={!properties[indicator].isDirectionUp}
+          isDollar={properties[indicator].isDollar}
           {... indicatorsSpecialProp[indicator]}
         />
       );
-      return <div className={ indiStyle.locals.row } key={group}>
-        { indicatorsItems }
-      </div>
+      return <div className={indiStyle.locals.row} key={group}>
+        {indicatorsItems}
+      </div>;
     });
     return <div className={indiStyle.locals.wrap}>
-      <FacebookAutomaticPopup hidden={ !this.state.showFacebookPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showFacebookPopup: false}) }}/>
-      <TwitterAutomaticPopup hidden={ !this.state.showTwitterPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showTwitterPopup: false}) }}/>
-      <MozAutomaticPopup hidden={ !this.state.showMozPopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showMozPopup: false}) } } defaultUrl={ this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite }/>
-      <CRMPopup hidden={ !this.state.showCRMPopup } close={ ()=>{ this.setState({showCRMPopup: false}) } } setDataAsState={ this.props.setDataAsState } updateState={ this.updateState } salesforceapi={this.props.salesforceapi} hubspotAuto={this.props.hubspotAuto}/>
-      <AnalyticsPopup hidden={ !this.state.showAnalyticsPopup } close={ ()=>{ this.setState({showAnalyticsPopup: false}) } } setDataAsState={ this.props.setDataAsState } googleAuto={this.props.googleAuto}/>
-      <FinancePopup hidden={ !this.state.showFinancePopup } close={ ()=>{ this.setState({showFinancePopup: false}) } } setDataAsState={ this.props.setDataAsState } googleSheetsAuto={this.props.googleSheetsAuto}/>
-      <SocialPopup hidden={ !this.state.showSocialPopup } close={ ()=>{ this.setState({showSocialPopup: false}) } } setDataAsState={ this.props.setDataAsState }/>
-      <YoutubeAutomaticPopup hidden={ !this.state.showYoutubePopup } setDataAsState={ this.props.setDataAsState } close={ ()=>{ this.setState({showYoutubePopup: false}) }}/>
+      <FacebookAutomaticPopup hidden={!this.state.showFacebookPopup} setDataAsState={this.props.setDataAsState}
+                              close={() => {
+                                this.setState({showFacebookPopup: false});
+                              }}/>
+      <TwitterAutomaticPopup hidden={!this.state.showTwitterPopup} setDataAsState={this.props.setDataAsState}
+                             close={() => {
+                               this.setState({showTwitterPopup: false});
+                             }}/>
+      <MozAutomaticPopup hidden={!this.state.showMozPopup} setDataAsState={this.props.setDataAsState} close={() => {
+        this.setState({showMozPopup: false});
+      }} defaultUrl={this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite}/>
+      <CRMPopup hidden={!this.state.showCRMPopup} close={() => {
+        this.setState({showCRMPopup: false});
+      }} setDataAsState={this.props.setDataAsState} updateState={this.updateState}
+                salesforceapi={this.props.salesforceapi} hubspotapi={this.props.hubspotapi}/>
+      <AnalyticsPopup hidden={!this.state.showAnalyticsPopup} close={() => {
+        this.setState({showAnalyticsPopup: false});
+      }} setDataAsState={this.props.setDataAsState} googleapi={this.props.googleapi}/>
+      <FinancePopup hidden={!this.state.showFinancePopup} close={() => {
+        this.setState({showFinancePopup: false});
+      }} setDataAsState={this.props.setDataAsState} googlesheetsapi={this.props.googlesheetsapi}/>
+      <SocialPopup hidden={!this.state.showSocialPopup} close={() => {
+        this.setState({showSocialPopup: false});
+      }} setDataAsState={this.props.setDataAsState}/>
+      <YoutubeAutomaticPopup hidden={!this.state.showYoutubePopup} setDataAsState={this.props.setDataAsState}
+                             close={() => {
+                               this.setState({showYoutubePopup: false});
+                             }}/>
       {/*<Loading hidden={ !this.state.loading }/>*/}
-      <div className={ this.classes.cols }>
-        <div className={ this.classes.colLeft }>
-          { page }
+      <div className={this.classes.cols}>
+        <div className={this.classes.colLeft}>
+          {page}
         </div>
 
-        { isPopupMode() ?
+        {isPopupMode() ?
 
-          <div className={ this.classes.colRight }>
-            <div className={ this.classes.row }>
-              <ProfileProgress progress={ 76 } image={
+          <div className={this.classes.colRight}>
+            <div className={this.classes.row}>
+              <ProfileProgress progress={76} image={
                 require('assets/flower/4.png')
               }
                                text="You rock! Hope you’re starting to get excited about planning the right way"/>
@@ -345,24 +361,24 @@ export default class Indicators extends Component {
              **/}
           </div>
 
-          : null }
+          : null}
       </div>
 
-      { isPopupMode() ?
+      {isPopupMode() ?
 
-        <div className={ this.classes.footer }>
-          <BackButton onClick={ () => {
+        <div className={this.classes.footer}>
+          <BackButton onClick={() => {
             history.push('/profile/target-audience');
-          } }/>
-          <div style={{ width: '30px' }} />
-          <NextButton onClick={ () => {
+          }}/>
+          <div style={{width: '30px'}}/>
+          <NextButton onClick={() => {
             history.push('/profile/preferences');
-          } }/>
+          }}/>
         </div>
 
         :
-        <div style={{ paddingBottom: '60px' }}/>
+        <div style={{paddingBottom: '60px'}}/>
       }
-    </div>
+    </div>;
   }
 }

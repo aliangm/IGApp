@@ -1,11 +1,11 @@
-import { getNickname } from 'components/utils/channels';
+import {getNickname} from 'components/utils/channels';
 
 const channelPlatformMapping = {
-  'advertising_socialAds_facebookAdvertising' : 'facebookadsapi',
-  'advertising_displayAds_googleAdwords' : 'adwordsapi',
-  'advertising_searchMarketing_SEM_googleAdwords': 'adwordsapi',
-  'advertising_socialAds_linkedinAdvertising': 'linkedinapi',
-  'advertising_socialAds_twitterAdvertising': 'twitterapi',
+  'advertising_socialAds_facebookAdvertising': 'isFacebookAdsAuto',
+  'advertising_displayAds_googleAdwords': 'isAdwordsAuto',
+  'advertising_searchMarketing_SEM_googleAdwords': 'isAdwordsAuto',
+  'advertising_socialAds_linkedinAdvertising': 'isLinkedinAdsAuto',
+  'advertising_socialAds_twitterAdvertising': 'isTwitterAdsAuto'
 };
 
 export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, knownChannels, unknownChannels, apis) {
@@ -15,7 +15,7 @@ export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, kn
       key: channel,
       channel: getNickname(channel),
       planned: approvedBudgets[channel],
-      actual: knownChannels[channel] !== undefined  ? knownChannels[channel] : approvedBudgets[channel],
+      actual: knownChannels[channel] !== undefined ? knownChannels[channel] : approvedBudgets[channel],
       isAutomatic: knownChannels[channel] !== undefined ? (apis[channelPlatformMapping[channel]] !== undefined) : false
     });
   });
@@ -36,7 +36,7 @@ export function parsePlannedVsActual(approvedBudgets, plannedUnknownChannels, kn
         channel: getNickname(channel),
         planned: 0,
         actual: knownChannels[channel],
-        isAutomatic : apis[channelPlatformMapping[channel]] != undefined
+        isAutomatic: apis[channelPlatformMapping[channel]] != undefined
       });
     }
   });
