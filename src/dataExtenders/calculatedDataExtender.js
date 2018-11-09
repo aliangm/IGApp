@@ -23,7 +23,7 @@ export function calculatedDataExtender(data) {
   });
   const activeCampaigns = campaignsWithIndex.filter(campaign => campaign.isArchived !== true);
   const allBudgets = merge([], committedBudgets, data.planUnknownChannels);
-  const monthlyBudget = sumBy(Object.keys(allBudgets[0]), (key)=> allBudgets[0][key]);
+  const monthlyBudget = sum(Object.values(allBudgets[0]));
   const monthlyExtarpolatedMoneySpent = calculateActualSpent(committedBudgets[0],
     data.planUnknownChannels[0],
     data.knownChannels,
