@@ -51,9 +51,9 @@ import {formatDate} from 'components/utils/date';
 import {userPermittedToPage} from 'utils';
 import config from 'components/utils/Configuration';
 import Login from 'components/pages/signIn/Login';
-import SignUp from 'components/pages/signIn/SignUp';
 import ForgotPassword from 'components/pages/signIn/ForgotPassword';
 import ManualPlan from 'components/pages/ManualPlan';
+import NoAnalyzeData from 'components/pages/analyze/NoAnalyzeData';
 
 style.use();
 
@@ -94,7 +94,6 @@ ReactDOM.render(
   <Router onUpdate={onUpdate} history={history}>
     <Route path='/login' component={Login}/>
     <Route path='/forgotPassword' component={ForgotPassword}/>
-    <Route path='/signup' component={SignUp}/>
     <Route path="/" component={SignIn} onEnter={handleAuthentication}/>
     <Route path="/loginCallBack" onEnter={crossOriginVerification}/>
     <Route component={App} onEnter={requireAuth}>
@@ -123,8 +122,8 @@ ReactDOM.render(
                tabName="Planned VS Actual"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
-        <Route path="/campaigns/by-channel" component={ByChannelTab} onEnter={requireAuth} tabName='By Channel'/>
         <Route path="/campaigns/by-status" component={ByStatusTab} onEnter={requireAuth} tabName='By Status'/>
+        <Route path="/campaigns/by-channel" component={ByChannelTab} onEnter={requireAuth} tabName='By Channel'/>
         <Route path="/campaigns/online-performance"
                component={OnlineTab}
                onEnter={requireAuth}
@@ -167,6 +166,7 @@ ReactDOM.render(
         <Route path="/analyze/content" component={Content} onEnter={requireAuth} tabName='Content'/>
         <Route path="/analyze/audiences" component={Users} onEnter={requireAuth} tabName='Audiences'/>
       </Route>
+      <Route path="/no-analyze-data" component={NoAnalyzeData} onEnter={requireAdminAuth}/>
       <Route path="/trustability" component={Trustability} onEnter={requireAdminAuth}/>
     </Route>
     <Route component={AttributionLink} path='/attribution/:UID'></Route>

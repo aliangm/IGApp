@@ -24,7 +24,6 @@ export default class ForgotPassword extends Component {
 
     return <div>
       <SignInForm title='Welcome back!'
-                  subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
                   buttonAction={() => passwordReset(this.state.email, (error) => {
                     if (error) {
                       alert(error.description);

@@ -62,9 +62,13 @@ export default class Campaigns extends Component {
 
   componentDidMount() {
     if (this.props.location.query.campaign) {
-      this.setState({showPopup: true, index: this.props.location.query.campaign});
+      this.openCampaign(this.props.location.query.campaign);
     }
   }
+
+  openCampaign = platformIndex => {
+    this.setState({showPopup: true, index: platformIndex});
+  };
 
   componentWillReceiveProps({campaigns}) {
     if (this.props.campaigns !== campaigns) {
@@ -202,7 +206,8 @@ export default class Campaigns extends Component {
         filteredCampaigns: filteredCampaigns,
         updateCampaigns: this.updateCampaigns,
         showCampaign: this.showCampaign,
-        addNewCampaign: this.addNewCampaign
+        addNewCampaign: this.addNewCampaign,
+        openCampaign: this.openCampaign
       })));
 
     return <div>
