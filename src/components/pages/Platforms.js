@@ -122,64 +122,64 @@ export default class Platforms extends Component {
         <ReactTooltip place='right' effect='solid' id='platforms' html={true}/>
         <Title title="Integrations"/>
         <div>
-          <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.salesforceapi}
+          <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                    data={this.props.salesforceapi}
                                     ref="salesforce" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Salesforce}
                                     actualIndicators={this.props.actualIndicators}
                                     loadingStarted={() => this.setLoading('salesforce', true)}
-                                    loadingFinished={() => this.setLoading('salesforce', false)}
-          />
-          <HubspotAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.hubspotAuto}
+                                    loadingFinished={() => this.setLoading('salesforce', false)}/>
+          <HubspotAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                 data={this.props.hubspotapi}
                                  updateState={this.props.updateState} ref="hubspot"
                                  affectedIndicators={PLATFORM_INDICATORS_MAPPING.Hubspot}
                                  actualIndicators={this.props.actualIndicators}
                                  loadingStarted={() => this.setLoading('hubspot', true)}
-                                 loadingFinished={() => this.setLoading('hubspot', false)}
-          />
-          <GoogleAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleAuto}
+                                 loadingFinished={() => this.setLoading('hubspot', false)}/>
+          <GoogleAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                data={this.props.googleapi}
                                 ref="googleAnalytics"
                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']}
                                 actualIndicators={this.props.actualIndicators}
                                 loadingStarted={() => this.setLoading('google', true)}
-                                loadingFinished={() => this.setLoading('google', false)}
-          />
-          <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState} ref="linkedin"
+                                loadingFinished={() => this.setLoading('google', false)}/>
+          <LinkedinAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                  ref="linkedin"
                                   affectedIndicators={PLATFORM_INDICATORS_MAPPING.LinkedIn}
                                   actualIndicators={this.props.actualIndicators}
                                   loadingStarted={() => this.setLoading('linkedin', true)}
-                                  loadingFinished={() => this.setLoading('linkedin', false)}
-          />
-          <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState} ref="facebook"
+                                  loadingFinished={() => this.setLoading('linkedin', false)}/>
+          <FacebookAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                  ref="facebook"
                                   affectedIndicators={PLATFORM_INDICATORS_MAPPING.Facebook}
                                   actualIndicators={this.props.actualIndicators}/>
-          <TwitterAutomaticPopup setDataAsState={this.props.setDataAsState} ref="twitter"
+          <TwitterAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                 ref="twitter"
                                  affectedIndicators={PLATFORM_INDICATORS_MAPPING.Twitter}
                                  actualIndicators={this.props.actualIndicators}/>
-          <YoutubeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="youtube"
+          <YoutubeAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                 ref="youtube"
                                  affectedIndicators={PLATFORM_INDICATORS_MAPPING.Youtube}
                                  actualIndicators={this.props.actualIndicators}/>
-          <StripeAutomaticPopup setDataAsState={this.props.setDataAsState} ref="stripe"
+          <StripeAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                ref="stripe"
                                 affectedIndicators={PLATFORM_INDICATORS_MAPPING.Stripe}
                                 actualIndicators={this.props.actualIndicators}
                                 loadingStarted={() => this.setLoading('stripe', true)}
-                                loadingFinished={() => this.setLoading('stripe', false)}
-          />
+                                loadingFinished={() => this.setLoading('stripe', false)}/>
           <MozAutomaticPopup setDataAsState={this.props.setDataAsState}
-                             defaultUrl={this.props.mozapi
-                               ? this.props.mozapi.url
-                               : this.props.userAccount.companyWebsite}
-                             ref="moz" affectedIndicators={PLATFORM_INDICATORS_MAPPING.Moz}
+                             defaultUrl={this.props.mozapi ? this.props.mozapi.url : this.props.userAccount.companyWebsite}
+                             ref="moz"
+                             affectedIndicators={PLATFORM_INDICATORS_MAPPING.Moz}
                              actualIndicators={this.props.actualIndicators}
                              loadingStarted={() => this.setLoading('moz', true)}
-                             loadingFinished={() => this.setLoading('moz', false)}
-
-          />
-          <GoogleSheetsAutomaticPopup setDataAsState={this.props.setDataAsState} data={this.props.googleSheetsAuto}
+                             loadingFinished={() => this.setLoading('moz', false)}/>
+          <GoogleSheetsAutomaticPopup setDataAsState={this.props.setDataAsState}
+                                      data={this.props.googlesheetsapi}
                                       ref="googleSheets"
                                       affectedIndicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']}
                                       actualIndicators={this.props.actualIndicators}
                                       loadingStarted={() => this.setLoading('sheets', true)}
-                                      loadingFinished={() => this.setLoading('sheets', false)}
-          />
+                                      loadingFinished={() => this.setLoading('sheets', false)}/>
           <LinkedinCampaignsPopup setDataAsState={this.props.setDataAsState}
                                   ref='linkedinCampaigns'
                                   data={this.props.linkedinadsapi}
@@ -191,29 +191,25 @@ export default class Platforms extends Component {
                                  data={this.props.twitteradsapi}
                                  userAccount={this.props.userAccount}
                                  loadingStarted={() => this.setLoading('twitterCampaigns', true)}
-                                 loadingFinished={() => this.setLoading('twitterCampaigns', false)}
-          />
+                                 loadingFinished={() => this.setLoading('twitterCampaigns', false)}/>
           <FacebookCampaignsPopup setDataAsState={this.props.setDataAsState}
                                   ref='facebookCampaigns'
                                   data={this.props.facebookadsapi}
                                   userAccount={this.props.userAccount}
                                   loadingStarted={() => this.setLoading('facebookCampaigns', true)}
-                                  loadingFinished={() => this.setLoading('facebookCampaigns', false)}
-          />
+                                  loadingFinished={() => this.setLoading('facebookCampaigns', false)}/>
           <AdwordsCampaignsPopup setDataAsState={this.props.setDataAsState}
                                  ref='adwordsCampaigns'
                                  data={this.props.adwordsapi}
                                  userAccount={this.props.userAccount}
                                  loadingStarted={() => this.setLoading('adwordsCampaigns', true)}
-                                 loadingFinished={() => this.setLoading('adwordsCampaigns', false)}
-          />
+                                 loadingFinished={() => this.setLoading('adwordsCampaigns', false)}/>
           <SalesforceCampaignsPopup setDataAsState={this.props.setDataAsState}
                                     ref='salesForceCampaigns'
                                     data={this.props.salesforceapi}
                                     userAccount={this.props.userAccount}
                                     loadingStarted={() => this.setLoading('salesForceCampaigns', true)}
-                                    loadingFinished={() => this.setLoading('salesForceCampaigns', false)}
-          />
+                                    loadingFinished={() => this.setLoading('salesForceCampaigns', false)}/>
           <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'
@@ -227,18 +223,24 @@ export default class Platforms extends Component {
               CRM
             </div>
             <div className={platformsStyle.locals.platformLine} ref="crm">
-              <Platform
-                connected={!!(this.props.salesforceapi && this.props.salesforceapi.tokens && this.props.salesforceapi.mapping)}
-                title="Salesforce"
-                loading={this.isLoading('salesforce')}
-                indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']} icon="platform:salesforce" open={() => {
-                this.refs.salesforce.open();
-              }} hidden={this.isHidden('salesforce')}/>
-              <Platform connected={this.props.hubspotAuto} title="Hubspot"
+              <Platform connected={this.props.calculatedData.integrations.isSalesforceAuto}
+                        title="Salesforce"
+                        loading={this.isLoading('salesforce')}
+                        indicators={PLATFORM_INDICATORS_MAPPING['Salesforce']}
+                        icon="platform:salesforce"
+                        open={() => {
+                          this.refs.salesforce.open();
+                        }}
+                        hidden={this.isHidden('salesforce')}/>
+              <Platform connected={this.props.calculatedData.integrations.isHubspotAuto}
+                        title="Hubspot"
                         loading={this.isLoading('hubspot')}
-                        indicators={PLATFORM_INDICATORS_MAPPING['Hubspot']} icon="platform:hubspot" open={() => {
-                this.refs.hubspot.open();
-              }} hidden={this.isHidden('hubspot')}/>
+                        indicators={PLATFORM_INDICATORS_MAPPING['Hubspot']}
+                        icon="platform:hubspot"
+                        open={() => {
+                          this.refs.hubspot.open();
+                        }}
+                        hidden={this.isHidden('hubspot')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.webAnalytics}>
@@ -246,12 +248,15 @@ export default class Platforms extends Component {
               Web Analytics
             </div>
             <div className={platformsStyle.locals.platformLine} ref="webAnalytics">
-              <Platform connected={this.props.googleAuto} title="Google Analytics"
+              <Platform connected={this.props.calculatedData.integrations.isGoogleAuto}
+                        title="Google Analytics"
                         loading={this.isLoading('google')}
-                        indicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']} icon="platform:googleAnalytics"
+                        indicators={PLATFORM_INDICATORS_MAPPING['Google Analytics']}
+                        icon="platform:googleAnalytics"
                         open={() => {
                           this.refs.googleAnalytics.open();
-                        }} hidden={this.isHidden('googleAnalytics')}/>
+                        }}
+                        hidden={this.isHidden('googleAnalytics')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.social}>
@@ -259,23 +264,39 @@ export default class Platforms extends Component {
               Social
             </div>
             <div className={platformsStyle.locals.platformLine} ref="social">
-              <Platform connected={this.props.isLinkedinAuto} title="LinkedIn"
+              <Platform connected={this.props.calculatedData.integrations.isLinkedinAuto}
+                        title="LinkedIn"
                         loading={this.isLoading('linkedin')}
-                        indicators={PLATFORM_INDICATORS_MAPPING['LinkedIn']} icon="platform:linkedin" open={() => {
-                this.refs.linkedin.open();
-              }} hidden={this.isHidden('linkedin')}/>
-              <Platform connected={this.props.isFacebookAuto} title="Facebook"
-                        indicators={PLATFORM_INDICATORS_MAPPING['Facebook']} icon="platform:facebook" open={() => {
-                this.refs.facebook.open();
-              }} hidden={this.isHidden('facebook')}/>
-              <Platform connected={this.props.isTwitterAuto} title="Twitter"
-                        indicators={PLATFORM_INDICATORS_MAPPING['Twitter']} icon="platform:twitter" open={() => {
-                this.refs.twitter.open();
-              }} hidden={this.isHidden('twitter')}/>
-              <Platform connected={this.props.isYoutubeAuto} title="Youtube"
-                        indicators={PLATFORM_INDICATORS_MAPPING['Youtube']} icon="platform:youtube" open={() => {
-                this.refs.youtube.open();
-              }} hidden={this.isHidden('youtube')}/>
+                        indicators={PLATFORM_INDICATORS_MAPPING['LinkedIn']}
+                        icon="platform:linkedin"
+                        open={() => {
+                          this.refs.linkedin.open();
+                        }}
+                        hidden={this.isHidden('linkedin')}/>
+              <Platform connected={this.props.calculatedData.integrations.isFacebookAuto}
+                        title="Facebook"
+                        indicators={PLATFORM_INDICATORS_MAPPING['Facebook']}
+                        icon="platform:facebook"
+                        open={() => {
+                          this.refs.facebook.open();
+                        }}
+                        hidden={this.isHidden('facebook')}/>
+              <Platform connected={this.props.calculatedData.integrations.isTwitterAuto}
+                        title="Twitter"
+                        indicators={PLATFORM_INDICATORS_MAPPING['Twitter']}
+                        icon="platform:twitter"
+                        open={() => {
+                          this.refs.twitter.open();
+                        }}
+                        hidden={this.isHidden('twitter')}/>
+              <Platform connected={this.props.calculatedData.integrations.isYoutubeAuto}
+                        title="Youtube"
+                        indicators={PLATFORM_INDICATORS_MAPPING['Youtube']}
+                        icon="platform:youtube"
+                        open={() => {
+                          this.refs.youtube.open();
+                        }}
+                        hidden={this.isHidden('youtube')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.payment}>
@@ -283,11 +304,15 @@ export default class Platforms extends Component {
               Payment Providers
             </div>
             <div className={platformsStyle.locals.platformLine} ref="payment">
-              <Platform connected={this.props.isStripeAuto} title="Stripe"
+              <Platform connected={this.props.calculatedData.integrations.isStripeAuto}
+                        title="Stripe"
                         loading={this.isLoading('stripe')}
-                        indicators={PLATFORM_INDICATORS_MAPPING['Stripe']} icon="platform:stripe" open={() => {
-                this.refs.stripe.open();
-              }} hidden={this.isHidden('stripe')}/>
+                        indicators={PLATFORM_INDICATORS_MAPPING['Stripe']}
+                        icon="platform:stripe"
+                        open={() => {
+                          this.refs.stripe.open();
+                        }}
+                        hidden={this.isHidden('stripe')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.productivity}>
@@ -295,11 +320,15 @@ export default class Platforms extends Component {
               Productivity
             </div>
             <div className={platformsStyle.locals.platformLine} ref="productivity">
-              <Platform connected={this.props.googleSheetsAuto} title="Google Sheets" loading={this.isLoading('sheets')}
-                        indicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']} icon="platform:googleSheets"
+              <Platform connected={this.props.calculatedData.integrations.isGoogleSheetsAuto}
+                        title="Google Sheets"
+                        loading={this.isLoading('sheets')}
+                        indicators={PLATFORM_INDICATORS_MAPPING['Google Sheets']}
+                        icon="platform:googleSheets"
                         open={() => {
                           this.refs.googleSheets.open();
-                        }} hidden={this.isHidden('googleSheets')}/>
+                        }}
+                        hidden={this.isHidden('googleSheets')}/>
             </div>
           </div>
           <div hidden={this.state.visibleSections.seo}>
@@ -307,12 +336,15 @@ export default class Platforms extends Component {
               SEO
             </div>
             <div className={platformsStyle.locals.platformLine} ref="seo">
-              <Platform connected={this.props.mozapi} title="Moz" indicators={PLATFORM_INDICATORS_MAPPING['Moz']}
+              <Platform connected={this.props.calculatedData.integrations.isMozAuto}
+                        title="Moz"
+                        indicators={PLATFORM_INDICATORS_MAPPING['Moz']}
                         loading={this.isLoading('moz')}
-                        icon="platform:moz" open={() => {
-                this.refs.moz.open();
-              }} hidden={this.isHidden('moz')}
-              />
+                        icon="platform:moz"
+                        open={() => {
+                          this.refs.moz.open();
+                        }}
+                        hidden={this.isHidden('moz')}/>
             </div>
           </div>
           <div>
@@ -321,60 +353,54 @@ export default class Platforms extends Component {
             </div>
             <div className={platformsStyle.locals.platformLine} ref="crm">
               <div className={this.classes.row}>
-                <Platform
-                  connected={!!(this.props.salesforceapi && this.props.salesforceapi.tokens && this.props.salesforceapi.selectedCampaigns && this.props.salesforceapi.selectedCampaigns.length > 0)}
-                  title="Salesforce Campaigns" loading={this.isLoading('salesForceCampaigns')}
-                  icon="platform:salesforce"
-                  connectButtonText='Import'
-                  setDataAsState={this.props.setDataAsState}
-                  open={() => {
-                    this.refs.salesForceCampaigns.open();
-                  }}
-                />
+                <Platform connected={this.props.calculatedData.integrations.isSalesforceCampaignsAuto}
+                          title="Salesforce Campaigns"
+                          loading={this.isLoading('salesForceCampaigns')}
+                          icon="platform:salesforce"
+                          connectButtonText='Import'
+                          setDataAsState={this.props.setDataAsState}
+                          open={() => {
+                            this.refs.salesForceCampaigns.open();
+                          }}/>
               </div>
               <div className={this.classes.row}>
               </div>
-              <Platform
-                connected={!!this.props.adwordsapi} title="Adwords Campaigns"
-                loading={this.isLoading('adwordsCampaigns')}
-                icon='platform:googleAds'
-                connectButtonText='Import'
-                setDataAsState={this.props.setDataAsState}
-                open={() => {
-                  this.refs.adwordsCampaigns.open();
-                }}
-              />
-              <Platform
-                connected={!!(this.props.facebookadsapi && this.props.facebookadsapi.accountId && this.props.facebookadsapi.token)}
-                title="Facebook Campaigns" loading={this.isLoading('facebookCampaigns')}
-                icon='platform:facebookAds'
-                connectButtonText='Import'
-                setDataAsState={this.props.setDataAsState}
-                open={() => {
-                  this.refs.facebookCampaigns.open();
-                }}
-              />
-              <Platform
-                connected={!!(this.props.linkedinadsapi && this.props.linkedinadsapi.tokens && this.props.linkedinadsapi.accountId)}
-                title="LinkedIn Campaigns"
-                loading={this.isLoading('linkedinCampaigns')}
-                icon='platform:linkedInAds'
-                connectButtonText='Import'
-                setDataAsState={this.props.setDataAsState}
-                open={() => {
-                  this.refs.linkedinCampaigns.open();
-                }}
-              />
-              <Platform
-                connected={!!(this.props.twitteradsapi && this.props.twitteradsapi.oauthAccessToken && this.props.twitteradsapi.oauthAccessTokenSecret && this.props.twitteradsapi.accountId)}
-                title="Twitter Campaigns" loading={this.isLoading('twitterCampaigns')}
-                icon='platform:twitterAds'
-                connectButtonText='Import'
-                setDataAsState={this.props.setDataAsState}
-                open={() => {
-                  this.refs.twitterCampaigns.open();
-                }}
-              />
+              <Platform connected={this.props.calculatedData.integrations.isAdwordsAuto}
+                        title="Adwords Campaigns"
+                        loading={this.isLoading('adwordsCampaigns')}
+                        icon='platform:googleAds'
+                        connectButtonText='Import'
+                        setDataAsState={this.props.setDataAsState}
+                        open={() => {
+                          this.refs.adwordsCampaigns.open();
+                        }}/>
+              <Platform connected={this.props.calculatedData.integrations.isFacebookAdsAuto}
+                        title="Facebook Campaigns"
+                        loading={this.isLoading('facebookCampaigns')}
+                        icon='platform:facebookAds'
+                        connectButtonText='Import'
+                        setDataAsState={this.props.setDataAsState}
+                        open={() => {
+                          this.refs.facebookCampaigns.open();
+                        }}/>
+              <Platform connected={this.props.calculatedData.integrations.isLinkedinAdsAuto}
+                        title="LinkedIn Campaigns"
+                        loading={this.isLoading('linkedinCampaigns')}
+                        icon='platform:linkedInAds'
+                        connectButtonText='Import'
+                        setDataAsState={this.props.setDataAsState}
+                        open={() => {
+                          this.refs.linkedinCampaigns.open();
+                        }}/>
+              <Platform connected={this.props.calculatedData.integrations.isTwitterAdsAuto}
+                        title="Twitter Campaigns"
+                        loading={this.isLoading('twitterCampaigns')}
+                        icon='platform:twitterAds'
+                        connectButtonText='Import'
+                        setDataAsState={this.props.setDataAsState}
+                        open={() => {
+                          this.refs.twitterCampaigns.open();
+                        }}/>
             </div>
           </div>
           {isPopupMode() ?

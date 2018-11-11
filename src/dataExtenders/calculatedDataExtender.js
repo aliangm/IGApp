@@ -80,7 +80,8 @@ export function calculatedDataExtender(data) {
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
       isTrial,
-      isAccountEnabled
+      isAccountEnabled,
+      integrations: calculateAutomaticIntegration(data)
     },
     ...data
   };
@@ -152,4 +153,40 @@ function calculateActualSpent(committedBudgets, planUnknownChannels, knownChanne
 
   return sumBy(Object.keys(approvedExtarpolate), (key) => approvedExtarpolate[key]) +
     sumBy(Object.keys(planUnknownExtarpolate), (key) => planUnknownExtarpolate[key]);
+}
+
+function calculateAutomaticIntegration(data) {
+  const isTwitterAdsAuto = !!(data.twitteradsapi && data.twitteradsapi.oauthAccessToken && data.twitteradsapi.oauthAccessTokenSecret && data.twitteradsapi.accountId);
+  const isLinkedinAdsAuto = !!(data.linkedinadsapi && data.linkedinadsapi.tokens && data.linkedinadsapi.accountId);
+  const isFacebookAdsAuto = !!(data.facebookadsapi && data.facebookadsapi.accountId && data.facebookadsapi.token);
+  const isAdwordsAuto = !!(data.adwordsapi && data.adwordsapi.tokens && data.adwordsapi.customerId);
+  const isSalesforceCampaignsAuto = !!(data.salesforceapi && data.salesforceapi.tokens && data.salesforceapi.selectedCampaigns && data.salesforceapi.selectedCampaigns.length > 0);
+  const isSalesforceAuto = !!(data.salesforceapi && data.salesforceapi.tokens && data.salesforceapi.mapping);
+  const isMozAuto = !!(data.mozapi && data.mozapi.url);
+  const isHubspotAuto = !!(data.hubspotapi && data.hubspotapi.mapping && data.hubspotapi.tokens);
+  const isGoogleAuto = !!(data.googleapi && data.googleapi.tokens && data.googleapi.profileId);
+  const isLinkedinAuto = !!(data.linkedinapi && data.linkedinapi.accountId && data.linkedinapi.tokens);
+  const isFacebookAuto = !!(data.facebookapi && data.facebookapi.pageId);
+  const isTwitterAuto = !!(data.twitterapi && data.twitterapi.accountName);
+  const isYoutubeAuto = !!(data.youtubeapi && data.youtubeapi.type && data.youtubeapi.id);
+  const isStripeAuto = !!(data.stripeapi && data.stripeapi.tokens);
+  const isGoogleSheetsAuto = !!(data.googlesheetsapi && data.googlesheetsapi.tokens && data.googlesheetsapi.mapping);
+
+  return {
+    isTwitterAdsAuto,
+    isLinkedinAdsAuto,
+    isFacebookAdsAuto,
+    isAdwordsAuto,
+    isSalesforceCampaignsAuto,
+    isSalesforceAuto,
+    isMozAuto,
+    isHubspotAuto,
+    isGoogleAuto,
+    isLinkedinAuto,
+    isFacebookAuto,
+    isTwitterAuto,
+    isYoutubeAuto,
+    isStripeAuto,
+    isGoogleSheetsAuto
+  };
 }
