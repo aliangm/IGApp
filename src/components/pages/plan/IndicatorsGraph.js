@@ -308,8 +308,10 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart}>
+				<CustomizedLegend hidden={!this.props.dashedLineData}/>
 				<div className={this.classes.chartScroller} ref='chart'>
           <AreaChart
+						className={this.classes.chartContent}
             data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
             margin={{top: 10, right: 25, left: 10, bottom: 21}}
             onMouseMove={this.handleMouseMove}
@@ -327,8 +329,6 @@ export default class IndicatorsGraph extends Component {
                    tickMargin={21}
                    interval={0}/>
             {dots}
-            <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
-                    wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
             <Tooltip
               content={tooltip}
               offset={0}
@@ -377,7 +377,7 @@ class CustomizedLegend extends Component {
 
   render() {
     return this.props.hidden ? null :
-      <div style={{display: 'flex'}}>
+      <div className={this.classes.legend} style={{display: 'flex'}}>
         <div style={{display: 'flex'}}>
           <div className={this.classes.legendIcon}/>
           <div className={this.classes.legendText}>
