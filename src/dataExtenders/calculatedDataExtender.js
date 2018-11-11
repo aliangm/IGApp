@@ -86,7 +86,7 @@ export function calculatedDataExtender(data) {
       isTrial,
       isAccountEnabled,
       integrations: calculateAutomaticIntegration(data)
-    }
+    },
     ...data
   };
 }
