@@ -111,7 +111,7 @@ export default class OnlineCampaigns extends Component {
           platformIndex: index
         };
       })
-      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId);
+      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId || campaign.twitteradsId);
 
     const rows = campaignsWithAttribution
       .sort((item1, item2) =>
