@@ -307,19 +307,44 @@ export default class IndicatorsGraph extends Component {
           {menuItems}
         </div>
       </div>
-      <div className={this.classes.chart} ref='chart'>
+      <div className={this.classes.chart}>
+				<div className={this.classes.chartScroller} ref='chart'>
+          <AreaChart
+            data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
+            margin={{top: 10, right: 25, left: 10, bottom: 21}}
+            onMouseMove={this.handleMouseMove}
+          >
+            <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
+            <XAxis dataKey="name"
+                   style={{textTransform: 'uppercase'}}
+                   tick={{
+                     fontSize: '11px',
+                     fill: '#99a4c2',
+                     fontWeight: 600,
+                     letterSpacing: '0.1px'
+                   }}
+                   tickLine={false}
+                   tickMargin={21}
+                   interval={0}/>
+            {dots}
+            <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
+                    wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
+            <Tooltip
+              content={tooltip}
+              offset={0}
+              position={{ y: tooltipPosition }}
+            />
+            {defs}
+            {areas}
+            {dashedAreas}
+          </AreaChart>
+        </div>
+        {/* area with fixed position and hidden content, except y-axis */}
         <AreaChart
+          className={this.classes.fixedChartOverlay}
           data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
           margin={{top: 10, right: 25, left: 10, bottom: 21}}
-          onMouseMove={this.handleMouseMove}
         >
-          <YAxis axisLine={false}
-                 tickLine={false}
-                 tickFormatter={formatBudgetShortened}
-                 tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
-                 tickMargin={21}
-                 domain={['auto', 'auto']}/>
-          <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
           <XAxis dataKey="name"
                  style={{textTransform: 'uppercase'}}
                  tick={{
@@ -331,17 +356,15 @@ export default class IndicatorsGraph extends Component {
                  tickLine={false}
                  tickMargin={21}
                  interval={0}/>
-          {dots}
-          <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
-                  wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
-          <Tooltip
-            content={tooltip}
-            offset={0}
-            position={{ y: tooltipPosition }}
-          />
-          {defs}
           {areas}
           {dashedAreas}
+          <YAxis axisLine={false}
+                 tickLine={false}
+                 stroke="white"
+                 tickFormatter={formatBudgetShortened}
+                 tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
+                 tickMargin={21}
+                 domain={['auto', 'auto']}/>
         </AreaChart>
       </div>
     </div>;
