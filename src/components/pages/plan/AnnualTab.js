@@ -27,7 +27,6 @@ export default class AnnualTab extends Component {
     super(props);
     this.state = {
       hoverRow: void 0,
-      approvedPlan: true,
       scrollPosition: 0
     };
   }
@@ -64,7 +63,6 @@ export default class AnnualTab extends Component {
                         isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
                         data={budgetsData}
-                        approvedPlan={this.state.approvedPlan}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}

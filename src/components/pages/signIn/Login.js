@@ -26,7 +26,6 @@ export default class Login extends Component {
 
     return <div>
       <SignInForm title='Welcome back!'
-                  subTitle={<div>Don't have an account? <a href="/signup">Sign Up</a></div>}
                   buttonAction={() => {
                     this.setState({error: undefined});
 

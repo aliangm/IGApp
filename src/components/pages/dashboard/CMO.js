@@ -111,7 +111,7 @@ export default class CMO extends Component {
       return {
         value: index,
         label: index || 'Only this month'
-      }
+      };
     });
 
     const merged = merge(committedBudgets, planUnknownChannels);
@@ -316,6 +316,13 @@ export default class CMO extends Component {
         return json;
       });
 
+    const calcConvRate = ((funnelStage1, funnelStage2) => {
+      if (funnelStage2 && funnelStage1) {
+        return Math.round(funnelStage2 / funnelStage1 * 100);
+      }
+      return 0;
+    });
+
     return <div className={dashboardStyle.locals.wrap}>
       <div className={this.classes.cols}>
         <div className={this.classes.colLeft}>
@@ -467,7 +474,7 @@ export default class CMO extends Component {
                     </div>
                     <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '157px'}}>
                       <div className={dashboardStyle.locals.curvedArrow}/>
-                      {actualIndicators.leadToMQLConversionRate}%
+                      {calcConvRate(actualIndicators.newMCL, actualIndicators.newMQL)}%
                     </div>
                   </div>
                 </div>
@@ -481,7 +488,7 @@ export default class CMO extends Component {
                     </div>
                     <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '142px'}}>
                       <div className={dashboardStyle.locals.curvedArrow}/>
-                      {actualIndicators.MQLToSQLConversionRate}%
+                      {calcConvRate(actualIndicators.newMQL, actualIndicators.newSQL)}%
                     </div>
                   </div>
                 </div>
@@ -495,7 +502,7 @@ export default class CMO extends Component {
                     </div>
                     <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '125px'}}>
                       <div className={dashboardStyle.locals.curvedArrow}/>
-                      {actualIndicators.SQLToOppConversionRate}%
+                      {calcConvRate(actualIndicators.newSQL, actualIndicators.newOpps)}%
                     </div>
                   </div>
                 </div>
@@ -509,7 +516,7 @@ export default class CMO extends Component {
                     </div>
                     <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '109px'}}>
                       <div className={dashboardStyle.locals.curvedArrow}/>
-                      {actualIndicators.OppToAccountConversionRate}%
+                      {calcConvRate(actualIndicators.newOpps, actualIndicators.newUsers)}%
                     </div>
                   </div>
                 </div>
@@ -802,7 +809,8 @@ export default class CMO extends Component {
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item} style={{height: '350px', width: '540px'}}>
-            <div className={dashboardStyle.locals.text} data-tip="Total allocated budget for campaigns per defined focus">
+            <div className={dashboardStyle.locals.text}
+                 data-tip="Total allocated budget for campaigns per defined focus">
               Campaigns by Focus
             </div>
             <div className={dashboardStyle.locals.chart}>

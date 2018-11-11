@@ -439,16 +439,16 @@ class AppComponent extends Component {
       budget: data.annualBudget,
       budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
-      googleAuto: data.googleapi,
-      hubspotAuto: data.hubspotapi,
-      isFacebookAuto: !!data.facebookapi,
-      isYoutubeAuto: !!data.youtubeapi,
+      googleapi: data.googleapi,
+      hubspotapi: data.hubspotapi,
+      facebookapi: data.facebookapi,
+      youtubeapi: data.youtubeapi,
       mozapi: data.mozapi,
       salesforceapi: data.salesforceapi,
-      isLinkedinAuto: !!data.linkedinapi,
-      isTwitterAuto: !!data.twitterapi,
-      googleSheetsAuto: data.googlesheetsapi,
-      isStripeAuto: !!data.stripeapi,
+      linkedinapi: data.linkedinapi,
+      twitterapi: data.twitterapi,
+      googlesheetsapi: data.googlesheetsapi,
+      stripeapi: data.stripeapi,
       adwordsapi: data.adwordsapi,
       facebookadsapi: data.facebookadsapi,
       linkedinadsapi: data.linkedinadsapi,
@@ -471,7 +471,8 @@ class AppComponent extends Component {
       namesMapping: data.namesMapping && Object.keys(data.namesMapping).length > 0 ? data.namesMapping : {
         channels: {},
         indicators: {}
-      }
+      },
+      userRegions: data.userRegions
     });
   }
 

@@ -34,6 +34,7 @@ export default class MozAutomaticPopup extends Component {
                                      JSON.stringify({url: this.state.url}),
                                      localStorage.getItem('region'))}
                                    title='Please enter your website'
+                                   placeHolder='http://www.website.com'
                                    onChange={this.handleChange.bind(this)}
                                    value={this.state.url}
                                    affectedIndicators={this.props.affectedIndicators}
