@@ -113,38 +113,39 @@ export default class Indicators extends Component {
   };
 
   render() {
+    const {actualIndicators, calculatedData: {integrations: {isFacebookAuto, isTwitterAuto, isLinkedinAuto, isYoutubeAuto, isMozAuto, isGoogleAuto}}} = this.props;
     const indicatorsSpecialProp = {
       facebookLikes: {
         showAutomaticPopup: this.showFacebookPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isFacebookAuto
+        automaticIndicators: isFacebookAuto
       },
       facebookEngagement: {
         showAutomaticPopup: this.showFacebookPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isFacebookAuto
+        automaticIndicators: isFacebookAuto
       },
       twitterFollowers: {
         showAutomaticPopup: this.showTwitterPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isTwitterAuto
+        automaticIndicators: isTwitterAuto
       },
       twitterEngagement: {
         showAutomaticPopup: this.showTwitterPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isTwitterAuto
+        automaticIndicators: isTwitterAuto
       },
       linkedinFollowers: {
         showAutomaticPopup: this.showSocialPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isLinkedinAuto
+        automaticIndicators: isLinkedinAuto
       },
       linkedinEngagement: {
         showAutomaticPopup: this.showSocialPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isLinkedinAuto
+        automaticIndicators: isLinkedinAuto
       },
       youtubeSubscribers: {
         showAutomaticPopup: this.showYoutubePopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isYoutubeAuto
+        automaticIndicators: isYoutubeAuto
       },
       youtubeEngagement: {
         showAutomaticPopup: this.showYoutubePopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isYoutubeAuto
+        automaticIndicators: isYoutubeAuto
       },
       MCL: {
         showAutomaticPopup: this.showCRMPopup.bind(this),
@@ -244,19 +245,19 @@ export default class Indicators extends Component {
       },
       domainAuthority: {
         showAutomaticPopup: this.showMozPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isMozAuto
+        automaticIndicators: isMozAuto
       },
       sessions: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isGoogleAuto
+        automaticIndicators: isGoogleAuto
       },
       averageSessionDuration: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isGoogleAuto
+        automaticIndicators: isGoogleAuto
       },
       bounceRate: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
-        automaticIndicators: this.props.calculatedData.integrations.isGoogleAuto
+        automaticIndicators: isGoogleAuto
       },
       blogVisits: {
         showAutomaticPopup: this.showAnalyticsPopup.bind(this),
@@ -274,7 +275,6 @@ export default class Indicators extends Component {
         automaticIndicators: this.isFinanceAuto('churnRate')
       }
     };
-    const {actualIndicators} = this.props;
     let groups = [];
     const properties = getIndicatorsWithProps() || {};
     const indicators = Object.keys(properties);
