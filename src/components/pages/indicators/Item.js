@@ -1,44 +1,40 @@
 import React from 'react';
 import Component from 'components/Component';
 import names from 'classnames';
-
+import isNil from 'lodash/isNil';
 import style from 'styles/indicators/item.css';
 import icons from 'styles/icons/indicators.css';
 import providerIcons from 'styles/icons/providers.css';
 import tooltipStyle from 'styles/controls-label.css';
-
 import Popup from 'components/Popup';
 import Textfield from 'components/controls/Textfield';
 import Button from 'components/controls/Button';
 
 export default class Item extends Component {
+
   style = style;
   styles = [icons, tooltipStyle, providerIcons];
 
   constructor(props) {
     super(props);
-    this.state = {
-      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) : (props.defaultStatus === 0 ? 'inactive' : undefined),
-      status: props.defaultStatus <= 0 ? '' : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus || '' : props.defaultStatus || '')),
+    this.state = {...this.initialState(props)};
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({...this.initialState(nextProps)});
+  }
+
+  initialState = (props) => {
+    return {
+      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) : (props.defaultStatus === 0 ? (props.automaticIndicators ? 'auto' : 'inactive') : undefined),
+      status: props.defaultStatus <= 0 ? (props.automaticIndicators ? props.defaultStatus : '') : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus || '' : props.defaultStatus || '')),
       menuShown: false,
       statusPopupHidden: true,
       name: props.name,
       maxValue: props.maxValue / 100 || 1,
       displayHelp: false
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      state: nextProps.defaultStatus ? (nextProps.defaultStatus === -2 ? 'irrelevant' : (nextProps.automaticIndicators ? 'auto' : 'manual')) : (nextProps.defaultStatus === 0 ? 'inactive' : undefined),
-      status: nextProps.defaultStatus <= 0 ? '' : (nextProps.isPercentage ? nextProps.defaultStatus + '%' || '' : (nextProps.isDollar ? '$' + nextProps.defaultStatus || '' : nextProps.defaultStatus || '')),
-      menuShown: false,
-      statusPopupHidden: true,
-      name: nextProps.name,
-      maxValue: nextProps.maxValue / 100 || 1,
-      displayHelp: false
-    });
-  }
+  };
 
   getStateText() {
     switch (this.state.state) {
@@ -80,11 +76,8 @@ export default class Item extends Component {
 
   getStatusText() {
     const status = this.state.status;
-    if (status == '') {
-      return '';
-    }
 
-    if (status == 0) {
+    if (status === 0) {
       return '0';
     }
 
@@ -219,7 +212,7 @@ export default class Item extends Component {
               this.setState({menuShown: true});
             }}/>
           </div>
-          {this.state.state ?
+          {!isNil(this.state.state) ?
             <div className={this.classes.status}>{this.getStatusText()}</div>
             : null}
         </div>
