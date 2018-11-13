@@ -138,6 +138,7 @@ export default class OnlineCampaigns extends Component {
         ], {
           key: index,
           className: this.classes.tableRow,
+          style: {cursor: 'pointer'},
           onClick: () => {
             this.props.openCampaign(campaign.platformIndex);
           }
