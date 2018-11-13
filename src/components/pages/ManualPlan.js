@@ -90,16 +90,18 @@ export default class ManualPlan extends Component {
         });
       });
     }
-    this.props.forecast(planBudgets)
-      .then((forecastedIndicaotrs) => {
-        this.props.updateUserMonthPlan({
-          planBudgets: planBudgets,
-          forecastedIndicators: forecastedIndicaotrs
-        }, this.props.region, this.props.planDate)
-          .then(() => {
-            history.push('/plan/annual');
-          });
-      });
+    if (planBudgets && planBudgets.length > 0 && planBudgets.find(item => Object.keys(item).length > 0)) {
+      this.props.forecast(planBudgets)
+        .then((forecastedIndicaotrs) => {
+          this.props.updateUserMonthPlan({
+            planBudgets: planBudgets,
+            forecastedIndicators: forecastedIndicaotrs
+          }, this.props.region, this.props.planDate)
+            .then(() => {
+              history.push('/plan/annual');
+            });
+        });
+    }
   };
 
   render() {
