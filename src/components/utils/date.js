@@ -49,3 +49,13 @@ export function getEndOfMonthString(dateStr) {
 export function getNumberOfDaysBetweenDates(toDate, fromDate = new Date()) {
   return Math.max(Math.ceil((toDate.getTime() - fromDate.getTime()) / (24 * 60 * 60 * 1000)), 0);
 }
+
+export function formatTimestamp(dateString) {
+  const date = new Date(dateString);
+
+  const day = date.getDate();
+  const monthIndex = date.getMonth();
+  const year = date.getFullYear().toString().substr(2, 2);
+
+  return `${day}-${monthNames[monthIndex]}-${year}`;
+}

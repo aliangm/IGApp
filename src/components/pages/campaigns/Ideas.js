@@ -9,6 +9,7 @@ import setupStyle from 'styles/attribution/setup.css';
 import commentStyle from 'styles/campaigns/comment.css';
 import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
+import {formatTimestamp} from 'components/utils/date';
 
 export default class Ideas extends Component {
 
@@ -30,13 +31,13 @@ export default class Ideas extends Component {
   addIdea(idea) {
     let update = this.props.campaignIdeas;
     update.push({
-      ... idea,
+      ...idea,
       date: new Date(),
       owner: getProfileSync().user_id,
       endorsements: []
     });
     this.setState({showAddIdeaPopup: false});
-    return this.props.updateUserMonthPlan({ campaignIdeas: update }, this.props.region, this.props.planDate);
+    return this.props.updateUserMonthPlan({campaignIdeas: update}, this.props.region, this.props.planDate);
   }
 
   addLike(userId, index) {
@@ -44,27 +45,11 @@ export default class Ideas extends Component {
     if (!update[index].endorsements.includes(userId)) {
       update[index].endorsements.push(userId);
     }
-    return this.props.updateUserMonthPlan({ campaignIdeas: update }, this.props.region, this.props.planDate);
-  }
-
-  formatDate(dateString) {
-    const date = new Date(dateString);
-    const monthNames = [
-      "January", "February", "March",
-      "April", "May", "June", "July",
-      "August", "September", "October",
-      "November", "December"
-    ];
-
-    const day = date.getDate();
-    const monthIndex = date.getMonth();
-    const year = date.getFullYear();
-
-    return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    return this.props.updateUserMonthPlan({campaignIdeas: update}, this.props.region, this.props.planDate);
   }
 
   render() {
-    const { campaignIdeas, auth } = this.props;
+    const {campaignIdeas, auth} = this.props;
     const headRow = this.getTableRow(null, [
       'Owner',
       'Date',
@@ -79,76 +64,81 @@ export default class Ideas extends Component {
     const rows = campaignIdeas.map((idea, i) => {
       const member = this.props.teamMembers.find(member => member.userId === idea.owner);
       return this.getTableRow(null, [
-        <div className={ PlannedVsActualstyle.locals.cellItem }>
+        <div className={PlannedVsActualstyle.locals.cellItem}>
           <Avatar member={member} className={commentStyle.locals.initials}/>
         </div>,
-        <div className={ PlannedVsActualstyle.locals.cellItem }>
-          { this.formatDate(idea.date) }
+        <div className={PlannedVsActualstyle.locals.cellItem}>
+          {formatTimestamp(idea.date)}
         </div>,
-        <div className={ PlannedVsActualstyle.locals.cellItem }>
-          { idea.name }
+        <div className={PlannedVsActualstyle.locals.cellItem}>
+          {idea.name}
         </div>,
-        <div className={ PlannedVsActualstyle.locals.cellItem } style={{ whiteSpace:  'pre-wrap'}}>
-          { idea.description }
+        <div className={PlannedVsActualstyle.locals.cellItem} style={{whiteSpace: 'pre-wrap'}}>
+          {idea.description}
         </div>,
-        <div className={ PlannedVsActualstyle.locals.cellItem }>
-          { idea.goal }
+        <div className={PlannedVsActualstyle.locals.cellItem}>
+          {idea.goal}
         </div>,
-        <div className={ PlannedVsActualstyle.locals.cellItem }>
-          { idea.endorsements.length }
+        <div className={PlannedVsActualstyle.locals.cellItem}>
+          {idea.endorsements.length}
         </div>,
-        <div className={ideasStyle.locals.like} onClick={this.addLike.bind(this, member.userId, i)} data-disabled={ idea.endorsements.includes(member.userId) ? true : null }/>
+        <div className={ideasStyle.locals.like} onClick={this.addLike.bind(this, member.userId, i)}
+             data-disabled={idea.endorsements.includes(member.userId) ? true : null}/>
       ], {
         key: i
       });
     });
     return <div>
-      <div className={ PlannedVsActualstyle.locals.wrap } ref="wrap" style={{ margin: '40px 40px' }}>
-        <div className={ PlannedVsActualstyle.locals.box } style={{ overflow: 'visible' }}>
-          <table className={ PlannedVsActualstyle.locals.table }>
+      <div className={PlannedVsActualstyle.locals.wrap} ref="wrap" style={{margin: '40px 40px'}}>
+        <div className={PlannedVsActualstyle.locals.box} style={{overflow: 'visible'}}>
+          <table className={PlannedVsActualstyle.locals.table}>
             <thead>
-            { headRow }
+            {headRow}
             </thead>
-            <tbody className={ setupStyle.locals.tableBody }>
-            { rows }
+            <tbody className={setupStyle.locals.tableBody}>
+            {rows}
             </tbody>
           </table>
         </div>
       </div>
-      <div style={{ justifyContent: 'center', display: 'flex' }}>
+      <div style={{justifyContent: 'center', display: 'flex'}}>
         <Button
           type="primary"
-          style={{ width: '75px', marginTop: '20px' }}
-          onClick={ () => { this.setState({showAddIdeaPopup: true}) } }>+Add
+          style={{width: '75px', marginTop: '20px'}}
+          onClick={() => {
+            this.setState({showAddIdeaPopup: true});
+          }}>+Add
         </Button>
       </div>
       <AddIdeaPopup
-        hidden={ !this.state.showAddIdeaPopup }
-        close={ ()=>{ this.setState({showAddIdeaPopup: false}) } }
-        addIdea={ this.addIdea }/>
-    </div>
+        hidden={!this.state.showAddIdeaPopup}
+        close={() => {
+          this.setState({showAddIdeaPopup: false});
+        }}
+        addIdea={this.addIdea}/>
+    </div>;
   }
 
   getTableRow(title, items, props) {
-    return <tr {... props}>
-      { title != null ?
-        <td className={ PlannedVsActualstyle.locals.titleCell }>{ this.getCellItem(title) }</td>
-        : null }
+    return <tr {...props}>
+      {title != null ?
+        <td className={PlannedVsActualstyle.locals.titleCell}>{this.getCellItem(title)}</td>
+        : null}
       {
         items.map((item, i) => {
-          return <td className={ PlannedVsActualstyle.locals.valueCell } key={ i }>{
+          return <td className={PlannedVsActualstyle.locals.valueCell} key={i}>{
             this.getCellItem(item)
-          }</td>
+          }</td>;
         })
       }
-    </tr>
+    </tr>;
   }
 
   getCellItem(item) {
     let elem;
 
     if (typeof item !== 'object') {
-      elem = <div className={ PlannedVsActualstyle.locals.cellItem }>{ item }</div>
+      elem = <div className={PlannedVsActualstyle.locals.cellItem}>{item}</div>;
     } else {
       elem = item;
     }
