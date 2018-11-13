@@ -48,8 +48,10 @@ export default class AddExpensePopup extends Component {
     }
   }
 
-  removeTimeframe = () => {
-
+  removeTimeframe = (index) => {
+    const timeframe = [...this.state.timeframe];
+    timeframe.splice(index, 1);
+    this.setState({timeframe: timeframe});
   };
 
   handleChangeEntityId = (value) => {
