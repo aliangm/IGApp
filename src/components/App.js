@@ -437,7 +437,6 @@ class AppComponent extends Component {
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
-      budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
       googleapi: data.googleapi,
       hubspotapi: data.hubspotapi,
