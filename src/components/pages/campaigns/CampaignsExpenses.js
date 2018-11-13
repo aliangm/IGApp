@@ -4,10 +4,18 @@ import style from 'styles/campaigns/online-campaigns.css';
 import {formatBudget} from 'components/utils/budget';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {formatTimestamp, getDates} from 'components/utils/date';
+import taskStyle from 'styles/campaigns/task.css';
 
 export default class CampaignsExpenses extends Component {
 
   style = style;
+  styles = [taskStyle];
+
+  deleteExpense = (index) => {
+    const expenses = [...this.props.expenses];
+    expenses.splice(index, 1);
+    this.props.updateUserMonthPlan({expenses}, this.props.region, this.props.planDate);
+  };
 
   render() {
     const {expenses, planDate, calculatedData: {activeCampaigns}} = this.props;
@@ -15,6 +23,7 @@ export default class CampaignsExpenses extends Component {
     const dates = getDates(planDate);
 
     const headRow = this.getTableRow(null, [
+      '',
       'Expense',
       'Timeframe',
       'Due date',
@@ -39,6 +48,8 @@ export default class CampaignsExpenses extends Component {
           : getChannelNickname(expense.assignedTo.entityId);
 
         return this.getTableRow(null, [
+          <div className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
+               style={{cursor: 'pointer'}}/>,
           expense.name,
           timeframe.map(item => dates[item.index]).join(', '),
           expense.dueDate,
