@@ -14,6 +14,8 @@ import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import {formatNumber} from 'components/utils/budget';
 import {getProfileSync} from 'components/utils/AuthService';
+import CampaignsExpenses from 'components/pages/campaigns/CampaignsExpenses';
+import history from 'history';
 
 function getDateString(stringDate) {
   if (stringDate) {
@@ -210,11 +212,23 @@ export default class Campaigns extends Component {
         openCampaign: this.openCampaign
       })));
 
+    const expensesTabActive = this.props.children ? this.props.children.type === CampaignsExpenses : null;
+
     return <div>
       <Page contentClassName={planStyle.locals.content} width="100%">
         <div className={planStyle.locals.head}>
           <div className={planStyle.locals.headTitle}>Campaigns & Activities</div>
           <div className={planStyle.locals.headPlan}>
+            {expensesTabActive ?
+              <Button type="primary" style={{
+                width: '102px',
+                marginRight: '15px'
+              }} onClick={() => {
+                history.push('/campaigns/add-expense');
+              }}>
+                Add Expense
+              </Button>
+              : null}
             <Button type="primary" style={{
               width: '102px'
             }} onClick={() => {
@@ -279,6 +293,8 @@ export default class Campaigns extends Component {
               updateCampaignsTemplates={this.updateCampaignsTemplates}
               processedChannels={processedChannels}
               addNotification={addNotification}
+              planDate={this.props.planDate}
+              expenses={this.props.expenses}
             />
           </div>
           <div hidden={!this.state.addNew}>

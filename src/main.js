@@ -54,6 +54,8 @@ import Login from 'components/pages/signIn/Login';
 import ForgotPassword from 'components/pages/signIn/ForgotPassword';
 import ManualPlan from 'components/pages/ManualPlan';
 import NoAnalyzeData from 'components/pages/analyze/NoAnalyzeData';
+import CampaignsExpenses from 'components/pages/campaigns/CampaignsExpenses';
+import AddExpensePopup from 'components/pages/campaigns/AddExpensePopup';
 
 style.use();
 
@@ -129,7 +131,9 @@ ReactDOM.render(
                onEnter={requireAuth}
                tabName='Online Performance'/>
         <Route path="/campaigns/ideas" component={IdeasTab} onEnter={requireAuth} tabName='Ideas'/>
+        <Route path="/campaigns/expenses" component={CampaignsExpenses} onEnter={requireAuth} tabName='Expenses'/>
       </Route>
+      <Route path="/campaigns/add-expense" component={AddExpensePopup} onEnter={requireAuth}/>
       <Route component={Settings} onEnter={requireAuth}>
         <Route path="/settings/account" component={Welcome} onEnter={requireAuth}/>
         <Route component={Attribution} onEnter={requireAuth}>
