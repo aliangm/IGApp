@@ -62,9 +62,16 @@ export default class Expenses extends Component {
           entityType: 'campaign',
           entityId: this.props.campaign.index
         };
+        const currentPath = window.location.pathname;
         history.push({
           pathname: '/campaigns/add-expense',
-          search: `?assignedTo=${JSON.stringify(json)}`
+          state: {
+            close: () => history.push({
+              pathname: currentPath,
+              query: {campaign: this.props.campaign.index}
+            }),
+            assignedTo: json
+          }
         });
       }}>
         Add Expense

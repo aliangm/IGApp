@@ -224,7 +224,14 @@ export default class Campaigns extends Component {
                 width: '102px',
                 marginRight: '15px'
               }} onClick={() => {
-                history.push('/campaigns/add-expense');
+                history.push({
+                  pathname: '/campaigns/add-expense',
+                  state: {
+                    close: () => history.push({
+                      pathname: '/campaigns/expenses'
+                    })
+                  }
+                });
               }}>
                 Add Expense
               </Button>

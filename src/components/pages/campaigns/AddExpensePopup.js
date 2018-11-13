@@ -32,7 +32,8 @@ export default class AddExpensePopup extends Component {
     assignedTo: {
       entityType: 'campaign',
       entityId: ''
-    }
+    },
+    close: history.goBack
   };
 
   constructor(props) {
@@ -43,8 +44,8 @@ export default class AddExpensePopup extends Component {
   }
 
   componentDidMount() {
-    if (this.props.location.query && this.props.location.query.assignedTo) {
-      this.setState({...this.defaultData, ...{assignedTo: JSON.parse(this.props.location.query.assignedTo)}});
+    if (this.props.location.state) {
+      this.setState({...this.defaultData, ...this.props.location.state});
     }
   }
 
@@ -82,7 +83,9 @@ export default class AddExpensePopup extends Component {
   };
 
   close = () => {
-    history.goBack();
+    if (this.state.close) {
+      this.state.close();
+    }
   };
 
   save = () => {
