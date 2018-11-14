@@ -10,7 +10,7 @@ import Textfield from 'components/controls/Textfield';
 import Select from 'components/controls/Select';
 import Calendar from 'components/controls/Calendar';
 import MultiRow from 'components/MultiRow';
-import {getDates} from 'components/utils/date';
+import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import {extractNumberFromBudget, formatBudget} from 'components/utils/budget';
 import {formatChannels} from 'components/utils/channels';
 import {getProfileSync} from 'components/utils/AuthService';
@@ -63,7 +63,7 @@ export default class AddExpensePopup extends Component {
 
   addExpense = () => {
     const {name, owner, amount, type, dueDate, timeframe, assignedTo} = this.state;
-    const timeFrameArray = new Array(12).fill(null);
+    const timeFrameArray = new Array(NUMBER_OF_FUTURE_MONTHS).fill(null);
     timeframe.forEach(item => {
       timeFrameArray[item.month] = item.amount;
     });
