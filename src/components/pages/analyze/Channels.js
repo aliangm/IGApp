@@ -75,7 +75,7 @@ export default class Channels extends Component {
     ];
 
     const headRow = this.getTableRow(null, [
-      <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}
+      <div style={{textAlign: 'left', cursor: 'pointer'}}
            onClick={this.sortBy.bind(this, 'label')}>
         Channel
       </div>,
@@ -184,7 +184,7 @@ export default class Channels extends Component {
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
       )
       .map(item => {
-        const {channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX} = item;
+        const {channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI CPX} = item;
         return this.getTableRow(null,
           [
             <div style={{display: 'flex'}}>
