@@ -298,6 +298,21 @@ export default class IndicatorsGraph extends Component {
       return null;
     };
 
+    const xAxis = (
+      <XAxis dataKey="name"
+       style={{textTransform: 'uppercase'}}
+       tick={{
+         fontSize: '11px',
+         fill: '#99a4c2',
+         fontWeight: 600,
+         letterSpacing: '0.1px'
+       }}
+       tickLine={false}
+       tickMargin={21}
+       interval={0}
+      />
+    );
+
     return <div className={classnames(this.classes.inner, { [this.classes.floating]: floating })}>
       <div className={this.classes.menu}>
         <div className={this.classes.menuTitle}>
@@ -308,26 +323,16 @@ export default class IndicatorsGraph extends Component {
         </div>
       </div>
       <div className={this.classes.chart}>
-				<CustomizedLegend hidden={!this.props.dashedLineData}/>
-				<div className={this.classes.chartScroller} ref='chart'>
+        <CustomizedLegend hidden={!this.props.dashedLineData}/>
+        <div className={this.classes.chartScroller} ref='chart'>
           <AreaChart
-						className={this.classes.chartContent}
+            className={this.classes.chartContent}
             data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
             margin={{top: 10, right: 25, left: 10, bottom: 21}}
             onMouseMove={this.handleMouseMove}
           >
             <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
-            <XAxis dataKey="name"
-                   style={{textTransform: 'uppercase'}}
-                   tick={{
-                     fontSize: '11px',
-                     fill: '#99a4c2',
-                     fontWeight: 600,
-                     letterSpacing: '0.1px'
-                   }}
-                   tickLine={false}
-                   tickMargin={21}
-                   interval={0}/>
+            {xAxis}
             {dots}
             <Tooltip
               content={tooltip}
@@ -345,17 +350,7 @@ export default class IndicatorsGraph extends Component {
           data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
           margin={{top: 10, right: 25, left: 10, bottom: 21}}
         >
-          <XAxis dataKey="name"
-                 style={{textTransform: 'uppercase'}}
-                 tick={{
-                   fontSize: '11px',
-                   fill: '#99a4c2',
-                   fontWeight: 600,
-                   letterSpacing: '0.1px'
-                 }}
-                 tickLine={false}
-                 tickMargin={21}
-                 interval={0}/>
+          {xAxis}
           {areas}
           {dashedAreas}
           <YAxis axisLine={false}

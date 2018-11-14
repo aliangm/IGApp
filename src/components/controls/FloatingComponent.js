@@ -473,7 +473,10 @@ export default class FloatingComponent extends Component {
           </div>
           <div className={innerClasses} ref={el => this.innerEl = el} style={innerStyle}>
             <div ref={el => this.childWrapperEl = el} className={childClasses} style={childStyle}>
-              {React.cloneElement(this.props.children, { floating: this.state.isActive })}
+              {React.Children.map(
+                this.props.children,
+                (child) => React.cloneElement(child, { floating: this.state.isActive })
+              )}
             </div>
           </div>
         </div>
