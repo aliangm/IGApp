@@ -6,7 +6,7 @@ import Button from 'components/controls/Button';
 import history from 'history';
 import {formatExpenses} from 'components/utils/expenses';
 
-export default class Expenses extends Component {
+export default class CampaignExpenses extends Component {
 
   style = style;
 

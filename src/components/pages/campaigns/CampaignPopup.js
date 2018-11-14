@@ -17,7 +17,7 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import Button from 'components/controls/Button';
 import isEmpty from 'lodash/isEmpty';
-import Expenses from 'components/pages/campaigns/Expenses';
+import CampaignExpenses from 'components/pages/campaigns/CampaignExpenses';
 
 export default class CampaignPopup extends Component {
 
@@ -211,7 +211,7 @@ export default class CampaignPopup extends Component {
       'Updates': Updates,
       'Tracking': Tracking,
       'Assets': Assets,
-      'Expenses': Expenses
+      'Expenses': CampaignExpenses
     };
 
     const tabNames = Object.keys(tabs);
