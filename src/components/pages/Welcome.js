@@ -27,6 +27,7 @@ import Tabs from 'components/onboarding/Tabs';
 import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
 import {userPermittedToPage} from 'utils';
+import {getMemberFullName} from 'components/utils/teamMembers';
 
 const MEMBERS_TO_SKIP = 1;
 
@@ -178,7 +179,7 @@ export default class Welcome extends Component {
     serverCommunication.serverRequest('PUT', 'members', JSON.stringify({
       newMember,
       admin: {
-        name: this.props.userAccount.teamMembers[0].firstName + ' ' + this.props.userAccount.teamMembers[0].lastName,
+        name: getMemberFullName(this.props.userAccount.teamMembers[0]),
         company: this.props.userAccount.companyName
       }
     }))

@@ -9,6 +9,7 @@ import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
 import {formatChannels} from 'components/utils/channels';
 import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
+import {getTeamMembersOptions} from 'components/utils/teamMembers';
 
 export default class SalesforceCampaigns extends Component {
 
@@ -130,10 +131,7 @@ export default class SalesforceCampaigns extends Component {
       owners: {
         select: {
           name: 'owners',
-          options: this.props.userAccount.teamMembers
-            .map(member => {
-              return {value: member.userId, label: member.firstName + ' ' + member.lastName};
-            })
+          options: getTeamMembersOptions(this.props.userAccount.teamMembers)
         }
       },
       channels: {
@@ -158,10 +156,7 @@ export default class SalesforceCampaigns extends Component {
         }
       }
     };
-    selects.owners.select.options.push({
-      value: this.props.userAccount.UID,
-      label: this.props.userAccount.firstName + ' ' + this.props.userAccount.lastName
-    });
+
     const ownersRows = this.state.owners.map((owner, index) =>
       <div className={this.classes.row} key={index}>
         <div className={this.classes.cols}>

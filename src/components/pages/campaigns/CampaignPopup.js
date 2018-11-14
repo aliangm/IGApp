@@ -17,6 +17,7 @@ import SaveButton from 'components/pages/profile/SaveButton';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import Button from 'components/controls/Button';
 import isEmpty from 'lodash/isEmpty';
+import CampaignExpenses from 'components/pages/campaigns/CampaignExpenses';
 
 export default class CampaignPopup extends Component {
 
@@ -209,7 +210,8 @@ export default class CampaignPopup extends Component {
       'Items': Checklist,
       'Updates': Updates,
       'Tracking': Tracking,
-      'Assets': Assets
+      'Assets': Assets,
+      'Expenses': CampaignExpenses
     };
 
     const tabNames = Object.keys(tabs);
@@ -265,7 +267,9 @@ export default class CampaignPopup extends Component {
             setRefSource: this.setRefSource,
             setRefDueDate: this.setRefDueDate,
             save: this.save,
-            addNotification: this.props.addNotification
+            addNotification: this.props.addNotification,
+            expenses: this.props.expenses,
+            planDate: this.props.planDate
           })) : null}
         </div>
       </Page>
