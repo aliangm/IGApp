@@ -93,6 +93,18 @@ export default class AddExpensePopup extends Component {
     this.close();
   };
 
+  handleChangeTimeframe = (value, index, param) => {
+    const newTimeframe = [...this.state.timeframe];
+    if (!newTimeframe[index]) {
+      newTimeframe[index] = {
+        month: '',
+        amount: ''
+      };
+    }
+    newTimeframe[index][param] = value;
+    this.setState({timeframe: newTimeframe});
+  };
+
   render() {
     const {name, owner, amount, type, dueDate, timeframe, assignedTo: {entityType, entityId}} = this.state;
     const {calculatedData: {activeCampaigns}} = this.props;
@@ -195,32 +207,10 @@ export default class AddExpensePopup extends Component {
                       select={{
                         options: datesOptions
                       }}
-                      onChange={(e) => {
-                        const newTimeframe = [...timeframe];
-                        const monthIndex = e.value;
-                        if (!newTimeframe[index]) {
-                          newTimeframe[index] = {
-                            month: '',
-                            amount: ''
-                          };
-                        }
-                        newTimeframe[index].month = monthIndex;
-                        this.setState({timeframe: newTimeframe});
-                      }}
+                      onChange={e => this.handleChangeTimeframe(e.value, index, 'month')}
                     />
                     <Textfield value={timeframe[index] && timeframe[index].amount}
-                               onChange={e => {
-                                 const newTimeframe = [...timeframe];
-                                 const amount = e.target.value;
-                                 if (!newTimeframe[index]) {
-                                   newTimeframe[index] = {
-                                     month: '',
-                                     amount: ''
-                                   };
-                                 }
-                                 newTimeframe[index].amount = amount;
-                                 this.setState({timeframe: newTimeframe});
-                               }}
+                               onChange={e => this.handleChangeTimeframe(e.target.value, index, 'amount')}
                                style={{width: '90px', marginLeft: '20px'}}/>
                     <div style={{marginLeft: '25px', alignSelf: 'center'}}>
                       {removeButton}
