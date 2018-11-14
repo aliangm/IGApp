@@ -13,8 +13,8 @@ import MultiRow from 'components/MultiRow';
 import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import {extractNumberFromBudget, formatBudget} from 'components/utils/budget';
 import {formatChannels} from 'components/utils/channels';
-import {getProfileSync} from 'components/utils/AuthService';
 import history from 'history';
+import {getTeamMembersOptions} from 'components/utils/teamMembers';
 
 export default class AddExpensePopup extends Component {
 
@@ -113,9 +113,7 @@ export default class AddExpensePopup extends Component {
         label: 'Owner',
         select: {
           name: 'owner',
-          options: [
-            {value: 'other', label: 'Other'}
-          ]
+          options: getTeamMembersOptions(this.props.teamMembers)
         }
       },
       type: {
@@ -145,11 +143,6 @@ export default class AddExpensePopup extends Component {
         }
       }
     };
-
-    this.props.teamMembers && this.props.teamMembers.forEach((member) => {
-      const label = getProfileSync().app_metadata && getProfileSync().user_id === member.userId ? member.firstName + ' ' + member.lastName + ' (me)' : member.firstName + ' ' + member.lastName;
-      selects.owner.select.options.push({value: member.userId, label: label});
-    });
 
     const dates = getDates(this.props.planDate);
     const datesOptions = dates.map((item, index) => {
