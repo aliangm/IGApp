@@ -1,6 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/avatar.css';
+import {getMemberFullName} from 'components/utils/teamMembers';
 
 export default class Avatar extends Component {
 
@@ -24,12 +25,12 @@ export default class Avatar extends Component {
     return hash;
   }
 
-  intToRGB(i){
+  intToRGB(i) {
     const c = (i & 0x00FFFFFF)
       .toString(16)
       .toUpperCase();
 
-    return "00000".substring(0, 6 - c.length) + c;
+    return '00000'.substring(0, 6 - c.length) + c;
   }
 
   render() {
@@ -45,15 +46,17 @@ export default class Avatar extends Component {
           <div className={className}
                style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}>
           </div>
-          {this.props.withShadow ? <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/> : null }
+          {this.props.withShadow ?
+            <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/> : null}
         </div>
         :
         <div className={this.classes.outerDiv}>
           <div className={className}
-               style={{backgroundColor: "#" + this.intToRGB(this.hashCode(member.firstName + ' ' + member.lastName))}}>
+               style={{backgroundColor: '#' + this.intToRGB(this.hashCode(getMemberFullName(member)))}}>
             {this.getInitials()}
           </div>
-          {this.props.withShadow ? <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/>: null }
+          {this.props.withShadow ?
+            <div className={this.classes.shadow} style={{backgroundImage: 'url(' + member.pictureUrl + ')'}}/> : null}
         </div>
       : null;
   }

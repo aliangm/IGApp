@@ -3,6 +3,7 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import Button from 'components/controls/Button';
 import style from 'styles/reason-popup.css';
+import {getMemberFullName} from 'components/utils/teamMembers';
 
 export default class ReasonPopup extends Component {
 
@@ -24,7 +25,7 @@ export default class ReasonPopup extends Component {
   }
 
   render() {
-    const name = this.props.userAccount && this.props.userAccount.teamMembers[0] && (this.props.userAccount.teamMembers[0].firstName + ' ' + this.props.userAccount.teamMembers[0].lastName);
+    const name = this.props.userAccount && this.props.userAccount.teamMembers[0] && getMemberFullName(this.props.userAccount.teamMembers[0]);
     return <div hidden={this.props.hidden}>
       <Page popup={true} width={'952px'} contentClassName={this.classes.content}>
         <div className={this.classes.center}>
