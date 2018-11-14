@@ -14,7 +14,7 @@ import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
 import {formatNumber} from 'components/utils/budget';
 import {getProfileSync} from 'components/utils/AuthService';
-import CampaignsExpenses from 'components/pages/campaigns/CampaignsExpenses';
+import Expenses from 'components/pages/campaigns/Expenses';
 import history from 'history';
 
 function getDateString(stringDate) {
@@ -212,7 +212,7 @@ export default class Campaigns extends Component {
         openCampaign: this.openCampaign
       })));
 
-    const expensesTabActive = this.props.children ? this.props.children.type === CampaignsExpenses : null;
+    const expensesTabActive = this.props.children ? this.props.children.type === Expenses : null;
 
     return <div>
       <Page contentClassName={planStyle.locals.content} width="100%">

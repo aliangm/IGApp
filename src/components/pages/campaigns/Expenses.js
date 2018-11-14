@@ -6,7 +6,7 @@ import {getDates} from 'components/utils/date';
 import taskStyle from 'styles/campaigns/task.css';
 import {formatExpenses} from 'components/utils/expenses';
 
-export default class CampaignsExpenses extends Component {
+export default class Expenses extends Component {
 
   style = style;
   styles = [taskStyle];
