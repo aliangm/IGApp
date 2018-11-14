@@ -1,10 +1,10 @@
 import React from 'react';
 import Component from 'components/Component';
-import {formatBudget} from 'components/utils/budget';
 import style from 'styles/campaigns/expenses.css';
 import {getDates} from 'components/utils/date';
 import Button from 'components/controls/Button';
 import history from 'history';
+import {formatExpenses} from 'components/utils/expenses';
 
 export default class Expenses extends Component {
 
@@ -12,7 +12,6 @@ export default class Expenses extends Component {
 
   render() {
     const {planDate, expenses} = this.props;
-    const dates = getDates(planDate);
 
     const headRow = this.getTableRow(null, [
       'Expense',
@@ -25,25 +24,18 @@ export default class Expenses extends Component {
 
     const campaignExpenses = expenses.filter(item => item.assignedTo && item.assignedTo.entityType === 'campaign' && item.assignedTo.entityId === this.props.campaign.index);
 
-    const rows = campaignExpenses && campaignExpenses
-      .map((expense, index) => {
-
-        const timeframe = expense.timeframe
-          .map((amount, index) => {
-            return {amount, index};
-          })
-          .filter(item => item.amount);
-
-        return this.getTableRow(null, [
+    const rows = campaignExpenses && formatExpenses(campaignExpenses, getDates(planDate))
+      .map((expense, index) =>
+        this.getTableRow(null, [
           expense.name,
-          timeframe.map(item => dates[item.index]).join(', '),
+          expense.formattedTimeframe,
           expense.dueDate,
-          formatBudget(expense.amount)
+          expense.formattedAmount
         ], {
           key: index,
           className: this.classes.tableRow
-        });
-      });
+        })
+      );
 
     return <div>
       <table className={this.classes.table}>

@@ -1,10 +1,10 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/campaigns/online-campaigns.css';
-import {formatBudget} from 'components/utils/budget';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
-import {formatTimestamp, getDates} from 'components/utils/date';
+import {getDates} from 'components/utils/date';
 import taskStyle from 'styles/campaigns/task.css';
+import {formatExpenses} from 'components/utils/expenses';
 
 export default class CampaignsExpenses extends Component {
 
@@ -20,8 +20,6 @@ export default class CampaignsExpenses extends Component {
   render() {
     const {expenses, planDate, calculatedData: {activeCampaigns}} = this.props;
 
-    const dates = getDates(planDate);
-
     const headRow = this.getTableRow(null, [
       '',
       'Expense',
@@ -34,14 +32,8 @@ export default class CampaignsExpenses extends Component {
       className: this.classes.headRow
     });
 
-    const rows = expenses
+    const rows = formatExpenses(expenses, getDates(planDate))
       .map((expense, index) => {
-
-        const timeframe = expense.timeframe
-          .map((amount, index) => {
-            return {amount, index};
-          })
-          .filter(item => item.amount);
 
         const assignedTo = expense.assignedTo.entityType === 'campaign' ?
           activeCampaigns[expense.assignedTo.entityId].name
@@ -51,11 +43,11 @@ export default class CampaignsExpenses extends Component {
           <div className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
                style={{cursor: 'pointer'}}/>,
           expense.name,
-          timeframe.map(item => dates[item.index]).join(', '),
+          expense.formattedTimeframe,
           expense.dueDate,
-          formatBudget(expense.amount),
+          expense.formattedAmount,
           assignedTo,
-          formatTimestamp(expense.lastUpdateTime)
+          expense.formattedTimestamp
         ], {
           key: index,
           className: this.classes.tableRow
