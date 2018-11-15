@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import Page from 'components/Page';
+import PagePopup from 'components/PagePopup';
 import style from 'styles/onboarding/onboarding.css';
 import campaignPopupStyle from 'styles/campaigns/capmaign-popup.css';
 import Title from 'components/onboarding/Title';
@@ -149,7 +149,7 @@ export default class AddExpensePopup extends Component {
       return {label: item, value: index};
     });
     return <div>
-      <Page popup={true} width={'700px'} onClose={this.close}>
+      <PagePopup width={'700px'} onClose={this.close}>
         <Title className={campaignPopupStyle.locals.title} title='Add Expense'/>
         <div style={{display: 'flex', justifyContent: 'flex-end'}}>
           <SaveButton onClick={this.save}/>
@@ -202,8 +202,9 @@ export default class AddExpensePopup extends Component {
                       }}
                       onChange={e => this.handleChangeTimeframe(e.value, index, 'month')}
                     />
-                    <Textfield value={timeframe[index] && timeframe[index].amount}
-                               onChange={e => this.handleChangeTimeframe(e.target.value, index, 'amount')}
+                    <Textfield value={formatBudget(timeframe[index] && timeframe[index].amount)}
+                               placeHolder='$'
+                               onChange={e => this.handleChangeTimeframe(extractNumberFromBudget(e.target.value), index, 'amount')}
                                style={{width: '90px', marginLeft: '20px'}}/>
                     <div style={{marginLeft: '25px', alignSelf: 'center'}}>
                       {removeButton}
@@ -219,6 +220,9 @@ export default class AddExpensePopup extends Component {
               }}/>
             </div>
           </div>
+          <div>
+            <Label>Assign the expense’s father-object</Label>
+          </div>
           <div className={this.classes.flexRow}>
             <Select select={{options: [{value: 'campaign', label: 'Campaign'}, {value: 'channel', label: 'Channel'}]}}
                     style={{width: '111px', marginRight: '19px'}}
@@ -228,31 +232,22 @@ export default class AddExpensePopup extends Component {
                       assignedTo.entityType = e.value;
                       this.setState({assignedTo: assignedTo});
                     }}/>
-            {entityType === 'campaign' ?
-              <Select select={{
-                options: activeCampaigns.map(item => {
-                  return {value: item.index, label: item.name};
-                })
-              }}
-                      style={{width: '111px'}}
-                      selected={entityId}
-                      onChange={(e) => {
-                        this.handleChangeEntityId(e.value);
-                      }}/>
-              :
-              <Select select={{options: formatChannels()}}
-                      style={{width: '111px'}}
-                      selected={entityId}
-                      onChange={(e) => {
-                        this.handleChangeEntityId(e.value);
-                      }}/>
-            }
+            <Select select={{
+              options: entityType === 'campaign' ? activeCampaigns.map(item => {
+                return {value: item.index, label: item.name};
+              }) : formatChannels()
+            }}
+                    style={{width: '230px'}}
+                    selected={entityId}
+                    onChange={(e) => {
+                      this.handleChangeEntityId(e.value);
+                    }}/>
           </div>
         </div>
         <div style={{display: 'flex', justifyContent: 'flex-end'}}>
           <SaveButton onClick={this.save}/>
         </div>
-      </Page>
+      </PagePopup>
     </div>;
   }
 }
