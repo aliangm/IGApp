@@ -35,9 +35,11 @@ export default class Expenses extends Component {
     const rows = formatExpenses(expenses, getDates(planDate))
       .map((expense, index) => {
 
-        const assignedTo = expense.assignedTo.entityType === 'campaign' ?
-          activeCampaigns[expense.assignedTo.entityId].name
-          : getChannelNickname(expense.assignedTo.entityId);
+        const assignedTo = expense.assignedTo.entityId ?
+          (expense.assignedTo.entityType === 'campaign' ?
+            activeCampaigns[expense.assignedTo.entityId].name
+            : getChannelNickname(expense.assignedTo.entityId))
+          : '';
 
         return this.getTableRow(null, [
           <div className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
