@@ -12,6 +12,7 @@ import PlanFromExcel from 'components/PlanFromExcel';
 import Toggle from 'components/controls/Toggle';
 import isEqual from 'lodash/isEqual';
 import mapValues from 'lodash/mapValues';
+import isEmpty from 'lodash/isEmpty';
 import PlanButton from 'components/pages/indicators/PlanButton';
 import history from 'history';
 
@@ -90,16 +91,18 @@ export default class ManualPlan extends Component {
         });
       });
     }
-    this.props.forecast(planBudgets)
-      .then((forecastedIndicaotrs) => {
-        this.props.updateUserMonthPlan({
-          planBudgets: planBudgets,
-          forecastedIndicators: forecastedIndicaotrs
-        }, this.props.region, this.props.planDate)
-          .then(() => {
-            history.push('/plan/annual');
-          });
-      });
+    if (!isEmpty(planBudgets) && planBudgets.some(item => !isEmpty(item))) {
+      this.props.forecast(planBudgets)
+        .then((forecastedIndicaotrs) => {
+          this.props.updateUserMonthPlan({
+            planBudgets: planBudgets,
+            forecastedIndicators: forecastedIndicaotrs
+          }, this.props.region, this.props.planDate)
+            .then(() => {
+              history.push('/plan/annual');
+            });
+        });
+    }
   };
 
   render() {

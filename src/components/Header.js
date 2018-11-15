@@ -20,6 +20,7 @@ import insightsStyle from 'styles/insights/insights.css';
 import {Link} from 'react-router';
 import {getProfileSync, logout} from 'components/utils/AuthService';
 import PayButton from 'components/PayButton';
+import {getMemberFullName} from 'components/utils/teamMembers';
 
 export default class Header extends Component {
 
@@ -127,7 +128,8 @@ export default class Header extends Component {
         {tabs}
       </div>
       <div className={this.classes.itemsBox}>
-        <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay} trialEnd={this.props.userAccount.trialEnd}/>
+        <PayButton isPaid={this.props.userAccount.isPaid} pay={this.props.pay}
+                   trialEnd={this.props.userAccount.trialEnd}/>
         {/* Hidden Email, so we'll have the user id in customer labs */}
         <div className={this.classes.hiddenEmail}>
           {user && user.email}
@@ -242,7 +244,7 @@ export default class Header extends Component {
             <Avatar member={user} className={this.classes.userLogo} withShadow={true}/>
             <div className={this.classes.userDetails}>
               <div className={this.classes.user}>
-                {user ? user.firstName + ' ' + user.lastName : ''}
+                {user ? getMemberFullName(user) : ''}
               </div>
               <div className={this.classes.userCompany}>
                 {this.props.userCompany}
@@ -375,7 +377,7 @@ export default class Header extends Component {
           <div className={this.classes.logged}>
             {this.props.userCompany}
             <div className={this.classes.user}>
-              {user ? user.firstName + ' ' + user.lastName : ''}
+              {user ? getMemberFullName(user) : ''}
             </div>
           </div>
         </div>

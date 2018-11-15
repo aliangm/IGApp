@@ -13,7 +13,7 @@ import MultiSelect from 'components/controls/MultiSelect';
 import {getChannelsWithTitles, getTitle} from 'components/utils/channels';
 import Toggle from 'components/controls/Toggle';
 import buttonsStyle from 'styles/onboarding/buttons.css';
-import {getProfileSync} from 'components/utils/AuthService';
+import {getTeamMembersOptions} from 'components/utils/teamMembers';
 
 export default class Brief extends Component {
 
@@ -210,9 +210,7 @@ export default class Brief extends Component {
         label: 'Owner',
         select: {
           name: 'owner',
-          options: [
-            {value: 'other', label: 'Other'}
-          ]
+          options: getTeamMembersOptions(this.props.teamMembers)
         }
       },
       source: {
@@ -278,12 +276,6 @@ export default class Brief extends Component {
         selects.source.select.options.push({value: source, label: source});
       }
     });
-    if (this.props.teamMembers) {
-      this.props.teamMembers.forEach((member) => {
-          const label = getProfileSync().app_metadata && getProfileSync().user_id === member.userId ? member.firstName + ' ' + member.lastName + ' (me)' : member.firstName + ' ' + member.lastName;
-          selects.owner.select.options.push({value: member.userId, label: label});
-      });
-    }
 
     const assetsCategories = this.props.campaign.assets ?
       [...new Set(this.props.campaign.assets.map(item => item.category))]

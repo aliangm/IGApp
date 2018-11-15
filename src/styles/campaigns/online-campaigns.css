@@ -27,23 +27,22 @@
 }
 
 .table-row {
-    height: 70px;
+    height: 60px;
     border-radius: 2px;
     background-color: #ffffff;
-    border-top: 10px solid #F5F6FB;
+    border-top: 5px solid #F5F6FB;
     font-size: 16px;
     color: #354052;
-    cursor: pointer;
 }
 
 .icon {
     background-size: contain;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     background-repeat: no-repeat;
     background-position: center center;
-    min-width: 20px;
-    min-height: 20px;
+    min-width: 15px;
+    min-height: 15px;
     margin-left: 15px;
 }
 

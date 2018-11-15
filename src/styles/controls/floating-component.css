@@ -136,7 +136,6 @@
 
 .is-active .child {
     height: 358px;
-    overflow-y: scroll;
 }
 
 .outer-clone {

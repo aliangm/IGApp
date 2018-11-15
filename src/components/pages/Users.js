@@ -227,7 +227,7 @@ export default class Users extends Component {
       <div className={this.classes.toggle}>
         <Toggle
           options={[{
-            text: 'Users',
+            text: 'People',
             value: GROUP_BY.USERS
           },
             {

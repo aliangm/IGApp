@@ -51,7 +51,7 @@ export default class Campaigns extends Component {
     ];
 
     const headRow = this.getTableRow(null, [
-      <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}
+      <div style={{textAlign: 'left', cursor: 'pointer'}}
            onClick={this.sortBy.bind(this, 'label')}>
         campaign
       </div>,
@@ -265,7 +265,7 @@ export default class Campaigns extends Component {
                   <div className={dashboardStyle.locals.channelText}>
                     {journeyText}
                   </div>
-                </div>
+                </div>;
               })}
             </div>
           </div>

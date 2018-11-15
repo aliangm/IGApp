@@ -88,7 +88,7 @@ export function calculatedDataExtender(data) {
 }
 
 export function getAnnualBudgetFromAppData(data) {
-  return !isNil(data.annualBudget) ? data.annualBudget : sum(data.budgetArray);
+  return !isNil(data.annualBudget) ? data.annualBudget : sum(data.annualBudgetArray);
 }
 
 function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0) {

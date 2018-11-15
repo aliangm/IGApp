@@ -64,7 +64,7 @@ export default class Content extends Component {
     const objective = funnelFirstObjective;
 
     const headRow = this.getTableRow(null, [
-      <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}>
+      <div style={{textAlign: 'left', cursor: 'pointer'}}>
         Channel
       </div>,
       'Title',
@@ -102,7 +102,7 @@ export default class Content extends Component {
             width: 'auto',
             marginBottom: 'initial',
             letterSpacing: 'initial',
-            fontSize: '18px',
+            fontSize: '16px',
             fontWeight: '600',
             color: '#354052',
             justifyContent: 'center',

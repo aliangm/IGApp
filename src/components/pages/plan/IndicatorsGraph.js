@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import Component from 'components/Component';
 import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
@@ -21,13 +22,16 @@ export default class IndicatorsGraph extends Component {
 
   style = style;
   styles = [onboardingStyle];
+  areas = { } // area refs
 
   constructor(props) {
     super(props);
 
     const initialIndicators = this.getInitialIndicators(this.props);
     this.state = {
-      checkedIndicators: initialIndicators ? initialIndicators : []
+      checkedIndicators: initialIndicators ? initialIndicators : [],
+      activeTooltipIndex: 0,
+      tooltipPosition: 0,
     };
   }
 
@@ -60,6 +64,19 @@ export default class IndicatorsGraph extends Component {
   handleScroll = () => {
     this.props.changeScrollPosition(this.refs.chart.scrollLeft);
   };
+
+  handleMouseMove = ({ activeTooltipIndex }) => {
+    if (this.areas && Number.isInteger(activeTooltipIndex) && this.state.activeTooltipIndex !== activeTooltipIndex) {
+      this.setState({
+        activeTooltipIndex,
+        tooltipPosition: Math.min(
+          ...Object.values(this.areas)
+            .filter((a) => !!a)
+            .map((a) => a.props.points[activeTooltipIndex].y)
+        ),
+      })
+    }
+  }
 
   getInitialIndicators = (props) => {
     const objectives = Object.keys(props.parsedObjectives);
@@ -135,7 +152,8 @@ export default class IndicatorsGraph extends Component {
 
   render() {
     const indicators = getIndicatorsWithProps();
-    const {parsedObjectives} = this.props;
+    const {parsedObjectives, floating} = this.props;
+    const {tooltipPosition} = this.state;
     const indicatorsMapping = {};
     Object.keys(indicators)
       .filter(item => indicators[item].isObjective)
@@ -144,6 +162,7 @@ export default class IndicatorsGraph extends Component {
       );
 
     const areaData = this.getAreasData();
+    const areaHeight = floating ? 230 : 400;
 
     const {collapsedObjectives} = this.props.calculatedData.objectives;
     const menuItems = Object.keys(indicatorsMapping).map((indicator, index) => {
@@ -178,9 +197,10 @@ export default class IndicatorsGraph extends Component {
       </defs>;
     });
 
-    const areas = this.state.checkedIndicators.map(indicator => {
+    const areas = this.state.checkedIndicators.map((indicator) => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator}
+                   ref={ref => this.areas[indicator] = ref }
                    isAnimationActive={false}
                    type='monotone'
                    dataKey={indicator}
@@ -278,7 +298,22 @@ export default class IndicatorsGraph extends Component {
       return null;
     };
 
-    return <div className={this.classes.inner}>
+    const xAxis = (
+      <XAxis dataKey="name"
+       style={{textTransform: 'uppercase'}}
+       tick={{
+         fontSize: '11px',
+         fill: '#99a4c2',
+         fontWeight: 600,
+         letterSpacing: '0.1px'
+       }}
+       tickLine={false}
+       tickMargin={21}
+       interval={0}
+      />
+    );
+
+    return <div className={classnames(this.classes.inner, { [this.classes.floating]: floating })}>
       <div className={this.classes.menu}>
         <div className={this.classes.menuTitle}>
           Forecasting
@@ -287,34 +322,44 @@ export default class IndicatorsGraph extends Component {
           {menuItems}
         </div>
       </div>
-      <div className={this.classes.chart} ref='chart'>
-        <AreaChart data={areaData} height={400} width={70 + this.props.cellWidth * (areaData.length - 1)}
-                   margin={{top: 10, right: 25, left: 10, bottom: 21}}>
+      <div className={this.classes.chart}>
+        <CustomizedLegend hidden={!this.props.dashedLineData}/>
+        <div className={this.classes.chartScroller} ref='chart'>
+          <AreaChart
+            className={this.classes.chartContent}
+            data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
+            margin={{top: 10, right: 25, left: 10, bottom: 21}}
+            onMouseMove={this.handleMouseMove}
+          >
+            <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
+            {xAxis}
+            {dots}
+            <Tooltip
+              content={tooltip}
+              offset={0}
+              position={{ y: tooltipPosition }}
+            />
+            {defs}
+            {areas}
+            {dashedAreas}
+          </AreaChart>
+        </div>
+        {/* area with fixed position and hidden content, except y-axis */}
+        <AreaChart
+          className={this.classes.fixedChartOverlay}
+          data={areaData} height={areaHeight} width={70 + this.props.cellWidth * (areaData.length - 1)}
+          margin={{top: 10, right: 25, left: 10, bottom: 21}}
+        >
+          {xAxis}
+          {areas}
+          {dashedAreas}
           <YAxis axisLine={false}
                  tickLine={false}
+                 stroke="white"
                  tickFormatter={formatBudgetShortened}
                  tick={{fontSize: '14px', fill: '#b2bbd5', fontWeight: 600, letterSpacing: '0.1px'}}
                  tickMargin={21}
                  domain={['auto', 'auto']}/>
-          <CartesianGrid vertical={false} stroke='#EBEDF5' strokeWidth={1}/>
-          <XAxis dataKey="name"
-                 style={{textTransform: 'uppercase'}}
-                 tick={{
-                   fontSize: '11px',
-                   fill: '#99a4c2',
-                   fontWeight: 600,
-                   letterSpacing: '0.1px'
-                 }}
-                 tickLine={false}
-                 tickMargin={21}
-                 interval={0}/>
-          {dots}
-          <Legend content={<CustomizedLegend hidden={!this.props.dashedLineData}/>} align='right' verticalAlign='top'
-                  wrapperStyle={{top: '-3px', left: 'calc(100% - 350px)', width: '350px'}}/>
-          <Tooltip content={tooltip} offset={0}/>
-          {defs}
-          {areas}
-          {dashedAreas}
         </AreaChart>
       </div>
     </div>;
@@ -327,7 +372,7 @@ class CustomizedLegend extends Component {
 
   render() {
     return this.props.hidden ? null :
-      <div style={{display: 'flex'}}>
+      <div className={this.classes.legend} style={{display: 'flex'}}>
         <div style={{display: 'flex'}}>
           <div className={this.classes.legendIcon}/>
           <div className={this.classes.legendText}>

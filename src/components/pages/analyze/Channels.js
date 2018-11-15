@@ -75,7 +75,7 @@ export default class Channels extends Component {
     ];
 
     const headRow = this.getTableRow(null, [
-      <div style={{fontWeight: 'bold', fontSize: '22px', textAlign: 'left', cursor: 'pointer'}}
+      <div style={{textAlign: 'left', cursor: 'pointer'}}
            onClick={this.sortBy.bind(this, 'label')}>
         Channel
       </div>,

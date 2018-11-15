@@ -20,6 +20,7 @@ import PlanLoading from 'components/pages/plan/PlanLoading';
 import {calculatedDataExtender, getAnnualBudgetFromAppData} from 'dataExtenders/calculatedDataExtender.js';
 import {getProfileSync} from 'components/utils/AuthService';
 import Settings from 'components/pages/Settings';
+import {getMemberFullName} from 'components/utils/teamMembers';
 
 class AppComponent extends Component {
 
@@ -437,7 +438,6 @@ class AppComponent extends Component {
       numberOfPlanUpdates: data.numberOfPlanUpdates,
       planUnknownChannels: data.unknownChannels || [],
       budget: data.annualBudget,
-      budgetArray: data.annualBudgetArray || [],
       events: data.events || [],
       googleapi: data.googleapi,
       hubspotapi: data.hubspotapi,
@@ -472,7 +472,8 @@ class AppComponent extends Component {
         channels: {},
         indicators: {}
       },
-      userRegions: data.userRegions
+      userRegions: data.userRegions,
+      expenses: data.expenses || []
     });
   }
 
@@ -487,11 +488,13 @@ class AppComponent extends Component {
     });
     this.updateUserMonthPlan({notifications: notifications}, this.state.region, this.state.planDate);
     if (isSendEmail) {
+      const member = this.state.teamMembers.find(member => member.userId === userId);
+      const tagger = this.state.teamMembers.find(member => member.userId === notification.tagger);
       serverCommunication.serverRequest('POST', 'email', JSON.stringify({
-          email: this.state.teamMembers.find(member => member.userId === userId).email,
-          name: this.state.teamMembers.find(member => member.userId === userId).firstName + ' ' + this.state.teamMembers.find(member => member.userId === userId).lastName,
+          email: member.email,
+          name: getMemberFullName(member),
           type: type,
-          taggerName: this.state.teamMembers.find(member => member.userId === notification.tagger).firstName + ' ' + this.state.teamMembers.find(member => member.userId === notification.tagger).lastName,
+          taggerName: getMemberFullName(tagger),
           campaignName: notification.campaignName,
           plainComment: notification.plainComment
         }),

@@ -111,7 +111,7 @@ export default class OnlineCampaigns extends Component {
           platformIndex: index
         };
       })
-      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId);
+      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId || campaign.twitteradsId);
 
     const rows = campaignsWithAttribution
       .sort((item1, item2) =>
@@ -138,6 +138,7 @@ export default class OnlineCampaigns extends Component {
         ], {
           key: index,
           className: this.classes.tableRow,
+          style: {cursor: 'pointer'},
           onClick: () => {
             this.props.openCampaign(campaign.platformIndex);
           }

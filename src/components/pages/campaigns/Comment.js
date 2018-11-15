@@ -6,6 +6,7 @@ import CommentTextArea from 'components/pages/campaigns/CommentTextArea';
 import Popup from 'components/Popup';
 import Button from 'components/controls/Button';
 import Avatar from 'components/Avatar';
+import {getMemberFullName} from 'components/utils/teamMembers';
 
 export default class Task extends Component {
 
@@ -74,7 +75,7 @@ export default class Task extends Component {
           <div className={ this.classes.content }>
             <Avatar member ={this.props.member} className={ this.classes.initials }/>
             <div className={ this.classes.name }>
-              {this.props.member ? this.props.member.firstName + ' ' + this.props.member.lastName : ''}
+              {this.props.member ? getMemberFullName(this.props.member) : ''}
             </div>
             <div className={ this.classes.commentText }>
               {this.props.comment}
