@@ -4,18 +4,14 @@ import Component from 'components/Component';
 import Page from 'components/Page';
 import NextButton from 'components/pages/profile/NextButton';
 import SaveButton from 'components/pages/profile/SaveButton';
-
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import Button from 'components/controls/Button';
 import Label from 'components/ControlsLabel';
-
 import Title from 'components/onboarding/Title';
-
 import style from 'styles/onboarding/onboarding.css';
 import welcomeStyle from 'styles/welcome/welcome.css';
 import PlannedVsActualstyle from 'styles/plan/planned-actual-tab.css';
-
 import {isPopupMode} from 'modules/popup-mode';
 import history from 'history';
 import RegionPopup from 'components/RegionPopup';
@@ -28,6 +24,7 @@ import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
 import {userPermittedToPage} from 'utils';
 import {getMemberFullName} from 'components/utils/teamMembers';
+import Table from 'components/controls/Table';
 
 const MEMBERS_TO_SKIP = 1;
 
@@ -212,41 +209,39 @@ export default class Welcome extends Component {
   };
 
   render() {
-    const headRow = this.getTableRow(null, [
+    const headRow = [
       'First Name',
       'Last Name',
       'Email',
       'Role',
       'Admin',
       ''
-    ], {
-      className: PlannedVsActualstyle.locals.headRow
-    });
+    ];
 
     const userPermittedToSettings = userPermittedToPage('settings');
 
     const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
-      return this.getTableRow(null, [
-        <div className={PlannedVsActualstyle.locals.cellItem}>
-          {item.firstName}
-        </div>,
-        <div className={PlannedVsActualstyle.locals.cellItem}>
-          {item.lastName}
-        </div>,
-        <div className={PlannedVsActualstyle.locals.cellItem}>
-          {item.email}
-        </div>,
-        <div className={PlannedVsActualstyle.locals.cellItem}>
-          {item.role}
-        </div>,
-        <div className={welcomeStyle.locals.center}>
-          <input type="checkbox" checked={!!item.isAdmin}/>
-        </div>,
-        <ButtonWithSurePopup style={{background: '#e50000'}} onClick={this.removeMember.bind(this, i)}
-                             buttonText="Remove"/>
-      ], {
-        key: i
-      });
+      return {
+        items: [
+          <div className={PlannedVsActualstyle.locals.cellItem}>
+            {item.firstName}
+          </div>,
+          <div className={PlannedVsActualstyle.locals.cellItem}>
+            {item.lastName}
+          </div>,
+          <div className={PlannedVsActualstyle.locals.cellItem}>
+            {item.email}
+          </div>,
+          <div className={PlannedVsActualstyle.locals.cellItem}>
+            {item.role}
+          </div>,
+          <div className={welcomeStyle.locals.center}>
+            <input type="checkbox" checked={!!item.isAdmin}/>
+          </div>,
+          <ButtonWithSurePopup style={{background: '#e50000'}} onClick={this.removeMember.bind(this, i)}
+                               buttonText="Remove"/>
+        ]
+      };
     });
     const selects = {
       role: {
@@ -292,12 +287,14 @@ export default class Welcome extends Component {
     const userAccount = <div>
       <div className={this.classes.row}>
         <Label>First Name</Label>
-        <Textfield value={member && member.firstName} onChange={this.handleChangeName.bind(this, 'firstName', memberIndex)} ref={'firstName'}
+        <Textfield value={member && member.firstName}
+                   onChange={this.handleChangeName.bind(this, 'firstName', memberIndex)} ref={'firstName'}
                    withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
         <Label>Last Name</Label>
-        <Textfield value={member && member.lastName} onChange={this.handleChangeName.bind(this, 'lastName', memberIndex)} ref={'lastName'}
+        <Textfield value={member && member.lastName}
+                   onChange={this.handleChangeName.bind(this, 'lastName', memberIndex)} ref={'lastName'}
                    withValidationError={true}/>
       </div>
       <div className={this.classes.row}>
@@ -333,19 +330,8 @@ export default class Welcome extends Component {
         <div className={this.classes.row}>
           <Label>Team Members</Label>
           <div className={welcomeStyle.locals.innerBox}>
-            <div className={PlannedVsActualstyle.locals.wrap} ref="wrap"
-                 style={{margin: 'initial', overflow: 'visible'}}>
-              <div className={PlannedVsActualstyle.locals.box} style={{overflow: 'visible'}}>
-                <table className={PlannedVsActualstyle.locals.table}>
-                  <thead>
-                  {headRow}
-                  </thead>
-                  <tbody className={PlannedVsActualstyle.locals.tableBody}>
-                  {rows}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <Table headRowData={{items: headRow}}
+                   rowsData={rows}/>
           </div>
           <div>
             <div className={welcomeStyle.locals.center}>
@@ -480,33 +466,5 @@ export default class Welcome extends Component {
                       }}
                       inviteMember={this.inviteMember.bind(this)}/>
     </div>;
-  }
-
-  getTableRow(title, items, props) {
-    return <tr {...props}>
-      {title != null ?
-        <td className={PlannedVsActualstyle.locals.titleCell}>{this.getCellItem(title)}</td>
-        : null}
-      {
-        items.map((item, i) => {
-          return <td className={PlannedVsActualstyle.locals.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
-        })
-      }
-    </tr>;
-  }
-
-  getCellItem(item) {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={PlannedVsActualstyle.locals.cellItem}>{item}</div>;
-    }
-    else {
-      elem = item;
-    }
-
-    return elem;
   }
 }
