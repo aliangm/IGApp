@@ -157,32 +157,4 @@ export default class OnlineCampaigns extends Component {
              rowsData={rows}/>
     );
   }
-
-  getTableRow(title, items, props) {
-    return <tr {...props}>
-      {title != null ?
-        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
-        : null}
-      {
-        items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
-        })
-      }
-    </tr>;
-  }
-
-  getCellItem(item) {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    } else {
-      elem = item;
-    }
-
-    return elem;
-  }
-
 }
