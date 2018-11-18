@@ -13,6 +13,7 @@
 }
 
 .channel-name {
+    font-weight: 600;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,11 +36,8 @@
 }
 
 .cell-item {
-    padding: 0 12px;
-    box-sizing: border-box;
-    /*height: 50px;*/
     white-space: pre-wrap;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     width: 100%;
 }

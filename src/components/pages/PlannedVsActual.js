@@ -165,9 +165,7 @@ export default class PlannedVsActual extends Component {
             : null
           }
         </div>,
-        <div className={this.classes.cellItem}>
-          <div className={this.classes.channelName}>{formatBudget(data.planned - data.actual, true)}</div>
-        </div>
+        formatBudget(data.planned - data.actual, true)
       ]
     };
   };
