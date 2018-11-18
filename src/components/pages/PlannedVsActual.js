@@ -15,7 +15,6 @@ import {formatChannels} from 'components/utils/channels';
 import {formatBudget} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import icons from 'styles/icons/plan.css';
-import annualStyle from 'styles/plan/annual-tab.css';
 import {getCommitedBudgets} from 'components/utils/budget';
 import {extractNumber} from 'components/utils/utils';
 import Table from 'components/controls/Table';
@@ -23,7 +22,7 @@ import Table from 'components/controls/Table';
 export default class PlannedVsActual extends Component {
 
   style = style;
-  styles = [planStyles, budgetsStyle, icons, annualStyle];
+  styles = [planStyles, budgetsStyle, icons];
 
   static defaultProps = {
     planUnknownChannels: [],
@@ -290,33 +289,5 @@ export default class PlannedVsActual extends Component {
         </div>
       </div>
     </div>;
-  }
-
-  getTableRow(title, items, props) {
-    return <tr {...props}>
-      {title != null ?
-        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
-        : null}
-      {
-        items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
-        })
-      }
-    </tr>;
-  }
-
-  getCellItem(item) {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    }
-    else {
-      elem = item;
-    }
-
-    return elem;
   }
 }
