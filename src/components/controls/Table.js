@@ -36,12 +36,12 @@ export default class Table extends Component {
     const {headRowData, rowsData, footRowData, showFootRowOnHeader} = this.props;
 
     const headRow = this.getTableRow(null, headRowData.items, {
-      className: this.classes.headRow
+      className: this.classes.headRow,
       ...headRowData.props
     });
     const rows = rowsData.map((row, index) => this.getTableRow(null, row.items, {
       className: this.classes.tableRow,
-      key: index
+      key: index,
       ...row.props
     }));
     const footRow = this.getTableRow(null, footRowData.items, {
