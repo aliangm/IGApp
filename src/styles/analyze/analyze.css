@@ -1,3 +1,5 @@
+@import "../global/mixins.css";
+
 .text {
     font-size: 12px !important;
 }
@@ -8,3 +10,5 @@
     margin: 0 8px;
     z-index: 2;
 }
+
+@mixin icon-nodpi icons:calendar, /assets/select-calendar;
