@@ -12,9 +12,9 @@ import Calendar from 'components/controls/Calendar';
 import MultiRow from 'components/MultiRow';
 import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import {extractNumberFromBudget, formatBudget} from 'components/utils/budget';
-import {formatChannels} from 'components/utils/channels';
 import history from 'history';
 import {getTeamMembersOptions} from 'components/utils/teamMembers';
+import ChannelsSelect from 'components/common/ChannelsSelect';
 
 export default class AddExpensePopup extends Component {
 
@@ -148,6 +148,15 @@ export default class AddExpensePopup extends Component {
     const datesOptions = dates.map((item, index) => {
       return {label: item, value: index};
     });
+
+    const entityIdProps = {
+      style: {width: '230px'},
+      selected: entityId,
+      onChange: (e) => {
+        this.handleChangeEntityId(e.value);
+      }
+    };
+
     return <div>
       <PagePopup width={'700px'} onClose={this.close}>
         <Title className={campaignPopupStyle.locals.title} title='Add Expense'/>
@@ -232,16 +241,18 @@ export default class AddExpensePopup extends Component {
                       assignedTo.entityType = e.value;
                       this.setState({assignedTo: assignedTo});
                     }}/>
-            <Select select={{
-              options: entityType === 'campaign' ? activeCampaigns.map(item => {
-                return {value: item.index, label: item.name};
-              }) : formatChannels()
-            }}
-                    style={{width: '230px'}}
-                    selected={entityId}
-                    onChange={(e) => {
-                      this.handleChangeEntityId(e.value);
-                    }}/>
+            {
+              entityType === 'campaign' ?
+                <Select select={{
+                  options: activeCampaigns.map(item => {
+                    return {value: item.index, label: item.name};
+                  })
+                }}
+                        {...entityIdProps}/>
+                :
+                <ChannelsSelect {...entityIdProps}/>
+            }
+
           </div>
         </div>
         <div style={{display: 'flex', justifyContent: 'flex-end'}}>

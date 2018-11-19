@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
 import Page from 'components/Page';
-import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import Label from 'components/ControlsLabel';
 import Notice from 'components/Notice';
@@ -27,8 +26,10 @@ import Range from 'components/controls/Range';
 import {getDates, getEndOfMonthDate} from 'components/utils/date';
 import isNil from 'lodash/isNil';
 import sortBy from 'lodash/sortBy';
+import ChannelsSelect from 'components/common/ChannelsSelect';
 
 export default class Preferences extends Component {
+
   style = style;
   styles = [preferencesStyle];
 
@@ -386,10 +387,12 @@ export default class Preferences extends Component {
   render() {
     const {budgetConstraints, annualBudgetArray, calculatedData: {objectives: {objectivesData}}} = this.props;
 
+    const isChannelOptionDisabled = channel => this.props.blockedChannels.includes(channel) || this.props.inHouseChannels.includes(channel) || Object.keys(budgetConstraints).includes(channel);
+
     const channels = {
       select: {
         name: 'channels',
-        options: formatChannels(channel => this.props.blockedChannels.includes(channel) || this.props.inHouseChannels.includes(channel) || Object.keys(budgetConstraints).includes(channel))
+        options: formatChannels(isChannelOptionDisabled)
       }
     };
 
@@ -580,19 +583,10 @@ export default class Preferences extends Component {
                     <MultiRow numOfRows={budgetConstraintsChannels.length} rowRemoved={this.budgetConstraintRemove}>
                       {({index, data, update, removeButton}) => {
                         return <div className={preferencesStyle.locals.channelsRow}>
-                          <Select
+                          <ChannelsSelect
                             style={{width: '230px'}}
                             selected={budgetConstraintsChannels[index]}
-                            select={{
-                              menuTop: true,
-                              name: 'channels',
-                              onChange: (selected) => {
-                                update({
-                                  selected: selected
-                                });
-                              },
-                              options: channels.select.options
-                            }}
+                            isOptionDisabled={isChannelOptionDisabled}
                             onChange={this.addBudgetConstraintChannel.bind(this, index)}
                           />
                           <Range

@@ -4,8 +4,6 @@ import Page from 'components/Page';
 import style from 'styles/manual-plan/manual-plan.css';
 import Label from 'components/ControlsLabel';
 import MultiRow from 'components/MultiRow';
-import Select from 'components/controls/Select';
-import {formatChannels} from 'components/utils/channels';
 import Textfield from 'components/controls/Textfield';
 import {extractNumberFromBudget, formatBudget} from 'components/utils/budget';
 import PlanFromExcel from 'components/PlanFromExcel';
@@ -15,6 +13,7 @@ import mapValues from 'lodash/mapValues';
 import isEmpty from 'lodash/isEmpty';
 import PlanButton from 'components/pages/indicators/PlanButton';
 import history from 'history';
+import ChannelsSelect from 'components/common/ChannelsSelect';
 
 export default class ManualPlan extends Component {
 
@@ -108,12 +107,6 @@ export default class ManualPlan extends Component {
   render() {
     const {manualChannels, isExcel} = this.state;
     const manualChannelsKeys = Object.keys(manualChannels);
-    const channels = {
-      select: {
-        name: 'channels',
-        options: formatChannels(channel => manualChannelsKeys.includes(channel))
-      }
-    };
 
     return <div>
       <Page popup={true} width={'700px'}>
@@ -148,20 +141,10 @@ export default class ManualPlan extends Component {
               <MultiRow numOfRows={manualChannelsKeys.length} rowRemoved={this.removeManualChannel}>
                 {({index, data, update, removeButton}) => {
                   return <div style={{display: 'flex', marginBottom: '10px'}}>
-                    <Select
-                      style={{width: '262px'}}
-                      selected={manualChannelsKeys[index]}
-                      select={{
-                        menuTop: true,
-                        name: 'channels',
-                        onChange: (selected) => {
-                          update({
-                            selected: selected
-                          });
-                        },
-                        options: channels.select.options
-                      }}
-                      onChange={(e) => this.addOrOverrideManualChannel(index, e.value)}
+                    <ChannelsSelect style={{width: '262px'}}
+                                    selected={manualChannelsKeys[index]}
+                                    isOptionDisabled={channel => manualChannelsKeys.includes(channel)}
+                                    onChange={(e) => this.addOrOverrideManualChannel(index, e.value)}
                     />
                     <Textfield disabled={!manualChannelsKeys[index]}
                                value={formatBudget(manualChannels[manualChannelsKeys[index]])}

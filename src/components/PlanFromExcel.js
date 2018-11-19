@@ -3,18 +3,17 @@ import Component from 'components/Component';
 import style from 'styles/plan-from-excel.css';
 import Dropzone from 'react-dropzone';
 import Label from 'components/ControlsLabel';
-import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import XLSX from 'xlsx';
 import offlineStyle from 'styles/attribution/upload-offline-popup.css';
 import MultiRow from 'components/MultiRow';
-import {formatChannels} from 'components/utils/channels';
 import Page from 'components/Page';
 import Button from 'components/controls/Button';
 import Title from 'components/onboarding/Title';
 import {extractNumberFromBudget} from 'components/utils/budget';
+import ChannelsSelect from 'components/common/ChannelsSelect';
 
 export default class PlanFromExcel extends Component {
 
@@ -128,7 +127,6 @@ export default class PlanFromExcel extends Component {
     const dates = getDates(planDate);
     const channelKeys = Object.keys(channelsRowMapping);
     const channelsCells = Object.values(channelsRowMapping);
-    const channelsOptions = formatChannels(channel => Object.keys(channelsRowMapping).includes(channel));
     const monthsRows = dates
       .map((month, index) => <div className={offlineStyle.locals.row} key={index}>
         <div className={offlineStyle.locals.field} style={{width: '100px'}}>
@@ -168,12 +166,10 @@ export default class PlanFromExcel extends Component {
           <MultiRow numOfRows={channelKeys.length} rowRemoved={this.channelRemove}>
             {({index, data, update, removeButton}) => {
               return <div className={offlineStyle.locals.row} style={{margin: '7px 0'}}>
-                <Select
+                <ChannelsSelect
                   style={{width: '230px'}}
                   selected={channelKeys[index]}
-                  select={{
-                    options: channelsOptions
-                  }}
+                  isOptionDisabled={channel => Object.keys(channelsRowMapping).includes(channel)}
                   onChange={(e) => this.handleChangeChannelKey(e.value, index)}
                 />
                 <Textfield value={channelsCells[index]}

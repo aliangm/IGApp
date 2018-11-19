@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
 import MultiRow from 'components/MultiRow';
-import Select from 'components/controls/Select';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
@@ -11,13 +10,13 @@ import planStyles from 'styles/plan/plan.css';
 import {parsePlannedVsActual} from 'data/parsePlannedVsActual';
 import Paging from 'components/Paging';
 import {getTitle, isUnknownChannel} from 'components/utils/channels';
-import {formatChannels} from 'components/utils/channels';
 import {formatBudget} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import icons from 'styles/icons/plan.css';
 import annualStyle from 'styles/plan/annual-tab.css';
 import {getCommitedBudgets} from 'components/utils/budget';
 import {extractNumber} from 'components/utils/utils';
+import ChannelsSelect from 'components/common/ChannelsSelect';
 
 export default class PlannedVsActual extends Component {
 
@@ -177,7 +176,6 @@ export default class PlannedVsActual extends Component {
     let month;
     let headRow;
     let rows;
-    let channelOptions = [];
     this.keys = this.getDates();
     month = this.keys[this.state.month];
     const data = parsePlannedVsActual(this.state.committedBudgets[0] || {},
@@ -211,8 +209,6 @@ export default class PlannedVsActual extends Component {
       className: this.classes.headRow
     });
 
-    channelOptions = formatChannels(channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel));
-
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
@@ -241,24 +237,13 @@ export default class PlannedVsActual extends Component {
                       paddingBottom: '25px',
                       width: '460px'
                     }} className={this.classes.channelsRow}>
-                      <Select
-                        className={this.classes.channelsSelect}
-                        selected={-1}
-                        select={{
-                          menuTop: true,
-                          name: 'channels',
-                          onChange: (selected) => {
-                            update({
-                              selected: selected
-                            });
-                          },
-                          options: channelOptions
-                        }}
-                        onChange={this.addChannel.bind(this)}
-                        label={`Add a channel`}
-                        labelQuestion={['']}
-                        description={['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}
-                      />
+                      <ChannelsSelect className={this.classes.channelsSelect}
+                                      selected={-1}
+                                      isOptionDisabled={channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel)}
+                                      onChange={this.addChannel.bind(this)}
+                                      label={`Add a channel`}
+                                      labelQuestion={['']}
+                                      description={['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}/>
                     </div>;
                   }}
                 </MultiRow>
