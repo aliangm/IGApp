@@ -35,6 +35,10 @@ export function calculatedDataExtender(data) {
   const objectivesData = flattenObjectives(data.objectives, data.actualIndicators, dates, false);
   const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
   const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
+  const prioritizedFunnelObjectives = ['newSQL', 'newMQL', 'newOpps', 'newMCL','newUsers'];
+  const nonZeroFunnelObjective = prioritizedFunnelObjectives.find(funnelObjective =>
+    data.actualIndicators && data.actualIndicators[funnelObjective] > 0) ||
+    prioritizedFunnelObjectives[0];
   const funnelObjectives = collapsedObjectives.filter(
     objective => funnelPossibleObjectives.includes(objective.indicator));
 
@@ -50,8 +54,8 @@ export function calculatedDataExtender(data) {
       activeCampaigns: activeCampaigns,
       annualBudget: annualBudget,
       annualBudgetLeftToPlan: annualBudget -
-      allBudgets.reduce((annualSum, month) => Object.keys(month)
-        .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
+        allBudgets.reduce((annualSum, month) => Object.keys(month)
+          .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
       monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
@@ -76,7 +80,7 @@ export function calculatedDataExtender(data) {
         collapsedObjectives: collapsedObjectives,
         firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator : null,
         funnelObjectives: funnelObjectives,
-        funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator : 'newSQL'
+        funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator : nonZeroFunnelObjective
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
       isTrial,
@@ -97,8 +101,8 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
   const historyDataWithCurrentMonth = {};
   Object.keys(historyData).forEach(key => {
     const sliceNumber = historyDataLength(historyData) - monthExceptThisMonth;
-    // Indicators key in current month is actually "ActualIndicators" and not an array, that's why is has special treatment
-    // All the other one's has the same exact name and are arrays.
+    // Indicators key in current month is actually "ActualIndicators" and not an array, that's why is has special
+    // treatment All the other one's has the same exact name and are arrays.
     if (key === 'indicators') {
       historyDataWithCurrentMonth[key] = [...historyData[key], currentData.actualIndicators].slice(sliceNumber);
     }
@@ -156,11 +160,18 @@ function calculateActualSpent(committedBudgets, planUnknownChannels, knownChanne
 }
 
 function calculateAutomaticIntegration(data) {
-  const isTwitterAdsAuto = !!(data.twitteradsapi && data.twitteradsapi.oauthAccessToken && data.twitteradsapi.oauthAccessTokenSecret && data.twitteradsapi.accountId);
+  const isTwitterAdsAuto = !!(data.twitteradsapi &&
+    data.twitteradsapi.oauthAccessToken &&
+    data.twitteradsapi.oauthAccessTokenSecret &&
+    data.twitteradsapi.accountId);
   const isLinkedinAdsAuto = !!(data.linkedinadsapi && data.linkedinadsapi.tokens && data.linkedinadsapi.accountId);
   const isFacebookAdsAuto = !!(data.facebookadsapi && data.facebookadsapi.accountId && data.facebookadsapi.token);
   const isAdwordsAuto = !!(data.adwordsapi && data.adwordsapi.tokens && data.adwordsapi.customerId);
-  const isSalesforceCampaignsAuto = !!(data.salesforceapi && data.salesforceapi.tokens && data.salesforceapi.selectedCampaigns && data.salesforceapi.selectedCampaigns.length > 0);
+  const isSalesforceCampaignsAuto = !!(data.salesforceapi &&
+    data.salesforceapi.tokens &&
+    data.salesforceapi.selectedCampaigns &&
+    data.salesforceapi.selectedCampaigns.length >
+    0);
   const isSalesforceAuto = !!(data.salesforceapi && data.salesforceapi.tokens && data.salesforceapi.mapping);
   const isMozAuto = !!(data.mozapi && data.mozapi.url);
   const isHubspotAuto = !!(data.hubspotapi && data.hubspotapi.mapping && data.hubspotapi.tokens);
