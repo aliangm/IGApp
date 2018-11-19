@@ -40,7 +40,6 @@ import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
 import SiteStructure from 'components/pages/attribution/SiteStructure';
 import CurrentTab from 'components/pages/plan/CurrentTab';
-import ProjectionsTab from 'components/pages/plan/ProjectionsTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
@@ -114,10 +113,6 @@ ReactDOM.render(
           // can't render the name here. DefaultName is for situation where the property is still loading
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
-        <Route path="/plan/projections"
-               component={ProjectionsTab}
-               onEnter={requireAuth}
-               tabName='Forecasting'/>
         <Route path="/plan/planned-vs-actual"
                component={PlannedVsActual}
                onEnter={requireAuth}
