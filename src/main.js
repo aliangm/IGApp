@@ -35,7 +35,6 @@ import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
 import Setup from 'components/pages/attribution/Setup';
 import AttributionLink from 'components/pages/AttributionLink';
-import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
 import SiteStructure from 'components/pages/attribution/SiteStructure';
@@ -133,10 +132,6 @@ ReactDOM.render(
         <Route path="/settings/account" component={Welcome} onEnter={requireAuth}/>
         <Route component={Attribution} onEnter={requireAuth}>
           <Route path="/settings/attribution/setup" component={Setup} onEnter={requireAuth} tabName='Setup'/>
-          <Route path="/settings/attribution/tracking-plan"
-                 component={TrackingPlan}
-                 onEnter={requireAuth}
-                 tabName='Tracking Plan'/>
           <Route path="/settings/attribution/tracking-urls"
                  component={TrackingUrls}
                  onEnter={requireAuth}
