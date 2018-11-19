@@ -11,12 +11,12 @@ export default class Table extends Component {
     headRowData: PropTypes.shape({
       items: PropTypes.arrayOf(PropTypes.any),
       props: PropTypes.object
-    }),
+    }).isRequired,
     rowsData: PropTypes.arrayOf(
       PropTypes.shape({
         items: PropTypes.arrayOf(PropTypes.any),
         props: PropTypes.object
-      })),
+      })).isRequired,
     footRowData: PropTypes.shape({
       items: PropTypes.arrayOf(PropTypes.any),
       props: PropTypes.object
