@@ -15,14 +15,14 @@ import {formatChannels} from 'components/utils/channels';
 import {formatBudget} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import icons from 'styles/icons/plan.css';
-import annualStyle from 'styles/plan/annual-tab.css';
 import {getCommitedBudgets} from 'components/utils/budget';
 import {extractNumber} from 'components/utils/utils';
+import Table from 'components/controls/Table';
 
 export default class PlannedVsActual extends Component {
 
   style = style;
-  styles = [planStyles, budgetsStyle, icons, annualStyle];
+  styles = [planStyles, budgetsStyle, icons];
 
   static defaultProps = {
     planUnknownChannels: [],
@@ -130,53 +130,51 @@ export default class PlannedVsActual extends Component {
   getRowForData = (data, key, month, isTotalRow) => {
     const actualText = formatBudget(data.actual);
 
-    return this.getTableRow(null, [
-      <div className={this.classes.cellItem}>
-        {!isTotalRow
-          ? <div className={budgetsStyle.locals.rowIcon}
-                 data-icon={!isUnknownChannel(data.key) ? `plan:${data.key}` : 'plan:other'}/>
-          : null
-        }
-        <div className={this.classes.channelName}>{data.channel}</div>
-        {data.isAutomatic ? <div className={this.classes.automaticLabel}>Automatic</div> : null}
-      </div>,
-      '$' + data.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-      <div className={this.classes.cellItem}>
-        {isTotalRow
-          ? <div className={this.classes.actualText} style={{
-            minWidth: '72px',
-            width: '50%'
-          }}>
-            {actualText}
-          </div>
-          : <Textfield style={{
-            minWidth: '72px',
-            width: '50%'
-          }} value={actualText} onChange={(e) => {
-            this.updateActual(data.key, extractNumber(e.target.value));
-          }} disabled={data.isAutomatic}/>
-        }
+    return {
+      items: [
+        <div className={this.classes.cellItem}>
+          {!isTotalRow
+            ? <div className={budgetsStyle.locals.rowIcon}
+                   data-icon={!isUnknownChannel(data.key) ? `plan:${data.key}` : 'plan:other'}/>
+            : null
+          }
+          <div className={this.classes.channelName}>{data.channel}</div>
+          {data.isAutomatic ? <div className={this.classes.automaticLabel}>Automatic</div> : null}
+        </div>,
+        '$' + data.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+        <div className={this.classes.cellItem}>
+          {isTotalRow
+            ? <div className={this.classes.actualText} style={{
+              minWidth: '72px',
+              width: '50%'
+            }}>
+              {actualText}
+            </div>
+            : <Textfield style={{
+              minWidth: '72px',
+              width: '50%'
+            }} value={actualText} onChange={(e) => {
+              this.updateActual(data.key, extractNumber(e.target.value));
+            }} disabled={data.isAutomatic}/>
+          }
 
-        {this.props.planDate === this.state.planDate
-          ? <div className={this.classes.expected} style={isTotalRow ? null : {color: '#b2bbd5'}}>
-            Expected: {formatBudget(Math.round(data.actual / this.props.calculatedData.extarpolateRatio))}
-          </div>
-          : null
-        }
-      </div>,
-      <div className={this.classes.cellItem}>
-        <div className={this.classes.channelName}>{formatBudget(data.planned - data.actual, true)}</div>
-      </div>
-    ], {
-      key: month + key,
-      className: isTotalRow ? this.classes.totalRow : null
-    });
+          {this.props.planDate === this.state.planDate
+            ? <div className={this.classes.expected} style={isTotalRow ? null : {color: '#b2bbd5'}}>
+              Expected: {formatBudget(Math.round(data.actual / this.props.calculatedData.extarpolateRatio))}
+            </div>
+            : null
+          }
+        </div>,
+        formatBudget(data.planned - data.actual, true)
+      ]
+    };
   };
 
   render() {
     let month;
     let headRow;
     let rows;
+    let footRow;
     let channelOptions = [];
     this.keys = this.getDates();
     month = this.keys[this.state.month];
@@ -196,20 +194,17 @@ export default class PlannedVsActual extends Component {
         actual: sumBy(data, item => item.actual)
       };
 
-      const topTotalRow = this.getRowForData(totalData, '-1', month, true);
-      const bottomTotalRow = this.getRowForData(totalData, '-2', month, true);
+      footRow = this.getRowForData(totalData, '-2', month, true);
 
-      rows = [topTotalRow, ...data.map((item, i) => this.getRowForData(item, i, month, false)), bottomTotalRow];
+      rows = data.map((item, i) => this.getRowForData(item, i, month, false));
     }
 
-    headRow = this.getTableRow(null, [
+    headRow = [
       'Channels',
       'Planned Budget',
       'Actual Cost',
       'Difference'
-    ], {
-      className: this.classes.headRow
-    });
+    ];
 
     channelOptions = formatChannels(channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel));
 
@@ -220,20 +215,11 @@ export default class PlannedVsActual extends Component {
             <Paging month={this.state.planDate} pagingUpdateState={this.pagingUpdateState} region={this.state.region}/>
           </div>
           <div className={planStyles.locals.innerBox}>
-            <div className={this.classes.wrap} ref="wrap">
-              <div className={this.classes.box}>
-                <table className={this.classes.table}>
-                  {/*<col style={{ width: '50%' }} />
-                   <col style={{ width: '25%' }} />
-                   <col style={{ width: '25%' }} />*/}
-                  <thead>
-                  {headRow}
-                  </thead>
-                  <tbody className={this.classes.tableBody}>
-                  {rows}
-                  </tbody>
-                </table>
-              </div>
+            <Table headRowData={{items: headRow}}
+                   rowsData={rows}
+                   footRowData={footRow}
+                   showFootRowOnHeader={true}/>
+            <div>
               <div className={this.classes.bottom}>
                 <MultiRow numOfRows={1} maxNumOfRows={1}>
                   {({index, data, update, removeButton}) => {
@@ -301,33 +287,5 @@ export default class PlannedVsActual extends Component {
         </div>
       </div>
     </div>;
-  }
-
-  getTableRow(title, items, props) {
-    return <tr {...props}>
-      {title != null ?
-        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
-        : null}
-      {
-        items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
-        })
-      }
-    </tr>;
-  }
-
-  getCellItem(item) {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    }
-    else {
-      elem = item;
-    }
-
-    return elem;
   }
 }

@@ -6,6 +6,7 @@ import Select from 'components/controls/Select';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import Avatar from 'components/Avatar';
+import Table from 'components/controls/Table';
 
 export default class OnlineCampaigns extends Component {
 
@@ -46,7 +47,7 @@ export default class OnlineCampaigns extends Component {
       {value: 'revenue', label: 'Revenue'}
     ];
 
-    const headRow = this.getTableRow(null, [
+    const headRow = [
       'Status',
       'Channel',
       <div onClick={this.sortBy.bind(this, 'name')} style={{cursor: 'pointer'}}>
@@ -75,7 +76,13 @@ export default class OnlineCampaigns extends Component {
             onChange={(e) => {
               this.setState({selectedAttributionMetric: e.value});
             }}
-            style={{width: '160px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
+            style={{
+              width: '160px',
+              fontWeight: 'initial',
+              fontSize: 'initial',
+              color: 'initial',
+              textAlign: 'initial'
+            }}
           />
           :
           <div onClick={this.sortBy.bind(this, selectedAttributionMetric)} style={{cursor: 'pointer'}}>
@@ -88,9 +95,7 @@ export default class OnlineCampaigns extends Component {
           {editMetric ? 'Done' : 'Edit'}
         </div>
       </div>
-    ], {
-      className: this.classes.headRow
-    });
+    ];
 
     const campaignsWithAttribution = campaigns
       .map((campaign, index) => {
@@ -117,73 +122,39 @@ export default class OnlineCampaigns extends Component {
       .sort((item1, item2) =>
         ((item2[this.state.sortBy] || 0) - (item1[this.state.sortBy] || 0)) * this.state.isDesc
       )
-      .map((campaign, index) =>
-        this.getTableRow(null, [
-          <div className={this.classes.statusIcon} data-icon={'status:' + campaign.status} title={campaign.status}/>,
-          <div>
-            {campaign.source.map(channel =>
-              <div key={channel} className={this.classes.channelIcon} data-icon={'plan:' + channel}
-                   title={getChannelNickname(channel)}/>
-            )}
-          </div>,
-          campaign.name,
-          <div title={campaign.user && campaign.user.name}>
-            <Avatar member={campaign.user} className={this.classes.icon}/>
-          </div>,
-          campaign.impressions,
-          campaign.clicks,
-          campaign.conversions,
-          '$' + formatNumber(campaign.actualSpent || 0),
-          campaign[selectedAttributionMetric] || 0
-        ], {
-          key: index,
-          className: this.classes.tableRow,
-          style: {cursor: 'pointer'},
-          onClick: () => {
-            this.props.openCampaign(campaign.platformIndex);
+      .map((campaign, index) => {
+        return {
+          items: [
+            <div className={this.classes.statusIcon} data-icon={'status:' + campaign.status} title={campaign.status}/>,
+            <div>
+              {campaign.source.map(channel =>
+                <div key={channel} className={this.classes.channelIcon} data-icon={'plan:' + channel}
+                     title={getChannelNickname(channel)}/>
+              )}
+            </div>,
+            campaign.name,
+            <div title={campaign.user && campaign.user.name}>
+              <Avatar member={campaign.user} className={this.classes.icon}/>
+            </div>,
+            campaign.impressions,
+            campaign.clicks,
+            campaign.conversions,
+            '$' + formatNumber(campaign.actualSpent || 0),
+            campaign[selectedAttributionMetric] || 0
+          ],
+          props: {
+            key: index,
+            style: {cursor: 'pointer'},
+            onClick: () => {
+              this.props.openCampaign(campaign.platformIndex);
+            }
           }
-        })
-      );
+        };
+      });
 
     return (
-      <div className={this.classes.wrap}>
-        <table className={this.classes.table}>
-          <thead>
-          {headRow}
-          </thead>
-          <tbody className={this.classes.tableBody}>
-          {rows}
-          </tbody>
-        </table>
-      </div>
+      <Table headRowData={{items: headRow}}
+             rowsData={rows}/>
     );
   }
-
-  getTableRow(title, items, props) {
-    return <tr {...props}>
-      {title != null ?
-        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
-        : null}
-      {
-        items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
-        })
-      }
-    </tr>;
-  }
-
-  getCellItem(item) {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    } else {
-      elem = item;
-    }
-
-    return elem;
-  }
-
 }
