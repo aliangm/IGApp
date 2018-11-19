@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/planned-actual-tab.css';
-import planStyles from 'styles/plan/plan.css';
 import copy from 'copy-to-clipboard';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import trackingStyle from 'styles/campaigns/tracking.css';
@@ -11,7 +10,7 @@ import Table from 'components/controls/Table';
 export default class TrackingPlan extends Component {
 
   style = style;
-  styles = [planStyles, buttonsStyle, trackingStyle];
+  styles = [buttonsStyle, trackingStyle];
 
   static defaultProps = {
     campaigns: []
@@ -75,10 +74,8 @@ export default class TrackingPlan extends Component {
     ];
 
     return <div>
-      <div className={planStyles.locals.innerBox}>
-        <Table headRowData={{items: headRow}}
-               rowsData={rows}/>
-      </div>
+      <Table headRowData={{items: headRow}}
+             rowsData={rows}/>
     </div>;
   }
 }
