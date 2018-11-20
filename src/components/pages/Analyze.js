@@ -60,6 +60,8 @@ export default class Analyze extends Component {
               onChange={(e) => {
                 this.props.calculateAttributionData(e.value, attributionModel);
               }}
+              iconRendererOnValue={true}
+              iconFromValue={() => 'icons:calendar'}
               className={analyzeStyle.locals.dateSelect}
             />
             <div className={analyzeStyle.locals.text}>Attribution Model:</div>
