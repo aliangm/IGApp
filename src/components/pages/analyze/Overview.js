@@ -1,11 +1,24 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
-import {XAxis, Tooltip, AreaChart, Area, YAxis, CartesianGrid, Pie, PieChart, Cell, BarChart, Bar, LabelList} from 'recharts';
+import {
+  XAxis,
+  Tooltip,
+  AreaChart,
+  Area,
+  YAxis,
+  CartesianGrid,
+  Pie,
+  PieChart,
+  Cell,
+  BarChart,
+  Bar,
+  LabelList
+} from 'recharts';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
-import {formatBudgetShortened} from 'components/utils/budget';
+import {formatBudget, formatBudgetShortened} from 'components/utils/budget';
 import merge from 'lodash/merge';
 import {getChannelsWithProps, getMetadata} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
@@ -14,6 +27,7 @@ import {flattenObjectives} from 'components/utils/objective';
 import {getDatesSpecific} from 'components/utils/date';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
 import {getColor} from 'components/utils/colors';
+import SumBy from 'lodash/SumBy';
 
 export default class Overview extends Component {
 
@@ -220,6 +234,29 @@ export default class Overview extends Component {
       </Bar>
     );
 
+    const funnel = {
+      MCL: 'newMCL',
+      MQL: 'newMQL',
+      SQL: 'newSQL',
+      opps: 'newOpps',
+      users: 'newUsers'
+    };
+
+    const costPerX = Object.keys(funnel).map(indicator => {
+      const newIndicator = funnel[indicator];
+      const indicatorSum = SumBy(indicatorsData[newIndicator], item => item.value || 0);
+      return <div className={this.classes.colCenter}>
+        <div className={dashboardStyle.locals.item}>
+          <div className={dashboardStyle.locals.text}>
+            Cost per {getIndicatorNickname(indicator, true)}
+          </div>
+          <div className={dashboardStyle.locals.number}>
+            {indicatorSum ? formatBudget(Math.round(totalCost / indicatorSum)) : '-'}
+          </div>
+        </div>
+      </div>;
+    });
+
     return <div>
       <div className={this.classes.wrap}>
         <div>
@@ -247,7 +284,7 @@ export default class Overview extends Component {
             <div className={this.classes.colCenter}>
               <div className={dashboardStyle.locals.item}>
                 <div className={dashboardStyle.locals.text}>
-                  Total {this.state.attributionTableRevenueMetric}
+                  Total Pipeline Revenue
                 </div>
                 <div className={dashboardStyle.locals.number}>
                   ${formatBudgetShortened(totalRevenue)}
@@ -266,11 +303,14 @@ export default class Overview extends Component {
               </div>
             </div>
           </div>
+          <div className={this.classes.cols} style={{width: '825px'}}>
+            {costPerX}
+          </div>
           <div className={this.classes.cols}>
             <div className={this.classes.colLeft}>
               <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
                 <div className={dashboardStyle.locals.text}
-                     data-tip="Total (estimated) business impact generated across funnel. Sum of volumes of each funnel stage X the possibility to convert to a paying account X estimated LTV.">
+                     data-tip="(Estimated) Impact across funnel. Sum of each funnel stage X the likability to convert to a paying account X estimated LTV.">
                   Business Impact across funnel
                 </div>
                 <div style={{display: 'flex'}}>
