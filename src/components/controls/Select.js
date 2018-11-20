@@ -54,14 +54,6 @@ export default class Select extends Component {
         <Label question={this.props.labelQuestion} description={this.props.description}>{this.props.label}</Label>;
     }
 
-    const otherProps = {};
-    if (this.props.iconRendererOnValue) {
-      otherProps.valueRenderer = this.iconRenderer;
-    }
-    if (this.props.iconRendererOnOptions) {
-      otherProps.optionRenderer = this.iconRenderer;
-    }
-
     const select = this.props.select;
 
     return <div style={this.props.style} className={this.props.className}>
@@ -69,7 +61,8 @@ export default class Select extends Component {
       <div style={{display: 'flex', position: 'relative'}}>
         <div style={{flex: 'auto'}}>
           <ReactSelect {...select}
-                       {...otherProps}
+                       valueRenderer={this.props.iconRendererOnValue ? this.iconRenderer : null}
+                       optionRenderer={this.props.iconRendererOnOptions ? this.iconRenderer : null}
                        ref="input"
                        openOnFocus={true}
                        value={this.props.selected}
