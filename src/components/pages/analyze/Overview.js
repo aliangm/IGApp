@@ -147,42 +147,29 @@ export default class Overview extends Component {
       };
     });
 
-    const objectivesHeadRow = this.getTableRow(null, [
-      <div style={{fontWeight: 'bold', fontSize: '22px'}}>
-        Objective
-      </div>,
-      'Date',
-      'Target',
-      'Actual',
-      'Delta'
-    ], {
-      className: dashboardStyle.locals.objectivesHeadRow
-    });
-
     const objectivesRows = flattenHistoryObjectives.map((objective, index) => {
       const grow = Math.round(objective.value - objective.target);
-      return this.getTableRow(null, [
-        getIndicatorNickname(objective.indicator),
-        this.getObjectiveFormattedDate(objective.dueDate),
-        objective.target,
-        objective.value,
-        <div>
-          {grow ?
-            <div style={{display: 'flex'}}>
-              <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
-              <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
-                   style={{marginRight: '0'}}>
-                {Math.abs(grow)}
+      return {
+        items: [
+          getIndicatorNickname(objective.indicator),
+          this.getObjectiveFormattedDate(objective.dueDate),
+          objective.target,
+          objective.value,
+          <div>
+            {grow ?
+              <div style={{display: 'flex'}}>
+                <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
+                <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
+                     style={{marginRight: '0'}}>
+                  {Math.abs(grow)}
+                </div>
               </div>
-            </div>
-            :
-            <div className={dashboardStyle.locals.checkMark}/>
-          }
-        </div>
-      ], {
-        key: index,
-        className: dashboardStyle.locals.objectivesTableRow
-      });
+              :
+              <div className={dashboardStyle.locals.checkMark}/>
+            }
+          </div>
+        ]
+      };
     });
 
     const channelCategoriesPerMonth = indicatorsForDisplay.slice(this.props.monthsExceptThisMonth).map((month) => {
@@ -517,23 +504,15 @@ export default class Overview extends Component {
             </div>
             <div className={this.classes.colRight}>
               <div className={dashboardStyle.locals.item} style={{
-                display: 'inline-block',
                 height: '412px',
                 width: '540px',
-                overflow: 'auto',
-                padding: '15px 0'
+                overflow: 'auto'
               }}>
                 <div className={dashboardStyle.locals.text}>
                   Objectives - planned vs actual
                 </div>
-                <table className={dashboardStyle.locals.objectivesTable}>
-                  <thead>
-                  {objectivesHeadRow}
-                  </thead>
-                  <tbody className={dashboardStyle.locals.objectiveTableBody}>
-                  {objectivesRows}
-                  </tbody>
-                </table>
+                <SmallTable headRowData={{items: ['Objective', 'Date', 'Target', 'Actual', 'Delta']}}
+                            rowsData={objectivesRows}/>
               </div>
             </div>
           </div>
