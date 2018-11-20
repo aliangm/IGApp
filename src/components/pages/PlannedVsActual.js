@@ -225,7 +225,7 @@ export default class PlannedVsActual extends Component {
                     }} className={this.classes.channelsRow}>
                       <ChannelsSelect className={this.classes.channelsSelect}
                                       selected={-1}
-                                      isOptionDisabled={channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel)}
+                                      isChannelDisabled={channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel)}
                                       onChange={this.addChannel.bind(this)}
                                       label={`Add a channel`}
                                       labelQuestion={['']}

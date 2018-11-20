@@ -143,7 +143,7 @@ export default class ManualPlan extends Component {
                   return <div style={{display: 'flex', marginBottom: '10px'}}>
                     <ChannelsSelect style={{width: '262px'}}
                                     selected={manualChannelsKeys[index]}
-                                    isOptionDisabled={channel => manualChannelsKeys.includes(channel)}
+                                    isChannelDisabled={channel => manualChannelsKeys.includes(channel)}
                                     onChange={(e) => this.addOrOverrideManualChannel(index, e.value)}
                     />
                     <Textfield disabled={!manualChannelsKeys[index]}

@@ -586,7 +586,7 @@ export default class Preferences extends Component {
                           <ChannelsSelect
                             style={{width: '230px'}}
                             selected={budgetConstraintsChannels[index]}
-                            isOptionDisabled={isChannelOptionDisabled}
+                            isChannelDisabled={isChannelOptionDisabled}
                             onChange={this.addBudgetConstraintChannel.bind(this, index)}
                           />
                           <Range

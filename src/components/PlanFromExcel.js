@@ -169,7 +169,7 @@ export default class PlanFromExcel extends Component {
                 <ChannelsSelect
                   style={{width: '230px'}}
                   selected={channelKeys[index]}
-                  isOptionDisabled={channel => Object.keys(channelsRowMapping).includes(channel)}
+                  isChannelDisabled={channel => Object.keys(channelsRowMapping).includes(channel)}
                   onChange={(e) => this.handleChangeChannelKey(e.value, index)}
                 />
                 <Textfield value={channelsCells[index]}

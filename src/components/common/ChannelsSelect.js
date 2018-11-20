@@ -6,15 +6,15 @@ import Select from 'components/controls/Select';
 export default class ChannelsSelect extends Component {
 
   static propTypes = {
-    isOptionDisabled: PropTypes.func
+    isChannelDisabled: PropTypes.func
   };
 
   render() {
-    const {isOptionDisabled, ...otherProps} = this.props;
+    const {isChannelDisabled, ...otherProps} = this.props;
     const channels = {
       select: {
         name: 'channels',
-        options: formatChannels(isOptionDisabled)
+        options: formatChannels(isChannelDisabled)
       }
     };
 
