@@ -135,7 +135,12 @@ export default class Overview extends Component {
 
     const revenueByCategoryRows = Object.keys(revenueByCategory).map(category => {
       return {
-        items: [<div style={{textTransform: 'capitalize'}}>{category}</div>, formatBudget(revenueByCategory[category])]
+        items: [
+          <div style={{textTransform: 'capitalize'}}>
+            {category}
+          </div>,
+          formatBudget(revenueByCategory[category])
+        ]
       };
     });
 
