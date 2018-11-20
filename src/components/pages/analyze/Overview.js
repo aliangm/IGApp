@@ -278,7 +278,7 @@ export default class Overview extends Component {
     const costPerX = Object.keys(funnel).map(indicator => {
       const newIndicator = funnel[indicator];
       const indicatorSum = SumBy(indicatorsData[newIndicator], item => item.value || 0);
-      return <div className={this.classes.colCenter}>
+      return <div className={this.classes.colCenter} key={indicator}>
         <div className={dashboardStyle.locals.item}>
           <div className={dashboardStyle.locals.text}>
             Cost per {getIndicatorNickname(indicator, true)}
