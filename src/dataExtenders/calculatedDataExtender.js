@@ -35,7 +35,7 @@ export function calculatedDataExtender(data) {
   const objectivesData = flattenObjectives(data.objectives, data.actualIndicators, dates, false);
   const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
   const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
-  const prioritizedFunnelObjectives = ['newSQL', 'newMQL', 'newOpps', 'newMCL','newUsers'];
+  const prioritizedFunnelObjectives = ['newSQL', 'newOpps', 'newUsers', 'newMQL', 'newMCL'];
   const nonZeroFunnelObjective = prioritizedFunnelObjectives.find(funnelObjective =>
     data.actualIndicators && data.actualIndicators[funnelObjective] > 0) ||
     prioritizedFunnelObjectives[0];
