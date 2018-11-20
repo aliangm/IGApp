@@ -19,7 +19,6 @@ import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
 import {formatBudget, formatBudgetShortened} from 'components/utils/budget';
-import merge from 'lodash/merge';
 import {getChannelsWithProps, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
@@ -39,8 +38,7 @@ export default class Overview extends Component {
     super(props);
 
     this.state = {
-      historicalPerformanceIndicator: 'SQL',
-      attributionTableRevenueMetric: 'pipeline'
+      historicalPerformanceIndicator: 'SQL'
     };
   }
 
@@ -76,7 +74,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {committedBudgets, months, sumBudgets, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay}}}} = this.props;
+    const {attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay}}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
@@ -106,9 +104,15 @@ export default class Overview extends Component {
         }
       }
     }
-    const totalRevenue = (channelsImpact && channelsImpact[this.state.attributionTableRevenueMetric]
-      ? Object.keys(channelsImpact[this.state.attributionTableRevenueMetric])
-        .reduce((channelsSum, item) => channelsSum + channelsImpact[this.state.attributionTableRevenueMetric][item], 0)
+
+    const totalPipeline = (channelsImpact && channelsImpact.pipeline
+      ? Object.keys(channelsImpact.pipeline)
+        .reduce((channelsSum, item) => channelsSum + channelsImpact.pipeline[item], 0)
+      : 0);
+
+    const totalRevenue = (channelsImpact && channelsImpact.revenue
+      ? Object.keys(channelsImpact.revenue)
+        .reduce((channelsSum, item) => channelsSum + channelsImpact.revenue[item], 0)
       : 0);
 
     const revenueByChannel = channelsImpact ? channelsImpact.revenue : {};
@@ -285,16 +289,6 @@ export default class Overview extends Component {
       <div className={this.classes.wrap}>
         <div>
           <div className={this.classes.cols} style={{width: '825px'}}>
-            <div className={this.classes.colLeft}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Channels
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  {Object.keys(committedBudgets.reduce((sum, item) => merge(sum, item), {})).length}
-                </div>
-              </div>
-            </div>
             <div className={this.classes.colCenter}>
               <div className={dashboardStyle.locals.item}>
                 <div className={dashboardStyle.locals.text}>
@@ -311,14 +305,35 @@ export default class Overview extends Component {
                   Total Pipeline Revenue
                 </div>
                 <div className={dashboardStyle.locals.number}>
+                  ${formatBudgetShortened(totalPipeline)}
+                </div>
+              </div>
+            </div>
+            <div className={this.classes.colCenter}>
+              <div className={dashboardStyle.locals.item}>
+                <div className={dashboardStyle.locals.text}>
+                  Pipeline ROI
+                </div>
+                <div className={dashboardStyle.locals.number}>
+                  {/* Two digits after comma */}
+                  {(Math.round(totalPipeline / totalCost * 100) / 100).toFixed(2)}X
+                </div>
+              </div>
+            </div>
+            <div className={this.classes.colCenter}>
+              <div className={dashboardStyle.locals.item}>
+                <div className={dashboardStyle.locals.text}>
+                  Total Revenue
+                </div>
+                <div className={dashboardStyle.locals.number}>
                   ${formatBudgetShortened(totalRevenue)}
                 </div>
               </div>
             </div>
-            <div className={this.classes.colRight}>
+            <div className={this.classes.colCenter}>
               <div className={dashboardStyle.locals.item}>
                 <div className={dashboardStyle.locals.text}>
-                  ROI
+                  Revenue ROI
                 </div>
                 <div className={dashboardStyle.locals.number}>
                   {/* Two digits after comma */}
