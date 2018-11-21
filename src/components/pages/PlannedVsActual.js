@@ -156,14 +156,10 @@ export default class PlannedVsActual extends Component {
               this.updateActual(data.key, extractNumber(e.target.value));
             }} disabled={data.isAutomatic}/>
           }
-
-          {this.props.planDate === this.state.planDate
-            ? <div className={this.classes.expected} style={isTotalRow ? null : {color: '#b2bbd5'}}>
-              Expected: {formatBudget(Math.round(data.actual / this.props.calculatedData.extarpolateRatio))}
-            </div>
-            : null
-          }
         </div>,
+        this.props.planDate === this.state.planDate
+          ? formatBudget(Math.round(data.actual / this.props.calculatedData.extarpolateRatio))
+          : null,
         formatBudget(data.planned - data.actual, true)
       ]
     };
@@ -198,9 +194,10 @@ export default class PlannedVsActual extends Component {
     }
 
     headRow = [
-      'Channels',
+      'Channel',
       'Planned Budget',
-      'Actual Cost',
+      'Actual Cost to date',
+      'Pacing for',
       'Difference'
     ];
 
