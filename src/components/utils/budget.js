@@ -76,3 +76,7 @@ export function getCommitedBudgets(planBudgets) {
     return newMonth;
   });
 }
+
+export function formatNumberWithDecimalPoint(number, numberOfDigitsAfterPoint = 2) {
+  return (Math.round(number * 100) / 100).toFixed(numberOfDigitsAfterPoint);
+}

@@ -8,18 +8,23 @@ export default class SmallTable extends Component {
   style = style;
 
   render() {
-    const {headRowData: {items: headRowItems, props: headRowProps = {}}, rowsData, ...otherProps} = this.props;
+    const {headRowData, rowsData, ...otherProps} = this.props;
     const rowsDataWithStyling = rowsData.map(row => {
-      const {items, props} = row;
       return {
-        items: items,
+        ...row,
         props: {
           className: this.classes.tableRow,
-          ...props
+          ...row.props
         }
       };
     });
-    return <Table headRowData={{items: headRowItems, props: {className: this.classes.headRow, ...headRowProps}}}
+    return <Table headRowData={{
+      ...headRowData,
+      props: {
+        className: this.classes.headRow,
+        ...headRowData.props
+      }
+    }}
                   rowsData={rowsDataWithStyling}
                   {...otherProps}
     />;

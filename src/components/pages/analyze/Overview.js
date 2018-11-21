@@ -18,7 +18,7 @@ import {
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
-import {formatBudget, formatBudgetShortened} from 'components/utils/budget';
+import {formatBudget, formatBudgetShortened, formatNumberWithDecimalPoint} from 'components/utils/budget';
 import {getChannelsWithProps, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
@@ -26,7 +26,9 @@ import {flattenObjectives} from 'components/utils/objective';
 import {getDatesSpecific} from 'components/utils/date';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
 import {getColor} from 'components/utils/colors';
-import SumBy from 'lodash/SumBy';
+import sumBy from 'lodash/sumBy';
+import groupBy from 'lodash/groupBy';
+import mapValues from 'lodash/mapValues';
 import SmallTable from 'components/controls/SmallTable';
 
 export default class Overview extends Component {
@@ -105,15 +107,13 @@ export default class Overview extends Component {
       }
     }
 
-    const totalPipeline = (channelsImpact && channelsImpact.pipeline
-      ? Object.keys(channelsImpact.pipeline)
-        .reduce((channelsSum, item) => channelsSum + channelsImpact.pipeline[item], 0)
+    const getTotalParam = param => (channelsImpact && channelsImpact[param]
+      ? Object.keys(channelsImpact[param])
+        .reduce((channelsSum, item) => channelsSum + channelsImpact[param][item], 0)
       : 0);
 
-    const totalRevenue = (channelsImpact && channelsImpact.revenue
-      ? Object.keys(channelsImpact.revenue)
-        .reduce((channelsSum, item) => channelsSum + channelsImpact.revenue[item], 0)
-      : 0);
+    const totalPipeline = getTotalParam('pipeline');
+    const totalRevenue = getTotalParam('revenue');
 
     const revenueByChannel = channelsImpact ? channelsImpact.revenue : {};
     delete revenueByChannel.direct;
@@ -124,14 +124,8 @@ export default class Overview extends Component {
       };
     });
 
-    const revenueByCategory = {};
-    Object.keys(revenueByChannel).forEach(channel => {
-      const category = getMetadata('category', channel);
-      if (!revenueByCategory[category]) {
-        revenueByCategory[category] = 0;
-      }
-      revenueByCategory[category] += revenueByChannel[channel];
-    });
+    const channelsByCategories = groupBy(Object.keys(revenueByChannel), channel => getMetadata('category', channel));
+    const revenueByCategory = mapValues(channelsByCategories, channels => sumBy(channels, channel => revenueByChannel[channel]));
 
     const revenueByCategoryRows = Object.keys(revenueByCategory).map(category => {
       return {
@@ -267,7 +261,7 @@ export default class Overview extends Component {
       </Bar>
     );
 
-    const funnel = {
+    const newIndicatorMapping = {
       MCL: 'newMCL',
       MQL: 'newMQL',
       SQL: 'newSQL',
@@ -275,20 +269,44 @@ export default class Overview extends Component {
       users: 'newUsers'
     };
 
-    const costPerX = Object.keys(funnel).map(indicator => {
-      const newIndicator = funnel[indicator];
-      const indicatorSum = SumBy(indicatorsData[newIndicator], item => item.value || 0);
-      return <div className={this.classes.colCenter} key={indicator}>
+    const costPerFunnel = {};
+    Object.keys(newIndicatorMapping).map(indicator => {
+      const newIndicator = newIndicatorMapping[indicator];
+      const indicatorSum = sumBy(indicatorsData[newIndicator], item => item.value || 0);
+      costPerFunnel[indicator] = indicatorSum ? formatBudget(Math.round(totalCost / indicatorSum)) : '-';
+    });
+
+    const costPerX = Object.keys(costPerFunnel).map(indicator =>
+      <div className={this.classes.colCenter} key={indicator}>
         <div className={dashboardStyle.locals.item}>
           <div className={dashboardStyle.locals.text}>
             Cost per {getIndicatorNickname(indicator, true)}
           </div>
           <div className={dashboardStyle.locals.number}>
-            {indicatorSum ? formatBudget(Math.round(totalCost / indicatorSum)) : '-'}
+            {costPerFunnel[indicator]}
           </div>
         </div>
+      </div>
+    );
+
+    const getRevenueByTableItem = (title, revenueByRows, key) =>
+      <div className={this.classes.colCenter} key={key}>
+        <div className={dashboardStyle.locals.item}
+             style={{display: 'inline-block', height: '412px', width: '540px', overflow: 'auto'}}>
+          <div className={dashboardStyle.locals.text}>
+            Revenue by {title}
+          </div>
+          <SmallTable headRowData={{items: [title, 'Revenue']}}
+                      rowsData={revenueByRows}/>
+        </div>
       </div>;
-    });
+
+    const getRevenueByRow = data => {
+      const items = data.map((dataItem, index) => getRevenueByTableItem(dataItem.title, dataItem.revenueByRows, index));
+      return <div className={this.classes.cols} style={{width: '1110px'}}>
+        {items}
+      </div>;
+    };
 
     return <div>
       <div className={this.classes.wrap}>
@@ -320,8 +338,7 @@ export default class Overview extends Component {
                   Pipeline ROI
                 </div>
                 <div className={dashboardStyle.locals.number}>
-                  {/* Two digits after comma */}
-                  {(Math.round(totalPipeline / totalCost * 100) / 100).toFixed(2)}X
+                  {formatNumberWithDecimalPoint(totalPipeline / totalCost)}
                 </div>
               </div>
             </div>
@@ -341,8 +358,7 @@ export default class Overview extends Component {
                   Revenue ROI
                 </div>
                 <div className={dashboardStyle.locals.number}>
-                  {/* Two digits after comma */}
-                  {(Math.round(totalRevenue / totalCost * 100) / 100).toFixed(2)}X
+                  {formatNumberWithDecimalPoint(totalRevenue / totalCost)}X
                 </div>
               </div>
             </div>
@@ -430,50 +446,20 @@ export default class Overview extends Component {
               </div>
             </div>
           </div>
-          <div className={this.classes.cols} style={{width: '1110px'}}>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}
-                   style={{display: 'inline-block', height: '412px', width: '540px', overflow: 'auto'}}>
-                <div className={dashboardStyle.locals.text}>
-                  Revenue by Category
-                </div>
-                <SmallTable headRowData={{items: ['Category', 'Revenue']}}
-                            rowsData={revenueByCategoryRows}/>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}
-                   style={{display: 'inline-block', height: '412px', width: '540px', overflow: 'auto'}}>
-                <div className={dashboardStyle.locals.text}>
-                  Revenue by Channel
-                </div>
-                <SmallTable headRowData={{items: ['Channel', 'Revenue']}}
-                            rowsData={revenueByChannelRows}/>
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.cols} style={{width: '1110px'}}>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}
-                   style={{display: 'inline-block', height: '412px', width: '540px', overflow: 'auto'}}>
-                <div className={dashboardStyle.locals.text}>
-                  Revenue by Campaign
-                </div>
-                <SmallTable headRowData={{items: ['Campaign', 'Revenue']}}
-                            rowsData={revenueByCampaignRows}/>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}
-                   style={{display: 'inline-block', height: '412px', width: '540px', overflow: 'auto'}}>
-                <div className={dashboardStyle.locals.text}>
-                  Revenue by Content
-                </div>
-                <SmallTable headRowData={{items: ['Content', 'Revenue']}}
-                            rowsData={revenueByContentRows}/>
-              </div>
-            </div>
-          </div>
+          {getRevenueByRow([{
+            title: 'Category',
+            revenueByRows: revenueByCategoryRows
+          }, {
+            title: 'Channel',
+            revenueByRows: revenueByChannelRows
+          }])}
+          {getRevenueByRow([{
+            title: 'Campaign',
+            revenueByRows: revenueByCampaignRows
+          }, {
+            title: 'Content',
+            revenueByRows: revenueByContentRows
+          }])}
           <div className={this.classes.cols} style={{width: '1110px'}}>
             <div className={this.classes.colLeft}>
               <div className={dashboardStyle.locals.item}
