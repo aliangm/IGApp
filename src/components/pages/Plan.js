@@ -309,20 +309,10 @@ export default class Plan extends Component {
     });
   };
 
-  addUnknownChannel = (name, category) => {
-    const namesMapping = {...this.props.namesMapping};
-    if (!namesMapping.channels) {
-      namesMapping.channels = {};
-    }
-    const channel = `${category} / ${name}`;
-    namesMapping.channels[channel] = {
-      title: channel,
-      nickname: name,
-      category: category,
-      isUnknownChannel: true
-    };
-    this.props.updateState({namesMapping: namesMapping});
-    this.addChannel(channel);
+  addUnknownChannel = (channel, category) => {
+    const channelWithCategory = category ? `${category} / ${channel}` : channel;
+    this.props.addUnknownChannel(channelWithCategory, channel, category);
+    this.addChannel(channelWithCategory);
   };
 
   setRef = (channel, ref) => {

@@ -47,7 +47,8 @@ class AppComponent extends Component {
       optimalImprovementPlan: this.optimalImprovementPlan.bind(this),
       pay: this.pay.bind(this),
       getUserAccount: this.getUserAccount.bind(this),
-      sendSnippetEmail: this.sendSnippetEmail.bind(this)
+      sendSnippetEmail: this.sendSnippetEmail.bind(this),
+      addUnknownChannel: this.addUnknownChannel.bind(this)
     };
   }
 
@@ -430,6 +431,7 @@ class AppComponent extends Component {
       userMinMonthBudgets: data.userMinMonthBudgets || [],
       maxChannels: data.maxChannels || -1,
       actualIndicators: data.actualIndicators || {},
+      actualChannelBudgets: data.actualChannelBudgets || {},
       knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
       unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
       campaigns: data.campaigns || [],
@@ -627,6 +629,20 @@ class AppComponent extends Component {
           }
         });
     });
+  }
+
+  addUnknownChannel(channelKey, nickname = channelKey, category = channelKey) {
+    const namesMapping = {...this.state.namesMapping};
+    if (!namesMapping.channels) {
+      namesMapping.channels = {};
+    }
+    namesMapping.channels[channelKey] = {
+      title: channelKey,
+      nickname: nickname,
+      category: category,
+      isUnknownChannel: true
+    };
+    this.updateState({namesMapping: namesMapping});
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {

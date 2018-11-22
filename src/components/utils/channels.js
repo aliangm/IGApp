@@ -42,7 +42,7 @@ export function getNickname(channel) {
 
 export function getChannelIcon(channel) {
   if (isInitialized && channel) {
-    if (!schema.properties[channel].isUnknownChannel) {
+    if (schema.properties[channel] && !schema.properties[channel].isUnknownChannel) {
       return `plan:${channel}`;
     }
     else {
