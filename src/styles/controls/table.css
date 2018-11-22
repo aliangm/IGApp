@@ -1,0 +1,47 @@
+.wrap {
+    padding: 15px;
+    border: 1px #e3e6f4;
+    border-radius: 2px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+}
+
+.table :global(td):first-child {
+    padding-left: 10px;
+}
+
+.head-row {
+    height: 60px;
+    border-radius: 2px;
+    background-color: #65b7f3;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.table-row {
+    height: 60px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    border-top: 5px solid #F5F6FB;
+    font-size: 14px;
+    color: #354052;
+}
+
+.foot-row {
+    composes: table-row;
+    background-color: #33cc3478;
+    color: #354052;
+}
+
+.cell-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: 1;
+    max-width: 300px;
+}

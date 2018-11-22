@@ -1,4 +1,7 @@
 import uniq from 'lodash/uniq';
+import icons from 'styles/icons/plan.css';
+
+icons.use();
 
 let schema = { properties: {} };
 let isInitialized = false;
@@ -34,6 +37,20 @@ export function getNickname(channel) {
   }
   else {
     console.log(channel);
+  }
+}
+
+export function getChannelIcon(channel) {
+  if (isInitialized && channel) {
+    if (!schema.properties[channel].isUnknownChannel) {
+      return `plan:${channel}`;
+    }
+    else {
+      return 'plan:other';
+    }
+  }
+  else {
+    console.error(channel);
   }
 }
 

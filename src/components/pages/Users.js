@@ -1,17 +1,13 @@
 import React from 'react';
 import Component from 'components/Component';
-import Page from 'components/Page';
 import style from 'styles/users/users.css';
 import ReactCountryFlag from 'react-country-flag';
-import planStyle from 'styles/plan/plan.css';
 import {getNickname} from 'components/utils/indicators';
 import icons from 'styles/icons/plan.css';
 import uniq from 'lodash/uniq';
 import UsersPopup from 'components/pages/users/UsersPopup';
-import dashboardStyle from 'styles/dashboard/dashboard.css';
-import {formatDate} from 'components/utils/date';
-import Select from 'components/controls/Select';
 import Toggle from 'components/controls/Toggle';
+import Table from 'components/controls/Table';
 
 const GROUP_BY = {
   USERS: 0,
@@ -21,7 +17,7 @@ const GROUP_BY = {
 export default class Users extends Component {
 
   style = style;
-  styles = [planStyle, icons, dashboardStyle];
+  styles = [icons];
 
   constructor(props) {
     super(props);
@@ -89,7 +85,7 @@ export default class Users extends Component {
 
     const {attribution} = this.props;
 
-    const headRow = this.getTableRow(null, [
+    const headRow = [
       'User',
       'Channels',
       'Stage',
@@ -98,9 +94,7 @@ export default class Users extends Component {
       'First touch',
       'Last touch',
       'Device'
-    ], {
-      className: this.classes.headRow
-    });
+    ];
 
     const stagesOrder = {
       blogSubscribers: 0,
@@ -187,40 +181,42 @@ export default class Users extends Component {
         }));
         const devices = uniq(user.journey.reduce((mergedItem, item) => [...mergedItem, ...item.devices], []));
         const countries = uniq(user.journey.reduce((mergedItem, item) => [...mergedItem, ...item.countries], []));
-        return this.getTableRow(null, [
-          <div className={this.classes.container}>
-            <div className={this.classes.icon} style={{
-              backgroundImage: 'url(https://logo.clearbit.com/' + domain + ')',
-              width: '25px',
-              height: '25px'
-            }}/>
-            <div className={this.classes.account}>
-              {user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0]}
-              <div className={this.classes.email}>{emails.length <= 1 ? emails && emails[0] : 'multiple users'}</div>
+        return {
+          items: [
+            <div className={this.classes.container}>
+              <div className={this.classes.icon} style={{
+                backgroundImage: 'url(https://logo.clearbit.com/' + domain + ')',
+                width: '25px',
+                height: '25px'
+              }}/>
+              <div className={this.classes.account}>
+                {user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0]}
+                <div className={this.classes.email}>{emails.length <= 1 ? emails && emails[0] : 'multiple users'}</div>
+              </div>
+            </div>,
+            <div className={this.classes.container}>
+              {uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={'plan:' + item}/>)}
+            </div>,
+            getNickname(user.funnelStage[user.funnelStage.length - 1], true),
+            user.journey.length,
+            <div className={this.classes.container}>
+              {countries && countries.length > 0 && countries.map(item => <div key={item}
+                                                                               className={this.classes.container}>
+                <ReactCountryFlag code={item} svg/>
+                <div style={{marginLeft: '5px'}}>{item}</div>
+              </div>)}
+            </div>,
+            this.timeSince(firstTouchPoint),
+            this.timeSince(lastTouchPoint),
+            <div className={this.classes.container}>
+              {devices && devices.length > 0 && devices.map(item => <div key={item} className={this.classes.icon}
+                                                                         data-icon={'device:' + item}/>)}
             </div>
-          </div>,
-          <div className={this.classes.container}>
-            {uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={'plan:' + item}/>)}
-          </div>,
-          getNickname(user.funnelStage[user.funnelStage.length - 1], true),
-          user.journey.length,
-          <div className={this.classes.container}>
-            {countries && countries.length > 0 && countries.map(item => <div key={item} className={this.classes.container}>
-              <ReactCountryFlag code={item} svg/>
-              <div style={{marginLeft: '5px'}}>{item}</div>
-            </div>)}
-          </div>,
-          this.timeSince(firstTouchPoint),
-          this.timeSince(lastTouchPoint),
-          <div className={this.classes.container}>
-            {devices && devices.length > 0 && devices.map(item => <div key={item} className={this.classes.icon}
-                                                 data-icon={'device:' + item}/>)}
-          </div>
-        ], {
-          key: index,
-          className: this.classes.tableRow,
-          onClick: this.showPopup.bind(this, {...user, devices: devices, countries: countries})
-        });
+          ], props: {
+            style: {cursor: 'pointer'},
+            onClick: this.showPopup.bind(this, {...user, devices: devices, countries: countries})
+          }
+        };
       });
 
     return <div>
@@ -241,14 +237,8 @@ export default class Users extends Component {
           }}/>
       </div>
       <div className={this.classes.inner}>
-        <table className={this.classes.table}>
-          <thead>
-          {headRow}
-          </thead>
-          <tbody>
-          {rows}
-          </tbody>
-        </table>
+        <Table headRowData={{items: headRow}}
+               rowsData={rows}/>
       </div>
       <div hidden={!this.state.showPopup}>
         <UsersPopup user={this.state.selectedUser} close={() => {
@@ -256,32 +246,5 @@ export default class Users extends Component {
         }}/>
       </div>
     </div>;
-  }
-
-  getTableRow(title, items, props) {
-    return <tr {...props}>
-      {title != null ?
-        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
-        : null}
-      {
-        items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
-        })
-      }
-    </tr>;
-  }
-
-  getCellItem(item) {
-    let elem;
-
-    if (typeof item !== 'object') {
-      elem = <div className={this.classes.cellItem}>{item}</div>;
-    } else {
-      elem = item;
-    }
-
-    return elem;
   }
 }
