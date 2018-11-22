@@ -2,7 +2,6 @@ import React from 'react';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/plan/planned-actual-tab.css';
-import planStyles from 'styles/plan/plan.css';
 import setupStyle from 'styles/attribution/setup.css';
 import copy from 'copy-to-clipboard';
 import buttonsStyle from 'styles/onboarding/buttons.css';
@@ -11,7 +10,7 @@ import Table from 'components/controls/Table';
 export default class TrackingPlan extends Component {
 
   style = style;
-  styles = [planStyles, setupStyle, buttonsStyle];
+  styles = [setupStyle, buttonsStyle];
 
   static defaultProps = {
     attribution: {
@@ -95,10 +94,8 @@ export default class TrackingPlan extends Component {
     ];
 
     return <div>
-      <div className={planStyles.locals.innerBox}>
-        <Table headRowData={{items: headRow}}
-               rowsData={rows}/>
-      </div>
+      <Table headRowData={{items: headRow}}
+             rowsData={rows}/>
     </div>;
   }
 }

@@ -7,9 +7,9 @@ import Label from 'components/ControlsLabel';
 import salesForceStyle from 'styles/indicators/salesforce-automatic-popup.css';
 import Title from 'components/onboarding/Title';
 import CRMStyle from 'styles/indicators/crm-popup.css';
-import {formatChannels} from 'components/utils/channels';
 import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 import {getTeamMembersOptions} from 'components/utils/teamMembers';
+import ChannelsSelect from 'components/common/ChannelsSelect';
 
 export default class SalesforceCampaigns extends Component {
 
@@ -134,12 +134,6 @@ export default class SalesforceCampaigns extends Component {
           options: getTeamMembersOptions(this.props.userAccount.teamMembers)
         }
       },
-      channels: {
-        select: {
-          name: 'channels',
-          options: formatChannels()
-        }
-      },
       statuses: {
         select: {
           name: 'statuses',
@@ -183,12 +177,10 @@ export default class SalesforceCampaigns extends Component {
             <div className={salesForceStyle.locals.arrow}/>
           </div>
           <div className={this.classes.colRight}>
-            <Select {...selects.channels}
-                    style={{width: '270px'}}
-                    selected={this.state.campaignsMapping.types[type.Type]}
-                    onChange={this.handleChange.bind(this, type.Type, 'types')}
-                    ref={'type' + index}
-            />
+            <ChannelsSelect style={{width: '270px'}}
+                            selected={this.state.campaignsMapping.types[type.Type]}
+                            onChange={this.handleChange.bind(this, type.Type, 'types')}
+                            ref={'type' + index}/>
           </div>
         </div>
       </div>

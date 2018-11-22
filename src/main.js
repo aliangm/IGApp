@@ -35,12 +35,10 @@ import Channels from 'components/pages/analyze/Channels';
 import CampaignsMeasure from 'components/pages/analyze/Campaigns';
 import Setup from 'components/pages/attribution/Setup';
 import AttributionLink from 'components/pages/AttributionLink';
-import TrackingPlan from 'components/pages/attribution/TrackingPlan';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
 import SiteStructure from 'components/pages/attribution/SiteStructure';
 import CurrentTab from 'components/pages/plan/CurrentTab';
-import ProjectionsTab from 'components/pages/plan/ProjectionsTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
@@ -114,10 +112,6 @@ ReactDOM.render(
           // can't render the name here. DefaultName is for situation where the property is still loading
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
-        <Route path="/plan/projections"
-               component={ProjectionsTab}
-               onEnter={requireAuth}
-               tabName='Forecasting'/>
         <Route path="/plan/planned-vs-actual"
                component={PlannedVsActual}
                onEnter={requireAuth}
@@ -138,10 +132,6 @@ ReactDOM.render(
         <Route path="/settings/account" component={Welcome} onEnter={requireAuth}/>
         <Route component={Attribution} onEnter={requireAuth}>
           <Route path="/settings/attribution/setup" component={Setup} onEnter={requireAuth} tabName='Setup'/>
-          <Route path="/settings/attribution/tracking-plan"
-                 component={TrackingPlan}
-                 onEnter={requireAuth}
-                 tabName='Tracking Plan'/>
           <Route path="/settings/attribution/tracking-urls"
                  component={TrackingUrls}
                  onEnter={requireAuth}
