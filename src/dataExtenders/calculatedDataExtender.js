@@ -36,11 +36,17 @@ export function calculatedDataExtender(data) {
   const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
   const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
   const prioritizedFunnelObjectives = ['newSQL', 'newOpps', 'newUsers', 'newMQL', 'newMCL'];
-  const nonZeroFunnelObjective = prioritizedFunnelObjectives.find(funnelObjective =>
-    data.actualIndicators && data.actualIndicators[funnelObjective] > 0) ||
+
+  const findFirstNonZeroIndicator = collection => {
+    return collection.find(funnelObjective =>
+      data.actualIndicators && data.actualIndicators[funnelObjective] > 0);
+  };
+
+  const nonZeroFunnelIndicator = findFirstNonZeroIndicator(prioritizedFunnelObjectives) ||
     prioritizedFunnelObjectives[0];
   const funnelObjectives = collapsedObjectives.filter(
     objective => funnelPossibleObjectives.includes(objective.indicator));
+  const nonZeroFunnelObjective = findFirstNonZeroIndicator(funnelObjectives);
 
   const isTrial = new Date() < new Date(data.userAccount.trialEnd);
   const isAccountEnabled = isTrial || data.userAccount.isPaid;
@@ -80,7 +86,7 @@ export function calculatedDataExtender(data) {
         collapsedObjectives: collapsedObjectives,
         firstObjective: collapsedObjectives && collapsedObjectives.length > 0 ? collapsedObjectives[0].indicator : null,
         funnelObjectives: funnelObjectives,
-        funnelFirstObjective: funnelObjectives.length > 0 ? funnelObjectives[0].indicator : nonZeroFunnelObjective
+        funnelFirstObjective: nonZeroFunnelObjective || nonZeroFunnelIndicator
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
       isTrial,
