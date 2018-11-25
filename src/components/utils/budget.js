@@ -1,5 +1,6 @@
 import sumBy from 'lodash/sumBy';
 import isNil from 'lodash/isNil';
+import merge from 'lodash/merge';
 
 export function formatNumber(budget) {
   if (budget == null) {
@@ -41,6 +42,15 @@ export function extractNumberFromBudget(budget, defaultValue = 0) {
     return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
   }
   return defaultValue;
+}
+
+export function getAnnualBudgetLeftToPlan(annualBudget, planBudgets, planUnknownChannels) {
+  const committedBudgets = getCommitedBudgets(planBudgets);
+  const allBudgets = merge([], committedBudgets, planUnknownChannels);
+
+  return annualBudget -
+    allBudgets.reduce((annualSum, month) => Object.keys(month)
+      .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0);
 }
 
 export function getPlanBudgetsData(planBudgets) {
