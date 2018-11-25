@@ -6,7 +6,7 @@
 
 .date-select {
     composes: text;
-    width: 120px;
+    width: 135px;
     margin: 0 8px;
     z-index: 2;
 }

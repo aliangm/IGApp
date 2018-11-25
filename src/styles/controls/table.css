@@ -37,3 +37,11 @@
     background-color: #33cc3478;
     color: #354052;
 }
+
+.cell-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: 1;
+    max-width: 300px;
+}
