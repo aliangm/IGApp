@@ -110,7 +110,8 @@ export default class PlannedVsActual extends Component {
   render() {
     const {month} = this.state;
     const {calculatedData: {extarpolateRatio, integrations, historyDataYear: {months, historyDataWithCurrentMonth: {planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets}}}} = this.props;
-    const actuals = merge({}, actualChannelBudgets[month].knownChannels || {}, actualChannelBudgets[month].unknownChannels || {});
+    const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
+    const actuals = merge({}, knownChannels, unknownChannels);
     const planned = merge({}, mapValues(planBudgets[month], 'committedBudget'), planUnknownChannels[month]);
     const channels = merge({}, planned, actuals);
     const parsedChannels = Object.keys(channels).map(channel => {
@@ -145,7 +146,9 @@ export default class PlannedVsActual extends Component {
             }} disabled={isAutomatic}/>
           </div>,
           formatBudget(planned - actual, true),
-          formatBudget(isRealActual ? Math.round(actual / extarpolateRatio) : actual)
+          month === months.length - 1 ?
+            formatBudget(isRealActual ? Math.round(actual / extarpolateRatio) : actual)
+            : '-'
         ]
       };
     });
@@ -163,7 +166,7 @@ export default class PlannedVsActual extends Component {
       formatBudget(sumBy(parsedChannels, 'planned')),
       formatBudget(sumBy(parsedChannels, 'actual')),
       formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-      formatBudget(sumBy(parsedChannels, item => item.isRealActual ? Math.round(item.actual / extarpolateRatio) : item.actual))
+      month === months.length - 1 ? formatBudget(sumBy(parsedChannels, item => item.isRealActual ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-'
     ];
 
     return <div>
