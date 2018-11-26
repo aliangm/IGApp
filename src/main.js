@@ -112,10 +112,10 @@ ReactDOM.render(
           // can't render the name here. DefaultName is for situation where the property is still loading
                tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
-        <Route path="/plan/planned-vs-actual"
+        <Route path="/plan/plans-vs-actuals"
                component={PlannedVsActual}
                onEnter={requireAuth}
-               tabName="Planned VS Actual"/>
+               tabName="Plans VS Actuals"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
         <Route path="/campaigns/by-status" component={ByStatusTab} onEnter={requireAuth} tabName='By Status'/>

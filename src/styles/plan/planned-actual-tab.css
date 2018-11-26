@@ -31,10 +31,6 @@
     box-sizing: border-box;
 }
 
-.expected {
-    margin-left: 10px;
-}
-
 .cell-item {
     white-space: pre-wrap;
     display: flex;
