@@ -20,6 +20,7 @@ import concat from 'lodash/concat';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import {getDatesSpecific} from 'components/utils/date';
 import Button from 'components/controls/Button';
+import classnames from 'classnames';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -228,14 +229,21 @@ export default class BudgetsTable extends Component {
 
     const cells = data.values.map((monthData, key) => {
       const isHistory = key < numberOfPastDates;
+      const isQuarter = monthData.isQuarter;
 
-      return rowType === ROW_TYPE.CATEGORY || isHistory ?
+      return rowType === ROW_TYPE.CATEGORY || isHistory || isQuarter ?
         (rowType === ROW_TYPE.CATEGORY ?
-          <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}
-              data-history={isHistory ? true : null}>
+          <td key={`category:${data.channel}:${key}`} className={classnames(this.classes.categoryCell, {
+            [this.classes.historyCell]: isHistory,
+            [this.classes.quarterCell]: isQuarter
+          })}>
             {formatBudget(monthData.primaryBudget)}
           </td> :
-          <td key={`${data.channel}:${key}`} className={this.classes.historyCell}>
+          <td key={`${data.channel}:${key}`} className={classnames(this.classes.cell,
+            {
+              [this.classes.historyCell]: isHistory,
+              [this.classes.quarterCell]: isQuarter
+            })}>
             {formatBudget(monthData.primaryBudget)}
           </td>) : <TableCell
           key={`${data.channel}:${key}`}
@@ -414,7 +422,7 @@ export default class BudgetsTable extends Component {
         return {
           primaryBudget: sumBy(quarterMonths, 'primaryBudget'),
           secondaryBudget: sumBy(quarterMonths, 'secondaryBudget'),
-          isConstraint: false
+          isQuarter: true
         };
       });
 
@@ -428,7 +436,8 @@ export default class BudgetsTable extends Component {
     return Array(arrayLength).fill(0).map((value, index) => {
       return {
         primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
-        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
+        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget),
+        isQuarter: channels[0].values[index].isQuarter
       };
     });
   };
@@ -512,7 +521,7 @@ export default class BudgetsTable extends Component {
       ...chunk(array.slice(quarterSumStartOffset), 4)];
 
     const withQuarterAddition = quartersSplit.map((quarterMonths, index) => {
-      // If last quarter did not end, don't sum it
+      // If last quarter did not end, don't add quarter value
       if (index == quartersSplit.length - 1 && quarterSumStartOffset !== 0) {
         return quarterMonths;
       }
@@ -536,7 +545,9 @@ export default class BudgetsTable extends Component {
       this.props.data.length - numberOfPastDates,
       quarterSumStartOffset);
 
-    const dates = this.addQuarters(datesWithoutQuarters, quarterSumStartOffset, () => {return 'Quarter'});
+    const dates = this.addQuarters(datesWithoutQuarters, quarterSumStartOffset, () => {
+      return 'Quarter';
+    });
 
     const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
 
