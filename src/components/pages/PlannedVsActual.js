@@ -116,18 +116,18 @@ export default class PlannedVsActual extends Component {
     const channels = merge({}, planned, actuals);
     const parsedChannels = Object.keys(channels).map(channel => {
       const actual = actuals[channel];
-      const isRealActual = !isNil(actual);
+      const isActualNotEmpty = !isNil(actual);
       const plan = planned[channel] || 0;
       return {
         channel,
-        isRealActual,
-        actual: isRealActual ? actual : plan,
+        isActualNotEmpty,
+        actual: isActualNotEmpty ? actual : plan,
         planned: plan
       };
     });
 
     const rows = parsedChannels.map(item => {
-      const {actual, planned, isRealActual, channel} = item;
+      const {actual, planned, isActualNotEmpty, channel} = item;
       const isAutomatic = integrations[channelPlatformMapping[channel]];
       return {
         items: [
@@ -147,7 +147,7 @@ export default class PlannedVsActual extends Component {
           </div>,
           formatBudget(planned - actual, true),
           month === months.length - 1 ?
-            formatBudget(isRealActual ? Math.round(actual / extarpolateRatio) : actual)
+            formatBudget(isActualNotEmpty ? Math.round(actual / extarpolateRatio) : actual)
             : '-'
         ]
       };
@@ -166,7 +166,7 @@ export default class PlannedVsActual extends Component {
       formatBudget(sumBy(parsedChannels, 'planned')),
       formatBudget(sumBy(parsedChannels, 'actual')),
       formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-      month === months.length - 1 ? formatBudget(sumBy(parsedChannels, item => item.isRealActual ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-'
+      month === months.length - 1 ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-'
     ];
 
     return <div>
