@@ -11,9 +11,11 @@ import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {getDates, getEndOfMonthString} from 'components/utils/date';
+import {getDates, getDatesSpecific, getEndOfMonthString} from 'components/utils/date';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
+import {addQuarters} from 'utils';
+import last from 'lodash/last';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
@@ -22,7 +24,7 @@ export default class IndicatorsGraph extends Component {
 
   style = style;
   styles = [onboardingStyle];
-  areas = { } // area refs
+  areas = {}; // area refs
 
   constructor(props) {
     super(props);
@@ -31,7 +33,7 @@ export default class IndicatorsGraph extends Component {
     this.state = {
       checkedIndicators: initialIndicators ? initialIndicators : [],
       activeTooltipIndex: 0,
-      tooltipPosition: 0,
+      tooltipPosition: 0
     };
   }
 
@@ -65,7 +67,7 @@ export default class IndicatorsGraph extends Component {
     this.props.changeScrollPosition(this.refs.chart.scrollLeft);
   };
 
-  handleMouseMove = ({ activeTooltipIndex }) => {
+  handleMouseMove = ({activeTooltipIndex}) => {
     if (this.areas && Number.isInteger(activeTooltipIndex) && this.state.activeTooltipIndex !== activeTooltipIndex) {
       this.setState({
         activeTooltipIndex,
@@ -73,10 +75,10 @@ export default class IndicatorsGraph extends Component {
           ...Object.values(this.areas)
             .filter((a) => !!a)
             .map((a) => a.props.points[activeTooltipIndex].y)
-        ),
-      })
+        )
+      });
     }
-  }
+  };
 
   getInitialIndicators = (props) => {
     const objectives = Object.keys(props.parsedObjectives);
@@ -102,8 +104,13 @@ export default class IndicatorsGraph extends Component {
   getAreasData = () => {
     const forecastingData = [];
 
-    const futureDates = getDates(this.props.planDate);
-    this.props.mainLineData.forEach((month, monthIndex) => {
+    const futureDates = getDates(this.props.planDate, false, true, true);
+    const quarterOffset = futureDates.findIndex(date => date === 'Quarter');
+    const mainLineDataWithQuarters = addQuarters(this.props.mainLineData, (quarterData) => {
+      return last(quarterData);
+    }, quarterOffset);
+
+    mainLineDataWithQuarters.forEach((month, monthIndex) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].committed;
@@ -118,8 +125,12 @@ export default class IndicatorsGraph extends Component {
       forecastingData.push({...json, name: getEndOfMonthString(futureDates[monthIndex])});
     });
 
-    const pastDates = getDates(this.props.planDate, true, false);
-    this.props.pastIndicators.forEach((month, index) => {
+    const pastDates = getDatesSpecific(this.props.planDate, this.props.pastIndicators.length, true, false, true);
+    const quarterPastOffset = pastDates.findIndex(date => date === 'Quarter');
+    const pastIndicatorsWithOffset = addQuarters(this.props.pastIndicators, (quarterData) => {
+      return last(quarterData);
+    }, quarterPastOffset);
+    pastIndicatorsWithOffset.forEach((month, index) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key];
@@ -147,7 +158,7 @@ export default class IndicatorsGraph extends Component {
       committedForecasting[objectiveData.monthIndex][objectiveData.indicator];
     return <ObjectiveIcon target={objectiveData.target}
                           value={this.props.actualIndicators[objectiveData.indicator]}
-                          project={project} />;
+                          project={project}/>;
   };
 
   render() {
@@ -200,7 +211,7 @@ export default class IndicatorsGraph extends Component {
     const areas = this.state.checkedIndicators.map((indicator) => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator}
-                   ref={ref => this.areas[indicator] = ref }
+                   ref={ref => this.areas[indicator] = ref}
                    isAnimationActive={false}
                    type='monotone'
                    dataKey={indicator}
@@ -300,20 +311,20 @@ export default class IndicatorsGraph extends Component {
 
     const xAxis = (
       <XAxis dataKey="name"
-       style={{textTransform: 'uppercase'}}
-       tick={{
-         fontSize: '11px',
-         fill: '#99a4c2',
-         fontWeight: 600,
-         letterSpacing: '0.1px'
-       }}
-       tickLine={false}
-       tickMargin={21}
-       interval={0}
+             style={{textTransform: 'uppercase'}}
+             tick={{
+               fontSize: '11px',
+               fill: '#99a4c2',
+               fontWeight: 600,
+               letterSpacing: '0.1px'
+             }}
+             tickLine={false}
+             tickMargin={21}
+             interval={0}
       />
     );
 
-    return <div className={classnames(this.classes.inner, { [this.classes.floating]: floating })}>
+    return <div className={classnames(this.classes.inner, {[this.classes.floating]: floating})}>
       <div className={this.classes.menu}>
         <div className={this.classes.menuTitle}>
           Forecasting
@@ -337,7 +348,7 @@ export default class IndicatorsGraph extends Component {
             <Tooltip
               content={tooltip}
               offset={0}
-              position={{ y: tooltipPosition }}
+              position={{y: tooltipPosition}}
             />
             {defs}
             {areas}

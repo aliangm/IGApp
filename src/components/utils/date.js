@@ -12,11 +12,11 @@ export function formatDate(dateStr) {
   }
 }
 
-export function getDates(dateStr, includingPast = false, includingFuture = true) {
-  return getDatesSpecific(dateStr, includingPast ? NUMBER_OF_FUTURE_MONTHS : 0, includingFuture ? NUMBER_OF_FUTURE_MONTHS : 0);
+export function getDates(dateStr, includingPast = false, includingFuture = true, withQuarters = false) {
+  return getDatesSpecific(dateStr, includingPast ? NUMBER_OF_FUTURE_MONTHS : 0, includingFuture ? NUMBER_OF_FUTURE_MONTHS : 0, false, withQuarters);
 }
 
-export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystemDates = false) {
+export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystemDates = false, withQuarters = false) {
   if (dateStr) {
     const dates = [];
     const planDate = dateStr.split('/');
@@ -27,6 +27,13 @@ export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystem
       const yearStr = isSystemDates ?  date.getFullYear().toString() : date.getFullYear().toString().substr(2, 2);
       const delimiter = isSystemDates ? '/' : ' ';
       dates.push(monthStr + delimiter + yearStr);
+
+      if(withQuarters) {
+        const quarterString = 'Quarter'
+        if (date.getMonth() % 3 === 2) {
+          dates.push(quarterString);
+        }
+      }
     }
     return dates;
   }

@@ -7,6 +7,8 @@ import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getEndOfMonthString} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
+import {addQuarters} from 'utils';
+import {sumBy, union} from 'lodash';
 
 const CELL_WIDTH = 140;
 
@@ -56,13 +58,30 @@ export default class AnnualTab extends Component {
         parsedObjectives[objective.indicator] = {x: getEndOfMonthString(monthStr), y: target};
       });
 
+    const dataWithQuarters = budgetsData && addQuarters(budgetsData, quarterData => {
+      const channelsInQuarter = union(...quarterData.map(month => Object.keys(month.channels)));
+      const quarterSummedChannel = {};
+      channelsInQuarter.forEach(channel => {
+        const primaryBudget = sumBy(quarterData, month => {
+          return month.channels[channel] ? month.channels[channel].primaryBudget : 0;
+        });
+        const secondaryBudget = sumBy(quarterData, month => {
+          return month.channels[channel] ? month.channels[channel].secondaryBudget : 0;
+        });
+
+        return quarterSummedChannel[channel] = {primaryBudget, secondaryBudget};
+      });
+
+      return {channels: quarterSummedChannel, isHistory: false, isQuarter: true};
+    }, 2);
+
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
           <BudgetsTable isEditMode={editMode}
                         isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
-                        data={budgetsData}
+                        data={dataWithQuarters}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}
@@ -77,7 +96,9 @@ export default class AnnualTab extends Component {
                                changeScrollPosition={this.changeScrollPosition}
                                scrollPosition={this.state.scrollPosition}
                                cellWidth={CELL_WIDTH}
-                               mainLineData={showSecondaryIndicatorGraph ? secondaryPlanForecastedIndicators : primaryPlanForecastedIndicators}
+                               mainLineData={showSecondaryIndicatorGraph
+                                 ? secondaryPlanForecastedIndicators
+                                 : primaryPlanForecastedIndicators}
                                dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
                                pastIndicators={indicators}
                                {...this.props}
