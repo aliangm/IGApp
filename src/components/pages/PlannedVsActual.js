@@ -8,7 +8,7 @@ import budgetsStyle from 'styles/plan/budget-table.css';
 import planStyles from 'styles/plan/plan.css';
 import Paging from 'components/Paging';
 import {getChannelIcon, getNickname as getChannelNickname, isUnknownChannel} from 'components/utils/channels';
-import {formatBudget} from 'components/utils/budget';
+import {formatBudget, getCommitedBudgets} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
@@ -49,7 +49,7 @@ export default class PlannedVsActual extends Component {
 
   componentDidMount() {
     // Set the default month to current
-    this.setState({month: this.props.calculatedData.historyDataYear.months.length - 1});
+    this.setState({month: this.props.calculatedData.lastYearHistoryData.months.length - 1});
   }
 
   addChannel = (event) => {
@@ -96,7 +96,7 @@ export default class PlannedVsActual extends Component {
   };
 
   setMonth = diff => {
-    const maxMonth = this.props.calculatedData.historyDataYear.months.length - 1;
+    const maxMonth = this.props.calculatedData.lastYearHistoryData.months.length - 1;
     let newMonth = this.state.month + diff;
     if (newMonth < 0) {
       newMonth = 0;
@@ -109,10 +109,10 @@ export default class PlannedVsActual extends Component {
 
   render() {
     const {month} = this.state;
-    const {calculatedData: {extarpolateRatio, integrations, historyDataYear: {months, historyDataWithCurrentMonth: {planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets}}}} = this.props;
+    const {calculatedData: {extarpolateRatio, integrations, lastYearHistoryData: {months, historyDataWithCurrentMonth: {planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets}}}} = this.props;
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
     const actuals = merge({}, knownChannels, unknownChannels);
-    const planned = merge({}, mapValues(planBudgets[month], 'committedBudget'), planUnknownChannels[month]);
+    const planned = merge({}, getCommitedBudgets(planBudgets)[month], planUnknownChannels[month]);
     const channels = merge({}, planned, actuals);
     const parsedChannels = Object.keys(channels).map(channel => {
       const actual = actuals[channel];
@@ -125,6 +125,8 @@ export default class PlannedVsActual extends Component {
         planned: plan
       };
     });
+
+    const extrapolatedValue = value => Math.round(value / extarpolateRatio);
 
     const rows = parsedChannels.map(item => {
       const {actual, planned, isActualNotEmpty, channel} = item;
@@ -147,7 +149,7 @@ export default class PlannedVsActual extends Component {
           </div>,
           formatBudget(planned - actual, true),
           month === months.length - 1 ?
-            formatBudget(isActualNotEmpty ? Math.round(actual / extarpolateRatio) : actual)
+            formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
             : '-'
         ]
       };
@@ -165,8 +167,8 @@ export default class PlannedVsActual extends Component {
       'Total',
       formatBudget(sumBy(parsedChannels, 'planned')),
       formatBudget(sumBy(parsedChannels, 'actual')),
-      formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-      month === months.length - 1 ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-'
+      formatBudget(sumBy(parsedChannels, item => item.planned - item.actual), true),
+      month === months.length - 1 ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-'
     ];
 
     return <div>
