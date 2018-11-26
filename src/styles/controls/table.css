@@ -2,6 +2,7 @@
     padding: 15px;
     border: 1px #e3e6f4;
     border-radius: 2px;
+    overflow: auto;
 }
 
 .table {
@@ -36,6 +37,7 @@
     composes: table-row;
     background-color: #33cc3478;
     color: #354052;
+    font-weight: 600;
 }
 
 .cell-item {
@@ -44,4 +46,17 @@
     white-space: nowrap;
     -webkit-line-clamp: 1;
     max-width: 300px;
+}
+
+.cell {
+    padding: 0 10px;
+    min-width: 120px;
+}
+
+.value-cell {
+    composes: cell;
+}
+
+.title-cell {
+    composes: cell;
 }

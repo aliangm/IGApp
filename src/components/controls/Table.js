@@ -21,7 +21,8 @@ export default class Table extends Component {
       items: PropTypes.arrayOf(PropTypes.any),
       props: PropTypes.object
     }),
-    showFootRowOnHeader: PropTypes.bool
+    showFootRowOnHeader: PropTypes.bool,
+    valueCellClassName: PropTypes.string
   };
 
   static defaultProps = {
@@ -38,7 +39,7 @@ export default class Table extends Component {
     const headRow = this.getTableRow(null, headRowData.items, {
       className: this.classes.headRow,
       ...headRowData.props
-    });
+    }, true);
     const rows = rowsData.map((row, index) => this.getTableRow(null, row.items, {
       className: this.classes.tableRow,
       key: index,
@@ -71,16 +72,24 @@ export default class Table extends Component {
     </div>;
   }
 
-  getTableRow(title, items, props) {
+  getTableRow(title, items, props, isHead = false) {
+    let valueCellClassName = this.classes.valueCell;
+    if (this.props.valueCellClassName) {
+      valueCellClassName += ' ' + this.props.valueCellClassName;
+    }
     return <tr {...props}>
       {title != null ?
         <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
         : null}
       {
         items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
+          return isHead ?
+            <td className={this.classes.titleCell} key={i}>{this.getCellItem(<div
+              className={this.classes.titleItem}>{item}</div>)}</td>
+            :
+            <td className={valueCellClassName} key={i}>{
+              this.getCellItem(item)
+            }</td>;
         })
       }
     </tr>;

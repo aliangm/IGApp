@@ -8,7 +8,7 @@ import budgetsStyle from 'styles/plan/budget-table.css';
 import planStyles from 'styles/plan/plan.css';
 import Paging from 'components/Paging';
 import {getChannelIcon, getNickname as getChannelNickname, isUnknownChannel} from 'components/utils/channels';
-import {formatBudget} from 'components/utils/budget';
+import {formatBudget, formatNumber} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
@@ -17,6 +17,7 @@ import {extractNumber} from 'components/utils/utils';
 import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
+import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 
 const channelPlatformMapping = {
   'advertising_socialAds_facebookAdvertising': 'isFacebookAdsAuto',
@@ -49,7 +50,7 @@ export default class PlannedVsActual extends Component {
 
   componentDidMount() {
     // Set the default month to current
-    this.setState({month: this.props.calculatedData.historyDataYear.months.length - 1});
+    this.setState({month: this.props.calculatedData.historyDataYear.historyDataLength});
   }
 
   addChannel = (event) => {
@@ -96,7 +97,7 @@ export default class PlannedVsActual extends Component {
   };
 
   setMonth = diff => {
-    const maxMonth = this.props.calculatedData.historyDataYear.months.length - 1;
+    const maxMonth = this.props.calculatedData.historyDataYear.historyDataLength;
     let newMonth = this.state.month + diff;
     if (newMonth < 0) {
       newMonth = 0;
@@ -107,10 +108,35 @@ export default class PlannedVsActual extends Component {
     this.setState({month: newMonth});
   };
 
+  updateImpact = (channel, indicator, type, value) => {
+    const channelsImpact = {...this.props.channelsImpact};
+    if (!channelsImpact[channel]) {
+      channelsImpact[channel] = {};
+    }
+    if (!channelsImpact[channel][indicator]) {
+      channelsImpact[channel][indicator] = {
+        actual: 0,
+        planned: 0
+      };
+    }
+    channelsImpact[channel][indicator][type] = value;
+    this.props.updateState({channelsImpact: channelsImpact});
+  };
+
   render() {
+    const newFunnelMapping = {
+      newMCL: 'MCL',
+      newMQL: 'MQL',
+      newSQL: 'SQL',
+      newOpps: 'opps',
+      newUsers: 'users'
+    };
     const {month} = this.state;
-    const {calculatedData: {extarpolateRatio, integrations, historyDataYear: {months, historyDataWithCurrentMonth: {planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets}}}} = this.props;
+    const {attribution: {channelsImpact: attributionChannelsImpact}, calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, historyDataYear: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators}}}} = this.props;
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
+
+    const isCurrentMonth = month === historyDataLength;
+
     const actuals = merge({}, knownChannels, unknownChannels);
     const planned = merge({}, mapValues(planBudgets[month], 'committedBudget'), planUnknownChannels[month]);
     const channels = merge({}, planned, actuals);
@@ -118,55 +144,117 @@ export default class PlannedVsActual extends Component {
       const actual = actuals[channel];
       const isRealActual = !isNil(actual);
       const plan = planned[channel] || 0;
+      const channelImpact = channelsImpact[month] ? channelsImpact[month][channel] || {} : {};
+      const {planned: plannedFunnel = 0, actual: actualFunnel = 0} = channelImpact[funnelFirstObjective] || {};
+      const attributedFunnel = (attributionChannelsImpact[newFunnelMapping[funnelFirstObjective]] && attributionChannelsImpact[newFunnelMapping[funnelFirstObjective]][channel]) || 0;
+      const {planned: plannedUsers = 0, actual: actualUsers = 0} = channelImpact.newUsers || {};
+      const attributedUsers = (attributionChannelsImpact[channel] && attributionChannelsImpact[channel].users) || 0;
       return {
         channel,
         isRealActual,
         actual: isRealActual ? actual : plan,
-        planned: plan
+        planned: plan,
+        plannedFunnel,
+        actualFunnel: actualFunnel || attributedFunnel,
+        plannedUsers,
+        actualUsers: actualUsers || attributedUsers
       };
     });
 
     const rows = parsedChannels.map(item => {
-      const {actual, planned, isRealActual, channel} = item;
+      const {actual, planned, isRealActual, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
       const isAutomatic = integrations[channelPlatformMapping[channel]];
       return {
         items: [
           <div className={this.classes.cellItem}>
             <div className={budgetsStyle.locals.rowIcon} data-icon={getChannelIcon(channel)}/>
             <div className={this.classes.channelName}>{getChannelNickname(channel)}</div>
-            {isAutomatic ? <div className={this.classes.automaticLabel}>Automatic</div> : null}
+            {isAutomatic ? <div className={this.classes.automaticLabel}>Auto</div> : null}
           </div>,
           formatBudget(planned),
           <div className={this.classes.cellItem}>
             <Textfield style={{
-              minWidth: '72px',
-              width: '50%'
+              width: '84px'
             }} value={formatBudget(actual)} onChange={(e) => {
               this.updateActual(channel, extractNumber(e.target.value));
             }} disabled={isAutomatic}/>
           </div>,
           formatBudget(planned - actual, true),
-          month === months.length - 1 ?
+          isCurrentMonth ?
             formatBudget(isRealActual ? Math.round(actual / extarpolateRatio) : actual)
-            : '-'
+            : '-',
+          <div className={this.classes.cellItem}>
+            <Textfield style={{
+              width: '84px'
+            }} value={formatNumber(plannedFunnel)} onChange={(e) => {
+              this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value));
+            }}/>
+          </div>,
+          <div className={this.classes.cellItem}>
+            <Textfield style={{
+              width: '84px'
+            }} value={formatNumber(actualFunnel)} onChange={(e) => {
+              this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value));
+            }}/>
+          </div>,
+          formatNumber(plannedFunnel - actualFunnel),
+          isCurrentMonth ? formatNumber(Math.round(actualFunnel / extarpolateRatio)) : '-',
+          <div className={this.classes.cellItem}>
+            <Textfield style={{
+              width: '84px'
+            }} value={formatNumber(plannedUsers)} onChange={(e) => {
+              this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value));
+            }}/>
+          </div>,
+          <div className={this.classes.cellItem}>
+            <Textfield style={{
+              width: '84px'
+            }} value={formatNumber(actualUsers)} onChange={(e) => {
+              this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value));
+            }}/>
+          </div>,
+          formatNumber(plannedUsers - actualUsers),
+          isCurrentMonth ? formatNumber(Math.round(actualUsers / extarpolateRatio)) : '-'
         ]
       };
     });
 
+    const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
+    const userNickname = getIndicatorNickname('users');
     const headRow = [
       'Channel',
       'Planned Budget',
       'Actual Cost to date',
       'Difference',
+      'Pacing for',
+      <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
+      `Actual ${firstFunnelObjectiveNickname} to date`,
+      'Difference',
+      'Pacing for',
+      <div data-tip="what's your expectation?">Planned {userNickname}</div>,
+      `Actual ${userNickname} to date`,
+      'Difference',
       'Pacing for'
     ];
 
+    const totalPlannedFunnel = sumBy(parsedChannels, 'plannedFunnel');
+    const totalActualFunnel = indicators[month][funnelFirstObjective];
+    const totalPlannedUsers = sumBy(parsedChannels, 'plannedUsers');
+    const totalActualUsers = indicators[month].newUsers;
     const footRow = [
       'Total',
       formatBudget(sumBy(parsedChannels, 'planned')),
       formatBudget(sumBy(parsedChannels, 'actual')),
       formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-      month === months.length - 1 ? formatBudget(sumBy(parsedChannels, item => item.isRealActual ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-'
+      isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isRealActual ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-',
+      formatNumber(totalPlannedFunnel),
+      formatNumber(totalActualFunnel),
+      formatNumber(totalPlannedFunnel - totalActualFunnel),
+      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => Math.round(item.actualFunnel / extarpolateRatio))) : '-',
+      formatNumber(totalPlannedUsers),
+      formatNumber(totalActualUsers),
+      formatNumber(totalPlannedUsers - totalActualUsers),
+      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => Math.round(item.actualUsers / extarpolateRatio))) : '-'
     ];
 
     return <div>
@@ -179,7 +267,8 @@ export default class PlannedVsActual extends Component {
             <Table headRowData={{items: headRow}}
                    rowsData={rows}
                    footRowData={{items: footRow}}
-                   showFootRowOnHeader={true}/>
+                   showFootRowOnHeader={true}
+                   valueCellClassName={this.classes.valueCell}/>
             <div>
               <div className={this.classes.bottom}>
                 <div style={{
@@ -216,7 +305,8 @@ export default class PlannedVsActual extends Component {
                     this.setState({saveFail: false, saveSuccess: false}, () => {
                       this.props.updateUserMonthPlan({
                         actualChannelBudgets: this.props.actualChannelBudgets,
-                        namesMapping: this.props.namesMapping
+                        namesMapping: this.props.namesMapping,
+                        channelsImpact: this.props.channelsImpact
                       }, this.props.region, this.props.planDate);
                       this.setState({saveSuccess: true});
                     });
