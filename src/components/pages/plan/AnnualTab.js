@@ -65,7 +65,10 @@ export default class AnnualTab extends Component {
     const quarterOffset = getQuarterOffset(dates);
 
     const datesWithQuarters = dates && addQuarters(dates, quarterData => {
-      return 'Quarter';
+      const date = quarterData[0];
+      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const yearStr = date.getFullYear().toString().substr(2, 2);
+      return `Q${quarterNumber} ${yearStr}`;
     }, quarterOffset, item => formatSpecificDate(item, false));
 
     const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {
