@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import Component from 'components/Component';
-import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend, ReferenceLine} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
@@ -11,11 +11,12 @@ import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {formatSpecificDate, getDates, getDatesSpecific, getEndOfMonthString, getQuarterOffset, getRawDates, getRawDatesSpecific} from 'components/utils/date';
+import {formatSpecificDate, getEndOfMonthString, getQuarterOffset, getRawDates, getRawDatesSpecific} from 'components/utils/date';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
 import {addQuarters} from 'utils';
 import last from 'lodash/last';
+import {union} from 'lodash';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
@@ -101,17 +102,8 @@ export default class IndicatorsGraph extends Component {
   getTooltipContent = () => {
   };
 
-  getAreasData = () => {
+  getAreasData = (futureDatesWithQuarters, quarterPastOffset, pastDatesWithQuarters, quarterFutureOffset) => {
     const forecastingData = [];
-
-    const futureDatesRaw = getRawDates(this.props.planDate, false, true);
-    const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
-    const futureDatesWithQuarters = addQuarters(futureDatesRaw, quarterData => {
-      const date = quarterData[0];
-      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
-      const yearStr = date.getFullYear().toString().substr(2, 2);
-      return `Q${quarterNumber} ${yearStr}`;
-    }, quarterFutureOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const mainLineDataWithQuarters = addQuarters(this.props.mainLineData, (quarterData) => {
       return last(quarterData);
@@ -131,15 +123,6 @@ export default class IndicatorsGraph extends Component {
 
       forecastingData.push({...json, name: futureDatesWithQuarters[monthIndex]});
     });
-
-    const pastDatesRaw = getRawDatesSpecific(this.props.planDate, this.props.pastIndicators.length);
-    const quarterPastOffset = getQuarterOffset(pastDatesRaw);
-    const pastDatesWithQuarters = addQuarters(pastDatesRaw, quarterData => {
-      const date = quarterData[0];
-      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
-      const yearStr = date.getFullYear().toString().substr(2, 2);
-      return `Q${quarterNumber} ${yearStr}`;
-    }, quarterPastOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const pastIndicatorsWithOffset = addQuarters(this.props.pastIndicators, (quarterData) => {
       return last(quarterData);
@@ -186,7 +169,28 @@ export default class IndicatorsGraph extends Component {
         indicatorsMapping[item] = indicators[item].nickname
       );
 
-    const areaData = this.getAreasData();
+    const futureDatesRaw = getRawDates(this.props.planDate, false, true);
+    const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
+    const futureDatesWithQuarters = addQuarters(futureDatesRaw, quarterData => {
+      const date = quarterData[0];
+      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const yearStr = date.getFullYear().toString().substr(2, 2);
+      return `Q${quarterNumber} ${yearStr}`;
+    }, quarterFutureOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
+
+    const pastDatesRaw = getRawDatesSpecific(this.props.planDate, this.props.pastIndicators.length);
+    const quarterPastOffset = getQuarterOffset(pastDatesRaw);
+    const pastDatesWithQuarters = addQuarters(pastDatesRaw, quarterData => {
+      const date = quarterData[0];
+      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const yearStr = date.getFullYear().toString().substr(2, 2);
+      return `Q${quarterNumber} ${yearStr}`;
+    }, quarterPastOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
+
+    const referenceLinesData = union(pastDatesWithQuarters, futureDatesWithQuarters).filter((date) => date[0] === 'Q');
+    const references = referenceLinesData.map(quarter => <ReferenceLine x={quarter} stroke="green" label="" />);
+
+    const areaData = this.getAreasData(futureDatesWithQuarters,quarterPastOffset, pastDatesWithQuarters, quarterFutureOffset);
     const areaHeight = floating ? 230 : 400;
 
     const {collapsedObjectives} = this.props.calculatedData.objectives;
@@ -367,6 +371,7 @@ export default class IndicatorsGraph extends Component {
             {defs}
             {areas}
             {dashedAreas}
+            {references}
           </AreaChart>
         </div>
         {/* area with fixed position and hidden content, except y-axis */}
