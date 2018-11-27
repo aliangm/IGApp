@@ -121,15 +121,19 @@ export default class IndicatorsGraph extends Component {
       return last(quarterData);
     }, quarterFutureOffset);
 
+    const dashedLineDataWithQuarters = this.props.dashedLineData && addQuarters(this.props.dashedLineData, (quarterData) => {
+      return last(quarterData);
+    }, quarterFutureOffset);
+
     mainLineDataWithQuarters.forEach((month, monthIndex) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].committed;
       });
 
-      if (this.props.dashedLineData) {
-        Object.keys(this.props.dashedLineData[monthIndex]).forEach((key) => {
-          json[key + DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
+      if (dashedLineDataWithQuarters) {
+        Object.keys(dashedLineDataWithQuarters[monthIndex]).forEach((key) => {
+          json[key + DASHED_KEY_SUFFIX] = dashedLineDataWithQuarters[monthIndex][key].committed;
         });
       }
 
@@ -144,7 +148,7 @@ export default class IndicatorsGraph extends Component {
       Object.keys(month).forEach(key => {
         json[key] = month[key];
 
-        if (this.props.dashedLineData) {
+        if (dashedLineDataWithQuarters) {
           json[key + DASHED_KEY_SUFFIX] = json[key];
         }
       });
