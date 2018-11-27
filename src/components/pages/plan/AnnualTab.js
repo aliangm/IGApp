@@ -5,7 +5,7 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, addQuartersAndFormatDates} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, addQuartersAndFormatDates, getRawDates} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {addQuarters} from 'utils';
 import {isNil, sumBy, union, last} from 'lodash';
@@ -88,6 +88,31 @@ export default class AnnualTab extends Component {
       return {channels: quarterSummedChannel, isHistory: last(quarterData).isHistory, isQuarter: true};
     }, quarterOffset);
 
+
+    const futureDatesRaw = getRawDates(this.props.planDate, false, true);
+    const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
+    const futureDatesWithQuarters = addQuartersAndFormatDates(futureDatesRaw,
+      quarterFutureOffset,
+      item => getEndOfMonthString(formatSpecificDate(item, false)));
+
+    const pastDatesRaw = getRawDatesSpecific(this.props.planDate, indicators.length);
+    const quarterPastOffset = getQuarterOffset(pastDatesRaw);
+    const pastDatesWithQuarters = addQuartersAndFormatDates(pastDatesRaw,
+      quarterPastOffset,
+      item => getEndOfMonthString(formatSpecificDate(item, false)));
+
+    const primaryDataWithQuarters = addQuarters(primaryPlanForecastedIndicators, (quarterData) => {
+      return last(quarterData);
+    }, quarterFutureOffset);
+
+    const secondaryDataWithQuarters = secondaryPlanForecastedIndicators && addQuarters(secondaryPlanForecastedIndicators, (quarterData) => {
+      return last(quarterData);
+    }, quarterFutureOffset);
+
+    const pastIndicatorsWithQuarters = addQuarters(indicators, (quarterData) => {
+      return last(quarterData);
+    }, quarterPastOffset);
+
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
@@ -112,10 +137,12 @@ export default class AnnualTab extends Component {
                                scrollPosition={this.state.scrollPosition}
                                cellWidth={CELL_WIDTH}
                                mainLineData={showSecondaryIndicatorGraph
-                                 ? secondaryPlanForecastedIndicators
-                                 : primaryPlanForecastedIndicators}
-                               dashedLineData={showSecondaryIndicatorGraph ? primaryPlanForecastedIndicators : null}
-                               pastIndicators={indicators}
+                                 ? secondaryDataWithQuarters
+                                 : primaryDataWithQuarters}
+                               dashedLineData={showSecondaryIndicatorGraph ? primaryDataWithQuarters : null}
+                               pastIndicators={pastIndicatorsWithQuarters}
+                               pastDates={pastDatesWithQuarters}
+                               futureDates={futureDatesWithQuarters}
                                {...this.props}
               />
             </FloatingComponent>

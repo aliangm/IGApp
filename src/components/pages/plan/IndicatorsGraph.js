@@ -105,45 +105,22 @@ export default class IndicatorsGraph extends Component {
   getAreasData = () => {
     const forecastingData = [];
 
-    const futureDatesRaw = getRawDates(this.props.planDate, false, true);
-    const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
-    const futureDatesWithQuarters = addQuartersAndFormatDates(futureDatesRaw,
-      quarterFutureOffset,
-      item => getEndOfMonthString(formatSpecificDate(item, false)));
-
-    const pastDatesRaw = getRawDatesSpecific(this.props.planDate, this.props.pastIndicators.length);
-    const quarterPastOffset = getQuarterOffset(pastDatesRaw);
-    const pastDatesWithQuarters = addQuartersAndFormatDates(pastDatesRaw,
-      quarterPastOffset,
-      item => getEndOfMonthString(formatSpecificDate(item, false)));
-
-    const mainLineDataWithQuarters = addQuarters(this.props.mainLineData, (quarterData) => {
-      return last(quarterData);
-    }, quarterFutureOffset);
-
-    const dashedLineDataWithQuarters = this.props.dashedLineData && addQuarters(this.props.dashedLineData, (quarterData) => {
-      return last(quarterData);
-    }, quarterFutureOffset);
-
-    mainLineDataWithQuarters.forEach((month, monthIndex) => {
+    this.props.mainLineData.forEach((month, monthIndex) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].committed;
       });
 
-      if (dashedLineDataWithQuarters) {
-        Object.keys(dashedLineDataWithQuarters[monthIndex]).forEach((key) => {
-          json[key + DASHED_KEY_SUFFIX] = dashedLineDataWithQuarters[monthIndex][key].committed;
+      if (this.props.dashedLineData) {
+        Object.keys(this.props.dashedLineData[monthIndex]).forEach((key) => {
+          json[key + DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
         });
       }
 
-      forecastingData.push({...json, name: futureDatesWithQuarters[monthIndex]});
+      forecastingData.push({...json, name: this.props.futureDates[monthIndex]});
     });
 
-    const pastIndicatorsWithOffset = addQuarters(this.props.pastIndicators, (quarterData) => {
-      return last(quarterData);
-    }, quarterPastOffset);
-    pastIndicatorsWithOffset.forEach((month, index) => {
+    this.props.pastIndicators.forEach((month, index) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key];
@@ -153,7 +130,7 @@ export default class IndicatorsGraph extends Component {
         }
       });
 
-      forecastingData.unshift({...json, name: pastDatesWithQuarters[pastDatesWithQuarters.length - 1 - index]});
+      forecastingData.unshift({...json, name: this.props.pastDates[this.props.pastDates.length - 1 - index]});
     });
 
     const zeroedIndicators = {};
