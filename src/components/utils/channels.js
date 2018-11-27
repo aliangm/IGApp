@@ -119,7 +119,7 @@ export function output() {
     channelId: 'other?',
     level: 1,
     title: 'Other*',
-    path: null,
+    path: undefined,
     isLeaf: true,
     isOther: true,
     id: 'other?',
