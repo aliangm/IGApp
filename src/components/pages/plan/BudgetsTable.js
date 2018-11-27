@@ -210,7 +210,7 @@ export default class BudgetsTable extends Component {
           ? monthData.secondaryBudget
           : null}
         isConstraitsEnabled={false}
-        approveSuggestion={() => this.approveMonthSuggestions(key)}
+        approveSuggestion={() => this.approveMonthSuggestions(monthData.updateIndex)}
         enableActionButtons={false}
       />;
     });
@@ -260,7 +260,7 @@ export default class BudgetsTable extends Component {
             isConstraint,
             isSoft)}
           isEditMode={this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue, data.region)}
+          onChange={(newValue) => this.props.editCommittedBudget(monthData.updateIndex, data.channel, newValue, data.region)}
           isConstraitsEnabled={this.props.isConstraintsEnabled &&
           !isUnknownChannel(data.channel) &&
           rowType !==
@@ -269,7 +269,7 @@ export default class BudgetsTable extends Component {
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
           isDragging={this.state.isDragging}
-          approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+          approveSuggestion={() => this.props.editCommittedBudget(monthData.updateIndex, data.channel, monthData.secondaryBudget)}
           enableActionButtons={true}
           cellKey={`${data.channel}:${key}`}
         />;
@@ -413,6 +413,7 @@ export default class BudgetsTable extends Component {
       data.forEach((month, index) => {
         const channels = month.channels;
         monthArray[index].isQuarter = month.isQuarter;
+        monthArray[index].updateIndex = month.updateIndex;
         if (channels[channel]) {
           monthArray[index] = {
             ...monthArray[index],

@@ -58,7 +58,8 @@ export default class AnnualTab extends Component {
         parsedObjectives[objective.indicator] = {x: getEndOfMonthString(monthStr), y: target};
       });
 
-    const dataWithQuarters = budgetsData && addQuarters(budgetsData, quarterData => {
+    const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {return {...month, updateIndex: index}});
+    const dataWithQuarters = budgetDataWithIndex && addQuarters(budgetDataWithIndex, quarterData => {
       const channelsInQuarter = union(...quarterData.map(month => Object.keys(month.channels)));
       const quarterSummedChannel = {};
       channelsInQuarter.forEach(channel => {
