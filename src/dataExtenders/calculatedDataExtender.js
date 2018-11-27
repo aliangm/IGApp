@@ -114,6 +114,9 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
     if (key === 'indicators') {
       historyDataWithCurrentMonth[key] = [...historyData[key], currentData.actualIndicators].slice(sliceNumber);
     }
+    else if (key === 'actualIndicatorsDaily') {
+      historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key]].slice(sliceNumber);
+    }
     else if (key === 'unknownChannels') {
       historyDataWithCurrentMonth[key] = [...historyData[key], currentData.planUnknownChannels[0]].slice(sliceNumber);
     }

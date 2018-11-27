@@ -476,6 +476,7 @@ class AppComponent extends Component {
       },
       userRegions: data.userRegions,
       expenses: data.expenses || [],
+      actualIndicatorsDaily: data.actualIndicatorsDaily,
       channelsImpact: data.channelsImpact || {}
     });
   }
