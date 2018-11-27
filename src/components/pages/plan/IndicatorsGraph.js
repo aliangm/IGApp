@@ -105,9 +105,14 @@ export default class IndicatorsGraph extends Component {
     const forecastingData = [];
 
     const futureDatesRaw = getRawDates(this.props.planDate, false, true);
-    const futureDates = futureDatesRaw.map((item) => formatSpecificDate(item, false));
     const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
-    const futureDatesWithQuarters = addQuarters(futureDates, () => {return 'Quarter'}, quarterFutureOffset);
+    const futureDatesWithQuarters = addQuarters(futureDatesRaw, quarterData => {
+      const date = quarterData[0];
+      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const yearStr = date.getFullYear().toString().substr(2, 2);
+      return `Q${quarterNumber} ${yearStr}`;
+    }, quarterFutureOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
+
     const mainLineDataWithQuarters = addQuarters(this.props.mainLineData, (quarterData) => {
       return last(quarterData);
     }, quarterFutureOffset);
@@ -124,13 +129,18 @@ export default class IndicatorsGraph extends Component {
         });
       }
 
-      forecastingData.push({...json, name: getEndOfMonthString(futureDatesWithQuarters[monthIndex])});
+      forecastingData.push({...json, name: futureDatesWithQuarters[monthIndex]});
     });
 
     const pastDatesRaw = getRawDatesSpecific(this.props.planDate, this.props.pastIndicators.length);
-    const pastDates = pastDatesRaw.map((item) => formatSpecificDate(item, false));
     const quarterPastOffset = getQuarterOffset(pastDatesRaw);
-    const pastDatesWithQuarters = addQuarters(pastDates, () => {return 'Quarter'}, quarterPastOffset);
+    const pastDatesWithQuarters = addQuarters(pastDatesRaw, quarterData => {
+      const date = quarterData[0];
+      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const yearStr = date.getFullYear().toString().substr(2, 2);
+      return `Q${quarterNumber} ${yearStr}`;
+    }, quarterPastOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
+
     const pastIndicatorsWithOffset = addQuarters(this.props.pastIndicators, (quarterData) => {
       return last(quarterData);
     }, quarterPastOffset);
@@ -144,7 +154,7 @@ export default class IndicatorsGraph extends Component {
         }
       });
 
-      forecastingData.unshift({...json, name: getEndOfMonthString(pastDatesWithQuarters[pastDatesWithQuarters.length - 1 - index])});
+      forecastingData.unshift({...json, name: pastDatesWithQuarters[pastDatesWithQuarters.length - 1 - index]});
     });
 
     const zeroedIndicators = {};
