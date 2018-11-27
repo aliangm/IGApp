@@ -49,17 +49,14 @@ export default class Plan extends Component {
     };
   }
 
-  componentWillMount() {
-    this.setBudgetsData();
-    this.setState({primaryPlanForecastedIndicators: this.props.forecastedIndicators});
-  }
-
   componentDidMount() {
     this.getRelevantEvents(this.props);
     if (isPopupMode()) {
       disablePopupMode();
       this.setState({interactiveMode: true});
     }
+    this.setBudgetsData();
+    this.setState({primaryPlanForecastedIndicators: this.props.forecastedIndicators});
   }
 
   parsePlannerForecasting = (forecastedIndicators) => {
@@ -509,7 +506,7 @@ export default class Plan extends Component {
     const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
     const {planUnknownChannels, calculatedData: {annualBudget}} = this.props;
 
-    const annualBudgetLeftToPlan = getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
+    const annualBudgetLeftToPlan = this.state.budgetsData && getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
         return merge(object, item);
