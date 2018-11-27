@@ -5,10 +5,10 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getDatesSpecific} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {addQuarters} from 'utils';
-import {isNil, sumBy, union} from 'lodash';
+import {isNil, sumBy, union, last} from 'lodash';
 
 const CELL_WIDTH = 140;
 
@@ -59,11 +59,15 @@ export default class AnnualTab extends Component {
       });
 
     const numberOfPastDates = budgetsData && budgetsData.filter((month) => month.isHistory).length;
-    const datesWithQuarters = !isNil(numberOfPastDates) && getDatesSpecific(this.props.planDate,
+    const dates = !isNil(numberOfPastDates) && budgetsData && getRawDatesSpecific(this.props.planDate,
       numberOfPastDates,
-      budgetsData.length - numberOfPastDates, false, true);
+      budgetsData.length - numberOfPastDates);
+    const quarterOffset = getQuarterOffset(dates);
 
-    const quarterOffset = datesWithQuarters && datesWithQuarters.findIndex(item => item === 'Quarter');
+    const datesWithQuarters = dates && addQuarters(dates, quarterData => {
+      return 'Quarter';
+    }, quarterOffset, item => formatSpecificDate(item, false));
+
     const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {
       return {...month, updateIndex: index};
     });
@@ -82,7 +86,7 @@ export default class AnnualTab extends Component {
         return quarterSummedChannel[channel] = {primaryBudget, secondaryBudget};
       });
 
-      return {channels: quarterSummedChannel, isHistory: false, isQuarter: true};
+      return {channels: quarterSummedChannel, isHistory: last(quarterData).isHistory, isQuarter: true};
     }, quarterOffset);
 
     return <div>
