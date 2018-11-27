@@ -8,7 +8,7 @@ import budgetsStyle from 'styles/plan/budget-table.css';
 import planStyles from 'styles/plan/plan.css';
 import Paging from 'components/Paging';
 import {getChannelIcon, getNickname as getChannelNickname, isUnknownChannel} from 'components/utils/channels';
-import {formatBudget, formatNumber} from 'components/utils/budget';
+import {formatBudget, formatNumber, getCommitedBudgets} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
@@ -51,7 +51,7 @@ export default class PlannedVsActual extends Component {
 
   componentDidMount() {
     // Set the default month to current
-    this.setState({month: this.props.calculatedData.historyDataYear.historyDataLength});
+    this.setState({month: this.props.calculatedData.lastYearHistoryData.historyDataLength});
   }
 
   addChannel = (event) => {
@@ -98,7 +98,7 @@ export default class PlannedVsActual extends Component {
   };
 
   setMonth = diff => {
-    const maxMonth = this.props.calculatedData.historyDataYear.historyDataLength;
+    const maxMonth = this.props.calculatedData.lastYearHistoryData.historyDataLength;
     let newMonth = this.state.month + diff;
     if (newMonth < 0) {
       newMonth = 0;
@@ -126,17 +126,17 @@ export default class PlannedVsActual extends Component {
 
   render() {
     const {month} = this.state;
-    const {attribution: {channelsImpact: attributionChannelsImpact}, calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, historyDataYear: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators}}}} = this.props;
+    const {attribution: {channelsImpact: attributionChannelsImpact}, calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators}}}} = this.props;
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
     const isCurrentMonth = month === historyDataLength;
 
     const actuals = merge({}, knownChannels, unknownChannels);
-    const planned = merge({}, mapValues(planBudgets[month], 'committedBudget'), planUnknownChannels[month]);
+    const planned = merge({}, getCommitedBudgets(planBudgets)[month], planUnknownChannels[month]);
     const channels = merge({}, planned, actuals);
     const parsedChannels = Object.keys(channels).map(channel => {
       const actual = actuals[channel];
-      const isRealActual = !isNil(actual);
+      const isActualNotEmpty = !isNil(actual);
       const plan = planned[channel] || 0;
       const channelImpact = get(channelsImpact, [month, channel], {});
       const {planned: plannedFunnel = 0, actual: actualFunnel = 0} = channelImpact[funnelFirstObjective] || {};
@@ -145,8 +145,8 @@ export default class PlannedVsActual extends Component {
       const attributedUsers = get(attributionChannelsImpact, ['users', channel], 0);
       return {
         channel,
-        isRealActual,
-        actual: isRealActual ? actual : plan,
+        isActualNotEmpty,
+        actual: isActualNotEmpty ? actual : plan,
         planned: plan,
         plannedFunnel,
         actualFunnel: actualFunnel || attributedFunnel,
@@ -162,8 +162,10 @@ export default class PlannedVsActual extends Component {
         }} value={value} onChange={onChange} disabled={disabled}/>
       </div>;
 
+    const extrapolatedValue = value => Math.round(value / extarpolateRatio);
+
     const rows = parsedChannels.map(item => {
-      const {actual, planned, isRealActual, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
+      const {actual, planned, isActualNotEmpty, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
       const isAutomatic = integrations[channelPlatformMapping[channel]];
       return {
         items: [
@@ -176,7 +178,7 @@ export default class PlannedVsActual extends Component {
           getTextfieldItem(formatBudget(actual), e => this.updateActual(channel, extractNumber(e.target.value)), isAutomatic),
           formatBudget(planned - actual, true),
           isCurrentMonth ?
-            formatBudget(isRealActual ? Math.round(actual / extarpolateRatio) : actual)
+            formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
             : '-',
           getTextfieldItem(formatNumber(plannedFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
           getTextfieldItem(formatNumber(actualFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
@@ -217,7 +219,7 @@ export default class PlannedVsActual extends Component {
       formatBudget(sumBy(parsedChannels, 'planned')),
       formatBudget(sumBy(parsedChannels, 'actual')),
       formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-      isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isRealActual ? Math.round(item.actual / extarpolateRatio) : item.actual)) : '-',
+      isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
       formatNumber(totalPlannedFunnel),
       formatNumber(totalActualFunnel),
       formatNumber(totalPlannedFunnel - totalActualFunnel),

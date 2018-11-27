@@ -8,6 +8,7 @@ import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
+import isArray from 'lodash/isArray';
 
 export function calculatedDataExtender(data) {
 
@@ -60,8 +61,8 @@ export function calculatedDataExtender(data) {
       activeCampaigns: activeCampaigns,
       annualBudget: annualBudget,
       annualBudgetLeftToPlan: annualBudget -
-        allBudgets.reduce((annualSum, month) => Object.keys(month)
-          .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
+      allBudgets.reduce((annualSum, month) => Object.keys(month)
+        .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
       monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
@@ -89,7 +90,7 @@ export function calculatedDataExtender(data) {
         funnelFirstObjective: nonZeroFunnelObjective || nonZeroFunnelIndicator
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
-      historyDataYear: calculateHistoryData(data, data.historyData, NUMBER_OF_FUTURE_MONTHS),
+      lastYearHistoryData: calculateHistoryData(data, data.historyData, NUMBER_OF_FUTURE_MONTHS),
       isTrial,
       isAccountEnabled,
       integrations: calculateAutomaticIntegration(data)
@@ -117,7 +118,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
       historyDataWithCurrentMonth[key] = [...historyData[key], currentData.planUnknownChannels[0]].slice(sliceNumber);
     }
     else {
-      currentData[key].constructor === Array ?
+      isArray(currentData[key]) ?
         historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key][0]].slice(sliceNumber)
         :
         historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key]].slice(sliceNumber);
