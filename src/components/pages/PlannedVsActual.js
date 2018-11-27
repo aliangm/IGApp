@@ -183,11 +183,11 @@ export default class PlannedVsActual extends Component {
           getTextfieldItem(formatNumber(plannedFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
           getTextfieldItem(formatNumber(actualFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
           formatNumber(plannedFunnel - actualFunnel),
-          isCurrentMonth ? formatNumber(Math.round(actualFunnel / extarpolateRatio)) : '-',
+          isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
           getTextfieldItem(formatNumber(plannedUsers), e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))),
           getTextfieldItem(formatNumber(actualUsers), e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))),
           formatNumber(plannedUsers - actualUsers),
-          isCurrentMonth ? formatNumber(Math.round(actualUsers / extarpolateRatio)) : '-'
+          isCurrentMonth ? formatNumber(extarpolateRatio(actualUsers)) : '-'
         ]
       };
     });
@@ -223,11 +223,11 @@ export default class PlannedVsActual extends Component {
       formatNumber(totalPlannedFunnel),
       formatNumber(totalActualFunnel),
       formatNumber(totalPlannedFunnel - totalActualFunnel),
-      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => Math.round(item.actualFunnel / extarpolateRatio))) : '-',
+      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extarpolateRatio(item.actualFunnel))) : '-',
       formatNumber(totalPlannedUsers),
       formatNumber(totalActualUsers),
       formatNumber(totalPlannedUsers - totalActualUsers),
-      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => Math.round(item.actualUsers / extarpolateRatio))) : '-'
+      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extarpolateRatio(item.actualUsers))) : '-'
     ];
 
     return <div>
