@@ -85,7 +85,7 @@ export default class Overview extends Component {
       getDatesSpecific(planDate, objectives.length, 0),
       false);
 
-
+    // Parse object to recharts format per indicator
     const indicatorsData = {};
     actualIndicatorsDaily.forEach((item, key) => {
       const monthString = months[key];
