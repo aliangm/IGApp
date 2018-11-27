@@ -3,11 +3,12 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
-import {getDates} from 'components/utils/date';
+import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import {getAnnualBudgetLeftToPlan, getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
+import isArray from 'lodash/isArray';
 
 export function calculatedDataExtender(data) {
 
@@ -87,6 +88,7 @@ export function calculatedDataExtender(data) {
         funnelFirstObjective: nonZeroFunnelObjective || nonZeroFunnelIndicator
       },
       historyData: calculateHistoryData(data, data.historyData, data.monthsExceptThisMonth),
+      lastYearHistoryData: calculateHistoryData(data, data.historyData, NUMBER_OF_FUTURE_MONTHS),
       isTrial,
       isAccountEnabled,
       integrations: calculateAutomaticIntegration(data)
@@ -105,13 +107,15 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
   const historyDataWithCurrentMonth = {};
   Object.keys(historyData).forEach(key => {
     const sliceNumber = historyDataLength(historyData) - monthExceptThisMonth;
-    // Indicators key in current month is actually "ActualIndicators" and not an array, that's why is has special
-    // treatment All the other one's has the same exact name and are arrays.
+    // Indicators key in current month is ActualIndicators, that's why is has special treatment
     if (key === 'indicators') {
       historyDataWithCurrentMonth[key] = [...historyData[key], currentData.actualIndicators].slice(sliceNumber);
     }
     else {
-      historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key][0]].slice(sliceNumber);
+      isArray(currentData[key]) ?
+        historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key][0]].slice(sliceNumber)
+        :
+        historyDataWithCurrentMonth[key] = [...historyData[key], currentData[key]].slice(sliceNumber);
     }
   });
 
