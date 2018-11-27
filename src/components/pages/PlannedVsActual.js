@@ -155,6 +155,13 @@ export default class PlannedVsActual extends Component {
       };
     });
 
+    const getTextfieldItem = (value, onChange, disabled = false) =>
+      <div className={this.classes.cellItem}>
+        <Textfield style={{
+          width: '84px'
+        }} value={value} onChange={onChange} disabled={disabled}/>
+      </div>;
+
     const rows = parsedChannels.map(item => {
       const {actual, planned, isRealActual, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
       const isAutomatic = integrations[channelPlatformMapping[channel]];
@@ -166,47 +173,17 @@ export default class PlannedVsActual extends Component {
             {isAutomatic ? <div className={this.classes.automaticLabel}>Auto</div> : null}
           </div>,
           formatBudget(planned),
-          <div className={this.classes.cellItem}>
-            <Textfield style={{
-              width: '84px'
-            }} value={formatBudget(actual)} onChange={(e) => {
-              this.updateActual(channel, extractNumber(e.target.value));
-            }} disabled={isAutomatic}/>
-          </div>,
+          getTextfieldItem(formatBudget(actual), e => this.updateActual(channel, extractNumber(e.target.value)), isAutomatic),
           formatBudget(planned - actual, true),
           isCurrentMonth ?
             formatBudget(isRealActual ? Math.round(actual / extarpolateRatio) : actual)
             : '-',
-          <div className={this.classes.cellItem}>
-            <Textfield style={{
-              width: '84px'
-            }} value={formatNumber(plannedFunnel)} onChange={(e) => {
-              this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value));
-            }}/>
-          </div>,
-          <div className={this.classes.cellItem}>
-            <Textfield style={{
-              width: '84px'
-            }} value={formatNumber(actualFunnel)} onChange={(e) => {
-              this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value));
-            }}/>
-          </div>,
+          getTextfieldItem(formatNumber(plannedFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(actualFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
           formatNumber(plannedFunnel - actualFunnel),
           isCurrentMonth ? formatNumber(Math.round(actualFunnel / extarpolateRatio)) : '-',
-          <div className={this.classes.cellItem}>
-            <Textfield style={{
-              width: '84px'
-            }} value={formatNumber(plannedUsers)} onChange={(e) => {
-              this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value));
-            }}/>
-          </div>,
-          <div className={this.classes.cellItem}>
-            <Textfield style={{
-              width: '84px'
-            }} value={formatNumber(actualUsers)} onChange={(e) => {
-              this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value));
-            }}/>
-          </div>,
+          getTextfieldItem(formatNumber(plannedUsers), e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(actualUsers), e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))),
           formatNumber(plannedUsers - actualUsers),
           isCurrentMonth ? formatNumber(Math.round(actualUsers / extarpolateRatio)) : '-'
         ]
