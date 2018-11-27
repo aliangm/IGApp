@@ -4,7 +4,7 @@ import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
 import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
-import {getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
+import {getAnnualBudgetLeftToPlan, getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
@@ -60,9 +60,7 @@ export function calculatedDataExtender(data) {
       committedForecasting: committedForecasting,
       activeCampaigns: activeCampaigns,
       annualBudget: annualBudget,
-      annualBudgetLeftToPlan: annualBudget -
-      allBudgets.reduce((annualSum, month) => Object.keys(month)
-        .reduce((monthSum, channel) => monthSum + month[channel], 0) + annualSum, 0),
+      annualBudgetLeftToPlan: getAnnualBudgetLeftToPlan(annualBudget, data.planBudgets, data.planUnknownChannels),
       monthlyBudget: monthlyBudget,
       monthlyExtarpolatedMoneySpent: monthlyExtarpolatedMoneySpent,
       monthlyExtapolatedTotalSpending: monthlyExtarpolatedMoneySpent / extarpolateRatio,
