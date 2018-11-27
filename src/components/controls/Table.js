@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/controls/table.css';
 import isEmpty from 'lodash/isEmpty';
+import classnames from 'classnames';
 
 export default class Table extends Component {
 
@@ -73,10 +74,7 @@ export default class Table extends Component {
   }
 
   getTableRow(title, items, props, isHead = false) {
-    let valueCellClassName = this.classes.valueCell;
-    if (this.props.valueCellClassName) {
-      valueCellClassName += ' ' + this.props.valueCellClassName;
-    }
+    const valueCellClassName = classnames(this.classes.valueCell, this.props.valueCellClassName);
     return <tr {...props}>
       {title != null ?
         <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
