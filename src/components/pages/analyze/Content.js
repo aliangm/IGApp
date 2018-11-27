@@ -13,6 +13,7 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {formatDate} from 'components/utils/date';
 import icons from 'styles/icons/plan.css';
 import ReactTooltip from 'react-tooltip';
+import {newFunnelMapping} from 'components/utils/utils';
 
 export default class Content extends Component {
 
@@ -52,14 +53,6 @@ export default class Content extends Component {
       {value: 'opps', label: getIndicatorNickname('opps')},
       {value: 'users', label: getIndicatorNickname('users')}
     ];
-
-    const newFunnelMapping = {
-      newMCL: 'MCL',
-      newMQL: 'MQL',
-      newSQL: 'SQL',
-      newOpps: 'opps',
-      newUsers: 'users'
-    };
 
     const objective = funnelFirstObjective;
 

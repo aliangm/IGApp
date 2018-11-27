@@ -13,7 +13,7 @@ import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
 import icons from 'styles/icons/plan.css';
-import {extractNumber} from 'components/utils/utils';
+import {extractNumber, newFunnelMapping} from 'components/utils/utils';
 import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
@@ -124,13 +124,6 @@ export default class PlannedVsActual extends Component {
   };
 
   render() {
-    const newFunnelMapping = {
-      newMCL: 'MCL',
-      newMQL: 'MQL',
-      newSQL: 'SQL',
-      newOpps: 'opps',
-      newUsers: 'users'
-    };
     const {month} = this.state;
     const {attribution: {channelsImpact: attributionChannelsImpact}, calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, historyDataYear: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators}}}} = this.props;
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];

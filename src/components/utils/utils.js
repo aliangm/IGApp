@@ -8,3 +8,11 @@ export function getExtarpolateRatio(day, monthString) {
 export function extractNumber(budget, defaultValue = 0) {
   return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
 }
+
+export const newFunnelMapping = {
+  newMCL: 'MCL',
+  newMQL: 'MQL',
+  newSQL: 'SQL',
+  newOpps: 'opps',
+  newUsers: 'users'
+};
