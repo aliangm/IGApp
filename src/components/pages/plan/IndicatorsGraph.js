@@ -11,7 +11,7 @@ import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {formatSpecificDate, getEndOfMonthString, getQuarterOffset, getRawDates, getRawDatesSpecific} from 'components/utils/date';
+import {addQuartersAndFormatDates, formatSpecificDate, getEndOfMonthString, getQuarterOffset, getRawDates, getRawDatesSpecific} from 'components/utils/date';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
 import {addQuarters} from 'utils';
@@ -171,26 +171,23 @@ export default class IndicatorsGraph extends Component {
 
     const futureDatesRaw = getRawDates(this.props.planDate, false, true);
     const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
-    const futureDatesWithQuarters = addQuarters(futureDatesRaw, quarterData => {
-      const date = quarterData[0];
-      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
-      const yearStr = date.getFullYear().toString().substr(2, 2);
-      return `Q${quarterNumber} ${yearStr}`;
-    }, quarterFutureOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
+    const futureDatesWithQuarters = addQuartersAndFormatDates(futureDatesRaw,
+      quarterFutureOffset,
+      item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const pastDatesRaw = getRawDatesSpecific(this.props.planDate, this.props.pastIndicators.length);
     const quarterPastOffset = getQuarterOffset(pastDatesRaw);
-    const pastDatesWithQuarters = addQuarters(pastDatesRaw, quarterData => {
-      const date = quarterData[0];
-      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
-      const yearStr = date.getFullYear().toString().substr(2, 2);
-      return `Q${quarterNumber} ${yearStr}`;
-    }, quarterPastOffset, item => getEndOfMonthString(formatSpecificDate(item, false)));
+    const pastDatesWithQuarters = addQuartersAndFormatDates(pastDatesRaw,
+      quarterPastOffset,
+      item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const referenceLinesData = union(pastDatesWithQuarters, futureDatesWithQuarters).filter((date) => date[0] === 'Q');
-    const references = referenceLinesData.map(quarter => <ReferenceLine x={quarter} stroke="green" label="" />);
+    const references = referenceLinesData.map(quarter => <ReferenceLine x={quarter} stroke="green" label=""/>);
 
-    const areaData = this.getAreasData(futureDatesWithQuarters,quarterPastOffset, pastDatesWithQuarters, quarterFutureOffset);
+    const areaData = this.getAreasData(futureDatesWithQuarters,
+      quarterPastOffset,
+      pastDatesWithQuarters,
+      quarterFutureOffset);
     const areaHeight = floating ? 230 : 400;
 
     const {collapsedObjectives} = this.props.calculatedData.objectives;

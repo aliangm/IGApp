@@ -16,10 +16,8 @@ import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {getDatesSpecific} from 'components/utils/date';
 import Button from 'components/controls/Button';
 import classnames from 'classnames';
-import {addQuarters} from 'utils';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,

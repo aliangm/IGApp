@@ -5,7 +5,7 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, addQuartersAndFormatDates} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {addQuarters} from 'utils';
 import {isNil, sumBy, union, last} from 'lodash';
@@ -64,12 +64,8 @@ export default class AnnualTab extends Component {
       budgetsData.length - numberOfPastDates);
     const quarterOffset = getQuarterOffset(dates);
 
-    const datesWithQuarters = dates && addQuarters(dates, quarterData => {
-      const date = quarterData[0];
-      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
-      const yearStr = date.getFullYear().toString().substr(2, 2);
-      return `Q${quarterNumber} ${yearStr}`;
-    }, quarterOffset, item => formatSpecificDate(item, false));
+    const datesWithQuarters = dates &&
+      addQuartersAndFormatDates(dates, quarterOffset, item => formatSpecificDate(item, false));
 
     const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {
       return {...month, updateIndex: index};
