@@ -8,8 +8,8 @@ export default class BudgetLeftToPlan extends Component {
   style = style;
 
   static propTypes = {
-    annualBudget: PropTypes.number.isRequired,
-    annualBudgetLeftToPlan: PropTypes.number.isRequired
+    annualBudget: PropTypes.number,
+    annualBudgetLeftToPlan: PropTypes.number
   };
 
   render() {
