@@ -518,13 +518,7 @@ export default class BudgetsTable extends Component {
     const channelsProps = getChannelsWithProps();
     const parsedData = this.getDataByChannel(this.props.data, channelsProps);
     const numberOfPastDates = this.props.data.filter((month) => month.isHistory).length;
-    const datesWithoutQuarters = getDatesSpecific(this.props.planDate,
-      numberOfPastDates,
-      this.props.data.length - numberOfPastDates);
-
-    const dates = addQuarters(datesWithoutQuarters, () => {
-      return 'Quarter';
-    }, 2);
+    const dates = this.props.dates;
 
     const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
 

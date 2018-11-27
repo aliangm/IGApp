@@ -5,10 +5,10 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getDatesSpecific} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {addQuarters} from 'utils';
-import {sumBy, union} from 'lodash';
+import {isNil, sumBy, union} from 'lodash';
 
 const CELL_WIDTH = 140;
 
@@ -58,7 +58,16 @@ export default class AnnualTab extends Component {
         parsedObjectives[objective.indicator] = {x: getEndOfMonthString(monthStr), y: target};
       });
 
-    const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {return {...month, updateIndex: index}});
+    const numberOfPastDates = budgetsData && budgetsData.filter((month) => month.isHistory).length;
+    const datesWithQuarters = !isNil(numberOfPastDates) && getDatesSpecific(this.props.planDate,
+      numberOfPastDates,
+      budgetsData.length - numberOfPastDates, false, true);
+
+    const quarterOffset = datesWithQuarters && datesWithQuarters.findIndex(item => item === 'Quarter');
+    const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {
+      return {...month, updateIndex: index};
+    });
+
     const dataWithQuarters = budgetDataWithIndex && addQuarters(budgetDataWithIndex, quarterData => {
       const channelsInQuarter = union(...quarterData.map(month => Object.keys(month.channels)));
       const quarterSummedChannel = {};
@@ -74,7 +83,7 @@ export default class AnnualTab extends Component {
       });
 
       return {channels: quarterSummedChannel, isHistory: false, isQuarter: true};
-    }, 2);
+    }, quarterOffset);
 
     return <div>
       <div className={this.classes.wrap}>
@@ -87,6 +96,8 @@ export default class AnnualTab extends Component {
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}
                         isPopup={interactiveMode}
+                        dates={datesWithQuarters || []}
+                        numberOfPastDates={numberOfPastDates}
                         {...this.props}
           />
 
