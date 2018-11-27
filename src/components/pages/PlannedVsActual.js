@@ -17,6 +17,7 @@ import {extractNumber, newFunnelMapping} from 'components/utils/utils';
 import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
+import get from 'lodash/get';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 
 const channelPlatformMapping = {
@@ -137,11 +138,11 @@ export default class PlannedVsActual extends Component {
       const actual = actuals[channel];
       const isRealActual = !isNil(actual);
       const plan = planned[channel] || 0;
-      const channelImpact = channelsImpact[month] ? channelsImpact[month][channel] || {} : {};
+      const channelImpact = get(channelsImpact, [month, channel], {});
       const {planned: plannedFunnel = 0, actual: actualFunnel = 0} = channelImpact[funnelFirstObjective] || {};
-      const attributedFunnel = (attributionChannelsImpact[newFunnelMapping[funnelFirstObjective]] && attributionChannelsImpact[newFunnelMapping[funnelFirstObjective]][channel]) || 0;
+      const attributedFunnel = get(attributionChannelsImpact, [newFunnelMapping[funnelFirstObjective], channel], 0);
       const {planned: plannedUsers = 0, actual: actualUsers = 0} = channelImpact.newUsers || {};
-      const attributedUsers = (attributionChannelsImpact[channel] && attributionChannelsImpact[channel].users) || 0;
+      const attributedUsers = get(attributionChannelsImpact, ['users', channel], 0);
       return {
         channel,
         isRealActual,
