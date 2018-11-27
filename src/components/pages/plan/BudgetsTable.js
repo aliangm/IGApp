@@ -121,10 +121,10 @@ export default class BudgetsTable extends Component {
     const headers = dates.map((month, index) => {
       return <td key={`head:${index}`}
                  className={classnames(this.classes.headRowCell, {
-                   [this.classes.quarterCell]: month === 'Quarter'
+                   [this.classes.quarterCell]: month[0] === 'Q',
+                   [this.classes.historyCell]: index < numberOfPastDates
                  })}
                  style={{minWidth: headerWidth, width: headerWidth}}
-                 data-history={index < numberOfPastDates ? true : null}
                  data-first-month={index === numberOfPastDates ? true : null}>
 
         <div style={{width: `${this.props.cellWidth - 12}px`}}>{month}</div>
