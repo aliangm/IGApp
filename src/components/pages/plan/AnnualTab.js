@@ -52,8 +52,10 @@ export default class AnnualTab extends Component {
       return {value: `Q${quarterNumber} ${yearStr}`, isQuarter: true};
     };
 
-    const annualDate = () => {
-      return {value: 'Annual', isAnnual: true};
+    const annualDate = (annualData) => {
+      const date = annualData[0];
+      const yearStr = date.getFullYear().toString();
+      return {value: `FY ${yearStr}`, isAnnual: true};
     };
 
     return this.addExtraSumData(dates,

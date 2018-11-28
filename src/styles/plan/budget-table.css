@@ -218,6 +218,11 @@
     background-color: #dae8ff;
 }
 
+.annual-cell {
+    color: #ffffff;
+    background-color: #4d91fc;
+}
+
 .value-cell {
     composes: cell;
     height: 14px;

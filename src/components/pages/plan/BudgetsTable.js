@@ -120,6 +120,7 @@ export default class BudgetsTable extends Component {
       return <td key={`head:${index}`}
                  className={classnames(this.classes.headRowCell, {
                    [this.classes.quarterCell]: month.isQuarter,
+                   [this.classes.annualCell]: month.isAnnual,
                    [this.classes.historyCell]: index < numberOfPastDates
                  })}
                  style={{minWidth: headerWidth, width: headerWidth}}
@@ -229,19 +230,22 @@ export default class BudgetsTable extends Component {
     const cells = data.values.map((monthData, key) => {
       const isHistory = key < numberOfPastDates;
       const isQuarter = monthData.isQuarter;
+      const isAnnual = monthData.isAnnual;
 
-      return rowType === ROW_TYPE.CATEGORY || isHistory || isQuarter ?
+      return rowType === ROW_TYPE.CATEGORY || isHistory || isQuarter || isAnnual ?
         (rowType === ROW_TYPE.CATEGORY ?
           <td key={`category:${data.channel}:${key}`} className={classnames(this.classes.categoryCell, {
             [this.classes.historyCell]: isHistory,
-            [this.classes.quarterCell]: isQuarter
+            [this.classes.quarterCell]: isQuarter,
+              [this.classes.annualCell]: isAnnual
           })}>
             {formatBudget(monthData.primaryBudget)}
           </td> :
           <td key={`${data.channel}:${key}`} className={classnames(this.classes.cell,
             {
               [this.classes.historyCell]: isHistory,
-              [this.classes.quarterCell]: isQuarter
+              [this.classes.quarterCell]: isQuarter,
+              [this.classes.annualCell]: isAnnual
             })}>
             {formatBudget(monthData.primaryBudget)}
           </td>) : <TableCell
@@ -411,6 +415,7 @@ export default class BudgetsTable extends Component {
       data.forEach((month, index) => {
         const channels = month.channels;
         monthArray[index].isQuarter = month.isQuarter;
+        monthArray[index].isAnnual = month.isAnnual;
         monthArray[index].updateIndex = month.realIndex;
         if (channels[channel]) {
           monthArray[index] = {
@@ -433,7 +438,8 @@ export default class BudgetsTable extends Component {
       return {
         primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
         secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget),
-        isQuarter: channels[0].values[index].isQuarter
+        isQuarter: channels[0].values[index].isQuarter,
+        isAnnual: channels[0].values[index].isAnnual
       };
     });
   };
