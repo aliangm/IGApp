@@ -116,7 +116,7 @@ export default class IndicatorsGraph extends Component {
         });
       }
 
-      forecastingData.push({...json, name: futureDates[monthIndex], isQuarter: isQuarter});
+      forecastingData.push({...json, name: futureDates[monthIndex].value, isQuarter: isQuarter});
     });
 
     const pastIndicators = this.props.mainLineData.slice(0, pastDates.length);
@@ -132,7 +132,7 @@ export default class IndicatorsGraph extends Component {
 
       forecastingData.unshift({
         ...json,
-        name: pastDates[pastDates.length - 1 - index],
+        name: pastDates[pastDates.length - 1 - index].value,
         isQuarter: isQuarter
       });
     });
