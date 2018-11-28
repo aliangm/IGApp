@@ -238,7 +238,7 @@ export default class BudgetsTable extends Component {
           <td key={`category:${data.channel}:${key}`} className={classnames(this.classes.categoryCell, {
             [this.classes.historyCell]: isHistory,
             [this.classes.quarterCell]: isQuarter,
-              [this.classes.annualCell]: isAnnual
+            [this.classes.annualCategoryCell]: isAnnual
           })}>
             {formatBudget(monthData.primaryBudget)}
           </td> :
