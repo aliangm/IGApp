@@ -262,7 +262,10 @@ export default class BudgetsTable extends Component {
             isConstraint,
             isSoft)}
           isEditMode={this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommittedBudget(monthData.updateIndex, data.channel, newValue, data.region)}
+          onChange={(newValue) => this.props.editCommittedBudget(monthData.updateIndex,
+            data.channel,
+            newValue,
+            data.region)}
           isConstraitsEnabled={this.props.isConstraintsEnabled &&
           !isUnknownChannel(data.channel) &&
           rowType !==
@@ -271,7 +274,9 @@ export default class BudgetsTable extends Component {
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
           isDragging={this.state.isDragging}
-          approveSuggestion={() => this.props.editCommittedBudget(monthData.updateIndex, data.channel, monthData.secondaryBudget)}
+          approveSuggestion={() => this.props.editCommittedBudget(monthData.updateIndex,
+            data.channel,
+            monthData.secondaryBudget)}
           enableActionButtons={true}
           cellKey={`${data.channel}:${key}`}
         />;

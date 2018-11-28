@@ -100,17 +100,21 @@ export default class IndicatorsGraph extends Component {
 
   getAreasData = () => {
     const forecastingData = [];
-    const pastDates = this.props.dates.slice(0, this.props.numberOfPastDates);
-    const futureDates = this.props.dates.slice(this.props.numberOfPastDates);
+    const numberOfPastDates = this.props.numberOfPastDates;
+    const pastDates = this.props.dates.slice(0, numberOfPastDates);
+    const futureDates = this.props.dates.slice(numberOfPastDates);
+    const mainFutureData = this.props.mainLineData.slice(numberOfPastDates);
+    const pastIndicators = this.props.mainLineData.slice(0, numberOfPastDates);
+    const dashedLineData = this.props.dashedLineData && this.props.dashedLineData.slice(numberOfPastDates);
 
-    this.props.mainLineData.forEach(({indicators: month, ...extraProps}, monthIndex) => {
+    mainFutureData.forEach(({indicators: month, ...extraProps}, monthIndex) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].committed;
       });
 
-      if (this.props.dashedLineData) {
-        const dashedIndicators = this.props.dashedLineData[monthIndex].indicators;
+      if (dashedLineData) {
+        const dashedIndicators = dashedLineData[monthIndex].indicators;
         Object.keys(dashedIndicators).forEach((key) => {
           json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key].committed;
         });
@@ -119,13 +123,12 @@ export default class IndicatorsGraph extends Component {
       forecastingData.push({...json, name: futureDates[monthIndex].value, ...extraProps});
     });
 
-    const pastIndicators = this.props.mainLineData.slice(0, pastDates.length);
     pastIndicators.forEach(({indicators: month, isQuarter}, index) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key];
 
-        if (dashedLineDataWithQuarters) {
+        if (dashedLineData) {
           json[key + DASHED_KEY_SUFFIX] = json[key];
         }
       });

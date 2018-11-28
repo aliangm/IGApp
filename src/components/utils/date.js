@@ -1,3 +1,5 @@
+import {isNil} from 'lodash';
+
 export const NUMBER_OF_FUTURE_MONTHS = 12;
 
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -31,7 +33,7 @@ function getDateOffset(dates, division) {
     return (month + 1) % division === 0;
   });
 
-  return (lastIndexOfFirstQuarter && lastIndexOfFirstQuarter >= 0) ? lastIndexOfFirstQuarter + 1 : null;
+  return (!isNil(lastIndexOfFirstQuarter) && lastIndexOfFirstQuarter >= 0) ? lastIndexOfFirstQuarter + 1 : null;
 }
 
 export function getQuarterOffset(dates) {
