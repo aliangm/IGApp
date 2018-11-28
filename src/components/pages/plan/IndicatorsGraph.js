@@ -11,12 +11,8 @@ import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {addQuartersAndFormatDates, formatSpecificDate, getEndOfMonthString, getQuarterOffset, getRawDates, getRawDatesSpecific} from 'components/utils/date';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
-import {addQuarters} from 'utils';
-import last from 'lodash/last';
-import {union} from 'lodash';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';

@@ -1,5 +1,3 @@
-import {addQuarters} from 'utils';
-
 export const NUMBER_OF_FUTURE_MONTHS = 12;
 
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -73,15 +71,6 @@ export function getEndOfMonthString(dateStr) {
   const month = monthNames.indexOf(monthStr);
   const date = new Date(year, month + 1, 0);
   return `${date.getDate()} ${monthStr} ${year}`;
-}
-
-export function addQuartersAndFormatDates(dates, quarterFutureOffset, formatDateFunc) {
-  return addQuarters(dates, quarterData => {
-    const date = quarterData[0];
-    const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
-    const yearStr = date.getFullYear().toString().substr(2, 2);
-    return `Q${quarterNumber} ${yearStr}`;
-  }, quarterFutureOffset, item => formatDateFunc(item, false));
 }
 
 export function getNumberOfDaysBetweenDates(toDate, fromDate = new Date()) {

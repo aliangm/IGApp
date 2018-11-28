@@ -22,21 +22,3 @@ export function getParameterByName(name, url) {
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-
-export function addQuarters (array, quarterDataFunc, firstQuarterOffset, itemInQuarterMap = (item) => {return item}) {
-
-  const quartersSplit = [array.slice(0, firstQuarterOffset),
-    ...chunk(array.slice(firstQuarterOffset), 3)];
-
-  const withQuarterAddition = quartersSplit.map((quarterMonths, index) => {
-    // If last quarter did not end, don't add quarter value
-    if (index == quartersSplit.length - 1 && firstQuarterOffset !== 0) {
-      return quarterMonths.map(itemInQuarterMap);
-    }
-    else {
-      return [...quarterMonths.map(itemInQuarterMap), quarterDataFunc(quarterMonths)];
-    }
-  });
-
-  return concat(...withQuarterAddition);
-}

@@ -5,10 +5,11 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, addQuartersAndFormatDates, getRawDates} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getRawDates} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {addQuarters} from 'utils';
 import {isNil, sumBy, union, last} from 'lodash';
+import chunk from 'lodash/chunk';
+import concat from 'lodash/concat';
 
 const CELL_WIDTH = 140;
 
@@ -43,6 +44,33 @@ export default class AnnualTab extends Component {
     this.setState({scrollPosition: this.props.calculatedData.historyData.historyDataLength * CELL_WIDTH});
   }
 
+  addQuartersAndFormatDates = (dates, quarterFutureOffset, formatDateFunc) => {
+    return this.addQuarters(dates, quarterData => {
+      const date = quarterData[0];
+      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const yearStr = date.getFullYear().toString().substr(2, 2);
+      return `Q${quarterNumber} ${yearStr}`;
+    }, quarterFutureOffset, item => formatDateFunc(item, false));
+  };
+
+  addQuarters = (array, quarterDataFunc, firstQuarterOffset, itemInQuarterMap = (item) => {return item}) => {
+
+    const quartersSplit = [array.slice(0, firstQuarterOffset),
+      ...chunk(array.slice(firstQuarterOffset), 3)];
+
+    const withQuarterAddition = quartersSplit.map((quarterMonths, index) => {
+      // If last quarter did not end, don't add quarter value
+      if (index == quartersSplit.length - 1 && firstQuarterOffset !== 0) {
+        return quarterMonths.map(itemInQuarterMap);
+      }
+      else {
+        return [...quarterMonths.map(itemInQuarterMap), quarterDataFunc(quarterMonths)];
+      }
+    });
+
+    return concat(...withQuarterAddition);
+  }
+
   render() {
     const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
 
@@ -65,13 +93,13 @@ export default class AnnualTab extends Component {
     const quarterOffset = getQuarterOffset(dates);
 
     const datesWithQuarters = dates &&
-      addQuartersAndFormatDates(dates, quarterOffset, item => formatSpecificDate(item, false));
+      this.addQuartersAndFormatDates(dates, quarterOffset, item => formatSpecificDate(item, false));
 
     const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {
       return {...month, updateIndex: index};
     });
 
-    const dataWithQuarters = budgetDataWithIndex && addQuarters(budgetDataWithIndex, quarterData => {
+    const dataWithQuarters = budgetDataWithIndex && this.addQuarters(budgetDataWithIndex, quarterData => {
       const channelsInQuarter = union(...quarterData.map(month => Object.keys(month.channels)));
       const quarterSummedChannel = {};
       channelsInQuarter.forEach(channel => {
@@ -91,13 +119,13 @@ export default class AnnualTab extends Component {
 
     const futureDatesRaw = getRawDates(this.props.planDate, false, true);
     const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
-    const futureDatesWithQuarters = addQuartersAndFormatDates(futureDatesRaw,
+    const futureDatesWithQuarters = this.addQuartersAndFormatDates(futureDatesRaw,
       quarterFutureOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const pastDatesRaw = getRawDatesSpecific(this.props.planDate, indicators.length);
     const quarterPastOffset = getQuarterOffset(pastDatesRaw);
-    const pastDatesWithQuarters = addQuartersAndFormatDates(pastDatesRaw,
+    const pastDatesWithQuarters = this.addQuartersAndFormatDates(pastDatesRaw,
       quarterPastOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
@@ -109,13 +137,13 @@ export default class AnnualTab extends Component {
       return {indicators: month, isQuarter: false}
     };
 
-    const primaryDataWithQuarters = addQuarters(primaryPlanForecastedIndicators, addQuarterDataForForecasting
+    const primaryDataWithQuarters = this.addQuarters(primaryPlanForecastedIndicators, addQuarterDataForForecasting
       , quarterFutureOffset, parseRegularMonthForForecasting);
 
     const secondaryDataWithQuarters = secondaryPlanForecastedIndicators &&
-      addQuarters(secondaryPlanForecastedIndicators, addQuarterDataForForecasting, quarterFutureOffset, parseRegularMonthForForecasting);
+      this.addQuarters(secondaryPlanForecastedIndicators, addQuarterDataForForecasting, quarterFutureOffset, parseRegularMonthForForecasting);
 
-    const pastIndicatorsWithQuarters = addQuarters(indicators, addQuarterDataForForecasting, quarterPastOffset, parseRegularMonthForForecasting);
+    const pastIndicatorsWithQuarters = this.addQuarters(indicators, addQuarterDataForForecasting, quarterPastOffset, parseRegularMonthForForecasting);
 
     return <div>
       <div className={this.classes.wrap}>
