@@ -16,6 +16,7 @@ import {getColor} from 'components/utils/colors';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
+const SUM_KEY_SUFFIX = '_SUM';
 
 export default class IndicatorsGraph extends Component {
 
@@ -99,6 +100,8 @@ export default class IndicatorsGraph extends Component {
   };
 
   getAreasData = () => {
+    const isSumItem = (sumItem) => sumItem.isQuarter || sumItem.isAnnual;
+    const sumSuffix = (sumItem) => sumItem.isQuarter ? 'Quarter' : 'Annual';
     const forecastingData = [];
     const numberOfPastDates = this.props.numberOfPastDates;
     const pastDates = this.props.dates.slice(0, numberOfPastDates);
@@ -109,18 +112,45 @@ export default class IndicatorsGraph extends Component {
 
     mainFutureData.forEach(({indicators: month, ...extraProps}, monthIndex) => {
       const json = {};
-      Object.keys(month).forEach(key => {
-        json[key] = month[key].committed;
-      });
 
-      if (dashedLineData) {
-        const dashedIndicators = dashedLineData[monthIndex].indicators;
-        Object.keys(dashedIndicators).forEach((key) => {
-          json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key].committed;
+      if(isSumItem(extraProps)){
+        const suffix = sumSuffix(extraProps);
+        const currentDataJson = {};
+        const previousDataJson = forecastingData[monthIndex -1];
+        Object.keys(month.start).forEach(key => {
+          previousDataJson[key+SUM_KEY_SUFFIX+suffix] = month.start[key];
         });
-      }
 
-      forecastingData.push({...json, name: futureDates[monthIndex].value, ...extraProps});
+        Object.keys(month.end).forEach(key => {
+          currentDataJson[key+SUM_KEY_SUFFIX+suffix] = month.end[key];
+        });
+
+        if(dashedLineData) {
+          Object.keys(month.start).forEach(key => {
+            previousDataJson[key+DASHED_KEY_SUFFIX+SUM_KEY_SUFFIX+suffix] = month.start[key];
+          });
+
+          Object.keys(month.end).forEach(key => {
+            currentDataJson[key+DASHED_KEY_SUFFIX+SUM_KEY_SUFFIX+suffix] = month.end[key];
+          });
+        }
+
+        forecastingData.push({...currentDataJson, name: futureDates[monthIndex].value, ...extraProps});
+      }
+      else{
+        Object.keys(month).forEach(key => {
+          json[key] = month[key];
+        });
+
+        if (dashedLineData) {
+          const dashedIndicators = dashedLineData[monthIndex].indicators;
+          Object.keys(dashedIndicators).forEach((key) => {
+            json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key];
+          });
+        }
+
+        forecastingData.push({...json, name: futureDates[monthIndex].value});
+      }
     });
 
     pastIndicators.forEach(({indicators: month, isQuarter}, index) => {
@@ -232,6 +262,19 @@ export default class IndicatorsGraph extends Component {
       />;
     });
 
+    const quarterAreas = this.state.checkedIndicators.map((indicator) => {
+      const index = Object.keys(indicatorsMapping).indexOf(indicator);
+      return <Area key={indicator + 2}
+                   type='monotone'
+                   isAnimationActive={false}
+                   dataKey={indicator + SUM_KEY_SUFFIX+'Quarter'}
+                   stroke={getColor(index)}
+                   stroke={getColor(index)}
+                   fill={`url(#${indicator})`}
+                   fillOpacity={1}
+                   strokeWidth={2}/>;
+    });
+
     const CustomizedLabel = React.createClass({
       render() {
         const {viewBox} = this.props;
@@ -268,41 +311,41 @@ export default class IndicatorsGraph extends Component {
         return <div className={this.classes.customTooltip}>
           {areaData[currentIndex].isQuarter ? 'Quarter'
             : areaData[currentIndex].isAnnual ? 'Annual'
-            : <div>{
+              : <div>{
 
-              parsedIndicators.map((item, index) => {
-                const indicator = item.dataKey;
-                const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
-                if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
-                  return <div key={index}>
-                    <div className={this.classes.customTooltipIndicator}>
-                      {indicatorsMapping[indicator]}
-                    </div>
-                    <div className={this.classes.customTooltipValues}>
-                      <div className={this.classes.customTooltipValue}
-                           style={{color: getColor(colorIndex)}}>
-                        {formatNumber(item.value)}
+                parsedIndicators.map((item, index) => {
+                  const indicator = item.dataKey;
+                  const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
+                  if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
+                    return <div key={index}>
+                      <div className={this.classes.customTooltipIndicator}>
+                        {indicatorsMapping[indicator]}
                       </div>
-                      {item.secondaryValue ?
+                      <div className={this.classes.customTooltipValues}>
                         <div className={this.classes.customTooltipValue}
-                             style={{
-                               color: getColor(colorIndex),
-                               opacity: DASHED_OPACITY
-                             }}>
-                          {formatNumber(item.secondaryValue)}
-                        </div> : null
-                      }
-                    </div>
-                    {parsedObjectives[indicator] !== undefined &&
-                    parsedObjectives[indicator].x === data.label ?
-                      <div className={this.classes.customTooltipObjective}>
-                        Objective: {formatNumber(parsedObjectives[indicator].y)}
+                             style={{color: getColor(colorIndex)}}>
+                          {formatNumber(item.value)}
+                        </div>
+                        {item.secondaryValue ?
+                          <div className={this.classes.customTooltipValue}
+                               style={{
+                                 color: getColor(colorIndex),
+                                 opacity: DASHED_OPACITY
+                               }}>
+                            {formatNumber(item.secondaryValue)}
+                          </div> : null
+                        }
                       </div>
-                      : null}
-                  </div>;
-                }
-              })
-            }</div>}
+                      {parsedObjectives[indicator] !== undefined &&
+                      parsedObjectives[indicator].x === data.label ?
+                        <div className={this.classes.customTooltipObjective}>
+                          Objective: {formatNumber(parsedObjectives[indicator].y)}
+                        </div>
+                        : null}
+                    </div>;
+                  }
+                })
+              }</div>}
         </div>;
       }
       return null;
@@ -352,6 +395,7 @@ export default class IndicatorsGraph extends Component {
             {defs}
             {areas}
             {dashedAreas}
+            {quarterAreas}
           </AreaChart>
         </div>
         {/* area with fixed position and hidden content, except y-axis */}

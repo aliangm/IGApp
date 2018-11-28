@@ -7,7 +7,7 @@ import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject, get, chunk} from 'lodash';
+import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject, get, chunk, mapValues} from 'lodash';
 
 const CELL_WIDTH = 140;
 
@@ -42,7 +42,11 @@ export default class AnnualTab extends Component {
     const pastMonths = this.props.calculatedData.historyData.rawMonths;
     const quarterOffset = getQuarterOffset(pastMonths);
     const annualOffset = getAnnualOffset(pastMonths);
-    const monthsWithExtraData = this.addExtraSumData(pastMonths, () => {return {}}, () => {return {}}, quarterOffset, annualOffset);
+    const monthsWithExtraData = this.addExtraSumData(pastMonths, () => {
+      return {};
+    }, () => {
+      return {};
+    }, quarterOffset, annualOffset);
 
     this.setState({scrollPosition: (monthsWithExtraData.length - 1) * CELL_WIDTH});
   }
@@ -168,7 +172,7 @@ export default class AnnualTab extends Component {
 
         const summedRegions = {};
         regionsInChannel && regionsInChannel.forEach(region => {
-          summedRegions[region] = sumBy(chunk, month => get(month, ['channels', channel, 'regions',region], 0));
+          summedRegions[region] = sumBy(chunk, month => get(month, ['channels', channel, 'regions', region], 0));
         });
 
         chunkSummedChannel[channel] = {primaryBudget, secondaryBudget, regions: summedRegions};
@@ -193,28 +197,35 @@ export default class AnnualTab extends Component {
       quarterOffset, annualOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
+    const sumForecasteDataForChunk = (chunk) => {
+      return {start: {...chunk[0]}, end: last(chunk)};
+    };
+
     const addQuarterDataForForecasting = (quarterData) => {
-      return {indicators: last(quarterData), isQuarter: true};
+      return {indicators: sumForecasteDataForChunk(quarterData), isQuarter: true};
     };
 
     const addAnnualDataForForecasting = (annualData) => {
-      return {indicators: last(annualData), isAnnual: true};
+      return {indicators: sumForecasteDataForChunk(annualData), isAnnual: true};
     };
 
     const parseRegularMonthForForecasting = (month) => {
       return {indicators: month, isQuarter: false, isAnnual: false};
     };
 
-    const primaryDataWithQuarters = dates && this.addExtraSumData([...indicators, ...primaryPlanForecastedIndicators],
-      addQuarterDataForForecasting, addAnnualDataForForecasting,
-      quarterOffset, annualOffset,
-      parseRegularMonthForForecasting);
-
-    const secondaryDataWithQuarters = dates && secondaryPlanForecastedIndicators &&
-      this.addExtraSumData([...indicators, ...secondaryPlanForecastedIndicators],
+    const parseForecastingIndicators = (forecasting) => {
+      return this.addExtraSumData([...indicators,
+          ...forecasting.map(month => mapValues(month, indicator => indicator.committed))],
         addQuarterDataForForecasting, addAnnualDataForForecasting,
         quarterOffset, annualOffset,
         parseRegularMonthForForecasting);
+    };
+
+    const primaryDataWithQuarters = dates &&
+      parseForecastingIndicators(primaryPlanForecastedIndicators);
+
+    const secondaryDataWithQuarters = dates && secondaryPlanForecastedIndicators &&
+      parseForecastingIndicators(secondaryPlanForecastedIndicators);
 
     return <div>
       <div className={this.classes.wrap}>
