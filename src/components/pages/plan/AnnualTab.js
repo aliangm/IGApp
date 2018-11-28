@@ -5,9 +5,9 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getRawDates} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getRawDates, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {isNil, sumBy, union, last} from 'lodash';
+import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty} from 'lodash';
 import chunk from 'lodash/chunk';
 import concat from 'lodash/concat';
 
@@ -53,7 +53,54 @@ export default class AnnualTab extends Component {
     }, quarterFutureOffset, item => formatDateFunc(item, false));
   };
 
-  addQuarters = (array, quarterDataFunc, firstQuarterOffset, itemInQuarterMap = (item) => {return item}) => {
+  addEvery = (array, chunkData, itemInQuarterMap = (item) => {
+    return item;
+  }) => {
+    const chunksAddition = union(...chunkData.map(({offset, itemsInChunk, sumChunkFormatter}, grouperIndex) => {
+      const chunkSplit = [array.slice(0, offset),
+        ...chunk(array.slice(offset), itemsInChunk)];
+
+      const mapChunk = (chunk) => chunk.map((chunk, index) => {
+        return {putAfter: (offset + index * itemsInChunk), value: sumChunkFormatter(chunk), orderIndex: grouperIndex};
+      });
+
+      if (array.length / itemsInChunk !== 0) {
+        return mapChunk(chunkSplit.slice(0, chunkSplit.length - 1));
+      }
+      else {
+        return mapChunk(chunkSplit);
+      }
+    }));
+
+    const orderedChunksAddition = orderBy(chunksAddition, 'orderIndex');
+    const groupedAdditions = groupBy(orderedChunksAddition, 'putAfter');
+    const parsedArray = array.map((item, index) => {
+      return {value: itemInQuarterMap(item), realIndex: index};
+    });
+
+    let arrayWithAddition = parsedArray;
+    Object.keys(groupedAdditions).forEach(putAfter => {
+      const additions = groupedAdditions[putAfter];
+      const putAfterIndex = arrayWithAddition.findIndex(item => item.realIndex == putAfter);
+      arrayWithAddition =
+        [...arrayWithAddition.slice(0, putAfterIndex),
+          ...additions.map(item => item.value),
+          ...arrayWithAddition.slice(putAfterIndex)];
+    });
+
+    return arrayWithAddition;
+  };
+
+  addQuarters = (array, quarterDataFunc, firstQuarterOffset, itemInQuarterMap = (item) => {
+    return item;
+  }) => {
+
+    if (isEmpty(array)) {
+      return [];
+    }
+    // return this.addEvery(array,
+    //   [{offset: firstQuarterOffset, itemsInChunk: 3, sumChunkFormatter: quarterDataFunc}],
+    //   itemInQuarterMap);
 
     const quartersSplit = [array.slice(0, firstQuarterOffset),
       ...chunk(array.slice(firstQuarterOffset), 3)];
@@ -69,7 +116,7 @@ export default class AnnualTab extends Component {
     });
 
     return concat(...withQuarterAddition);
-  }
+  };
 
   render() {
     const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
@@ -91,6 +138,7 @@ export default class AnnualTab extends Component {
       numberOfPastDates,
       budgetsData.length - numberOfPastDates);
     const quarterOffset = getQuarterOffset(dates);
+    const annualOffset = getAnnualOffset(dates);
 
     const datesWithQuarters = dates &&
       this.addQuartersAndFormatDates(dates, quarterOffset, item => formatSpecificDate(item, false));
@@ -116,17 +164,9 @@ export default class AnnualTab extends Component {
       return {channels: quarterSummedChannel, isHistory: last(quarterData).isHistory, isQuarter: true};
     }, quarterOffset);
 
-
-    const futureDatesRaw = getRawDates(this.props.planDate, false, true);
-    const quarterFutureOffset = getQuarterOffset(futureDatesRaw);
-    const futureDatesWithQuarters = this.addQuartersAndFormatDates(futureDatesRaw,
-      quarterFutureOffset,
-      item => getEndOfMonthString(formatSpecificDate(item, false)));
-
-    const pastDatesRaw = getRawDatesSpecific(this.props.planDate, indicators.length);
-    const quarterPastOffset = getQuarterOffset(pastDatesRaw);
-    const pastDatesWithQuarters = this.addQuartersAndFormatDates(pastDatesRaw,
-      quarterPastOffset,
+    const numberOfPastDatesWithQuarters = dataWithQuarters && dataWithQuarters.filter((item) => item.isHistory).length;
+    const datesForGraphWithQuarters = dates && this.addQuartersAndFormatDates(dates,
+      quarterOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const addQuarterDataForForecasting = (quarterData) => {
@@ -134,16 +174,19 @@ export default class AnnualTab extends Component {
     };
 
     const parseRegularMonthForForecasting = (month) => {
-      return {indicators: month, isQuarter: false}
+      return {indicators: month, isQuarter: false};
     };
 
-    const primaryDataWithQuarters = this.addQuarters(primaryPlanForecastedIndicators, addQuarterDataForForecasting
-      , quarterFutureOffset, parseRegularMonthForForecasting);
+    const primaryDataWithQuarters = dates && this.addQuarters([...indicators, ...primaryPlanForecastedIndicators],
+      addQuarterDataForForecasting,
+      quarterOffset,
+      parseRegularMonthForForecasting);
 
-    const secondaryDataWithQuarters = secondaryPlanForecastedIndicators &&
-      this.addQuarters(secondaryPlanForecastedIndicators, addQuarterDataForForecasting, quarterFutureOffset, parseRegularMonthForForecasting);
-
-    const pastIndicatorsWithQuarters = this.addQuarters(indicators, addQuarterDataForForecasting, quarterPastOffset, parseRegularMonthForForecasting);
+    const secondaryDataWithQuarters = dates && secondaryPlanForecastedIndicators &&
+      this.addQuarters([...indicators, ...secondaryPlanForecastedIndicators],
+        addQuarterDataForForecasting,
+        quarterOffset,
+        parseRegularMonthForForecasting);
 
     return <div>
       <div className={this.classes.wrap}>
@@ -157,7 +200,7 @@ export default class AnnualTab extends Component {
                         cellWidth={CELL_WIDTH}
                         isPopup={interactiveMode}
                         dates={datesWithQuarters || []}
-                        numberOfPastDates={numberOfPastDates}
+                        numberOfPastDates={numberOfPastDatesWithQuarters || 0}
                         {...this.props}
           />
 
@@ -168,13 +211,12 @@ export default class AnnualTab extends Component {
                                changeScrollPosition={this.changeScrollPosition}
                                scrollPosition={this.state.scrollPosition}
                                cellWidth={CELL_WIDTH}
-                               mainLineData={showSecondaryIndicatorGraph
+                               mainLineData={(showSecondaryIndicatorGraph
                                  ? secondaryDataWithQuarters
-                                 : primaryDataWithQuarters}
+                                 : primaryDataWithQuarters) || []}
                                dashedLineData={showSecondaryIndicatorGraph ? primaryDataWithQuarters : null}
-                               pastIndicators={pastIndicatorsWithQuarters}
-                               pastDates={pastDatesWithQuarters}
-                               futureDates={futureDatesWithQuarters}
+                               dates={datesForGraphWithQuarters || []}
+                               numberOfPastDates={numberOfPastDatesWithQuarters || 0}
                                {...this.props}
               />
             </FloatingComponent>

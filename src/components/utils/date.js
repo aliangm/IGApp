@@ -25,13 +25,21 @@ export function getRawDates(dateStr, includingPast = false, includingFuture = tr
     includingFuture ? NUMBER_OF_FUTURE_MONTHS : 0)
 }
 
-export function getQuarterOffset(dates) {
+function getDateOffset(dates, division) {
   const lastIndexOfFirstQuarter = dates && dates.findIndex(date => {
     const month = date.getMonth();
-    return (month + 1) % 3 === 0;
+    return (month + 1) % division === 0;
   });
 
   return (lastIndexOfFirstQuarter && lastIndexOfFirstQuarter >= 0) ? lastIndexOfFirstQuarter + 1 : null;
+}
+
+export function getQuarterOffset(dates) {
+  return getDateOffset(dates, 3);
+}
+
+export function getAnnualOffset(dates) {
+  return getDateOffset(dates, 12);
 }
 
 export function formatSpecificDate(date, isSystemDate) {
