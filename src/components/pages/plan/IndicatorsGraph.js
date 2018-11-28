@@ -105,7 +105,7 @@ export default class IndicatorsGraph extends Component {
   getAreasData = () => {
     const forecastingData = [];
 
-    this.props.mainLineData.forEach(({indicators: month}, monthIndex) => {
+    this.props.mainLineData.forEach(({indicators: month, isQuarter}, monthIndex) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].committed;
@@ -118,10 +118,10 @@ export default class IndicatorsGraph extends Component {
         });
       }
 
-      forecastingData.push({...json, name: this.props.futureDates[monthIndex]});
+      forecastingData.push({...json, name: this.props.futureDates[monthIndex], isQuarter: isQuarter});
     });
 
-    this.props.pastIndicators.forEach(({indicators: month}, index) => {
+    this.props.pastIndicators.forEach(({indicators: month, isQuarter}, index) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key];
@@ -131,7 +131,11 @@ export default class IndicatorsGraph extends Component {
         }
       });
 
-      forecastingData.unshift({...json, name: this.props.pastDates[this.props.pastDates.length - 1 - index]});
+      forecastingData.unshift({
+        ...json,
+        name: this.props.pastDates[this.props.pastDates.length - 1 - index],
+        isQuarter: isQuarter
+      });
     });
 
     const zeroedIndicators = {};
@@ -260,41 +264,42 @@ export default class IndicatorsGraph extends Component {
           });
 
         return <div className={this.classes.customTooltip}>
-          {
+          {areaData[currentIndex].isQuarter ? 'Quarter'
+            : <div>{
 
-            parsedIndicators.map((item, index) => {
-              const indicator = item.dataKey;
-              const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
-              if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
-                return <div key={index}>
-                  <div className={this.classes.customTooltipIndicator}>
-                    {indicatorsMapping[indicator]}
-                  </div>
-                  <div className={this.classes.customTooltipValues}>
-                    <div className={this.classes.customTooltipValue}
-                         style={{color: getColor(colorIndex)}}>
-                      {formatNumber(item.value)}
+              parsedIndicators.map((item, index) => {
+                const indicator = item.dataKey;
+                const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
+                if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
+                  return <div key={index}>
+                    <div className={this.classes.customTooltipIndicator}>
+                      {indicatorsMapping[indicator]}
                     </div>
-                    {item.secondaryValue ?
+                    <div className={this.classes.customTooltipValues}>
                       <div className={this.classes.customTooltipValue}
-                           style={{
-                             color: getColor(colorIndex),
-                             opacity: DASHED_OPACITY
-                           }}>
-                        {formatNumber(item.secondaryValue)}
-                      </div> : null
-                    }
-                  </div>
-                  {parsedObjectives[indicator] !== undefined &&
-                  parsedObjectives[indicator].x === data.label ?
-                    <div className={this.classes.customTooltipObjective}>
-                      Objective: {formatNumber(parsedObjectives[indicator].y)}
+                           style={{color: getColor(colorIndex)}}>
+                        {formatNumber(item.value)}
+                      </div>
+                      {item.secondaryValue ?
+                        <div className={this.classes.customTooltipValue}
+                             style={{
+                               color: getColor(colorIndex),
+                               opacity: DASHED_OPACITY
+                             }}>
+                          {formatNumber(item.secondaryValue)}
+                        </div> : null
+                      }
                     </div>
-                    : null}
-                </div>;
-              }
-            })
-          }
+                    {parsedObjectives[indicator] !== undefined &&
+                    parsedObjectives[indicator].x === data.label ?
+                      <div className={this.classes.customTooltipObjective}>
+                        Objective: {formatNumber(parsedObjectives[indicator].y)}
+                      </div>
+                      : null}
+                  </div>;
+                }
+              })
+            }</div>}
         </div>;
       }
       return null;
