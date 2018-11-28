@@ -101,17 +101,21 @@ export default class AnnualTab extends Component {
       quarterPastOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
-    const primaryDataWithQuarters = addQuarters(primaryPlanForecastedIndicators, (quarterData) => {
-      return last(quarterData);
-    }, quarterFutureOffset);
+    const addQuarterDataForForecasting = (quarterData) => {
+      return {indicators: last(quarterData), isQuarter: true};
+    };
 
-    const secondaryDataWithQuarters = secondaryPlanForecastedIndicators && addQuarters(secondaryPlanForecastedIndicators, (quarterData) => {
-      return last(quarterData);
-    }, quarterFutureOffset);
+    const parseRegularMonthForForecasting = (month) => {
+      return {indicators: month, isQuarter: false}
+    };
 
-    const pastIndicatorsWithQuarters = addQuarters(indicators, (quarterData) => {
-      return last(quarterData);
-    }, quarterPastOffset);
+    const primaryDataWithQuarters = addQuarters(primaryPlanForecastedIndicators, addQuarterDataForForecasting
+      , quarterFutureOffset, parseRegularMonthForForecasting);
+
+    const secondaryDataWithQuarters = secondaryPlanForecastedIndicators &&
+      addQuarters(secondaryPlanForecastedIndicators, addQuarterDataForForecasting, quarterFutureOffset, parseRegularMonthForForecasting);
+
+    const pastIndicatorsWithQuarters = addQuarters(indicators, addQuarterDataForForecasting, quarterPastOffset, parseRegularMonthForForecasting);
 
     return <div>
       <div className={this.classes.wrap}>
