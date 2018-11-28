@@ -15,6 +15,7 @@ import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
+import get from 'lodash/get';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import Button from 'components/controls/Button';
 import classnames from 'classnames';
@@ -180,9 +181,9 @@ export default class BudgetsTable extends Component {
             channel: channel.channel,
             region: region,
             nickname: `${channel.nickname} - ${region}`,
-            values: channel.values.map(item => {
-              const value = (item.regions && item.regions[region]) ? item.regions[region] : 0;
-              return {primaryBudget: value};
+            values: channel.values.map(({regions, ...otherProps}) => {
+              const value = get(regions, [region], 0);
+              return {primaryBudget: value, ...otherProps};
             })
           }, ROW_TYPE.REGION, numberOfPastDates)))
         ];
