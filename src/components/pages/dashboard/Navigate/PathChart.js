@@ -1,9 +1,9 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react'
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Line } from 'recharts'
-import Component from 'components/Component';
-import style from 'styles/dashboard/navigate.css';
-import MonthsPopup from '../MonthsPopup'
 import ReactTooltip from 'react-tooltip'
+import Component from 'components/Component'
+import style from 'styles/dashboard/navigate.css'
+import MonthsPopup from '../MonthsPopup'
 
 const styles = style.locals
 const LINE_COLOR = '#4d91fc'
