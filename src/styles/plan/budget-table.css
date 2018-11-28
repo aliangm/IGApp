@@ -135,8 +135,8 @@
 }
 
 .table-row[data-row-type='category'] {
-    background-color: rgba(222, 235, 255, 0.32);
-    color: #222a41;
+    opacity: 0.70;
+    background-color: #deebff;
 }
 
 .table-row[data-row-type='bottom'] {
