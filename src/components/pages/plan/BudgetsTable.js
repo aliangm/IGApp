@@ -411,7 +411,7 @@ export default class BudgetsTable extends Component {
       data.forEach((month, index) => {
         const channels = month.channels;
         monthArray[index].isQuarter = month.isQuarter;
-        monthArray[index].updateIndex = month.updateIndex;
+        monthArray[index].updateIndex = month.realIndex;
         if (channels[channel]) {
           monthArray[index] = {
             ...monthArray[index],
