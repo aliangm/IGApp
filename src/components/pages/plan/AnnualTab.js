@@ -39,7 +39,12 @@ export default class AnnualTab extends Component {
   };
 
   componentDidMount() {
-    this.setState({scrollPosition: this.props.calculatedData.historyData.historyDataLength * CELL_WIDTH});
+    const pastMonths = this.props.calculatedData.historyData.rawMonths;
+    const quarterOffset = getQuarterOffset(pastMonths);
+    const annualOffset = getAnnualOffset(pastMonths);
+    const monthsWithExtraData = this.addExtraSumData(pastMonths, () => {return {}}, () => {return {}}, quarterOffset, annualOffset);
+
+    this.setState({scrollPosition: (monthsWithExtraData.length - 1) * CELL_WIDTH});
   }
 
   addExtraSumDataAndFormatDates = (dates, quarterOffset, annualOffset, formatDateFunc) => {
