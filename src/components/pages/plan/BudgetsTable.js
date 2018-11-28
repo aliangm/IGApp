@@ -181,9 +181,9 @@ export default class BudgetsTable extends Component {
             channel: channel.channel,
             region: region,
             nickname: `${channel.nickname} - ${region}`,
-            values: channel.values.map(({regions, ...otherProps}) => {
+            values: channel.values.map(({regions, isQuarter, isAnnual, updateIndex}) => {
               const value = get(regions, [region], 0);
-              return {primaryBudget: value, ...otherProps};
+              return {primaryBudget: value, isQuarter, isAnnual, updateIndex};
             })
           }, ROW_TYPE.REGION, numberOfPastDates)))
         ];

@@ -166,7 +166,7 @@ export default class AnnualTab extends Component {
           summedRegions[region] = sumBy(chunk, month => get(month, ['channels', channel, 'regions',region], 0));
         });
 
-        return chunkSummedChannel[channel] = {primaryBudget, secondaryBudget, regions: summedRegions};
+        chunkSummedChannel[channel] = {primaryBudget, secondaryBudget, regions: summedRegions};
       });
 
       return {channels: chunkSummedChannel, isHistory: last(chunk).isHistory};
