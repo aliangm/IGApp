@@ -5,11 +5,9 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getRawDates, getAnnualOffset} from 'components/utils/date';
+import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject} from 'lodash';
-import chunk from 'lodash/chunk';
-import concat from 'lodash/concat';
+import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject, get, chunk} from 'lodash';
 
 const CELL_WIDTH = 140;
 
@@ -159,7 +157,16 @@ export default class AnnualTab extends Component {
           return month.channels[channel] ? month.channels[channel].secondaryBudget : 0;
         });
 
-        return chunkSummedChannel[channel] = {primaryBudget, secondaryBudget};
+        const regionsInChannel = union(...chunk.map(
+          month => Object.keys(get(month, ['channels', channel, 'regions'], {}))
+        ));
+
+        const summedRegions = {};
+        regionsInChannel && regionsInChannel.forEach(region => {
+          summedRegions[region] = sumBy(chunk, month => get(month, ['channels', channel, 'regions',region], 0));
+        });
+
+        return chunkSummedChannel[channel] = {primaryBudget, secondaryBudget, regions: summedRegions};
       });
 
       return {channels: chunkSummedChannel, isHistory: last(chunk).isHistory};
