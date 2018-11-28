@@ -7,7 +7,7 @@ import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getRawDates, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty} from 'lodash';
+import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject} from 'lodash';
 import chunk from 'lodash/chunk';
 import concat from 'lodash/concat';
 
@@ -49,7 +49,7 @@ export default class AnnualTab extends Component {
       const date = quarterData[0];
       const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
       const yearStr = date.getFullYear().toString().substr(2, 2);
-      return `Q${quarterNumber} ${yearStr}`;
+      return {value: `Q${quarterNumber} ${yearStr}`, isQuarter: true};
     }, quarterFutureOffset, item => formatDateFunc(item, false));
   };
 
@@ -75,7 +75,10 @@ export default class AnnualTab extends Component {
     const orderedChunksAddition = orderBy(chunksAddition, 'orderIndex');
     const groupedAdditions = groupBy(orderedChunksAddition, 'putAfter');
     const parsedArray = array.map((item, index) => {
-      return {value: itemInQuarterMap(item), realIndex: index};
+      const valueOfItem = itemInQuarterMap(item);
+      return isObject(valueOfItem)
+        ? {...valueOfItem, realIndex: index}
+        : {value: valueOfItem, realIndex: index};
     });
 
     let arrayWithAddition = parsedArray;
@@ -98,24 +101,9 @@ export default class AnnualTab extends Component {
     if (isEmpty(array)) {
       return [];
     }
-    // return this.addEvery(array,
-    //   [{offset: firstQuarterOffset, itemsInChunk: 3, sumChunkFormatter: quarterDataFunc}],
-    //   itemInQuarterMap);
-
-    const quartersSplit = [array.slice(0, firstQuarterOffset),
-      ...chunk(array.slice(firstQuarterOffset), 3)];
-
-    const withQuarterAddition = quartersSplit.map((quarterMonths, index) => {
-      // If last quarter did not end, don't add quarter value
-      if (index == quartersSplit.length - 1 && firstQuarterOffset !== 0) {
-        return quarterMonths.map(itemInQuarterMap);
-      }
-      else {
-        return [...quarterMonths.map(itemInQuarterMap), quarterDataFunc(quarterMonths)];
-      }
-    });
-
-    return concat(...withQuarterAddition);
+    return this.addEvery(array,
+      [{offset: firstQuarterOffset, itemsInChunk: 3, sumChunkFormatter: quarterDataFunc}],
+      itemInQuarterMap);
   };
 
   render() {
@@ -143,11 +131,7 @@ export default class AnnualTab extends Component {
     const datesWithQuarters = dates &&
       this.addQuartersAndFormatDates(dates, quarterOffset, item => formatSpecificDate(item, false));
 
-    const budgetDataWithIndex = budgetsData && budgetsData.map((month, index) => {
-      return {...month, updateIndex: index};
-    });
-
-    const dataWithQuarters = budgetDataWithIndex && this.addQuarters(budgetDataWithIndex, quarterData => {
+    const dataWithQuarters = budgetsData && this.addQuarters(budgetsData, quarterData => {
       const channelsInQuarter = union(...quarterData.map(month => Object.keys(month.channels)));
       const quarterSummedChannel = {};
       channelsInQuarter.forEach(channel => {
