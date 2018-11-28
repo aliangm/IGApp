@@ -44,13 +44,24 @@ export default class AnnualTab extends Component {
     this.setState({scrollPosition: this.props.calculatedData.historyData.historyDataLength * CELL_WIDTH});
   }
 
-  addQuartersAndFormatDates = (dates, quarterFutureOffset, formatDateFunc) => {
-    return this.addQuarters(dates, quarterData => {
+  addExtraSumDataAndFormatDates = (dates, quarterOffset, annualOffset, formatDateFunc) => {
+    const quarterDate = quarterData => {
       const date = quarterData[0];
       const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
       const yearStr = date.getFullYear().toString().substr(2, 2);
       return {value: `Q${quarterNumber} ${yearStr}`, isQuarter: true};
-    }, quarterFutureOffset, item => formatDateFunc(item, false));
+    };
+
+    const annualDate = () => {
+      return {value: 'Annual', isAnnual: true};
+    };
+
+    return this.addExtraSumData(dates,
+      quarterDate,
+      annualDate,
+      quarterOffset,
+      annualOffset,
+      item => formatDateFunc(item, false));
   };
 
   addEvery = (array, chunkData, itemInQuarterMap = (item) => {
@@ -94,16 +105,20 @@ export default class AnnualTab extends Component {
     return arrayWithAddition;
   };
 
-  addQuarters = (array, quarterDataFunc, firstQuarterOffset, itemInQuarterMap = (item) => {
+  addExtraSumData = (array, quarterSumFunc, annualSumFunc, quarterOffset, annualOffset, itemParseFunc = (item) => {
     return item;
   }) => {
 
     if (isEmpty(array)) {
       return [];
     }
-    return this.addEvery(array,
-      [{offset: firstQuarterOffset, itemsInChunk: 3, sumChunkFormatter: quarterDataFunc}],
-      itemInQuarterMap);
+    else {
+      return this.addEvery(array,
+        [
+          {offset: quarterOffset, itemsInChunk: 3, sumChunkFormatter: quarterSumFunc},
+          {offset: annualOffset, itemsInChunk: 12, sumChunkFormatter: annualSumFunc}
+        ], itemParseFunc);
+    }
   };
 
   render() {
@@ -129,47 +144,62 @@ export default class AnnualTab extends Component {
     const annualOffset = getAnnualOffset(dates);
 
     const datesWithQuarters = dates &&
-      this.addQuartersAndFormatDates(dates, quarterOffset, item => formatSpecificDate(item, false));
+      this.addExtraSumDataAndFormatDates(dates, quarterOffset, annualOffset, item => formatSpecificDate(item, false));
 
-    const dataWithQuarters = budgetsData && this.addQuarters(budgetsData, quarterData => {
-      const channelsInQuarter = union(...quarterData.map(month => Object.keys(month.channels)));
-      const quarterSummedChannel = {};
-      channelsInQuarter.forEach(channel => {
-        const primaryBudget = sumBy(quarterData, month => {
+    const sumBudgetsData = (chunk) => {
+      const channelsInChunk = union(...chunk.map(month => Object.keys(month.channels)));
+      const chunkSummedChannel = {};
+      channelsInChunk.forEach(channel => {
+        const primaryBudget = sumBy(chunk, month => {
           return month.channels[channel] ? month.channels[channel].primaryBudget : 0;
         });
-        const secondaryBudget = sumBy(quarterData, month => {
+        const secondaryBudget = sumBy(chunk, month => {
           return month.channels[channel] ? month.channels[channel].secondaryBudget : 0;
         });
 
-        return quarterSummedChannel[channel] = {primaryBudget, secondaryBudget};
+        return chunkSummedChannel[channel] = {primaryBudget, secondaryBudget};
       });
 
-      return {channels: quarterSummedChannel, isHistory: last(quarterData).isHistory, isQuarter: true};
-    }, quarterOffset);
+      return {channels: chunkSummedChannel, isHistory: last(chunk).isHistory};
+    };
+
+    const addBudgetQuarterData = (chunk) => {
+      return {...sumBudgetsData(chunk), isQuarter: true};
+    };
+
+    const addAnnualBudgetData = (chunk) => {
+      return {...sumBudgetsData(chunk), isAnnual: true};
+    };
+
+    const dataWithQuarters = budgetsData && this.addExtraSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
+      quarterOffset, annualOffset);
 
     const numberOfPastDatesWithQuarters = dataWithQuarters && dataWithQuarters.filter((item) => item.isHistory).length;
-    const datesForGraphWithQuarters = dates && this.addQuartersAndFormatDates(dates,
-      quarterOffset,
+    const datesForGraphWithQuarters = dates && this.addExtraSumDataAndFormatDates(dates,
+      quarterOffset, annualOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
     const addQuarterDataForForecasting = (quarterData) => {
       return {indicators: last(quarterData), isQuarter: true};
     };
 
-    const parseRegularMonthForForecasting = (month) => {
-      return {indicators: month, isQuarter: false};
+    const addAnnualDataForForecasting = (annualData) => {
+      return {indicators: last(annualData), isAnnual: true};
     };
 
-    const primaryDataWithQuarters = dates && this.addQuarters([...indicators, ...primaryPlanForecastedIndicators],
-      addQuarterDataForForecasting,
-      quarterOffset,
+    const parseRegularMonthForForecasting = (month) => {
+      return {indicators: month, isQuarter: false, isAnnual: false};
+    };
+
+    const primaryDataWithQuarters = dates && this.addExtraSumData([...indicators, ...primaryPlanForecastedIndicators],
+      addQuarterDataForForecasting, addAnnualDataForForecasting,
+      quarterOffset, annualOffset,
       parseRegularMonthForForecasting);
 
     const secondaryDataWithQuarters = dates && secondaryPlanForecastedIndicators &&
-      this.addQuarters([...indicators, ...secondaryPlanForecastedIndicators],
-        addQuarterDataForForecasting,
-        quarterOffset,
+      this.addExtraSumData([...indicators, ...secondaryPlanForecastedIndicators],
+        addQuarterDataForForecasting, addAnnualDataForForecasting,
+        quarterOffset, annualOffset,
         parseRegularMonthForForecasting);
 
     return <div>
