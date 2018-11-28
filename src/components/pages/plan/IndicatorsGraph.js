@@ -103,7 +103,7 @@ export default class IndicatorsGraph extends Component {
     const pastDates = this.props.dates.slice(0, this.props.numberOfPastDates);
     const futureDates = this.props.dates.slice(this.props.numberOfPastDates);
 
-    this.props.mainLineData.forEach(({indicators: month, isQuarter}, monthIndex) => {
+    this.props.mainLineData.forEach(({indicators: month, ...extraProps}, monthIndex) => {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].committed;
@@ -116,7 +116,7 @@ export default class IndicatorsGraph extends Component {
         });
       }
 
-      forecastingData.push({...json, name: futureDates[monthIndex].value, isQuarter: isQuarter});
+      forecastingData.push({...json, name: futureDates[monthIndex].value, ...extraProps});
     });
 
     const pastIndicators = this.props.mainLineData.slice(0, pastDates.length);
@@ -264,6 +264,7 @@ export default class IndicatorsGraph extends Component {
 
         return <div className={this.classes.customTooltip}>
           {areaData[currentIndex].isQuarter ? 'Quarter'
+            : areaData[currentIndex].isAnnual ? 'Annual'
             : <div>{
 
               parsedIndicators.map((item, index) => {
