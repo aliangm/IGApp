@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import Component from 'components/Component';
-import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend, ReferenceLine} from 'recharts';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
 import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
