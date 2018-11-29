@@ -126,8 +126,8 @@ export default class AnnualTab extends Component {
     else {
       return this.addEvery(array,
         [
-          {offset: quarterOffset, itemsInChunk: 3, sumChunkFormatter: quarterSumFunc},
-          {offset: annualOffset, itemsInChunk: 12, sumChunkFormatter: annualSumFunc}
+          {offset: quarterOffset, itemsInChunk: 3, chunkAdditionFormatter: quarterSumFunc},
+          {offset: annualOffset, itemsInChunk: 12, chunkAdditionFormatter: annualSumFunc}
         ], itemParseFunc);
     }
   };
@@ -159,13 +159,13 @@ export default class AnnualTab extends Component {
 
     const sumBudgetsData = (chunk) => {
       const channelsInChunk = union(...chunk.map(month => Object.keys(month.channels)));
-      const chunkSummedChannel = {};
+      const chunkSummedChannels = {};
       channelsInChunk.forEach(channel => {
         const primaryBudget = sumBy(chunk, month => {
-          return month.channels[channel] ? month.channels[channel].primaryBudget : 0;
+          return get(month, ['channels', channel, 'primaryBudget'], 0);
         });
         const secondaryBudget = sumBy(chunk, month => {
-          return month.channels[channel] ? month.channels[channel].secondaryBudget : 0;
+          return get(month, ['channels', channel, 'secondaryBudget'], 0);
         });
 
         const regionsInChannel = union(...chunk.map(
@@ -177,10 +177,10 @@ export default class AnnualTab extends Component {
           summedRegions[region] = sumBy(chunk, month => get(month, ['channels', channel, 'regions', region], 0));
         });
 
-        chunkSummedChannel[channel] = {primaryBudget, secondaryBudget, regions: summedRegions};
+        chunkSummedChannels[channel] = {primaryBudget, secondaryBudget, regions: summedRegions};
       });
 
-      return {channels: chunkSummedChannel, isHistory: last(chunk).isHistory};
+      return {channels: chunkSummedChannels, isHistory: last(chunk).isHistory};
     };
 
     const addBudgetQuarterData = (chunk) => {
@@ -191,11 +191,11 @@ export default class AnnualTab extends Component {
       return {...sumBudgetsData(chunk), isAnnual: true};
     };
 
-    const dataWithQuarters = budgetsData && this.addExtraSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
+    const dataWithSumAddition = budgetsData && this.addExtraSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
       quarterOffset, annualOffset);
 
-    const numberOfPastDatesWithQuarters = dataWithQuarters && dataWithQuarters.filter((item) => item.isHistory).length;
-    const datesForGraphWithQuarters = dates && this.addExtraSumDataAndFormatDates(dates,
+    const numberOfPastDatesWithSumAddition = dataWithSumAddition && dataWithSumAddition.filter((item) => item.isHistory).length;
+    const datesForGraphWithPeriodMonths = dates && this.addExtraSumDataAndFormatDates(dates,
       quarterOffset, annualOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
@@ -242,10 +242,10 @@ export default class AnnualTab extends Component {
         parseRegularMonthForForecasting);
     };
 
-    const primaryDataWithQuarters = dates &&
+    const primaryDataWithSumAddition = dates &&
       parseForecastingIndicators(primaryPlanForecastedIndicators);
 
-    const secondaryDataWithQuarters = dates && secondaryPlanForecastedIndicators &&
+    const secondaryDataWithSumAddition = dates && secondaryPlanForecastedIndicators &&
       parseForecastingIndicators(secondaryPlanForecastedIndicators);
 
     return <div>
@@ -254,13 +254,13 @@ export default class AnnualTab extends Component {
           <BudgetsTable isEditMode={editMode}
                         isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
-                        data={dataWithQuarters}
+                        data={dataWithSumAddition}
                         changeScrollPosition={this.changeScrollPosition}
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}
                         isPopup={interactiveMode}
                         dates={datesWithQuarters || []}
-                        numberOfPastDates={numberOfPastDatesWithQuarters || 0}
+                        numberOfPastDates={numberOfPastDatesWithSumAddition || 0}
                         {...this.props}
           />
 
@@ -272,12 +272,12 @@ export default class AnnualTab extends Component {
                                scrollPosition={this.state.scrollPosition}
                                cellWidth={CELL_WIDTH}
                                mainLineData={(showSecondaryIndicatorGraph
-                                 ? secondaryDataWithQuarters
-                                 : primaryDataWithQuarters) || []}
-                               dashedLineData={showSecondaryIndicatorGraph ? primaryDataWithQuarters : null}
-                               labelDates={datesForGraphWithQuarters || []}
+                                 ? secondaryDataWithSumAddition
+                                 : primaryDataWithSumAddition) || []}
+                               dashedLineData={showSecondaryIndicatorGraph ? primaryDataWithSumAddition : null}
+                               labelDates={datesForGraphWithPeriodMonths || []}
                                preiodDates={datesWithQuarters || []}
-                               numberOfPastDates={numberOfPastDatesWithQuarters || 0}
+                               numberOfPastDates={numberOfPastDatesWithSumAddition || 0}
                                {...this.props}
               />
             </FloatingComponent>
