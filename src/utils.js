@@ -1,6 +1,4 @@
 import {getProfileSync} from 'components/utils/AuthService';
-import chunk from 'lodash/chunk';
-import concat from 'lodash/concat';
 
 export function userPermittedToPage(page) {
   const userProfile = getProfileSync();
