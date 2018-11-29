@@ -4,7 +4,7 @@ import Component from 'components/Component';
 import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
-import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
+import {getIndicatorsWithProps} from 'components/utils/indicators';
 import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
@@ -126,7 +126,11 @@ export default class IndicatorsGraph extends Component {
         });
       }
 
-      forecastingData.push({...json, name: futureLabelDates[monthIndex].value, tooltipDate: futureTooltipDates[monthIndex].value});
+      forecastingData.push({
+        ...json,
+        name: futureLabelDates[monthIndex].value,
+        tooltipDate: futureTooltipDates[monthIndex].value
+      });
 
     });
 
@@ -270,7 +274,8 @@ export default class IndicatorsGraph extends Component {
               DASHED_KEY_SUFFIX);
 
             const tooltipValue = item.payload[item.dataKey + TOOLTIP_VALUE_SUFFIX];
-            const secondaryTooltipValue = secondaryItem && secondaryItem.payload[secondaryItem.dataKey + TOOLTIP_VALUE_SUFFIX];
+            const secondaryTooltipValue = secondaryItem &&
+              secondaryItem.payload[secondaryItem.dataKey + TOOLTIP_VALUE_SUFFIX];
             return {
               ...item,
               tooltipValue: tooltipValue,

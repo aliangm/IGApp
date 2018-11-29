@@ -5,7 +5,7 @@ import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
-import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
+import {getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject, get, chunk, mapValues} from 'lodash';
 import {newFunnelMapping} from 'components/utils/utils';
@@ -143,8 +143,8 @@ export default class AnnualTab extends Component {
       .forEach(objective => {
         const target = objective.target;
         const date = objective.dueDate;
-        const monthStr = monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().substr(2, 2);
-        parsedObjectives[objective.indicator] = {x: getEndOfMonthString(monthStr), y: target};
+        const endOfMonth = getEndOfMonthString(formatSpecificDate(date, false));
+        parsedObjectives[objective.indicator] = {x: endOfMonth, y: target};
       });
 
     const numberOfPastDates = budgetsData && budgetsData.filter((month) => month.isHistory).length;
@@ -154,7 +154,7 @@ export default class AnnualTab extends Component {
     const quarterOffset = getQuarterOffset(dates);
     const annualOffset = getAnnualOffset(dates);
 
-    const datesWithQuarters = dates &&
+    const datesWithAddition = dates &&
       this.addExtraSumDataAndFormatDates(dates, quarterOffset, annualOffset, item => formatSpecificDate(item, false));
 
     const sumBudgetsData = (chunk) => {
@@ -259,7 +259,7 @@ export default class AnnualTab extends Component {
                         scrollPosition={this.state.scrollPosition}
                         cellWidth={CELL_WIDTH}
                         isPopup={interactiveMode}
-                        dates={datesWithQuarters || []}
+                        dates={datesWithAddition || []}
                         numberOfPastDates={numberOfPastDatesWithSumAddition || 0}
                         {...this.props}
           />
@@ -276,7 +276,7 @@ export default class AnnualTab extends Component {
                                  : primaryDataWithSumAddition) || []}
                                dashedLineData={showSecondaryIndicatorGraph ? primaryDataWithSumAddition : null}
                                labelDates={datesForGraphWithPeriodMonths || []}
-                               preiodDates={datesWithQuarters || []}
+                               preiodDates={datesWithAddition || []}
                                numberOfPastDates={numberOfPastDatesWithSumAddition || 0}
                                {...this.props}
               />
