@@ -274,7 +274,8 @@ export default class AnnualTab extends Component {
                                  ? secondaryDataWithQuarters
                                  : primaryDataWithQuarters) || []}
                                dashedLineData={showSecondaryIndicatorGraph ? primaryDataWithQuarters : null}
-                               dates={datesForGraphWithQuarters || []}
+                               labelDates={datesForGraphWithQuarters || []}
+                               preiodDates={datesWithQuarters || []}
                                numberOfPastDates={numberOfPastDatesWithQuarters || 0}
                                {...this.props}
               />

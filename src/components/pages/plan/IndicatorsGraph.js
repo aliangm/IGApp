@@ -102,8 +102,10 @@ export default class IndicatorsGraph extends Component {
   getAreasData = () => {
     const forecastingData = [];
     const numberOfPastDates = this.props.numberOfPastDates;
-    const pastDates = this.props.dates.slice(0, numberOfPastDates);
-    const futureDates = this.props.dates.slice(numberOfPastDates);
+    const pastLabelDates = this.props.labelDates.slice(0, numberOfPastDates);
+    const futureLabelDates = this.props.labelDates.slice(numberOfPastDates);
+    const pastTooltipDates = this.props.preiodDates.slice(0, numberOfPastDates);
+    const futureTooltipDates = this.props.preiodDates.slice(numberOfPastDates);
     const mainFutureData = this.props.mainLineData.slice(numberOfPastDates);
     const pastIndicators = this.props.mainLineData.slice(0, numberOfPastDates);
     const dashedLineData = this.props.dashedLineData && this.props.dashedLineData.slice(numberOfPastDates);
@@ -124,7 +126,7 @@ export default class IndicatorsGraph extends Component {
         });
       }
 
-      forecastingData.push({...json, name: futureDates[monthIndex].value});
+      forecastingData.push({...json, name: futureLabelDates[monthIndex].value, tooltipDate: futureTooltipDates[monthIndex].value});
 
     });
 
@@ -142,7 +144,8 @@ export default class IndicatorsGraph extends Component {
 
       forecastingData.unshift({
         ...json,
-        name: pastDates[pastDates.length - 1 - index].value
+        name: pastLabelDates[pastLabelDates.length - 1 - index].value,
+        tooltipDate: pastTooltipDates[pastLabelDates.length - 1 - index].value
       });
     });
 
@@ -275,7 +278,12 @@ export default class IndicatorsGraph extends Component {
             };
           });
 
+        const tooltipTimePeriod = areaData[currentIndex].tooltipDate;
+
         return <div className={this.classes.customTooltip}>
+          <div className={this.classes.customTooltipHeader}>
+            {tooltipTimePeriod}
+          </div>
           {
 
             parsedIndicators.map((item, index) => {
