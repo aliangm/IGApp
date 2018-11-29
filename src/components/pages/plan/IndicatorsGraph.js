@@ -16,7 +16,7 @@ import {getColor} from 'components/utils/colors';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
-const SUM_KEY_SUFFIX = '_SUM';
+const TOOLTIP_VALUE_SUFFIX = '_TOOLTIP';
 
 export default class IndicatorsGraph extends Component {
 
@@ -113,12 +113,14 @@ export default class IndicatorsGraph extends Component {
 
       Object.keys(month).forEach(key => {
         json[key] = month[key].graphValue;
+        json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
       });
 
       if (dashedLineData) {
         const dashedIndicators = dashedLineData[monthIndex].indicators;
         Object.keys(dashedIndicators).forEach((key) => {
           json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key].graphValue;
+          json[key + DASHED_KEY_SUFFIX + TOOLTIP_VALUE_SUFFIX] = dashedIndicators[key].tooltipValue;
         });
       }
 
@@ -130,9 +132,11 @@ export default class IndicatorsGraph extends Component {
       const json = {};
       Object.keys(month).forEach(key => {
         json[key] = month[key].graphValue;
+        json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
 
         if (dashedLineData) {
           json[key + DASHED_KEY_SUFFIX] = json[key];
+          json[key + DASHED_KEY_SUFFIX + TOOLTIP_VALUE_SUFFIX] = json[key + TOOLTIP_VALUE_SUFFIX];
         }
       });
 
@@ -261,50 +265,52 @@ export default class IndicatorsGraph extends Component {
             const secondaryItem = data.payload.find((secondaryItem) => secondaryItem.dataKey ==
               item.dataKey +
               DASHED_KEY_SUFFIX);
+
+            const tooltipValue = item.payload[item.dataKey + TOOLTIP_VALUE_SUFFIX];
+            const secondaryTooltipValue = secondaryItem && secondaryItem.payload[secondaryItem.dataKey + TOOLTIP_VALUE_SUFFIX];
             return {
               ...item,
-              secondaryValue: secondaryItem ? secondaryItem.value : null
+              tooltipValue: tooltipValue,
+              secondaryTooltipValue: secondaryTooltipValue
             };
           });
 
         return <div className={this.classes.customTooltip}>
-          {areaData[currentIndex].isQuarter ? 'Quarter'
-            : areaData[currentIndex].isAnnual ? 'Annual'
-              : <div>{
+          {
 
-                parsedIndicators.map((item, index) => {
-                  const indicator = item.dataKey;
-                  const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
-                  if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
-                    return <div key={index}>
-                      <div className={this.classes.customTooltipIndicator}>
-                        {indicatorsMapping[indicator]}
-                      </div>
-                      <div className={this.classes.customTooltipValues}>
-                        <div className={this.classes.customTooltipValue}
-                             style={{color: getColor(colorIndex)}}>
-                          {formatNumber(item.value)}
-                        </div>
-                        {item.secondaryValue ?
-                          <div className={this.classes.customTooltipValue}
-                               style={{
-                                 color: getColor(colorIndex),
-                                 opacity: DASHED_OPACITY
-                               }}>
-                            {formatNumber(item.secondaryValue)}
-                          </div> : null
-                        }
-                      </div>
-                      {parsedObjectives[indicator] !== undefined &&
-                      parsedObjectives[indicator].x === data.label ?
-                        <div className={this.classes.customTooltipObjective}>
-                          Objective: {formatNumber(parsedObjectives[indicator].y)}
-                        </div>
-                        : null}
-                    </div>;
-                  }
-                })
-              }</div>}
+            parsedIndicators.map((item, index) => {
+              const indicator = item.dataKey;
+              const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
+              if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
+                return <div key={index}>
+                  <div className={this.classes.customTooltipIndicator}>
+                    {indicatorsMapping[indicator]}
+                  </div>
+                  <div className={this.classes.customTooltipValues}>
+                    <div className={this.classes.customTooltipValue}
+                         style={{color: getColor(colorIndex)}}>
+                      {formatNumber(item.tooltipValue)}
+                    </div>
+                    {item.secondaryTooltipValue ?
+                      <div className={this.classes.customTooltipValue}
+                           style={{
+                             color: getColor(colorIndex),
+                             opacity: DASHED_OPACITY
+                           }}>
+                        {formatNumber(item.secondaryTooltipValue)}
+                      </div> : null
+                    }
+                  </div>
+                  {parsedObjectives[indicator] !== undefined &&
+                  parsedObjectives[indicator].x === data.label ?
+                    <div className={this.classes.customTooltipObjective}>
+                      Objective: {formatNumber(parsedObjectives[indicator].y)}
+                    </div>
+                    : null}
+                </div>;
+              }
+            })
+          }
         </div>;
       }
       return null;
