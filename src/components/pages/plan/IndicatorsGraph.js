@@ -100,8 +100,6 @@ export default class IndicatorsGraph extends Component {
   };
 
   getAreasData = () => {
-    const isSumItem = (sumItem) => sumItem.isQuarter || sumItem.isAnnual;
-    const sumSuffix = (sumItem) => sumItem.isQuarter ? 'Quarter' : 'Annual';
     const forecastingData = [];
     const numberOfPastDates = this.props.numberOfPastDates;
     const pastDates = this.props.dates.slice(0, numberOfPastDates);
@@ -110,53 +108,28 @@ export default class IndicatorsGraph extends Component {
     const pastIndicators = this.props.mainLineData.slice(0, numberOfPastDates);
     const dashedLineData = this.props.dashedLineData && this.props.dashedLineData.slice(numberOfPastDates);
 
-    mainFutureData.forEach(({indicators: month, ...extraProps}, monthIndex) => {
+    mainFutureData.forEach(({indicators: month}, monthIndex) => {
       const json = {};
 
-      if(isSumItem(extraProps)){
-        const suffix = sumSuffix(extraProps);
-        const currentDataJson = {};
-        const previousDataJson = forecastingData[monthIndex -1];
-        Object.keys(month.start).forEach(key => {
-          previousDataJson[key+SUM_KEY_SUFFIX+suffix] = month.start[key];
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].graphValue;
+      });
+
+      if (dashedLineData) {
+        const dashedIndicators = dashedLineData[monthIndex].indicators;
+        Object.keys(dashedIndicators).forEach((key) => {
+          json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key].graphValue;
         });
-
-        Object.keys(month.end).forEach(key => {
-          currentDataJson[key+SUM_KEY_SUFFIX+suffix] = month.end[key];
-        });
-
-        if(dashedLineData) {
-          Object.keys(month.start).forEach(key => {
-            previousDataJson[key+DASHED_KEY_SUFFIX+SUM_KEY_SUFFIX+suffix] = month.start[key];
-          });
-
-          Object.keys(month.end).forEach(key => {
-            currentDataJson[key+DASHED_KEY_SUFFIX+SUM_KEY_SUFFIX+suffix] = month.end[key];
-          });
-        }
-
-        forecastingData.push({...currentDataJson, name: futureDates[monthIndex].value, ...extraProps});
       }
-      else{
-        Object.keys(month).forEach(key => {
-          json[key] = month[key];
-        });
 
-        if (dashedLineData) {
-          const dashedIndicators = dashedLineData[monthIndex].indicators;
-          Object.keys(dashedIndicators).forEach((key) => {
-            json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key];
-          });
-        }
+      forecastingData.push({...json, name: futureDates[monthIndex].value});
 
-        forecastingData.push({...json, name: futureDates[monthIndex].value});
-      }
     });
 
-    pastIndicators.forEach(({indicators: month, isQuarter}, index) => {
+    pastIndicators.forEach(({indicators: month}, index) => {
       const json = {};
       Object.keys(month).forEach(key => {
-        json[key] = month[key];
+        json[key] = month[key].graphValue;
 
         if (dashedLineData) {
           json[key + DASHED_KEY_SUFFIX] = json[key];
@@ -165,8 +138,7 @@ export default class IndicatorsGraph extends Component {
 
       forecastingData.unshift({
         ...json,
-        name: pastDates[pastDates.length - 1 - index].value,
-        isQuarter: isQuarter
+        name: pastDates[pastDates.length - 1 - index].value
       });
     });
 
@@ -260,19 +232,6 @@ export default class IndicatorsGraph extends Component {
                    strokeDasharray="7 11"
                    style={{opacity: DASHED_OPACITY}}
       />;
-    });
-
-    const quarterAreas = this.state.checkedIndicators.map((indicator) => {
-      const index = Object.keys(indicatorsMapping).indexOf(indicator);
-      return <Area key={indicator + 2}
-                   type='monotone'
-                   isAnimationActive={false}
-                   dataKey={indicator + SUM_KEY_SUFFIX+'Quarter'}
-                   stroke={getColor(index)}
-                   stroke={getColor(index)}
-                   fill={`url(#${indicator})`}
-                   fillOpacity={1}
-                   strokeWidth={2}/>;
     });
 
     const CustomizedLabel = React.createClass({
@@ -395,7 +354,6 @@ export default class IndicatorsGraph extends Component {
             {defs}
             {areas}
             {dashedAreas}
-            {quarterAreas}
           </AreaChart>
         </div>
         {/* area with fixed position and hidden content, except y-axis */}

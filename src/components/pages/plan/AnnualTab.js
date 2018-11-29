@@ -8,6 +8,7 @@ import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {monthNames, getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject, get, chunk, mapValues} from 'lodash';
+import {newFunnelMapping} from 'components/utils/utils';
 
 const CELL_WIDTH = 140;
 
@@ -197,20 +198,39 @@ export default class AnnualTab extends Component {
       quarterOffset, annualOffset,
       item => getEndOfMonthString(formatSpecificDate(item, false)));
 
-    const sumForecasteDataForChunk = (chunk) => {
-      return {start: {...chunk[0]}, end: last(chunk)};
+    const forecastingDataForChunk = (chunk) => {
+      const indicators = Object.keys(last(chunk));
+      const summedIndicators = {};
+      indicators.forEach(indicator => {
+        const summedValue = newFunnelMapping[indicator]
+          ? sumBy(chunk, month => month[indicator])
+          : last(chunk)[indicator];
+
+        summedIndicators[indicator] = {
+          graphValue: last(chunk)[indicator],
+          tooltipValue: summedValue
+        };
+      });
+
+      return summedIndicators;
     };
 
     const addQuarterDataForForecasting = (quarterData) => {
-      return {indicators: sumForecasteDataForChunk(quarterData), isQuarter: true};
+      return {indicators: forecastingDataForChunk(quarterData), isQuarter: true};
     };
 
     const addAnnualDataForForecasting = (annualData) => {
-      return {indicators: sumForecasteDataForChunk(annualData), isAnnual: true};
+      return {indicators: forecastingDataForChunk(annualData), isAnnual: true};
     };
 
     const parseRegularMonthForForecasting = (month) => {
-      return {indicators: month, isQuarter: false, isAnnual: false};
+      return {
+        indicators: mapValues(month,(value) => {
+          return {graphValue: value, tooltipValue: value};
+        }),
+        isQuarter: false,
+        isAnnual: false
+      };
     };
 
     const parseForecastingIndicators = (forecasting) => {
