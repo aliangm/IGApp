@@ -74,17 +74,18 @@ export default class AnnualTab extends Component {
       item => formatDateFunc(item, false));
   };
 
-  addEvery = (array, chunkData, itemInQuarterMap = (item) => {
+  addEvery = (array, chunkFormattingData, itemInQuarterMap = (item) => {
     return item;
   }) => {
-    const chunksAddition = union(...chunkData.map(({offset, itemsInChunk, sumChunkFormatter}, grouperIndex) => {
+    const chunksAddition = union(...chunkFormattingData.map(({offset, itemsInChunk, chunkAdditionFormatter}, grouperIndex) => {
       const chunkSplit = [array.slice(0, offset),
         ...chunk(array.slice(offset), itemsInChunk)];
 
       const mapChunk = (chunk) => chunk.map((chunk, index) => {
-        return {putAfter: (offset + index * itemsInChunk), value: sumChunkFormatter(chunk), orderIndex: grouperIndex};
+        return {putAfter: (offset + index * itemsInChunk), value: chunkAdditionFormatter(chunk), orderIndex: grouperIndex};
       });
 
+      // If does not need to add to last chunk
       if (array.length / itemsInChunk !== 0) {
         return mapChunk(chunkSplit.slice(0, chunkSplit.length - 1));
       }
