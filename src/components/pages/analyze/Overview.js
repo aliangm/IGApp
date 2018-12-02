@@ -79,7 +79,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay, actualIndicatorsDaily}}}} = this.props;
+    const {totalRevenue, attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay, actualIndicatorsDaily}}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
@@ -126,13 +126,7 @@ export default class Overview extends Component {
       }
     }
 
-    const getTotalParam = param => (channelsImpact && channelsImpact[param]
-      ? Object.keys(channelsImpact[param])
-        .reduce((channelsSum, item) => channelsSum + channelsImpact[param][item], 0)
-      : 0);
-
-    const totalPipeline = getTotalParam('pipeline');
-    const totalRevenue = getTotalParam('revenue');
+    const totalPipeline = this.props.getTotalParam('pipeline');
 
     const revenueByChannel = channelsImpact ? channelsImpact.revenue : {};
     delete revenueByChannel.direct;
@@ -298,6 +292,7 @@ export default class Overview extends Component {
     const costPerX = Object.keys(costPerFunnel).map(indicator =>
       <StatSquare title={`Cost per ${getIndicatorNickname(indicator, true)}`}
                   stat={costPerFunnel[indicator]}
+                  key={indicator}
       />
     );
 

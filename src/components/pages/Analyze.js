@@ -16,7 +16,7 @@ export default class Analyze extends Component {
   };
 
   render() {
-    const {attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataLength}}} = this.props;
+    const {attribution: {channelsImpact}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataLength}}} = this.props;
 
     const attributionModels = [
       {value: false, label: 'Full Journey'},
@@ -30,8 +30,18 @@ export default class Analyze extends Component {
       selectOptions.push({value: i, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'});
     }
 
+    const getTotalParam = param => (channelsImpact && channelsImpact[param]
+      ? Object.keys(channelsImpact[param])
+        .reduce((channelsSum, item) => channelsSum + channelsImpact[param][item], 0)
+      : 0);
+
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, {...this.props}));
+      (child) => React.cloneElement(child,
+        {
+          ...this.props,
+          getTotalParam: getTotalParam,
+          totalRevenue: getTotalParam('revenue')
+        }));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>
