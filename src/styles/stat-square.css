@@ -48,10 +48,13 @@
     padding: 12px 0;
     align-items: center;
     text-transform: capitalize;
+    height: 60px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 .number {
-    margin-top: 35px;
+    margin-top: 20px;
     font-size: 36px;
     font-weight: 600;
     color:  #354052;
