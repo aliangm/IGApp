@@ -110,6 +110,31 @@ export default class IndicatorsGraph extends Component {
     const pastIndicators = this.props.mainLineData.slice(0, numberOfPastDates);
     const dashedLineData = this.props.dashedLineData && this.props.dashedLineData.slice(numberOfPastDates);
 
+    const zeroedIndicators = {};
+    Object.keys(getIndicatorsWithProps()).forEach(key => {
+      zeroedIndicators[key] = 0;
+    });
+    forecastingData.push({...zeroedIndicators, name: ''});
+
+    pastIndicators.forEach(({indicators: month}, index) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].graphValue;
+        json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
+
+        if (dashedLineData) {
+          json[key + DASHED_KEY_SUFFIX] = json[key];
+          json[key + DASHED_KEY_SUFFIX + TOOLTIP_VALUE_SUFFIX] = json[key + TOOLTIP_VALUE_SUFFIX];
+        }
+      });
+
+      forecastingData.push({
+        ...json,
+        name: pastLabelDates[index].value,
+        tooltipDate: pastTooltipDates[index].value
+      });
+    });
+
     mainFutureData.forEach(({indicators: month}, monthIndex) => {
       const json = {};
 
@@ -133,31 +158,6 @@ export default class IndicatorsGraph extends Component {
       });
 
     });
-
-    pastIndicators.forEach(({indicators: month}, index) => {
-      const json = {};
-      Object.keys(month).forEach(key => {
-        json[key] = month[key].graphValue;
-        json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
-
-        if (dashedLineData) {
-          json[key + DASHED_KEY_SUFFIX] = json[key];
-          json[key + DASHED_KEY_SUFFIX + TOOLTIP_VALUE_SUFFIX] = json[key + TOOLTIP_VALUE_SUFFIX];
-        }
-      });
-
-      forecastingData.unshift({
-        ...json,
-        name: pastLabelDates[pastLabelDates.length - 1 - index].value,
-        tooltipDate: pastTooltipDates[pastLabelDates.length - 1 - index].value
-      });
-    });
-
-    const zeroedIndicators = {};
-    Object.keys(getIndicatorsWithProps()).forEach(key => {
-      zeroedIndicators[key] = 0;
-    });
-    forecastingData.unshift({...zeroedIndicators, name: ''});
 
     return forecastingData;
   };

@@ -234,8 +234,9 @@ export default class AnnualTab extends Component {
       };
     };
 
+    const pastIndicators = [...indicators].reverse();
     const parseForecastingIndicators = (forecasting) => {
-      return this.addExtraSumData([...indicators,
+      return this.addExtraSumData([...pastIndicators,
           ...forecasting.map(month => mapValues(month, indicator => indicator.committed))],
         addQuarterDataForForecasting, addAnnualDataForForecasting,
         quarterOffset, annualOffset,
