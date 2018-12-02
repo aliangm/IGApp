@@ -258,7 +258,7 @@ export default class BudgetsTable extends Component {
           isConstraint={monthData.isConstraint}
           isSoft={monthData.isSoft}
           constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-            key,
+            monthData.updateIndex,
             data.channel,
             isConstraint,
             isSoft)}
