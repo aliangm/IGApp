@@ -3,17 +3,15 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
-import {getIndicatorsWithNicknames} from 'components/utils/indicators';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
-import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
+import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Label from 'components/ControlsLabel';
-import {timeFrameToDate} from 'components/utils/objective';
-import {formatDate} from 'components/utils/date';
 import icons from 'styles/icons/plan.css';
 import ReactTooltip from 'react-tooltip';
 import {newFunnelMapping} from 'components/utils/utils';
+import StatSquare from 'components/common/StatSquare';
 
 export default class Content extends Component {
 
@@ -195,48 +193,20 @@ export default class Content extends Component {
       <ReactTooltip/>
       <div className={this.classes.wrap}>
         <div className={this.classes.cols} style={{width: '825px'}}>
-          <div className={this.classes.colLeft}>
-            <div className={dashboardStyle.locals.item}>
-              <div className={dashboardStyle.locals.text}>
-                Revenue
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                ${formatBudgetShortened(revenue)}
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.colCenter}>
-            <div className={dashboardStyle.locals.item}>
-              <div className={dashboardStyle.locals.text}>
-                Impact On {getIndicatorNickname(objective)}
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                {isFinite(impact) ? Math.round(impact * 100) : 0}%
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.colCenter}>
-            <div className={dashboardStyle.locals.item}
-                 data-tip='How many out of those who started to read the content piece, actually read/finished it.'>
-              <div className={dashboardStyle.locals.text}>
-                Avg. Read Ratio
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                {Math.round(avgReadRatio)}%
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.colRight}>
-            <div className={dashboardStyle.locals.item}
-                 data-tip='How many out of those who saw/read the content piece, moved to another page in the website afterward.'>
-              <div className={dashboardStyle.locals.text}>
-                Avg. Proceed ratio
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                {Math.round(avgProceedRatio)}%
-              </div>
-            </div>
-          </div>
+          <StatSquare title='Revenue'
+                      stat={`$${formatBudgetShortened(revenue)}`}
+          />
+          <StatSquare title={`Impact On ${getIndicatorNickname(objective)}`}
+                      stat={`${isFinite(impact) ? Math.round(impact * 100) : 0}%`}
+          />
+          <StatSquare title="Avg. Read Ratio"
+                      stat={`${Math.round(avgReadRatio)}%`}
+                      tooltipText='How many out of those who started to read the content piece, actually read/finished it.'
+          />
+          <StatSquare title="Avg. Proceed ratio"
+                      stat={`${Math.round(avgProceedRatio)}%`}
+                      tooltipText='How many out of those who saw/read the content piece, moved to another page in the website afterward.'
+          />
         </div>
         <div>
           <FeatureToggle featureName="attribution">

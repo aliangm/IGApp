@@ -2,6 +2,7 @@ import React, { PropTypes } from "react";
 import Component from "components/Component";
 import style from "styles/dashboard/dashboard-stat-with-context.css";
 import StatSquare from 'components/common/StatSquare';
+import ReactTooltip from 'react-tooltip';
 
 export default class DashboardStatWithContext extends Component {
 
@@ -12,22 +13,28 @@ export default class DashboardStatWithContext extends Component {
     statWithArrow: PropTypes.bool,
     contextText: PropTypes.string,
     isPositive: PropTypes.bool,
-    tooltipText: PropTypes.string,
+    contextStatTooltipText: PropTypes.string,
     showEmptyStat : PropTypes.bool,
-    emptyStatMessage: PropTypes.string
+    emptyStatMessage: PropTypes.string,
+    tooltipText: PropTypes.string
   };
 
   static defaultProps = {
-    tooltipText: '',
+    contextStatTooltipText: '',
     statWithArrow: false,
     showEmptyStat: false,
     contextText: ''
   };
 
+  constructor(props){
+    super(props);
+    this.uniqueID = Math.random().toString(36).substr(2, 9);
+  }
+
   style = style;
 
   render() {
-    const stat = <div style={{display: "inline-flex"}}>
+    const stat = <div style={{display: "inline-flex"}} data-tip={this.props.contextStatTooltipText} data-for={this.uniqueID}>
       {this.props.contextStat ? <div className={this.classes.contextStat + ' ' + this.classes.contextText} data-negative={ this.props.isPositive ? null : 'negative' }>
         {this.props.statWithArrow ? <div className={this.classes.arrow} data-arrow-type={ !this.props.isPositive ? 'decline' : null } /> : ''}
         {this.props.contextStat}
@@ -37,6 +44,9 @@ export default class DashboardStatWithContext extends Component {
       { ' '+ this.props.contextText }
     </div>;
 
-    return <StatSquare {...this.props} contextStat={stat}/>
+    return <div>
+      <ReactTooltip place='bottom' effect='solid' id={this.uniqueID}/>
+      <StatSquare {...this.props} contextStat={stat}/>
+    </div>
   }
 }

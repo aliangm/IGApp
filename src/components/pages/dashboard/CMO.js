@@ -172,7 +172,7 @@ export default class CMO extends Component {
         value: funnel[i + 1].value / funnel[i].value
       });
     }
-    const minRatio = Math.min(... funnelRatios.map(item => item.value));
+    const minRatio = Math.min(...funnelRatios.map(item => item.value));
     const minRatioTitle = funnelRatios
       .filter(item => item.value == minRatio)
       .map(item => item.name);
@@ -265,11 +265,20 @@ export default class CMO extends Component {
     const channelsWithProps = getChannelsWithProps();
     const topChannels = Object.keys(channelsWithProps).map(channel => {
       const score = Math.round(
-        ((channelsImpact && channelsImpact.MCL && channelsImpact.MCL[channel]) ? channelsImpact.MCL[channel] * weights.newMCL : 0)
-        + ((channelsImpact && channelsImpact.MQL && channelsImpact.MQL[channel]) ? channelsImpact.MQL[channel] * weights.newMQL : 0)
-        + ((channelsImpact && channelsImpact.SQL && channelsImpact.SQL[channel]) ? channelsImpact.SQL[channel] * weights.newSQL : 0)
-        + ((channelsImpact && channelsImpact.opps && channelsImpact.opps[channel]) ? channelsImpact.opps[channel] * weights.newOpps : 0)
-        + ((channelsImpact && channelsImpact.users && channelsImpact.users[channel]) ? channelsImpact.users[channel] * weights.newUsers : 0)
+        ((channelsImpact && channelsImpact.MCL && channelsImpact.MCL[channel]) ? channelsImpact.MCL[channel] *
+          weights.newMCL : 0)
+        +
+        ((channelsImpact && channelsImpact.MQL && channelsImpact.MQL[channel]) ? channelsImpact.MQL[channel] *
+          weights.newMQL : 0)
+        +
+        ((channelsImpact && channelsImpact.SQL && channelsImpact.SQL[channel]) ? channelsImpact.SQL[channel] *
+          weights.newSQL : 0)
+        +
+        ((channelsImpact && channelsImpact.opps && channelsImpact.opps[channel]) ? channelsImpact.opps[channel] *
+          weights.newOpps : 0)
+        +
+        ((channelsImpact && channelsImpact.users && channelsImpact.users[channel]) ? channelsImpact.users[channel] *
+          weights.newUsers : 0)
       );
       return {title: channelsWithProps[channel].nickname, score: score, icon: 'plan:' + channel};
     });
@@ -731,7 +740,7 @@ export default class CMO extends Component {
           contextStat={isOnTrack ? 'On-Track' : 'Off-Track'}
           contextText=''
           isPositive={isOnTrack}
-          tooltipText={isOnTrack ? 'Actual spent on-track' : 'Actual spent off-track. Forecasted: ' +
+          contextStatTooltipText={isOnTrack ? 'Actual spent on-track' : 'Actual spent off-track. Forecasted: ' +
             '$' +
             formatBudgetShortened(monthlyExtapolatedTotalSpending)}
           statWithArrow={false}
