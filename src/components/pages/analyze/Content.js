@@ -195,7 +195,7 @@ export default class Content extends Component {
       <ReactTooltip/>
       <div className={this.classes.wrap}>
         <div className={this.classes.cols} style={{width: '825px'}}>
-          <StatSquare title='Revenue'
+          <StatSquare title='Content-Influenced Revenue'
                       stat={`$${formatBudgetShortened(revenue)}`}
                       contextStat={isFinite(outOfTotalRevenue) ? `${outOfTotalRevenue}% out of $${formatBudgetShortened(
                         totalRevenue)}` : null}
