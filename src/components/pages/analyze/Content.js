@@ -160,6 +160,8 @@ export default class Content extends Component {
     const avgReadRatio = pagesData.reduce((sum, item) => sum + item.readRatio, 0) / attributionPages.length;
     const avgProceedRatio = pagesData.reduce((sum, item) => sum + item.proceedRatio, 0) / attributionPages.length;
 
+    const objectiveNickName = getIndicatorNickname(objective);
+
     const rows = pagesData
       .sort((item1, item2) =>
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
@@ -206,9 +208,9 @@ export default class Content extends Component {
             </div>
           </div>
           <div className={this.classes.colCenter}>
-            <div className={dashboardStyle.locals.item}>
+            <div className={dashboardStyle.locals.item} data-tip={`# of ${objectiveNickName} that have been influenced by content out of the total ${objectiveNickName}.`}>
               <div className={dashboardStyle.locals.text}>
-                Impact On {getIndicatorNickname(objective)}
+                Impact On {objectiveNickName}
               </div>
               <div className={dashboardStyle.locals.number}>
                 {isFinite(impact) ? Math.round(impact * 100) : 0}%
