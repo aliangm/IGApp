@@ -24,7 +24,7 @@ export default class Setup extends Component {
   render() {
     const {attribution, companyWebsite} = this.props;
     const siteStructure = attribution.siteStructure || {};
-    const {homepage, pricing, blog, caseStudies, contact, aboutUs, presentations, eBooks, whitepapers, videos} = siteStructure;
+    const {homepage, pricing, blog, caseStudies, contact, aboutUs, presentations, eBooks, whitepapers, videos, landingPages} = siteStructure;
     return <div style={{ padding: '20px' }}>
       <div className={ this.classes.cell }>
         <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Homepage</Label>
@@ -103,6 +103,14 @@ export default class Setup extends Component {
         <Textfield
           value={videos || (companyWebsite + '/videos')}
           onChange={ this.handleChange.bind(this, 'videos') }
+          style={{ width: '300px'}}
+        />
+      </div>
+      <div className={ this.classes.cell }>
+        <Label style={{width: '100px', marginTop: '12px', textTransform: 'capitalize'}}>Landing Pages</Label>
+        <Textfield
+          value={landingPages || 'lp.domain.com'}
+          onChange={ this.handleChange.bind(this, 'landingPages') }
           style={{ width: '300px'}}
         />
       </div>
