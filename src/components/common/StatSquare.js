@@ -16,9 +16,7 @@ export default class StatSquare extends Component {
 
   static defaultProps = {
     tooltipText: '',
-    statWithArrow: false,
     showEmptyStat: false,
-    contextText: ''
   };
 
   constructor(props) {
