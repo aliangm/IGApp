@@ -39,7 +39,7 @@ export default class Content extends Component {
   }
 
   render() {
-    const {attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
+    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
     const attributionPages = attribution.pages || [];
 
     const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
@@ -189,12 +189,16 @@ export default class Content extends Component {
           : null;
       });
 
+    const outOfTotalRevenue = Math.round((revenue / totalRevenue) * 100);
+
     return <div>
       <ReactTooltip/>
       <div className={this.classes.wrap}>
         <div className={this.classes.cols} style={{width: '825px'}}>
           <StatSquare title='Revenue'
                       stat={`$${formatBudgetShortened(revenue)}`}
+                      contextStat={isFinite(outOfTotalRevenue) ? `${outOfTotalRevenue}% out of $${formatBudgetShortened(
+                        totalRevenue)}` : null}
           />
           <StatSquare title={`Impact On ${getIndicatorNickname(objective)}`}
                       stat={`${isFinite(impact) ? Math.round(impact * 100) : 0}%`}
