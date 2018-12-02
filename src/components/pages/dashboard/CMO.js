@@ -790,7 +790,6 @@ export default class CMO extends Component {
           stat={`${Math.round(minRatio * 10000) / 100}%`}
           emptyStatMessage={'Oh… It seems that the relevant metrics (funnel metrics) are missing. Please update your data.'}
           showEmptyStat={!(minRatio && isFinite(minRatio))}
-          statWithArrow={false}
         />
       </div>
       <div className={this.classes.cols} style={{width: '825px'}}>

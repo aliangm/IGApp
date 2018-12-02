@@ -32,6 +32,7 @@ import mapValues from 'lodash/mapValues';
 import SmallTable from 'components/controls/SmallTable';
 import indicatorsGraphStyle from 'styles/plan/indicators-graph.css';
 import isEmpty from 'lodash/isEmpty';
+import StatSquare from 'components/common/StatSquare';
 
 export default class Overview extends Component {
 
@@ -345,56 +346,26 @@ export default class Overview extends Component {
       <div className={this.classes.wrap}>
         <div>
           <div className={this.classes.cols} style={{width: '825px'}}>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Total Cost
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  ${formatBudgetShortened(totalCost)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Total Pipeline Revenue
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  ${formatBudgetShortened(totalPipeline)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Pipeline ROI
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  {formatNumberWithDecimalPoint(totalPipeline / totalCost)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Total Revenue
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  ${formatBudgetShortened(totalRevenue)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Revenue ROI
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  {formatNumberWithDecimalPoint(totalRevenue / totalCost)}X
-                </div>
-              </div>
-            </div>
+            <StatSquare
+              title="Total Cost"
+              stat={`$${formatBudgetShortened(totalCost)}`}
+            />
+            <StatSquare
+              title="Total Pipeline Revenue"
+              stat={`$${formatBudgetShortened(totalPipeline)}`}
+            />
+            <StatSquare
+              title="Pipeline ROI"
+              stat={formatNumberWithDecimalPoint(totalPipeline / totalCost)}
+            />
+            <StatSquare
+              title="Total Revenue"
+              stat={`$${formatBudgetShortened(totalRevenue)}`}
+            />
+            <StatSquare
+              title="Revenue ROI"
+              stat={`${formatNumberWithDecimalPoint(totalRevenue / totalCost)}X`}
+            />
           </div>
           <div className={this.classes.cols} style={{width: '825px'}}>
             {costPerX}
