@@ -87,7 +87,7 @@ export default class Content extends Component {
         </div>
       </div>,
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-        Web Visits
+        Views
       </div>,
       <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}>
         <Label
