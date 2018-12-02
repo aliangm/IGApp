@@ -296,16 +296,9 @@ export default class Overview extends Component {
     });
 
     const costPerX = Object.keys(costPerFunnel).map(indicator =>
-      <div className={this.classes.colCenter} key={indicator}>
-        <div className={dashboardStyle.locals.item}>
-          <div className={dashboardStyle.locals.text}>
-            Cost per {getIndicatorNickname(indicator, true)}
-          </div>
-          <div className={dashboardStyle.locals.number}>
-            {costPerFunnel[indicator]}
-          </div>
-        </div>
-      </div>
+      <StatSquare title={`Cost per ${getIndicatorNickname(indicator, true)}`}
+                  stat={costPerFunnel[indicator]}
+      />
     );
 
     const getRevenueByTableItem = (title, revenueByRows, key) =>
