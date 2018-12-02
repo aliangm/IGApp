@@ -7,7 +7,7 @@ import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isObject, get, chunk, mapValues} from 'lodash';
+import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isPlainObject, get, chunk, mapValues} from 'lodash';
 import {newFunnelMapping} from 'components/utils/utils';
 
 const CELL_WIDTH = 140;
@@ -71,7 +71,7 @@ export default class AnnualTab extends Component {
       annualDate,
       quarterOffset,
       annualOffset,
-      item => formatDateFunc(item, false));
+      formatDateFunc);
   };
 
   addEvery = (array, chunkFormattingData, itemInQuarterMap = (item) => {
@@ -98,7 +98,7 @@ export default class AnnualTab extends Component {
     const groupedAdditions = groupBy(orderedChunksAddition, 'putAfter');
     const parsedArray = array.map((item, index) => {
       const valueOfItem = itemInQuarterMap(item);
-      return isObject(valueOfItem)
+      return isPlainObject(valueOfItem)
         ? {...valueOfItem, realIndex: index}
         : {value: valueOfItem, realIndex: index};
     });
