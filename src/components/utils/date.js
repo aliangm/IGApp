@@ -69,11 +69,12 @@ export function getEndOfMonthDate(dateStr) {
   return new Date(parseInt(`20${year}`), month + 1, 0);
 }
 
-export function getEndOfMonthString(dateStr) {
+export function getEndOfMonthString(date) {
+  const dateStr = formatSpecificDate(date, false)
   const [monthStr, year] = dateStr.split(' ');
   const month = monthNames.indexOf(monthStr);
-  const date = new Date(year, month + 1, 0);
-  return `${date.getDate()} ${monthStr} ${year}`;
+  const endOfMonthDate = new Date(year, month + 1, 0);
+  return `${endOfMonthDate.getDate()} ${monthStr} ${year}`;
 }
 
 export function getNumberOfDaysBetweenDates(toDate, fromDate = new Date()) {

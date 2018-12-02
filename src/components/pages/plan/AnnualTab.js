@@ -143,7 +143,7 @@ export default class AnnualTab extends Component {
       .forEach(objective => {
         const target = objective.target;
         const date = objective.dueDate;
-        const endOfMonth = getEndOfMonthString(formatSpecificDate(date, false));
+        const endOfMonth = getEndOfMonthString(date);
         parsedObjectives[objective.indicator] = {x: endOfMonth, y: target};
       });
 
@@ -197,7 +197,7 @@ export default class AnnualTab extends Component {
     const numberOfPastDatesWithSumAddition = dataWithSumAddition && dataWithSumAddition.filter((item) => item.isHistory).length;
     const datesForGraphWithPeriodMonths = dates && this.addExtraSumDataAndFormatDates(dates,
       quarterOffset, annualOffset,
-      item => getEndOfMonthString(formatSpecificDate(item, false)));
+      item => getEndOfMonthString(item));
 
     const forecastingDataForChunk = (chunk) => {
       const indicators = Object.keys(last(chunk));
