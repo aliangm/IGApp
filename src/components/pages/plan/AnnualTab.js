@@ -55,7 +55,7 @@ export default class AnnualTab extends Component {
   addExtraSumDataAndFormatDates = (dates, quarterOffset, annualOffset, formatDateFunc) => {
     const quarterDate = quarterData => {
       const date = quarterData[0];
-      const quarterNumber = Math.round((date.getMonth() / 3)) + 1;
+      const quarterNumber = Math.floor((date.getMonth() / 3)) + 1;
       const yearStr = date.getFullYear().toString().substr(2, 2);
       return {value: `Q${quarterNumber} ${yearStr}`, isQuarter: true};
     };
