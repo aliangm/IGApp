@@ -265,7 +265,8 @@ export default class Brief extends Component {
             {value: 'SQL', label: 'SQLs'},
             {value: 'opps', label: 'Opps'},
             {value: 'users', label: 'Paying Accounts'},
-            {value: 'MRR', label: 'MRR'}
+            {value: 'MRR', label: 'MRR'},
+            {value: 'ARR', label: 'ARR'}
           ]
         }
       }

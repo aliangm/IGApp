@@ -40,6 +40,7 @@
 @mixin icon-nodpi indicator:blogVisits, /assets/indicator-icons/blog_visits_indicator;
 @mixin icon-nodpi indicator:blogSubscribers, /assets/indicator-icons/blog_subscribers_indicator;
 @mixin icon-nodpi indicator:MRR, /assets/indicator-icons/MRR_indicator;
+@mixin icon-nodpi indicator:ARR, /assets/indicator-icons/ARR_indicator;
 @mixin icon-nodpi indicator:churnRate, /assets/indicator-icons/churnRate_indicator;
 @mixin icon-nodpi indicator:ARPA, /assets/indicator-icons/ARPA_indicator;
 @mixin icon-nodpi indicator:leadToMQLVelocity, /assets/indicator-icons/LEAD2MQL-Velocity;

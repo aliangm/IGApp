@@ -38,6 +38,7 @@ const PLATFORM_INDICATORS_MAPPING = {
     'users',
     'CAC',
     'MRR',
+    'ARR',
     'ARPA',
     'newMCL',
     'newMQL',
@@ -49,8 +50,8 @@ const PLATFORM_INDICATORS_MAPPING = {
   'Facebook': ['facebookEngagement', 'facebookLikes'],
   'Twitter': ['twitterFollowers', 'twitterEngagement'],
   'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
-  'Stripe': ['MRR', 'LTV', 'churnRate'],
-  'Google Sheets': ['MRR', 'LTV', 'CAC', 'churnRate'],
+  'Stripe': ['MRR','ARR', 'LTV', 'churnRate'],
+  'Google Sheets': ['MRR','ARR', 'LTV', 'CAC', 'churnRate'],
   'Moz': ['domainAuthority']
 };
 

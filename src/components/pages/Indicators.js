@@ -270,6 +270,10 @@ export default class Indicators extends Component {
         showAutomaticPopup: this.showFinancePopup.bind(this),
         automaticIndicators: this.isFinanceAuto('MRR') || (this.props.salesforceapi && this.props.salesforceapi.isMRRAuto)
       },
+      ARR: {
+        showAutomaticPopup: this.showFinancePopup.bind(this),
+        automaticIndicators: this.isFinanceAuto('MRR') || (this.props.salesforceapi && this.props.salesforceapi.isMRRAuto)
+      },
       churnRate: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
         automaticIndicators: this.isFinanceAuto('churnRate')
