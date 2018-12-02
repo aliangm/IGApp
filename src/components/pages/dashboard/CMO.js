@@ -28,6 +28,7 @@ import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
 import ReactTooltip from 'react-tooltip';
+import StatSquare from 'components/common/StatSquare';
 
 export default class CMO extends Component {
 
@@ -784,27 +785,13 @@ export default class CMO extends Component {
             </div>
           </div>
         </div>
-        <div className={this.classes.colRight} style={{paddingLeft: 0}}>
-          <div className={dashboardStyle.locals.item} style={{marginTop: '30px'}}>
-            <div className={dashboardStyle.locals.text}>
-              {(minRatioTitle.length > 0 ? minRatioTitle : 'Funnel') + ' Ratio'}
-            </div>
-            {minRatio && isFinite(minRatio) ?
-              <div className={dashboardStyle.locals.number}>
-                {Math.round(minRatio * 10000) / 100}%
-              </div>
-              :
-              <div>
-                <div className={dashboardStyle.locals.center}>
-                  <div className={dashboardStyle.locals.sadIcon}/>
-                </div>
-                <div className={dashboardStyle.locals.noMetrics}>
-                  Oh… It seems that the relevant metrics (funnel metrics) are missing. Please update your data.
-                </div>
-              </div>
-            }
-          </div>
-        </div>
+        <StatSquare
+          title={(minRatioTitle.length > 0 ? minRatioTitle : 'Funnel') + ' Ratio'}
+          stat={`${Math.round(minRatio * 10000) / 100}%`}
+          emptyStatMessage={'Oh… It seems that the relevant metrics (funnel metrics) are missing. Please update your data.'}
+          showEmptyStat={!(minRatio && isFinite(minRatio))}
+          statWithArrow={false}
+        />
       </div>
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
