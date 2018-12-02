@@ -49,7 +49,7 @@ export default class AnnualTab extends Component {
       return {};
     }, quarterOffset, annualOffset);
 
-    this.setState({scrollPosition: (monthsWithExtraData.length - 1) * CELL_WIDTH});
+    this.setState({scrollPosition: (monthsWithExtraData.length) * CELL_WIDTH});
   }
 
   addExtraSumDataAndFormatDates = (dates, quarterOffset, annualOffset, formatDateFunc) => {
@@ -77,7 +77,8 @@ export default class AnnualTab extends Component {
   addEvery = (array, chunkFormattingData, itemInQuarterMap = (item) => {
     return item;
   }) => {
-    const chunksAddition = union(...chunkFormattingData.map(({offset, itemsInChunk, chunkAdditionFormatter}, grouperIndex) => {
+    const chunkFormattingDataWithOffset = chunkFormattingData.filter(({offset}) => !isNil(offset));
+    const chunksAddition = union(...chunkFormattingDataWithOffset.map(({offset, itemsInChunk, chunkAdditionFormatter}, grouperIndex) => {
       const chunkSplit = [array.slice(0, offset),
         ...chunk(array.slice(offset), itemsInChunk)];
 
