@@ -85,7 +85,7 @@ export default class Content extends Component {
         </div>
       </div>,
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-        Web Visits
+        Views
       </div>,
       <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}>
         <Label
@@ -158,6 +158,8 @@ export default class Content extends Component {
     const avgReadRatio = pagesData.reduce((sum, item) => sum + item.readRatio, 0) / attributionPages.length;
     const avgProceedRatio = pagesData.reduce((sum, item) => sum + item.proceedRatio, 0) / attributionPages.length;
 
+    const objectiveNickName = getIndicatorNickname(objective);
+
     const rows = pagesData
       .sort((item1, item2) =>
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
@@ -202,6 +204,7 @@ export default class Content extends Component {
           />
           <StatSquare title={`Impact On ${getIndicatorNickname(objective)}`}
                       stat={`${isFinite(impact) ? Math.round(impact * 100) : 0}%`}
+                      tooltipText={`# of ${objectiveNickName} that have been influenced by content out of the total ${objectiveNickName}.`}
           />
           <StatSquare title="Avg. Read Ratio"
                       stat={`${Math.round(avgReadRatio)}%`}
