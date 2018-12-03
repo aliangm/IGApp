@@ -43,11 +43,7 @@ export default class AnnualTab extends Component {
     const pastMonths = this.props.calculatedData.historyData.rawMonths;
     const quarterOffset = getQuarterOffset(pastMonths);
     const annualOffset = getAnnualOffset(pastMonths);
-    const monthsWithExtraData = this.addQuartersAndYearSumData(pastMonths, () => {
-      return {};
-    }, () => {
-      return {};
-    }, quarterOffset, annualOffset);
+    const monthsWithExtraData = this.addQuartersAndYearSumData(pastMonths, null, null, quarterOffset, annualOffset);
 
     this.setState({scrollPosition: (monthsWithExtraData.length) * CELL_WIDTH});
   }
@@ -78,12 +74,17 @@ export default class AnnualTab extends Component {
     return item;
   }) => {
     const chunkFormattingDataWithOffset = chunkFormattingData.filter(({offset}) => !isNil(offset));
-    const chunksAddition = union(...chunkFormattingDataWithOffset.map(({offset, itemsInChunk, chunkAdditionFormatter}, grouperIndex) => {
+    const chunksAddition = union(...chunkFormattingDataWithOffset.map(({offset, itemsInChunk, chunkAdditionFormatter},
+                                                                       grouperIndex) => {
       const chunkSplit = [array.slice(0, offset),
         ...chunk(array.slice(offset), itemsInChunk)];
 
       const mapChunk = (chunk) => chunk.map((chunk, index) => {
-        return {putAfter: (offset + index * itemsInChunk), value: chunkAdditionFormatter(chunk), orderIndex: grouperIndex};
+        return {
+          putAfter: (offset + index * itemsInChunk),
+          value: chunkAdditionFormatter && chunkAdditionFormatter(chunk),
+          orderIndex: grouperIndex
+        };
       });
 
       // If does not need to add to last chunk
@@ -107,7 +108,7 @@ export default class AnnualTab extends Component {
     let arrayWithAddition = parsedArray;
     Object.keys(groupedAdditions).forEach(putAfter => {
       const additions = groupedAdditions[putAfter];
-      const putAfterIndex = arrayWithAddition.findIndex(item => item.realIndex == putAfter);
+      const putAfterIndex = arrayWithAddition.findIndex(item => get(item, 'realIndex', null) == putAfter);
       arrayWithAddition =
         [...arrayWithAddition.slice(0, putAfterIndex),
           ...additions.map(item => item.value),
@@ -117,9 +118,14 @@ export default class AnnualTab extends Component {
     return arrayWithAddition;
   };
 
-  addQuartersAndYearSumData = (array, quarterSumFunc, annualSumFunc, quarterOffset, annualOffset, itemParseFunc = (item) => {
-    return item;
-  }) => {
+  addQuartersAndYearSumData = (array,
+                               quarterSumFunc,
+                               annualSumFunc,
+                               quarterOffset,
+                               annualOffset,
+                               itemParseFunc = (item) => {
+                                 return item;
+                               }) => {
 
     if (isEmpty(array)) {
       return [];
@@ -192,10 +198,12 @@ export default class AnnualTab extends Component {
       return {...sumBudgetsData(chunk), isAnnual: true};
     };
 
-    const dataWithSumAddition = budgetsData && this.addQuartersAndYearSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
-      quarterOffset, annualOffset);
+    const dataWithSumAddition = budgetsData &&
+      this.addQuartersAndYearSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
+        quarterOffset, annualOffset);
 
-    const numberOfPastDatesWithSumAddition = dataWithSumAddition && dataWithSumAddition.filter((item) => item.isHistory).length;
+    const numberOfPastDatesWithSumAddition = dataWithSumAddition &&
+      dataWithSumAddition.filter((item) => item.isHistory).length;
     const datesForGraphWithPeriodMonths = dates && this.addExtraSumDataAndFormatDates(dates,
       quarterOffset, annualOffset,
       item => getEndOfMonthString(item));
@@ -227,7 +235,7 @@ export default class AnnualTab extends Component {
 
     const parseRegularMonthForForecasting = (month) => {
       return {
-        indicators: mapValues(month,(value) => {
+        indicators: mapValues(month, (value) => {
           return {graphValue: value, tooltipValue: value};
         }),
         isQuarter: false,
