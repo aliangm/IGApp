@@ -198,15 +198,15 @@ export default class PlannedVsActual extends Component {
       'Channel',
       'Planned Budget',
       'Actual Cost',
-      'Difference',
+      'Plan vs Actual',
       'Pacing for',
       <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
       `Actual ${firstFunnelObjectiveNickname}`,
-      'Difference',
+      'Plan vs Actual',
       'Pacing for',
       <div data-tip="what's your expectation?">Planned {userNickname}</div>,
       `Actual ${userNickname}`,
-      'Difference',
+      'Plan vs Actual',
       'Pacing for'
     ];
 
