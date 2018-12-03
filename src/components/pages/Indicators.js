@@ -104,6 +104,10 @@ export default class Indicators extends Component {
     return false;
   }
 
+  isMrrAuto = () => {
+    return this.isFinanceAuto('MRR') || (this.props.salesforceapi && this.props.salesforceapi.isMRRAuto);
+  };
+
   isBlogAuto() {
     return this.props.googleapi && this.props.googleapi.blogProfileId;
   }
@@ -268,11 +272,11 @@ export default class Indicators extends Component {
       },
       MRR: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
-        automaticIndicators: this.isFinanceAuto('MRR') || (this.props.salesforceapi && this.props.salesforceapi.isMRRAuto)
+        automaticIndicators: this.isMrrAuto()
       },
       ARR: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
-        automaticIndicators: this.isFinanceAuto('MRR') || (this.props.salesforceapi && this.props.salesforceapi.isMRRAuto)
+        automaticIndicators: this.isMrrAuto()
       },
       churnRate: {
         showAutomaticPopup: this.showFinancePopup.bind(this),
