@@ -155,7 +155,7 @@ export default class AnnualTab extends Component {
       });
 
     const numberOfPastDates = budgetsData && budgetsData.filter((month) => month.isHistory).length;
-    const dates = !isNil(numberOfPastDates) && budgetsData && getRawDatesSpecific(this.props.planDate,
+    const dates = budgetsData && getRawDatesSpecific(this.props.planDate,
       numberOfPastDates,
       budgetsData.length - numberOfPastDates);
     const quarterOffset = getQuarterOffset(dates);
