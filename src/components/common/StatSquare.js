@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip';
 export default class StatSquare extends Component {
 
   static propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     stat: PropTypes.string,
     contextStat: PropTypes.node,
     tooltipText: PropTypes.string,
