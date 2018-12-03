@@ -197,16 +197,16 @@ export default class PlannedVsActual extends Component {
     const headRow = [
       'Channel',
       'Planned Budget',
-      'Actual Cost to date',
-      'Difference',
+      'Actual Cost',
+      'Plan vs Actual',
       'Pacing for',
       <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
-      `Actual ${firstFunnelObjectiveNickname} to date`,
-      'Difference',
+      `Actual ${firstFunnelObjectiveNickname}`,
+      'Plan vs Actual',
       'Pacing for',
       <div data-tip="what's your expectation?">Planned {userNickname}</div>,
-      `Actual ${userNickname} to date`,
-      'Difference',
+      `Actual ${userNickname}`,
+      'Plan vs Actual',
       'Pacing for'
     ];
 
