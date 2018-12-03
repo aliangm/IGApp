@@ -43,7 +43,7 @@ export default class AnnualTab extends Component {
     const pastMonths = this.props.calculatedData.historyData.rawMonths;
     const quarterOffset = getQuarterOffset(pastMonths);
     const annualOffset = getAnnualOffset(pastMonths);
-    const monthsWithExtraData = this.addExtraSumData(pastMonths, () => {
+    const monthsWithExtraData = this.addQuartersAndYearSumData(pastMonths, () => {
       return {};
     }, () => {
       return {};
@@ -66,7 +66,7 @@ export default class AnnualTab extends Component {
       return {value: `FY ${yearStr}`, isAnnual: true};
     };
 
-    return this.addExtraSumData(dates,
+    return this.addQuartersAndYearSumData(dates,
       quarterDate,
       annualDate,
       quarterOffset,
@@ -117,7 +117,7 @@ export default class AnnualTab extends Component {
     return arrayWithAddition;
   };
 
-  addExtraSumData = (array, quarterSumFunc, annualSumFunc, quarterOffset, annualOffset, itemParseFunc = (item) => {
+  addQuartersAndYearSumData = (array, quarterSumFunc, annualSumFunc, quarterOffset, annualOffset, itemParseFunc = (item) => {
     return item;
   }) => {
 
@@ -192,7 +192,7 @@ export default class AnnualTab extends Component {
       return {...sumBudgetsData(chunk), isAnnual: true};
     };
 
-    const dataWithSumAddition = budgetsData && this.addExtraSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
+    const dataWithSumAddition = budgetsData && this.addQuartersAndYearSumData(budgetsData, addBudgetQuarterData, addAnnualBudgetData,
       quarterOffset, annualOffset);
 
     const numberOfPastDatesWithSumAddition = dataWithSumAddition && dataWithSumAddition.filter((item) => item.isHistory).length;
@@ -237,7 +237,7 @@ export default class AnnualTab extends Component {
 
     const pastIndicators = indicators;
     const parseForecastingIndicators = (forecasting) => {
-      return this.addExtraSumData([...pastIndicators,
+      return this.addQuartersAndYearSumData([...pastIndicators,
           ...forecasting.map(month => mapValues(month, indicator => indicator.committed))],
         addQuarterDataForForecasting, addAnnualDataForForecasting,
         quarterOffset, annualOffset,
