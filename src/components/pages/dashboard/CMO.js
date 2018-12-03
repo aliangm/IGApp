@@ -19,12 +19,12 @@ import {getDates} from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
+import MonthsPopup from 'components/pages/dashboard/MonthsPopup';
 import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
 import ReactTooltip from 'react-tooltip';
-import MonthsPopup from './MonthsPopup';
 
 export default class CMO extends Component {
 

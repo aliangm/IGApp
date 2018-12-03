@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route} from 'react-router';
 import history from 'history';
-import Navigate from 'components/pages/dashboard/Navigate';
+import Navigate from 'components/pages/dashboard/Navigate/Navigate';
 import CMO from 'components/pages/dashboard/CMO';
 import Dashboard from './components/pages/Dashboard';
 import Product from './components/pages/Product';

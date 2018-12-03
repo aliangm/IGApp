@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, {Component, PropTypes} from 'react'
 import { NUMBER_OF_FUTURE_MONTHS } from 'components/utils/date'
 import PlanPopup, { TextContent as PopupTextContent } from 'components/pages/plan/Popup'
 import Select from 'components/controls/Select'
@@ -13,6 +13,17 @@ const getOptions = (maxMonths) => {
 }
 
 export default class MonthsPopup extends Component {
+	static propTypes = {
+		// amount of months to display
+		months: PropTypes.number.isRequired,
+		// max possible months to display
+		maxMonths: PropTypes.number.isRequired,
+		// change handler
+		onChange: PropTypes.func.isRequired,
+		// acts like 'ref' but returns root node of component
+		getRef: PropTypes.func.isRequired,
+	}
+
 	handleChange = (e) => {
 		this.props.onChange(e.value)
 		this.popup.close()

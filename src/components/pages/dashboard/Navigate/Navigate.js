@@ -1,8 +1,8 @@
 import React from 'react'
 import Component from 'components/Component'
+import PathChart from 'components/pages/dashboard/Navigate/PathChart'
 import style from 'styles/dashboard/navigate.css'
 import dashboardStyle from 'styles/dashboard/dashboard.css'
-import PathChart from './PathChart'
 import { getChannelsWithProps } from 'components/utils/channels'
 
 const formatForecastedIndicators = (forecastedIndicators) => forecastedIndicators.map((month) =>
