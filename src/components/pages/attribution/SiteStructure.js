@@ -27,6 +27,20 @@ export default class Setup extends Component {
     const {homepage, pricing, blog, caseStudies, contact, aboutUs, presentations, eBooks, whitepapers, videos, landingPages} = siteStructure;
     const labelStyle = {width: '110px', marginTop: '12px', textTransform: 'capitalize'};
 
+    let landingPageURL;
+    if (companyWebsite) {
+      const websiteWithOutWWW = companyWebsite.replace('www.', '');
+      const indexOfProtocol = websiteWithOutWWW.indexOf('://');
+      if(indexOfProtocol > -1) {
+        const endIndexOfProtocol = indexOfProtocol + 3;
+        landingPageURL = websiteWithOutWWW.slice(0, endIndexOfProtocol) + 'lp.' + websiteWithOutWWW.slice(endIndexOfProtocol);
+      }
+      else {
+        landingPageURL = "lp." + websiteWithOutWWW;
+      }
+
+    }
+
     return <div style={{ padding: '20px' }}>
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Homepage</Label>
@@ -111,7 +125,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Landing Pages</Label>
         <Textfield
-          value={landingPages || 'lp.domain.com'}
+          value={landingPages || landingPageURL}
           onChange={ this.handleChange.bind(this, 'landingPages') }
           style={{ width: '300px'}}
         />
