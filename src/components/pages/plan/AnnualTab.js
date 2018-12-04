@@ -70,7 +70,7 @@ export default class AnnualTab extends Component {
       formatDateFunc);
   };
 
-  addEvery = (array, chunkFormattingData, itemInQuarterMap = (item) => {
+  formatAndAddExtraData = (array, chunkFormattingData, itemInQuarterMap = (item) => {
     return item;
   }) => {
     const chunkFormattingDataWithOffset = chunkFormattingData.filter(({offset}) => !isNil(offset));
@@ -129,7 +129,7 @@ export default class AnnualTab extends Component {
       return [];
     }
     else {
-      return this.addEvery(array,
+      return this.formatAndAddExtraData(array,
         [
           {offset: quarterOffset, itemsInChunk: 3, chunkAdditionFormatter: quarterSumFunc},
           {offset: annualOffset, itemsInChunk: 12, chunkAdditionFormatter: annualSumFunc}
