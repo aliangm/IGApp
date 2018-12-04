@@ -45,8 +45,9 @@ export function calculatedDataExtender(data) {
 
   const nonZeroFunnelIndicator = findFirstNonZeroIndicator(prioritizedFunnelObjectives) ||
     prioritizedFunnelObjectives[0];
-  const funnelObjectives = collapsedObjectives.filter(
-    objective => funnelPossibleObjectives.includes(objective.indicator));
+  const funnelObjectives = collapsedObjectives
+    .filter(objective => funnelPossibleObjectives.includes(objective.indicator))
+    .map(objective => objective.indicator);
   const nonZeroFunnelObjective = findFirstNonZeroIndicator(funnelObjectives);
 
   const isTrial = new Date() < new Date(data.userAccount.trialEnd);
