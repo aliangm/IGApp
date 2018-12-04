@@ -193,7 +193,7 @@ export default class PlannedVsActual extends Component {
     });
 
     const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
-    const userNickname = getIndicatorNickname('users');
+    const userNickname = getIndicatorNickname('newUsers');
     const headRow = [
       'Channel',
       'Planned Budget',
