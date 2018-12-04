@@ -5,7 +5,6 @@ import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {formatNumber} from 'components/utils/budget';
 import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
-import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
