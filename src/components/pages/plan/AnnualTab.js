@@ -123,9 +123,7 @@ export default class AnnualTab extends Component {
                                annualSumFunc,
                                quarterOffset,
                                annualOffset,
-                               itemParseFunc = (item) => {
-                                 return item;
-                               }) => {
+                               itemParseFunc) => {
 
     if (isEmpty(array)) {
       return [];
