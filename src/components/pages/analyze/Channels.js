@@ -66,13 +66,52 @@ export default class Channels extends Component {
     const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}} = this.props;
     const {firstObjective} = this.state;
 
-    const metrics = [
-      {value: 'MCL', label: getIndicatorNickname('MCL')},
-      {value: 'MQL', label: getIndicatorNickname('MQL')},
-      {value: 'SQL', label: getIndicatorNickname('SQL')},
-      {value: 'opps', label: getIndicatorNickname('opps')},
-      {value: 'users', label: getIndicatorNickname('users')}
-    ];
+    const getSelectOptions = object => {
+      return Object.keys(object).map(key => {
+        return {
+          value: key,
+          label: object[key]
+        };
+      });
+    };
+
+    const getMetrics = (isSingular = false) => {
+      return {
+        MCL: getIndicatorNickname('MCL', isSingular),
+        MQL: getIndicatorNickname('MQL', isSingular),
+        SQL: getIndicatorNickname('SQL', isSingular),
+        opps: getIndicatorNickname('opps', isSingular),
+        users: getIndicatorNickname('users', isSingular)
+      }
+    };
+    const metrics = getMetrics();
+    const metricsOptions = getSelectOptions(metrics);
+
+    const getMetricsWithInfluenced = (isSingular = false) => {
+      const metrics = getMetrics(isSingular);
+      const influencePrefix = 'Influenced';
+      return {
+        ...metrics,
+        influencedMCL: `${influencePrefix} ${metrics.MCL}`,
+        influencedMQL: `${influencePrefix} ${metrics.MQL}`,
+        influencedSQL: `${influencePrefix} ${metrics.SQL}`,
+        influencedOpps: `${influencePrefix} ${metrics.opps}`,
+        influencedUsers: `${influencePrefix} ${metrics.users}`
+      }
+    };
+    const metricsWithInfluenced = getMetricsWithInfluenced();
+    const metricsWithInfluencedSingular = getMetricsWithInfluenced(true);
+    const metricsWithInfluencedOptions = getSelectOptions(metricsWithInfluenced);
+
+    const revenueMetrics = {
+      revenue: 'revenue',
+      pipeline: 'pipeline',
+      LTV: 'LTV',
+      influencedRevenue: 'influenced revenue',
+      influencedPipeline: 'influenced pipeline',
+      influencedLTV: 'influenced LTV'
+    };
+    const revenueMetricsOptions = getSelectOptions(revenueMetrics);
 
     const headRow = this.getTableRow(null, [
       <div style={{textAlign: 'left', cursor: 'pointer'}}
@@ -87,9 +126,7 @@ export default class Channels extends Component {
           <Select
             selected={this.state.attributionTableRevenueMetric}
             select={{
-              options: [{value: 'revenue', label: 'revenue'},
-                {value: 'pipeline', label: 'pipeline'},
-                {value: 'LTV', label: 'LTV'}]
+              options: revenueMetricsOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableRevenueMetric: e.value});
@@ -98,8 +135,8 @@ export default class Channels extends Component {
           />
           :
           <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
-            {this.state.attributionTableRevenueMetric}
+               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
+            {revenueMetrics[this.state.attributionTableRevenueMetric]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -123,7 +160,7 @@ export default class Channels extends Component {
           <Select
             selected={this.state.attributionTableIndicator}
             select={{
-              options: metrics
+              options: metricsWithInfluencedOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableIndicator: e.value});
@@ -132,8 +169,8 @@ export default class Channels extends Component {
           />
           :
           <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
-            {getIndicatorNickname(this.state.attributionTableIndicator)}
+               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
+            {metricsWithInfluenced[this.state.attributionTableIndicator]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -143,7 +180,7 @@ export default class Channels extends Component {
         </div>
       </div>,
       <div onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}}
-           data-tip={'Cost per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
+           data-tip={'Cost per ' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]}>
         Efficiency
       </div>
     ], {
@@ -201,7 +238,7 @@ export default class Channels extends Component {
             Math.round(funnelIndicator * 100) / 100,
             this.formatEffciency(budget,
               funnelIndicator,
-              getIndicatorNickname(this.state.attributionTableIndicator, true))
+              metricsWithInfluencedSingular[this.state.attributionTableIndicator])
           ], {
             key: channel,
             className: dashboardStyle.locals.tableRow
@@ -223,7 +260,7 @@ export default class Channels extends Component {
       totalIndicatorGenerated,
       this.formatEffciency(totalBudget,
         totalIndicatorGenerated,
-        getIndicatorNickname(this.state.attributionTableIndicator, true))
+        metricsWithInfluencedSingular[this.state.attributionTableIndicator])
     ], {
       className: dashboardStyle.locals.footRow
     });
@@ -328,7 +365,7 @@ export default class Channels extends Component {
                   <Select
                     selected={this.state.conversionIndicator}
                     select={{
-                      options: metrics
+                      options: metricsOptions
                     }}
                     onChange={(e) => {
                       this.setState({conversionIndicator: e.value});
