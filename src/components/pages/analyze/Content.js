@@ -39,18 +39,10 @@ export default class Content extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
+    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, metricsWithInfluencedOptions, metricsWithInfluenced, revenueMetricsOptions, revenueMetrics} = this.props;
     const attributionPages = attribution.pages || [];
 
     const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
-
-    const metrics = [
-      {value: 'MCL', label: getIndicatorNickname('MCL')},
-      {value: 'MQL', label: getIndicatorNickname('MQL')},
-      {value: 'SQL', label: getIndicatorNickname('SQL')},
-      {value: 'opps', label: getIndicatorNickname('opps')},
-      {value: 'users', label: getIndicatorNickname('users')}
-    ];
 
     const objective = funnelFirstObjective;
 
@@ -64,7 +56,7 @@ export default class Content extends Component {
           <Select
             selected={this.state.attributionTableRevenueMetric}
             select={{
-              options: [{value: 'revenue', label: 'Revenue'}, {value: 'pipeline', label: 'Pipeline'}]
+              options: revenueMetricsOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableRevenueMetric: e.value});
@@ -74,8 +66,8 @@ export default class Content extends Component {
           :
           <div onClick={this.sortBy.bind(this, 'revenueMetric')}
                style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
-            {this.state.attributionTableRevenueMetric === 'revenue' ? 'Revenue' : 'Pipeline'}
+               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
+            {revenueMetrics[this.state.attributionTableRevenueMetric]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -109,7 +101,7 @@ export default class Content extends Component {
           <Select
             selected={this.state.attributionTableIndicator}
             select={{
-              options: metrics
+              options: metricsWithInfluencedOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableIndicator: e.value});
@@ -119,8 +111,8 @@ export default class Content extends Component {
           :
           <div onClick={this.sortBy.bind(this, 'funnelIndicator')}
                style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
-            {getIndicatorNickname(this.state.attributionTableIndicator)}
+               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
+            {metricsWithInfluenced[this.state.attributionTableIndicator]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
