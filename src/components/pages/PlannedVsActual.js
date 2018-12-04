@@ -49,7 +49,7 @@ export default class PlannedVsActual extends Component {
     };
   }
 
-  getCurrentMonthIndex = () => this.props.calculatedData.lastYearHistoryData.historyDataLength - 1;
+  getCurrentMonthIndex = () => this.props.calculatedData.lastYearHistoryData.historyDataLength;
 
   componentDidMount() {
     // Set the default month to current
