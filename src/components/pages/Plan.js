@@ -609,7 +609,6 @@ export default class Plan extends Component {
                     <Button type="primary"
                             style={{
                               marginLeft: '15px',
-                              width: '118px'
                             }}
                             selected={showNewScenarioPopup ? true : null}
                             onClick={() => {
@@ -617,7 +616,7 @@ export default class Plan extends Component {
                                 showNewScenarioPopup: true
                               });
                             }}>
-                      New Scenario
+                      Alternative Scenario
                     </Button>
                     <NewScenarioPopup hidden={!showNewScenarioPopup}
                                       onClose={() => {

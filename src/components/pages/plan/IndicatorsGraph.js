@@ -414,7 +414,7 @@ class CustomizedLegend extends Component {
         <div style={{display: 'flex'}}>
           <div className={this.classes.legendIconDashed}/>
           <div className={this.classes.legendText}>
-            New Scenario
+            Alternative Scenario
           </div>
         </div>
       </div>;
