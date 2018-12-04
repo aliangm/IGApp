@@ -58,7 +58,7 @@ export default class PlannedVsActual extends Component {
     this.setState({showText: false});
     const channel = event.value;
     if (channel === 'OTHER') {
-      this.setState({showText: true});
+      this.setState({showText: true}, () => this.refs.other.focus());
     }
     else {
       const actualChannelBudgets = {...this.props.actualChannelBudgets};
@@ -264,7 +264,7 @@ export default class PlannedVsActual extends Component {
                       width: '292px'
                     }} onChange={(e) => {
                       this.setState({otherChannel: e.target.value});
-                    }}/>
+                    }} ref='other'/>
                     <Button type="primary" style={{
                       width: '72px',
                       margin: '0 20px'
