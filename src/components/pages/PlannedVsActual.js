@@ -49,9 +49,11 @@ export default class PlannedVsActual extends Component {
     };
   }
 
+  getCurrentMonthIndex = () => this.props.calculatedData.lastYearHistoryData.historyDataLength - 1;
+
   componentDidMount() {
     // Set the default month to current
-    this.setState({month: this.props.calculatedData.lastYearHistoryData.historyDataLength - 1});
+    this.setState({month: this.getCurrentMonthIndex()});
   }
 
   addChannel = (event) => {
@@ -98,7 +100,7 @@ export default class PlannedVsActual extends Component {
   };
 
   setMonth = diff => {
-    const maxMonth = this.props.calculatedData.lastYearHistoryData.historyDataLength - 1;
+    const maxMonth = this.getCurrentMonthIndex();
     let newMonth = this.state.month + diff;
     if (newMonth < 0) {
       newMonth = 0;
