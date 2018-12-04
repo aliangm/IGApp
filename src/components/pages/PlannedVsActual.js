@@ -49,16 +49,18 @@ export default class PlannedVsActual extends Component {
     };
   }
 
+  getCurrentMonthIndex = () => this.props.calculatedData.lastYearHistoryData.historyDataLength - 1;
+
   componentDidMount() {
     // Set the default month to current
-    this.setState({month: this.props.calculatedData.lastYearHistoryData.historyDataLength});
+    this.setState({month: this.getCurrentMonthIndex()});
   }
 
   addChannel = (event) => {
     this.setState({showText: false});
     const channel = event.value;
     if (channel === 'OTHER') {
-      this.setState({showText: true});
+      this.setState({showText: true}, () => this.refs.other.focus());
     }
     else {
       const actualChannelBudgets = {...this.props.actualChannelBudgets};
@@ -98,7 +100,7 @@ export default class PlannedVsActual extends Component {
   };
 
   setMonth = diff => {
-    const maxMonth = this.props.calculatedData.lastYearHistoryData.historyDataLength;
+    const maxMonth = this.getCurrentMonthIndex();
     let newMonth = this.state.month + diff;
     if (newMonth < 0) {
       newMonth = 0;
@@ -193,7 +195,7 @@ export default class PlannedVsActual extends Component {
     });
 
     const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
-    const userNickname = getIndicatorNickname('users');
+    const userNickname = getIndicatorNickname('newUsers');
     const headRow = [
       'Channel',
       'Planned Budget',
@@ -241,7 +243,8 @@ export default class PlannedVsActual extends Component {
                    rowsData={rows}
                    footRowData={{items: footRow}}
                    showFootRowOnHeader={true}
-                   valueCellClassName={this.classes.valueCell}/>
+                   valueCellClassName={this.classes.valueCell}
+                   titleCellClassName={this.classes.titleCell}/>
             <div>
               <div className={this.classes.bottom}>
                 <div style={{
@@ -263,7 +266,7 @@ export default class PlannedVsActual extends Component {
                       width: '292px'
                     }} onChange={(e) => {
                       this.setState({otherChannel: e.target.value});
-                    }}/>
+                    }} ref='other'/>
                     <Button type="primary" style={{
                       width: '72px',
                       margin: '0 20px'
