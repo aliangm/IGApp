@@ -382,6 +382,7 @@ export default class IndicatorsGraph extends Component {
           margin={{top: 10, right: 25, left: 10, bottom: 21}}
         >
           {xAxis}
+          {dots}
           {areas}
           {dashedAreas}
           <YAxis axisLine={false}
