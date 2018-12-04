@@ -16,7 +16,7 @@ export default class Analyze extends Component {
   };
 
   render() {
-    const {attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataWithCurrentMonth, months, historyDataLength}}} = this.props;
+    const {attribution: {channelsImpact}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataLength}}} = this.props;
 
     const attributionModels = [
       {value: false, label: 'Full Journey'},
@@ -30,24 +30,18 @@ export default class Analyze extends Component {
       selectOptions.push({value: i, label: lastXMonth ? `Last ${lastXMonth + 1} months` : 'This month'});
     }
 
-    const indicatorsData = {};
-    historyDataWithCurrentMonth.indicators.forEach((item, key) => {
-      const displayDate = months[key];
-      Object.keys(item).forEach(indicator => {
-        if (!indicatorsData[indicator]) {
-          indicatorsData[indicator] = [];
-        }
-        const value = item[indicator];
-        indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
-      });
-    });
-
-    const historyCalculatedProps = {
-      indicatorsData: indicatorsData
-    };
+    const getTotalParam = param => (channelsImpact && channelsImpact[param]
+      ? Object.keys(channelsImpact[param])
+        .reduce((channelsSum, item) => channelsSum + channelsImpact[param][item], 0)
+      : 0);
 
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, {...this.props, ...historyCalculatedProps}));
+      (child) => React.cloneElement(child,
+        {
+          ...this.props,
+          getTotalParam: getTotalParam,
+          totalRevenue: getTotalParam('revenue')
+        }));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">
         <div className={this.classes.head}>

@@ -1,22 +1,32 @@
 import React from 'react';
 import Component from 'components/Component';
-import MultiRow from 'components/MultiRow';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/plan/planned-actual-tab.css';
 import budgetsStyle from 'styles/plan/budget-table.css';
 import planStyles from 'styles/plan/plan.css';
-import {parsePlannedVsActual} from 'data/parsePlannedVsActual';
 import Paging from 'components/Paging';
-import {getTitle, isUnknownChannel} from 'components/utils/channels';
-import {formatBudget} from 'components/utils/budget';
+import {getChannelIcon, getNickname as getChannelNickname, isUnknownChannel} from 'components/utils/channels';
+import {formatBudget, formatNumber, getCommitedBudgets} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
+import merge from 'lodash/merge';
+import mapValues from 'lodash/mapValues';
 import icons from 'styles/icons/plan.css';
-import {getCommitedBudgets} from 'components/utils/budget';
-import {extractNumber} from 'components/utils/utils';
+import {extractNumber, newFunnelMapping} from 'components/utils/utils';
 import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
+import isNil from 'lodash/isNil';
+import get from 'lodash/get';
+import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+
+const channelPlatformMapping = {
+  'advertising_socialAds_facebookAdvertising': 'isFacebookAdsAuto',
+  'advertising_displayAds_googleAdwords': 'isAdwordsAuto',
+  'advertising_searchMarketing_SEM_googleAdwords': 'isAdwordsAuto',
+  'advertising_socialAds_linkedinAdvertising': 'isLinkedinAdsAuto',
+  'advertising_socialAds_twitterAdvertising': 'isTwitterAdsAuto'
+};
 
 export default class PlannedVsActual extends Component {
 
@@ -34,234 +44,246 @@ export default class PlannedVsActual extends Component {
 
   constructor(props) {
     super(props);
-    const committedBudgets = this.props.calculatedData.committedBudgets;
-    this.state = {...props, committedBudgets};
-
-    this.keys = [''];
-    this.pagingUpdateState = this.pagingUpdateState.bind(this);
+    this.state = {
+      month: 0
+    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.state.updating) {
-      const committedBudgets = this.props.calculatedData.committedBudgets;
-      this.setState({...nextProps, committedBudgets});
-    }
+  getCurrentMonthIndex = () => this.props.calculatedData.lastYearHistoryData.historyDataLength;
+
+  componentDidMount() {
+    // Set the default month to current
+    this.setState({month: this.getCurrentMonthIndex()});
   }
 
-  pagingUpdateState(data) {
-    const committedBudgets = getCommitedBudgets(data.planBudgets);
-    this.setState({
-      planDate: data.planDate,
-      region: data.region,
-      knownChannels: data.actualChannelBudgets && data.actualChannelBudgets.knownChannels || {},
-      unknownChannels: data.actualChannelBudgets && data.actualChannelBudgets.unknownChannels || {},
-      committedBudgets: committedBudgets || [],
-      planUnknownChannels: data.unknownChannels || []
-    });
-  }
-
-  addChannel(event) {
-    if (!event) {
-      var update = this.state.unknownChannels;
-      update[this.state.otherChannel] = 0;
-      this.setState({
-        unknownChannels: update,
-        showText: false,
-        otherChannel: ''
-      });
+  addChannel = (event) => {
+    this.setState({showText: false});
+    const channel = event.value;
+    if (channel === 'OTHER') {
+      this.setState({showText: true}, () => this.refs.other.focus());
     }
     else {
-      if (typeof event.value === 'string') {
-        if (event.value == 'OTHER') {
-          this.setState({showText: true});
-        }
-        else {
-          var alreadyExist = Object.keys(this.state.committedBudgets[0]);
-          alreadyExist =
-            alreadyExist.concat(Object.keys(this.state.knownChannels), Object.keys(this.state.unknownChannels));
-          if (alreadyExist.indexOf(event.value) === -1) {
-            var update = this.state.knownChannels;
-            update[event.value] = 0;
-            this.setState({knownChannels: update});
-          }
-        }
-      }
-    }
-  }
-
-  addOtherChannel(e) {
-    this.setState({otherChannel: e.target.value});
-  }
-
-  updateActual(key, value) {
-    const title = getTitle(key);
-    if (!title) {
-      let update = this.state.unknownChannels;
-      update[key] = value;
-      this.setState({unknownChannels: update});
-    }
-    else {
-      let update = this.state.knownChannels;
-      update[key] = value;
-      this.setState({knownChannels: update});
-    }
-  }
-
-  getDates = () => {
-    var dates = [];
-    var monthNames = [
-      'Jan', 'Feb', 'Mar',
-      'Apr', 'May', 'Jun', 'Jul',
-      'Aug', 'Sep', 'Oct',
-      'Nov', 'Dec'
-    ];
-    var planDate = this.state.planDate ? this.state.planDate.split('/') : null;
-    if (planDate) {
-      var date = new Date(planDate[1], planDate[0] - 1);
-      dates.push(monthNames[date.getMonth()] + '/' + date.getFullYear().toString().substr(2, 2));
-      return dates;
-    }
-    else {
-      return [];
+      const actualChannelBudgets = {...this.props.actualChannelBudgets};
+      const {knownChannels = {}} = actualChannelBudgets;
+      knownChannels[channel] = 0;
+      this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, knownChannels: knownChannels}});
     }
   };
 
-  getRowForData = (data, key, month, isTotalRow) => {
-    const actualText = formatBudget(data.actual);
+  addOtherChannel = () => {
+    const channel = this.state.otherChannel;
+    this.props.addUnknownChannel(channel);
 
-    return {
-      items: [
-        <div className={this.classes.cellItem}>
-          {!isTotalRow
-            ? <div className={budgetsStyle.locals.rowIcon}
-                   data-icon={!isUnknownChannel(data.key) ? `plan:${data.key}` : 'plan:other'}/>
-            : null
-          }
-          <div className={this.classes.channelName}>{data.channel}</div>
-          {data.isAutomatic ? <div className={this.classes.automaticLabel}>Automatic</div> : null}
-        </div>,
-        '$' + data.planned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-        <div className={this.classes.cellItem}>
-          {isTotalRow
-            ? <div className={this.classes.actualText} style={{
-              minWidth: '72px',
-              width: '50%'
-            }}>
-              {actualText}
-            </div>
-            : <Textfield style={{
-              minWidth: '72px',
-              width: '50%'
-            }} value={actualText} onChange={(e) => {
-              this.updateActual(data.key, extractNumber(e.target.value));
-            }} disabled={data.isAutomatic}/>
-          }
+    const actualChannelBudgets = {...this.props.actualChannelBudgets};
+    const {unknownChannels = {}} = actualChannelBudgets;
+    unknownChannels[channel] = 0;
+    this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, unknownChannels: unknownChannels}});
 
-          {this.props.planDate === this.state.planDate
-            ? <div className={this.classes.expected} style={isTotalRow ? null : {color: '#b2bbd5'}}>
-              Expected: {formatBudget(Math.round(data.actual / this.props.calculatedData.extarpolateRatio))}
-            </div>
-            : null
-          }
-        </div>,
-        formatBudget(data.planned - data.actual, true)
-      ]
-    };
+  };
+
+  updateActual = (channel, value) => {
+    const actualChannelBudgets = {...this.props.actualChannelBudgets};
+    const {unknownChannels = {}, knownChannels = {}} = actualChannelBudgets;
+    if (isUnknownChannel(channel)) {
+      unknownChannels[channel] = value;
+    }
+    else {
+      knownChannels[channel] = value;
+    }
+    this.props.updateState({
+      actualChannelBudgets: {
+        ...actualChannelBudgets,
+        knownChannels: knownChannels,
+        unknownChannels: unknownChannels
+      }
+    });
+  };
+
+  setMonth = diff => {
+    const maxMonth = this.getCurrentMonthIndex();
+    let newMonth = this.state.month + diff;
+    if (newMonth < 0) {
+      newMonth = 0;
+    }
+    if (newMonth > maxMonth) {
+      newMonth = maxMonth;
+    }
+    this.setState({month: newMonth});
+  };
+
+  updateImpact = (channel, indicator, type, value) => {
+    const channelsImpact = {...this.props.channelsImpact};
+    if (!channelsImpact[channel]) {
+      channelsImpact[channel] = {};
+    }
+    if (!channelsImpact[channel][indicator]) {
+      channelsImpact[channel][indicator] = {
+        actual: 0,
+        planned: 0
+      };
+    }
+    channelsImpact[channel][indicator][type] = value;
+    this.props.updateState({channelsImpact: channelsImpact});
   };
 
   render() {
-    let month;
-    let headRow;
-    let rows;
-    let footRow;
-    this.keys = this.getDates();
-    month = this.keys[this.state.month];
-    const data = parsePlannedVsActual(this.state.committedBudgets[0] || {},
-      this.state.planUnknownChannels[0] || {},
-      this.state.knownChannels,
-      this.state.unknownChannels,
-      this.props.calculatedData.integrations
-    );
-    if (data) {
+    const {month} = this.state;
+    const {attribution: {channelsImpact: attributionChannelsImpact}, calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators}}}} = this.props;
+    const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
-      const totalData = {
-        key: 'total',
-        channel: 'Total',
-        isAutomatic: false,
-        planned: sumBy(data, item => item.planned),
-        actual: sumBy(data, item => item.actual)
+    const isCurrentMonth = month === historyDataLength;
+
+    const actuals = merge({}, knownChannels, unknownChannels);
+    const planned = merge({}, getCommitedBudgets(planBudgets)[month], planUnknownChannels[month]);
+    const channels = merge({}, planned, actuals);
+    const parsedChannels = Object.keys(channels).map(channel => {
+      const actual = actuals[channel];
+      const isActualNotEmpty = !isNil(actual);
+      const plan = planned[channel] || 0;
+      const channelImpact = get(channelsImpact, [month, channel], {});
+      const {planned: plannedFunnel = 0, actual: actualFunnel = 0} = channelImpact[funnelFirstObjective] || {};
+      const attributedFunnel = get(attributionChannelsImpact, [newFunnelMapping[funnelFirstObjective], channel], 0);
+      const {planned: plannedUsers = 0, actual: actualUsers = 0} = channelImpact.newUsers || {};
+      const attributedUsers = get(attributionChannelsImpact, ['users', channel], 0);
+      return {
+        channel,
+        isActualNotEmpty,
+        actual: isActualNotEmpty ? actual : plan,
+        planned: plan,
+        plannedFunnel,
+        actualFunnel: actualFunnel || attributedFunnel,
+        plannedUsers,
+        actualUsers: actualUsers || attributedUsers
       };
+    });
 
-      footRow = this.getRowForData(totalData, '-2', month, true);
+    const getTextfieldItem = (value, onChange, disabled = false) =>
+      <div className={this.classes.cellItem}>
+        <Textfield style={{
+          width: '84px'
+        }} value={value} onChange={onChange} disabled={disabled}/>
+      </div>;
 
-      rows = data.map((item, i) => this.getRowForData(item, i, month, false));
-    }
+    const extrapolatedValue = value => Math.round(value / extarpolateRatio);
 
-    headRow = [
-      'Channels',
+    const rows = parsedChannels.map(item => {
+      const {actual, planned, isActualNotEmpty, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
+      const isAutomatic = integrations[channelPlatformMapping[channel]];
+      return {
+        items: [
+          <div className={this.classes.cellItem}>
+            <div className={budgetsStyle.locals.rowIcon} data-icon={getChannelIcon(channel)}/>
+            <div className={this.classes.channelName}>{getChannelNickname(channel)}</div>
+            {isAutomatic ? <div className={this.classes.automaticLabel}>Auto</div> : null}
+          </div>,
+          formatBudget(planned),
+          getTextfieldItem(formatBudget(actual), e => this.updateActual(channel, extractNumber(e.target.value)), isAutomatic),
+          formatBudget(planned - actual, true),
+          isCurrentMonth ?
+            formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
+            : '-',
+          getTextfieldItem(formatNumber(plannedFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(actualFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
+          formatNumber(plannedFunnel - actualFunnel),
+          isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
+          getTextfieldItem(formatNumber(plannedUsers), e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(actualUsers), e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))),
+          formatNumber(plannedUsers - actualUsers),
+          isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-'
+        ]
+      };
+    });
+
+    const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
+    const userNickname = getIndicatorNickname('newUsers');
+    const headRow = [
+      'Channel',
       'Planned Budget',
       'Actual Cost',
-      'Difference'
+      'Plan vs Actual',
+      'Pacing for',
+      <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
+      `Actual ${firstFunnelObjectiveNickname}`,
+      'Plan vs Actual',
+      'Pacing for',
+      <div data-tip="what's your expectation?">Planned {userNickname}</div>,
+      `Actual ${userNickname}`,
+      'Plan vs Actual',
+      'Pacing for'
+    ];
+
+    const totalPlannedFunnel = sumBy(parsedChannels, 'plannedFunnel');
+    const totalActualFunnel = indicators[month][funnelFirstObjective];
+    const totalPlannedUsers = sumBy(parsedChannels, 'plannedUsers');
+    const totalActualUsers = indicators[month].newUsers;
+    const footRow = [
+      'Total',
+      formatBudget(sumBy(parsedChannels, 'planned')),
+      formatBudget(sumBy(parsedChannels, 'actual')),
+      formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
+      isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
+      formatNumber(totalPlannedFunnel),
+      formatNumber(totalActualFunnel),
+      formatNumber(totalPlannedFunnel - totalActualFunnel),
+      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualFunnel))) : '-',
+      formatNumber(totalPlannedUsers),
+      formatNumber(totalActualUsers),
+      formatNumber(totalPlannedUsers - totalActualUsers),
+      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualUsers))) : '-'
     ];
 
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
           <div className={planStyles.locals.title}>
-            <Paging month={this.state.planDate} pagingUpdateState={this.pagingUpdateState} region={this.state.region}/>
+            <Paging title={months[month]} onBack={() => this.setMonth(-1)} onNext={() => this.setMonth(1)}/>
           </div>
           <div className={planStyles.locals.innerBox}>
             <Table headRowData={{items: headRow}}
                    rowsData={rows}
-                   footRowData={footRow}
-                   showFootRowOnHeader={true}/>
+                   footRowData={{items: footRow}}
+                   showFootRowOnHeader={true}
+                   valueCellClassName={this.classes.valueCell}
+                   titleCellClassName={this.classes.titleCell}/>
             <div>
               <div className={this.classes.bottom}>
-                <MultiRow numOfRows={1} maxNumOfRows={1}>
-                  {({index, data, update, removeButton}) => {
-                    return <div style={{
-                      paddingBottom: '25px',
-                      width: '460px'
-                    }} className={this.classes.channelsRow}>
-                      <ChannelsSelect className={this.classes.channelsSelect}
-                                      selected={-1}
-                                      isChannelDisabled={channel => Object.keys(this.state.knownChannels).includes(channel) || Object.keys(this.state.committedBudgets[0] || {}).includes(channel)}
-                                      onChange={this.addChannel.bind(this)}
-                                      label={`Add a channel`}
-                                      labelQuestion={['']}
-                                      description={['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}/>
-                    </div>;
-                  }}
-                </MultiRow>
+                <div style={{
+                  paddingBottom: '25px',
+                  width: '460px'
+                }} className={this.classes.channelsRow}>
+                  <ChannelsSelect className={this.classes.channelsSelect}
+                                  withOtherChannel={true}
+                                  selected={-1}
+                                  isChannelDisabled={channel => Object.keys(channels).includes(channel)}
+                                  onChange={this.addChannel}
+                                  label={`Add a channel`}
+                                  labelQuestion={['']}
+                                  description={['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}/>
+                </div>
                 {this.state.showText ?
                   <div className={this.classes.channelsRow}>
                     <Textfield style={{
                       width: '292px'
                     }} onChange={(e) => {
-                      this.addOtherChannel(e);
-                    }}/>
+                      this.setState({otherChannel: e.target.value});
+                    }} ref='other'/>
                     <Button type="primary" style={{
                       width: '72px',
                       margin: '0 20px'
                     }} onClick={() => {
-                      this.addChannel();
+                      this.addOtherChannel();
                     }}> Enter
                     </Button>
                   </div>
                   : null}
                 <div className={this.classes.footer} style={{marginTop: '150px'}}>
                   <SaveButton onClick={() => {
-                    this.setState({saveFail: false, saveSuccess: false, updating: true}, () => {
-                      this.state.updateUserMonthPlan({
-                        actualChannelBudgets: {
-                          knownChannels: this.state.knownChannels,
-                          unknownChannels: this.state.unknownChannels
-                        }
-                      }, this.state.region, this.state.planDate, true)
-                        .then((data) => {
-                          this.setState({updating: false});
-                          this.pagingUpdateState(data);
-                        });
+                    this.setState({saveFail: false, saveSuccess: false}, () => {
+                      this.props.updateUserMonthPlan({
+                        actualChannelBudgets: this.props.actualChannelBudgets,
+                        namesMapping: this.props.namesMapping,
+                        channelsImpact: this.props.channelsImpact
+                      }, this.props.region, this.props.planDate);
                       this.setState({saveSuccess: true});
                     });
                   }} success={this.state.saveSuccess} fail={this.state.saveFail}/>

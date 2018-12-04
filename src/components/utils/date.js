@@ -1,3 +1,5 @@
+import {isNil} from 'lodash';
+
 export const NUMBER_OF_FUTURE_MONTHS = 12;
 
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -13,24 +15,52 @@ export function formatDate(dateStr) {
 }
 
 export function getDates(dateStr, includingPast = false, includingFuture = true) {
-  return getDatesSpecific(dateStr, includingPast ? NUMBER_OF_FUTURE_MONTHS : 0, includingFuture ? NUMBER_OF_FUTURE_MONTHS : 0);
+  return getDatesSpecific(dateStr,
+    includingPast ? NUMBER_OF_FUTURE_MONTHS : 0,
+    includingFuture ? NUMBER_OF_FUTURE_MONTHS : 0);
 }
 
-export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystemDates = false) {
+function getDateOffset(dates, division) {
+  const lastIndexOfFirstQuarter = dates && dates.findIndex(date => {
+    const month = date.getMonth();
+    return (month + 1) % division === 0;
+  });
+
+  return (!isNil(lastIndexOfFirstQuarter) && lastIndexOfFirstQuarter >= 0) ? lastIndexOfFirstQuarter + 1 : null;
+}
+
+export function getQuarterOffset(dates) {
+  return getDateOffset(dates, 3);
+}
+
+export function getAnnualOffset(dates) {
+  return getDateOffset(dates, 12);
+}
+
+export function formatSpecificDate(date, isSystemDate) {
+  const monthStr = isSystemDate ? date.getMonth() + 1 : monthNames[date.getMonth()];
+  const yearStr = isSystemDate ? date.getFullYear().toString() : date.getFullYear().toString().substr(2, 2);
+  const delimiter = isSystemDate ? '/' : ' ';
+  return monthStr + delimiter + yearStr;
+}
+
+export function getRawDatesSpecific(dateStr, numberOfPast, numberOfFuture) {
   if (dateStr) {
     const dates = [];
     const planDate = dateStr.split('/');
     for (let i = -numberOfPast; i < numberOfFuture; i++) {
       const date = new Date(planDate[1], planDate[0] - 1);
       date.setMonth(date.getMonth() + i);
-      const monthStr = isSystemDates ? date.getMonth() + 1 : monthNames[date.getMonth()];
-      const yearStr = isSystemDates ?  date.getFullYear().toString() : date.getFullYear().toString().substr(2, 2);
-      const delimiter = isSystemDates ? '/' : ' ';
-      dates.push(monthStr + delimiter + yearStr);
+      dates.push(new Date(date));
     }
     return dates;
   }
   return [];
+}
+
+export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystemDates = false) {
+  const rawDates = getRawDatesSpecific(dateStr, numberOfPast, numberOfFuture);
+  return rawDates.map(date => formatSpecificDate(date, isSystemDates));
 }
 
 export function getEndOfMonthDate(dateStr) {
@@ -39,11 +69,12 @@ export function getEndOfMonthDate(dateStr) {
   return new Date(parseInt(`20${year}`), month + 1, 0);
 }
 
-export function getEndOfMonthString(dateStr) {
+export function getEndOfMonthString(date) {
+  const dateStr = formatSpecificDate(date, false)
   const [monthStr, year] = dateStr.split(' ');
   const month = monthNames.indexOf(monthStr);
-  const date = new Date(year, month + 1, 0);
-  return `${date.getDate()} ${monthStr} ${year}`;
+  const endOfMonthDate = new Date(year, month + 1, 0);
+  return `${endOfMonthDate.getDate()} ${monthStr} ${year}`;
 }
 
 export function getNumberOfDaysBetweenDates(toDate, fromDate = new Date()) {

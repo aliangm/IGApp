@@ -18,7 +18,7 @@ import {
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getIndicatorsWithNicknames} from 'components/utils/indicators';
-import {formatBudget, formatBudgetShortened, formatNumberWithDecimalPoint} from 'components/utils/budget';
+import {formatBudget, formatBudgetShortened, formatNumber, formatNumberWithDecimalPoint} from 'components/utils/budget';
 import {getChannelsWithProps, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
@@ -30,11 +30,14 @@ import sumBy from 'lodash/sumBy';
 import groupBy from 'lodash/groupBy';
 import mapValues from 'lodash/mapValues';
 import SmallTable from 'components/controls/SmallTable';
+import indicatorsGraphStyle from 'styles/plan/indicators-graph.css';
+import isEmpty from 'lodash/isEmpty';
+import StatSquare from 'components/common/StatSquare';
 
 export default class Overview extends Component {
 
   style = style;
-  styles = [dashboardStyle];
+  styles = [dashboardStyle, indicatorsGraphStyle];
 
   constructor(props) {
     super(props);
@@ -76,12 +79,28 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, indicatorsData, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay}}}} = this.props;
+    const {totalRevenue, attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay, actualIndicatorsDaily}}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
       getDatesSpecific(planDate, objectives.length, 0),
       false);
+
+    // Parse object to recharts format per indicator
+    const indicatorsData = {};
+    actualIndicatorsDaily.forEach((item, key) => {
+      const monthString = months[key];
+      item.forEach((month, index) => {
+        const displayDate = index ? `${index + 1} ${monthString}` : monthString;
+        Object.keys(month).forEach(indicator => {
+          if (!indicatorsData[indicator]) {
+            indicatorsData[indicator] = [];
+          }
+          const value = month[indicator];
+          indicatorsData[indicator].push({name: displayDate, value: value > 0 ? value : 0});
+        });
+      });
+    });
 
     let grow = 0;
     if (indicatorsData[this.state.historicalPerformanceIndicator]) {
@@ -107,13 +126,7 @@ export default class Overview extends Component {
       }
     }
 
-    const getTotalParam = param => (channelsImpact && channelsImpact[param]
-      ? Object.keys(channelsImpact[param])
-        .reduce((channelsSum, item) => channelsSum + channelsImpact[param][item], 0)
-      : 0);
-
-    const totalPipeline = getTotalParam('pipeline');
-    const totalRevenue = getTotalParam('revenue');
+    const totalPipeline = this.props.getTotalParam('pipeline');
 
     const revenueByChannel = channelsImpact ? channelsImpact.revenue : {};
     delete revenueByChannel.direct;
@@ -277,16 +290,10 @@ export default class Overview extends Component {
     });
 
     const costPerX = Object.keys(costPerFunnel).map(indicator =>
-      <div className={this.classes.colCenter} key={indicator}>
-        <div className={dashboardStyle.locals.item}>
-          <div className={dashboardStyle.locals.text}>
-            Cost per {getIndicatorNickname(indicator, true)}
-          </div>
-          <div className={dashboardStyle.locals.number}>
-            {costPerFunnel[indicator]}
-          </div>
-        </div>
-      </div>
+      <StatSquare title={`Cost per ${getIndicatorNickname(indicator, true)}`}
+                  stat={costPerFunnel[indicator]}
+                  key={indicator}
+      />
     );
 
     const getRevenueByTableItem = (title, revenueByRows, key) =>
@@ -308,60 +315,45 @@ export default class Overview extends Component {
       </div>;
     };
 
+    const tooltip = (data) => {
+      const {active, label, payload} = data;
+
+      return (active && !isEmpty(payload) && payload[0]) ?
+        <div className={indicatorsGraphStyle.locals.customTooltip}>
+          <div className={indicatorsGraphStyle.locals.customTooltipIndicator}>
+            {label}
+          </div>
+          <div className={indicatorsGraphStyle.locals.customTooltipObjective}>
+            {getIndicatorNickname(this.state.historicalPerformanceIndicator)}: {formatNumber(payload[0].value)}
+          </div>
+        </div>
+        : null;
+    };
+
     return <div>
       <div className={this.classes.wrap}>
         <div>
           <div className={this.classes.cols} style={{width: '825px'}}>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Total Cost
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  ${formatBudgetShortened(totalCost)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Total Pipeline Revenue
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  ${formatBudgetShortened(totalPipeline)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Pipeline ROI
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  {formatNumberWithDecimalPoint(totalPipeline / totalCost)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Total Revenue
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  ${formatBudgetShortened(totalRevenue)}
-                </div>
-              </div>
-            </div>
-            <div className={this.classes.colCenter}>
-              <div className={dashboardStyle.locals.item}>
-                <div className={dashboardStyle.locals.text}>
-                  Revenue ROI
-                </div>
-                <div className={dashboardStyle.locals.number}>
-                  {formatNumberWithDecimalPoint(totalRevenue / totalCost)}X
-                </div>
-              </div>
-            </div>
+            <StatSquare
+              title="Total Cost"
+              stat={`$${formatBudgetShortened(totalCost)}`}
+            />
+            <StatSquare
+              title="Total Pipeline Revenue"
+              stat={`$${formatBudgetShortened(totalPipeline)}`}
+            />
+            <StatSquare
+              title="Pipeline ROI"
+              stat={formatNumberWithDecimalPoint(totalPipeline / totalCost)}
+            />
+            <StatSquare
+              title="Total Revenue"
+              stat={`$${formatBudgetShortened(totalRevenue)}`}
+            />
+            <StatSquare
+              title="Revenue ROI"
+              stat={`${formatNumberWithDecimalPoint(totalRevenue / totalCost)}X`}
+            />
           </div>
           <div className={this.classes.cols} style={{width: '825px'}}>
             {costPerX}
@@ -499,10 +491,10 @@ export default class Overview extends Component {
                                ? indicatorsData[this.state.historicalPerformanceIndicator].slice(this.props.months)
                                : []}
                              style={{marginLeft: '-21px'}}>
-                    <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
+                    <XAxis dataKey="name" style={{fontSize: '12px', color: '#354052', opacity: '0.5'}} ticks={months}/>
                     <YAxis style={{fontSize: '12px', color: '#354052', opacity: '0.5'}}/>
                     <CartesianGrid vertical={false}/>
-                    <Tooltip/>
+                    <Tooltip content={tooltip}/>
                     <Area type='monotone' dataKey='value' stroke='#6BCCFF' fill='#DFECF7' strokeWidth={3}/>
                   </AreaChart>
                 </div>

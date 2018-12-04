@@ -8,22 +8,21 @@ import style from 'styles/plan/plan.css';
 import Button from 'components/controls/Button';
 import PlanButton from 'components/pages/plan/PlanButton';
 import {isPopupMode, disablePopupMode} from 'modules/popup-mode';
-import history from 'history';
 import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
-import {output, isUnknownChannel, initialize} from 'components/utils/channels';
+import {output, isUnknownChannel} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
 import PlanOptimizationPopup from 'components/pages/plan/PlanOptimizationPopup';
-import intersection from 'lodash/intersection';
 import union from 'lodash/union';
 import maxBy from 'lodash/maxBy';
 import isNil from 'lodash/isNil';
 import AnnualTab from 'components/pages/plan/AnnualTab';
 import UserRegionsPopup from 'components/pages/plan/UserRegionsPopup';
+import {getAnnualBudgetLeftToPlan} from 'components/utils/budget';
 
 export default class Plan extends Component {
 
@@ -309,20 +308,10 @@ export default class Plan extends Component {
     });
   };
 
-  addUnknownChannel = (name, category) => {
-    const namesMapping = {...this.props.namesMapping};
-    if (!namesMapping.channels) {
-      namesMapping.channels = {};
-    }
-    const channel = `${category} / ${name}`;
-    namesMapping.channels[channel] = {
-      title: channel,
-      nickname: name,
-      category: category,
-      isUnknownChannel: true
-    };
-    this.props.updateState({namesMapping: namesMapping});
-    this.addChannel(channel);
+  addUnknownChannel = (channel, category) => {
+    const channelWithCategory = category ? `${category} / ${channel}` : channel;
+    this.props.addUnknownChannel(channelWithCategory, channel, category);
+    this.addChannel(channelWithCategory);
   };
 
   setRef = (channel, ref) => {
@@ -505,7 +494,9 @@ export default class Plan extends Component {
 
   render() {
     const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
-    const {calculatedData: {annualBudget, annualBudgetLeftToPlan}} = this.props;
+    const {planUnknownChannels, calculatedData: {annualBudget}} = this.props;
+
+    const annualBudgetLeftToPlan = this.state.budgetsData && getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
         return merge(object, item);

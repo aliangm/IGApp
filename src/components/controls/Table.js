@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/controls/table.css';
 import isEmpty from 'lodash/isEmpty';
+import classnames from 'classnames';
 
 export default class Table extends Component {
 
@@ -21,7 +22,9 @@ export default class Table extends Component {
       items: PropTypes.arrayOf(PropTypes.any),
       props: PropTypes.object
     }),
-    showFootRowOnHeader: PropTypes.bool
+    showFootRowOnHeader: PropTypes.bool,
+    valueCellClassName: PropTypes.string,
+    titleCellClassName: PropTypes.string
   };
 
   static defaultProps = {
@@ -38,7 +41,7 @@ export default class Table extends Component {
     const headRow = this.getTableRow(null, headRowData.items, {
       className: this.classes.headRow,
       ...headRowData.props
-    });
+    }, true);
     const rows = rowsData.map((row, index) => this.getTableRow(null, row.items, {
       className: this.classes.tableRow,
       key: index,
@@ -71,16 +74,22 @@ export default class Table extends Component {
     </div>;
   }
 
-  getTableRow(title, items, props) {
+  getTableRow(title, items, props, isHead = false) {
+    const valueCellClassName = classnames(this.classes.valueCell, this.props.valueCellClassName);
+    const titleCellClassName = classnames(this.classes.titleCell, this.props.titleCellClassName);
     return <tr {...props}>
       {title != null ?
-        <td className={this.classes.titleCell}>{this.getCellItem(title)}</td>
+        <td className={titleCellClassName}>{this.getCellItem(title)}</td>
         : null}
       {
         items.map((item, i) => {
-          return <td className={this.classes.valueCell} key={i}>{
-            this.getCellItem(item)
-          }</td>;
+          return isHead ?
+            <td className={titleCellClassName} key={i}>{this.getCellItem(<div
+              className={this.classes.titleItem}>{item}</div>)}</td>
+            :
+            <td className={valueCellClassName} key={i}>{
+              this.getCellItem(item)
+            }</td>;
         })
       }
     </tr>;

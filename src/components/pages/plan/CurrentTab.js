@@ -1,35 +1,19 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
-
 import Masonry from 'react-masonry-component';
-import Popup from 'components/Popup';
-import Loading from 'components/pages/plan/Loading';
-import Button from 'components/controls/Button';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
-import Explanation from 'components/pages/plan/Explanation';
 import ChannelCube, {formatPrice} from 'components/pages/plan/ChannelCube';
 import {parseBudgets} from 'data/parseAnnualPlan';
-
 import style from 'styles/plan/current-tab.css';
 import planStyles from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import Paging from 'components/Paging';
-
-function formatDate(dateStr) {
-  if (dateStr) {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const [monthNum, yearNum] = dateStr.split('/');
-
-    return `${monthNames[monthNum - 1]} ${yearNum}`;
-  }
-  else {
-    return null;
-  }
-}
+import {formatDate} from 'components/utils/date';
 
 export default class CurrentTab extends Component {
+
+  style = style;
+  styles = [planStyles, icons];
+
   static propTypes = {
     planDate: PropTypes.string,
     committedBudgets: PropTypes.array
@@ -39,28 +23,17 @@ export default class CurrentTab extends Component {
     planDate: null
   };
 
-  styles = [planStyles, icons];
-  style = style;
-
   constructor(props) {
     super(props);
     this.state = props;
-    this.pagingUpdateState = this.pagingUpdateState.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState(nextProps);
   }
 
-  pagingUpdateState(data) {
-    this.setState({
-      planDate: data.planDate,
-      region: data.region
-    });
-  }
-
   render() {
-    const {planDate, calculatedData: {committedBudgets}, region, planUnknownChannels, inHouseChannels} = this.state;
+    const {planDate, calculatedData: {committedBudgets}, planUnknownChannels, inHouseChannels} = this.state;
 
     const planData = parseBudgets(committedBudgets, planUnknownChannels, inHouseChannels);
     const planDataChannels = Object.keys(planData).filter(channelName => channelName !== '__TOTAL__');
@@ -82,12 +55,14 @@ export default class CurrentTab extends Component {
         })
       : null;
 
+    const formattedDate = formatDate(planDate);
+
     return <div className={this.classes.wrap}>
-      <Paging month={planDate} pagingUpdateState={this.pagingUpdateState} region={region}/>
+      <Paging title={formattedDate}/>
       <div className={planStyles.locals.title}>
         <div className={planStyles.locals.titleMain}>
           <div className={planStyles.locals.titleText}>
-            {formatDate(planDate)}: Budget
+            {formattedDate}: Budget
           </div>
           <div className={planStyles.locals.titlePrice}>{formatPrice(monthBudget)}</div>
         </div>
