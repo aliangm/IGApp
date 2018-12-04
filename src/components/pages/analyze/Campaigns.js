@@ -40,15 +40,7 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const {attribution: {campaigns: attributionCampaigns, users}, campaigns} = this.props;
-
-    const metrics = [
-      {value: 'MCL', label: getIndicatorNickname('MCL')},
-      {value: 'MQL', label: getIndicatorNickname('MQL')},
-      {value: 'SQL', label: getIndicatorNickname('SQL')},
-      {value: 'opps', label: getIndicatorNickname('opps')},
-      {value: 'users', label: getIndicatorNickname('users')}
-    ];
+    const {attribution: {campaigns: attributionCampaigns, users}, campaigns, revenueMetricsOptions, revenueMetrics, metricsWithInfluencedOptions, metricsWithInfluenced, metricsWithInfluencedSingular, metricsOptions, formatEfficiency} = this.props;
 
     const headRow = this.getTableRow(null, [
       <div style={{textAlign: 'left', cursor: 'pointer'}}
@@ -63,10 +55,7 @@ export default class Campaigns extends Component {
           <Select
             selected={this.state.attributionTableRevenueMetric}
             select={{
-              options: [{value: 'revenue', label: 'revenue'}, {value: 'pipeline', label: 'pipeline'}, {
-                value: 'LTV',
-                label: 'LTV'
-              }]
+              options: revenueMetricsOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableRevenueMetric: e.value});
@@ -75,8 +64,8 @@ export default class Campaigns extends Component {
           />
           :
           <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
-            {this.state.attributionTableRevenueMetric}
+               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
+            {revenueMetrics[this.state.attributionTableRevenueMetric]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -100,7 +89,7 @@ export default class Campaigns extends Component {
           <Select
             selected={this.state.attributionTableIndicator}
             select={{
-              options: metrics
+              options: metricsWithInfluencedOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableIndicator: e.value});
@@ -109,8 +98,8 @@ export default class Campaigns extends Component {
           />
           :
           <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
-            {getIndicatorNickname(this.state.attributionTableIndicator)}
+               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
+            {metricsWithInfluenced[this.state.attributionTableIndicator]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -120,7 +109,7 @@ export default class Campaigns extends Component {
         </div>
       </div>,
       <div onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}}
-           data-tip={'Cost per ' + getIndicatorNickname(this.state.attributionTableIndicator, true)}>
+           data-tip={'Cost per ' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]}>
         Efficiency
       </div>,
       'Channels'
@@ -187,7 +176,7 @@ export default class Campaigns extends Component {
               formatNumber(webVisits),
               formatNumber(conversion),
               Math.round(funnelIndicator),
-              '$' + (isFinite(CPX) ? formatNumber(Math.round(CPX) + '/' + getIndicatorNickname(this.state.attributionTableIndicator, true)) : 0),
+              '$' + (isFinite(CPX) ? formatNumber(Math.round(CPX) + '/' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]) : 0),
               <div style={{display: 'flex'}}>
                 <ReactTooltip/>
                 {channels.map(channel =>
@@ -212,7 +201,7 @@ export default class Campaigns extends Component {
         formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
         formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
         Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-        '$' + formatNumber(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + '/' + getIndicatorNickname(this.state.attributionTableIndicator, true)),
+        '$' + formatNumber(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + '/' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]),
         ''
       ]
       , {
@@ -308,7 +297,7 @@ export default class Campaigns extends Component {
                   <Select
                     selected={this.state.conversionIndicator}
                     select={{
-                      options: metrics
+                      options: metricsOptions
                     }}
                     onChange={(e) => {
                       this.setState({conversionIndicator: e.value});
