@@ -241,7 +241,8 @@ export default class PlannedVsActual extends Component {
                    rowsData={rows}
                    footRowData={{items: footRow}}
                    showFootRowOnHeader={true}
-                   valueCellClassName={this.classes.valueCell}/>
+                   valueCellClassName={this.classes.valueCell}
+                   titleCellClassName={this.classes.titleCell}/>
             <div>
               <div className={this.classes.bottom}>
                 <div style={{

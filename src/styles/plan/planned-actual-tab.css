@@ -63,11 +63,15 @@
     min-width: 200px;
 }
 
+/* 4n+5 : start from 5th column, repeat every 4 columns */
+.title-cell:nth-child(4n+5) {
+    border-right: 1px solid #ffffff;
+}
+
 .value-cell:nth-child(4n+5) {
     border-right: 1px solid #ffffff;
 }
 
-/* 4n+5 : start from 5th column, repeat every 4 columns */
 tbody .value-cell:nth-child(4n+5) {
     border-right: 1px solid #b2bbd5;
 }
