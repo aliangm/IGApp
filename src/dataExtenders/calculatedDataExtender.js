@@ -3,7 +3,7 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
-import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
+import {getDates, getRawDatesSpecific, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import {getAnnualBudgetLeftToPlan, getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 import isNil from 'lodash/isNil';
@@ -139,9 +139,12 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
     };
   });
 
+  const rawMonths = getRawDatesSpecific(currentData.planDate, historyDataLength(historyData), 0);
+
   return {
     historyDataWithCurrentMonth,
     months,
+    rawMonths,
     committedBudgets,
     sumBudgets,
     totalCost,

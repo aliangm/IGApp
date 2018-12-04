@@ -138,7 +138,6 @@
 
 .table-row[data-row-type='category'] {
     background-color: rgba(222, 235, 255, 0.32);
-    color: #222a41;
 }
 
 .table-row[data-row-type='bottom'] {
@@ -207,18 +206,27 @@
     composes: cell;
 }
 
-.head-row-cell[data-history] {
-    background-color: rgba(112, 126, 167, 0.13);
-}
-
 .head-row-cell[data-first-month] {
     border-bottom: 2px solid #4d91fc;
     color: #4d91fc;
 }
 
 .history-cell {
-    composes: cell;
     background-color: rgba(112, 126, 167, 0.13);
+}
+
+.quarter-cell {
+    background-color: #dae8ff;
+}
+
+.annual-cell {
+    color: #ffffff;
+    background-color: #4d91fc;
+}
+
+.annual-category-cell {
+    composes: annual-cell;
+    background-color: #7AADFC;
 }
 
 .value-cell {
@@ -232,10 +240,6 @@
     border-style: solid;
     border-color: rgba(106, 154, 230, 0.19);
     border-width: 1px 0;
-}
-
-.category-cell[data-history] {
-    background-color: rgba(112, 126, 167, 0.13);
 }
 
 .title-cell {
