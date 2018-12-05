@@ -1,9 +1,8 @@
-/* Example Styles for React Tags*/
+/* The baseline for the style is the example style in the react-tag-input code */
 div.tags {
     position: relative;
 }
 
-/* Styles for the input */
 div.tag-input {
     width: 200px;
     border-radius: 2px;
@@ -19,7 +18,6 @@ div.tag-input input.tag-input-field:focus {
     padding: 0 14px;
 }
 
-/* Styles for selected tags */
 div.selected span.tag {
     border: 1px solid #ddd;
     background: #eee;
@@ -35,7 +33,6 @@ div.selected a.remove {
     cursor: pointer;
 }
 
-/* Styles for suggestions */
 div.suggestions {
     position: absolute;
 }
