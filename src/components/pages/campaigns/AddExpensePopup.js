@@ -53,14 +53,15 @@ export default class AddExpensePopup extends Component {
   componentDidMount() {
     if (this.props.location.state) {
       const {timeframe, ...otherState} = this.props.location.state;
-      const parsedTimeframe = timeframe ? timeframe
-        .filter(item => !isNil(item))
-        .map((item, index) => {
-          return {
-            month: index,
-            amount: item
-          }
-        }) : [];
+      const parsedTimeframe = timeframe ?
+        timeframe
+          .filter(item => !isNil(item))
+          .map((item, index) => {
+            return {
+              month: index,
+              amount: item
+            };
+          }) : [];
       this.setState({...this.defaultData, ...otherState, timeframe: parsedTimeframe});
     }
   }
