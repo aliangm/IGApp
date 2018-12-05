@@ -15,6 +15,8 @@ import {extractNumberFromBudget, formatBudget} from 'components/utils/budget';
 import history from 'history';
 import {getTeamMembersOptions} from 'components/utils/teamMembers';
 import ChannelsSelect from 'components/common/ChannelsSelect';
+import Tags from 'components/controls/Tags';
+import {isNil} from 'lodash';
 
 export default class AddExpensePopup extends Component {
 
@@ -22,6 +24,7 @@ export default class AddExpensePopup extends Component {
   styles = [campaignPopupStyle];
 
   defaultData = {
+    index: null,
     name: '',
     owner: '',
     amount: '',
@@ -33,6 +36,10 @@ export default class AddExpensePopup extends Component {
       entityType: 'campaign',
       entityId: ''
     },
+    poNumber: '',
+    vendorName: '',
+    tags: [],
+    notes: '',
     close: history.goBack
   };
 
@@ -45,7 +52,17 @@ export default class AddExpensePopup extends Component {
 
   componentDidMount() {
     if (this.props.location.state) {
-      this.setState({...this.defaultData, ...this.props.location.state});
+      const {timeframe, ...otherState} = this.props.location.state;
+      const parsedTimeframe = timeframe ?
+        timeframe
+          .filter(item => !isNil(item))
+          .map((item, index) => {
+            return {
+              month: index,
+              amount: item
+            };
+          }) : [];
+      this.setState({...this.defaultData, ...otherState, timeframe: parsedTimeframe});
     }
   }
 
@@ -61,12 +78,14 @@ export default class AddExpensePopup extends Component {
     this.setState({assignedTo: assignedTo});
   };
 
-  addExpense = () => {
-    const {name, owner, amount, type, dueDate, timeframe, assignedTo} = this.state;
+  addOrEditExpense = () => {
+    const {name, owner, amount, type, dueDate, timeframe, assignedTo, poNumber, vendorName, tags, notes, index} = this.state;
     const timeFrameArray = new Array(NUMBER_OF_FUTURE_MONTHS).fill(null);
-    timeframe.forEach(item => {
-      timeFrameArray[item.month] = item.amount;
-    });
+    timeframe
+      .filter(item => !isNil(item.month))
+      .forEach(item => {
+        timeFrameArray[item.month] = item.amount;
+      });
     const newExpense = {
       name,
       owner,
@@ -74,11 +93,20 @@ export default class AddExpensePopup extends Component {
       type,
       dueDate,
       assignedTo,
+      poNumber,
+      vendorName,
+      tags,
+      notes,
       lastUpdateTime: new Date(),
       timeframe: timeFrameArray
     };
     const expenses = [...this.props.expenses];
-    expenses.push(newExpense);
+    if (isNil(index)) {
+      expenses.push(newExpense);
+    }
+    else {
+      expenses[index] = newExpense;
+    }
     this.props.updateUserMonthPlan({expenses}, this.props.region, this.props.planDate);
   };
 
@@ -89,7 +117,7 @@ export default class AddExpensePopup extends Component {
   };
 
   save = () => {
-    this.addExpense();
+    this.addOrEditExpense();
     this.close();
   };
 
@@ -105,8 +133,19 @@ export default class AddExpensePopup extends Component {
     this.setState({timeframe: newTimeframe});
   };
 
+  handleTagDelete = (index) => {
+    const {tags} = this.state;
+    tags.splice(index, 1);
+    this.setState({tags});
+  };
+
+  handleTagAdd = (tag) => {
+    const {tags} = this.state;
+    this.setState({tags: [...tags, tag]});
+  };
+
   render() {
-    const {name, owner, amount, type, dueDate, timeframe, assignedTo: {entityType, entityId}} = this.state;
+    const {name, owner, amount, type, dueDate, timeframe, assignedTo: {entityType, entityId}, poNumber, vendorName, tags, notes} = this.state;
     const {calculatedData: {activeCampaigns}} = this.props;
     const selects = {
       owner: {
@@ -253,6 +292,26 @@ export default class AddExpensePopup extends Component {
                 <ChannelsSelect {...entityIdProps}/>
             }
 
+          </div>
+          <div className={this.classes.flexRow}>
+            <div className={this.classes.leftHalf}>
+              <Label>PO Number</Label>
+              <Textfield value={poNumber} onChange={(e) => this.setState({poNumber: e.target.value})}/>
+            </div>
+            <div className={this.classes.rightHalf}>
+              <Label>Vendor Name</Label>
+              <Textfield value={vendorName} onChange={(e) => this.setState({vendorName: e.target.value})}/>
+            </div>
+          </div>
+          <div className={this.classes.flexRow}>
+            <Tags tags={tags}
+                  handleDelete={this.handleTagDelete}
+                  handleAddition={this.handleTagAdd}/>
+          </div>
+          <div className={this.classes.row}>
+            <Label>Notes</Label>
+            <textarea value={notes} className={campaignPopupStyle.locals.textArea}
+                      onChange={(e) => this.setState({notes: e.target.value})}/>
           </div>
         </div>
         <div style={{display: 'flex', justifyContent: 'flex-end'}}>
