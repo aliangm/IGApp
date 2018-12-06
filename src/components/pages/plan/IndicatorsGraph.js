@@ -292,25 +292,35 @@ export default class IndicatorsGraph extends Component {
           {
 
             parsedIndicators.map((item, index) => {
+              const showLegend = !!item.secondaryTooltipValue;
               const indicator = item.dataKey;
               const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
+              const indicatorColor = getColor(colorIndex);
               if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
                 return <div key={index}>
                   <div className={this.classes.customTooltipIndicator}>
                     {indicatorsMapping[indicator]}
                   </div>
                   <div className={this.classes.customTooltipValues}>
-                    <div className={this.classes.customTooltipValue}
-                         style={{color: getColor(colorIndex)}}>
-                      {formatNumber(item.tooltipValue)}
+                    <div className={this.classes.valueClass}>
+                      {showLegend ? <div className={this.classes.tooltipLegend}
+                                         style={{borderColor: indicatorColor}}/> : null}
+                      <div className={this.classes.customTooltipValue}
+                           style={{color: indicatorColor}}>
+                        {formatNumber(item.tooltipValue)}
+                      </div>
                     </div>
                     {item.secondaryTooltipValue ?
-                      <div className={this.classes.customTooltipValue}
-                           style={{
-                             color: getColor(colorIndex),
-                             opacity: DASHED_OPACITY
-                           }}>
-                        {formatNumber(item.secondaryTooltipValue)}
+                      <div className={this.classes.valueClass}>
+                        {showLegend ? <div className={this.classes.tooltipLegend}
+                                           style={{borderColor: indicatorColor, opacity: DASHED_OPACITY, borderStyle: "dashed"}}/> : null}
+                        <div className={this.classes.customTooltipValue}
+                             style={{
+                               color: indicatorColor,
+                               opacity: DASHED_OPACITY
+                             }}>
+                          {formatNumber(item.secondaryTooltipValue)}
+                        </div>
                       </div> : null
                     }
                   </div>

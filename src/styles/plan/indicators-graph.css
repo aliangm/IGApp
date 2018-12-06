@@ -79,7 +79,8 @@
 
 .custom-tooltip {
     padding: 14px;
-    width: 126px;
+    width: fit-content;
+    min-width: 126px;
     height: auto;
     background-color: #222a41;
     box-shadow: 0 4px 8px 0 rgba(153, 164, 194, 0.16);
@@ -185,6 +186,21 @@
 
 .fixedChartOverlay g {
     display: none;
+}
+
+.tooltip-legend {
+    height: 50%;
+    min-height: 50%;
+    width: 20px;
+    border-style: solid;
+    border-width: 0 0 3px 0;
+    align-self: center;
+    margin-right: 2px;
+}
+
+.value-class {
+    height: 100%;
+    display: inline-flex;
 }
 
 .fixedChartOverlay :global(.yAxis),
