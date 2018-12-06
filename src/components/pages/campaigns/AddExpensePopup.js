@@ -303,7 +303,8 @@ export default class AddExpensePopup extends Component {
               <Textfield value={vendorName} onChange={(e) => this.setState({vendorName: e.target.value})}/>
             </div>
           </div>
-          <div className={this.classes.flexRow}>
+          <div className={this.classes.row}>
+            <Label>Tags</Label>
             <Tags tags={tags}
                   handleDelete={this.handleTagDelete}
                   handleAddition={this.handleTagAdd}/>
