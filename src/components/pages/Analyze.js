@@ -5,6 +5,7 @@ import style from 'styles/plan/plan.css';
 import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
 import setupStyle from 'styles/attribution/attribution-setp.css';
+import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 
 export default class Analyze extends Component {
 
@@ -35,10 +36,69 @@ export default class Analyze extends Component {
         .reduce((channelsSum, item) => channelsSum + channelsImpact[param][item], 0)
       : 0);
 
+    const getSelectOptions = object => {
+      return Object.keys(object).map(key => {
+        return {
+          value: key,
+          label: object[key]
+        };
+      });
+    };
+
+    const getMetrics = (isSingular = false) => {
+      return {
+        MCL: getIndicatorNickname('MCL', isSingular),
+        MQL: getIndicatorNickname('MQL', isSingular),
+        SQL: getIndicatorNickname('SQL', isSingular),
+        opps: getIndicatorNickname('opps', isSingular),
+        users: getIndicatorNickname('users', isSingular)
+      }
+    };
+    const metrics = getMetrics();
+    const metricsOptions = getSelectOptions(metrics);
+
+    const getAttributedMetrics = (isSingular = false) => {
+      const metrics = getMetrics(isSingular);
+      const attributedPrefix = 'Attributed';
+      return _.mapValues(metrics, (value) => `${attributedPrefix} ${value}`)
+    };
+
+    const getMetricsWithInfluenced = (isSingular = false) => {
+      const attributedMetrics = getAttributedMetrics(isSingular);
+      const influencePrefix = 'Influenced';
+      return {
+        ...attributedMetrics,
+        influencedMCL: `${influencePrefix} ${metrics.MCL}`,
+        influencedMQL: `${influencePrefix} ${metrics.MQL}`,
+        influencedSQL: `${influencePrefix} ${metrics.SQL}`,
+        influencedOpps: `${influencePrefix} ${metrics.opps}`,
+        influencedUsers: `${influencePrefix} ${metrics.users}`
+      }
+    };
+    const metricsWithInfluenced = getMetricsWithInfluenced();
+    const metricsWithInfluencedSingular = getMetricsWithInfluenced(true);
+    const metricsWithInfluencedOptions = getSelectOptions(metricsWithInfluenced);
+
+    const revenueMetrics = {
+      revenue: 'attributed revenue',
+      pipeline: 'attributed pipeline',
+      LTV: 'attributed LTV',
+      influencedRevenue: 'influenced revenue',
+      influencedPipeline: 'influenced pipeline',
+      influencedLTV: 'influenced LTV'
+    };
+    const revenueMetricsOptions = getSelectOptions(revenueMetrics);
+
     const childrenWithProps = React.Children.map(this.props.children,
       (child) => React.cloneElement(child,
         {
           ...this.props,
+          revenueMetrics,
+          revenueMetricsOptions,
+          metricsWithInfluenced,
+          metricsWithInfluencedOptions,
+          metricsWithInfluencedSingular,
+          metricsOptions,
           getTotalParam: getTotalParam,
           totalRevenue: getTotalParam('revenue')
         }));

@@ -309,7 +309,7 @@ export default class CMO extends Component {
 
     const data = isPast ? indicatorsDataPerMonth
       :
-      committedBudgets.slice(0, months).map((month, index) => {
+      committedBudgets.slice(0, months + 1).map((month, index) => {
         const json = {
           name: futureDates[index]
         };
