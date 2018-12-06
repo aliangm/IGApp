@@ -201,7 +201,7 @@ export default class UsersPopup extends Component {
           <div className={this.classes.eventText}>
             Status change - <b>{getIndicatorNickname(item.funnelStage[0], true) + " > " + getIndicatorNickname(item.funnelStage[item.funnelStage.length - 1], true)}</b>
             <div className={this.classes.eventTime}>
-              {this.stringifyDate(item.stageChangeTime)}
+              {this.stringifyDate(item.startTime)}
               {emails.length > 1 ? ", " + item.email : null}
             </div>
           </div>
