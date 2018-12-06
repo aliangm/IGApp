@@ -57,11 +57,17 @@ export default class Analyze extends Component {
     const metrics = getMetrics();
     const metricsOptions = getSelectOptions(metrics);
 
-    const getMetricsWithInfluenced = (isSingular = false) => {
+    const getAttributedMetrics = (isSingular = false) => {
       const metrics = getMetrics(isSingular);
+      const attributedPrefix = 'Attributed';
+      return _.mapValues(metrics, (value) => `${attributedPrefix} ${value}`)
+    };
+
+    const getMetricsWithInfluenced = (isSingular = false) => {
+      const attributedMetrics = getAttributedMetrics(isSingular);
       const influencePrefix = 'Influenced';
       return {
-        ...metrics,
+        ...attributedMetrics,
         influencedMCL: `${influencePrefix} ${metrics.MCL}`,
         influencedMQL: `${influencePrefix} ${metrics.MQL}`,
         influencedSQL: `${influencePrefix} ${metrics.SQL}`,
@@ -74,9 +80,9 @@ export default class Analyze extends Component {
     const metricsWithInfluencedOptions = getSelectOptions(metricsWithInfluenced);
 
     const revenueMetrics = {
-      revenue: 'revenue',
-      pipeline: 'pipeline',
-      LTV: 'LTV',
+      revenue: 'attributed revenue',
+      pipeline: 'attributed pipeline',
+      LTV: 'attributed LTV',
       influencedRevenue: 'influenced revenue',
       influencedPipeline: 'influenced pipeline',
       influencedLTV: 'influenced LTV'
