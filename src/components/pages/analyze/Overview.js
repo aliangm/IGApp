@@ -363,7 +363,7 @@ export default class Overview extends Component {
               <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
                 <div className={dashboardStyle.locals.text}
                      data-tip="(Estimated) Impact across funnel. Sum of each funnel stage X the likability to convert to a paying account X estimated LTV.">
-                  Business Impact across funnel
+                  Marketing-Generated Business Impact
                 </div>
                 <div style={{display: 'flex'}}>
                   <div className={dashboardStyle.locals.chart} style={{width: '443px', alignItems: 'center'}}>
