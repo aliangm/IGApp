@@ -6,7 +6,7 @@ import style from 'styles/campaigns/choose-existing-template.css';
 import TemplateBox from 'components/pages/campaigns/TemplateBox';
 import Button from 'components/controls/Button';
 import campaignTemplates from 'data/campaignTemplates';
-import {getTitle} from 'components/utils/channels';
+import {getChannelIcon} from 'components/utils/channels';
 
 export default class ChooseExistingTemplate extends Component {
 
@@ -105,7 +105,7 @@ export default class ChooseExistingTemplate extends Component {
         text={templateName}
         selected={this.state.selected === index}
         onClick={ this.templateClick.bind(this, index) }
-        icons={ this.props.campaignsTemplates[templateName].source && this.props.campaignsTemplates[templateName].source.map(channel => getTitle(channel) ? "plan:" + channel : 'plan:other') }
+        icons={ this.props.campaignsTemplates[templateName].source && this.props.campaignsTemplates[templateName].source.map(channel => getChannelIcon(channel)) }
       />
     );
     return <div>

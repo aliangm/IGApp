@@ -8,7 +8,7 @@ import ChooseExistingTemplate from 'components/pages/campaigns/ChooseExistingTem
 import planStyle from 'styles/plan/plan.css';
 import icons from 'styles/icons/plan.css';
 import campaignsStyle from 'styles/campaigns/campaigns.css';
-import {getNickname, getTitle} from 'components/utils/channels';
+import {getChannelIcon, getNickname} from 'components/utils/channels';
 import Label from 'components/ControlsLabel';
 import Button from 'components/controls/Button';
 import ImportCampaignsPopup from 'components/pages/campaigns/ImportCampaignsPopup';
@@ -162,16 +162,8 @@ export default class Campaigns extends Component {
     };
 
     processedChannels.names.forEach((channel) => {
-      const title = getTitle(channel);
-      if (title) {
-        processedChannels.titles[channel] = getNickname(channel);
-        let channelHierarchy = title.split('/').map(item => item.trim());
-        processedChannels.icons[channel] = 'plan:' + channel;
-      }
-      else {
-        processedChannels.titles[channel] = channel;
-        processedChannels.icons[channel] = 'plan:other';
-      }
+      processedChannels.titles[channel] = getNickname(channel);
+      processedChannels.icons[channel] = getChannelIcon(channel);
     });
 
     let filteredCampaigns = activeCampaigns;
