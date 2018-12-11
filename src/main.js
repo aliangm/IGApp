@@ -54,6 +54,8 @@ import ManualPlan from 'components/pages/ManualPlan';
 import NoAnalyzeData from 'components/pages/analyze/NoAnalyzeData';
 import Expenses from 'components/pages/campaigns/Expenses';
 import AddExpensePopup from 'components/pages/campaigns/AddExpensePopup';
+import ChannelsSettings from 'components/pages/settings/channels/Channels';
+import ChannelsTab from 'components/pages/settings/channels/tabs/ChannelsTab';
 
 style.use();
 
@@ -152,6 +154,12 @@ ReactDOM.render(
         <Route path="/settings/profile/integrations"
                component={Platforms}
                onEnter={requireAuth}/>
+        <Route component={ChannelsSettings} onEnter={requireAuth}>
+          <Route path="/settings/channels/tab1"
+                 component={ChannelsTab}
+                 onEnter={requireAuth}
+                 tabName='blabla'/>
+        </Route>
       </Route>
       <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>
         <Route path="/analyze/overview" component={Overview} onEnter={requireAuth} tabName='Overview'/>
