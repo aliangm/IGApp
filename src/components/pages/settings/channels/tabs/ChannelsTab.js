@@ -37,7 +37,7 @@ export default class ChannelsTab extends Component {
 
     const {selectedCategory = categories[0], selectedChannel = getDefaultChannel(selectedCategory)} = this.state;
     const channelNickname = getChannelNickname(selectedChannel);
-    const channelIcon = getChannelIcon(selectedChannel);
+
     return <div>
       <div style={{display: 'flex'}}>
         <div className={this.classes.categoriesMenu}>
@@ -62,7 +62,7 @@ export default class ChannelsTab extends Component {
                    onClick={() => {
                      this.setState({selectedChannel: item.channel});
                    }}>
-                <div className={this.classes.channelIcon} data-icon={channelIcon}/>
+                <div className={this.classes.channelIcon} data-icon={getChannelIcon(item.channel)}/>
                 {item.nickname}
               </div>)
           }
@@ -72,7 +72,7 @@ export default class ChannelsTab extends Component {
             {selectedCategory}
           </div>
           <div className={this.classes.channel}>
-            <div className={this.classes.channelIcon} data-icon={channelIcon}/>
+            <div className={this.classes.channelIcon} data-icon={getChannelIcon(selectedChannel)}/>
             {channelNickname}
           </div>
           <div className={this.classes.flexRow}>
