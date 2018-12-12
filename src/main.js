@@ -155,10 +155,10 @@ ReactDOM.render(
                component={Platforms}
                onEnter={requireAuth}/>
         <Route component={ChannelsSettings} onEnter={requireAuth}>
-          <Route path="/settings/channels/tab1"
+          <Route path="/settings/channels/channels"
                  component={ChannelsTab}
                  onEnter={requireAuth}
-                 tabName='blabla'/>
+                 tabName='channels'/>
         </Route>
       </Route>
       <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>

@@ -41,7 +41,7 @@ export default class SettingsSideBar extends Component {
       },
       {
         name: 'Channels',
-        path: '/settings/channels/tab1',
+        path: '/settings/channels/channels',
         representivePath: '/settings/channels'
       }
     ];
