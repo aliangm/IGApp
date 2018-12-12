@@ -37,7 +37,10 @@ export default class ChannelsTab extends Component {
     userChannelsSchema[channel].category = category;
 
     this.props.updateState({userChannelsSchema: userChannelsSchema}, () => {
-      this.props.updateUserMonthPlan({userChannelsSchema: this.props.userChannelsSchema}, this.props.region, this.props.planDate);
+      this.props.updateUserMonthPlan({
+        userChannelsSchema: this.props.userChannelsSchema,
+        attributionMappingRules: this.props.attributionMappingRules
+      }, this.props.region, this.props.planDate);
       this.setState({
         categoryEdit: undefined,
         channelEdit: undefined,
