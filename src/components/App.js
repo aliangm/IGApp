@@ -474,6 +474,7 @@ class AppComponent extends Component {
         indicators: {}
       },
       userChannelsSchema: data.userChannelsSchema,
+      attributionMappingRules: data.attributionMappingRules,
       userRegions: data.userRegions,
       expenses: data.expenses || [],
       actualIndicatorsDaily: data.actualIndicatorsDaily,

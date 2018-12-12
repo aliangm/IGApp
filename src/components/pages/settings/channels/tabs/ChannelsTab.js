@@ -6,6 +6,18 @@ import Textfield from 'components/controls/Textfield';
 import {getChannelIcon, getChannelsWithProps, getNickname as getChannelNickname} from 'components/utils/channels';
 import {groupBy, sortBy, uniq} from 'lodash';
 import SaveButton from 'components/pages/profile/SaveButton';
+import Button from 'components/controls/Button';
+
+const paramsOptions = [
+  {value: 'source', label: 'source'},
+  {value: 'medium', label: 'medium'},
+  {value: 'referrer', label: 'referrer'}
+];
+
+const operationOptions = [
+  {value: 'equals', label: 'equals'},
+  {value: 'contains', label: 'contains'}
+];
 
 export default class ChannelsTab extends Component {
 
@@ -35,6 +47,50 @@ export default class ChannelsTab extends Component {
     });
   };
 
+  getNewCondition = () => {
+    return {
+      param: '',
+      operation: '',
+      value: ''
+    };
+  };
+
+  addRule = (channel) => {
+    const {attributionMappingRules} = this.props;
+    attributionMappingRules.push({
+      conditions: [
+        {...this.getNewCondition()}
+      ],
+      channel
+    });
+    this.props.updateState({attributionMappingRules});
+  };
+
+  updateRule = (ruleIndex, conditionIndex, key, value) => {
+    const {attributionMappingRules} = this.props;
+    attributionMappingRules[ruleIndex].conditions[conditionIndex][key] = value;
+    this.props.updateState({attributionMappingRules});
+  };
+
+  deleteCondition = (ruleIndex, conditionIndex) => {
+    const {attributionMappingRules} = this.props;
+    delete attributionMappingRules[ruleIndex].conditions[conditionIndex];
+
+    // If last condition, delete rule
+    if (attributionMappingRules[ruleIndex].conditions.length === 0) {
+      delete attributionMappingRules[ruleIndex];
+    }
+
+    this.props.updateState({attributionMappingRules});
+  };
+
+  addCondition = (ruleIndex) => {
+    const {attributionMappingRules} = this.props;
+    delete attributionMappingRules[ruleIndex].conditions.push({...this.getNewCondition()});
+
+    this.props.updateState({attributionMappingRules});
+  };
+
   render() {
     const channelsWithProps = getChannelsWithProps();
     const propsArray = Object.keys(channelsWithProps).map(channel => {
@@ -55,6 +111,15 @@ export default class ChannelsTab extends Component {
     const getDefaultChannel = category => channelsByCategory[category][0].channel;
 
     const {selectedCategory = categories[0], selectedChannel = getDefaultChannel(selectedCategory), channelEdit = getChannelNickname(selectedChannel), categoryEdit = selectedCategory} = this.state;
+    const {attributionMappingRules} = this.props;
+    const channelRules = attributionMappingRules
+      .map((rule, index) => {
+        return {
+          ...rule,
+          index
+        };
+      })
+      .filter(rule => rule.channel === selectedChannel);
 
     return <div>
       <div style={{display: 'flex'}}>
@@ -111,6 +176,47 @@ export default class ChannelsTab extends Component {
                     onChange={e => {
                       this.setState({categoryEdit: e.value});
                     }}/>
+          </div>
+          <div>
+            <div className={this.classes.titleText} style={{marginTop: '30px'}}>
+              Mapping
+            </div>
+            {
+              channelRules.map(rule =>
+                <div>
+                  {
+                    rule.conditions.map((condition, conditionIndex) =>
+                      <div className={this.classes.flexRow}>
+                        <Select select={{options: paramsOptions}} style={{width: '131px', marginRight: '15px'}}
+                                selected={condition.param}
+                                onChange={e => {
+                                  this.updateRule(rule.index, conditionIndex, 'param', e.value);
+                                }}/>
+                        <Select select={{options: operationOptions}} style={{width: '131px', marginRight: '15px'}}
+                                selected={condition.operation}
+                                onChange={e => {
+                                  this.updateRule(rule.index, conditionIndex, 'operation', e.value);
+                                }}/>
+                        <Textfield value={condition.value}
+                                   style={{marginRight: '15px'}}
+                                   onChange={e => {
+                                     this.updateRule(rule.index, conditionIndex, 'value', e.target.value);
+                                   }}/>
+                        <div className={this.classes.rowIcons}>
+                          <div className={this.classes.minusIcon}
+                               onClick={() => this.deleteCondition(rule.index, conditionIndex)}/>
+                          <div className={this.classes.plusIcon} onClick={() => this.addCondition(rule.index)}/>
+                        </div>
+                      </div>)
+                  }
+                  <div className={this.classes.text} hidden={rule.index === channelRules.length - 1}>
+                    OR
+                  </div>
+                </div>)
+            }
+            <Button type="secondary" style={{width: 'fit-content'}} onClick={() => this.addRule(selectedChannel)}>
+              Or
+            </Button>
           </div>
           <SaveButton onClick={() => {
             this.setState({saveFail: false, saveSuccess: false});
