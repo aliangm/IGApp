@@ -1,19 +1,20 @@
 .categories-menu {
     width: 177px;
-    height: 637px;
+    height: -webkit-fill-available;
     border-radius: 2px;
     background-color: #e6e8f0;
+    overflow-y: auto;
 }
 
 .category-box {
     height: 46px;
     border-radius: 2px;
-    border-bottom: 1px solid white;
     display: flex;
     padding-left: 15px;
     align-items: center;
     font-size: 14px;
     color: #354052;
+    cursor: pointer;
 }
 
 .category-box[data-selected] {
@@ -22,15 +23,14 @@
 
 .channels-menu {
     width: 177px;
-    height: 637px;
+    height: -webkit-fill-available;
     border-radius: 2px;
     background-color: #ffffff;
 }
 
 .channel-box {
-    margin-left: auto;
-    width: 152px;
-    height: 28px;
+    margin-left: 8px;
+    height: 30px;
     border-radius: 3px;
     font-size: 14px;
     font-weight: 600;
@@ -38,6 +38,7 @@
     display: flex;
     align-items: center;
     padding: 8px;
+    cursor: pointer;
 }
 
 .channel-box[data-selected] {
@@ -90,6 +91,8 @@
 .channel-icon {
     height: 32px;
     width: 32px;
+    min-height: 32px;
+    min-width: 32px;
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
