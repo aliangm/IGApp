@@ -183,10 +183,10 @@ export default class ChannelsTab extends Component {
             </div>
             {
               channelRules.map(rule =>
-                <div>
+                <div key={rule.index}>
                   {
                     rule.conditions.map((condition, conditionIndex) =>
-                      <div className={this.classes.flexRow}>
+                      <div className={this.classes.flexRow} key={`${rule.index}-${conditionIndex}`}>
                         <Select select={{options: paramsOptions}} style={{width: '131px', marginRight: '15px'}}
                                 selected={condition.param}
                                 onChange={e => {
