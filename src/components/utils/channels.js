@@ -1,26 +1,21 @@
 import uniq from 'lodash/uniq';
 import icons from 'styles/icons/plan.css';
+import {mapValues, merge} from 'lodash';
 
 icons.use();
 
 let schema = {properties: {}};
 let isInitialized = false;
 
-export function initialize(channelsSchema, userMapping) {
-  schema = channelsSchema;
-  if (userMapping) {
-    Object.keys(userMapping).forEach(channel => {
-      if (!schema.properties[channel]) {
-        schema.properties[channel] = {};
-      }
-      schema.properties[channel].nickname = userMapping[channel].nickname;
-      schema.properties[channel].category = userMapping[channel].category;
-      schema.properties[channel].isUnknownChannel = !!userMapping[channel].isUnknownChannel;
-    });
-  }
-  Object.keys(schema.properties).forEach(channel => {
-    const {category, nickname} = schema.properties[channel];
-    schema.properties[channel].title = `${category} / ${nickname}`;
+export function initialize(channelsSchema, userChannelsSchema = {}) {
+  schema.properties = merge(schema.properties, channelsSchema.properties, userChannelsSchema);
+  schema.properties = mapValues(schema.properties, props => {
+    const {category, nickname, isUnknownChannel} = props;
+    return {
+      ...props,
+      title: `${category} / ${nickname}`,
+      isUnknownChannel: !!isUnknownChannel
+    }
   });
   isInitialized = true;
 }

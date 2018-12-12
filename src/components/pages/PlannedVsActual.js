@@ -281,7 +281,7 @@ export default class PlannedVsActual extends Component {
                     this.setState({saveFail: false, saveSuccess: false}, () => {
                       this.props.updateUserMonthPlan({
                         actualChannelBudgets: this.props.actualChannelBudgets,
-                        namesMapping: this.props.namesMapping,
+                        userChannelsSchema: this.props.userChannelsSchema,
                         channelsImpact: this.props.channelsImpact
                       }, this.props.region, this.props.planDate);
                       this.setState({saveSuccess: true});

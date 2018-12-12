@@ -125,7 +125,7 @@ export default class Plan extends Component {
     this.forecastAndUpdateUserMonthPlan({
       planBudgets: planBudgets,
       unknownChannels: this.getPlanBudgets(true),
-      namesMapping: this.props.namesMapping
+      userChannelsSchema: this.props.userChannelsSchema,
     }, this.state.primaryPlanForecastedIndicators);
   };
 
@@ -280,7 +280,7 @@ export default class Plan extends Component {
       this.forecastAndUpdateUserMonthPlan({
         planBudgets: this.getPlanBudgets(),
         unknownChannels: this.getPlanBudgets(true),
-        namesMapping: this.props.namesMapping
+        userChannelsSchema: this.props.userChannelsSchema
       });
     }
   };

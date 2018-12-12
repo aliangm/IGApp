@@ -4,7 +4,7 @@ import style from 'styles/settings/channels/channels-tab.css';
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import {getChannelIcon, getChannelsWithProps, getNickname as getChannelNickname} from 'components/utils/channels';
-import {groupBy, uniq} from 'lodash';
+import {groupBy, sortBy, uniq} from 'lodash';
 import SaveButton from 'components/pages/profile/SaveButton';
 
 export default class ChannelsTab extends Component {
@@ -16,17 +16,16 @@ export default class ChannelsTab extends Component {
     this.state = {};
   }
 
-  editChannelName = (name, category, channel) => {
-    const namesMapping = {...this.props.namesMapping};
-    if (!namesMapping.channels) {
-      namesMapping.channels = {};
+  editChannel = (name, category, channel) => {
+    const userChannelsSchema = {...this.props.userChannelsSchema};
+    if (!userChannelsSchema[channel]) {
+      userChannelsSchema[channel] = {};
     }
-    namesMapping.channels[channel] = {
-      nickname: name,
-      category: category
-    };
-    this.props.updateState({namesMapping: namesMapping}, () => {
-      this.props.updateUserMonthPlan({namesMapping: this.props.namesMapping}, this.props.region, this.props.planDate);
+    userChannelsSchema[channel].nickname = name;
+    userChannelsSchema[channel].category = category;
+
+    this.props.updateState({userChannelsSchema: userChannelsSchema}, () => {
+      this.props.updateUserMonthPlan({userChannelsSchema: this.props.userChannelsSchema}, this.props.region, this.props.planDate);
       this.setState({
         categoryEdit: undefined,
         channelEdit: undefined,
@@ -44,8 +43,8 @@ export default class ChannelsTab extends Component {
         ...channelsWithProps[channel]
       };
     });
-    const channelsByCategory = groupBy(propsArray, 'category');
-    const categories = uniq(Object.keys(channelsByCategory));
+    const channelsByCategory = groupBy(sortBy(propsArray, ['nickname']), 'category');
+    const categories = uniq(Object.keys(channelsByCategory)).sort();
     const categoriesOptions = categories.map(category => {
       return {
         value: category,
@@ -116,7 +115,7 @@ export default class ChannelsTab extends Component {
           <SaveButton onClick={() => {
             this.setState({saveFail: false, saveSuccess: false});
             this.setState({saveSuccess: true});
-            this.editChannelName(channelEdit, categoryEdit, selectedChannel);
+            this.editChannel(channelEdit, categoryEdit, selectedChannel);
           }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
         </div>
       </div>
