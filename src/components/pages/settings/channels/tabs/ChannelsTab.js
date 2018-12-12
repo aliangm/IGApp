@@ -5,6 +5,7 @@ import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import {getChannelIcon, getChannelsWithProps, getNickname as getChannelNickname} from 'components/utils/channels';
 import {groupBy, uniq} from 'lodash';
+import SaveButton from 'components/pages/profile/SaveButton';
 
 export default class ChannelsTab extends Component {
 
@@ -15,6 +16,25 @@ export default class ChannelsTab extends Component {
     this.state = {};
   }
 
+  editChannelName = (name, category, channel) => {
+    const namesMapping = {...this.props.namesMapping};
+    if (!namesMapping.channels) {
+      namesMapping.channels = {};
+    }
+    namesMapping.channels[channel] = {
+      nickname: name,
+      category: category
+    };
+    this.props.updateState({namesMapping: namesMapping}, () => {
+      this.props.updateUserMonthPlan({namesMapping: this.props.namesMapping}, this.props.region, this.props.planDate);
+      this.setState({
+        categoryEdit: undefined,
+        channelEdit: undefined,
+        selectedChannel: channel,
+        selectedCategory: category
+      });
+    });
+  };
 
   render() {
     const channelsWithProps = getChannelsWithProps();
@@ -35,8 +55,7 @@ export default class ChannelsTab extends Component {
 
     const getDefaultChannel = category => channelsByCategory[category][0].channel;
 
-    const {selectedCategory = categories[0], selectedChannel = getDefaultChannel(selectedCategory)} = this.state;
-    const channelNickname = getChannelNickname(selectedChannel);
+    const {selectedCategory = categories[0], selectedChannel = getDefaultChannel(selectedCategory), channelEdit = getChannelNickname(selectedChannel), categoryEdit = selectedCategory} = this.state;
 
     return <div>
       <div style={{display: 'flex'}}>
@@ -73,23 +92,32 @@ export default class ChannelsTab extends Component {
           </div>
           <div className={this.classes.channel}>
             <div className={this.classes.channelIcon} data-icon={getChannelIcon(selectedChannel)}/>
-            {channelNickname}
+            {getChannelNickname(selectedChannel)}
           </div>
           <div className={this.classes.flexRow}>
             <div className={this.classes.fieldText}>
               Name
             </div>
-            <Textfield value={channelNickname} onChange={() => {
-            }}/>
+            <Textfield value={channelEdit}
+                       onChange={e => {
+                         this.setState({channelEdit: e.target.value});
+                       }}/>
           </div>
           <div className={this.classes.flexRow}>
             <div className={this.classes.fieldText}>
               Category
             </div>
-            <Select select={{options: categoriesOptions}} style={{width: '131px'}} selected={selectedCategory}
-                    onChange={() => {
+            <Select select={{options: categoriesOptions}} style={{width: '131px'}}
+                    selected={categoryEdit}
+                    onChange={e => {
+                      this.setState({categoryEdit: e.value});
                     }}/>
           </div>
+          <SaveButton onClick={() => {
+            this.setState({saveFail: false, saveSuccess: false});
+            this.setState({saveSuccess: true});
+            this.editChannelName(channelEdit, categoryEdit, selectedChannel);
+          }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
         </div>
       </div>
     </div>;
