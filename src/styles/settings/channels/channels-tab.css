@@ -1,6 +1,6 @@
 .categories-menu {
     width: 177px;
-    height: -webkit-fill-available;
+    height: stretch;
     border-radius: 2px;
     background-color: #e6e8f0;
     overflow-y: auto;
@@ -23,7 +23,7 @@
 
 .channels-menu {
     width: 177px;
-    height: -webkit-fill-available;
+    height: stretch;
     border-radius: 2px;
     background-color: #ffffff;
 }

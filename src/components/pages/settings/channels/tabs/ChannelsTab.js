@@ -214,15 +214,17 @@ export default class ChannelsTab extends Component {
                   </div>
                 </div>)
             }
-            <Button type="secondary" style={{width: 'fit-content'}} onClick={() => this.addRule(selectedChannel)}>
+            <Button type="secondary" style={{width: 'fit-content', marginTop: '15px'}}
+                    onClick={() => this.addRule(selectedChannel)}>
               Or
             </Button>
           </div>
-          <SaveButton onClick={() => {
-            this.setState({saveFail: false, saveSuccess: false});
-            this.setState({saveSuccess: true});
-            this.editChannel(channelEdit, categoryEdit, selectedChannel);
-          }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
+          <SaveButton style={{marginTop: '15px', width: 'fit-content'}}
+                      onClick={() => {
+                        this.setState({saveFail: false, saveSuccess: false});
+                        this.setState({saveSuccess: true});
+                        this.editChannel(channelEdit, categoryEdit, selectedChannel);
+                      }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
         </div>
       </div>
     </div>;
