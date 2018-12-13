@@ -9,6 +9,7 @@ import {getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecif
 import FloatingComponent from 'components/controls/FloatingComponent';
 import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isPlainObject, get, chunk, mapValues} from 'lodash';
 import {newFunnelMapping} from 'components/utils/utils';
+import Toggle from 'components/controls/Toggle';
 
 const CELL_WIDTH = 140;
 
@@ -29,7 +30,8 @@ export default class AnnualTab extends Component {
     super(props);
     this.state = {
       hoverRow: void 0,
-      scrollPosition: 0
+      scrollPosition: 0,
+      showSumData: true
     };
   }
 
@@ -129,11 +131,11 @@ export default class AnnualTab extends Component {
       return [];
     }
     else {
-      return this.formatAndAddExtraData(array,
+      return this.formatAndAddExtraData(array, this.state.showSumData ?
         [
           {offset: quarterOffset, itemsInChunk: 3, chunkAdditionFormatter: quarterSumFunc},
           {offset: annualOffset, itemsInChunk: 12, chunkAdditionFormatter: annualSumFunc}
-        ], itemParseFunc);
+        ] : [], itemParseFunc);
     }
   };
 
@@ -259,6 +261,15 @@ export default class AnnualTab extends Component {
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
+          <div className={this.classes.quarterlySumToggle}>
+            <div className={this.classes.quarterlySumLabel}>Q/Y Sums</div>
+            <Toggle options={[{value: true, text: 'Show'}, {value: false, text: 'Hide'}]}
+                    selectedValue={this.state.showSumData}
+                    onClick={(value) => {
+                      this.setState({showSumData: value});
+                    }}
+            />
+          </div>
           <BudgetsTable isEditMode={editMode}
                         isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
