@@ -38,14 +38,12 @@ import AttributionLink from 'components/pages/AttributionLink';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
 import SiteStructure from 'components/pages/attribution/SiteStructure';
-import CurrentTab from 'components/pages/plan/CurrentTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
-import {formatDate} from 'components/utils/date';
 import {userPermittedToPage} from 'utils';
 import config from 'components/utils/Configuration';
 import Login from 'components/pages/signIn/Login';
@@ -105,12 +103,6 @@ ReactDOM.render(
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
       <Route path="/build-first-plan" component={ManualPlan} onEnter={requireAdminAuth}/>
       <Route component={Plan} onEnter={(...parameters) => requirePermission('plan', ...parameters)}>
-        <Route path="/plan/current"
-               component={CurrentTab}
-               onEnter={requireAuth}
-          // Special treatment for state derived tab name. The state is saved at App.js level therefore
-          // can't render the name here. DefaultName is for situation where the property is still loading
-               tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
         <Route path="/plan/plans-vs-actuals"
                component={PlannedVsActual}
