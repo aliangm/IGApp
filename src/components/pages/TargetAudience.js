@@ -122,12 +122,12 @@ export default class TargetAudience extends Component {
     const tabData = this.props.targetAudience[index];
     this.setState({
       showAdvancedFields: tabData &&
-        (
-          this.selectFieldNotEmpty(tabData.fields.teamSize) ||
-          this.selectFieldNotEmpty(tabData.fields.salary) ||
-          this.selectFieldNotEmpty(tabData.fields.education) ||
-          this.selectFieldNotEmpty(tabData.fields.dailyOnlinePresence)
-        )
+      (
+        this.selectFieldNotEmpty(tabData.fields.teamSize) ||
+        this.selectFieldNotEmpty(tabData.fields.salary) ||
+        this.selectFieldNotEmpty(tabData.fields.education) ||
+        this.selectFieldNotEmpty(tabData.fields.dailyOnlinePresence)
+      )
     });
   };
 
@@ -382,9 +382,11 @@ export default class TargetAudience extends Component {
                   <div className={this.classes.row}>
                     <Label>Management Level</Label>
                     <ButtonsSet buttons={[
-                      {key: 'C-Level', text: 'C-Level', icon: 'buttons:cxo'},
-                      {key: 'Management', text: 'Management', icon: 'buttons:manager'},
-                      {key: 'Employee', text: 'Employee', icon: 'buttons:employee'}
+                      {key: 'C-Level', text: 'CXO', icon: 'buttons:cxo'},
+                      {key: 'VP', text: 'VP', icon: 'buttons:vp'},
+                      {key: 'Director', text: 'Director', icon: 'buttons:director'},
+                      {key: 'Management', text: 'Manager', icon: 'buttons:manager'},
+                      {key: 'Employee', text: 'Other', icon: 'buttons:employee'}
                     ]}
                                 selectedKey={this.hasTargetInIndex(index) &&
                                 this.props.targetAudience[index].fields.managementLevel}
