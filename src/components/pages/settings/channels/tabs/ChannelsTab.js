@@ -4,7 +4,7 @@ import style from 'styles/settings/channels/channels-tab.css';
 import Select from 'components/controls/Select';
 import Textfield from 'components/controls/Textfield';
 import {getChannelIcon, getChannelsWithProps, getNickname as getChannelNickname} from 'components/utils/channels';
-import {groupBy, sortBy, uniq} from 'lodash';
+import {groupBy, sortBy, uniq, set} from 'lodash';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Button from 'components/controls/Button';
 
@@ -30,11 +30,9 @@ export default class ChannelsTab extends Component {
 
   editChannel = (name, category, channel) => {
     const userChannelsSchema = {...this.props.userChannelsSchema};
-    if (!userChannelsSchema[channel]) {
-      userChannelsSchema[channel] = {};
-    }
-    userChannelsSchema[channel].nickname = name;
-    userChannelsSchema[channel].category = category;
+
+    set(userChannelsSchema, [channel, 'nickname'], name);
+    set(userChannelsSchema, [channel, 'category'], category);
 
     this.props.updateState({userChannelsSchema: userChannelsSchema}, () => {
       this.props.updateUserMonthPlan({
