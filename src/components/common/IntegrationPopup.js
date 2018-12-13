@@ -101,7 +101,6 @@ export default class IntegrationPopup extends Component {
         description={properties[indicator].description}
         formula={properties[indicator].formula}
         isDirectionDown={!properties[indicator].isDirectionUp}
-        isDollar={properties[indicator].isDollar}
         automaticIndicators={true}
       />
     );

@@ -7,6 +7,7 @@ import icons from 'styles/icons/indicators.css';
 import { formatNumber } from 'components/utils/budget';
 import Textfield from 'components/controls/Textfield';
 import Button from 'components/controls/Button';
+import {formatIndicatorDisplay} from 'components/utils/indicators';
 
 export default class ProjectionItem extends Component {
   style = style;
@@ -64,11 +65,7 @@ export default class ProjectionItem extends Component {
       return '\u00A0';
     }
 
-    if (isFinite(value)) {
-      return (this.props.isDollar ? '$' : '') + formatNumber(value) + (this.props.isPercentage ? '%' : '');
-    }
-
-    return (this.props.isDollar ? '$' : '') + formatNumber(value) + (this.props.isPercentage ? '%' : '');
+    return formatIndicatorDisplay(this.props.indicator, value);
   }
 
   getDiff() {

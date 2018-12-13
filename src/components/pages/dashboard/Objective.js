@@ -4,6 +4,7 @@ import style from 'styles/dashboard/objective.css';
 import {formatNumber} from 'components/utils/budget';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getNumberOfDaysBetweenDates} from 'components/utils/date';
+import {getIndicatorDisplaySign} from 'components/utils/indicators';
 
 export default class Objective extends Component {
 
@@ -79,7 +80,7 @@ export default class Objective extends Component {
             {formatNumber(Math.round(this.props.value) || 0)}
           </tspan>
           <tspan className={this.classes.currentMark} dy={-5} dx={2}>
-            {(this.props.isDollar ? '$' : '')}{(this.props.isPercentage ? '%' : '')}
+            {getIndicatorDisplaySign(this.props.indicator)}
           </tspan>
         </text>
         <text className={this.classes.title} x="50%" y="45%" textAnchor="middle">

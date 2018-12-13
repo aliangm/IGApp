@@ -310,7 +310,6 @@ export default class Indicators extends Component {
           description={properties[indicator].description}
           formula={properties[indicator].formula}
           isDirectionDown={!properties[indicator].isDirectionUp}
-          isDollar={properties[indicator].isDollar}
           {... indicatorsSpecialProp[indicator]}
         />
       );
