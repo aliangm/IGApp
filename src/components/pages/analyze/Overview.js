@@ -129,18 +129,22 @@ export default class Overview extends Component {
     const totalPipeline = this.props.getTotalParam('pipeline');
 
     const revenueByChannel = channelsImpact ? channelsImpact.revenue : {};
-    const influencedByRevenue = channelsImpact ? channelsImpact.influencedRevenue : {};
+    const influencedRevenueByChannel = channelsImpact ? channelsImpact.influencedRevenue : {};
     delete revenueByChannel.direct;
 
     const revenueByChannelRows = Object.keys(revenueByChannel).map(channel => {
       return {
-        items: [getChannelNickname(channel), formatBudget(revenueByChannel[channel]), formatBudget(influencedByRevenue[channel])]
+        items: [getChannelNickname(channel),
+          formatBudget(revenueByChannel[channel]),
+          formatBudget(influencedRevenueByChannel[channel])]
       };
     });
 
     const channelsByCategories = groupBy(Object.keys(revenueByChannel), channel => getMetadata('category', channel));
-    const revenueByCategory = mapValues(channelsByCategories, channels => sumBy(channels, channel => revenueByChannel[channel]));
-    const influencedRevenueByCategory = mapValues(channelsByCategories, channels => sumBy(channels, channel => influencedByRevenue[channel]));
+    const revenueByCategory = mapValues(channelsByCategories,
+      channels => sumBy(channels, channel => revenueByChannel[channel]));
+    const influencedRevenueByCategory = mapValues(channelsByCategories,
+      channels => sumBy(channels, channel => influencedRevenueByChannel[channel]));
 
     const revenueByCategoryRows = Object.keys(revenueByCategory).map(category => {
       return {
@@ -305,7 +309,7 @@ export default class Overview extends Component {
           <div className={dashboardStyle.locals.text}>
             Revenue by {title}
           </div>
-          <SmallTable headRowData={{items: [title, 'Revenue', "Influenced Revenue"]}}
+          <SmallTable headRowData={{items: [title, 'Attributed Revenue', 'Influenced Revenue']}}
                       rowsData={revenueByRows}/>
         </div>
       </div>;
