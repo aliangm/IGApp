@@ -19,6 +19,9 @@ const operationOptions = [
   {value: 'contains', label: 'contains'}
 ];
 
+const MARGIN_RIGHT = '15px';
+const ruleSelectStyle = {width: '131px', marginRight: MARGIN_RIGHT};
+
 export default class ChannelsTab extends Component {
 
   style = style;
@@ -188,18 +191,18 @@ export default class ChannelsTab extends Component {
                   {
                     rule.conditions.map((condition, conditionIndex) =>
                       <div className={this.classes.flexRow} key={`${rule.index}-${conditionIndex}`}>
-                        <Select select={{options: paramsOptions}} style={{width: '131px', marginRight: '15px'}}
+                        <Select select={{options: paramsOptions}} style={ruleSelectStyle}
                                 selected={condition.param}
                                 onChange={e => {
                                   this.updateRule(rule.index, conditionIndex, 'param', e.value);
                                 }}/>
-                        <Select select={{options: operationOptions}} style={{width: '131px', marginRight: '15px'}}
+                        <Select select={{options: operationOptions}} style={ruleSelectStyle}
                                 selected={condition.operation}
                                 onChange={e => {
                                   this.updateRule(rule.index, conditionIndex, 'operation', e.value);
                                 }}/>
                         <Textfield value={condition.value}
-                                   style={{marginRight: '15px'}}
+                                   style={{marginRight: MARGIN_RIGHT}}
                                    onChange={e => {
                                      this.updateRule(rule.index, conditionIndex, 'value', e.target.value);
                                    }}/>
