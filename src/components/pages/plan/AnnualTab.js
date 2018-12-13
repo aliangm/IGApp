@@ -261,12 +261,15 @@ export default class AnnualTab extends Component {
     return <div>
       <div className={this.classes.wrap}>
         <div className={this.classes.innerBox}>
-          <Toggle options={[{value: true, text: 'show'}, {value: false, text: 'hide'}]}
-                  selectedValue={this.state.showSumData}
-                  onClick={(value) => {
-                    this.setState({showSumData: value});
-                  }}
-          />
+          <div className={this.classes.quarterlySumToggle}>
+            <div className={this.classes.quarterlySumLabel}>Q/Y Sums</div>
+            <Toggle options={[{value: true, text: 'Show'}, {value: false, text: 'Hide'}]}
+                    selectedValue={this.state.showSumData}
+                    onClick={(value) => {
+                      this.setState({showSumData: value});
+                    }}
+            />
+          </div>
           <BudgetsTable isEditMode={editMode}
                         isShowSecondaryEnabled={interactiveMode || editMode}
                         isConstraintsEnabled={interactiveMode}
