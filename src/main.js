@@ -107,7 +107,7 @@ ReactDOM.render(
         <Route path="/plan/plans-vs-actuals"
                component={PlannedVsActual}
                onEnter={requireAuth}
-               tabName="Plans VS Actuals"/>
+               tabName="Plans vs Actuals"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
         <Route path="/campaigns/by-status" component={ByStatusTab} onEnter={requireAuth} tabName='By Status'/>
@@ -148,7 +148,7 @@ ReactDOM.render(
       <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>
         <Route path="/analyze/overview" component={Overview} onEnter={requireAuth} tabName='Overview'/>
         <Route path="/analyze/channels" component={Channels} onEnter={requireAuth} tabName='Channels'/>
-        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='campaigns'/>
+        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='Campaigns'/>
         <Route path="/analyze/content" component={Content} onEnter={requireAuth} tabName='Content'/>
         <Route path="/analyze/audiences" component={Users} onEnter={requireAuth} tabName='Audiences'/>
       </Route>
