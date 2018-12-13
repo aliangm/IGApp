@@ -208,8 +208,7 @@ export default class CMO extends Component {
         directionDown={!indicatorsProperties[objective.indicator].isDirectionUp}
         timeFrame={objective.dueDate}
         color={getColor(index)}
-        isDollar={indicatorsProperties[objective.indicator].isDollar}
-        isPercentage={indicatorsProperties[objective.indicator].isPercentage}
+        indicator={objective.indicator}
       />;
     });
 
