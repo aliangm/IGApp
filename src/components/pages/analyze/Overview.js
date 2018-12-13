@@ -129,16 +129,22 @@ export default class Overview extends Component {
     const totalPipeline = this.props.getTotalParam('pipeline');
 
     const revenueByChannel = channelsImpact ? channelsImpact.revenue : {};
+    const influencedRevenueByChannel = channelsImpact ? channelsImpact.influencedRevenue : {};
     delete revenueByChannel.direct;
 
     const revenueByChannelRows = Object.keys(revenueByChannel).map(channel => {
       return {
-        items: [getChannelNickname(channel), formatBudget(revenueByChannel[channel])]
+        items: [getChannelNickname(channel),
+          formatBudget(revenueByChannel[channel]),
+          formatBudget(influencedRevenueByChannel[channel])]
       };
     });
 
     const channelsByCategories = groupBy(Object.keys(revenueByChannel), channel => getMetadata('category', channel));
-    const revenueByCategory = mapValues(channelsByCategories, channels => sumBy(channels, channel => revenueByChannel[channel]));
+    const revenueByCategory = mapValues(channelsByCategories,
+      channels => sumBy(channels, channel => revenueByChannel[channel]));
+    const influencedRevenueByCategory = mapValues(channelsByCategories,
+      channels => sumBy(channels, channel => influencedRevenueByChannel[channel]));
 
     const revenueByCategoryRows = Object.keys(revenueByCategory).map(category => {
       return {
@@ -146,20 +152,20 @@ export default class Overview extends Component {
           <div style={{textTransform: 'capitalize'}}>
             {category}
           </div>,
-          formatBudget(revenueByCategory[category])
+          formatBudget(revenueByCategory[category]), formatBudget(influencedRevenueByCategory[category])
         ]
       };
     });
 
     const revenueByCampaignRows = attributionCampaigns.map(campaign => {
       return {
-        items: [campaign.name, formatBudget(campaign.revenue)]
+        items: [campaign.name, formatBudget(campaign.revenue), formatBudget(campaign.influencedRevenue)]
       };
     });
 
     const revenueByContentRows = attributionPages.map(page => {
       return {
-        items: [page.title, formatBudget(page.revenue)]
+        items: [page.title, formatBudget(page.revenue), formatBudget(page.influencedRevenue)]
       };
     });
 
@@ -303,7 +309,7 @@ export default class Overview extends Component {
           <div className={dashboardStyle.locals.text}>
             Revenue by {title}
           </div>
-          <SmallTable headRowData={{items: [title, 'Revenue']}}
+          <SmallTable headRowData={{items: [title, 'Attributed Revenue', 'Influenced Revenue']}}
                       rowsData={revenueByRows}/>
         </div>
       </div>;
