@@ -21,6 +21,7 @@ import {calculatedDataExtender, getAnnualBudgetFromAppData} from 'dataExtenders/
 import {getProfileSync} from 'components/utils/AuthService';
 import Settings from 'components/pages/Settings';
 import {getMemberFullName} from 'components/utils/teamMembers';
+import ReactTooltip from 'react-tooltip';
 
 class AppComponent extends Component {
 
@@ -751,6 +752,7 @@ class AppComponent extends Component {
 
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
+        <ReactTooltip place='bottom' effect='solid' id='appTip' html={true}/>
         <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
         <Sidebar userAccount={this.state.userAccount}
                  path={this.props.location.pathname}/>
