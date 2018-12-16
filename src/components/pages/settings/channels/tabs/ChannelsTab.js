@@ -90,7 +90,7 @@ export default class ChannelsTab extends Component {
 
   addCondition = (ruleIndex) => {
     const {attributionMappingRules} = this.props;
-    delete attributionMappingRules[ruleIndex].conditions.push({...this.getNewCondition()});
+    attributionMappingRules[ruleIndex].conditions.push({...this.getNewCondition()});
 
     this.props.updateState({attributionMappingRules});
   };
