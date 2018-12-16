@@ -78,11 +78,11 @@ export default class ChannelsTab extends Component {
 
   deleteCondition = (ruleIndex, conditionIndex) => {
     const {attributionMappingRules} = this.props;
-    delete attributionMappingRules[ruleIndex].conditions[conditionIndex];
+    attributionMappingRules[ruleIndex].conditions.splice(conditionIndex, 1);
 
     // If last condition, delete rule
     if (attributionMappingRules[ruleIndex].conditions.length === 0) {
-      delete attributionMappingRules[ruleIndex];
+      attributionMappingRules.splice(ruleIndex, 1);
     }
 
     this.props.updateState({attributionMappingRules});
@@ -220,7 +220,7 @@ export default class ChannelsTab extends Component {
             }
             <Button type="secondary" style={{width: 'fit-content', marginTop: '15px'}}
                     onClick={() => this.addRule(selectedChannel)}>
-              Or
+              OR
             </Button>
           </div>
           <SaveButton style={{marginTop: '15px', width: 'fit-content'}}
