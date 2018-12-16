@@ -18,6 +18,7 @@
 }
 
 .category-box[data-selected] {
+    border-radius: 0;
     background-color: #ffffff;
 }
 
@@ -45,10 +46,6 @@
     background-color: #283240;
     position: relative;
     color: #ffffff;
-}
-
-.channel-box[data-selected] .channel-icon {
-    border: 1px solid #ffffff;
 }
 
 .channel-box[data-selected]:after {
@@ -101,7 +98,6 @@
     background-position: center center;
     background-repeat: no-repeat;
     margin-right: 10px;
-    background-color: #ffffff;
 }
 
 .flex-row {
@@ -116,7 +112,8 @@
 }
 
 .row-icons {
-    width: 36px;
+    width: auto;
+    padding: 0 3px;
     height: 20px;
     background-color: #ffffff;
     display: flex;
@@ -127,7 +124,7 @@
 .icon {
     width: 10px;
     height: 10px;
-    margin: 2px;
+    margin: 3px;
     cursor: pointer;
 }
 
