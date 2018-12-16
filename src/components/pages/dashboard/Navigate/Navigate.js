@@ -63,7 +63,7 @@ export default class Navigate extends Component {
   };
 
   render() {
-    const {forecastedIndicators, attribution: {channelsImpact}, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedDatagit : {historyData: {historyDataLength}}} = this.props;
+    const {forecastedIndicators, attribution: {channelsImpact}, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedData : {historyData: {historyDataLength}}} = this.props;
     const {currentObjective, months} = this.state;
     const parseChannelsImpact = (channelsImpact) => {
       const impact = {};
