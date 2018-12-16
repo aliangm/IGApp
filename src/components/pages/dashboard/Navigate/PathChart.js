@@ -4,6 +4,8 @@ import ReactTooltip from 'react-tooltip';
 import Component from 'components/Component';
 import MonthsPopup from 'components/pages/dashboard/MonthsPopup';
 import style from 'styles/dashboard/navigate.css';
+import {getNickname} from 'components/utils/indicators';
+import {formatNumber} from 'components/utils/budget';
 
 const styles = style.locals;
 const LINE_COLOR = '#4d91fc';
@@ -13,8 +15,8 @@ const ObjectiveSelect = ({objective, onNext, onPrev}) => {
     <div className={styles.objectiveSelect}>
       <button className={styles.prevObjective} onClick={onPrev}/>
       <div className={styles.objective}>
-        <div className={styles.objectiveName}>{objective.name}</div>
-        <div className={styles.objectiveTarget}>{objective.target}</div>
+        <div className={styles.objectiveName}>{getNickname(objective.name)}</div>
+        <div className={styles.objectiveTarget}>{formatNumber(objective.target)}</div>
       </div>
       <button className={styles.nextObjective} onClick={onNext}/>
     </div>
