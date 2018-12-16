@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/plan/insight-item.css';
 import Button from 'components/controls/Button';
-import ReactTooltip from 'react-tooltip';
 import {formatBudget} from 'components/utils/budget';
 import groupBy from 'lodash/groupBy';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
@@ -73,11 +72,10 @@ export default class InsightItem extends Component {
                                                                          month={dates[item.monthKey]}/>);
 
     return <div style={{width: '100%'}}>
-      <ReactTooltip place='bottom' effect='solid' id='insightItem' html={true}/>
       <div className={this.classes.frame}>
         <div className={this.classes.title}>
           Optimization Opportunity
-          <div className={this.classes.forecastingIcon} data-tip={this.getTooltip(dates)} data-for='insightItem'/>
+          <div className={this.classes.forecastingIcon} data-tip={this.getTooltip(dates)} data-for='appTip'/>
         </div>
         <div className={this.classes.inner}>
           <div style={{width: 'fit-content'}}>

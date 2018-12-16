@@ -6,7 +6,6 @@ import {extractNumber} from 'components/utils/utils';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
-import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 import {ContextMenu, ContextMenuTrigger, SubMenu, MenuItem} from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
 import {getChannelsWithProps, isUnknownChannel} from 'components/utils/channels';
@@ -325,11 +324,6 @@ export default class BudgetsTable extends Component {
 
           {this.props.isEditMode && rowType === ROW_TYPE.CHANNEL ?
             <div>
-              <div className={this.classes.editChannelNameWrapper}>
-                <div className={this.classes.editChannelName} onClick={() => {
-                  this.setState({editChannelName: data.channel});
-                }}/>
-              </div>
               <div
                 className={this.classes.rowDelete}
                 onClick={() => this.setState({deletePopup: data.channel})}
@@ -342,14 +336,6 @@ export default class BudgetsTable extends Component {
                     this.setState({deletePopup: ''});
                   }}
                   onBack={() => this.setState({deletePopup: ''})}
-                />
-              </Popup>
-              <Popup hidden={data.channel !== this.state.editChannelName}
-                     style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-                <EditChannelNamePopup
-                  channel={this.state.editChannelName}
-                  onNext={this.editChannelName}
-                  onBack={() => this.setState({editChannelName: ''})}
                 />
               </Popup>
             </div>
@@ -378,8 +364,6 @@ export default class BudgetsTable extends Component {
                   :
                   rowType === ROW_TYPE.CHANNEL ?
                     <div className={this.classes.channelEditIcons}>
-                      <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
-                           onClick={() => this.setState({editChannelName: data.channel})}/>
                       <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
                            onClick={() => this.setState({deletePopup: data.channel})}/>
                     </div>
@@ -393,20 +377,6 @@ export default class BudgetsTable extends Component {
         </div>
       </td>
     </ContextMenuTrigger>;
-  };
-
-  editChannelName = (name, category, channel) => {
-    let namesMapping = this.props.namesMapping || {};
-    if (!namesMapping.channels) {
-      namesMapping.channels = {};
-    }
-    namesMapping.channels[channel] = {
-      title: `${category} / ${name}`,
-      nickname: name,
-      category: category
-    };
-    this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
-    this.setState({editChannelName: ''});
   };
 
   getDataByChannel = (data, channelsProps) => {

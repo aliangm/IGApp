@@ -21,6 +21,7 @@ import {calculatedDataExtender, getAnnualBudgetFromAppData} from 'dataExtenders/
 import {getProfileSync} from 'components/utils/AuthService';
 import Settings from 'components/pages/Settings';
 import {getMemberFullName} from 'components/utils/teamMembers';
+import ReactTooltip from 'react-tooltip';
 
 class AppComponent extends Component {
 
@@ -132,8 +133,8 @@ class AppComponent extends Component {
   }
 
   updateState(newState, callback) {
-    if (newState.namesMapping) {
-      initializeChannels(this.state.channelsSchema, newState.namesMapping.channels);
+    if (newState.userChannelsSchema) {
+      initializeChannels(this.state.channelsSchema, newState.userChannelsSchema);
     }
     this.setState(newState, callback);
     this.setState({unsaved: newState.unsaved === undefined ? true : newState.unsaved});
@@ -150,7 +151,7 @@ class AppComponent extends Component {
               if (!dontSetState) {
                 this.setDataAsState(data);
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
-                initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
+                initializeChannels(this.state.channelsSchema, data.userChannelsSchema);
               }
               deferred.resolve(data);
             });
@@ -180,7 +181,7 @@ class AppComponent extends Component {
               if (data) {
                 this.setDataAsState(data);
                 initializeIndicators(this.state.indicatorsSchema, data.namesMapping && data.namesMapping.indicators);
-                initializeChannels(this.state.channelsSchema, data.namesMapping && data.namesMapping.channels);
+                initializeChannels(this.state.channelsSchema, data.userChannelsSchema);
               }
               deferred.resolve();
             });
@@ -471,9 +472,10 @@ class AppComponent extends Component {
       planBudgets: data.planBudgets || [],
       forecastedIndicators: data.forecastedIndicators || [],
       namesMapping: data.namesMapping && Object.keys(data.namesMapping).length > 0 ? data.namesMapping : {
-        channels: {},
         indicators: {}
       },
+      userChannelsSchema: data.userChannelsSchema,
+      attributionMappingRules: data.attributionMappingRules || [],
       userRegions: data.userRegions,
       expenses: data.expenses || [],
       actualIndicatorsDaily: data.actualIndicatorsDaily,
@@ -634,17 +636,13 @@ class AppComponent extends Component {
   }
 
   addUnknownChannel(channelKey, nickname = channelKey, category = channelKey) {
-    const namesMapping = {...this.state.namesMapping};
-    if (!namesMapping.channels) {
-      namesMapping.channels = {};
-    }
-    namesMapping.channels[channelKey] = {
-      title: channelKey,
+    const userChannelsSchema = {...this.state.userChannelsSchema};
+    userChannelsSchema[channelKey] = {
       nickname: nickname,
       category: category,
       isUnknownChannel: true
     };
-    this.updateState({namesMapping: namesMapping});
+    this.updateState({userChannelsSchema: userChannelsSchema});
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
@@ -751,6 +749,7 @@ class AppComponent extends Component {
 
     return <FeatureToggleProvider featureToggleList={this.state.permissions || {}}>
       <div>
+        <ReactTooltip place='bottom' effect='solid' id='appTip' html={true}/>
         <Header {...extendedData} tabs={tabs} isSettingsOpen={this.isSettingsOpen()}/>
         <Sidebar userAccount={this.state.userAccount}
                  path={this.props.location.pathname}/>

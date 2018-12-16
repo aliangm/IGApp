@@ -128,7 +128,9 @@ export default class PlannedVsActual extends Component {
 
   render() {
     const {month} = this.state;
-    const {attribution: {channelsImpact: attributionChannelsImpact}, calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators}}}} = this.props;
+    const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
+    const {channelsImpact: attributionChannelsImpact} = attribution[month];
+
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
     const isCurrentMonth = month === historyDataLength;
@@ -281,7 +283,7 @@ export default class PlannedVsActual extends Component {
                     this.setState({saveFail: false, saveSuccess: false}, () => {
                       this.props.updateUserMonthPlan({
                         actualChannelBudgets: this.props.actualChannelBudgets,
-                        namesMapping: this.props.namesMapping,
+                        userChannelsSchema: this.props.userChannelsSchema,
                         channelsImpact: this.props.channelsImpact
                       }, this.props.region, this.props.planDate);
                       this.setState({saveSuccess: true});

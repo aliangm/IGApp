@@ -1,24 +1,22 @@
 import uniq from 'lodash/uniq';
 import icons from 'styles/icons/plan.css';
+import {mapValues, merge} from 'lodash';
 
 icons.use();
 
-let schema = { properties: {} };
+let schema = {properties: {}};
 let isInitialized = false;
 
-export function initialize(channelsSchema, userMapping) {
-  schema = channelsSchema;
-  if (userMapping) {
-    Object.keys(userMapping).forEach(channel => {
-      if (!schema.properties[channel]) {
-        schema.properties[channel] = {};
-      }
-      schema.properties[channel].title = userMapping[channel].title;
-      schema.properties[channel].nickname = userMapping[channel].nickname;
-      schema.properties[channel].category = userMapping[channel].category;
-      schema.properties[channel].isUnknownChannel = !!userMapping[channel].isUnknownChannel;
-    });
-  }
+export function initialize(channelsSchema, userChannelsSchema = {}) {
+  schema.properties = merge(schema.properties, channelsSchema.properties, userChannelsSchema);
+  schema.properties = mapValues(schema.properties, props => {
+    const {category, nickname, isUnknownChannel} = props;
+    return {
+      ...props,
+      title: `${category} / ${nickname}`,
+      isUnknownChannel: !!isUnknownChannel
+    }
+  });
   isInitialized = true;
 }
 
@@ -70,7 +68,7 @@ export function isUnknownChannel(channel) {
 export function getChannelsWithTitles() {
   if (isInitialized) {
     return Object.keys(schema.properties).map(item => {
-      return {value: item, label: schema.properties[item].title}
+      return {value: item, label: schema.properties[item].title};
     });
   }
   else return [];
@@ -79,7 +77,7 @@ export function getChannelsWithTitles() {
 export function getChannelsWithNicknames() {
   if (isInitialized) {
     return Object.keys(schema.properties).map(item => {
-      return {value: item, label: schema.properties[item].nickname}
+      return {value: item, label: schema.properties[item].nickname};
     });
   }
   else return [];
@@ -143,7 +141,7 @@ export function output() {
     pathIds.forEach((id, index) => {
       if (index !== 0) {
         result[pathIds[index - 1]].children.push(id);
-        result[pathIds[index - 1]].children.push(pathTitles[index -1] + '_other?');
+        result[pathIds[index - 1]].children.push(pathTitles[index - 1] + '_other?');
       } else {
         result.root.children.push(id);
       }
@@ -162,16 +160,16 @@ export function output() {
           children: !isLeaf ? [] : null
         };
       }
-      if (!result[pathTitles[index -1] + '_other?']) {
+      if (!result[pathTitles[index - 1] + '_other?']) {
         const title = pathTitles.slice(1, index).reduce((a, b) => a + ' / ' + b, pathTitles[0]);
-        result[pathTitles[index -1] + '_other?'] = {
-          channelId: pathTitles[index -1] + '_other?',
+        result[pathTitles[index - 1] + '_other?'] = {
+          channelId: pathTitles[index - 1] + '_other?',
           level: index + 1,
-          title: "Other*",
+          title: 'Other*',
           path: title,
           isLeaf: true,
           isOther: true,
-          id: pathTitles[index -1] + '_other?',
+          id: pathTitles[index - 1] + '_other?',
           minBudget: 0,
           children: null
         };

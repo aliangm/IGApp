@@ -9,6 +9,7 @@ import tooltipStyle from 'styles/controls-label.css';
 import Popup from 'components/Popup';
 import Textfield from 'components/controls/Textfield';
 import Button from 'components/controls/Button';
+import {formatIndicatorDisplay} from 'components/utils/indicators';
 
 export default class Item extends Component {
 
@@ -27,7 +28,7 @@ export default class Item extends Component {
   initialState = (props) => {
     return {
       state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) : (props.defaultStatus === 0 ? (props.automaticIndicators ? 'auto' : 'inactive') : undefined),
-      status: props.defaultStatus <= 0 ? (props.automaticIndicators ? props.defaultStatus : '') : (props.isPercentage ? props.defaultStatus + '%' || '' : (props.isDollar ? '$' + props.defaultStatus || '' : props.defaultStatus || '')),
+      status: props.defaultStatus <= 0 ? (props.automaticIndicators ? props.defaultStatus : '') : formatIndicatorDisplay(props.name, props.defaultStatus),
       menuShown: false,
       statusPopupHidden: true,
       name: props.name,
@@ -122,7 +123,7 @@ export default class Item extends Component {
     status = parseInt(status.replace(/[%$,]/g, ''));
     if ((status && status > 0) || status == 0) {
       this.setState({
-        status: this.props.isPercentage ? (status > 100 ? 100 : status) + '%' : (this.props.isDollar ? '$' + status : status),
+        status: formatIndicatorDisplay(this.props.name, (this.props.isPercentage && status > 100) ? 100 : status),
         statusPopupHidden: true
       });
       this.props.updateIndicator(this.props.name, status);
