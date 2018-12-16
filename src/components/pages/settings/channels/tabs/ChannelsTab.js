@@ -21,6 +21,7 @@ const operationOptions = [
 
 const MARGIN_RIGHT = '15px';
 const ruleSelectStyle = {width: '131px', marginRight: MARGIN_RIGHT};
+const WIDTH = '200px';
 
 export default class ChannelsTab extends Component {
 
@@ -167,6 +168,7 @@ export default class ChannelsTab extends Component {
               Name
             </div>
             <Textfield value={channelEdit}
+                       style={{width: WIDTH}}
                        onChange={e => {
                          this.setState({channelEdit: e.target.value});
                        }}/>
@@ -175,7 +177,7 @@ export default class ChannelsTab extends Component {
             <div className={this.classes.fieldText}>
               Category
             </div>
-            <Select select={{options: categoriesOptions}} style={{width: '131px'}}
+            <Select select={{options: categoriesOptions}} style={{width: WIDTH}}
                     selected={categoryEdit}
                     onChange={e => {
                       this.setState({categoryEdit: e.value});
