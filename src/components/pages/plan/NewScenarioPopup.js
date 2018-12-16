@@ -27,7 +27,7 @@ export default class NewScenarioPopup extends Component {
               Create a new planning scenario
             </div>
             <div className={this.classes.subTitle}>
-              How would you want to start your new scenario?
+              How would you want to start your alternative scenario?
             </div>
             <div className={this.classes.boxes}>
               <div className={this.classes.scratch} onClick={onScratchClick}>

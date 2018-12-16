@@ -5,6 +5,7 @@ import {getDates} from 'components/utils/date';
 import taskStyle from 'styles/campaigns/task.css';
 import {formatExpenses} from 'components/utils/expenses';
 import Table from 'components/controls/Table';
+import history from 'history';
 
 export default class Expenses extends Component {
 
@@ -40,8 +41,23 @@ export default class Expenses extends Component {
 
         return {
           items: [
-            <div className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
-                 style={{cursor: 'pointer'}}/>,
+            <div style={{display: 'flex'}}>
+              <div className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
+                   style={{cursor: 'pointer'}}/>
+              <div className={taskStyle.locals.editIcon} onClick={() => {
+                history.push({
+                  pathname: '/campaigns/add-expense',
+                  state: {
+                    ...expense,
+                    index,
+                    close: () => history.push({
+                      pathname: '/campaigns/expenses'
+                    })
+                  }
+                });
+              }}
+                   style={{cursor: 'pointer', marginLeft: '20px'}}/>
+            </div>,
             expense.name,
             expense.formattedTimeframe,
             expense.dueDate,

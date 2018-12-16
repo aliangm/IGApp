@@ -3,16 +3,15 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
-import {getIndicatorsWithNicknames} from 'components/utils/indicators';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
-import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
+import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import Label from 'components/ControlsLabel';
-import {timeFrameToDate} from 'components/utils/objective';
-import {formatDate} from 'components/utils/date';
 import icons from 'styles/icons/plan.css';
 import ReactTooltip from 'react-tooltip';
+import {newFunnelMapping} from 'components/utils/utils';
+import StatSquare from 'components/common/StatSquare';
 
 export default class Content extends Component {
 
@@ -40,26 +39,10 @@ export default class Content extends Component {
   }
 
   render() {
-    const {attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
+    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, metricsWithInfluencedOptions, metricsWithInfluenced, revenueMetricsOptions, revenueMetrics} = this.props;
     const attributionPages = attribution.pages || [];
 
     const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
-
-    const metrics = [
-      {value: 'MCL', label: getIndicatorNickname('MCL')},
-      {value: 'MQL', label: getIndicatorNickname('MQL')},
-      {value: 'SQL', label: getIndicatorNickname('SQL')},
-      {value: 'opps', label: getIndicatorNickname('opps')},
-      {value: 'users', label: getIndicatorNickname('users')}
-    ];
-
-    const newFunnelMapping = {
-      newMCL: 'MCL',
-      newMQL: 'MQL',
-      newSQL: 'SQL',
-      newOpps: 'opps',
-      newUsers: 'users'
-    };
 
     const objective = funnelFirstObjective;
 
@@ -73,7 +56,7 @@ export default class Content extends Component {
           <Select
             selected={this.state.attributionTableRevenueMetric}
             select={{
-              options: [{value: 'revenue', label: 'Revenue'}, {value: 'pipeline', label: 'Pipeline'}]
+              options: revenueMetricsOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableRevenueMetric: e.value});
@@ -83,8 +66,8 @@ export default class Content extends Component {
           :
           <div onClick={this.sortBy.bind(this, 'revenueMetric')}
                style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${this.state.attributionTableRevenueMetric}`}>
-            {this.state.attributionTableRevenueMetric === 'revenue' ? 'Revenue' : 'Pipeline'}
+               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
+            {revenueMetrics[this.state.attributionTableRevenueMetric]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -94,7 +77,7 @@ export default class Content extends Component {
         </div>
       </div>,
       <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-        Web Visits
+        Views
       </div>,
       <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}>
         <Label
@@ -118,7 +101,7 @@ export default class Content extends Component {
           <Select
             selected={this.state.attributionTableIndicator}
             select={{
-              options: metrics
+              options: metricsWithInfluencedOptions
             }}
             onChange={(e) => {
               this.setState({attributionTableIndicator: e.value});
@@ -128,8 +111,8 @@ export default class Content extends Component {
           :
           <div onClick={this.sortBy.bind(this, 'funnelIndicator')}
                style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${getIndicatorNickname(this.state.attributionTableIndicator)}`}>
-            {getIndicatorNickname(this.state.attributionTableIndicator)}
+               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
+            {metricsWithInfluenced[this.state.attributionTableIndicator]}
           </div>
         }
         <div className={dashboardStyle.locals.metricEdit} onClick={() => {
@@ -167,6 +150,8 @@ export default class Content extends Component {
     const avgReadRatio = pagesData.reduce((sum, item) => sum + item.readRatio, 0) / attributionPages.length;
     const avgProceedRatio = pagesData.reduce((sum, item) => sum + item.proceedRatio, 0) / attributionPages.length;
 
+    const objectiveNickName = getIndicatorNickname(objective);
+
     const rows = pagesData
       .sort((item1, item2) =>
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
@@ -198,52 +183,29 @@ export default class Content extends Component {
           : null;
       });
 
+    const outOfTotalRevenue = Math.round((revenue / totalRevenue) * 100);
+
     return <div>
       <ReactTooltip/>
       <div className={this.classes.wrap}>
         <div className={this.classes.cols} style={{width: '825px'}}>
-          <div className={this.classes.colLeft}>
-            <div className={dashboardStyle.locals.item}>
-              <div className={dashboardStyle.locals.text}>
-                Revenue
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                ${formatBudgetShortened(revenue)}
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.colCenter}>
-            <div className={dashboardStyle.locals.item}>
-              <div className={dashboardStyle.locals.text}>
-                Impact On {getIndicatorNickname(objective)}
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                {isFinite(impact) ? Math.round(impact * 100) : 0}%
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.colCenter}>
-            <div className={dashboardStyle.locals.item}
-                 data-tip='How many out of those who started to read the content piece, actually read/finished it.'>
-              <div className={dashboardStyle.locals.text}>
-                Avg. Read Ratio
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                {Math.round(avgReadRatio)}%
-              </div>
-            </div>
-          </div>
-          <div className={this.classes.colRight}>
-            <div className={dashboardStyle.locals.item}
-                 data-tip='How many out of those who saw/read the content piece, moved to another page in the website afterward.'>
-              <div className={dashboardStyle.locals.text}>
-                Avg. Proceed ratio
-              </div>
-              <div className={dashboardStyle.locals.number}>
-                {Math.round(avgProceedRatio)}%
-              </div>
-            </div>
-          </div>
+          <StatSquare title='Content-Influenced Revenue'
+                      stat={`$${formatBudgetShortened(revenue)}`}
+                      contextStat={isFinite(outOfTotalRevenue) ? `${outOfTotalRevenue}% out of $${formatBudgetShortened(
+                        totalRevenue)}` : null}
+          />
+          <StatSquare title={`Impact On ${getIndicatorNickname(objective)}`}
+                      stat={`${isFinite(impact) ? Math.round(impact * 100) : 0}%`}
+                      tooltipText={`# of ${objectiveNickName} that have been influenced by content out of the total ${objectiveNickName}.`}
+          />
+          <StatSquare title="Avg. Read Ratio"
+                      stat={`${Math.round(avgReadRatio)}%`}
+                      tooltipText='How many out of those who started to read the content piece, actually read/finished it.'
+          />
+          <StatSquare title="Avg. Proceed ratio"
+                      stat={`${Math.round(avgProceedRatio)}%`}
+                      tooltipText='How many out of those who saw/read the content piece, moved to another page in the website afterward.'
+          />
         </div>
         <div>
           <FeatureToggle featureName="attribution">

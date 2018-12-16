@@ -79,7 +79,8 @@
 
 .custom-tooltip {
     padding: 14px;
-    width: 126px;
+    width: fit-content;
+    min-width: 126px;
     height: auto;
     background-color: #222a41;
     box-shadow: 0 4px 8px 0 rgba(153, 164, 194, 0.16);
@@ -102,12 +103,16 @@
     border-right: solid 5px transparent;
 }
 
-.custom-tooltip-indicator {
-    font-size: 12px;
+.custom-tooltip-title {
     font-weight: 600;
-    text-align: center;
     color: #99a4c2;
-    margin-bottom: 8px;
+}
+
+.custom-tooltip-indicator {
+    composes: custom-tooltip-title;
+    font-size: 12px;
+    text-align: left;
+    margin-bottom: 2px;
 }
 
 .custom-tooltip-value {
@@ -119,6 +124,14 @@
 
 .custom-tooltip-values {
     display: inline-flex;
+    margin-bottom: 12px;
+}
+
+.custom-tooltip-header {
+    composes: custom-tooltip-title;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 14px;
 }
 
 .custom-tooltip-objective {
@@ -173,6 +186,18 @@
 
 .fixedChartOverlay g {
     display: none;
+}
+
+.tooltip-legend {
+    width: 20px;
+    border-style: solid;
+    border-width: 0 0 3px 0;
+    align-self: center;
+    margin-right: 4px;
+}
+
+.value-class {
+    display: inline-flex;
 }
 
 .fixedChartOverlay :global(.yAxis),

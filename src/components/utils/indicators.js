@@ -1,4 +1,6 @@
-let schema = { properties: {} };
+import {formatNumber} from 'components/utils/budget';
+
+let schema = {properties: {}};
 let isInitialized = false;
 
 export function initialize(indicatorsSchema, userMapping) {
@@ -10,6 +12,44 @@ export function initialize(indicatorsSchema, userMapping) {
     });
   }
   isInitialized = true;
+}
+
+export function formatIndicatorDisplay(indicator, valueToDisplay) {
+  if (isInitialized) {
+    const displaySign = getIndicatorDisplaySign(indicator);
+    const formattedValue = formatNumber(valueToDisplay);
+    switch (schema.properties[indicator].displayType) {
+      case 'percentage':
+        return `${formattedValue}${displaySign}`;
+      case 'dollar':
+        return `${displaySign}${formattedValue}`;
+      case 'days':
+        return `${formattedValue} ${displaySign}`;
+      default:
+        return formattedValue;
+    }
+  }
+  else {
+    console.error('indicators schema is not initialized');
+  }
+}
+
+export function getIndicatorDisplaySign(indicator) {
+  if (isInitialized) {
+    switch (schema.properties[indicator].displayType) {
+      case 'percentage':
+        return '%';
+      case 'dollar':
+        return '$';
+      case 'days':
+        return 'days';
+      default:
+        return '';
+    }
+  }
+  else {
+    console.error('indicators schema is not initialized');
+  }
 }
 
 export function getTitle(indicator) {
@@ -25,7 +65,7 @@ export function getNickname(indicator, isSingular = false) {
   if (isInitialized) {
     const nickname = schema.properties[indicator].nickname;
     if (isSingular && nickname.slice(-1) === 's') {
-      return nickname.slice(0,-1);
+      return nickname.slice(0, -1);
     }
     else {
       return nickname;
@@ -48,7 +88,7 @@ export function getMetadata(type, indicator) {
 export function getIndicatorsWithNicknames() {
   if (isInitialized) {
     return Object.keys(schema.properties).map(item => {
-      return {value: item, label: schema.properties[item].nickname}
+      return {value: item, label: schema.properties[item].nickname};
     });
   }
   else {

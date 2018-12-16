@@ -38,6 +38,7 @@ const PLATFORM_INDICATORS_MAPPING = {
     'users',
     'CAC',
     'MRR',
+    'ARR',
     'ARPA',
     'newMCL',
     'newMQL',
@@ -49,8 +50,8 @@ const PLATFORM_INDICATORS_MAPPING = {
   'Facebook': ['facebookEngagement', 'facebookLikes'],
   'Twitter': ['twitterFollowers', 'twitterEngagement'],
   'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
-  'Stripe': ['MRR', 'LTV', 'churnRate'],
-  'Google Sheets': ['MRR', 'LTV', 'CAC', 'churnRate'],
+  'Stripe': ['MRR','ARR', 'LTV', 'churnRate'],
+  'Google Sheets': ['MRR','ARR', 'LTV', 'CAC', 'churnRate'],
   'Moz': ['domainAuthority']
 };
 
@@ -357,7 +358,7 @@ export default class Platforms extends Component {
                           title="Salesforce Campaigns"
                           loading={this.isLoading('salesForceCampaigns')}
                           icon="platform:salesforce"
-                          connectButtonText='Import'
+                          connectButtonText='Sync'
                           setDataAsState={this.props.setDataAsState}
                           open={() => {
                             this.refs.salesForceCampaigns.open();
@@ -369,7 +370,7 @@ export default class Platforms extends Component {
                         title="Adwords Campaigns"
                         loading={this.isLoading('adwordsCampaigns')}
                         icon='platform:googleAds'
-                        connectButtonText='Import'
+                        connectButtonText='Sync'
                         setDataAsState={this.props.setDataAsState}
                         open={() => {
                           this.refs.adwordsCampaigns.open();
@@ -378,7 +379,7 @@ export default class Platforms extends Component {
                         title="Facebook Campaigns"
                         loading={this.isLoading('facebookCampaigns')}
                         icon='platform:facebookAds'
-                        connectButtonText='Import'
+                        connectButtonText='Sync'
                         setDataAsState={this.props.setDataAsState}
                         open={() => {
                           this.refs.facebookCampaigns.open();
@@ -387,7 +388,7 @@ export default class Platforms extends Component {
                         title="LinkedIn Campaigns"
                         loading={this.isLoading('linkedinCampaigns')}
                         icon='platform:linkedInAds'
-                        connectButtonText='Import'
+                        connectButtonText='Sync'
                         setDataAsState={this.props.setDataAsState}
                         open={() => {
                           this.refs.linkedinCampaigns.open();
@@ -396,7 +397,7 @@ export default class Platforms extends Component {
                         title="Twitter Campaigns"
                         loading={this.isLoading('twitterCampaigns')}
                         icon='platform:twitterAds'
-                        connectButtonText='Import'
+                        connectButtonText='Sync'
                         setDataAsState={this.props.setDataAsState}
                         open={() => {
                           this.refs.twitterCampaigns.open();

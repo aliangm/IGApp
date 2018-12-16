@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/profile/product-launch-popup.css';
 import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
-import { getTitle, getNickname, getMetadata, getChannelsWithProps } from 'components/utils/channels';
+import { getNickname, getMetadata, getChannelsWithProps } from 'components/utils/channels';
 import Label from 'components/ControlsLabel';
 import Select from 'components/controls/Select';
 

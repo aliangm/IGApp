@@ -6,20 +6,18 @@ import {extractNumber} from 'components/utils/utils';
 import TableCell from 'components/pages/plan/TableCell';
 import Popup from 'components/Popup';
 import DeleteChannelPopup from 'components/pages/plan/DeleteChannelPopup';
-import EditChannelNamePopup from 'components/pages/plan/EditChannelNamePopup';
 import {ContextMenu, ContextMenuTrigger, SubMenu, MenuItem} from 'react-contextmenu';
 import contextStyle from 'react-contextmenu/public/styles.css';
-import {TextContent as PopupTextContent} from 'components/pages/plan/Popup';
 import {getChannelsWithProps, isUnknownChannel} from 'components/utils/channels';
 import groupBy from 'lodash/groupBy';
 import union from 'lodash/union';
 import sumBy from 'lodash/sumBy';
 import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
+import get from 'lodash/get';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {getDatesSpecific} from 'components/utils/date';
 import Button from 'components/controls/Button';
-import history from 'history';
+import classnames from 'classnames';
 
 const COLLAPSE_OPTIONS = {
   COLLAPSE_ALL: 0,
@@ -120,12 +118,15 @@ export default class BudgetsTable extends Component {
     const headerWidth = `${this.props.cellWidth}px`;
     const headers = dates.map((month, index) => {
       return <td key={`head:${index}`}
-                 className={this.classes.headRowCell}
+                 className={classnames(this.classes.headRowCell, {
+                   [this.classes.quarterCell]: month.isQuarter,
+                   [this.classes.annualCell]: month.isAnnual,
+                   [this.classes.historyCell]: index < numberOfPastDates
+                 })}
                  style={{minWidth: headerWidth, width: headerWidth}}
-                 data-history={index < numberOfPastDates ? true : null}
                  data-first-month={index === numberOfPastDates ? true : null}>
 
-        <div style={{width: `${this.props.cellWidth - 12}px`}}>{month}</div>
+        <div style={{width: `${this.props.cellWidth - 12}px`}}>{month.value}</div>
       </td>;
     });
     return headers;
@@ -157,7 +158,8 @@ export default class BudgetsTable extends Component {
   };
 
   getRows = (data, numberOfPastDates) => {
-    return union(Object.keys(data).map(category => this.getCategoryRows(category, data[category], numberOfPastDates)));
+    return union(Object.keys(data)
+      .map(category => this.getCategoryRows(category, data[category], numberOfPastDates)));
   };
 
   getCategoryRows = (category, channels, numberOfPastDates) => {
@@ -178,9 +180,9 @@ export default class BudgetsTable extends Component {
             channel: channel.channel,
             region: region,
             nickname: `${channel.nickname} - ${region}`,
-            values: channel.values.map(item => {
-              const value = (item.regions && item.regions[region]) ? item.regions[region] : 0;
-              return {primaryBudget: value};
+            values: channel.values.map(({regions, isQuarter, isAnnual, updateIndex}) => {
+              const value = get(regions, [region], 0);
+              return {primaryBudget: value, isQuarter, isAnnual, updateIndex};
             })
           }, ROW_TYPE.REGION, numberOfPastDates)))
         ];
@@ -207,7 +209,7 @@ export default class BudgetsTable extends Component {
           ? monthData.secondaryBudget
           : null}
         isConstraitsEnabled={false}
-        approveSuggestion={() => this.approveMonthSuggestions(key)}
+        approveSuggestion={() => this.approveMonthSuggestions(monthData.updateIndex)}
         enableActionButtons={false}
       />;
     });
@@ -227,14 +229,24 @@ export default class BudgetsTable extends Component {
 
     const cells = data.values.map((monthData, key) => {
       const isHistory = key < numberOfPastDates;
+      const isQuarter = monthData.isQuarter;
+      const isAnnual = monthData.isAnnual;
 
-      return rowType === ROW_TYPE.CATEGORY || isHistory ?
+      return rowType === ROW_TYPE.CATEGORY || isHistory || isQuarter || isAnnual ?
         (rowType === ROW_TYPE.CATEGORY ?
-          <td key={`category:${data.channel}:${key}`} className={this.classes.categoryCell}
-              data-history={isHistory ? true : null}>
+          <td key={`category:${data.channel}:${key}`} className={classnames(this.classes.categoryCell, {
+            [this.classes.historyCell]: isHistory,
+            [this.classes.quarterCell]: isQuarter,
+            [this.classes.annualCategoryCell]: isAnnual
+          })}>
             {formatBudget(monthData.primaryBudget)}
           </td> :
-          <td key={`${data.channel}:${key}`} className={this.classes.historyCell}>
+          <td key={`${data.channel}:${key}`} className={classnames(this.classes.cell,
+            {
+              [this.classes.historyCell]: isHistory,
+              [this.classes.quarterCell]: isQuarter,
+              [this.classes.annualCell]: isAnnual
+            })}>
             {formatBudget(monthData.primaryBudget)}
           </td>) : <TableCell
           key={`${data.channel}:${key}`}
@@ -245,18 +257,26 @@ export default class BudgetsTable extends Component {
           isConstraint={monthData.isConstraint}
           isSoft={monthData.isSoft}
           constraintChange={(isConstraint, isSoft) => this.props.changeBudgetConstraint(
-            key,
+            monthData.updateIndex,
             data.channel,
             isConstraint,
             isSoft)}
           isEditMode={this.props.isEditMode}
-          onChange={(newValue) => this.props.editCommittedBudget(key, data.channel, newValue, data.region)}
-          isConstraitsEnabled={this.props.isConstraintsEnabled && !isUnknownChannel(data.channel) && rowType !== ROW_TYPE.REGION}
+          onChange={(newValue) => this.props.editCommittedBudget(monthData.updateIndex,
+            data.channel,
+            newValue,
+            data.region)}
+          isConstraitsEnabled={this.props.isConstraintsEnabled &&
+          !isUnknownChannel(data.channel) &&
+          rowType !==
+          ROW_TYPE.REGION}
           dragEnter={() => this.dragEnter(key, data.channel)}
           commitDrag={this.commitDrag}
           dragStart={this.dragStart}
           isDragging={this.state.isDragging}
-          approveSuggestion={() => this.props.editCommittedBudget(key, data.channel, monthData.secondaryBudget)}
+          approveSuggestion={() => this.props.editCommittedBudget(monthData.updateIndex,
+            data.channel,
+            monthData.secondaryBudget)}
           enableActionButtons={true}
           cellKey={`${data.channel}:${key}`}
         />;
@@ -304,11 +324,6 @@ export default class BudgetsTable extends Component {
 
           {this.props.isEditMode && rowType === ROW_TYPE.CHANNEL ?
             <div>
-              <div className={this.classes.editChannelNameWrapper}>
-                <div className={this.classes.editChannelName} onClick={() => {
-                  this.setState({editChannelName: data.channel});
-                }}/>
-              </div>
               <div
                 className={this.classes.rowDelete}
                 onClick={() => this.setState({deletePopup: data.channel})}
@@ -323,20 +338,14 @@ export default class BudgetsTable extends Component {
                   onBack={() => this.setState({deletePopup: ''})}
                 />
               </Popup>
-              <Popup hidden={data.channel !== this.state.editChannelName}
-                     style={{top: '-72px', left: '130px', cursor: 'initial'}}>
-                <EditChannelNamePopup
-                  channel={this.state.editChannelName}
-                  onNext={this.editChannelName}
-                  onBack={() => this.setState({editChannelName: ''})}
-                />
-              </Popup>
             </div>
             : null}
 
           <div className={this.classes.title} data-category-row={isCategoryRow ? true : null}>
             {rowType === ROW_TYPE.CHANNEL ? <div className={this.classes.rowIcon}
-                                                 data-icon={!isUnknownChannel(data.channel) ? `plan:${data.channel}` : 'plan:other'}/>
+                                                 data-icon={!isUnknownChannel(data.channel)
+                                                   ? `plan:${data.channel}`
+                                                   : 'plan:other'}/>
               : null}
 
             <div className={this.classes.titleText}>{data.nickname}</div>
@@ -355,8 +364,6 @@ export default class BudgetsTable extends Component {
                   :
                   rowType === ROW_TYPE.CHANNEL ?
                     <div className={this.classes.channelEditIcons}>
-                      <div className={this.classes.channelActionIcon} data-icon={'plan:editChannel'}
-                           onClick={() => this.setState({editChannelName: data.channel})}/>
                       <div className={this.classes.channelActionIcon} data-icon={'plan:removeChannel'}
                            onClick={() => this.setState({deletePopup: data.channel})}/>
                     </div>
@@ -372,31 +379,23 @@ export default class BudgetsTable extends Component {
     </ContextMenuTrigger>;
   };
 
-  editChannelName = (name, category, channel) => {
-    let namesMapping = this.props.namesMapping || {};
-    if (!namesMapping.channels) {
-      namesMapping.channels = {};
-    }
-    namesMapping.channels[channel] = {
-      title: `${category} / ${name}`,
-      nickname: name,
-      category: category
-    };
-    this.props.updateUserMonthPlan({namesMapping: namesMapping}, this.props.region, this.props.planDate);
-    this.setState({editChannelName: ''});
-  };
-
   getDataByChannel = (data, channelsProps) => {
     const channels = union(...data.map(month => Object.keys(month.channels)));
 
     const notSorted = channels.map(channel => {
-      const monthArray = Array(this.props.data.length).fill(
-        {primaryBudget: 0, secondaryBudget: 0, isConstraint: false});
+      const defaultMonthValues = {primaryBudget: 0, secondaryBudget: 0, isConstraint: false};
+      const monthArray = Array(this.props.data.length).fill(0).map(item => {
+        return {...defaultMonthValues};
+      });
 
       data.forEach((month, index) => {
         const channels = month.channels;
+        monthArray[index].isQuarter = month.isQuarter;
+        monthArray[index].isAnnual = month.isAnnual;
+        monthArray[index].updateIndex = month.realIndex;
         if (channels[channel]) {
           monthArray[index] = {
+            ...monthArray[index],
             ...channels[channel],
             isConstraint: channels[channel].isConstraint ? channels[channel].isConstraint : false,
             primaryBudget: channels[channel].primaryBudget ? channels[channel].primaryBudget : 0
@@ -414,7 +413,9 @@ export default class BudgetsTable extends Component {
     return Array(this.props.data.length).fill(0).map((value, index) => {
       return {
         primaryBudget: sumBy(channels, channel => channel.values[index].primaryBudget),
-        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget)
+        secondaryBudget: sumBy(channels, channel => channel.values[index].secondaryBudget),
+        isQuarter: channels[0].values[index].isQuarter,
+        isAnnual: channels[0].values[index].isAnnual
       };
     });
   };
@@ -496,8 +497,8 @@ export default class BudgetsTable extends Component {
   render() {
     const channelsProps = getChannelsWithProps();
     const parsedData = this.getDataByChannel(this.props.data, channelsProps);
-    const numberOfPastDates = this.props.data.filter((month) => month.isHistory).length;
-    const dates = getDatesSpecific(this.props.planDate, numberOfPastDates, this.props.data.length - numberOfPastDates);
+    const numberOfPastDates = this.props.numberOfPastDates;
+    const dates = this.props.dates;
 
     const dataWithCategories = groupBy(parsedData, (channel) => channelsProps[channel.channel].category);
 

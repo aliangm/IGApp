@@ -25,6 +25,7 @@ import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
 import ReactTooltip from 'react-tooltip';
+import StatSquare from 'components/common/StatSquare';
 
 export default class CMO extends Component {
 
@@ -162,7 +163,7 @@ export default class CMO extends Component {
         value: funnel[i + 1].value / funnel[i].value
       });
     }
-    const minRatio = Math.min(... funnelRatios.map(item => item.value));
+    const minRatio = Math.min(...funnelRatios.map(item => item.value));
     const minRatioTitle = funnelRatios
       .filter(item => item.value == minRatio)
       .map(item => item.name);
@@ -198,8 +199,7 @@ export default class CMO extends Component {
         directionDown={!indicatorsProperties[objective.indicator].isDirectionUp}
         timeFrame={objective.dueDate}
         color={getColor(index)}
-        isDollar={indicatorsProperties[objective.indicator].isDollar}
-        isPercentage={indicatorsProperties[objective.indicator].isPercentage}
+        indicator={objective.indicator}
       />;
     });
 
@@ -255,11 +255,20 @@ export default class CMO extends Component {
     const channelsWithProps = getChannelsWithProps();
     const topChannels = Object.keys(channelsWithProps).map(channel => {
       const score = Math.round(
-        ((channelsImpact && channelsImpact.MCL && channelsImpact.MCL[channel]) ? channelsImpact.MCL[channel] * weights.newMCL : 0)
-        + ((channelsImpact && channelsImpact.MQL && channelsImpact.MQL[channel]) ? channelsImpact.MQL[channel] * weights.newMQL : 0)
-        + ((channelsImpact && channelsImpact.SQL && channelsImpact.SQL[channel]) ? channelsImpact.SQL[channel] * weights.newSQL : 0)
-        + ((channelsImpact && channelsImpact.opps && channelsImpact.opps[channel]) ? channelsImpact.opps[channel] * weights.newOpps : 0)
-        + ((channelsImpact && channelsImpact.users && channelsImpact.users[channel]) ? channelsImpact.users[channel] * weights.newUsers : 0)
+        ((channelsImpact && channelsImpact.MCL && channelsImpact.MCL[channel]) ? channelsImpact.MCL[channel] *
+          weights.newMCL : 0)
+        +
+        ((channelsImpact && channelsImpact.MQL && channelsImpact.MQL[channel]) ? channelsImpact.MQL[channel] *
+          weights.newMQL : 0)
+        +
+        ((channelsImpact && channelsImpact.SQL && channelsImpact.SQL[channel]) ? channelsImpact.SQL[channel] *
+          weights.newSQL : 0)
+        +
+        ((channelsImpact && channelsImpact.opps && channelsImpact.opps[channel]) ? channelsImpact.opps[channel] *
+          weights.newOpps : 0)
+        +
+        ((channelsImpact && channelsImpact.users && channelsImpact.users[channel]) ? channelsImpact.users[channel] *
+          weights.newUsers : 0)
       );
       return {title: channelsWithProps[channel].nickname, score: score, icon: 'plan:' + channel};
     });
@@ -290,7 +299,7 @@ export default class CMO extends Component {
 
     const data = isPast ? indicatorsDataPerMonth
       :
-      committedBudgets.slice(0, months).map((month, index) => {
+      committedBudgets.slice(0, months + 1).map((month, index) => {
         const json = {
           name: futureDates[index]
         };
@@ -691,7 +700,7 @@ export default class CMO extends Component {
           contextStat={isOnTrack ? 'On-Track' : 'Off-Track'}
           contextText=''
           isPositive={isOnTrack}
-          tooltipText={isOnTrack ? 'Actual spent on-track' : 'Actual spent off-track. Forecasted: ' +
+          contextStatTooltipText={isOnTrack ? 'Actual spent on-track' : 'Actual spent off-track. Forecasted: ' +
             '$' +
             formatBudgetShortened(monthlyExtapolatedTotalSpending)}
           statWithArrow={false}
@@ -745,27 +754,12 @@ export default class CMO extends Component {
             </div>
           </div>
         </div>
-        <div className={this.classes.colRight} style={{paddingLeft: 0}}>
-          <div className={dashboardStyle.locals.item} style={{marginTop: '30px'}}>
-            <div className={dashboardStyle.locals.text}>
-              {(minRatioTitle.length > 0 ? minRatioTitle : 'Funnel') + ' Ratio'}
-            </div>
-            {minRatio && isFinite(minRatio) ?
-              <div className={dashboardStyle.locals.number}>
-                {Math.round(minRatio * 10000) / 100}%
-              </div>
-              :
-              <div>
-                <div className={dashboardStyle.locals.center}>
-                  <div className={dashboardStyle.locals.sadIcon}/>
-                </div>
-                <div className={dashboardStyle.locals.noMetrics}>
-                  Oh… It seems that the relevant metrics (funnel metrics) are missing. Please update your data.
-                </div>
-              </div>
-            }
-          </div>
-        </div>
+        <StatSquare
+          title={(minRatioTitle.length > 0 ? minRatioTitle : 'Funnel') + ' Ratio'}
+          stat={`${Math.round(minRatio * 10000) / 100}%`}
+          emptyStatMessage={'Oh… It seems that the relevant metrics (funnel metrics) are missing. Please update your data.'}
+          showEmptyStat={!(minRatio && isFinite(minRatio))}
+        />
       </div>
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>

@@ -91,8 +91,7 @@ export default class ProjectionsTab extends Component {
             100}
           icon={'indicator:' + item}
           title={properties[item].title}
-          isDollar={properties[item].isDollar}
-          isPercentage={properties[item].isPercentage}
+          indicator={item}
         />;
       });
 

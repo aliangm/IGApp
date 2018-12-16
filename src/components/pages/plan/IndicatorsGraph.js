@@ -1,28 +1,28 @@
 import React from 'react';
 import classnames from 'classnames';
 import Component from 'components/Component';
-import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis, Legend} from 'recharts';
+import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
-import {getIndicatorsWithProps, getNickname} from 'components/utils/indicators';
+import {getIndicatorsWithProps} from 'components/utils/indicators';
 import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
-import {getDates, getEndOfMonthString} from 'components/utils/date';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
+const TOOLTIP_VALUE_SUFFIX = '_TOOLTIP';
 
 export default class IndicatorsGraph extends Component {
 
   style = style;
   styles = [onboardingStyle];
-  areas = { } // area refs
+  areas = {}; // area refs
 
   constructor(props) {
     super(props);
@@ -31,7 +31,7 @@ export default class IndicatorsGraph extends Component {
     this.state = {
       checkedIndicators: initialIndicators ? initialIndicators : [],
       activeTooltipIndex: 0,
-      tooltipPosition: 0,
+      tooltipPosition: 0
     };
   }
 
@@ -65,7 +65,7 @@ export default class IndicatorsGraph extends Component {
     this.props.changeScrollPosition(this.refs.chart.scrollLeft);
   };
 
-  handleMouseMove = ({ activeTooltipIndex }) => {
+  handleMouseMove = ({activeTooltipIndex}) => {
     if (this.areas && Number.isInteger(activeTooltipIndex) && this.state.activeTooltipIndex !== activeTooltipIndex) {
       this.setState({
         activeTooltipIndex,
@@ -73,10 +73,10 @@ export default class IndicatorsGraph extends Component {
           ...Object.values(this.areas)
             .filter((a) => !!a)
             .map((a) => a.props.points[activeTooltipIndex].y)
-        ),
-      })
+        )
+      });
     }
-  }
+  };
 
   getInitialIndicators = (props) => {
     const objectives = Object.keys(props.parsedObjectives);
@@ -101,42 +101,63 @@ export default class IndicatorsGraph extends Component {
 
   getAreasData = () => {
     const forecastingData = [];
-
-    const futureDates = getDates(this.props.planDate);
-    this.props.mainLineData.forEach((month, monthIndex) => {
-      const json = {};
-      Object.keys(month).forEach(key => {
-        json[key] = month[key].committed;
-      });
-
-      if (this.props.dashedLineData) {
-        Object.keys(this.props.dashedLineData[monthIndex]).forEach((key) => {
-          json[key + DASHED_KEY_SUFFIX] = this.props.dashedLineData[monthIndex][key].committed;
-        });
-      }
-
-      forecastingData.push({...json, name: getEndOfMonthString(futureDates[monthIndex])});
-    });
-
-    const pastDates = getDates(this.props.planDate, true, false);
-    this.props.pastIndicators.forEach((month, index) => {
-      const json = {};
-      Object.keys(month).forEach(key => {
-        json[key] = month[key];
-
-        if (this.props.dashedLineData) {
-          json[key + DASHED_KEY_SUFFIX] = json[key];
-        }
-      });
-
-      forecastingData.unshift({...json, name: getEndOfMonthString(pastDates[pastDates.length - 1 - index])});
-    });
+    const numberOfPastDates = this.props.numberOfPastDates;
+    const pastLabelDates = this.props.labelDates.slice(0, numberOfPastDates);
+    const futureLabelDates = this.props.labelDates.slice(numberOfPastDates);
+    const pastTooltipDates = this.props.preiodDates.slice(0, numberOfPastDates);
+    const futureTooltipDates = this.props.preiodDates.slice(numberOfPastDates);
+    const mainFutureData = this.props.mainLineData.slice(numberOfPastDates);
+    const pastIndicators = this.props.mainLineData.slice(0, numberOfPastDates);
+    const dashedLineData = this.props.dashedLineData && this.props.dashedLineData.slice(numberOfPastDates);
 
     const zeroedIndicators = {};
     Object.keys(getIndicatorsWithProps()).forEach(key => {
       zeroedIndicators[key] = 0;
     });
-    forecastingData.unshift({...zeroedIndicators, name: ''});
+    forecastingData.push({...zeroedIndicators, name: ''});
+
+    pastIndicators.forEach(({indicators: month}, index) => {
+      const json = {};
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].graphValue;
+        json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
+
+        if (dashedLineData) {
+          json[key + DASHED_KEY_SUFFIX] = json[key];
+          json[key + DASHED_KEY_SUFFIX + TOOLTIP_VALUE_SUFFIX] = json[key + TOOLTIP_VALUE_SUFFIX];
+        }
+      });
+
+      forecastingData.push({
+        ...json,
+        name: pastLabelDates[index].value,
+        tooltipDate: pastTooltipDates[index].value
+      });
+    });
+
+    mainFutureData.forEach(({indicators: month}, monthIndex) => {
+      const json = {};
+
+      Object.keys(month).forEach(key => {
+        json[key] = month[key].graphValue;
+        json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
+      });
+
+      if (dashedLineData) {
+        const dashedIndicators = dashedLineData[monthIndex].indicators;
+        Object.keys(dashedIndicators).forEach((key) => {
+          json[key + DASHED_KEY_SUFFIX] = dashedIndicators[key].graphValue;
+          json[key + DASHED_KEY_SUFFIX + TOOLTIP_VALUE_SUFFIX] = dashedIndicators[key].tooltipValue;
+        });
+      }
+
+      forecastingData.push({
+        ...json,
+        name: futureLabelDates[monthIndex].value,
+        tooltipDate: futureTooltipDates[monthIndex].value
+      });
+
+    });
 
     return forecastingData;
   };
@@ -147,7 +168,7 @@ export default class IndicatorsGraph extends Component {
       committedForecasting[objectiveData.monthIndex][objectiveData.indicator];
     return <ObjectiveIcon target={objectiveData.target}
                           value={this.props.actualIndicators[objectiveData.indicator]}
-                          project={project} />;
+                          project={project}/>;
   };
 
   render() {
@@ -200,7 +221,7 @@ export default class IndicatorsGraph extends Component {
     const areas = this.state.checkedIndicators.map((indicator) => {
       const index = Object.keys(indicatorsMapping).indexOf(indicator);
       return <Area key={indicator}
-                   ref={ref => this.areas[indicator] = ref }
+                   ref={ref => this.areas[indicator] = ref}
                    isAnimationActive={false}
                    type='monotone'
                    dataKey={indicator}
@@ -251,35 +272,55 @@ export default class IndicatorsGraph extends Component {
             const secondaryItem = data.payload.find((secondaryItem) => secondaryItem.dataKey ==
               item.dataKey +
               DASHED_KEY_SUFFIX);
+
+            const tooltipValue = item.payload[item.dataKey + TOOLTIP_VALUE_SUFFIX];
+            const secondaryTooltipValue = secondaryItem &&
+              secondaryItem.payload[secondaryItem.dataKey + TOOLTIP_VALUE_SUFFIX];
             return {
               ...item,
-              secondaryValue: secondaryItem ? secondaryItem.value : null
+              tooltipValue: tooltipValue,
+              secondaryTooltipValue: secondaryTooltipValue
             };
           });
 
+        const tooltipTimePeriod = areaData[currentIndex].tooltipDate;
+
         return <div className={this.classes.customTooltip}>
+          <div className={this.classes.customTooltipHeader}>
+            {tooltipTimePeriod}
+          </div>
           {
 
             parsedIndicators.map((item, index) => {
+              const showLegend = !!item.secondaryTooltipValue;
               const indicator = item.dataKey;
               const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
+              const indicatorColor = getColor(colorIndex);
               if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
                 return <div key={index}>
                   <div className={this.classes.customTooltipIndicator}>
                     {indicatorsMapping[indicator]}
                   </div>
                   <div className={this.classes.customTooltipValues}>
-                    <div className={this.classes.customTooltipValue}
-                         style={{color: getColor(colorIndex)}}>
-                      {formatNumber(item.value)}
-                    </div>
-                    {item.secondaryValue ?
+                    <div className={this.classes.valueClass}>
+                      {showLegend ? <div className={this.classes.tooltipLegend}
+                                         style={{borderColor: indicatorColor}}/> : null}
                       <div className={this.classes.customTooltipValue}
-                           style={{
-                             color: getColor(colorIndex),
-                             opacity: DASHED_OPACITY
-                           }}>
-                        {formatNumber(item.secondaryValue)}
+                           style={{color: indicatorColor}}>
+                        {formatNumber(item.tooltipValue)}
+                      </div>
+                    </div>
+                    {item.secondaryTooltipValue ?
+                      <div className={this.classes.valueClass}>
+                        {showLegend ? <div className={this.classes.tooltipLegend}
+                                           style={{borderColor: indicatorColor, opacity: DASHED_OPACITY, borderStyle: "dashed"}}/> : null}
+                        <div className={this.classes.customTooltipValue}
+                             style={{
+                               color: indicatorColor,
+                               opacity: DASHED_OPACITY
+                             }}>
+                          {formatNumber(item.secondaryTooltipValue)}
+                        </div>
                       </div> : null
                     }
                   </div>
@@ -300,20 +341,20 @@ export default class IndicatorsGraph extends Component {
 
     const xAxis = (
       <XAxis dataKey="name"
-       style={{textTransform: 'uppercase'}}
-       tick={{
-         fontSize: '11px',
-         fill: '#99a4c2',
-         fontWeight: 600,
-         letterSpacing: '0.1px'
-       }}
-       tickLine={false}
-       tickMargin={21}
-       interval={0}
+             style={{textTransform: 'uppercase'}}
+             tick={{
+               fontSize: '11px',
+               fill: '#99a4c2',
+               fontWeight: 600,
+               letterSpacing: '0.1px'
+             }}
+             tickLine={false}
+             tickMargin={21}
+             interval={0}
       />
     );
 
-    return <div className={classnames(this.classes.inner, { [this.classes.floating]: floating })}>
+    return <div className={classnames(this.classes.inner, {[this.classes.floating]: floating})}>
       <div className={this.classes.menu}>
         <div className={this.classes.menuTitle}>
           Forecasting
@@ -337,7 +378,7 @@ export default class IndicatorsGraph extends Component {
             <Tooltip
               content={tooltip}
               offset={0}
-              position={{ y: tooltipPosition }}
+              position={{y: tooltipPosition}}
             />
             {defs}
             {areas}
@@ -351,6 +392,7 @@ export default class IndicatorsGraph extends Component {
           margin={{top: 10, right: 25, left: 10, bottom: 21}}
         >
           {xAxis}
+          {dots}
           {areas}
           {dashedAreas}
           <YAxis axisLine={false}
@@ -382,7 +424,7 @@ class CustomizedLegend extends Component {
         <div style={{display: 'flex'}}>
           <div className={this.classes.legendIconDashed}/>
           <div className={this.classes.legendText}>
-            New Scenario
+            Alternative Scenario
           </div>
         </div>
       </div>;

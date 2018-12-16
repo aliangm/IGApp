@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
+
 // import Styles from 'components/mixins/Styles';
 
 export default class Component extends React.Component {
@@ -16,5 +18,9 @@ export default class Component extends React.Component {
   componentWillUnmount() {
     this.style && this.style.unuse();
     this.styles.forEach(style => style.unuse());
+  }
+
+  componentDidMount() {
+    ReactTooltip.rebuild();
   }
 }

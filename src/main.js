@@ -39,14 +39,12 @@ import AttributionLink from 'components/pages/AttributionLink';
 import TrackingUrls from 'components/pages/attribution/TrackingUrls';
 import Offline from 'components/pages/attribution/Offline';
 import SiteStructure from 'components/pages/attribution/SiteStructure';
-import CurrentTab from 'components/pages/plan/CurrentTab';
 import AnnualTab from 'components/pages/plan/AnnualTab';
 import ByChannelTab from 'components/pages/campaigns/ByChannelTab';
 import ByStatusTab from 'components/pages/campaigns/ByStatusTab';
 import IdeasTab from 'components/pages/campaigns/Ideas';
 import OnlineTab from 'components/pages/campaigns/OnlineCampaigns';
 import Settings from 'components/pages/Settings';
-import {formatDate} from 'components/utils/date';
 import {userPermittedToPage} from 'utils';
 import config from 'components/utils/Configuration';
 import Login from 'components/pages/signIn/Login';
@@ -55,6 +53,8 @@ import ManualPlan from 'components/pages/ManualPlan';
 import NoAnalyzeData from 'components/pages/analyze/NoAnalyzeData';
 import Expenses from 'components/pages/campaigns/Expenses';
 import AddExpensePopup from 'components/pages/campaigns/AddExpensePopup';
+import ChannelsSettings from 'components/pages/settings/channels/Channels';
+import ChannelsTab from 'components/pages/settings/channels/tabs/ChannelsTab';
 
 style.use();
 
@@ -107,17 +107,11 @@ ReactDOM.render(
       <Route path="/manual" component={Manual} onEnter={requireAdminAuth}/>
       <Route path="/build-first-plan" component={ManualPlan} onEnter={requireAdminAuth}/>
       <Route component={Plan} onEnter={(...parameters) => requirePermission('plan', ...parameters)}>
-        <Route path="/plan/current"
-               component={CurrentTab}
-               onEnter={requireAuth}
-          // Special treatment for state derived tab name. The state is saved at App.js level therefore
-          // can't render the name here. DefaultName is for situation where the property is still loading
-               tabName={{fromProp: 'planDate', formatter: formatDate, defaultName: 'Current'}}/>
         <Route path="/plan/annual" component={AnnualTab} onEnter={requireAuth} tabName='Annual'/>
         <Route path="/plan/plans-vs-actuals"
                component={PlannedVsActual}
                onEnter={requireAuth}
-               tabName="Plans VS Actuals"/>
+               tabName="Plans vs Actuals"/>
       </Route>
       <Route component={Campaigns} onEnter={requireAuth}>
         <Route path="/campaigns/by-status" component={ByStatusTab} onEnter={requireAuth} tabName='By Status'/>
@@ -154,11 +148,17 @@ ReactDOM.render(
         <Route path="/settings/profile/integrations"
                component={Platforms}
                onEnter={requireAuth}/>
+        <Route component={ChannelsSettings} onEnter={requireAuth}>
+          <Route path="/settings/channels/channels"
+                 component={ChannelsTab}
+                 onEnter={requireAuth}
+                 tabName='Channels'/>
+        </Route>
       </Route>
       <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>
         <Route path="/analyze/overview" component={Overview} onEnter={requireAuth} tabName='Overview'/>
         <Route path="/analyze/channels" component={Channels} onEnter={requireAuth} tabName='Channels'/>
-        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='campaigns'/>
+        <Route path="/analyze/campaigns" component={CampaignsMeasure} onEnter={requireAuth} tabName='Campaigns'/>
         <Route path="/analyze/content" component={Content} onEnter={requireAuth} tabName='Content'/>
         <Route path="/analyze/audiences" component={Users} onEnter={requireAuth} tabName='Audiences'/>
       </Route>
