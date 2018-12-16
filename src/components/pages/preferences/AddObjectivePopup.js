@@ -286,7 +286,7 @@ export default class AddObjectivePopup extends Component {
         <Page popup={true} width={'410px'} contentClassName={popupStyle.locals.content}
               innerClassName={popupStyle.locals.inner}>
           <div className={popupStyle.locals.title}>
-            {isFirstObjective ? 'Add your main objective' : 'Add Objective'}
+            {isFirstObjective ? 'Add Your Main Objective' : 'Add Objective'}
             {isFirstObjective ? <div className={popupStyle.locals.subTitle}>what's your end-goal for the marketing org?</div> : null}
           </div>
           <div className={this.classes.row}>
