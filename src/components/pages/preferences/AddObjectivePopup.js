@@ -18,7 +18,6 @@ import {isPopupMode} from 'modules/popup-mode';
 import {formatNumber} from 'components/utils/budget';
 import {extractNumber} from 'components/utils/utils';
 import isNil from 'lodash/isNil';
-import {getDates} from 'components/utils/date';
 
 export default class AddObjectivePopup extends Component {
 
@@ -144,6 +143,8 @@ export default class AddObjectivePopup extends Component {
     for (let i = 0; i <= this.props.numOfPriorities; i++) {
       objectivesPriority.push({value: i, label: '#' + (i + 1)});
     }
+    const isFirstObjective = this.props.numOfPriorities === 0;
+
     const datesOptions = this.props.dates.map((item, index) => {
       return {label: item, value: index};
     });
@@ -285,7 +286,8 @@ export default class AddObjectivePopup extends Component {
         <Page popup={true} width={'410px'} contentClassName={popupStyle.locals.content}
               innerClassName={popupStyle.locals.inner}>
           <div className={popupStyle.locals.title}>
-            Add Objective
+            {isFirstObjective ? 'Add your main objective' : 'Add Objective'}
+            {isFirstObjective ? <div className={popupStyle.locals.subTitle}>what's your end-goal for the marketing org?</div> : null}
           </div>
           <div className={this.classes.row}>
             <Label>
