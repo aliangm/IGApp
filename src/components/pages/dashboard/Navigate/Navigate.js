@@ -3,9 +3,9 @@ import Component from 'components/Component';
 import PathChart from 'components/pages/dashboard/Navigate/PathChart';
 import style from 'styles/dashboard/navigate.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
-import {getChannelIcon} from 'components/utils/channels';
+import {getChannelIcon, getNickname} from 'components/utils/channels';
 import {set} from 'lodash';
-import {getCommitedBudgets} from 'components/utils/budget';
+import {formatBudget, formatNumber, getCommitedBudgets} from 'components/utils/budget';
 import {newFunnelMapping} from 'components/utils/utils';
 
 const formatForecastedIndicators = (forecastedIndicators) => forecastedIndicators.map((month) =>
@@ -46,11 +46,21 @@ export default class Navigate extends Component {
   };
 
   // channel tooltip just for example
-  renderChannelTooltip = (channel) => (
-    <div className={this.classes.channelTooltip}>
-      <div className={this.classes.channelTooltipHeader}>{channel}</div>
+  renderChannelTooltip = ((channel, impacts) => {
+  const impact = impacts.find(item => item.key === channel).impact;
+    return <div className={this.classes.channelTooltip}>
+      <div className={this.classes.channelTooltipHeader}>{getNickname(channel)}</div>
+      Impact: {formatNumber(impact)}
     </div>
-  );
+  });
+
+  renderFutureTooltip = ((channel, impact) => {
+    const budget = impact.find(item => item.key === channel).impact;
+    return <div className={this.classes.channelTooltip}>
+      <div className={this.classes.channelTooltipHeader}>{getNickname(channel)}</div>
+      Budget: {formatBudget(budget)}
+    </div>
+  });
 
   handleMonthsChange = (months) => this.setState({months});
 
@@ -63,20 +73,23 @@ export default class Navigate extends Component {
   };
 
   render() {
-    const {forecastedIndicators, attribution: {channelsImpact}, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedData : {historyData: {historyDataLength}}} = this.props;
+    const {forecastedIndicators, attribution: {channelsImpact}, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedData: {historyData: {historyDataLength}}} = this.props;
     const {currentObjective, months} = this.state;
     const parseChannelsImpact = (channelsImpact) => {
       const impact = {};
+      let sum = 0;
       channelsImpact.forEach(month => {
         month && Object.keys(month).forEach(channel => {
           set(impact, [channel], (impact[channel] || 0) + month[channel]);
+          sum += month[channel];
         });
       });
       return Object.keys(impact)
         .map(channel => {
           return {
             key: channel,
-            score: Math.random() + 1, // from 1 to 2
+            impact: impact[channel],
+            score: (impact[channel] / sum) + 1, // from 1 to 2
             icon: getChannelIcon(channel)
           };
         });
@@ -107,9 +120,9 @@ export default class Navigate extends Component {
             present: channelsPresent.slice(0, 5)
           }}
           tooltip={{
-            future: this.renderChannelTooltip,
-            past: this.renderChannelTooltip,
-            present: this.renderChannelTooltip
+            future: (channel) => this.renderFutureTooltip(channel, channelFuture),
+            past: (channel) => this.renderChannelTooltip(channel, channelsPast),
+            present: (channel) => this.renderChannelTooltip(channel, channelsPresent)
           }}
           handleMonthsChange={this.handleMonthsChange}
           handleObjectiveChange={this.handleObjectiveChange}
