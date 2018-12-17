@@ -65,7 +65,7 @@ export default class AddObjectivePopup extends Component {
       else {
         this.setState({
           ...this.defaultData,
-          priority: nextProps.numOfPriorities,
+          priority: nextProps.numOfObjectives,
           notSure: 0
         });
       }
@@ -140,10 +140,10 @@ export default class AddObjectivePopup extends Component {
     const indicatorsWithProps = getIndicatorsWithProps();
     const directionText = (this.state.indicator && indicatorsWithProps[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
     const objectivesPriority = [];
-    for (let i = 0; i <= this.props.numOfPriorities; i++) {
+    for (let i = 0; i <= this.props.numOfObjectives; i++) {
       objectivesPriority.push({value: i, label: '#' + (i + 1)});
     }
-    const isFirstObjective = this.props.numOfPriorities === 0;
+    const isFirstObjective = this.props.numOfObjectives === 0;
 
     const datesOptions = this.props.dates.map((item, index) => {
       return {label: item, value: index};
