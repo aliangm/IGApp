@@ -85,7 +85,10 @@ export default class AddObjectivePopup extends Component {
     if (months > 11) {
       months = 11;
     }
-    const value = Math.round((this.props.forecastedIndicators[months][this.state.indicator].committed - this.props.actualIndicators[this.state.indicator]) * this.state.aggressiveLevel + this.props.actualIndicators[this.state.indicator]);
+    const value = Math.round((this.props.forecastedIndicators[months][this.state.indicator].committed -
+      this.props.actualIndicators[this.state.indicator]) *
+      this.state.aggressiveLevel +
+      this.props.actualIndicators[this.state.indicator]);
     this.setState({
       amount: value,
       targetValue: value,
@@ -103,7 +106,8 @@ export default class AddObjectivePopup extends Component {
       targetValue = this.state.amount;
     }
     else if (this.state.isPercentage) {
-      targetValue = (1 + (this.state.amount / 100 * (isDirectionUp ? 1 : -1))) * this.props.actualIndicators[this.state.indicator];
+      targetValue =
+        (1 + (this.state.amount / 100 * (isDirectionUp ? 1 : -1))) * this.props.actualIndicators[this.state.indicator];
     }
     else {
       const indicator = this.props.actualIndicators[this.state.indicator] || 0;
@@ -138,7 +142,9 @@ export default class AddObjectivePopup extends Component {
 
   render() {
     const indicatorsWithProps = getIndicatorsWithProps();
-    const directionText = (this.state.indicator && indicatorsWithProps[this.state.indicator].isDirectionUp) ? 'Increase' : 'Decrease';
+    const directionText = (this.state.indicator && indicatorsWithProps[this.state.indicator].isDirectionUp)
+      ? 'Increase'
+      : 'Decrease';
     const objectivesPriority = [];
     for (let i = 0; i <= this.props.numOfObjectives; i++) {
       objectivesPriority.push({value: i, label: '#' + (i + 1)});
@@ -270,7 +276,9 @@ export default class AddObjectivePopup extends Component {
                         width: '100px'
                       }} onClick={() => {
                         this.setState({notSure: 0, aggressiveLevel: ''}, () => {
-                          this.props.createOrUpdateObjective(this.state, this.props.objectiveMonth, this.props.objective);
+                          this.props.createOrUpdateObjective(this.state,
+                            this.props.objectiveMonth,
+                            this.props.objective);
                         });
                       }}>
                         Use
@@ -286,8 +294,10 @@ export default class AddObjectivePopup extends Component {
         <Page popup={true} width={'410px'} contentClassName={popupStyle.locals.content}
               innerClassName={popupStyle.locals.inner}>
           <div className={popupStyle.locals.title}>
-            {isFirstObjective ? 'Add Your Main Objective' : 'Add Objective'}
-            {isFirstObjective ? <div className={popupStyle.locals.subTitle}>what's your end-goal for the marketing org?</div> : null}
+            {isFirstObjective ?
+              <div>Add Your Main Objective
+                <div className={popupStyle.locals.subTitle}>what's your end-goal for the marketing org?</div>
+              </div> : 'Add Objective'}
           </div>
           <div className={this.classes.row}>
             <Label>
