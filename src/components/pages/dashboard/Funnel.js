@@ -1,14 +1,14 @@
-import React from "react";
-import Component from "components/Component";
+import React from 'react';
+import Component from 'components/Component';
 import Column from 'components/pages/dashboard/Column';
 import Arrow from 'components/pages/dashboard/Arrow';
 import Circle from 'components/pages/dashboard/Circle';
 import style from 'styles/dashboard/funnel.css';
-import { getNickname } from 'components/utils/indicators';
+import {getNickname} from 'components/utils/indicators';
 
 export default class Funnel extends Component {
 
-  style=style;
+  style = style;
 
   render() {
     const funnel = {
@@ -38,21 +38,25 @@ export default class Funnel extends Component {
       }
     };
     // Find max value for the columns height
-    const maxValue = Math.max.apply(null,Object.keys(funnel).map(item=>funnel[item].value));
+    const maxValue = Math.max.apply(null, Object.keys(funnel).map(item => funnel[item].value));
     const funnelObject = Object.keys(funnel)
       .filter(item => funnel[item].value >= 0)
       .map((item, index, values) => {
-        return <div className={ this.classes.inner } key={ index }>
-          <Column {... funnel[item]} maxValue={maxValue}/>
-          <Arrow value={ index + 1 == values.length ? this.props.users/funnel[item].value : funnel[values[index + 1]].value/funnel[item].value }/>
-        </div>
+        return <div className={this.classes.inner} key={index}>
+          <Column {... funnel[item]} maxValue={maxValue}
+                  maxHeight={this.props.columnHeight}
+                  width={this.props.columnWidth}
+                  titleStyle={this.props.titleStyle}/>
+          <Arrow
+            value={index + 1 == values.length ? this.props.users / funnel[item].value : funnel[values[index + 1]].value / funnel[item].value}/>
+        </div>;
       });
 
-    return <div className={ this.classes.inner }>
+    return <div className={this.classes.inner}>
       {funnelObject}
-      <Circle value={ this.props.users } title={ getNickname('users') }/>
-      <div className={ this.classes.line }/>
-    </div>
+      <Circle value={this.props.users} title={getNickname('users')}/>
+      <div className={this.classes.line} style={{marginTop: `${this.props.columnHeight}px`}}/>
+    </div>;
   }
 
 }

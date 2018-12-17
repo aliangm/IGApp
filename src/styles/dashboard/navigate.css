@@ -2,6 +2,43 @@
     display: flex;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+}
+
+.wrap {
+    width: calc(100% - 668px);
+    position: relative;
+    margin: 90px 40px 0;
+}
+
+.metrics {
+    margin: 54px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.objectives {
+    margin: 60px 0;
+}
+
+.objectives-title {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #99a4c2;
+}
+
+.objectives-line {
+    display: flex;
+    justify-content: space-around;
+}
+
+.funnel {
+    height: 212px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
 }
 
 .chartWrapper {
@@ -144,7 +181,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width:100%;
+    width: 100%;
     height: 10px;
     border-radius: 0 0 6px 6px;
     background-color: #f5f6fb;

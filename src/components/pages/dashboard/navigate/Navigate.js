@@ -1,12 +1,21 @@
 import React from 'react';
 import Component from 'components/Component';
-import PathChart from 'components/pages/dashboard/Navigate/PathChart';
+import PathChart from 'components/pages/dashboard/navigate/PathChart';
 import style from 'styles/dashboard/navigate.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
-import {getChannelIcon, getNickname} from 'components/utils/channels';
+import {getChannelIcon, getNickname as getChannelNickname} from 'components/utils/channels';
 import {set} from 'lodash';
-import {formatBudget, formatNumber, getCommitedBudgets} from 'components/utils/budget';
+import {formatBudget, formatBudgetShortened, formatNumber, getCommitedBudgets} from 'components/utils/budget';
 import {newFunnelMapping} from 'components/utils/utils';
+import DashboardStatWithContextSmall from 'components/pages/dashboard/navigate/DashboardStatWithContextSmall';
+import {getColor} from 'components/utils/colors';
+import {
+  getIndicatorDisplaySign,
+  getIndicatorsWithProps,
+  getNickname as getIndicatorNickname
+} from 'components/utils/indicators';
+import Objective from 'components/pages/dashboard/Objective';
+import Funnel from 'components/pages/dashboard/Funnel';
 
 const formatForecastedIndicators = (forecastedIndicators) => forecastedIndicators.map((month) =>
   Object.keys(month).reduce((res, key) => ({
@@ -47,19 +56,19 @@ export default class Navigate extends Component {
 
   // channel tooltip just for example
   renderChannelTooltip = ((channel, impacts) => {
-  const impact = impacts.find(item => item.key === channel).impact;
+    const impact = impacts.find(item => item.key === channel).impact;
     return <div className={this.classes.channelTooltip}>
-      <div className={this.classes.channelTooltipHeader}>{getNickname(channel)}</div>
+      <div className={this.classes.channelTooltipHeader}>{getChannelNickname(channel)}</div>
       Impact: {formatNumber(impact)}
-    </div>
+    </div>;
   });
 
   renderFutureTooltip = ((channel, impact) => {
     const budget = impact.find(item => item.key === channel).impact;
     return <div className={this.classes.channelTooltip}>
-      <div className={this.classes.channelTooltipHeader}>{getNickname(channel)}</div>
+      <div className={this.classes.channelTooltipHeader}>{getChannelNickname(channel)}</div>
       Budget: {formatBudget(budget)}
-    </div>
+    </div>;
   });
 
   handleMonthsChange = (months) => this.setState({months});
@@ -73,7 +82,7 @@ export default class Navigate extends Component {
   };
 
   render() {
-    const {forecastedIndicators, attribution: {channelsImpact}, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedData: {historyData: {historyDataLength}}} = this.props;
+    const {forecastedIndicators, attribution: {channelsImpact}, actualIndicators, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedData: {monthlyBudget, committedForecasting, objectives: {collapsedObjectives, funnelFirstObjective}, historyData: {historyDataLength}}} = this.props;
     const {currentObjective, months} = this.state;
     const parseChannelsImpact = (channelsImpact) => {
       const impact = {};
@@ -106,9 +115,60 @@ export default class Navigate extends Component {
     const committedBudgets = getCommitedBudgets(planBudgets);
     const channelFuture = parseChannelsImpact(committedBudgets.slice(0, months));
 
+    const indicatorsProperties = getIndicatorsWithProps();
+
     return (
       <div className={this.classes.container}>
-        <div className={dashboardStyle.locals.wrap}>🚧</div>
+        <div className={this.classes.wrap}>
+          <div className={this.classes.metrics}>
+            <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'/>
+            <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'/>
+            <DashboardStatWithContextSmall value={formatNumber(Math.round(actualIndicators.LTV / monthlyBudget * 100))}
+                                           name='ROI'
+                                           sign='%'/>
+            <DashboardStatWithContextSmall value={formatNumber(actualIndicators[funnelFirstObjective])}
+                                           name={getIndicatorNickname(funnelFirstObjective)}
+                                           sign={getIndicatorDisplaySign(funnelFirstObjective)}/>
+          </div>
+          <div className={this.classes.objectives}>
+            <div className={this.classes.objectivesTitle}>
+              We are going
+            </div>
+            <div className={this.classes.objectivesLine}>
+              {
+                collapsedObjectives.slice(0, 2).map((objective, index) => {
+                  const target = objective.target;
+                  const project = committedForecasting[objective.monthIndex] &&
+                    committedForecasting[objective.monthIndex][objective.indicator];
+                  return <Objective
+                    target={target}
+                    value={actualIndicators[objective.indicator]}
+                    title={indicatorsProperties[objective.indicator].nickname}
+                    project={project}
+                    key={index}
+                    directionDown={!indicatorsProperties[objective.indicator].isDirectionUp}
+                    timeFrame={objective.dueDate}
+                    color={getColor(index)}
+                    indicator={objective.indicator}
+                  />;
+                })
+              }
+            </div>
+          </div>
+          <div className={this.classes.funnel}>
+            <Funnel {
+                      ...{
+                        MCL: actualIndicators.newMCL,
+                        MQL: actualIndicators.newMQL,
+                        SQL: actualIndicators.newSQL,
+                        opps: actualIndicators.newOpps,
+                        users: actualIndicators.newUsers
+                      }}
+                    columnHeight={179}
+                    columnWidth={66}
+                    titleStyle={{backgroundColor: '#F5F6FB'}}/>
+          </div>
+        </div>
         <PathChart
           data={{
             future: formatForecastedIndicators(forecastedIndicators),
