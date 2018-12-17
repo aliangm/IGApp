@@ -19,13 +19,6 @@ import Funnel from 'components/pages/dashboard/Funnel';
 
 const MAX_CHANNELS_FOR_PERIOD = 5;
 
-const formatForecastedIndicators = (forecastedIndicators) => forecastedIndicators.map((month) =>
-  Object.keys(month).reduce((res, key) => ({
-    ...res,
-    [key]: month[key].committed
-  }), {})
-);
-
 export default class Navigate extends Component {
 
   style = style;
@@ -197,7 +190,7 @@ export default class Navigate extends Component {
         </div>
         <PathChart
           data={{
-            future: formatForecastedIndicators(forecastedIndicators),
+            future: committedForecasting,
             past: indicators
           }}
           channels={{
