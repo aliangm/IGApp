@@ -14,16 +14,17 @@ export default class DashboardStatWithContextSmall extends Component {
   };
 
   render() {
+    const {value, sign, name, ...contextProps} = this.props;
     return <div className={this.classes.outer}>
       <div className={this.classes.statValue}>
-        {this.props.value}
+        {value}
         <div className={this.classes.statSign}>
-          {this.props.sign}
+          {sign}
         </div>
-        <NumberWithArrow/>
+        <NumberWithArrow {...contextProps}/>
       </div>
       <div className={this.classes.statName}>
-        {this.props.name}
+        {name}
       </div>
     </div>;
   }

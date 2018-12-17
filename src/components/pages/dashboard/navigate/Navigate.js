@@ -4,7 +4,7 @@ import PathChart from 'components/pages/dashboard/navigate/PathChart';
 import style from 'styles/dashboard/navigate.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {getChannelIcon, getNickname as getChannelNickname} from 'components/utils/channels';
-import {set} from 'lodash';
+import {set, merge, sum} from 'lodash';
 import {formatBudget, formatBudgetShortened, formatNumber, getCommitedBudgets} from 'components/utils/budget';
 import {newFunnelMapping} from 'components/utils/utils';
 import DashboardStatWithContextSmall from 'components/pages/dashboard/navigate/DashboardStatWithContextSmall';
@@ -16,6 +16,8 @@ import {
 } from 'components/utils/indicators';
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
+
+const MAX_CHANNELS_FOR_PERIOD = 5;
 
 const formatForecastedIndicators = (forecastedIndicators) => forecastedIndicators.map((month) =>
   Object.keys(month).reduce((res, key) => ({
@@ -59,7 +61,9 @@ export default class Navigate extends Component {
     const impact = impacts.find(item => item.key === channel).impact;
     return <div className={this.classes.channelTooltip}>
       <div className={this.classes.channelTooltipHeader}>{getChannelNickname(channel)}</div>
-      Impact: {formatNumber(impact)}
+      <div className={this.classes.channelTooltipBody}>
+        Impact: {formatNumber(impact)}
+      </div>
     </div>;
   });
 
@@ -67,7 +71,9 @@ export default class Navigate extends Component {
     const budget = impact.find(item => item.key === channel).impact;
     return <div className={this.classes.channelTooltip}>
       <div className={this.classes.channelTooltipHeader}>{getChannelNickname(channel)}</div>
-      Budget: {formatBudget(budget)}
+      <div className={this.classes.channelTooltipBody}>
+        Budget: {formatBudget(budget)}
+      </div>
     </div>;
   });
 
@@ -82,18 +88,20 @@ export default class Navigate extends Component {
   };
 
   render() {
-    const {forecastedIndicators, attribution: {channelsImpact}, actualIndicators, historyData: {channelsImpact: historyChannelsImpact, indicators}, planBudgets, calculatedData: {monthlyBudget, committedForecasting, objectives: {collapsedObjectives, funnelFirstObjective}, historyData: {historyDataLength}}} = this.props;
+    const {forecastedIndicators, attribution: {channelsImpact}, actualIndicators, historyData: {channelsImpact: historyChannelsImpact, indicators, planBudgets: historyPlanBudgets, unknownChannels: historyUnknownChannels}, planBudgets, calculatedData: {monthlyBudget, committedForecasting, objectives: {collapsedObjectives, funnelFirstObjective}, historyData: {historyDataLength}}} = this.props;
     const {currentObjective, months} = this.state;
     const parseChannelsImpact = (channelsImpact) => {
       const impact = {};
       let sum = 0;
       channelsImpact.forEach(month => {
-        month && Object.keys(month).forEach(channel => {
-          set(impact, [channel], (impact[channel] || 0) + month[channel]);
-          sum += month[channel];
-        });
+        month && Object.keys(month)
+          .filter(channel => month[channel])
+          .forEach(channel => {
+            set(impact, [channel], (impact[channel] || 0) + month[channel]);
+            sum += month[channel];
+          });
       });
-      return Object.keys(impact)
+      const channelsArray = Object.keys(impact)
         .map(channel => {
           return {
             key: channel,
@@ -102,6 +110,7 @@ export default class Navigate extends Component {
             icon: getChannelIcon(channel)
           };
         });
+      return _.sortBy(channelsArray, item => item.score).reverse();
     };
 
     const objectives = this.formatObjectives();
@@ -117,18 +126,35 @@ export default class Navigate extends Component {
 
     const indicatorsProperties = getIndicatorsWithProps();
 
+    const previousMonthUnknownChannels = historyUnknownChannels[historyDataLength - 1];
+    const historyCommittedBudgets = getCommitedBudgets(historyPlanBudgets);
+    const previousMonthCommittedBudgets = historyCommittedBudgets[historyDataLength - 1];
+    const previousMonthCosts = merge({}, previousMonthCommittedBudgets, previousMonthUnknownChannels);
+    const previousMonthBudget = sum(Object.values(previousMonthCosts));
+
+    const previousMonthLTV = indicators[historyDataLength - 1].LTV;
+    const previousMonthObjective = indicators[historyDataLength - 1][funnelFirstObjective];
+
     return (
       <div className={this.classes.container}>
         <div className={this.classes.wrap}>
           <div className={this.classes.metrics}>
-            <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'/>
-            <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'/>
+            <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'
+                                           stat={`${Math.round(monthlyBudget / previousMonthBudget * 100)}%`}
+                                           isNegative={previousMonthBudget > monthlyBudget}/>
+            <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'
+                                           stat={`${Math.round(actualIndicators.LTV / previousMonthLTV * 100)}%`}
+                                           isNegative={previousMonthLTV > actualIndicators.LTV}/>
             <DashboardStatWithContextSmall value={formatNumber(Math.round(actualIndicators.LTV / monthlyBudget * 100))}
                                            name='ROI'
-                                           sign='%'/>
+                                           sign='%'
+                                           stat={`${Math.round((actualIndicators.LTV / monthlyBudget) / (previousMonthLTV / previousMonthBudget) * 100)}%`}
+                                           isNegative={(previousMonthLTV / previousMonthBudget) > (actualIndicators.LTV / monthlyBudget)}/>
             <DashboardStatWithContextSmall value={formatNumber(actualIndicators[funnelFirstObjective])}
                                            name={getIndicatorNickname(funnelFirstObjective)}
-                                           sign={getIndicatorDisplaySign(funnelFirstObjective)}/>
+                                           sign={getIndicatorDisplaySign(funnelFirstObjective)}
+                                           stat={`${Math.round(actualIndicators[funnelFirstObjective] / previousMonthObjective * 100)}%`}
+                                           isNegative={previousMonthObjective > actualIndicators[funnelFirstObjective]}/>
           </div>
           <div className={this.classes.objectives}>
             <div className={this.classes.objectivesTitle}>
@@ -175,9 +201,9 @@ export default class Navigate extends Component {
             past: indicators
           }}
           channels={{
-            future: channelFuture.slice(0, 5),
-            past: channelsPast.slice(0, 5),
-            present: channelsPresent.slice(0, 5)
+            future: channelFuture.slice(0, MAX_CHANNELS_FOR_PERIOD),
+            past: channelsPast.slice(0, MAX_CHANNELS_FOR_PERIOD),
+            present: channelsPresent.slice(0, MAX_CHANNELS_FOR_PERIOD)
           }}
           tooltip={{
             future: (channel) => this.renderFutureTooltip(channel, channelFuture),
