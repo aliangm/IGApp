@@ -4,7 +4,7 @@ import Component from 'components/Component';
 import {Area, AreaChart, CartesianGrid, ReferenceDot, Tooltip, XAxis, YAxis} from 'recharts';
 import style from 'styles/plan/indicators-graph.css';
 import onboardingStyle from 'styles/onboarding/onboarding.css';
-import {getIndicatorsWithProps} from 'components/utils/indicators';
+import {formatIndicatorDisplay, getIndicatorsWithProps} from 'components/utils/indicators';
 import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
@@ -307,19 +307,23 @@ export default class IndicatorsGraph extends Component {
                                          style={{borderColor: indicatorColor}}/> : null}
                       <div className={this.classes.customTooltipValue}
                            style={{color: indicatorColor}}>
-                        {formatNumber(item.tooltipValue)}
+                        {formatIndicatorDisplay(indicator, item.tooltipValue)}
                       </div>
                     </div>
                     {item.secondaryTooltipValue ?
                       <div className={this.classes.valueClass}>
                         {showLegend ? <div className={this.classes.tooltipLegend}
-                                           style={{borderColor: indicatorColor, opacity: DASHED_OPACITY, borderStyle: "dashed"}}/> : null}
+                                           style={{
+                                             borderColor: indicatorColor,
+                                             opacity: DASHED_OPACITY,
+                                             borderStyle: 'dashed'
+                                           }}/> : null}
                         <div className={this.classes.customTooltipValue}
                              style={{
                                color: indicatorColor,
                                opacity: DASHED_OPACITY
                              }}>
-                          {formatNumber(item.secondaryTooltipValue)}
+                          {formatIndicatorDisplay(indicator, item.secondaryTooltipValue)}
                         </div>
                       </div> : null
                     }
