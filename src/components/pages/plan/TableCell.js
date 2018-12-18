@@ -234,7 +234,11 @@ export default class TableCell extends Component {
                  type="text"
                  value={formatBudget(this.state.editValue)}
                  onChange={this.onInputValueChange}
-                 ref='inputField'/>
+                 ref='inputField'
+                 onKeyPress={(event)=>{
+                   console.log(event.keyCode)
+                 }}
+          />
           : <div>{formatBudget(this.props.primaryValue)}</div>}
         {this.props.enableActionButtons ? this.getActionButtons() : null}
       </div>
