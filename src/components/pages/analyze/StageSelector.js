@@ -32,6 +32,7 @@ export default class StageSelector extends Component {
     const stagesDiv = stages.map((stage, index) => {
       return <div className={this.classes.innerDiv} data-selected={(index === this.state.selected) ? true : null}
                   data-before-selected={(index === this.state.selected - 1) ? true : null}
+                  data-last={(index === stages.length - 1) ? true : null}
                   onClick={() => {
                     this.setState({selected: index});
                   }}>

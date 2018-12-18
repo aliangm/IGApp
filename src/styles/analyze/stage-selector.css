@@ -62,27 +62,33 @@
 }
 
 .inner-div[data-selected]::before {
-    content: "";
-    width: 0;
-    height: 0;
-    right: 0;
-    position: absolute;
     border-top: var(--arrow-border-width) solid var(--background-color);
     border-bottom: var(--arrow-border-width) solid var(--background-color);
     border-left: var(--arrow-border-width) solid var(--selected-color);
-    z-index: 2;
 }
 
 .inner-div[data-before-selected]::before {
-    content: "";
-    width: 0;
-    height: 0;
-    right: 0;
-    position: absolute;
     border-top: var(--arrow-border-width) solid var(--selected-color);
     border-bottom: var(--arrow-border-width) solid var(--selected-color);
     border-left: var(--arrow-border-width) solid var(--selected-color);
-    z-index: 2;
+}
+
+.inner-div[data-last]::after {
+    border-top: var(--arrow-border-width) solid var(--background-color);
+    border-bottom: var(--arrow-border-width) solid var(--background-color);
+    border-left: var(--arrow-border-width) solid var(--background-color);
+}
+
+.inner-div[data-last][data-selected]::after {
+    border-top: var(--arrow-border-width) solid var(--selected-color);
+    border-bottom: var(--arrow-border-width) solid var(--selected-color);
+    border-left: var(--arrow-border-width) solid var(--selected-color);
+}
+
+.inner-div[data-last]::before {
+    border-top: var(--arrow-border-width) solid transparent;
+    border-bottom: var(--arrow-border-width) solid transparent;
+    border-left: var(--arrow-border-width) solid transparent;
 }
 
 .stage-name {
