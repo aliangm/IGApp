@@ -9,6 +9,7 @@ import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
+import StageSelector from 'components/pages/analyze/StageSelector';
 
 export default class Channels extends Component {
 
@@ -290,6 +291,7 @@ export default class Channels extends Component {
     return <div>
       <div className={this.classes.wrap}>
         <div>
+          <StageSelector/>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item}
                  style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
