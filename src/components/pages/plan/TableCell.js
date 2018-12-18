@@ -236,7 +236,9 @@ export default class TableCell extends Component {
                  onChange={this.onInputValueChange}
                  ref='inputField'
                  onKeyPress={(event)=>{
-                   console.log(event.keyCode)
+                   if(event.key === "Enter"){
+                     this.approveEdit();
+                   }
                  }}
           />
           : <div>{formatBudget(this.props.primaryValue)}</div>}
