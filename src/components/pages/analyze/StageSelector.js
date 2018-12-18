@@ -6,12 +6,12 @@ export default class StageSelector extends Component {
 
   style = style;
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
       selected: 0
-    }
+    };
   }
 
   render() {
@@ -30,11 +30,15 @@ export default class StageSelector extends Component {
     }];
 
     const stagesDiv = stages.map((stage, index) => {
-      return <div className={this.classes.innerDiv} data-selected={(index === this.state.selected) ? true : null} data-before-selected={(index === this.state.selected - 1) ? true : null}>
+      return <div className={this.classes.innerDiv} data-selected={(index === this.state.selected) ? true : null}
+                  data-before-selected={(index === this.state.selected - 1) ? true : null}
+                  onClick={() => {
+                    this.setState({selected: index});
+                  }}>
         <div className={this.classes.stageName}>{stage.stageName}</div>
         <div className={this.classes.number}>{stage.number}</div>
         <div className={this.classes.stat}>{stage.previousMonth}</div>
-        </div>;
+      </div>;
     });
 
     return <div className={this.classes.outerDiv}>{stagesDiv}</div>;
