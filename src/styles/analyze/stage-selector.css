@@ -81,7 +81,7 @@
     position: absolute;
     border-top: var(--arrow-border-width) solid var(--selected-color);
     border-bottom: var(--arrow-border-width) solid var(--selected-color);
-    border-left: var(--arrow-border-width) solid #e6e8f0;
+    border-left: var(--arrow-border-width) solid var(--selected-color);
     z-index: 2;
 }
 

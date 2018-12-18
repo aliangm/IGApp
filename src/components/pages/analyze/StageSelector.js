@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import style from 'styles/analyze/stageSelector.css';
+import style from 'styles/analyze/stage-selector.css';
 
 export default class StageSelector extends Component {
 
