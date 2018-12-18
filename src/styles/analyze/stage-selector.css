@@ -18,11 +18,13 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .inner-div[data-selected] {
     background-color: var(--selected-color);
     color: #ffffff;
+    cursor: initial;
 }
 
 .inner-div::after {
@@ -35,6 +37,7 @@
     border-left: var(--arrow-border-width) solid var(--background-color);
     position: absolute;
     z-index: 3;
+    cursor: pointer;
 }
 
 .inner-div[data-selected]::after {
@@ -47,6 +50,7 @@
     border-left: var(--arrow-border-width) solid var(--selected-color);
     position: absolute;
     z-index: 3;
+    cursor: initial;
 }
 
 .inner-div::before {
