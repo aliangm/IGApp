@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import style from 'styles/analyze/stage-selector.css';
 
@@ -6,13 +6,10 @@ export default class StageSelector extends Component {
 
   style = style;
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selected: 0
-    };
-  }
+  static propTypes = {
+    selectStage: PropTypes.func,
+    selectedIndex: PropTypes.number
+  };
 
   render() {
     const stages = [{
@@ -29,12 +26,14 @@ export default class StageSelector extends Component {
       stageName: 'Visitors', number: 70, previousMonth: 100
     }];
 
+    const selected = this.props.selectedIndex;
+
     const stagesDiv = stages.map((stage, index) => {
-      return <div className={this.classes.innerDiv} data-selected={(index === this.state.selected) ? true : null}
-                  data-before-selected={(index === this.state.selected - 1) ? true : null}
+      return <div className={this.classes.innerDiv} data-selected={(index === selected) ? true : null}
+                  data-before-selected={(index === selected - 1) ? true : null}
                   data-last={(index === stages.length - 1) ? true : null}
                   onClick={() => {
-                    this.setState({selected: index});
+                    this.props.selectStage(index);
                   }}>
         <div className={this.classes.stageName}>{stage.stageName}</div>
         <div className={this.classes.number}>{stage.number}</div>
