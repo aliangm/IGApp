@@ -41,11 +41,11 @@ export default class Content extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, metricsWithInfluencedOptions, metricsWithInfluenced, revenueMetricsOptions, revenueMetrics, formatAverage, formatEffciency} = this.props;
+    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, formatAverage, formatEffciency} = this.props;
     const attributionPages = attribution.pages || [];
 
     const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio', stages: ['Visitors']},
-      {title: 'Proceed Ratio', type: 'proceed-ratio', stages: ['Visitors']}, {title: 'Channel', type: 'channel'}];
+      {title: 'Proceed Ratio', type: 'proceed-ratio', stages: ['Visitors']}, {title: 'Channel', type: 'channel', atStart: true}];
 
     const getPageItemData = (page, dataKey) => get(page, dataKey, 0);
     const getPageItemTitle = (page) => {
@@ -81,91 +81,6 @@ export default class Content extends Component {
 
     const objective = funnelFirstObjective;
 
-    const headRow = this.getTableRow(null, [
-      <div style={{textAlign: 'left', cursor: 'pointer'}}>
-        Channel
-      </div>,
-      'Title',
-      <div style={{display: 'inline-flex'}}>
-        {this.state.editRevenueMetric ?
-          <Select
-            selected={this.state.attributionTableRevenueMetric}
-            select={{
-              options: revenueMetricsOptions
-            }}
-            onChange={(e) => {
-              this.setState({attributionTableRevenueMetric: e.value});
-            }}
-            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, 'revenueMetric')}
-               style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
-            {revenueMetrics[this.state.attributionTableRevenueMetric]}
-          </div>
-        }
-        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editRevenueMetric: !this.state.editRevenueMetric});
-        }}>
-          {this.state.editRevenueMetric ? 'Done' : 'Edit'}
-        </div>
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-        Views
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}>
-        <Label
-          style={{
-            width: 'auto',
-            marginBottom: 'initial',
-            letterSpacing: 'initial',
-            fontSize: '16px',
-            fontWeight: '600',
-            color: '#354052',
-            justifyContent: 'center',
-            textTransform: 'capitalize'
-          }}
-          question={['']}
-          description={['number of times the content led to a direct online conversion event on your website or landing pages.']}>
-          Conv.
-        </Label>
-      </div>,
-      <div style={{display: 'inline-flex'}}>
-        {this.state.editMetric ?
-          <Select
-            selected={this.state.attributionTableIndicator}
-            select={{
-              options: metricsWithInfluencedOptions
-            }}
-            onChange={(e) => {
-              this.setState({attributionTableIndicator: e.value});
-            }}
-            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, 'funnelIndicator')}
-               style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
-            {metricsWithInfluenced[this.state.attributionTableIndicator]}
-          </div>
-        }
-        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editMetric: !this.state.editMetric});
-        }}>
-          {this.state.editMetric ? 'Done' : 'Edit'}
-        </div>
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'readRatio')} style={{cursor: 'pointer'}}>
-        Read ratio
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'proceedRatio')} style={{cursor: 'pointer'}}>
-        Proceed ratio
-      </div>
-    ], {
-      className: dashboardStyle.locals.headRow
-    });
-
     const pagesData = attributionPages.map(item => {
       return {
         channel: item.channel,
@@ -186,37 +101,6 @@ export default class Content extends Component {
     const avgProceedRatio = pagesData.reduce((sum, item) => sum + item.proceedRatio, 0) / attributionPages.length;
 
     const objectiveNickName = getIndicatorNickname(objective);
-
-    const rows = pagesData
-      .sort((item1, item2) =>
-        (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
-      )
-      .map((item, index) => {
-        const {channel, title, revenueMetric, webVisits, conversion, funnelIndicator, readRatio, proceedRatio} = item;
-        return (funnelIndicator || conversion || webVisits) ?
-          this.getTableRow(null,
-            [
-              <div style={{display: 'flex'}}>
-                <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}/>
-                <div className={dashboardStyle.locals.channelTable}>
-                  {getChannelNickname(channel)}
-                </div>
-              </div>,
-              <div className={dashboardStyle.locals.contentTitle} data-tip={title}>
-                {title}
-              </div>,
-              '$' + formatNumber(revenueMetric),
-              webVisits,
-              conversion,
-              Math.round(funnelIndicator * 100) / 100,
-              readRatio + '%',
-              proceedRatio + '%'
-            ], {
-              key: index,
-              className: dashboardStyle.locals.tableRow
-            })
-          : null;
-      });
 
     const outOfTotalRevenue = Math.round((revenue / totalRevenue) * 100);
 

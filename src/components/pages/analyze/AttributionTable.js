@@ -39,7 +39,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {showTotalRow, additionalColumns, formatAdditionColumn,formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
+    const {showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
     const {selectedStageIndex} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -55,7 +55,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Web Visitors', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
-          ]
+        ]
       },
       {
         name: 'Leads',
@@ -109,8 +109,11 @@ export default class AttributionTable extends Component {
       }];
 
     const stages = basicStages.map(stage => {
-      const columnsToAdd = additionalColumns.filter(column => isEmpty(column.stages) || column.stages.includes(stage.name));
-      return {...stage, columns: [...stage.columns, ...columnsToAdd]}
+      const columnsToAdd = additionalColumns.filter(
+        column => isEmpty(column.stages) || column.stages.includes(stage.name));
+      const atStart = columnsToAdd.filter(column => column.atStart);
+      const atEnd = columnsToAdd.filter(column => !column.atStart);
+      return {...stage, columns: [...atStart, ...stage.columns, ...atEnd]};
     });
 
     const selectedStage = stages[selectedStageIndex];
@@ -204,7 +207,7 @@ export default class AttributionTable extends Component {
           });
       });
 
-    const footRow =  showTotalRow && this.getTableRow(null,
+    const footRow = showTotalRow && this.getTableRow(null,
       selectedStage.columns.map(column => getTotalColumnData(data, column.type)),
       {
         className: dashboardStyle.locals.footRow
