@@ -5,7 +5,6 @@ import style from 'styles/analyze/stage-selector.css';
 const stageType = PropTypes.shape({
   stageName: PropTypes.string,
   number: PropTypes.number,
-  previousMonth: PropTypes.number
 });
 
 export default class StageSelector extends Component {
@@ -34,7 +33,6 @@ export default class StageSelector extends Component {
                   }}>
         <div className={this.classes.stageName}>{stage.stageName}</div>
         <div className={this.classes.number}>{stage.number}</div>
-        <div className={this.classes.stat}>{stage.previousMonth}</div>
       </div>;
     });
 

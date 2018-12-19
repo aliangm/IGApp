@@ -196,8 +196,7 @@ export default class AttributionTable extends Component {
       return {
         stageName: stage.name,
         number: formatNumber(Math.round(sumBy(data,
-          item => getItemData(item, stage.dataKey)))),
-        previousMonth: 300
+          item => getItemData(item, stage.dataKey))))
       };
     });
 
