@@ -4,7 +4,7 @@ import style from 'styles/analyze/stage-selector.css';
 
 const stageType = PropTypes.shape({
   stageName: PropTypes.string,
-  number: PropTypes.number,
+  number: PropTypes.string,
 });
 
 export default class StageSelector extends Component {
