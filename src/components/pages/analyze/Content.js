@@ -45,7 +45,7 @@ export default class Content extends Component {
     const attributionPages = attribution.pages || [];
 
     const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio', stages: ['Visitors']},
-      {title: 'Proceed Ratio', type: 'proceed-ratio', stages: ['Visitors']}];
+      {title: 'Proceed Ratio', type: 'proceed-ratio', stages: ['Visitors']}, {title: 'Channel', type: 'channel'}];
 
     const getPageItemData = (page, dataKey) => get(page, dataKey, 0);
     const getPageItemTitle = (page) => {
@@ -56,18 +56,25 @@ export default class Content extends Component {
     };
 
     const formatAdditionColumn = (item, columnType) => {
-      if (columnType === 'proceed-ratio') {
-        const webVisits = getPageItemData(item, 'webVisits');
-        return webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0;
+      switch (columnType) {
+        case 'channel': {
+          const {channel} = item;
+          return <div style={{display: 'flex'}}>
+            <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}/>
+            <div className={dashboardStyle.locals.channelTable}>
+              {getChannelNickname(channel)}
+            </div>
+          </div>;
+        }
+        case 'proceed-ratio': {
+          const webVisits = getPageItemData(item, 'webVisits');
+          return webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0;
+        }
+        case 'read-ratio': {
+          const total = getPageItemData(item, 'total');
+          return total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0;
+        }
       }
-      else {
-        const total = getPageItemData(item, 'total');
-        return total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0;
-      }
-    };
-
-    const formatAdditionColumnTotal = (item, columnType) => {
-      return formatAdditionColumn(item, columnType) / attributionPages.length;
     };
 
     const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
@@ -239,14 +246,15 @@ export default class Content extends Component {
           <FeatureToggle featureName="attribution">
             <AttributionTable data={attributionPages}
                               additionalColumns={additionalColumns}
-                              formatAdditionColumnTotal={formatAdditionColumnTotal}
                               formatAdditionColumn={formatAdditionColumn}
                               titleColumnName='Content'
                               getItemCost={() => ''}
                               formatAverage={formatAverage}
                               formatEffciency={formatEffciency}
                               getItemData={getPageItemData}
-                              getItemTitle={getPageItemTitle}/>
+                              getItemTitle={getPageItemTitle}
+                              showTotalRow={false}
+            />
           </FeatureToggle>
         </div>
       </div>

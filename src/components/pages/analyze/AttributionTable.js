@@ -21,11 +21,13 @@ export default class AttributionTable extends Component {
     getItemTitle: PropTypes.func,
     additionalColumns: PropTypes.array,
     formatAdditionColumn: PropTypes.func,
-    formatAdditionColumnTotal: PropTypes.func
+    formatAdditionColumnTotal: PropTypes.func,
+    showTotalRow: PropTypes.bool
   };
 
   static defaultProps = {
-    additionalColumns: []
+    additionalColumns: [],
+    showTotalRow: true
   };
 
   constructor(props) {
@@ -37,7 +39,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {additionalColumns, formatAdditionColumn,formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
+    const {showTotalRow, additionalColumns, formatAdditionColumn,formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
     const {selectedStageIndex} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -202,7 +204,7 @@ export default class AttributionTable extends Component {
           });
       });
 
-    const footRow = this.getTableRow(null,
+    const footRow =  showTotalRow && this.getTableRow(null,
       selectedStage.columns.map(column => getTotalColumnData(data, column.type)),
       {
         className: dashboardStyle.locals.footRow
