@@ -138,6 +138,7 @@ class PathChart extends Component {
     const {months, data: {future, past}} = this.props;
 
     return [
+      // Remove elements from end of array
       ...past.slice(-(months || 1)),
       ...future.slice(0, months)
     ].map((month, index) => ({
