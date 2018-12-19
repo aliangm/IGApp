@@ -12,6 +12,8 @@ import icons from 'styles/icons/plan.css';
 import ReactTooltip from 'react-tooltip';
 import {newFunnelMapping} from 'components/utils/utils';
 import StatSquare from 'components/common/StatSquare';
+import AttributionTable from 'components/pages/analyze/AttributionTable';
+import {get} from 'lodash';
 
 export default class Content extends Component {
 
@@ -39,8 +41,34 @@ export default class Content extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, metricsWithInfluencedOptions, metricsWithInfluenced, revenueMetricsOptions, revenueMetrics} = this.props;
+    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, metricsWithInfluencedOptions, metricsWithInfluenced, revenueMetricsOptions, revenueMetrics, formatAverage, formatEffciency} = this.props;
     const attributionPages = attribution.pages || [];
+
+    const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio', stages: ['Visitors']},
+      {title: 'Proceed Ratio', type: 'proceed-ratio', stages: ['Visitors']}];
+
+    const getPageItemData = (page, dataKey) => get(page, dataKey, 0);
+    const getPageItemTitle = (page) => {
+      const {title} = page;
+      return <div className={dashboardStyle.locals.contentTitle} data-tip={title}>
+        {title}
+      </div>;
+    };
+
+    const formatAdditionColumn = (item, columnType) => {
+      if (columnType === 'proceed-ratio') {
+        const webVisits = getPageItemData(item, 'webVisits');
+        return webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0;
+      }
+      else {
+        const total = getPageItemData(item, 'total');
+        return total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0;
+      }
+    };
+
+    const formatAdditionColumnTotal = (item, columnType) => {
+      return formatAdditionColumn(item, columnType) / attributionPages.length;
+    };
 
     const actualIndicatorsArray = historyDataWithCurrentMonth.indicators;
 
@@ -209,17 +237,16 @@ export default class Content extends Component {
         </div>
         <div>
           <FeatureToggle featureName="attribution">
-            <div className={dashboardStyle.locals.item}
-                 style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
-              <table className={dashboardStyle.locals.table}>
-                <thead>
-                {headRow}
-                </thead>
-                <tbody className={dashboardStyle.locals.tableBody}>
-                {rows}
-                </tbody>
-              </table>
-            </div>
+            <AttributionTable data={attributionPages}
+                              additionalColumns={additionalColumns}
+                              formatAdditionColumnTotal={formatAdditionColumnTotal}
+                              formatAdditionColumn={formatAdditionColumn}
+                              titleColumnName='Content'
+                              getItemCost={() => ''}
+                              formatAverage={formatAverage}
+                              formatEffciency={formatEffciency}
+                              getItemData={getPageItemData}
+                              getItemTitle={getPageItemTitle}/>
           </FeatureToggle>
         </div>
       </div>

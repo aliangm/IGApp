@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {formatNumber} from 'components/utils/budget';
-import {capitalize, sumBy} from 'lodash';
+import {capitalize, isEmpty, sumBy} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 
@@ -44,7 +44,7 @@ export default class AttributionTable extends Component {
       return `influenced${capitalize(dataKey)}`;
     };
 
-    const stages = [
+    const basicStages = [
       {
         name: 'Visitors',
         dataKey: 'webVisits',
@@ -52,7 +52,8 @@ export default class AttributionTable extends Component {
           {title: titleColumnName, type: 'row-title'},
           {title: 'Cost', type: 'cost'},
           {title: 'Web Visitors', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns]
+          {title: 'Efficiency', type: 'efficiency'}
+          ]
       },
       {
         name: 'Leads',
@@ -62,7 +63,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Influenced/Touched Leads', type: 'stage-indicator'},
           {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
+          {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
@@ -71,7 +72,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed MQLs', type: 'stage-indicator'},
           {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
+          {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
@@ -80,7 +81,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed SQLs', type: 'stage-indicator'},
           {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
+          {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
@@ -89,7 +90,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
           {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
+          {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
@@ -101,9 +102,14 @@ export default class AttributionTable extends Component {
           {title: 'Efficiency', type: 'efficiency'},
           {title: 'Revenue', type: 'revenue'},
           {title: 'ARPA', type: 'arpa'},
-          {title: 'ROI', type: 'roi'}, ...additionalColumns
+          {title: 'ROI', type: 'roi'}
         ]
       }];
+
+    const stages = basicStages.map(stage => {
+      const columnsToAdd = additionalColumns.filter(column => isEmpty(column.stages) || column.stages.includes(stage.name));
+      return {...stage, columns: [...stage.columns, ...columnsToAdd]}
+    });
 
     const selectedStage = stages[selectedStageIndex];
     const headRow = this.getTableRow(null, selectedStage.columns.map(({title}) => {
