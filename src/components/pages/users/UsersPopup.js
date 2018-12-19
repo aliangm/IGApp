@@ -122,13 +122,13 @@ export default class UsersPopup extends Component {
           </div>
         </div>);
 
-        if (item.page && item.page.length > 0) {
-          const otherPages = item.page.slice(1);
+        if (!isEmpty(item.pages)) {
+          const otherPages = item.pages.slice(1);
           eventsUI.push(<div className={this.classes.eventLine} key={`pages-${index}`}>
             <div className={this.classes.iconCircleSmall} data-icon="event:page"/>
             <div className={this.classes.eventText}>
-              {item.page[0] + ' '}
-              {otherPages && otherPages.length > 0 ?
+              {item.pages[0].path + ' '}
+              {!isEmpty(otherPages) ?
                 <span>
                and other
                 <span className={this.classes.otherPages} onClick={() => {
@@ -140,7 +140,7 @@ export default class UsersPopup extends Component {
                   <Popup className={this.classes.otherPagesPopup} onClose={() => {
                     this.setState({showOtherPagesPopup: null});
                   }}>
-                    {otherPages.map(item => <div>{item}</div>)}
+                    {otherPages.map((item, index) => <div key={index}>{item.path}</div>)}
                   </Popup>
                 </span>
               </span>
