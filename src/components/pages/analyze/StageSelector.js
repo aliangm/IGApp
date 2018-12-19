@@ -30,7 +30,7 @@ export default class StageSelector extends Component {
                   data-before-selected={(index === selected - 1) ? true : null}
                   data-last={(index === stages.length - 1) ? true : null}
                   onClick={() => {
-                    stageType && selectStage(index);
+                    selectStage && selectStage(index);
                   }}>
         <div className={this.classes.stageName}>{stage.stageName}</div>
         <div className={this.classes.number}>{stage.number}</div>
