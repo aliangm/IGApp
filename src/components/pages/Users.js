@@ -83,7 +83,7 @@ export default class Users extends Component {
 
   render() {
 
-    const {attribution} = this.props;
+    const {attribution: {usersByEmail, usersByAccount}} = this.props;
 
     const headRow = [
       'User',
@@ -105,100 +105,48 @@ export default class Users extends Component {
       users: 5
     };
 
-    const usersData = [];
-    const usersCopy = JSON.parse(JSON.stringify(attribution.users));
-    usersCopy.forEach(user => {
-      const funnelStage = Object.keys(stagesOrder)[Math.max(... user.funnelStage.map(item => stagesOrder[item]))];
-      user.funnelStage = [funnelStage];
-      if (this.state.groupBy == GROUP_BY.USERS) {
-        if (user.accountName !== null) {
-          const accountUsers = {};
-          user.journey.forEach(item => {
-            if (!accountUsers[item.email]) {
-              accountUsers[item.email] = user;
-              accountUsers[item.email].journey = [];
-            }
-            accountUsers[item.email].journey.push(item);
-          });
-          Object.keys(accountUsers).forEach(accountUser => {
-            usersData.push(accountUsers[accountUser]);
-          });
-        }
-        else {
-          const alreadyExists = usersData.findIndex(item => item.user === user.user);
-          if (alreadyExists !== -1) {
-            const journey = JSON.parse(JSON.stringify(usersData[alreadyExists].journey));
-            usersData[alreadyExists].journey = [];
-            usersData[alreadyExists].journey = journey.concat(user.journey);
-            if (!usersData[alreadyExists].funnelStage.includes(user.funnelStage[0])) {
-              usersData[alreadyExists].funnelStage.push(user.funnelStage[0]);
-            }
-          }
-          else {
-            usersData.push(user);
-          }
-        }
-      }
-      else {
-        if (user.accountName === null) {
-          const domain = this.mode(user.journey.map(item => {
-            const domain = item.email && item.email.match('(?<=@).+');
-            return domain && domain[0];
-          }));
-          const alreadyExists = usersData.findIndex(user => this.mode(user.journey.map(item => item.email && item.email.match('(?<=@).+')[0])) === domain);
-          if (alreadyExists !== -1) {
-            const journey = JSON.parse(JSON.stringify(usersData[alreadyExists].journey));
-            usersData[alreadyExists].journey = [];
-            usersData[alreadyExists].journey = journey.concat(user.journey);
-            usersData[alreadyExists].journey.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
-            if (!usersData[alreadyExists].funnelStage.includes(user.funnelStage[0])) {
-              usersData[alreadyExists].funnelStage.push(user.funnelStage[0]);
-            }
-          }
-          else {
-            usersData.push(user);
-          }
-        }
-        else {
-          usersData.push(user);
-        }
-      }
-    });
+    const usersData = this.state.groupBy === GROUP_BY.USERS ? usersByEmail : usersByAccount;
+
     const rows = usersData
       .sort((user1, user2) => {
-        const lastTouchPoint1 = new Date(user1.journey[user1.journey.length - 1].endTime);
-        const lastTouchPoint2 = new Date(user2.journey[user2.journey.length - 1].endTime);
+        const lastTouchPoint1 = new Date(user1.sessions[user1.sessions.length - 1].endTime);
+        const lastTouchPoint2 = new Date(user2.sessions[user2.sessions.length - 1].endTime);
         return lastTouchPoint2 - lastTouchPoint1;
       })
       .map((user, index) => {
-        const firstTouchPoint = new Date(user.journey[0].startTime);
-        const lastTouchPoint = new Date(user.journey[user.journey.length - 1].endTime);
-        const uniqChannels = uniq(user.journey.map(item => item.channel));
-        const emails = uniq(user.journey.map(item => item.email));
-        const domain = this.mode(user.journey.map(item => {
+        const firstTouchPoint = new Date(user.sessions[0].startTime);
+        const lastTouchPoint = new Date(user.sessions[user.sessions.length - 1].endTime);
+        const timeSinceFirst = this.timeSince(firstTouchPoint);
+        const timeSinceLast = this.timeSince(lastTouchPoint);
+        const uniqChannels = uniq(user.sessions.map(item => item.channel));
+        const emails = uniq(user.sessions.map(item => item.email));
+        const domain = this.mode(user.sessions.map(item => {
           const domain = item.email && item.email.match('(?<=@).+');
           return domain && domain[0];
         }));
-        const devices = uniq(user.journey.reduce((mergedItem, item) => [...mergedItem, ...item.devices], []));
-        const countries = uniq(user.journey.reduce((mergedItem, item) => [...mergedItem, ...item.countries], []));
+        const devices = uniq(user.sessions.map(item => item.device));
+        const countries = uniq(user.sessions.map(item => item.country));
+        const displayName = user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0];
+        const domainIcon = 'url(https://logo.clearbit.com/' + domain + ')';
+        const funnelStage = Object.keys(stagesOrder)[Math.max(... Object.keys(user.funnelStages).map(stage => stagesOrder[stage]))];
         return {
           items: [
             <div className={this.classes.container}>
               <div className={this.classes.icon} style={{
-                backgroundImage: 'url(https://logo.clearbit.com/' + domain + ')',
+                backgroundImage: domainIcon,
                 width: '25px',
                 height: '25px'
               }}/>
               <div className={this.classes.account}>
-                {user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0]}
+                {displayName}
                 <div className={this.classes.email}>{emails.length <= 1 ? emails && emails[0] : 'multiple users'}</div>
               </div>
             </div>,
             <div className={this.classes.container}>
               {uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={'plan:' + item}/>)}
             </div>,
-            getNickname(user.funnelStage[user.funnelStage.length - 1], true),
-            user.journey.length,
+            getNickname(funnelStage, true),
+            user.sessions.length,
             <div className={this.classes.container}>
               {countries && countries.length > 0 && countries.map(item => <div key={item}
                                                                                className={this.classes.container}>
@@ -206,15 +154,24 @@ export default class Users extends Component {
                 <div style={{marginLeft: '5px'}}>{item}</div>
               </div>)}
             </div>,
-            this.timeSince(firstTouchPoint),
-            this.timeSince(lastTouchPoint),
+            timeSinceFirst,
+            timeSinceLast,
             <div className={this.classes.container}>
               {devices && devices.length > 0 && devices.map(item => <div key={item} className={this.classes.icon}
                                                                          data-icon={'device:' + item}/>)}
             </div>
           ], props: {
             style: {cursor: 'pointer'},
-            onClick: this.showPopup.bind(this, {...user, devices: devices, countries: countries})
+            onClick: this.showPopup.bind(this, {
+              ...user,
+              devices,
+              countries,
+              timeSinceFirst,
+              timeSinceLast,
+              emails,
+              displayName,
+              domainIcon
+            })
           }
         };
       });
