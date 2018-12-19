@@ -10,6 +10,7 @@ import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import StageSelector from 'components/pages/analyze/StageSelector';
+import {sumBy, get} from 'lodash';
 
 export default class Channels extends Component {
 
@@ -65,6 +66,13 @@ export default class Channels extends Component {
   render() {
     const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
     const {firstObjective} = this.state;
+
+    const stages = [{name: 'Visitors', dataKey: 'webVisits'},
+      {name: 'Leads', dataKey: 'MCL'},
+      {name: 'MQLs', dataKey: 'MQL'},
+      {name: 'SQLs', dataKey: 'SQL'},
+      {name: 'Opps', dataKey: 'opps'},
+      {name: 'Customers', dataKey: 'users'}];
 
     const headRow = this.getTableRow(null, [
       <div style={{textAlign: 'left', cursor: 'pointer'}}
@@ -143,12 +151,23 @@ export default class Channels extends Component {
     const channelsArray = getChannelsWithNicknames();
     channelsArray.push({value: 'direct', label: 'Direct'});
 
+    const stagesData = stages.map(stage => {
+      return {
+        stageName: stage.name,
+        number: formatNumber(Math.round(sumBy(channelsArray,
+          channel => get(channelsImpact, [stage.dataKey, channel.value], 0)))),
+        previousMonth: 300
+      };
+    });
+
     let channelsWithData = channelsArray.map(item => {
       const json = {
         channel: item.value,
         label: item.label,
         budget: sumBudgets[item.value] || 0,
-        revenueMetric: (channelsImpact && channelsImpact[this.state.attributionTableRevenueMetric] && channelsImpact[this.state.attributionTableRevenueMetric][item.value])
+        revenueMetric: (channelsImpact &&
+          channelsImpact[this.state.attributionTableRevenueMetric] &&
+          channelsImpact[this.state.attributionTableRevenueMetric][item.value])
           ? channelsImpact[this.state.attributionTableRevenueMetric][item.value]
           : 0,
         webVisits: (channelsImpact && channelsImpact['webVisits'] && channelsImpact['webVisits'][item.value])
@@ -157,7 +176,9 @@ export default class Channels extends Component {
         conversion: (channelsImpact && channelsImpact['conversion'] && channelsImpact['conversion'][item.value])
           ? channelsImpact['conversion'][item.value]
           : 0,
-        funnelIndicator: (channelsImpact && channelsImpact[this.state.attributionTableIndicator] && channelsImpact[this.state.attributionTableIndicator][item.value])
+        funnelIndicator: (channelsImpact &&
+          channelsImpact[this.state.attributionTableIndicator] &&
+          channelsImpact[this.state.attributionTableIndicator][item.value])
           ? channelsImpact[this.state.attributionTableIndicator][item.value]
           : 0
       };
@@ -291,22 +312,10 @@ export default class Channels extends Component {
     return <div>
       <div className={this.classes.wrap}>
         <div>
-          <StageSelector stages={[{
-            stageName: 'Leads', number: 255, previousMonth: 300
-          }, {
-            stageName: 'MQL', number: 10, previousMonth: 30
-          }, {
-            stageName: 'SQL', number: 50, previousMonth: 30
-          }, {
-            stageName: 'Opps', number: 10, previousMonth: 30
-          }, {
-            stageName: 'Customers', number: 3, previousMonth: 5
-          }, {
-            stageName: 'Visitors', number: 70, previousMonth: 100
-          }]} selectedIndex={0}/>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item}
                  style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
+              <StageSelector stages={stagesData} selectedIndex={0}/>
               <table className={dashboardStyle.locals.table}>
                 <thead className={dashboardStyle.locals.tableHead}>
                 {headRow}
