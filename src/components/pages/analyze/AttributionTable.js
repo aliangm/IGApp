@@ -18,7 +18,14 @@ export default class AttributionTable extends Component {
     getItemData: PropTypes.func,
     formatAverage: PropTypes.func,
     formatEffciency: PropTypes.func,
-    getItemTitle: PropTypes.func
+    getItemTitle: PropTypes.func,
+    additionalColumns: PropTypes.array,
+    formatAdditionColumn: PropTypes.func,
+    formatAdditionColumnTotal: PropTypes.func
+  };
+
+  static defaultProps = {
+    additionalColumns: []
   };
 
   constructor(props) {
@@ -30,7 +37,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
+    const {additionalColumns, formatAdditionColumn,formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
     const {selectedStageIndex} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -45,7 +52,7 @@ export default class AttributionTable extends Component {
           {title: titleColumnName, type: 'row-title'},
           {title: 'Cost', type: 'cost'},
           {title: 'Web Visitors', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}]
+          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns]
       },
       {
         name: 'Leads',
@@ -55,7 +62,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Influenced/Touched Leads', type: 'stage-indicator'},
           {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
         ]
       },
       {
@@ -64,7 +71,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed MQLs', type: 'stage-indicator'},
           {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
         ]
       },
       {
@@ -73,7 +80,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed SQLs', type: 'stage-indicator'},
           {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
         ]
       },
       {
@@ -82,7 +89,7 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
           {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Efficiency', type: 'efficiency'}, ...additionalColumns
         ]
       },
       {
@@ -94,7 +101,7 @@ export default class AttributionTable extends Component {
           {title: 'Efficiency', type: 'efficiency'},
           {title: 'Revenue', type: 'revenue'},
           {title: 'ARPA', type: 'arpa'},
-          {title: 'ROI', type: 'roi'}
+          {title: 'ROI', type: 'roi'}, ...additionalColumns
         ]
       }];
 
@@ -132,6 +139,8 @@ export default class AttributionTable extends Component {
           return formatAverage(getItemRevenue(item), getMetricNumber(item));
         case 'roi':
           return formatAverage(getItemRevenue(item), getItemCost(item));
+        default:
+          return formatAdditionColumn(item, columnType);
       }
     };
 
@@ -164,6 +173,8 @@ export default class AttributionTable extends Component {
           return formatAverage(totalRevenue(), totalMetric());
         case 'roi':
           return formatAverage(totalRevenue(), getTotalCost());
+        default:
+          return formatAdditionColumnTotal(data, columnType);
       }
     };
 
