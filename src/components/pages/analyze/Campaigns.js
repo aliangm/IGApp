@@ -10,6 +10,8 @@ import {timeFrameToDate} from 'components/utils/objective';
 import history from 'history';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
+import {get, sumBy} from 'lodash';
+import StageSelector from 'components/pages/analyze/StageSelector';
 
 export default class Campaigns extends Component {
 
@@ -24,7 +26,8 @@ export default class Campaigns extends Component {
       conversionIndicator: 'MCL',
       attributionTableRevenueMetric: 'pipeline',
       sortBy: 'webVisits',
-      isDesc: 1
+      isDesc: 1,
+      selectedStageIndex: 0
     };
   }
 
@@ -38,96 +41,225 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const {attribution: {campaigns: attributionCampaigns, users}, campaigns, revenueMetricsOptions, revenueMetrics, metricsWithInfluencedOptions, metricsWithInfluenced, metricsWithInfluencedSingular, metricsOptions, formatEfficiency} = this.props;
+    const {attribution: {campaigns: attributionCampaigns, users}, campaigns, metricsOptions, formatEffciency, formatAverage, getInfluencedDataKey} = this.props;
+    const {selectedStageIndex} = this.state;
 
-    const headRow = this.getTableRow(null, [
-      <div style={{textAlign: 'left', cursor: 'pointer'}}
-           onClick={this.sortBy.bind(this, 'label')}>
-        campaign
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
-        Cost
-      </div>,
-      <div style={{display: 'inline-flex'}}>
-        {this.state.editRevenueMetric ?
-          <Select
-            selected={this.state.attributionTableRevenueMetric}
-            select={{
-              options: revenueMetricsOptions
-            }}
-            onChange={(e) => {
-              this.setState({attributionTableRevenueMetric: e.value});
-            }}
-            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
-            {revenueMetrics[this.state.attributionTableRevenueMetric]}
-          </div>
-        }
-        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editRevenueMetric: !this.state.editRevenueMetric});
-        }}>
-          {this.state.editRevenueMetric ? 'Done' : 'Edit'}
-        </div>
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'ROI')} style={{cursor: 'pointer'}}>
-        ROI
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-        Web Visits
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}
-           data-tip="number of times the campaign led to a direct online conversion event on your website or landing pages.">
-        Conv.
-      </div>,
-      <div style={{display: 'inline-flex'}}>
-        {this.state.editMetric ?
-          <Select
-            selected={this.state.attributionTableIndicator}
-            select={{
-              options: metricsWithInfluencedOptions
-            }}
-            onChange={(e) => {
-              this.setState({attributionTableIndicator: e.value});
-            }}
-            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
-            {metricsWithInfluenced[this.state.attributionTableIndicator]}
-          </div>
-        }
-        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editMetric: !this.state.editMetric});
-        }}>
-          {this.state.editMetric ? 'Done' : 'Edit'}
-        </div>
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}}
-           data-tip={'Cost per ' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]}>
-        Efficiency
-      </div>,
-      'Channels'
-    ], {
-      className: dashboardStyle.locals.headRow
-    });
+    const stages = [{
+      name: 'Visitors',
+      dataKey: 'webVisits',
+      columns: [
+        {title: 'Campaign', type: 'row-title'},
+        {title: 'Cost', type: 'cost'},
+        {title: 'Web Visitors', type: 'stage-indicator'},
+        {title: 'Efficiency', type: 'efficiency'},
+        {title: 'Channels', type: 'channels'}
+      ]
+    },
+      {
+        name: 'Leads',
+        dataKey: 'MCL',
+        columns: [
+          {title: 'Campaign', type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
+          {title: 'Influenced/Touched Leads', type: 'stage-indicator'},
+          {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Channels', type: 'channels'}
+        ]
+      },
+      {
+        name: 'MQLs', dataKey: 'MQL', columns: [
+          {title: 'Campaign', type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
+          {title: 'Attributed MQLs', type: 'stage-indicator'},
+          {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'},
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Channels', type: 'channels'}
+        ]
+      },
+      {
+        name: 'SQLs', dataKey: 'SQL', columns: [
+          {title: 'Campaign', type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
+          {title: 'Attributed SQLs', type: 'stage-indicator'},
+          {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'},
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Channels', type: 'channels'}
+        ]
+      },
+      {
+        name: 'Opps', dataKey: 'opps', columns: [
+          {title: 'Campaign', type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
+          {title: 'Attributed Opps', type: 'stage-indicator'},
+          {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Channels', type: 'channels'}
+        ]
+      },
+      {
+        name: 'Customers', dataKey: 'users', columns: [
+          {title: 'Campaign', type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
+          {title: 'Attributed Customers', type: 'stage-indicator'},
+          {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Channels', type: 'channels'},
+          {title: 'Revenue', type: 'revenue'},
+          {title: 'ARPA', type: 'arpa'},
+          {title: 'ROI', type: 'roi'}
+        ]
+      }];
 
-    let campaignsWithData = attributionCampaigns.map(campaign => {
-      const campaignName = campaign.name;
+    const selectedStage = stages[selectedStageIndex];
+
+    const headRow = this.getTableRow(null, selectedStage.columns.map(({title}) => {
+      return <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
+        {title}
+      </div>;
+    }), {className: dashboardStyle.locals.headRow});
+
+    const stageIndicatorKey = selectedStage.dataKey;
+
+    const getPlatformCampaignIndex = (campaignIndex) => {
+      const campaignName = attributionCampaigns[campaignIndex].name;
+      return campaigns.findIndex(campaign => (campaign.name ===
+        campaignName ||
+        (campaign.tracking && campaign.tracking.campaignUTM === campaignName)) && !campaign.isArchived);
+    };
+
+    const getPlatformCampaign = (campaignIndex) => campaigns[getPlatformCampaignIndex(campaignIndex)];
+
+    const getCampaignCost = (campaignIndex) => {
       let budget = 0;
-      const platformCampaignIndex = campaigns.findIndex(campaign => (campaign.name === campaignName || (campaign.tracking && campaign.tracking.campaignUTM === campaignName)) && !campaign.isArchived);
-      const platformCampaign = campaigns[platformCampaignIndex];
+      const platformCampaign = getPlatformCampaign(campaignIndex);
       if (platformCampaign) {
         if (platformCampaign.isOneTime) {
-          if (platformCampaign.dueDate && timeFrameToDate(platformCampaign.dueDate).getMonth() === new Date().getMonth()) {
+          if (platformCampaign.dueDate &&
+            timeFrameToDate(platformCampaign.dueDate).getMonth() ===
+            new Date().getMonth()) {
             budget = platformCampaign.actualSpent || platformCampaign.budget || 0;
           }
         }
         else {
-          if (!platformCampaign.dueDate || (platformCampaign.dueDate && timeFrameToDate(platformCampaign.dueDate) < new Date())) {
+          if (!platformCampaign.dueDate ||
+            (platformCampaign.dueDate && timeFrameToDate(platformCampaign.dueDate) < new Date())) {
+            budget = platformCampaign.actualSpent || platformCampaign.budget || 0;
+          }
+        }
+      }
+
+      return budget;
+    };
+
+    const getMetricNumber = (campaignIndex) => {
+      return get(attributionCampaigns, [campaignIndex, stageIndicatorKey], 0);
+    };
+    const getInfluencedMetricNumber = (campaignIndex) => {
+      return get(attributionCampaigns, [campaignIndex, getInfluencedDataKey(stageIndicatorKey)], 0);
+    };
+
+    const getCampaignRevenue = (campaignIndex) => {
+      return get(attributionCampaigns, [campaignIndex, 'revenue'], 0);
+    };
+
+    const formatIndicator = (value) => formatNumber(Math.round(value));
+
+    const getColumnData = (campaignIndex, columnType) => {
+      switch (columnType) {
+        case 'row-title': {
+          const platformCampaignIndex = getPlatformCampaignIndex(campaignIndex);
+          return <div className={dashboardStyle.locals.channelTable}
+                      data-link={platformCampaignIndex !== -1 ? true : null}
+                      onClick={() => {
+                        if (platformCampaignIndex !== -1) {
+                          history.push({
+                            pathname: '/campaigns/by-channel',
+                            query: {campaign: platformCampaignIndex}
+                          });
+                        }
+                      }}>
+            {attributionCampaigns[campaignIndex].name}
+          </div>;
+        }
+        case 'cost':
+          return '$' + formatNumber(getCampaignCost(campaignIndex));
+        case 'stage-indicator':
+          return formatIndicator(getMetricNumber(campaignIndex));
+        case 'influenced-stage-indicator':
+          return formatIndicator(getInfluencedMetricNumber(campaignIndex));
+        case 'efficiency':
+          return formatEffciency(getCampaignCost(campaignIndex), getMetricNumber(campaignIndex), selectedStage.name);
+        case 'revenue':
+          return '$' + formatNumber(getCampaignRevenue(campaignIndex));
+        case 'arpa':
+          return formatAverage(getCampaignRevenue(campaignIndex), getMetricNumber(campaignIndex));
+        case 'roi':
+          return formatAverage(getCampaignRevenue(campaignIndex), getCampaignCost(campaignIndex));
+        case 'channels':
+          return <div style={{display: 'flex'}}>
+            <ReactTooltip/>
+            {attributionCampaigns[campaignIndex].channels.map(channel =>
+              <div key={channel} data-tip={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon}
+                   data-icon={'plan:' + channel}/>
+            )}
+          </div>;
+      }
+    };
+
+    const getTotalColumnData = (campagins, columnType) => {
+      const campaignIndices = campagins.map(campagin => campagin.campaignIndex);
+      const getTotalCost = () => sumBy(campaignIndices, getCampaignCost);
+
+      const totalIndicatorGenerated = (campaignIndices, getCampaginData) => Math.round(campaignIndices.reduce((sum,
+                                                                                                               item) => sum +
+        getCampaginData(item), 0) * 100) /
+        100;
+
+      const totalMetric = () => totalIndicatorGenerated(campaignIndices, getMetricNumber);
+
+      const totalRevenue = () => sumBy(campaignIndices, getCampaignRevenue);
+
+      switch (columnType) {
+        case 'row-title':
+          return 'Total';
+        case 'cost':
+          return '$' + formatNumber(getTotalCost());
+        case 'stage-indicator':
+          return totalMetric();
+        case 'influenced-stage-indicator':
+          return totalIndicatorGenerated(campaignIndices, getInfluencedMetricNumber);
+        case 'efficiency':
+          return formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
+        case 'revenue':
+          return '$' + formatNumber(totalRevenue());
+        case 'arpa':
+          return formatAverage(totalRevenue(), totalMetric());
+        case 'roi':
+          return formatAverage(totalRevenue(), getTotalCost());
+        case 'channels':
+          return '';
+      }
+    };
+
+    let campaignsWithData = attributionCampaigns.map((campaign, index) => {
+      const campaignName = campaign.name;
+      let budget = 0;
+      const platformCampaignIndex = campaigns.findIndex(campaign => (campaign.name ===
+        campaignName ||
+        (campaign.tracking && campaign.tracking.campaignUTM === campaignName)) && !campaign.isArchived);
+      const platformCampaign = campaigns[platformCampaignIndex];
+      if (platformCampaign) {
+        if (platformCampaign.isOneTime) {
+          if (platformCampaign.dueDate &&
+            timeFrameToDate(platformCampaign.dueDate).getMonth() ===
+            new Date().getMonth()) {
+            budget = platformCampaign.actualSpent || platformCampaign.budget || 0;
+          }
+        }
+        else {
+          if (!platformCampaign.dueDate ||
+            (platformCampaign.dueDate && timeFrameToDate(platformCampaign.dueDate) < new Date())) {
             budget = platformCampaign.actualSpent || platformCampaign.budget || 0;
           }
         }
@@ -140,69 +272,41 @@ export default class Campaigns extends Component {
         conversion: campaign.conversion,
         funnelIndicator: campaign[this.state.attributionTableIndicator],
         channels: campaign.channels,
-        platformCampaignIndex: platformCampaignIndex
+        platformCampaignIndex: platformCampaignIndex,
+        campaignIndex: index
       };
       json.ROI = json.budget ? json.revenueMetric / json.budget : 0;
       json.CPX = json.budget / json.funnelIndicator;
       return json;
     });
 
-    campaignsWithData = campaignsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
+    const stagesData = stages.map(stage => {
+      return {
+        stageName: stage.name,
+        number: formatNumber(Math.round(sumBy(attributionCampaigns,
+          campaign => get(campaign, stage.dataKey, 0)))),
+        previousMonth: 300
+      };
+    });
+
+    campaignsWithData =
+      campaignsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const rows = campaignsWithData
       .sort((item1, item2) =>
         (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
-      )
-      .map(item => {
-          const {label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX, channels, platformCampaignIndex} = item;
+      ).map(({campaignIndex}) => {
           return this.getTableRow(null,
-            [
-              <div className={dashboardStyle.locals.channelTable} data-link={platformCampaignIndex !== -1 ? true : null}
-                   onClick={() => {
-                     if (platformCampaignIndex !== -1) {
-                       history.push({
-                         pathname: '/campaigns/by-channel',
-                         query: {campaign: platformCampaignIndex}
-                       });
-                     }
-                   }}>
-                {label}
-              </div>,
-              '$' + formatNumber(budget),
-              '$' + formatNumber(revenueMetric),
-              Math.round(ROI * 100) + '%',
-              formatNumber(webVisits),
-              formatNumber(conversion),
-              Math.round(funnelIndicator),
-              '$' + (isFinite(CPX) ? formatNumber(Math.round(CPX) + '/' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]) : 0),
-              <div style={{display: 'flex'}}>
-                <ReactTooltip/>
-                {channels.map(channel =>
-                  <div key={channel} data-tip={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon}
-                       data-icon={'plan:' + channel}/>
-                )}
-              </div>
-            ], {
-              key: label,
+            selectedStage.columns.map(column => getColumnData(campaignIndex, column.type)), {
+              key: campaignIndex,
               className: dashboardStyle.locals.tableRow
             });
         }
       );
 
-    const sumData = campaignsWithData;
-
-    const footRow = this.getTableRow(null, [
-        'Total',
-        '$' + formatNumber(sumData.reduce((sum, item) => sum + item.budget, 0)),
-        '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
-        Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-        formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-        formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-        Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) / 100,
-        '$' + formatNumber(Math.round(sumData.reduce((sum, item) => isFinite(item.CPX) ? sum + item.funnelIndicator * item.CPX : sum, 0) / sumData.reduce((sum, item) => sum + item.funnelIndicator, 0)) + '/' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]),
-        ''
-      ]
-      , {
+    const footRow = this.getTableRow(null,
+      selectedStage.columns.map(column => getTotalColumnData(campaignsWithData, column.type)),
+      {
         className: dashboardStyle.locals.footRow
       });
 
@@ -216,7 +320,12 @@ export default class Campaigns extends Component {
         });
       if (journey && journey.length > 0) {
         journeysSum++;
-        const alreadyExists = journeys.find(item => item.journey.length === journey.length && item.journey.every((item, index) => item.campaign === journey[index].campaign && item.channel === journey[index].channel));
+        const alreadyExists = journeys.find(item => item.journey.length ===
+          journey.length &&
+          item.journey.every((item, index) => item.campaign ===
+            journey[index].campaign &&
+            item.channel ===
+            journey[index].channel));
         if (alreadyExists) {
           alreadyExists.count++;
         }
@@ -269,19 +378,26 @@ export default class Campaigns extends Component {
       <div className={this.classes.wrap}>
         <div>
           <FeatureToggle featureName="attribution">
-            <div className={dashboardStyle.locals.item}
-                 style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
-              <table className={dashboardStyle.locals.table}>
-                <thead className={dashboardStyle.locals.tableHead}>
-                {headRow}
-                </thead>
-                <tbody className={dashboardStyle.locals.tableBody}>
-                {rows}
-                </tbody>
-                <tfoot>
-                {footRow}
-                </tfoot>
-              </table>
+            <div>
+              <div style={{width: '1110px', margin: '15px'}}>
+                <StageSelector stages={stagesData}
+                               selectedIndex={selectedStageIndex}
+                               selectStage={(index) => this.setState({selectedStageIndex: index})}/>
+              </div>
+              <div className={dashboardStyle.locals.item}
+                   style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
+                <table className={dashboardStyle.locals.table}>
+                  <thead className={dashboardStyle.locals.tableHead}>
+                  {headRow}
+                  </thead>
+                  <tbody className={dashboardStyle.locals.tableBody}>
+                  {rows}
+                  </tbody>
+                  <tfoot>
+                  {footRow}
+                  </tfoot>
+                </table>
+              </div>
             </div>
           </FeatureToggle>
           <FeatureToggle featureName="attribution">
@@ -366,7 +482,8 @@ export default class Campaigns extends Component {
 
     if (typeof item !== 'object') {
       elem = <div className={this.classes.cellItem}>{item}</div>;
-    } else {
+    }
+    else {
       elem = item;
     }
 

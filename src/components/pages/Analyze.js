@@ -6,6 +6,8 @@ import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
 import setupStyle from 'styles/attribution/attribution-setp.css';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import {capitalize} from 'lodash';
+import {formatNumber} from 'components/utils/budget';
 
 export default class Analyze extends Component {
 
@@ -14,6 +16,23 @@ export default class Analyze extends Component {
 
   static defaultProps = {
     monthsExceptThisMonth: 0
+  };
+
+  formatEffciency = (dividend, divisor, indicatorName) => {
+    const efficiency = this.formatAverage(dividend, divisor);
+    return efficiency === '0' || efficiency === '-' ? efficiency :
+      efficiency + '/' + indicatorName;
+  };
+
+  formatAverage = (dividend, divisor) => {
+    const efficiency = Math.round(dividend / divisor);
+    if (isFinite(efficiency)) {
+      return '$' + formatNumber(efficiency);
+    }
+    if (dividend === 0) {
+      return '0';
+    }
+    return '-';
   };
 
   render() {
@@ -79,6 +98,10 @@ export default class Analyze extends Component {
     const metricsWithInfluencedSingular = getMetricsWithInfluenced(true);
     const metricsWithInfluencedOptions = getSelectOptions(metricsWithInfluenced);
 
+    const getInfluencedDataKey = (dataKey) => {
+      return `influenced${capitalize(dataKey)}`;
+    };
+
     const revenueMetrics = {
       revenue: 'attributed revenue',
       pipeline: 'attributed pipeline',
@@ -100,7 +123,10 @@ export default class Analyze extends Component {
           metricsWithInfluencedSingular,
           metricsOptions,
           getTotalParam: getTotalParam,
-          totalRevenue: getTotalParam('revenue')
+          totalRevenue: getTotalParam('revenue'),
+          getInfluencedDataKey,
+          formatEffciency: this.formatEffciency,
+          formatAverage: this.formatAverage
         }));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">

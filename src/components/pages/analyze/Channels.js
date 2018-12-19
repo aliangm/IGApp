@@ -53,40 +53,20 @@ export default class Channels extends Component {
     }
   }
 
-  formatEffciency(dividend, divisor, indicatorName) {
-    const efficiency = this.formatAverage(dividend, divisor);
-    return efficiency === '0' || efficiency === '-' ? efficiency :
-      efficiency + '/' + indicatorName;
-  }
-
-  formatAverage = (dividend, divisor) => {
-    const efficiency = Math.round(dividend / divisor);
-    if (isFinite(efficiency)) {
-      return '$' + formatNumber(efficiency);
-    }
-    if (dividend === 0) {
-      return '0';
-    }
-    return '-';
-  };
-
   render() {
-    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
+    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions, getInfluencedDataKey, formatEffciency, formatAverage} = this.props;
     const {firstObjective, selectedStageIndex} = this.state;
 
-    const getInfluencedDataKey = (dataKey) => {
-      return `influenced${capitalize(dataKey)}`;
-    };
-
-    const stages = [{
-      name: 'Visitors',
-      dataKey: 'webVisits',
-      columns: [
-        {title: 'Channel', type: 'row-title'},
-        {title: 'Cost', type: 'cost'},
-        {title: 'Web Visitors', type: 'stage-indicator'},
-        {title: 'Efficiency', type: 'efficiency'}]
-    },
+    const stages = [
+      {
+        name: 'Visitors',
+        dataKey: 'webVisits',
+        columns: [
+          {title: 'Channel', type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
+          {title: 'Web Visitors', type: 'stage-indicator'},
+          {title: 'Efficiency', type: 'efficiency'}]
+      },
       {
         name: 'Leads',
         dataKey: 'MCL',
@@ -180,13 +160,13 @@ export default class Channels extends Component {
         case 'influenced-stage-indicator':
           return formatIndicator(getInfluencedMetricNumber(channel));
         case 'efficiency':
-          return this.formatEffciency(getChannelCost(channel), getMetricNumber(channel), selectedStage.name);
+          return formatEffciency(getChannelCost(channel), getMetricNumber(channel), selectedStage.name);
         case 'revenue':
           return '$' + formatNumber(getChannelRevenue(channel));
         case 'arpa':
-          return this.formatAverage(getChannelRevenue(channel), getMetricNumber(channel));
+          return formatAverage(getChannelRevenue(channel), getMetricNumber(channel));
         case 'roi':
-          return this.formatAverage(getChannelRevenue(channel), getChannelCost(channel));
+          return formatAverage(getChannelRevenue(channel), getChannelCost(channel));
       }
     };
 
@@ -213,13 +193,13 @@ export default class Channels extends Component {
         case 'influenced-stage-indicator':
           return totalIndicatorGenerated(channelKeys, getInfluencedMetricNumber);
         case 'efficiency':
-          return this.formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
+          return formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
         case 'revenue':
           return '$' + formatNumber(totalRevenue());
         case 'arpa':
-          return this.formatAverage(totalRevenue(), totalMetric());
+          return formatAverage(totalRevenue(), totalMetric());
         case 'roi':
-          return this.formatAverage(totalRevenue(), getTotalCost());
+          return formatAverage(totalRevenue(), getTotalCost());
       }
     };
 
