@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {formatNumber} from 'components/utils/budget';
-import {capitalize, isEmpty, sumBy} from 'lodash';
+import {capitalize, isEmpty, sortBy, sumBy} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 
@@ -34,13 +34,14 @@ export default class AttributionTable extends Component {
     super(props);
 
     this.state = {
-      selectedStageIndex: 0
+      selectedStageIndex: 0,
+      sortByColumn: 'row-title'
     };
   }
 
   render() {
     const {showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
-    const {selectedStageIndex} = this.state;
+    const {selectedStageIndex, sortByColumn} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
       return `influenced${capitalize(dataKey)}`;
@@ -117,8 +118,8 @@ export default class AttributionTable extends Component {
     });
 
     const selectedStage = stages[selectedStageIndex];
-    const headRow = this.getTableRow(null, selectedStage.columns.map(({title}) => {
-      return <div style={{cursor: 'pointer'}}>
+    const headRow = this.getTableRow(null, selectedStage.columns.map(({title, type}) => {
+      return <div style={{cursor: 'pointer'}} onClick={() => this.setState({sortByColumn: type})}>
         {title}
       </div>;
     }), {className: dashboardStyle.locals.headRow});
@@ -189,6 +190,8 @@ export default class AttributionTable extends Component {
       }
     };
 
+    const sortedData = sortBy(data, item => getColumnData(item, sortByColumn));
+
     const stagesData = stages.map(stage => {
       return {
         stageName: stage.name,
@@ -198,7 +201,7 @@ export default class AttributionTable extends Component {
       };
     });
 
-    const rows = data
+    const rows = sortedData
       .map((item, key) => {
         return this.getTableRow(null,
           selectedStage.columns.map(column => getColumnData(item, column.type)), {
