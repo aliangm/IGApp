@@ -2,12 +2,10 @@ import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
-import Select from 'components/controls/Select';
-import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
+import {formatBudgetShortened} from 'components/utils/budget';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
-import Label from 'components/ControlsLabel';
 import icons from 'styles/icons/plan.css';
 import ReactTooltip from 'react-tooltip';
 import {newFunnelMapping} from 'components/utils/utils';
@@ -68,11 +66,11 @@ export default class Content extends Component {
         }
         case 'proceed-ratio': {
           const webVisits = getPageItemData(item, 'webVisits');
-          return webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0;
+          return (webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0) + '%';
         }
         case 'read-ratio': {
           const total = getPageItemData(item, 'total');
-          return total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0;
+          return (total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0) + '%';
         }
       }
     };

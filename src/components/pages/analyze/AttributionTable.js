@@ -142,7 +142,7 @@ export default class AttributionTable extends Component {
       }];
 
     const stagesWithCost = costExistsForData ? basicStages.map(stage => {
-      const costColumnsToAdd = get(costColumns.find(({type}) => stage.type === type), 'columns', []);
+      const costColumnsToAdd = get(costColumns.find(({dataKey}) => stage.dataKey === dataKey), 'columns', []);
       return {...stage, columns: [...stage.columns, ...costColumnsToAdd]}
     }) : basicStages;
 
