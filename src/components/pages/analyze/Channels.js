@@ -223,48 +223,6 @@ export default class Channels extends Component {
       }
     };
 
-    // const headRow = this.getTableRow(null, [
-    //   <div style={{textAlign: 'left', cursor: 'pointer'}}
-    //        onClick={this.sortBy.bind(this, 'label')}>
-    //     Channel
-    //   </div>,
-    //   <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
-    //     Cost
-    //   </div>,
-    //   <div style={{display: 'inline-flex'}}>
-    //     {this.state.editRevenueMetric ?
-    //       <Select
-    //         selected={this.state.attributionTableRevenueMetric}
-    //         select={{
-    //           options: revenueMetricsOptions
-    //         }}
-    //         onChange={(e) => {
-    //           this.setState({attributionTableRevenueMetric: e.value});
-    //         }}
-    //         style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign:
-    // 'initial'}} /> : <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
-    // data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
-    // {revenueMetrics[this.state.attributionTableRevenueMetric]} </div> } <div
-    // className={dashboardStyle.locals.metricEdit} onClick={() => { this.setState({editRevenueMetric:
-    // !this.state.editRevenueMetric}); }}> {this.state.editRevenueMetric ? 'Done' : 'Edit'} </div> </div>, <div
-    // onClick={this.sortBy.bind(this, 'ROI')} style={{cursor: 'pointer'}}> ROI </div>, <div
-    // onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}> Web Visits </div>, <div
-    // onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}} data-tip="number
-    // of
-    // times the channel/campaign led to a direct online conversion event on your website or landing pages."> Conv.
-    // </div>, <div style={{display: 'inline-flex'}}> {this.state.editMetric ? <Select
-    // selected={this.state.attributionTableIndicator} select={{ options: metricsWithInfluencedOptions }}
-    // onChange={(e) => { this.setState({attributionTableIndicator: e.value}); }} style={{width: '100px', fontWeight:
-    // 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}} /> : <div
-    // onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}} data-tip={`Attributed
-    // ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
-    // {metricsWithInfluenced[this.state.attributionTableIndicator]} </div> } <div
-    // className={dashboardStyle.locals.metricEdit} onClick={() => { this.setState({editMetric:
-    // !this.state.editMetric}); }}> {this.state.editMetric ? 'Done' : 'Edit'} </div> </div>, <div
-    // onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}} data-tip={'Cost per ' +
-    // metricsWithInfluencedSingular[this.state.attributionTableIndicator]}> Efficiency </div> ], { className:
-    // dashboardStyle.locals.headRow });
-
     const channelsArray = getChannelsWithNicknames();
     channelsArray.push({value: 'direct', label: 'Direct'});
 
@@ -326,21 +284,6 @@ export default class Channels extends Component {
       {
         className: dashboardStyle.locals.footRow
       });
-
-    // const footRow = this.getTableRow(null, [
-    //   'Total',
-    //   '$' + formatNumber(totalBudget),
-    //   '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
-    //   Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-    //   formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-    //   formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-    //   totalIndicatorGenerated,
-    //   this.formatEffciency(totalBudget,
-    //     totalIndicatorGenerated,
-    //     metricsWithInfluencedSingular[this.state.attributionTableIndicator])
-    // ], {
-    //   className: dashboardStyle.locals.footRow
-    // });
 
     const convIndicatorImpact = channelsImpact && channelsImpact[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
