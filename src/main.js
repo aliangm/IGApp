@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route} from 'react-router';
 import history from 'history';
+import Navigate from 'components/pages/dashboard/navigate/Navigate';
 import CMO from 'components/pages/dashboard/CMO';
 import Dashboard from './components/pages/Dashboard';
 import Product from './components/pages/Product';
@@ -98,6 +99,7 @@ ReactDOM.render(
     <Route path="/loginCallBack" onEnter={crossOriginVerification}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
+        <Route path="/dashboard/navigate" component={Navigate} onEnter={requireAuth} tabName='Navigate'/>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
         <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>

@@ -15,14 +15,11 @@ import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
 import Label from 'components/ControlsLabel';
 import merge from 'lodash/merge';
-import PlanPopup, {
-  TextContent as PopupTextContent
-} from 'components/pages/plan/Popup';
-import Select from 'components/controls/Select';
-import {getDates, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
+import {getDates} from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import TopX from 'components/pages/dashboard/TopX';
 import DashboardStatWithContext from 'components/pages/dashboard/DashboardStatWithContext.js';
+import MonthsPopup from 'components/pages/dashboard/MonthsPopup';
 import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
@@ -94,6 +91,8 @@ export default class CMO extends Component {
     return null;
   }
 
+  handleMonthsChange = (months) => this.setState({ months })
+
   render() {
     const {
       planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
@@ -107,14 +106,6 @@ export default class CMO extends Component {
     } = this.props;
 
     const {months, isPast, showAdvanced} = this.state;
-    const numberOfMonthsOptions = Math.min(historyDataLength + 1, NUMBER_OF_FUTURE_MONTHS);
-    const monthSelectOptions = Array.apply(null, new Array(numberOfMonthsOptions)).map((item, index) => {
-      return {
-        value: index,
-        label: index || 'Only this month'
-      };
-    });
-
     const merged = merge(committedBudgets, planUnknownChannels);
     const fatherChannelsWithBudgets = [];
     Object.keys(merged && merged[0])
@@ -351,30 +342,15 @@ export default class CMO extends Component {
                 }}/>
                 <div style={{position: 'relative'}}>
                   <div className={dashboardStyle.locals.settings} onClick={() => {
-                    this.refs.pastSettingsPopup.open();
+                    this.pastSettingsPopup.open();
                   }}/>
-                  <PlanPopup ref="pastSettingsPopup" style={{
-                    width: 'max-content',
-                    top: '20px',
-                    left: '-110px'
-                  }} title="Settings">
-                    <PopupTextContent>
-                      <div>
-                        Past/Future number of months
-                        <Select
-                          selected={this.state.months}
-                          select={{
-                            options: monthSelectOptions
-                          }}
-                          onChange={(e) => {
-                            this.setState({months: e.value});
-                            this.refs.pastSettingsPopup.close();
-                          }}
-                          style={{width: '100px', marginTop: '10px'}}
-                        />
-                      </div>
-                    </PopupTextContent>
-                  </PlanPopup>
+                  <MonthsPopup
+                    months={this.state.months}
+                    maxMonths={historyDataLength}
+                    onChange={this.handleMonthsChange}
+                    getRef={ref => this.pastSettingsPopup = ref}
+                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
+                  />
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
@@ -584,30 +560,15 @@ export default class CMO extends Component {
                 }}/>
                 <div style={{position: 'relative'}}>
                   <div className={dashboardStyle.locals.settings} onClick={() => {
-                    this.refs.futureSettingsPopup.open();
+                    this.futureSettingsPopup.open();
                   }}/>
-                  <PlanPopup ref="futureSettingsPopup" style={{
-                    width: 'max-content',
-                    top: '20px',
-                    left: '-110px'
-                  }} title="Settings">
-                    <PopupTextContent>
-                      <div>
-                        Past/Future number of months
-                        <Select
-                          selected={this.state.months}
-                          select={{
-                            options: monthSelectOptions
-                          }}
-                          onChange={(e) => {
-                            this.setState({months: e.value});
-                            this.refs.futureSettingsPopup.close();
-                          }}
-                          style={{width: '100px', marginTop: '5px'}}
-                        />
-                      </div>
-                    </PopupTextContent>
-                  </PlanPopup>
+                  <MonthsPopup
+                    months={this.state.months}
+                    maxMonths={historyDataLength}
+                    onChange={this.handleMonthsChange}
+                    getRef={ref => this.futureSettingsPopup = ref}
+                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
+                  />
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
