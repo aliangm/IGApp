@@ -66,7 +66,7 @@ export default class Channels extends Component {
 
   render() {
     const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
-    const {firstObjective} = this.state;
+    const {firstObjective, selectedStageIndex} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
       return `influenced${capitalize(dataKey)}`
@@ -121,18 +121,20 @@ export default class Channels extends Component {
           {title: 'Efficiency', type: 'efficiency'}
         ]}];
 
-    const headRow = this.getTableRow(null, stages[this.state.selectedStageIndex].columns.map(({title}) => {
+    const selectedStage = stages[selectedStageIndex];
+
+    const headRow = this.getTableRow(null, selectedStage.columns.map(({title}) => {
       return <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
         {title}
       </div>
     }), {className: dashboardStyle.locals.headRow});
 
     const getColumnData = (channel, columnType) => {
-      const stage = stages[this.state.selectedStageIndex];
-      const stageIndicatorKey = stage.dataKey;
+      const stageIndicatorKey = selectedStage.dataKey;
       const getCost = () => {return sumBudgets[channel] || 0};
       const formatIndicator = (value) => formatNumber(Math.round(value));
-      const getMetricNumber = () => {return channelsImpact[stageIndicatorKey][channel]};
+      const getMetricNumber = () => {return get(channelsImpact,[stageIndicatorKey,channel], 0)};
+      const getInfluncedMetricNumber = () => {return get(channelsImpact,[getInfluencedDataKey(stageIndicatorKey),channel],0)};
       switch (columnType) {
         case 'row-title': {
           return <div style={{display: 'flex'}}>
@@ -143,8 +145,8 @@ export default class Channels extends Component {
           </div>;}
         case 'cost': return '$' + formatNumber(getCost());
         case 'stage-indicator': return formatIndicator(getMetricNumber());
-        case 'influenced-stage-indicator': return formatIndicator(channelsImpact[getInfluencedDataKey(stageIndicatorKey)][channel]);
-        case 'efficiency': return this.formatEffciency(getCost(), getMetricNumber(),stage.name);
+        case 'influenced-stage-indicator': return formatIndicator(getInfluncedMetricNumber());
+        case 'efficiency': return this.formatEffciency(getCost(), getMetricNumber(),selectedStage.name);
       }
     };
 
@@ -271,7 +273,7 @@ export default class Channels extends Component {
       .map(item => {
         const {channel} = item;
         return this.getTableRow(null,
-          stages[this.state.selectedStageIndex].columns.map(column => getColumnData(channel, column.type)), {
+          selectedStage.columns.map(column => getColumnData(channel, column.type)), {
             key: channel,
             className: dashboardStyle.locals.tableRow
           });
@@ -373,7 +375,7 @@ export default class Channels extends Component {
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item}
                  style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
-              <StageSelector stages={stagesData} selectedIndex={this.state.selectedStageIndex}
+              <StageSelector stages={stagesData} selectedIndex={selectedStageIndex}
                              selectStage={(index) => this.setState({selectedStageIndex: index})}/>
               <table className={dashboardStyle.locals.table}>
                 <thead className={dashboardStyle.locals.tableHead}>
