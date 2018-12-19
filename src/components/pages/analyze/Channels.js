@@ -54,15 +54,21 @@ export default class Channels extends Component {
   }
 
   formatEffciency(dividend, divisor, indicatorName) {
+    const efficiency = this.formatAverage(dividend, divisor);
+    return efficiency === '0' || efficiency === '-' ? efficiency :
+      efficiency + '/' + indicatorName;
+  }
+
+  formatAverage = (dividend, divisor) => {
     const efficiency = Math.round(dividend / divisor);
     if (isFinite(efficiency)) {
-      return '$' + formatNumber(efficiency) + '/' + indicatorName;
+      return '$' + formatNumber(efficiency);
     }
     if (dividend === 0) {
       return '0';
     }
     return '-';
-  }
+  };
 
   render() {
     const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
@@ -126,7 +132,8 @@ export default class Channels extends Component {
           {title: 'Attributed Customers', type: 'stage-indicator'},
           {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Revenue', type:'revenue'}
+          {title: 'Revenue', type: 'revenue'},
+          {title: 'ARPA', type: 'arpa'}
         ]
       }];
 
@@ -174,7 +181,9 @@ export default class Channels extends Component {
         case 'efficiency':
           return this.formatEffciency(getChannelCost(channel), getMetricNumber(channel), selectedStage.name);
         case 'revenue':
-          return '$' + formatNumber(getChannelRevenue(channel))
+          return '$' + formatNumber(getChannelRevenue(channel));
+        case 'arpa':
+          return this.formatAverage(getChannelRevenue(channel), getMetricNumber(channel));
       }
     };
 
@@ -182,10 +191,14 @@ export default class Channels extends Component {
       const channelKeys = data.map(channels => channels.channel);
       const getTotalCost = () => sumBy(channelKeys, getChannelCost);
 
-      const totalIndicatorGenerated = (channelKeys, getChannelData) => Math.round(channelKeys.reduce((sum, item) => sum + getChannelData(item), 0) * 100) /
+      const totalIndicatorGenerated = (channelKeys, getChannelData) => Math.round(channelKeys.reduce((sum,
+                                                                                                      item) => sum +
+        getChannelData(item), 0) * 100) /
         100;
 
-      const totalMetric = () => totalIndicatorGenerated(channelKeys,getMetricNumber);
+      const totalMetric = () => totalIndicatorGenerated(channelKeys, getMetricNumber);
+
+      const totalRevenue = () => sumBy(channelKeys, getChannelRevenue);
 
       switch (columnType) {
         case 'row-title':
@@ -199,7 +212,9 @@ export default class Channels extends Component {
         case 'efficiency':
           return this.formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
         case 'revenue':
-          return '$' + formatNumber(sumBy(channelKeys,getChannelRevenue))
+          return '$' + formatNumber(totalRevenue());
+        case 'arpa':
+          return this.formatAverage(totalRevenue(), totalMetric());
       }
     };
 
