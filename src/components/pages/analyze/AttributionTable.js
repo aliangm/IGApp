@@ -23,13 +23,13 @@ export default class AttributionTable extends Component {
     formatAdditionColumn: PropTypes.func,
     formatAdditionColumnTotal: PropTypes.func,
     showTotalRow: PropTypes.bool,
-    costExistsForData: PropTypes.bool
+    showCostColumns: PropTypes.bool
   };
 
   static defaultProps = {
     additionalColumns: [],
     showTotalRow: true,
-    costExistsForData: true
+    showCostColumns: true
   };
 
   constructor(props) {
@@ -42,7 +42,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {costExistsForData, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
+    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
     const {selectedStageIndex, sortByColumn} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -141,7 +141,7 @@ export default class AttributionTable extends Component {
         ]
       }];
 
-    const stagesWithCost = costExistsForData ? basicStages.map(stage => {
+    const stagesWithCost = showCostColumns ? basicStages.map(stage => {
       const costColumnsToAdd = get(costColumns.find(({dataKey}) => stage.dataKey === dataKey), 'columns', []);
       return {...stage, columns: [...stage.columns, ...costColumnsToAdd]}
     }) : basicStages;

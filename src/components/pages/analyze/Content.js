@@ -126,7 +126,7 @@ export default class Content extends Component {
         </div>
         <div>
           <FeatureToggle featureName="attribution">
-            <AttributionTable costExistsForData={false}
+            <AttributionTable showCostColumns={false}
                               data={attributionPages}
                               additionalColumns={additionalColumns}
                               formatAdditionColumn={formatAdditionColumn}
