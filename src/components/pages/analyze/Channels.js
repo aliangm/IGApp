@@ -3,14 +3,13 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
-import {formatNumber} from 'components/utils/budget';
 import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
-import StageSelector from 'components/pages/analyze/StageSelector';
-import {sumBy, get, capitalize} from 'lodash';
+import {get} from 'lodash';
+import AttributionTable from 'components/pages/analyze/AttributionTable';
 
 export default class Channels extends Component {
 
@@ -26,8 +25,7 @@ export default class Channels extends Component {
       attributionTableRevenueMetric: 'pipeline',
       sortBy: 'webVisits',
       isDesc: 1,
-      firstObjective: 'SQL',
-      selectedStageIndex: 0
+      firstObjective: 'SQL'
     };
   }
 
@@ -54,166 +52,29 @@ export default class Channels extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions, getInfluencedDataKey, formatEffciency, formatAverage} = this.props;
-    const {firstObjective, selectedStageIndex} = this.state;
+    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions, formatEffciency, formatAverage} = this.props;
+    const {firstObjective} = this.state;
 
-    const stages = [
-      {
-        name: 'Visitors',
-        dataKey: 'webVisits',
-        columns: [
-          {title: 'Channel', type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Web Visitors', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}]
-      },
-      {
-        name: 'Leads',
-        dataKey: 'MCL',
-        columns: [
-          {title: 'Channel', type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Influenced/Touched Leads', type: 'stage-indicator'},
-          {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'MQLs', dataKey: 'MQL', columns: [
-          {title: 'Channel', type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Attributed MQLs', type: 'stage-indicator'},
-          {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'SQLs', dataKey: 'SQL', columns: [
-          {title: 'Channel', type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Attributed SQLs', type: 'stage-indicator'},
-          {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'Opps', dataKey: 'opps', columns: [
-          {title: 'Channel', type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'Customers', dataKey: 'users', columns: [
-          {title: 'Channel', type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Attributed Customers', type: 'stage-indicator'},
-          {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Revenue', type: 'revenue'},
-          {title: 'ARPA', type: 'arpa'},
-          {title: 'ROI', type: 'roi'}
-        ]
-      }];
-
-    const selectedStage = stages[selectedStageIndex];
-
-    const headRow = this.getTableRow(null, selectedStage.columns.map(({title}) => {
-      return <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
-        {title}
+    const getChannelTitle = ({value: channelKey, label}) => {
+      return <div style={{display: 'flex'}}>
+        <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channelKey}/>
+        <div className={dashboardStyle.locals.channelTable}>
+          {label}
+        </div>
       </div>;
-    }), {className: dashboardStyle.locals.headRow});
+    };
 
-    const stageIndicatorKey = selectedStage.dataKey;
+    const getItemData = (item, dataKey) => {
+      const {value: channelKey} = item;
+      return get(channelsImpact, [dataKey, channelKey], 0);
+    };
+
     const getChannelCost = (channel) => {
       return sumBudgets[channel] || 0;
     };
 
-    const getMetricNumber = (channel) => {
-      return get(channelsImpact, [stageIndicatorKey, channel], 0);
-    };
-    const getInfluencedMetricNumber = (channel) => {
-      return get(channelsImpact, [getInfluencedDataKey(stageIndicatorKey), channel], 0);
-    };
-
-    const getChannelRevenue = (channel) => {
-      return get(channelsImpact, ['revenue', channel], 0);
-    };
-
-    const formatIndicator = (value) => formatNumber(Math.round(value));
-    const getColumnData = (channel, columnType) => {
-      switch (columnType) {
-        case 'row-title': {
-          return <div style={{display: 'flex'}}>
-            <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}/>
-            <div className={dashboardStyle.locals.channelTable}>
-              {channelsArray.find(item => item.value === channel).label}
-            </div>
-          </div>;
-        }
-        case 'cost':
-          return '$' + formatNumber(getChannelCost(channel));
-        case 'stage-indicator':
-          return formatIndicator(getMetricNumber(channel));
-        case 'influenced-stage-indicator':
-          return formatIndicator(getInfluencedMetricNumber(channel));
-        case 'efficiency':
-          return formatEffciency(getChannelCost(channel), getMetricNumber(channel), selectedStage.name);
-        case 'revenue':
-          return '$' + formatNumber(getChannelRevenue(channel));
-        case 'arpa':
-          return formatAverage(getChannelRevenue(channel), getMetricNumber(channel));
-        case 'roi':
-          return formatAverage(getChannelRevenue(channel), getChannelCost(channel));
-      }
-    };
-
-    const getTotalColumnData = (data, columnType) => {
-      const channelKeys = data.map(channels => channels.channel);
-      const getTotalCost = () => sumBy(channelKeys, getChannelCost);
-
-      const totalIndicatorGenerated = (channelKeys, getChannelData) => Math.round(channelKeys.reduce((sum,
-                                                                                                      item) => sum +
-        getChannelData(item), 0) * 100) /
-        100;
-
-      const totalMetric = () => totalIndicatorGenerated(channelKeys, getMetricNumber);
-
-      const totalRevenue = () => sumBy(channelKeys, getChannelRevenue);
-
-      switch (columnType) {
-        case 'row-title':
-          return 'Total';
-        case 'cost':
-          return '$' + formatNumber(getTotalCost());
-        case 'stage-indicator':
-          return totalMetric();
-        case 'influenced-stage-indicator':
-          return totalIndicatorGenerated(channelKeys, getInfluencedMetricNumber);
-        case 'efficiency':
-          return formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
-        case 'revenue':
-          return '$' + formatNumber(totalRevenue());
-        case 'arpa':
-          return formatAverage(totalRevenue(), totalMetric());
-        case 'roi':
-          return formatAverage(totalRevenue(), getTotalCost());
-      }
-    };
-
     const channelsArray = getChannelsWithNicknames();
     channelsArray.push({value: 'direct', label: 'Direct'});
-
-    const stagesData = stages.map(stage => {
-      return {
-        stageName: stage.name,
-        number: formatNumber(Math.round(sumBy(channelsArray,
-          channel => get(channelsImpact, [stage.dataKey, channel.value], 0)))),
-        previousMonth: 300
-      };
-    });
 
     let channelsWithData = channelsArray.map(item => {
       const json = {
@@ -245,25 +106,6 @@ export default class Channels extends Component {
     channelsWithData =
       channelsWithData.filter(
         item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
-
-    const rows = channelsWithData
-      .sort((item1, item2) =>
-        (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
-      )
-      .map(item => {
-        const {channel} = item;
-        return this.getTableRow(null,
-          selectedStage.columns.map(column => getColumnData(channel, column.type)), {
-            key: channel,
-            className: dashboardStyle.locals.tableRow
-          });
-      });
-
-    const footRow = this.getTableRow(null,
-      selectedStage.columns.map(column => getTotalColumnData(channelsWithData, column.type)),
-      {
-        className: dashboardStyle.locals.footRow
-      });
 
     const convIndicatorImpact = channelsImpact && channelsImpact[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
@@ -339,27 +181,9 @@ export default class Channels extends Component {
       <div className={this.classes.wrap}>
         <div>
           <FeatureToggle featureName="attribution">
-            <div>
-              <div style={{width: '1110px', margin: '15px'}}>
-                <StageSelector stages={stagesData}
-                               selectedIndex={selectedStageIndex}
-                               selectStage={(index) => this.setState({selectedStageIndex: index})}/>
-              </div>
-              <div className={dashboardStyle.locals.item}
-                   style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
-                <table className={dashboardStyle.locals.table}>
-                  <thead className={dashboardStyle.locals.tableHead}>
-                  {headRow}
-                  </thead>
-                  <tbody className={dashboardStyle.locals.tableBody}>
-                  {rows}
-                  </tbody>
-                  <tfoot>
-                  {footRow}
-                  </tfoot>
-                </table>
-              </div>
-            </div>
+            <AttributionTable data={channelsArray} formatAverage={formatAverage} formatEffciency={formatEffciency}
+                              getItemCost={getChannelCost} titleColumnName='Channel' getItemTitle={getChannelTitle}
+                              getItemData={getItemData}/>
           </FeatureToggle>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
