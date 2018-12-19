@@ -291,7 +291,19 @@ export default class Channels extends Component {
     return <div>
       <div className={this.classes.wrap}>
         <div>
-          <StageSelector/>
+          <StageSelector stages={[{
+            stageName: 'Leads', number: 255, previousMonth: 300
+          }, {
+            stageName: 'MQL', number: 10, previousMonth: 30
+          }, {
+            stageName: 'SQL', number: 50, previousMonth: 30
+          }, {
+            stageName: 'Opps', number: 10, previousMonth: 30
+          }, {
+            stageName: 'Customers', number: 3, previousMonth: 5
+          }, {
+            stageName: 'Visitors', number: 70, previousMonth: 100
+          }]} selectedIndex={0}/>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item}
                  style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
