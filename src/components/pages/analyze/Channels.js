@@ -359,21 +359,26 @@ export default class Channels extends Component {
       <div className={this.classes.wrap}>
         <div>
           <FeatureToggle featureName="attribution">
-            <div className={dashboardStyle.locals.item}
-                 style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
-              <StageSelector stages={stagesData} selectedIndex={selectedStageIndex}
-                             selectStage={(index) => this.setState({selectedStageIndex: index})}/>
-              <table className={dashboardStyle.locals.table}>
-                <thead className={dashboardStyle.locals.tableHead}>
-                {headRow}
-                </thead>
-                <tbody className={dashboardStyle.locals.tableBody}>
-                {rows}
-                </tbody>
-                <tfoot>
-                {footRow}
-                </tfoot>
-              </table>
+            <div>
+              <div style={{width: '1110px', margin: '15px'}}>
+                <StageSelector stages={stagesData}
+                               selectedIndex={selectedStageIndex}
+                               selectStage={(index) => this.setState({selectedStageIndex: index})}/>
+              </div>
+              <div className={dashboardStyle.locals.item}
+                   style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
+                <table className={dashboardStyle.locals.table}>
+                  <thead className={dashboardStyle.locals.tableHead}>
+                  {headRow}
+                  </thead>
+                  <tbody className={dashboardStyle.locals.tableBody}>
+                  {rows}
+                  </tbody>
+                  <tfoot>
+                  {footRow}
+                  </tfoot>
+                </table>
+              </div>
             </div>
           </FeatureToggle>
           <FeatureToggle featureName="attribution">
