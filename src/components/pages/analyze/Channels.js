@@ -116,8 +116,8 @@ export default class Channels extends Component {
       {name: 'Customers', dataKey: 'users', columns: [
           {title: 'Channel', type: 'row-title'},
           {title: 'Cost', type: 'cost'},
-          {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
+          {title: 'Attributed Customers', type: 'stage-indicator'},
+          {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
         ]}];
 
