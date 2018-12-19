@@ -125,7 +125,8 @@ export default class Channels extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed Customers', type: 'stage-indicator'},
           {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Revenue', type:'revenue'}
         ]
       }];
 
@@ -149,6 +150,10 @@ export default class Channels extends Component {
       return get(channelsImpact, [getInfluencedDataKey(stageIndicatorKey), channel], 0);
     };
 
+    const getChannelRevenue = (channel) => {
+      return get(channelsImpact, ['revenue', channel], 0);
+    };
+
     const formatIndicator = (value) => formatNumber(Math.round(value));
     const getColumnData = (channel, columnType) => {
       switch (columnType) {
@@ -168,6 +173,8 @@ export default class Channels extends Component {
           return formatIndicator(getInfluencedMetricNumber(channel));
         case 'efficiency':
           return this.formatEffciency(getChannelCost(channel), getMetricNumber(channel), selectedStage.name);
+        case 'revenue':
+          return '$' + formatNumber(getChannelRevenue(channel))
       }
     };
 
@@ -191,6 +198,8 @@ export default class Channels extends Component {
           return totalIndicatorGenerated(channelKeys, getInfluencedMetricNumber);
         case 'efficiency':
           return this.formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
+        case 'revenue':
+          return '$' + formatNumber(sumBy(channelKeys,getChannelRevenue))
       }
     };
 
