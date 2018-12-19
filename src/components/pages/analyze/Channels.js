@@ -69,7 +69,7 @@ export default class Channels extends Component {
     const {firstObjective, selectedStageIndex} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
-      return `influenced${capitalize(dataKey)}`
+      return `influenced${capitalize(dataKey)}`;
     };
 
     const stages = [{
@@ -92,49 +92,65 @@ export default class Channels extends Component {
           {title: 'Efficiency', type: 'efficiency'}
         ]
       },
-      {name: 'MQLs', dataKey: 'MQL', columns: [
+      {
+        name: 'MQLs', dataKey: 'MQL', columns: [
           {title: 'Channel', type: 'row-title'},
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed MQLs', type: 'stage-indicator'},
           {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
-        ]},
-      {name: 'SQLs', dataKey: 'SQL', columns: [
+        ]
+      },
+      {
+        name: 'SQLs', dataKey: 'SQL', columns: [
           {title: 'Channel', type: 'row-title'},
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed SQLs', type: 'stage-indicator'},
           {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
-        ]},
-      {name: 'Opps', dataKey: 'opps', columns: [
+        ]
+      },
+      {
+        name: 'Opps', dataKey: 'opps', columns: [
           {title: 'Channel', type: 'row-title'},
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
           {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
-        ]},
-      {name: 'Customers', dataKey: 'users', columns: [
+        ]
+      },
+      {
+        name: 'Customers', dataKey: 'users', columns: [
           {title: 'Channel', type: 'row-title'},
           {title: 'Cost', type: 'cost'},
           {title: 'Attributed Customers', type: 'stage-indicator'},
           {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
-        ]}];
+        ]
+      }];
 
     const selectedStage = stages[selectedStageIndex];
 
     const headRow = this.getTableRow(null, selectedStage.columns.map(({title}) => {
       return <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
         {title}
-      </div>
+      </div>;
     }), {className: dashboardStyle.locals.headRow});
 
+    const stageIndicatorKey = selectedStage.dataKey;
+    const getChannelCost = (channel) => {
+      return sumBudgets[channel] || 0;
+    };
+
+    const getMetricNumber = (channel) => {
+      return get(channelsImpact, [stageIndicatorKey, channel], 0);
+    };
+    const getInfluencedMetricNumber = (channel) => {
+      return get(channelsImpact, [getInfluencedDataKey(stageIndicatorKey), channel], 0);
+    };
+
+    const formatIndicator = (value) => formatNumber(Math.round(value));
     const getColumnData = (channel, columnType) => {
-      const stageIndicatorKey = selectedStage.dataKey;
-      const getCost = () => {return sumBudgets[channel] || 0};
-      const formatIndicator = (value) => formatNumber(Math.round(value));
-      const getMetricNumber = () => {return get(channelsImpact,[stageIndicatorKey,channel], 0)};
-      const getInfluncedMetricNumber = () => {return get(channelsImpact,[getInfluencedDataKey(stageIndicatorKey),channel],0)};
       switch (columnType) {
         case 'row-title': {
           return <div style={{display: 'flex'}}>
@@ -142,11 +158,39 @@ export default class Channels extends Component {
             <div className={dashboardStyle.locals.channelTable}>
               {channelsArray.find(item => item.value === channel).label}
             </div>
-          </div>;}
-        case 'cost': return '$' + formatNumber(getCost());
-        case 'stage-indicator': return formatIndicator(getMetricNumber());
-        case 'influenced-stage-indicator': return formatIndicator(getInfluncedMetricNumber());
-        case 'efficiency': return this.formatEffciency(getCost(), getMetricNumber(),selectedStage.name);
+          </div>;
+        }
+        case 'cost':
+          return '$' + formatNumber(getChannelCost(channel));
+        case 'stage-indicator':
+          return formatIndicator(getMetricNumber(channel));
+        case 'influenced-stage-indicator':
+          return formatIndicator(getInfluencedMetricNumber(channel));
+        case 'efficiency':
+          return this.formatEffciency(getChannelCost(channel), getMetricNumber(channel), selectedStage.name);
+      }
+    };
+
+    const getTotalColumnData = (data, columnType) => {
+      const channelKeys = data.map(channels => channels.channel);
+      const getTotalCost = () => sumBy(channelKeys, getChannelCost);
+
+      const totalIndicatorGenerated = (channelKeys, getChannelData) => Math.round(channelKeys.reduce((sum, item) => sum + getChannelData(item), 0) * 100) /
+        100;
+
+      const totalMetric = () => totalIndicatorGenerated(channelKeys,getMetricNumber);
+
+      switch (columnType) {
+        case 'row-title':
+          return 'Total';
+        case 'cost':
+          return '$' + formatNumber(getTotalCost());
+        case 'stage-indicator':
+          return totalMetric();
+        case 'influenced-stage-indicator':
+          return totalIndicatorGenerated(channelKeys, getInfluencedMetricNumber);
+        case 'efficiency':
+          return this.formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
       }
     };
 
@@ -168,61 +212,29 @@ export default class Channels extends Component {
     //         onChange={(e) => {
     //           this.setState({attributionTableRevenueMetric: e.value});
     //         }}
-    //         style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-    //       />
-    //       :
-    //       <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
-    //            data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
-    //         {revenueMetrics[this.state.attributionTableRevenueMetric]}
-    //       </div>
-    //     }
-    //     <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-    //       this.setState({editRevenueMetric: !this.state.editRevenueMetric});
-    //     }}>
-    //       {this.state.editRevenueMetric ? 'Done' : 'Edit'}
-    //     </div>
-    //   </div>,
-    //   <div onClick={this.sortBy.bind(this, 'ROI')} style={{cursor: 'pointer'}}>
-    //     ROI
-    //   </div>,
-    //   <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-    //     Web Visits
-    //   </div>,
-    //   <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}
-    //        data-tip="number of times the channel/campaign led to a direct online conversion event on your website or landing pages.">
-    //     Conv.
-    //   </div>,
-    //   <div style={{display: 'inline-flex'}}>
-    //     {this.state.editMetric ?
-    //       <Select
-    //         selected={this.state.attributionTableIndicator}
-    //         select={{
-    //           options: metricsWithInfluencedOptions
-    //         }}
-    //         onChange={(e) => {
-    //           this.setState({attributionTableIndicator: e.value});
-    //         }}
-    //         style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-    //       />
-    //       :
-    //       <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}}
-    //            data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
-    //         {metricsWithInfluenced[this.state.attributionTableIndicator]}
-    //       </div>
-    //     }
-    //     <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-    //       this.setState({editMetric: !this.state.editMetric});
-    //     }}>
-    //       {this.state.editMetric ? 'Done' : 'Edit'}
-    //     </div>
-    //   </div>,
-    //   <div onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}}
-    //        data-tip={'Cost per ' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]}>
-    //     Efficiency
-    //   </div>
-    // ], {
-    //   className: dashboardStyle.locals.headRow
-    // });
+    //         style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign:
+    // 'initial'}} /> : <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
+    // data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
+    // {revenueMetrics[this.state.attributionTableRevenueMetric]} </div> } <div
+    // className={dashboardStyle.locals.metricEdit} onClick={() => { this.setState({editRevenueMetric:
+    // !this.state.editRevenueMetric}); }}> {this.state.editRevenueMetric ? 'Done' : 'Edit'} </div> </div>, <div
+    // onClick={this.sortBy.bind(this, 'ROI')} style={{cursor: 'pointer'}}> ROI </div>, <div
+    // onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}> Web Visits </div>, <div
+    // onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}} data-tip="number
+    // of
+    // times the channel/campaign led to a direct online conversion event on your website or landing pages."> Conv.
+    // </div>, <div style={{display: 'inline-flex'}}> {this.state.editMetric ? <Select
+    // selected={this.state.attributionTableIndicator} select={{ options: metricsWithInfluencedOptions }}
+    // onChange={(e) => { this.setState({attributionTableIndicator: e.value}); }} style={{width: '100px', fontWeight:
+    // 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}} /> : <div
+    // onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}} data-tip={`Attributed
+    // ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
+    // {metricsWithInfluenced[this.state.attributionTableIndicator]} </div> } <div
+    // className={dashboardStyle.locals.metricEdit} onClick={() => { this.setState({editMetric:
+    // !this.state.editMetric}); }}> {this.state.editMetric ? 'Done' : 'Edit'} </div> </div>, <div
+    // onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}} data-tip={'Cost per ' +
+    // metricsWithInfluencedSingular[this.state.attributionTableIndicator]}> Efficiency </div> ], { className:
+    // dashboardStyle.locals.headRow });
 
     const channelsArray = getChannelsWithNicknames();
     channelsArray.push({value: 'direct', label: 'Direct'});
@@ -264,7 +276,8 @@ export default class Channels extends Component {
     });
 
     channelsWithData =
-      channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
+      channelsWithData.filter(
+        item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const rows = channelsWithData
       .sort((item1, item2) =>
@@ -279,25 +292,26 @@ export default class Channels extends Component {
           });
       });
 
-    const sumData = channelsWithData;
+    const footRow = this.getTableRow(null,
+      selectedStage.columns.map(column => getTotalColumnData(channelsWithData, column.type)),
+      {
+        className: dashboardStyle.locals.footRow
+      });
 
-    const totalBudget = sumData.reduce((sum, item) => sum + item.budget, 0);
-    const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) /
-      100;
-    const footRow = this.getTableRow(null, [
-      'Total',
-      '$' + formatNumber(totalBudget),
-      '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
-      Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-      formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-      formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-      totalIndicatorGenerated,
-      this.formatEffciency(totalBudget,
-        totalIndicatorGenerated,
-        metricsWithInfluencedSingular[this.state.attributionTableIndicator])
-    ], {
-      className: dashboardStyle.locals.footRow
-    });
+    // const footRow = this.getTableRow(null, [
+    //   'Total',
+    //   '$' + formatNumber(totalBudget),
+    //   '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
+    //   Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
+    //   formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
+    //   formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
+    //   totalIndicatorGenerated,
+    //   this.formatEffciency(totalBudget,
+    //     totalIndicatorGenerated,
+    //     metricsWithInfluencedSingular[this.state.attributionTableIndicator])
+    // ], {
+    //   className: dashboardStyle.locals.footRow
+    // });
 
     const convIndicatorImpact = channelsImpact && channelsImpact[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
