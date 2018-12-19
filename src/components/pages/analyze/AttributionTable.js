@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {formatNumber} from 'components/utils/budget';
-import {capitalize, isEmpty, sortBy, sumBy} from 'lodash';
+import {capitalize, sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 
@@ -22,12 +22,14 @@ export default class AttributionTable extends Component {
     additionalColumns: PropTypes.array,
     formatAdditionColumn: PropTypes.func,
     formatAdditionColumnTotal: PropTypes.func,
-    showTotalRow: PropTypes.bool
+    showTotalRow: PropTypes.bool,
+    costExistsForData: PropTypes.bool
   };
 
   static defaultProps = {
     additionalColumns: [],
-    showTotalRow: true
+    showTotalRow: true,
+    costExistsForData: true
   };
 
   constructor(props) {
@@ -40,12 +42,57 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
+    const {costExistsForData, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
     const {selectedStageIndex, sortByColumn} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
       return `influenced${capitalize(dataKey)}`;
     };
+
+    const costColumns = [{
+      dataKey: 'webVisits',
+      columns: [
+        {title: 'Cost', type: 'cost'},
+        {title: 'Efficiency', type: 'efficiency'}
+      ]
+    },
+      {
+        dataKey: 'MCL',
+        columns: [
+          {title: 'Cost', type: 'cost'},
+          {title: 'Efficiency', type: 'efficiency'}
+        ]
+      },
+      {
+        dataKey: 'MQL',
+        columns: [
+          {title: 'Cost', type: 'cost'},
+          {title: 'Efficiency', type: 'efficiency'}
+        ]
+      },
+      {
+        dataKey: 'SQL',
+        columns: [
+          {title: 'Cost', type: 'cost'},
+          {title: 'Efficiency', type: 'efficiency'}
+        ]
+      },
+      {
+        dataKey: 'opps', columns: [
+          {title: 'Cost', type: 'cost'},
+          {title: 'Efficiency', type: 'efficiency'}
+        ]
+      },
+      {
+        dataKey: 'users', columns: [
+          {title: 'Cost', type: 'cost'},
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Revenue', type: 'revenue'},
+          {title: 'ARPA', type: 'arpa'},
+          {title: 'ROI', type: 'roi'}
+        ]
+      }
+      ];
 
     const basicStages = [
       {
@@ -53,9 +100,7 @@ export default class AttributionTable extends Component {
         dataKey: 'webVisits',
         columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Web Visitors', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
@@ -63,57 +108,47 @@ export default class AttributionTable extends Component {
         dataKey: 'MCL',
         columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Influenced/Touched Leads', type: 'stage-indicator'},
           {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
         name: 'MQLs', dataKey: 'MQL', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Attributed MQLs', type: 'stage-indicator'},
-          {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'}
         ]
       },
       {
         name: 'SQLs', dataKey: 'SQL', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Attributed SQLs', type: 'stage-indicator'},
-          {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'}
         ]
       },
       {
         name: 'Opps', dataKey: 'opps', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'}
         ]
       },
       {
         name: 'Customers', dataKey: 'users', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Attributed Customers', type: 'stage-indicator'},
           {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Revenue', type: 'revenue'},
-          {title: 'ARPA', type: 'arpa'},
-          {title: 'ROI', type: 'roi'}
         ]
       }];
 
-    const stages = basicStages.map(stage => {
-      const columnsToAdd = additionalColumns.filter(
-        column => isEmpty(column.stages) || column.stages.includes(stage.name));
-      const atStart = columnsToAdd.filter(column => column.atStart);
-      const atEnd = columnsToAdd.filter(column => !column.atStart);
+    const stagesWithCost = costExistsForData ? basicStages.map(stage => {
+      const costColumnsToAdd = get(costColumns.find(({type}) => stage.type === type), 'columns', []);
+      return {...stage, columns: [...stage.columns, ...costColumnsToAdd]}
+    }) : basicStages;
+
+    const stages = stagesWithCost.map(stage => {
+      const atStart = additionalColumns.filter(column => column.atStart);
+      const atEnd = additionalColumns.filter(column => !column.atStart);
       return {...stage, columns: [...atStart, ...stage.columns, ...atEnd]};
     });
 

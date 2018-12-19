@@ -44,8 +44,8 @@ export default class Content extends Component {
     const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, formatAverage, formatEffciency} = this.props;
     const attributionPages = attribution.pages || [];
 
-    const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio', stages: ['Visitors']},
-      {title: 'Proceed Ratio', type: 'proceed-ratio', stages: ['Visitors']}, {title: 'Channel', type: 'channel', atStart: true}];
+    const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio'},
+      {title: 'Proceed Ratio', type: 'proceed-ratio'}, {title: 'Channel', type: 'channel', atStart: true}];
 
     const getPageItemData = (page, dataKey) => get(page, dataKey, 0);
     const getPageItemTitle = (page) => {
@@ -128,7 +128,8 @@ export default class Content extends Component {
         </div>
         <div>
           <FeatureToggle featureName="attribution">
-            <AttributionTable data={attributionPages}
+            <AttributionTable costExistsForData={false}
+                              data={attributionPages}
                               additionalColumns={additionalColumns}
                               formatAdditionColumn={formatAdditionColumn}
                               titleColumnName='Content'
