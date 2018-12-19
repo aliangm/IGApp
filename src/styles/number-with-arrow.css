@@ -7,8 +7,8 @@
     color: #2fcf5f;
     font-size: 12px;
     font-weight: bold;
-    line-height: 10px;
     margin-left: 4px;
+    line-height: initial;
 }
 
 .inner[data-negative] .stat {
@@ -22,6 +22,7 @@
     border-style: solid;
     border-width: 0 6px 9px 6px;
     border-color: transparent transparent #2fcf5f transparent;
+    margin-top: 2px;
 }
 
 .inner[data-negative] .arrow {

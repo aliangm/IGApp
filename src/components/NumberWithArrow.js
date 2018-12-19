@@ -9,16 +9,18 @@ export default class NumberWithArrow extends Component {
 
   static propTypes = {
     stat: PropTypes.any,
-    isNegative: PropTypes.bool
+    isNegative: PropTypes.bool,
+    arrowStyle: PropTypes.string,
+    statStyle: PropTypes.string
   };
 
   render() {
-    const {stat, isNegative} = this.props;
+    const {stat, isNegative, arrowStyle, statStyle} = this.props;
     const notExist = isNil(stat);
     return notExist ? null :
       <div className={this.classes.inner} data-negative={isNegative ? true : null}>
-        <div className={this.classes.arrow}/>
-        <div className={this.classes.stat}>
+        <div className={this.classes.arrow} style={arrowStyle}/>
+        <div className={this.classes.stat} style={statStyle}>
           {stat}
         </div>
       </div>;
