@@ -133,7 +133,8 @@ export default class Channels extends Component {
           {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'},
           {title: 'Revenue', type: 'revenue'},
-          {title: 'ARPA', type: 'arpa'}
+          {title: 'ARPA', type: 'arpa'},
+          {title: 'ROI', type: 'roi'}
         ]
       }];
 
@@ -184,6 +185,8 @@ export default class Channels extends Component {
           return '$' + formatNumber(getChannelRevenue(channel));
         case 'arpa':
           return this.formatAverage(getChannelRevenue(channel), getMetricNumber(channel));
+        case 'roi':
+          return this.formatAverage(getChannelRevenue(channel), getChannelCost(channel));
       }
     };
 
@@ -215,6 +218,8 @@ export default class Channels extends Component {
           return '$' + formatNumber(totalRevenue());
         case 'arpa':
           return this.formatAverage(totalRevenue(), totalMetric());
+        case 'roi':
+          return this.formatAverage(totalRevenue(), getTotalCost());
       }
     };
 
