@@ -42,10 +42,13 @@ export default class Campaigns extends Component {
     const {attribution: {campaigns: attributionCampaigns, users}, campaigns, metricsOptions, formatEffciency, formatAverage} = this.props;
 
     const additionalColumns = [{title: 'Channels', type: 'channels'}];
-    const formatAdditionColumn = (item, columnType) => {
+    const additionalColumnValue = (item, columnType) => {
+      return item.channels;
+    };
+    const formatAdditionColumn = (value, columnType) => {
       return <div style={{display: 'flex'}}>
         <ReactTooltip/>
-        {item.channels.map(channel =>
+        {value.map(channel =>
           <div key={channel} data-tip={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon}
                data-icon={'plan:' + channel}/>
         )}
@@ -219,6 +222,7 @@ export default class Campaigns extends Component {
                               formatAdditionColumn={formatAdditionColumn}
                               formatAdditionColumnTotal={formatAdditionColumnTotal}
                               additionalColumns={additionalColumns}
+                              additionalColumnValue={additionalColumnValue}
             />
           </FeatureToggle>
           <FeatureToggle featureName="attribution">

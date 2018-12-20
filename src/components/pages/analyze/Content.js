@@ -53,25 +53,35 @@ export default class Content extends Component {
       </div>;
     };
 
-    const formatAdditionColumn = (item, columnType) => {
+    const additionalColumnValue = (item, columnType) => {
       switch (columnType) {
         case 'channel': {
           const {channel} = item;
-          return <div style={{display: 'flex'}}>
-            <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}/>
-            <div className={dashboardStyle.locals.channelTable}>
-              {getChannelNickname(channel)}
-            </div>
-          </div>;
+          return {nickname: getChannelNickname(channel), key: channel};
         }
         case 'proceed-ratio': {
           const webVisits = getPageItemData(item, 'webVisits');
-          return (webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0) + '%';
+          return (webVisits ? Math.round(getPageItemData(item, 'proceed') / webVisits * 100) : 0);
         }
         case 'read-ratio': {
           const total = getPageItemData(item, 'total');
-          return (total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0) + '%';
+          return (total ? Math.round(getPageItemData(item, 'totalRead') / total * 100) : 0);
         }
+      }
+    };
+
+    const formatAdditionColumn = (value, columnType) => {
+      if (columnType === 'channel') {
+        const {nickname, key} = value;
+        return <div style={{display: 'flex'}}>
+          <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + key}/>
+          <div className={dashboardStyle.locals.channelTable}>
+            {nickname}
+          </div>
+        </div>;
+      }
+      else {
+        return value + '%';
       }
     };
 
@@ -137,6 +147,7 @@ export default class Content extends Component {
                               getItemData={getPageItemData}
                               getItemTitle={getPageItemTitle}
                               showTotalRow={false}
+                              additionalColumnValue={additionalColumnValue}
             />
           </FeatureToggle>
         </div>

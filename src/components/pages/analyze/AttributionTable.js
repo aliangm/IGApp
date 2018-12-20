@@ -20,6 +20,7 @@ export default class AttributionTable extends Component {
     formatEffciency: PropTypes.func,
     getItemTitle: PropTypes.func,
     additionalColumns: PropTypes.array,
+    additionalColumnValue: PropTypes.func,
     formatAdditionColumn: PropTypes.func,
     formatAdditionColumnTotal: PropTypes.func,
     showTotalRow: PropTypes.bool,
@@ -42,7 +43,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle} = this.props;
+    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle, additionalColumnValue} = this.props;
     const {selectedStageIndex, sortByColumn} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -146,34 +147,63 @@ export default class AttributionTable extends Component {
     const getPipeline = (item) => getItemData(item, 'pipeline');
     const getLTV = (item) => getItemData(item, 'LTV');
 
-    const getColumnData = (item, columnType) => {
+    const getColumnRawData = (item, columnType) => {
       switch (columnType) {
         case 'row-title': {
           return getItemTitle(item);
         }
         case 'cost':
-          return '$' + formatNumber(getItemCost(item));
+          return formatNumber(getItemCost(item));
         case 'stage-indicator':
-          return formatIndicator(getMetricNumber(item));
+          return getMetricNumber(item);
         case 'influenced-stage-indicator':
-          return formatIndicator(getInfluencedMetricNumber(item));
+          return getInfluencedMetricNumber(item);
         case 'efficiency':
-          return formatEffciency(getItemCost(item), getMetricNumber(item), selectedStage.name);
+          return getItemCost(item) / getMetricNumber(item);
         case 'revenue':
-          return '$' + formatNumber(getItemRevenue(item));
+          return getItemRevenue(item);
         case 'arpa':
-          return formatAverage(getItemRevenue(item), getMetricNumber(item));
+          return getItemRevenue(item) / getMetricNumber(item);
         case 'roi':
-          return formatAverage(getItemRevenue(item), getItemCost(item));
+          return getItemRevenue(item) / getItemCost(item);
         case 'pipeline':
-          return '$' + formatNumber(getPipeline(item));
+          return getPipeline(item);
         case 'pipeline-roi':
-          return formatAverage(getPipeline(item), getItemCost(item));
+          return getPipeline(item) / getItemCost(item);
         case 'ltv':
-          return '$' + getLTV(item);
+          return getLTV(item);
         default:
-          return formatAdditionColumn(item, columnType);
+          return additionalColumnValue(item, columnType);
       }
+    };
+
+    const dollarFormatter = (value) => '$' + formatNumber(value);
+    const averageFormatter = (value) => isFinite(value) ? '$' + value : (isNaN(value) ? '0' : '-');
+    const efficiencyFormatter = (value) => {
+      const efficiency = averageFormatter(value);
+      return efficiency === '0' || efficiency === '-' ? efficiency :
+        efficiency + '/' + selectedStage.name;
+    };
+
+    const formatColumnData =
+      {
+        'row-title': value => value,
+        'cost': dollarFormatter,
+        'stage-indicator': formatIndicator,
+        'influenced-stage-indicator': formatIndicator,
+        'efficiency': efficiencyFormatter,
+        'revenue': dollarFormatter,
+        'arpa': averageFormatter,
+        'roi': averageFormatter,
+        'pipeline': dollarFormatter,
+        'pipeline-roi': averageFormatter,
+        'ltv': dollarFormatter
+      };
+
+    const getColumnData = (item, columnType) => {
+      const value = getColumnRawData(item, columnType);
+      const formatter = get(formatColumnData, columnType, (value) => formatAdditionColumn(value, columnType));
+      return formatter(value);
     };
 
     const getTotalColumnData = (data, columnType) => {
@@ -218,7 +248,7 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const sortedData = sortBy(data, item => getColumnData(item, sortByColumn));
+    const sortedData = sortBy(data, item => getColumnRawData(item, sortByColumn));
 
     const stagesData = stages.map(stage => {
       return {
