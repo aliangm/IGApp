@@ -128,7 +128,8 @@ export default class Users extends Component {
         const countries = uniq(user.sessions.map(item => item.country));
         const displayName = user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0];
         const domainIcon = 'url(https://logo.clearbit.com/' + domain + ')';
-        const funnelStage = Object.keys(stagesOrder)[Math.max(... Object.keys(user.funnelStages).map(stage => stagesOrder[stage]))];
+        const maxFunnelStageIndex = Math.max(... Object.keys(user.funnelStages).map(stage => stagesOrder[stage]));
+        const funnelStage = Object.keys(stagesOrder)[maxFunnelStageIndex];
         return {
           items: [
             <div className={this.classes.container}>

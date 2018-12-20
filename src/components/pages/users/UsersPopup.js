@@ -80,20 +80,22 @@ export default class UsersPopup extends Component {
           {item.channel === 'direct' ? 'Direct' : getChannelNickname(item.channel)}
         </div>
       </div>);
-    const events = sessions && sessions.filter(session => session.channel !== 'direct');
-    funnelStages && Object.keys(funnelStages).forEach(funnelStage => {
+
+    const nonDirectSessions = sessions && sessions.filter(session => session.channel !== 'direct');
+    const funnelStageChanges = funnelStages && Object.keys(funnelStages).map(funnelStage => {
       const timestamp = funnelStages[funnelStage];
       const index = stagesOrder[funnelStage];
-      events.push({
+      return {
         startTime: timestamp,
         endTime: timestamp,
         isFunnelStage: true,
         funnelStage,
         nickname: getIndicatorNickname(funnelStage, true),
         previousFunnelStageNickname: (index && index > 0) ? getIndicatorNickname(Object.keys(stagesOrder)[index - 1], true) : null
-      });
+      };
     });
 
+    const events = [...(nonDirectSessions || []), ...(funnelStageChanges || [])];
     const sortedEvents = sortBy(events, 'startTime');
     const eventsUI = [];
 
