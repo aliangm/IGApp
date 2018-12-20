@@ -108,7 +108,7 @@ export default class AttributionTable extends Component {
         dataKey: 'MCL',
         columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Influenced/Touched Leads', type: 'stage-indicator'},
+          {title: 'Touched Leads', type: 'stage-indicator'},
           {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
         ]
       },
@@ -116,28 +116,28 @@ export default class AttributionTable extends Component {
         name: 'MQLs', dataKey: 'MQL', columns: [
           {title: titleColumnName, type: 'row-title'},
           {title: 'Attributed MQLs', type: 'stage-indicator'},
-          {title: 'Influenced/Touched MQLs', type: 'influenced-stage-indicator'}
+          {title: 'Touched MQLs', type: 'influenced-stage-indicator'}
         ]
       },
       {
         name: 'SQLs', dataKey: 'SQL', columns: [
           {title: titleColumnName, type: 'row-title'},
           {title: 'Attributed SQLs', type: 'stage-indicator'},
-          {title: 'Influenced/Touched SQLs', type: 'influenced-stage-indicator'}
+          {title: 'Touched SQLs', type: 'influenced-stage-indicator'}
         ]
       },
       {
         name: 'Opps', dataKey: 'opps', columns: [
           {title: titleColumnName, type: 'row-title'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Influenced/Touched Opps', type: 'influenced-stage-indicator'}
+          {title: 'Touched Opps', type: 'influenced-stage-indicator'}
         ]
       },
       {
         name: 'Customers', dataKey: 'users', columns: [
           {title: titleColumnName, type: 'row-title'},
           {title: 'Attributed Customers', type: 'stage-indicator'},
-          {title: 'Influenced/Touched Customers', type: 'influenced-stage-indicator'},
+          {title: 'Touched Customers', type: 'influenced-stage-indicator'},
         ]
       }];
 
