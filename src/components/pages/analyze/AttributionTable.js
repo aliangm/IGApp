@@ -57,8 +57,8 @@ export default class AttributionTable extends Component {
         dataKey: 'webVisits',
         columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Web Visitors', type: 'stage-indicator'},
           {title: 'Cost', type: 'cost'},
+          {title: 'Web Visitors', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
         ]
       },
@@ -67,45 +67,45 @@ export default class AttributionTable extends Component {
         dataKey: 'MCL',
         columns: [
           {title: titleColumnName, type: 'row-title'},
+          {title: 'Cost', type: 'cost'},
           {title: 'Touched Leads', type: 'stage-indicator'},
           {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
-          {title: 'Cost', type: 'cost'},
           {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
         name: 'MQLs', dataKey: 'MQL', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Attributed MQLs', type: 'stage-indicator'},
-          {title: 'Touched MQLs', type: 'influenced-stage-indicator'},
           {title: 'Cost', type: 'cost'},
+          {title: 'Touched MQLs', type: 'influenced-stage-indicator'},
+          {title: 'Attributed MQLs', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
         name: 'SQLs', dataKey: 'SQL', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Attributed SQLs', type: 'stage-indicator'},
-          {title: 'Touched SQLs', type: 'influenced-stage-indicator'},
           {title: 'Cost', type: 'cost'},
+          {title: 'Touched SQLs', type: 'influenced-stage-indicator'},
+          {title: 'Attributed SQLs', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
         name: 'Opps', dataKey: 'opps', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Touched Opps', type: 'influenced-stage-indicator'},
           {title: 'Cost', type: 'cost'},
+          {title: 'Touched Opps', type: 'influenced-stage-indicator'},
+          {title: 'Attributed Opps', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'}
         ]
       },
       {
         name: 'Customers', dataKey: 'users', columns: [
           {title: titleColumnName, type: 'row-title'},
-          {title: 'Attributed Customers', type: 'stage-indicator'},
-          {title: 'Touched Customers', type: 'influenced-stage-indicator'},
           {title: 'Cost', type: 'cost'},
+          {title: 'Touched Customers', type: 'influenced-stage-indicator'},
+          {title: 'Attributed Customers', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'},
           {title: 'Revenue', type: 'revenue'},
           {title: 'ROI', type: 'roi'},
