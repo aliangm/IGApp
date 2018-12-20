@@ -49,7 +49,7 @@ export default class AttributionTable extends Component {
       return `influenced${capitalize(dataKey)}`;
     };
 
-    const costDependentColumnTypes = ['cost', 'efficiency', 'revenue', 'roi', 'pipeline-roi'];
+    const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
 
     const basicStages = [
       {
@@ -109,7 +109,8 @@ export default class AttributionTable extends Component {
           {title: 'Touched Customers', type: 'influenced-stage-indicator'},
           {title: 'Attributed Customers', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Revenue', type: 'revenue'},
+          {title: 'Touched Revenue', type: 'influenced-revenue'},
+          {title: 'Attributed Revenue', type: 'revenue'},
           {title: 'ROI', type: 'roi'},
           {title: 'ARPA', type: 'arpa'},
           {title: 'LTV', type: 'ltv'}
@@ -152,6 +153,7 @@ export default class AttributionTable extends Component {
 
     const getPipeline = (item) => getItemData(item, 'pipeline');
     const getLTV = (item) => getItemData(item, 'LTV');
+    const getInfluencedRevenue = (item) => getItemData(item, 'influencedRevenue');
 
     const getColumnRawData = (item, columnType) => {
       switch (columnType) {
@@ -178,6 +180,8 @@ export default class AttributionTable extends Component {
           return getPipeline(item) / getItemCost(item);
         case 'ltv':
           return getLTV(item);
+        case 'influenced-revenue':
+          return getInfluencedRevenue(item);
         default:
           return additionalColumnValue(item, columnType);
       }
@@ -203,7 +207,8 @@ export default class AttributionTable extends Component {
         'roi': averageFormatter,
         'pipeline': dollarFormatter,
         'pipeline-roi': averageFormatter,
-        'ltv': dollarFormatter
+        'ltv': dollarFormatter,
+        'influenced-revenue': dollarFormatter
       };
 
     const getColumnData = (item, columnType) => {
@@ -223,6 +228,7 @@ export default class AttributionTable extends Component {
       const totalMetric = () => totalIndicatorGenerated(data, getMetricNumber);
 
       const totalRevenue = () => sumBy(data, getItemRevenue);
+      const totalInfluencedRevenue = () => sumBy(data, getInfluencedRevenue);
       const totalPipeline = () => sumBy(data, getPipeline);
       const totalLTV = () => sumBy(data, getLTV);
 
@@ -249,6 +255,8 @@ export default class AttributionTable extends Component {
           return averageFormatter(totalPipeline(), getTotalCost());
         case 'ltv':
           return '$' + totalLTV();
+        case 'influenced-revenue':
+          return '$' + totalInfluencedRevenue();
         default:
           return formatAdditionColumnTotal(data, columnType);
       }
