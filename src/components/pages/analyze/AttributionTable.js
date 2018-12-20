@@ -16,8 +16,6 @@ export default class AttributionTable extends Component {
     titleColumnName: PropTypes.string,
     getItemCost: PropTypes.func,
     getItemData: PropTypes.func,
-    formatAverage: PropTypes.func,
-    formatEffciency: PropTypes.func,
     getItemTitle: PropTypes.func,
     additionalColumns: PropTypes.array,
     additionalColumnValue: PropTypes.func,
@@ -44,7 +42,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle, additionalColumnValue} = this.props;
+    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, getItemTitle, additionalColumnValue} = this.props;
     const {selectedStageIndex, sortByColumn, isReverse} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -238,17 +236,17 @@ export default class AttributionTable extends Component {
         case 'influenced-stage-indicator':
           return totalIndicatorGenerated(data, getInfluencedMetricNumber);
         case 'efficiency':
-          return formatEffciency(getTotalCost(), totalMetric(), selectedStage.name);
+          return efficiencyFormatter(getTotalCost(), totalMetric(), selectedStage.name);
         case 'revenue':
           return '$' + formatNumber(totalRevenue());
         case 'arpa':
-          return formatAverage(totalRevenue(), totalMetric());
+          return averageFormatter(totalRevenue(), totalMetric());
         case 'roi':
-          return formatAverage(totalRevenue(), getTotalCost());
+          return averageFormatter(totalRevenue(), getTotalCost());
         case 'pipeline':
           return '$' + formatNumber(totalPipeline());
         case 'pipeline-roi':
-          return formatAverage(totalPipeline(), getTotalCost());
+          return averageFormatter(totalPipeline(), getTotalCost());
         case 'ltv':
           return '$' + totalLTV();
         default:

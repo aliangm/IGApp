@@ -18,23 +18,6 @@ export default class Analyze extends Component {
     monthsExceptThisMonth: 0
   };
 
-  formatEffciency = (dividend, divisor, indicatorName) => {
-    const efficiency = this.formatAverage(dividend, divisor);
-    return efficiency === '0' || efficiency === '-' ? efficiency :
-      efficiency + '/' + indicatorName;
-  };
-
-  formatAverage = (dividend, divisor) => {
-    const efficiency = Math.round(dividend / divisor);
-    if (isFinite(efficiency)) {
-      return '$' + formatNumber(efficiency);
-    }
-    if (dividend === 0) {
-      return '0';
-    }
-    return '-';
-  };
-
   render() {
     const {attribution: {channelsImpact}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataLength}}} = this.props;
 
@@ -119,9 +102,7 @@ export default class Analyze extends Component {
           metricsWithInfluencedSingular,
           metricsOptions,
           getTotalParam: getTotalParam,
-          totalRevenue: getTotalParam('revenue'),
-          formatEffciency: this.formatEffciency,
-          formatAverage: this.formatAverage
+          totalRevenue: getTotalParam('revenue')
         }));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">

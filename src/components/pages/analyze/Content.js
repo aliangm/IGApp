@@ -39,7 +39,7 @@ export default class Content extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}, formatAverage, formatEffciency} = this.props;
+    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
     const attributionPages = attribution.pages || [];
 
     const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio'},
@@ -142,8 +142,6 @@ export default class Content extends Component {
                               formatAdditionColumn={formatAdditionColumn}
                               titleColumnName='Content'
                               getItemCost={() => ''}
-                              formatAverage={formatAverage}
-                              formatEffciency={formatEffciency}
                               getItemData={getPageItemData}
                               getItemTitle={getPageItemTitle}
                               showTotalRow={false}
