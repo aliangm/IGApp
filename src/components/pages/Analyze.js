@@ -98,10 +98,6 @@ export default class Analyze extends Component {
     const metricsWithInfluencedSingular = getMetricsWithInfluenced(true);
     const metricsWithInfluencedOptions = getSelectOptions(metricsWithInfluenced);
 
-    const getInfluencedDataKey = (dataKey) => {
-      return `influenced${capitalize(dataKey)}`;
-    };
-
     const revenueMetrics = {
       revenue: 'attributed revenue',
       pipeline: 'attributed pipeline',
