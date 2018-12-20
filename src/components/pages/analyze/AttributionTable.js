@@ -49,7 +49,7 @@ export default class AttributionTable extends Component {
       return `influenced${capitalize(dataKey)}`;
     };
 
-    const costDependentColumnTypes = ['cost', 'efficiency', 'revenue', 'roi'];
+    const costDependentColumnTypes = ['cost', 'efficiency', 'revenue', 'roi', 'pipeline-roi'];
 
     const basicStages = [
       {
@@ -98,7 +98,8 @@ export default class AttributionTable extends Component {
           {title: 'Touched Opps', type: 'influenced-stage-indicator'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
           {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Pipeline', type: 'pipeline'}
+          {title: 'Pipeline', type: 'pipeline'},
+          {title: 'Pipeline ROI', type: 'pipeline-roi'}
         ]
       },
       {
@@ -164,6 +165,8 @@ export default class AttributionTable extends Component {
           return formatAverage(getItemRevenue(item), getItemCost(item));
         case 'pipeline':
           return '$' + getPipeline(item);
+        case 'pipeline-roi':
+          return formatAverage(getPipeline(item), getItemCost(item));
         default:
           return formatAdditionColumn(item, columnType);
       }
@@ -180,6 +183,7 @@ export default class AttributionTable extends Component {
       const totalMetric = () => totalIndicatorGenerated(data, getMetricNumber);
 
       const totalRevenue = () => sumBy(data, getItemRevenue);
+      const totalPipeline = () => sumBy(data, getPipeline);
 
       switch (columnType) {
         case 'row-title':
@@ -199,7 +203,9 @@ export default class AttributionTable extends Component {
         case 'roi':
           return formatAverage(totalRevenue(), getTotalCost());
         case 'pipeline':
-          return '$' + sumBy(data, getPipeline);
+          return '$' + totalPipeline();
+        case 'pipeline-roi':
+          return formatAverage(totalPipeline(), getTotalCost());
         default:
           return formatAdditionColumnTotal(data, columnType);
       }
