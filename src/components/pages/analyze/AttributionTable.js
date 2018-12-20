@@ -97,7 +97,8 @@ export default class AttributionTable extends Component {
           {title: 'Cost', type: 'cost'},
           {title: 'Touched Opps', type: 'influenced-stage-indicator'},
           {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          {title: 'Efficiency', type: 'efficiency'},
+          {title: 'Pipeline', type: 'pipeline'}
         ]
       },
       {
@@ -140,6 +141,8 @@ export default class AttributionTable extends Component {
 
     const getItemRevenue = (item) => getItemData(item, 'revenue');
 
+    const getPipeline = (item) => getItemData(item, 'pipeline');
+
     const getColumnData = (item, columnType) => {
       switch (columnType) {
         case 'row-title': {
@@ -159,6 +162,8 @@ export default class AttributionTable extends Component {
           return formatAverage(getItemRevenue(item), getMetricNumber(item));
         case 'roi':
           return formatAverage(getItemRevenue(item), getItemCost(item));
+        case 'pipeline':
+          return '$' + getPipeline(item);
         default:
           return formatAdditionColumn(item, columnType);
       }
@@ -193,6 +198,8 @@ export default class AttributionTable extends Component {
           return formatAverage(totalRevenue(), totalMetric());
         case 'roi':
           return formatAverage(totalRevenue(), getTotalCost());
+        case 'pipeline':
+          return '$' + sumBy(data, getPipeline);
         default:
           return formatAdditionColumnTotal(data, columnType);
       }
