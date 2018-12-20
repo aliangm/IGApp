@@ -99,7 +99,7 @@ ReactDOM.render(
     <Route path="/loginCallBack" onEnter={crossOriginVerification}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
-        <Route path="/dashboard/navigate" component={Navigate} onEnter={requireAuth} tabName='Navigate'/>
+        {/*<Route path="/dashboard/navigate" component={Navigate} onEnter={requireAuth} tabName='Navigate'/>*/}
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
         <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>
