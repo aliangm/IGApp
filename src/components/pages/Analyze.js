@@ -120,7 +120,6 @@ export default class Analyze extends Component {
           metricsOptions,
           getTotalParam: getTotalParam,
           totalRevenue: getTotalParam('revenue'),
-          getInfluencedDataKey,
           formatEffciency: this.formatEffciency,
           formatAverage: this.formatAverage
         }));
