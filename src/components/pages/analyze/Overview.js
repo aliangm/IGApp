@@ -309,7 +309,7 @@ export default class Overview extends Component {
           <div className={dashboardStyle.locals.text}>
             Revenue by {title}
           </div>
-          <SmallTable headRowData={{items: [title, 'Attributed Revenue', 'Influenced Revenue']}}
+          <SmallTable headRowData={{items: [title, 'Attributed Revenue', 'Touched Revenue']}}
                       rowsData={revenueByRows}/>
         </div>
       </div>;
