@@ -38,13 +38,14 @@ export default class AttributionTable extends Component {
 
     this.state = {
       selectedStageIndex: 0,
-      sortByColumn: 'row-title'
+      sortByColumn: 'row-title',
+      isReverse: true
     };
   }
 
   render() {
     const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, formatAverage, formatEffciency, getItemTitle, additionalColumnValue} = this.props;
-    const {selectedStageIndex, sortByColumn} = this.state;
+    const {selectedStageIndex, sortByColumn, isReverse} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
       return `influenced${capitalize(dataKey)}`;
@@ -131,7 +132,14 @@ export default class AttributionTable extends Component {
 
     const selectedStage = stages[selectedStageIndex];
     const headRow = this.getTableRow(null, selectedStage.columns.map(({title, type}) => {
-      return <div style={{cursor: 'pointer'}} onClick={() => this.setState({sortByColumn: type})}>
+      return <div style={{cursor: 'pointer'}} onClick={() => {
+        if(type === sortByColumn){
+          this.setState({isReverse: !isReverse});
+        }
+        else {
+          this.setState({sortByColumn: type, isReverse: true});
+        }
+      }}>
         {title}
       </div>;
     }), {className: dashboardStyle.locals.headRow});
@@ -249,6 +257,7 @@ export default class AttributionTable extends Component {
     };
 
     const sortedData = sortBy(data, item => getColumnRawData(item, sortByColumn));
+    const reversedSortedData = isReverse ? [...sortedData].reverse() : sortedData;
 
     const stagesData = stages.map(stage => {
       return {
@@ -258,7 +267,7 @@ export default class AttributionTable extends Component {
       };
     });
 
-    const rows = sortedData
+    const rows = reversedSortedData
       .map((item, key) => {
         return this.getTableRow(null,
           selectedStage.columns.map(column => getColumnData(item, column.type)), {
