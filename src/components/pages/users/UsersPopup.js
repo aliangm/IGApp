@@ -90,7 +90,7 @@ export default class UsersPopup extends Component {
         isFunnelStage: true,
         funnelStage,
         nickname: getIndicatorNickname(funnelStage, true),
-        previousFunnelStageNickname: (index && index > 0) ? getIndicatorNickname(Object.keys(stagesOrder)[index - 1], true) : 'Anonymous'
+        previousFunnelStageNickname: (index && index > 0) ? getIndicatorNickname(Object.keys(stagesOrder)[index - 1], true) : null
       });
     });
 
@@ -102,7 +102,7 @@ export default class UsersPopup extends Component {
         eventsUI.push(<div className={this.classes.eventLine} key={`stage-${index}`}>
           <div className={this.classes.iconCircleSmall} data-icon="event:status"/>
           <div className={this.classes.eventText}>
-            Status change - <b>{item.previousFunnelStageNickname + ' > ' + item.nickname}</b>
+            Status change - <b>{item.previousFunnelStageNickname ? `${item.previousFunnelStageNickname} > ${item.nickname}` : `${item.nickname} creation`}</b>
             <div className={this.classes.eventTime}>
               {this.stringifyDate(item.startTime)}
               {/*{emails.length > 1 ? ", " + item.email : null}*/}
