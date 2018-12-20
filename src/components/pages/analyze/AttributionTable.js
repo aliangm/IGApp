@@ -166,7 +166,7 @@ export default class AttributionTable extends Component {
         case 'roi':
           return formatAverage(getItemRevenue(item), getItemCost(item));
         case 'pipeline':
-          return '$' + getPipeline(item);
+          return '$' + formatNumber(getPipeline(item));
         case 'pipeline-roi':
           return formatAverage(getPipeline(item), getItemCost(item));
         case 'ltv':
@@ -208,7 +208,7 @@ export default class AttributionTable extends Component {
         case 'roi':
           return formatAverage(totalRevenue(), getTotalCost());
         case 'pipeline':
-          return '$' + totalPipeline();
+          return '$' + formatNumber(totalPipeline());
         case 'pipeline-roi':
           return formatAverage(totalPipeline(), getTotalCost());
         case 'ltv':
