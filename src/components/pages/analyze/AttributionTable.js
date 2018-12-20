@@ -111,7 +111,8 @@ export default class AttributionTable extends Component {
           {title: 'Efficiency', type: 'efficiency'},
           {title: 'Revenue', type: 'revenue'},
           {title: 'ROI', type: 'roi'},
-          {title: 'ARPA', type: 'arpa'}
+          {title: 'ARPA', type: 'arpa'},
+          {title: 'LTV', type: 'ltv'}
         ]
       }];
 
@@ -143,6 +144,7 @@ export default class AttributionTable extends Component {
     const getItemRevenue = (item) => getItemData(item, 'revenue');
 
     const getPipeline = (item) => getItemData(item, 'pipeline');
+    const getLTV = (item) => getItemData(item, 'LTV');
 
     const getColumnData = (item, columnType) => {
       switch (columnType) {
@@ -167,6 +169,8 @@ export default class AttributionTable extends Component {
           return '$' + getPipeline(item);
         case 'pipeline-roi':
           return formatAverage(getPipeline(item), getItemCost(item));
+        case 'ltv':
+          return '$' + getLTV(item);
         default:
           return formatAdditionColumn(item, columnType);
       }
@@ -184,6 +188,7 @@ export default class AttributionTable extends Component {
 
       const totalRevenue = () => sumBy(data, getItemRevenue);
       const totalPipeline = () => sumBy(data, getPipeline);
+      const totalLTV = () => sumBy(data, getLTV);
 
       switch (columnType) {
         case 'row-title':
@@ -206,6 +211,8 @@ export default class AttributionTable extends Component {
           return '$' + totalPipeline();
         case 'pipeline-roi':
           return formatAverage(totalPipeline(), getTotalCost());
+        case 'ltv':
+          return '$' + totalLTV();
         default:
           return formatAdditionColumnTotal(data, columnType);
       }
