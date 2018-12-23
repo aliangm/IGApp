@@ -243,17 +243,17 @@ export default class AttributionTable extends Component {
         case 'influenced-stage-indicator':
           return totalIndicatorGenerated(data, getInfluencedMetricNumber);
         case 'efficiency':
-          return efficiencyFormatter(getTotalCost(), totalMetric(), selectedStage.name);
+          return efficiencyFormatter(getTotalCost() / totalMetric());
         case 'revenue':
           return formatBudget(totalRevenue());
         case 'arpa':
-          return averageFormatter(totalRevenue(), totalMetric());
+          return averageFormatter(totalRevenue() / totalMetric());
         case 'roi':
-          return averageFormatter(totalRevenue(), getTotalCost());
+          return averageFormatter(totalRevenue() / getTotalCost());
         case 'pipeline':
           return formatBudget(totalPipeline());
         case 'pipeline-roi':
-          return averageFormatter(totalPipeline(), getTotalCost());
+          return averageFormatter(totalPipeline() / getTotalCost());
         case 'ltv':
           return formatBudget(totalLTV());
         case 'influenced-revenue':
