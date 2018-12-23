@@ -124,8 +124,8 @@ export default class Users extends Component {
           const domain = item.email && item.email.match('(?<=@).+');
           return domain && domain[0];
         }));
-        const devices = uniq(user.sessions.map(item => item.device));
-        const countries = uniq(user.sessions.map(item => item.country));
+        const devices = uniq(user.sessions.map(item => item.device).filter(item => !!item));
+        const countries = uniq(user.sessions.map(item => item.country).filter(item => !!item));
         const displayName = user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0];
         const domainIcon = 'url(https://logo.clearbit.com/' + domain + ')';
         const maxFunnelStageIndex = Math.max(... Object.keys(user.funnelStages).map(stage => stagesOrder[stage]));
