@@ -6,6 +6,7 @@ import {sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 import {getNickname} from 'components/utils/indicators';
+import {precisionFormat} from 'utils';
 
 const influencedMapping = {
   MCL: 'influencedMCL',
@@ -146,7 +147,6 @@ export default class AttributionTable extends Component {
       </div>;
     }), {className: dashboardStyle.locals.headRow});
 
-    const formatIndicator = (value) => formatNumber(Math.round(value));
     const stageIndicatorKey = selectedStage.dataKey;
 
     const getMetricNumber = (item) => getItemData(item, stageIndicatorKey);
@@ -201,8 +201,8 @@ export default class AttributionTable extends Component {
       {
         'row-title': value => value,
         'cost': formatBudget,
-        'stage-indicator': formatIndicator,
-        'influenced-stage-indicator': formatIndicator,
+        'stage-indicator': precisionFormat,
+        'influenced-stage-indicator': precisionFormat,
         'efficiency': efficiencyFormatter,
         'revenue': formatBudget,
         'arpa': averageFormatter,
@@ -222,10 +222,9 @@ export default class AttributionTable extends Component {
     const getTotalColumnData = (data, columnType) => {
       const getTotalCost = () => sumBy(data, getItemCost);
 
-      const totalIndicatorGenerated = (data, getChannelData) => Math.round(data.reduce((sum,
+      const totalIndicatorGenerated = (data, getChannelData) => precisionFormat(data.reduce((sum,
                                                                                         item) => sum +
-        getChannelData(item), 0) * 100) /
-        100;
+        getChannelData(item), 0));
 
       const totalMetric = () => totalIndicatorGenerated(data, getMetricNumber);
 

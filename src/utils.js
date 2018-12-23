@@ -1,4 +1,5 @@
 import {getProfileSync} from 'components/utils/AuthService';
+import round from 'lodash/round';
 
 export function userPermittedToPage(page) {
   const userProfile = getProfileSync();
@@ -9,6 +10,10 @@ export function userPermittedToPage(page) {
     const blockedPages = userProfile.app_metadata.blockedPages;
     return !blockedPages || blockedPages.findIndex(blockedPage => page === blockedPage) === -1;
   }
+}
+
+export function precisionFormat(number) {
+  return round(number, 2);
 }
 
 export function getParameterByName(name, url) {
