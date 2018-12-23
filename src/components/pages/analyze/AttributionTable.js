@@ -222,7 +222,7 @@ export default class AttributionTable extends Component {
     const getTotalColumnData = (data, columnType) => {
       const getTotalCost = () => sumBy(data, getItemCost);
 
-      const totalIndicatorGenerated = (data, getChannelData) => precisionFormat(data.reduce((sum,
+      const totalIndicatorGenerated = (data, getChannelData) => Math.round(data.reduce((sum,
                                                                                         item) => sum +
         getChannelData(item), 0));
 
