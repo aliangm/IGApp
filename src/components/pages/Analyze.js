@@ -6,8 +6,6 @@ import analyzeStyle from 'styles/analyze/analyze.css';
 import Select from 'components/controls/Select';
 import setupStyle from 'styles/attribution/attribution-setp.css';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
-import {capitalize} from 'lodash';
-import {formatNumber} from 'components/utils/budget';
 
 export default class Analyze extends Component {
 
