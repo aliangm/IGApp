@@ -36,7 +36,7 @@ export default class AttributionTable extends Component {
     super(props);
 
     this.state = {
-      selectedStageIndex: 0,
+      selectedStageIndex: 1,
       sortByColumn: 'row-title',
       isReverse: true
     };
