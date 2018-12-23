@@ -202,7 +202,7 @@ export default class AttributionTable extends Component {
         'row-title': value => value,
         'cost': formatBudget,
         'stage-indicator': precisionFormat,
-        'influenced-stage-indicator': precisionFormat,
+        'influenced-stage-indicator': Math.round,
         'efficiency': efficiencyFormatter,
         'revenue': formatBudget,
         'arpa': averageFormatter,
