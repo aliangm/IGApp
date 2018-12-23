@@ -71,17 +71,28 @@ export default class AttributionTable extends Component {
       };
     };
 
+    const addColumnsToStageDefinition = (stageDefinition, columns) => {
+      return {...stageDefinition, columns: [...stageDefinition.columns, ...columns]};
+    };
+
     let usersStageDefinition = getIndicatorBaseDefinition('users');
-    usersStageDefinition = {
-      ...usersStageDefinition,
-      columns: [
-        ...usersStageDefinition.columns,
+    usersStageDefinition = addColumnsToStageDefinition(usersStageDefinition,
+      [
         {title: 'Touched Revenue', type: 'influenced-revenue'},
         {title: 'Attributed Revenue', type: 'revenue'},
         {title: 'ROI', type: 'roi'},
         {title: 'ARPA', type: 'arpa'},
-        {title: 'LTV', type: 'ltv'}]
-    };
+        {title: 'LTV', type: 'ltv'}
+      ]
+    );
+
+    let oppsStageDefinition = getIndicatorBaseDefinition('opps');
+    oppsStageDefinition = addColumnsToStageDefinition(oppsStageDefinition,
+      [
+        {title: 'Pipeline', type: 'pipeline'},
+        {title: 'Pipeline ROI', type: 'pipeline-roi'}
+      ]
+    );
 
     const basicStages = [
       {
@@ -97,7 +108,7 @@ export default class AttributionTable extends Component {
       getIndicatorBaseDefinition('MCL'),
       getIndicatorBaseDefinition('MQL'),
       getIndicatorBaseDefinition('SQL'),
-      getIndicatorBaseDefinition('opps'),
+      oppsStageDefinition,
       usersStageDefinition];
 
     const stagesWithCost = showCostColumns ? basicStages
