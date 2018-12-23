@@ -171,7 +171,6 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const dollarFormatter = (value) => formatBudget(value);
     const averageFormatter = (value) => isFinite(value) ? formatBudget(value) : (isNaN(value) ? '0' : '-');
     const efficiencyFormatter = (value) => {
       const efficiency = averageFormatter(value);
@@ -182,17 +181,17 @@ export default class AttributionTable extends Component {
     const formatColumnData =
       {
         'row-title': value => value,
-        'cost': dollarFormatter,
+        'cost': formatBudget,
         'stage-indicator': formatIndicator,
         'influenced-stage-indicator': formatIndicator,
         'efficiency': efficiencyFormatter,
-        'revenue': dollarFormatter,
+        'revenue': formatBudget,
         'arpa': averageFormatter,
         'roi': averageFormatter,
-        'pipeline': dollarFormatter,
+        'pipeline': formatBudget,
         'pipeline-roi': averageFormatter,
-        'ltv': dollarFormatter,
-        'influenced-revenue': dollarFormatter
+        'ltv': formatBudget,
+        'influenced-revenue': formatBudget
       };
 
     const getColumnData = (item, columnType) => {
