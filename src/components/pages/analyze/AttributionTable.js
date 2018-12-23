@@ -107,9 +107,10 @@ export default class AttributionTable extends Component {
       });
 
     const stages = stagesWithCost.map(stage => {
-      const atStart = additionalColumns.filter(column => column.atStart);
-      const atEnd = additionalColumns.filter(column => !column.atStart);
-      return {...stage, columns: [...atStart, ...stage.columns, ...atEnd]};
+      // Check which columns should be added at the start of the array and which ones at the end
+      const addAtStart = additionalColumns.filter(column => column.addAtStart);
+      const addAtEnd = additionalColumns.filter(column => !column.addAtStart);
+      return {...stage, columns: [...addAtStart, ...stage.columns, ...addAtEnd]};
     });
 
     const selectedStage = stages[selectedStageIndex];

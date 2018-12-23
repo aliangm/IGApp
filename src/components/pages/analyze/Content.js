@@ -43,7 +43,7 @@ export default class Content extends Component {
     const attributionPages = attribution.pages || [];
 
     const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio'},
-      {title: 'Proceed Ratio', type: 'proceed-ratio'}, {title: 'Channel', type: 'channel', atStart: true}];
+      {title: 'Proceed Ratio', type: 'proceed-ratio'}, {title: 'Channel', type: 'channel', addAtStart: true}];
 
     const getPageItemData = (page, dataKey) => get(page, dataKey, 0);
     const getPageItemTitle = (page) => {
