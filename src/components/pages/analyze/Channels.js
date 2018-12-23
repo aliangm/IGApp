@@ -3,12 +3,13 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/onboarding.css';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
-import {formatNumber} from 'components/utils/budget';
 import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
+import {get} from 'lodash';
+import AttributionTable from 'components/pages/analyze/AttributionTable';
 
 export default class Channels extends Component {
 
@@ -50,94 +51,27 @@ export default class Channels extends Component {
     }
   }
 
-  formatEffciency(dividend, divisor, indicatorName) {
-    const efficiency = Math.round(dividend / divisor);
-    if (isFinite(efficiency)) {
-      return '$' + formatNumber(efficiency) + '/' + indicatorName;
-    }
-    if (dividend === 0) {
-      return '0';
-    }
-    return '-';
-  }
-
   render() {
-    const {attribution: {channelsImpact, usersByEmail}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
+    const {attribution: {channelsImpact, usersByEmail}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions} = this.props;
     const {firstObjective} = this.state;
 
-    const headRow = this.getTableRow(null, [
-      <div style={{textAlign: 'left', cursor: 'pointer'}}
-           onClick={this.sortBy.bind(this, 'label')}>
-        Channel
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'budget')} style={{cursor: 'pointer'}}>
-        Cost
-      </div>,
-      <div style={{display: 'inline-flex'}}>
-        {this.state.editRevenueMetric ?
-          <Select
-            selected={this.state.attributionTableRevenueMetric}
-            select={{
-              options: revenueMetricsOptions
-            }}
-            onChange={(e) => {
-              this.setState({attributionTableRevenueMetric: e.value});
-            }}
-            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, 'revenueMetric')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${revenueMetrics[this.state.attributionTableRevenueMetric]}`}>
-            {revenueMetrics[this.state.attributionTableRevenueMetric]}
-          </div>
-        }
-        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editRevenueMetric: !this.state.editRevenueMetric});
-        }}>
-          {this.state.editRevenueMetric ? 'Done' : 'Edit'}
+    const getChannelTitle = ({value: channelKey, label}) => {
+      return <div style={{display: 'flex'}}>
+        <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channelKey}/>
+        <div className={dashboardStyle.locals.channelTable}>
+          {label}
         </div>
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'ROI')} style={{cursor: 'pointer'}}>
-        ROI
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'webVisits')} style={{cursor: 'pointer'}}>
-        Web Visits
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'conversion')} style={{cursor: 'pointer', display: 'flex'}}
-           data-tip="number of times the channel/campaign led to a direct online conversion event on your website or landing pages.">
-        Conv.
-      </div>,
-      <div style={{display: 'inline-flex'}}>
-        {this.state.editMetric ?
-          <Select
-            selected={this.state.attributionTableIndicator}
-            select={{
-              options: metricsWithInfluencedOptions
-            }}
-            onChange={(e) => {
-              this.setState({attributionTableIndicator: e.value});
-            }}
-            style={{width: '100px', fontWeight: 'initial', fontSize: 'initial', color: 'initial', textAlign: 'initial'}}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, 'funnelIndicator')} style={{cursor: 'pointer'}}
-               data-tip={`Attributed ${metricsWithInfluenced[this.state.attributionTableIndicator]}`}>
-            {metricsWithInfluenced[this.state.attributionTableIndicator]}
-          </div>
-        }
-        <div className={dashboardStyle.locals.metricEdit} onClick={() => {
-          this.setState({editMetric: !this.state.editMetric});
-        }}>
-          {this.state.editMetric ? 'Done' : 'Edit'}
-        </div>
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'CPX')} style={{cursor: 'pointer', display: 'flex'}}
-           data-tip={'Cost per ' + metricsWithInfluencedSingular[this.state.attributionTableIndicator]}>
-        Efficiency
-      </div>
-    ], {
-      className: dashboardStyle.locals.headRow
-    });
+      </div>;
+    };
+
+    const getItemData = (item, dataKey) => {
+      const {value: channelKey} = item;
+      return get(channelsImpact, [dataKey, channelKey], 0);
+    };
+
+    const getChannelCost = (channel) => {
+      return sumBudgets[channel] || 0;
+    };
 
     const channelsArray = getChannelsWithNicknames();
     channelsArray.push({value: 'direct', label: 'Direct'});
@@ -147,7 +81,9 @@ export default class Channels extends Component {
         channel: item.value,
         label: item.label,
         budget: sumBudgets[item.value] || 0,
-        revenueMetric: (channelsImpact && channelsImpact[this.state.attributionTableRevenueMetric] && channelsImpact[this.state.attributionTableRevenueMetric][item.value])
+        revenueMetric: (channelsImpact &&
+          channelsImpact[this.state.attributionTableRevenueMetric] &&
+          channelsImpact[this.state.attributionTableRevenueMetric][item.value])
           ? channelsImpact[this.state.attributionTableRevenueMetric][item.value]
           : 0,
         webVisits: (channelsImpact && channelsImpact['webVisits'] && channelsImpact['webVisits'][item.value])
@@ -156,7 +92,9 @@ export default class Channels extends Component {
         conversion: (channelsImpact && channelsImpact['conversion'] && channelsImpact['conversion'][item.value])
           ? channelsImpact['conversion'][item.value]
           : 0,
-        funnelIndicator: (channelsImpact && channelsImpact[this.state.attributionTableIndicator] && channelsImpact[this.state.attributionTableIndicator][item.value])
+        funnelIndicator: (channelsImpact &&
+          channelsImpact[this.state.attributionTableIndicator] &&
+          channelsImpact[this.state.attributionTableIndicator][item.value])
           ? channelsImpact[this.state.attributionTableIndicator][item.value]
           : 0
       };
@@ -166,56 +104,8 @@ export default class Channels extends Component {
     });
 
     channelsWithData =
-      channelsWithData.filter(item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
-
-    const rows = channelsWithData
-      .sort((item1, item2) =>
-        (item2[this.state.sortBy] - item1[this.state.sortBy]) * this.state.isDesc
-      )
-      .map(item => {
-        const {channel, label, budget, revenueMetric, webVisits, conversion, funnelIndicator, ROI, CPX} = item;
-        return this.getTableRow(null,
-          [
-            <div style={{display: 'flex'}}>
-              <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}/>
-              <div className={dashboardStyle.locals.channelTable}>
-                {label}
-              </div>
-            </div>,
-            '$' + formatNumber(budget),
-            '$' + formatNumber(revenueMetric),
-            Math.round(ROI * 100) + '%',
-            formatNumber(webVisits),
-            formatNumber(conversion),
-            Math.round(funnelIndicator * 100) / 100,
-            this.formatEffciency(budget,
-              funnelIndicator,
-              metricsWithInfluencedSingular[this.state.attributionTableIndicator])
-          ], {
-            key: channel,
-            className: dashboardStyle.locals.tableRow
-          });
-      });
-
-    const sumData = channelsWithData;
-
-    const totalBudget = sumData.reduce((sum, item) => sum + item.budget, 0);
-    const totalIndicatorGenerated = Math.round(sumData.reduce((sum, item) => sum + item.funnelIndicator, 0) * 100) /
-      100;
-    const footRow = this.getTableRow(null, [
-      'Total',
-      '$' + formatNumber(totalBudget),
-      '$' + formatNumber(sumData.reduce((sum, item) => sum + item.revenueMetric, 0)),
-      Math.round(sumData.reduce((sum, item) => sum + item.ROI, 0) / sumData.length * 100) + '%',
-      formatNumber(sumData.reduce((sum, item) => sum + item.webVisits, 0)),
-      formatNumber(sumData.reduce((sum, item) => sum + item.conversion, 0)),
-      totalIndicatorGenerated,
-      this.formatEffciency(totalBudget,
-        totalIndicatorGenerated,
-        metricsWithInfluencedSingular[this.state.attributionTableIndicator])
-    ], {
-      className: dashboardStyle.locals.footRow
-    });
+      channelsWithData.filter(
+        item => item.funnelIndicator || item.conversion || item.webVisits || item.revenueMetric);
 
     const convIndicatorImpact = channelsImpact && channelsImpact[this.state.conversionIndicator];
     const fatherChannelsWithBudgets = [];
@@ -286,20 +176,11 @@ export default class Channels extends Component {
       <div className={this.classes.wrap}>
         <div>
           <FeatureToggle featureName="attribution">
-            <div className={dashboardStyle.locals.item}
-                 style={{height: '459px', width: '1110px', overflow: 'visible', padding: '15px 0'}}>
-              <table className={dashboardStyle.locals.table}>
-                <thead className={dashboardStyle.locals.tableHead}>
-                {headRow}
-                </thead>
-                <tbody className={dashboardStyle.locals.tableBody}>
-                {rows}
-                </tbody>
-                <tfoot>
-                {footRow}
-                </tfoot>
-              </table>
-            </div>
+            <AttributionTable data={channelsArray}
+                              getItemCost={getChannelCost}
+                              titleColumnName='Channel'
+                              getItemTitle={getChannelTitle}
+                              getItemData={getItemData}/>
           </FeatureToggle>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
