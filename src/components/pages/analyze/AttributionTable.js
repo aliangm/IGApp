@@ -5,6 +5,7 @@ import {formatBudget, formatNumber} from 'components/utils/budget';
 import {capitalize, sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
+import {getNickname} from 'components/utils/channels';
 
 export default class AttributionTable extends Component {
 
@@ -50,72 +51,54 @@ export default class AttributionTable extends Component {
     };
 
     const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
+    const pluralNickname = (indicator) => getNickname(indicator, true);
+
+    const titleColumn = {title: titleColumnName, type: 'row-title'};
+    const costColumn = {title: 'Cost', type: 'cost'};
+    const efficiencyColumn = {title: 'Efficiency', type: 'efficiency'};
+
+    const getIndicatorBaseDefinition = (indicator) => {
+      return {
+        name: pluralNickname(indicator),
+        dataKey: indicator,
+        columns: [
+          ...titleColumn,
+          ...costColumn,
+          {title: `Touched ${pluralNickname(indicator)}`, type: 'stage-indicator'},
+          {title: `Attributed ${pluralNickname(indicator)}`, type: 'influenced-stage-indicator'},
+          ...efficiencyColumn
+        ]
+      };
+    };
+
+    let usersStageDefinition = getIndicatorBaseDefinition('users');
+    usersStageDefinition = {
+      ...usersStageDefinition,
+      columns: [
+        ...usersStageDefinition.columns,
+        {title: 'Touched Revenue', type: 'influenced-revenue'},
+        {title: 'Attributed Revenue', type: 'revenue'},
+        {title: 'ROI', type: 'roi'},
+        {title: 'ARPA', type: 'arpa'},
+        {title: 'LTV', type: 'ltv'}]
+    };
 
     const basicStages = [
       {
         name: 'Visitors',
         dataKey: 'webVisits',
         columns: [
-          {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
+          ...titleColumn,
+          ...costColumn,
           {title: 'Web Visitors', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
+          ...efficiencyColumn
         ]
       },
-      {
-        name: 'Leads',
-        dataKey: 'MCL',
-        columns: [
-          {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Touched Leads', type: 'stage-indicator'},
-          {title: 'Attributed Leads', type: 'influenced-stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'MQLs', dataKey: 'MQL', columns: [
-          {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Touched MQLs', type: 'influenced-stage-indicator'},
-          {title: 'Attributed MQLs', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'SQLs', dataKey: 'SQL', columns: [
-          {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Touched SQLs', type: 'influenced-stage-indicator'},
-          {title: 'Attributed SQLs', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'}
-        ]
-      },
-      {
-        name: 'Opps', dataKey: 'opps', columns: [
-          {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Touched Opps', type: 'influenced-stage-indicator'},
-          {title: 'Attributed Opps', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Pipeline', type: 'pipeline'},
-          {title: 'Pipeline ROI', type: 'pipeline-roi'}
-        ]
-      },
-      {
-        name: 'Customers', dataKey: 'users', columns: [
-          {title: titleColumnName, type: 'row-title'},
-          {title: 'Cost', type: 'cost'},
-          {title: 'Touched Customers', type: 'influenced-stage-indicator'},
-          {title: 'Attributed Customers', type: 'stage-indicator'},
-          {title: 'Efficiency', type: 'efficiency'},
-          {title: 'Touched Revenue', type: 'influenced-revenue'},
-          {title: 'Attributed Revenue', type: 'revenue'},
-          {title: 'ROI', type: 'roi'},
-          {title: 'ARPA', type: 'arpa'},
-          {title: 'LTV', type: 'ltv'}
-        ]
-      }];
+      getIndicatorBaseDefinition('MCL'),
+      getIndicatorBaseDefinition('MQL'),
+      getIndicatorBaseDefinition('SQL'),
+      getIndicatorBaseDefinition('opps'),
+      usersStageDefinition];
 
     const stagesWithCost = showCostColumns ? basicStages
       : basicStages.map(stage => {
@@ -132,7 +115,7 @@ export default class AttributionTable extends Component {
     const selectedStage = stages[selectedStageIndex];
     const headRow = this.getTableRow(null, selectedStage.columns.map(({title, type}) => {
       return <div style={{cursor: 'pointer'}} onClick={() => {
-        if(type === sortByColumn){
+        if (type === sortByColumn) {
           this.setState({isReverse: !isReverse});
         }
         else {
