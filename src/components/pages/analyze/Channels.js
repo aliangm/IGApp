@@ -62,7 +62,7 @@ export default class Channels extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact, users}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
+    const {attribution: {channelsImpact, usersByEmail}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, revenueMetrics, revenueMetricsOptions, metricsWithInfluenced, metricsWithInfluencedOptions, metricsWithInfluencedSingular, metricsOptions} = this.props;
     const {firstObjective} = this.state;
 
     const headRow = this.getTableRow(null, [
@@ -236,18 +236,13 @@ export default class Channels extends Component {
 
     const journeys = [];
     let journeysSum = 0;
-    users.forEach(user => {
-      const journey = user.journey
-        .filter(item => item.channel &&
-          item.channel !==
-          'direct' &&
-          item.funnelStage.includes(this.state.conversionIndicator))
+    usersByEmail.forEach(user => {
+      const journey = user.sessions
+        .filter(item => item.channel && item.channel !== 'direct' && Object.keys(item.funnelStages).includes(this.state.conversionIndicator))
         .map(item => item.channel);
       if (journey && journey.length > 0) {
         journeysSum++;
-        const alreadyExists = journeys.find(item => item.channels.length ===
-          journey.length &&
-          item.channels.every((item, index) => item === journey[index]));
+        const alreadyExists = journeys.find(item => item.channels.length === journey.length && item.channels.every((item, index) => item === journey[index]));
         if (alreadyExists) {
           alreadyExists.count++;
         }

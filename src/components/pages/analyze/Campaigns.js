@@ -38,7 +38,7 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const {attribution: {campaigns: attributionCampaigns, users}, campaigns, revenueMetricsOptions, revenueMetrics, metricsWithInfluencedOptions, metricsWithInfluenced, metricsWithInfluencedSingular, metricsOptions, formatEfficiency} = this.props;
+    const {attribution: {campaigns: attributionCampaigns, usersByEmail}, campaigns, revenueMetricsOptions, revenueMetrics, metricsWithInfluencedOptions, metricsWithInfluenced, metricsWithInfluencedSingular, metricsOptions, formatEfficiency} = this.props;
 
     const headRow = this.getTableRow(null, [
       <div style={{textAlign: 'left', cursor: 'pointer'}}
@@ -208,9 +208,9 @@ export default class Campaigns extends Component {
 
     const journeys = [];
     let journeysSum = 0;
-    users.forEach(user => {
-      const journey = user.journey
-        .filter(item => item.campaign && item.funnelStage.includes(this.state.conversionIndicator))
+    usersByEmail.forEach(user => {
+      const journey = user.sessions
+        .filter(item => item.campaign && Object.keys(item.funnelStages).includes(this.state.conversionIndicator))
         .map(item => {
           return {channel: item.channel, campaign: item.campaign};
         });
