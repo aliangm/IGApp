@@ -39,7 +39,7 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const {attribution: {campaigns: attributionCampaigns, users}, campaigns, metricsOptions} = this.props;
+    const {attribution: {campaigns: attributionCampaigns, usersByEmail}, campaigns, metricsOptions} = this.props;
 
     const additionalColumns = [{title: 'Channels', type: 'channels'}];
     const additionalColumnValue = (item, columnType) => {
@@ -131,9 +131,9 @@ export default class Campaigns extends Component {
 
     const journeys = [];
     let journeysSum = 0;
-    users.forEach(user => {
-      const journey = user.journey
-        .filter(item => item.campaign && item.funnelStage.includes(this.state.conversionIndicator))
+    usersByEmail.forEach(user => {
+      const journey = user.sessions
+        .filter(item => item.campaign && Object.keys(item.funnelStages).includes(this.state.conversionIndicator))
         .map(item => {
           return {channel: item.channel, campaign: item.campaign};
         });

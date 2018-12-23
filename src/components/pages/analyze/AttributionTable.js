@@ -5,7 +5,7 @@ import {formatBudget, formatNumber} from 'components/utils/budget';
 import {capitalize, sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
-import {getNickname} from 'components/utils/channels';
+import {getNickname} from 'components/utils/indicators';
 
 export default class AttributionTable extends Component {
 
@@ -51,7 +51,7 @@ export default class AttributionTable extends Component {
     };
 
     const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
-    const pluralNickname = (indicator) => getNickname(indicator, true);
+    const pluralNickname = (indicator) => getNickname(indicator, false);
 
     const titleColumn = {title: titleColumnName, type: 'row-title'};
     const costColumn = {title: 'Cost', type: 'cost'};
@@ -62,11 +62,11 @@ export default class AttributionTable extends Component {
         name: pluralNickname(indicator),
         dataKey: indicator,
         columns: [
-          ...titleColumn,
-          ...costColumn,
+          {...titleColumn},
+          {...costColumn},
           {title: `Touched ${pluralNickname(indicator)}`, type: 'stage-indicator'},
           {title: `Attributed ${pluralNickname(indicator)}`, type: 'influenced-stage-indicator'},
-          ...efficiencyColumn
+          {...efficiencyColumn}
         ]
       };
     };
@@ -88,10 +88,10 @@ export default class AttributionTable extends Component {
         name: 'Visitors',
         dataKey: 'webVisits',
         columns: [
-          ...titleColumn,
-          ...costColumn,
+          {...titleColumn},
+          {...costColumn},
           {title: 'Web Visitors', type: 'stage-indicator'},
-          ...efficiencyColumn
+          {...efficiencyColumn}
         ]
       },
       getIndicatorBaseDefinition('MCL'),
