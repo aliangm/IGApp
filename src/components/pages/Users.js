@@ -114,6 +114,7 @@ export default class Users extends Component {
         return lastTouchPoint2 - lastTouchPoint1;
       })
       .map((user, index) => {
+        const getUniqNotEmpty = field => uniq(user.sessions.map(item => item[field]).filter(item => !!item));
         const firstTouchPoint = new Date(user.sessions[0].startTime);
         const lastTouchPoint = new Date(user.sessions[user.sessions.length - 1].endTime);
         const timeSinceFirst = this.timeSince(firstTouchPoint);
@@ -124,8 +125,8 @@ export default class Users extends Component {
           const domain = item.email && item.email.match('(?<=@).+');
           return domain && domain[0];
         }));
-        const devices = uniq(user.sessions.map(item => item.device).filter(item => !!item));
-        const countries = uniq(user.sessions.map(item => item.country).filter(item => !!item));
+        const devices = getUniqNotEmpty('device');
+        const countries = getUniqNotEmpty('country');
         const displayName = user.accountName ? user.accountName : domain && domain.match('[^.]+(?=\\.)') && domain.match('[^.]+(?=\\.)')[0];
         const domainIcon = 'url(https://logo.clearbit.com/' + domain + ')';
         const maxFunnelStageIndex = Math.max(... Object.keys(user.funnelStages).map(stage => stagesOrder[stage]));
