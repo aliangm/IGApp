@@ -96,7 +96,7 @@ export default class UsersPopup extends Component {
     });
 
     const events = [...(nonDirectSessions || []), ...(funnelStageChanges || [])];
-    const sortedEvents = sortBy(events, 'startTime');
+    const sortedEvents = sortBy(events, event => new Date(event.startTime));
     const eventsUI = [];
 
     sortedEvents.forEach((item, index) => {
