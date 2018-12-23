@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
-import {formatNumber} from 'components/utils/budget';
+import {formatBudget, formatNumber} from 'components/utils/budget';
 import {capitalize, sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
@@ -187,8 +187,8 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const dollarFormatter = (value) => '$' + formatNumber(value);
-    const averageFormatter = (value) => isFinite(value) ? '$' + value : (isNaN(value) ? '0' : '-');
+    const dollarFormatter = (value) => formatBudget(value);
+    const averageFormatter = (value) => isFinite(value) ? formatBudget(value) : (isNaN(value) ? '0' : '-');
     const efficiencyFormatter = (value) => {
       const efficiency = averageFormatter(value);
       return efficiency === '0' || efficiency === '-' ? efficiency :
@@ -236,7 +236,7 @@ export default class AttributionTable extends Component {
         case 'row-title':
           return 'Total';
         case 'cost':
-          return '$' + formatNumber(getTotalCost());
+          return formatBudget(getTotalCost());
         case 'stage-indicator':
           return totalMetric();
         case 'influenced-stage-indicator':
@@ -244,19 +244,19 @@ export default class AttributionTable extends Component {
         case 'efficiency':
           return efficiencyFormatter(getTotalCost(), totalMetric(), selectedStage.name);
         case 'revenue':
-          return '$' + formatNumber(totalRevenue());
+          return formatBudget(totalRevenue());
         case 'arpa':
           return averageFormatter(totalRevenue(), totalMetric());
         case 'roi':
           return averageFormatter(totalRevenue(), getTotalCost());
         case 'pipeline':
-          return '$' + formatNumber(totalPipeline());
+          return formatBudget(totalPipeline());
         case 'pipeline-roi':
           return averageFormatter(totalPipeline(), getTotalCost());
         case 'ltv':
-          return '$' + totalLTV();
+          return formatBudget(totalLTV());
         case 'influenced-revenue':
-          return '$' + totalInfluencedRevenue();
+          return formatBudget(totalInfluencedRevenue());
         default:
           return formatAdditionColumnTotal(data, columnType);
       }
