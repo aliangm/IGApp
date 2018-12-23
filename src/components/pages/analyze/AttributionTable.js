@@ -2,10 +2,18 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {formatBudget, formatNumber} from 'components/utils/budget';
-import {capitalize, sortBy, sumBy, get} from 'lodash';
+import {sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 import {getNickname} from 'components/utils/indicators';
+
+const influencedMapping = {
+  MCL: 'influencedMCL',
+  MQL: 'influencedMQL',
+  SQL: 'influencedSQL',
+  opps: 'influencedOpps',
+  users: 'influencedUsers'
+};
 
 export default class AttributionTable extends Component {
 
@@ -47,7 +55,7 @@ export default class AttributionTable extends Component {
     const {selectedStageIndex, sortByColumn, isReverse} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
-      return `influenced${capitalize(dataKey)}`;
+      return influencedMapping[dataKey];
     };
 
     const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
@@ -64,8 +72,8 @@ export default class AttributionTable extends Component {
         columns: [
           {...titleColumn},
           {...costColumn},
-          {title: `Touched ${pluralNickname(indicator)}`, type: 'stage-indicator'},
-          {title: `Attributed ${pluralNickname(indicator)}`, type: 'influenced-stage-indicator'},
+          {title: `Touched ${pluralNickname(indicator)}`, type: 'influenced-stage-indicator'},
+          {title: `Attributed ${pluralNickname(indicator)}`, type: 'stage-indicator'},
           {...efficiencyColumn}
         ]
       };
