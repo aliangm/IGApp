@@ -2,10 +2,19 @@ import React, {PropTypes} from 'react';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {formatBudget, formatNumber} from 'components/utils/budget';
-import {capitalize, sortBy, sumBy, get} from 'lodash';
+import {sortBy, sumBy, get} from 'lodash';
 import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 import {getNickname} from 'components/utils/indicators';
+import {precisionFormat} from 'utils';
+
+const influencedMapping = {
+  MCL: 'influencedMCL',
+  MQL: 'influencedMQL',
+  SQL: 'influencedSQL',
+  opps: 'influencedOpps',
+  users: 'influencedUsers'
+};
 
 export default class AttributionTable extends Component {
 
@@ -47,7 +56,7 @@ export default class AttributionTable extends Component {
     const {selectedStageIndex, sortByColumn, isReverse} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
-      return `influenced${capitalize(dataKey)}`;
+      return influencedMapping[dataKey];
     };
 
     const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
@@ -64,24 +73,35 @@ export default class AttributionTable extends Component {
         columns: [
           {...titleColumn},
           {...costColumn},
-          {title: `Touched ${pluralNickname(indicator)}`, type: 'stage-indicator'},
-          {title: `Attributed ${pluralNickname(indicator)}`, type: 'influenced-stage-indicator'},
+          {title: `Touched ${pluralNickname(indicator)}`, type: 'influenced-stage-indicator'},
+          {title: `Attributed ${pluralNickname(indicator)}`, type: 'stage-indicator'},
           {...efficiencyColumn}
         ]
       };
     };
 
+    const addColumnsToStageDefinition = (stageDefinition, columns) => {
+      return {...stageDefinition, columns: [...stageDefinition.columns, ...columns]};
+    };
+
     let usersStageDefinition = getIndicatorBaseDefinition('users');
-    usersStageDefinition = {
-      ...usersStageDefinition,
-      columns: [
-        ...usersStageDefinition.columns,
+    usersStageDefinition = addColumnsToStageDefinition(usersStageDefinition,
+      [
         {title: 'Touched Revenue', type: 'influenced-revenue'},
         {title: 'Attributed Revenue', type: 'revenue'},
         {title: 'ROI', type: 'roi'},
         {title: 'ARPA', type: 'arpa'},
-        {title: 'LTV', type: 'ltv'}]
-    };
+        {title: 'LTV', type: 'ltv'}
+      ]
+    );
+
+    let oppsStageDefinition = getIndicatorBaseDefinition('opps');
+    oppsStageDefinition = addColumnsToStageDefinition(oppsStageDefinition,
+      [
+        {title: 'Pipeline', type: 'pipeline'},
+        {title: 'Pipeline ROI', type: 'pipeline-roi'}
+      ]
+    );
 
     const basicStages = [
       {
@@ -97,7 +117,7 @@ export default class AttributionTable extends Component {
       getIndicatorBaseDefinition('MCL'),
       getIndicatorBaseDefinition('MQL'),
       getIndicatorBaseDefinition('SQL'),
-      getIndicatorBaseDefinition('opps'),
+      oppsStageDefinition,
       usersStageDefinition];
 
     const stagesWithCost = showCostColumns ? basicStages
@@ -127,7 +147,6 @@ export default class AttributionTable extends Component {
       </div>;
     }), {className: dashboardStyle.locals.headRow});
 
-    const formatIndicator = (value) => formatNumber(Math.round(value));
     const stageIndicatorKey = selectedStage.dataKey;
 
     const getMetricNumber = (item) => getItemData(item, stageIndicatorKey);
@@ -182,8 +201,8 @@ export default class AttributionTable extends Component {
       {
         'row-title': value => value,
         'cost': formatBudget,
-        'stage-indicator': formatIndicator,
-        'influenced-stage-indicator': formatIndicator,
+        'stage-indicator': precisionFormat,
+        'influenced-stage-indicator': Math.round,
         'efficiency': efficiencyFormatter,
         'revenue': formatBudget,
         'arpa': averageFormatter,
@@ -205,8 +224,7 @@ export default class AttributionTable extends Component {
 
       const totalIndicatorGenerated = (data, getChannelData) => Math.round(data.reduce((sum,
                                                                                         item) => sum +
-        getChannelData(item), 0) * 100) /
-        100;
+        getChannelData(item), 0));
 
       const totalMetric = () => totalIndicatorGenerated(data, getMetricNumber);
 
@@ -225,17 +243,17 @@ export default class AttributionTable extends Component {
         case 'influenced-stage-indicator':
           return totalIndicatorGenerated(data, getInfluencedMetricNumber);
         case 'efficiency':
-          return efficiencyFormatter(getTotalCost(), totalMetric(), selectedStage.name);
+          return efficiencyFormatter(getTotalCost() / totalMetric());
         case 'revenue':
           return formatBudget(totalRevenue());
         case 'arpa':
-          return averageFormatter(totalRevenue(), totalMetric());
+          return averageFormatter(totalRevenue() / totalMetric());
         case 'roi':
-          return averageFormatter(totalRevenue(), getTotalCost());
+          return averageFormatter(totalRevenue() / getTotalCost());
         case 'pipeline':
           return formatBudget(totalPipeline());
         case 'pipeline-roi':
-          return averageFormatter(totalPipeline(), getTotalCost());
+          return averageFormatter(totalPipeline() / getTotalCost());
         case 'ltv':
           return formatBudget(totalLTV());
         case 'influenced-revenue':
