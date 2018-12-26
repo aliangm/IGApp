@@ -1,0 +1,65 @@
+.wrap {
+    padding: 15px;
+    border: 1px #e3e6f4;
+    border-radius: 2px;
+    overflow: auto;
+}
+
+.table {
+    width: 100%;
+    background: white;
+}
+
+.headRow {
+    min-height: 60px;
+    border-radius: 2px;
+    background-color: #65b7f3;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.tableRow {
+    height: 60px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    border-top: 5px solid #F5F6FB;
+    font-size: 14px;
+    color: #354052;
+}
+
+.footRow {
+    composes: tableRow;
+    background-color: #33cc3478;
+    color: #354052;
+    font-weight: 600;
+}
+
+.cellItem {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: 1;
+    max-width: 300px;
+}
+
+.cell {
+    padding: 0!important;
+}
+
+.tableCell {
+    composes: cell;
+}
+
+.headCell {
+    composes: cell;
+}
+
+.cellContent {
+    display: flex;
+    height: 100%;
+    padding: 5px 10px;
+    justify-content: flex-start;
+    align-items: center;
+    white-space: normal;
+}

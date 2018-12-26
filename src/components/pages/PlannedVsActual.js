@@ -14,7 +14,7 @@ import merge from 'lodash/merge';
 import mapValues from 'lodash/mapValues';
 import icons from 'styles/icons/plan.css';
 import {extractNumber, newFunnelMapping} from 'components/utils/utils';
-import Table from 'components/controls/Table';
+import Table from 'components/controls/Table2';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
 import get from 'lodash/get';
@@ -129,7 +129,7 @@ export default class PlannedVsActual extends Component {
   render() {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
-    const {channelsImpact: attributionChannelsImpact} = attribution[month];
+    const {channelsImpact: attributionChannelsImpact} = attribution[month] || { };
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -168,51 +168,114 @@ export default class PlannedVsActual extends Component {
 
     const extrapolatedValue = value => Math.round(value / extarpolateRatio);
 
-    const rows = parsedChannels.map(item => {
-      const {actual, planned, isActualNotEmpty, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
-      const isAutomatic = integrations[channelPlatformMapping[channel]];
-      return {
-        items: [
+    const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
+    const userNickname = getIndicatorNickname('newUsers');
+
+    const isAutomatic = (channel) => integrations[channelPlatformMapping[channel]]
+
+    const columns = [
+      {
+        id: 'channel',
+        header: 'Channel',
+        accessor: (item) => item.channel,
+        cell: ({ value: channel }) => (
           <div className={this.classes.cellItem}>
             <div className={budgetsStyle.locals.rowIcon} data-icon={getChannelIcon(channel)}/>
             <div className={this.classes.channelName}>{getChannelNickname(channel)}</div>
-            {isAutomatic ? <div className={this.classes.automaticLabel}>Auto</div> : null}
-          </div>,
-          formatBudget(planned),
-          getTextfieldItem(formatBudget(actual), e => this.updateActual(channel, extractNumber(e.target.value)), isAutomatic),
-          formatBudget(planned - actual, true),
-          isCurrentMonth ?
-            formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
-            : '-',
-          getTextfieldItem(formatNumber(plannedFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
-          getTextfieldItem(formatNumber(actualFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
-          formatNumber(plannedFunnel - actualFunnel),
-          isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
-          getTextfieldItem(formatNumber(plannedUsers), e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))),
-          getTextfieldItem(formatNumber(actualUsers), e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))),
-          formatNumber(plannedUsers - actualUsers),
-          isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-'
-        ]
-      };
-    });
-
-    const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
-    const userNickname = getIndicatorNickname('newUsers');
-    const headRow = [
-      'Channel',
-      'Planned Budget',
-      'Actual Cost',
-      'Plan vs Actual',
-      'Pacing for',
-      <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
-      `Actual ${firstFunnelObjectiveNickname}`,
-      'Plan vs Actual',
-      'Pacing for',
-      <div data-tip="what's your expectation?">Planned {userNickname}</div>,
-      `Actual ${userNickname}`,
-      'Plan vs Actual',
-      'Pacing for'
-    ];
+            {isAutomatic(channel) ? <div className={this.classes.automaticLabel}>Auto</div> : null}
+          </div>
+        ),
+        minWidth: 240,
+      },
+      {
+        id: 'plannedBudget',
+        header: 'Planned Budget',
+        accessor: ({ planned }) => planned,
+      },
+      {
+        id: 'actualCost',
+        header: 'Actual Cost',
+        accessor: (item) => item,
+        cell: ({ value: { actual, channel }}) =>
+          getTextfieldItem(
+            formatBudget(actual),
+            e => this.updateActual(channel, extractNumber(e.target.value)),
+            isAutomatic(channel)
+          ),
+      },
+      {
+        id: 'planVsActual',
+        header: 'Plan vs Actual',
+        accessor: ({ planned, actual }) => formatBudget(planned - actual, true),
+      },
+      {
+        id: 'pacingFor',
+        header: 'Pacing for',
+        accessor: ({ actual, isActualNotEmpty }) => isCurrentMonth
+          ? formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
+          : '-',
+      },
+      {
+        id: 'plannedObjective',
+        header: <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
+        accessor: (item) => item,
+        cell: ({ value: { plannedFunnel, channel }}) =>
+          getTextfieldItem(
+            formatNumber(plannedFunnel),
+            e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))
+          ),
+      },
+      // {
+      //   id: 'actualObjective',
+      //   header: `Actual ${firstFunnelObjectiveNickname}`,
+      //   accessor: (item) => item,
+      //   cell: ({ value: { actualFunnel, channel }}) =>
+      //     getTextfieldItem(
+      //       formatNumber(actualFunnel),
+      //         e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))
+      //     ),
+      // },
+      // {
+      //   id: 'planVsActualFunnel',
+      //   header: 'Plan vs Actual',
+      //   accessor: ({ plannedFunnel, actualFunnel }) => formatNumber(plannedFunnel - actualFunnel),
+      // },
+      // {
+      //   id: 'pacingForFunnel',
+      //   header: 'Pacing for',
+      //   accessor: ({ actualFunnel }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
+      // },
+      // {
+      //   id: 'plannedUser',
+      //   header: <div data-tip="what's your expectation?">Planned {userNickname}</div>,
+      //   accessor: (item) => item,
+      //   cell: ({ value: { plannedUsers, channel }}) =>
+      //     getTextfieldItem(
+      //       formatNumber(plannedUsers),
+      //       e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))
+      //     ),
+      // },
+      // {
+      //   id: 'actualUser',
+      //   header: `Actual ${userNickname}`,
+      //   accessor: (item) => item,
+      //   cell: ({ value: { actualUsers, channel }}) =>
+      //     getTextfieldItem(
+      //       formatNumber(actualUsers),
+      //       e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))
+      //     ),
+      // },
+      // {
+      //   id: 'planVsActualUser',
+      //   header: 'Plan vs Actual',
+      //   accessor: ({ plannedUsers, actualUsers }) => formatNumber(plannedUsers - actualUsers),
+      // },
+      // {
+      //   id: 'pacingForUser',
+      //   header: 'Pacing for',
+      //   accessor: ({ actualUsers }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-',
+      // },
+    ]
 
     const totalPlannedFunnel = sumBy(parsedChannels, 'plannedFunnel');
     const totalActualFunnel = indicators[month][funnelFirstObjective];
@@ -241,12 +304,16 @@ export default class PlannedVsActual extends Component {
             <Paging title={months[month]} onBack={() => this.setMonth(-1)} onNext={() => this.setMonth(1)}/>
           </div>
           <div className={planStyles.locals.innerBox}>
-            <Table headRowData={{items: headRow}}
-                   rowsData={rows}
-                   footRowData={{items: footRow}}
-                   showFootRowOnHeader={true}
-                   valueCellClassName={this.classes.valueCell}
-                   titleCellClassName={this.classes.titleCell}/>
+            <Table
+              columns={columns}
+              data={parsedChannels}
+              defaultSorted={[
+                {
+                  id: "plannedBudget",
+                  desc: true
+                }
+              ]}
+            />
             <div>
               <div className={this.classes.bottom}>
                 <div style={{
