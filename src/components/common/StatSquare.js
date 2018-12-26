@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react'; import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/stat-square.css';
 import ReactTooltip from 'react-tooltip';

@@ -1,6 +1,6 @@
 import Component from 'components/Component';
 import Textfield from 'components/controls/Textfield';
-import React, {PropTypes} from 'react';
+import React from 'react'; import PropTypes from 'prop-types';
 import style from 'styles/plan/plan-optimization-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
 import {getNickname} from 'components/utils/channels';
@@ -9,7 +9,7 @@ import Button from 'components/controls/Button';
 export default class ConstraintStep extends Component {
   style = style;
 
-  static PropTypes = {
+  static propTypes = {
     onConstraintAdd: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
     getChannelsLockOptions: PropTypes.func

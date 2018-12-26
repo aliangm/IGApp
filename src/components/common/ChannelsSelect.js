@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react'; import PropTypes from 'prop-types';
 import {formatChannels, getChannelIcon} from 'components/utils/channels';
 import Component from 'components/Component';
 import Select from 'components/controls/Select';

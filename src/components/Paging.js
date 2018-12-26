@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react'; import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/paging.css';

@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react'; import PropTypes from 'prop-types';
 import Card from './Cards/ChannelCard';
 import CampaignCard from './Cards/CampaignCard';
 

@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React from 'react'; import PropTypes from 'prop-types';
 import {ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Line} from 'recharts';
 import ReactTooltip from 'react-tooltip';
 import Component from 'components/Component';
