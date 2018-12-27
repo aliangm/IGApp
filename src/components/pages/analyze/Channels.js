@@ -8,7 +8,7 @@ import {FeatureToggle} from 'react-feature-toggles';
 import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
-import {get, union, uniq} from 'lodash';
+import {get} from 'lodash';
 import AttributionTable from 'components/pages/analyze/AttributionTable';
 
 export default class Channels extends Component {
