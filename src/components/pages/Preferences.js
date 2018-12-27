@@ -527,7 +527,7 @@ export default class Preferences extends Component {
               }}/>
               <AddObjectivePopup objectives={this.props.objectives}
                                  {...this.state.objectivePopupData}
-                                 numOfPriorities={objectivesData.length}
+                                 numOfObjectives={objectivesData.length}
                                  close={() => {
                                    this.setState({
                                      objectivePopupData: {
