@@ -257,17 +257,15 @@ export default class Overview extends Component {
       return month;
     });
 
-    const CustomizedLabel = React.createClass({
-      render() {
-        const {x, y, index: monthIndex, 'data-key': channel, height, width} = this.props;
-
-        return <RechartBarLabel x={x}
-                                y={y}
-                                height={height}
-                                width={width}
-                                label={'$' + formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}/>;
-      }
-    });
+    const CustomizedLabel = ({x, y, index: monthIndex, 'data-key': channel, height, width}) => (
+      <RechartBarLabel
+        x={x}
+        y={y}
+        height={height}
+        width={width}
+        label={'$' + formatBudgetShortened(channelCategoriesPerMonth[monthIndex][channel])}
+      />
+    );
 
     const bars = channelCategoriesForPeriod && Object.keys(channelCategoriesForPeriod).map((channel, index) =>
       <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={getColor(index)}
