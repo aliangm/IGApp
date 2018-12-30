@@ -79,7 +79,7 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay, actualIndicatorsDaily}}}} = this.props;
+    const {totalRevenue, attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsWithCurrentMonth, actualIndicatorsDaily}}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
@@ -157,7 +157,9 @@ export default class Overview extends Component {
       };
     });
 
-    const revenueByCampaignRows = attributionCampaigns.map(campaign => {
+    const revenueByCampaignRows = attributionCampaigns
+      .filter(campaign => campaign.revenue || campaign.influencedRevenue)
+      .map(campaign => {
       return {
         items: [campaign.name, formatBudget(campaign.revenue), formatBudget(campaign.influencedRevenue)]
       };
@@ -194,7 +196,9 @@ export default class Overview extends Component {
       };
     });
 
-    const channelCategoriesPerMonth = indicatorsForDisplay.slice(this.props.monthsExceptThisMonth).map((month) => {
+    const indicatorsInRelevantMonths = indicatorsWithCurrentMonth.slice(this.props.monthsExceptThisMonth)
+
+    const channelCategoriesPerMonth = indicatorsInRelevantMonths.map((month) => {
       const mergedObject = {};
       const channelsWithProps = getChannelsWithProps();
       Object.keys(channelsWithProps).forEach(channel => {
@@ -291,7 +295,7 @@ export default class Overview extends Component {
     const costPerFunnel = {};
     Object.keys(newIndicatorMapping).map(indicator => {
       const newIndicator = newIndicatorMapping[indicator];
-      const indicatorSum = sumBy(indicatorsData[newIndicator], item => item.value || 0);
+      const indicatorSum = sumBy(indicatorsInRelevantMonths, item => item[newIndicator] || 0);
       costPerFunnel[indicator] = indicatorSum ? formatBudget(Math.round(totalCost / indicatorSum)) : '-';
     });
 

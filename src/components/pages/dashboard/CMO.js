@@ -95,12 +95,12 @@ export default class CMO extends Component {
 
   render() {
     const {
-      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
+      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages},
       calculatedData: {
         committedBudgets,
         committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
-        annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
+        annualBudget, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
         historyData: {totalCost, historyDataWithCurrentMonth, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
