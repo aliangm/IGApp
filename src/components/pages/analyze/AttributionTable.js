@@ -32,13 +32,15 @@ export default class AttributionTable extends Component {
     formatAdditionColumn: PropTypes.func,
     formatAdditionColumnTotal: PropTypes.func,
     showTotalRow: PropTypes.bool,
-    showCostColumns: PropTypes.bool
+    showCostColumns: PropTypes.bool,
+    filterEmptyRows: PropTypes.bool
   };
 
   static defaultProps = {
     additionalColumns: [],
     showTotalRow: true,
-    showCostColumns: true
+    showCostColumns: true,
+    filterEmptyRows: true
   };
 
   constructor(props) {
@@ -52,7 +54,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, getItemTitle, additionalColumnValue} = this.props;
+    const {filterEmptyRows, showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, getItemTitle, additionalColumnValue} = this.props;
     const {selectedStageIndex, sortByColumn, isReverse} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -65,6 +67,12 @@ export default class AttributionTable extends Component {
     const titleColumn = {title: titleColumnName, type: 'row-title'};
     const costColumn = {title: 'Cost', type: 'cost'};
     const efficiencyColumn = {title: 'Efficiency', type: 'efficiency'};
+
+    const nonEmptyRowDataTypes = ['stage-indicator',
+      'influenced-stage-indicator',
+      'pipeline',
+      'revenue',
+      'influenced-revenue'];
 
     const getIndicatorBaseDefinition = (indicator) => {
       return {
@@ -263,7 +271,10 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const sortedData = sortBy(data, item => getColumnRawData(item, sortByColumn));
+    const filteredData = filterEmptyRows ? data.filter(
+      item => nonEmptyRowDataTypes.some(columnType => getColumnRawData(item, columnType)))
+      : data;
+    const sortedData = sortBy(filteredData, item => getColumnRawData(item, sortByColumn));
     const reversedSortedData = isReverse ? [...sortedData].reverse() : sortedData;
 
     const stagesData = stages.map(stage => {
