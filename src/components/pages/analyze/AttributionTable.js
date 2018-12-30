@@ -164,7 +164,7 @@ export default class AttributionTable extends Component {
           return getItemTitle(item);
         }
         case 'cost':
-          return formatNumber(getItemCost(item));
+          return getItemCost(item);
         case 'stage-indicator':
           return getMetricNumber(item);
         case 'influenced-stage-indicator':
