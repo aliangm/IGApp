@@ -16,3 +16,11 @@ export const newFunnelMapping = {
   newOpps: 'opps',
   newUsers: 'users'
 };
+
+export const influencedMapping = {
+  MCL: 'influencedMCL',
+  MQL: 'influencedMQL',
+  SQL: 'influencedSQL',
+  opps: 'influencedOpps',
+  users: 'influencedUsers'
+};

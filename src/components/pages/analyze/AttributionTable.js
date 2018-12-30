@@ -7,14 +7,7 @@ import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 import {getNickname} from 'components/utils/indicators';
 import {precisionFormat} from 'utils';
-
-const influencedMapping = {
-  MCL: 'influencedMCL',
-  MQL: 'influencedMQL',
-  SQL: 'influencedSQL',
-  opps: 'influencedOpps',
-  users: 'influencedUsers'
-};
+import {influencedMapping} from 'components/utils/utils';
 
 export default class AttributionTable extends Component {
 
