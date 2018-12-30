@@ -109,7 +109,8 @@ export default class Navigate extends Component {
   });
 
   renderFutureTooltip = ((channel, impact) => {
-    const budget = impact.find(item => item.key === channel).impact;
+    const channelBudgetObject = impact.find(item => item.key === channel);
+    const budget = channelBudgetObject ? channelBudgetObject.impact : 0;
     return <div className={this.classes.channelTooltip}>
       <div className={this.classes.channelTooltipHeader}>{getChannelNickname(channel)}</div>
       <div className={this.classes.channelTooltipBody}>
