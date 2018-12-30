@@ -190,7 +190,7 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const averageFormatter = (value) => isFinite(value) ? formatBudget(precisionFormat(value)) : (isNaN(value) ? '0' : '-');
+    const averageFormatter = (value) => isFinite(value) ? formatBudget(Math.round(value)) : (isNaN(value) ? '0' : '-');
     const efficiencyFormatter = (value) => {
       const efficiency = averageFormatter(value);
       return efficiency === '0' || efficiency === '-' ? efficiency :
