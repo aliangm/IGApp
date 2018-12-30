@@ -157,7 +157,9 @@ export default class Overview extends Component {
       };
     });
 
-    const revenueByCampaignRows = attributionCampaigns.map(campaign => {
+    const revenueByCampaignRows = attributionCampaigns
+      .filter(campaign => campaign.revenue || campaign.influencedRevenue)
+      .map(campaign => {
       return {
         items: [campaign.name, formatBudget(campaign.revenue), formatBudget(campaign.influencedRevenue)]
       };
