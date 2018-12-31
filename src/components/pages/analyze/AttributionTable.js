@@ -32,15 +32,13 @@ export default class AttributionTable extends Component {
     formatAdditionColumn: PropTypes.func,
     formatAdditionColumnTotal: PropTypes.func,
     showTotalRow: PropTypes.bool,
-    showCostColumns: PropTypes.bool,
-    filterEmptyRows: PropTypes.bool
+    showCostColumns: PropTypes.bool
   };
 
   static defaultProps = {
     additionalColumns: [],
     showTotalRow: true,
-    showCostColumns: true,
-    filterEmptyRows: true
+    showCostColumns: true
   };
 
   constructor(props) {
@@ -54,7 +52,7 @@ export default class AttributionTable extends Component {
   }
 
   render() {
-    const {filterEmptyRows, showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, getItemTitle, additionalColumnValue} = this.props;
+    const {showCostColumns, showTotalRow, additionalColumns, formatAdditionColumn, formatAdditionColumnTotal, data, titleColumnName, getItemCost, getItemData, getItemTitle, additionalColumnValue} = this.props;
     const {selectedStageIndex, sortByColumn, isReverse} = this.state;
 
     const getInfluencedDataKey = (dataKey) => {
@@ -271,9 +269,8 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const filteredData = filterEmptyRows ? data.filter(
-      item => nonEmptyRowDataTypes.some(columnType => getColumnRawData(item, columnType)))
-      : data;
+    const filteredData = data.filter(
+      item => nonEmptyRowDataTypes.some(columnType => getColumnRawData(item, columnType)));
     const sortedData = sortBy(filteredData, item => getColumnRawData(item, sortByColumn));
     const reversedSortedData = isReverse ? [...sortedData].reverse() : sortedData;
 

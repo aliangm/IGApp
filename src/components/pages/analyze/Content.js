@@ -146,7 +146,6 @@ export default class Content extends Component {
                               getItemTitle={getPageItemTitle}
                               showTotalRow={false}
                               additionalColumnValue={additionalColumnValue}
-                              filterEmptyRows={false}
             />
           </FeatureToggle>
         </div>
