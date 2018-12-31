@@ -32,6 +32,7 @@ const Channels = ({channels, tipSuffix}) => (
         data-icon={channel.icon}
         style={{'--score': channel.score}}
         data-tip={`${channel.key}::${tipSuffix}`}
+        data-for='pathChart'
         data-place="right"
       />
     ))}
@@ -217,6 +218,7 @@ class PathChart extends Component {
         <ReactTooltip
           className={this.classes.tooltip}
           getContent={this.renderTooltip}
+          id='pathChart'
         />
       </div>
     );
