@@ -70,7 +70,7 @@ export default class Channels extends Component {
     };
 
     const getChannelCost = (channel) => {
-      return sumBudgets[channel] || 0;
+      return sumBudgets[channel.value] || 0;
     };
 
     const channelsArray = getChannelsWithNicknames();
