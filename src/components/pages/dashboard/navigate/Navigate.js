@@ -6,7 +6,7 @@ import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {getChannelIcon, getNickname as getChannelNickname} from 'components/utils/channels';
 import {set, merge, sum, get} from 'lodash';
 import {formatBudget, formatBudgetShortened, formatNumber, getCommitedBudgets} from 'components/utils/budget';
-import {newFunnelMapping, influencedMapping, efficiencyFormatter} from 'components/utils/utils';
+import {newFunnelMapping, influencedMapping, efficiencyFormatter, percentageFormatter} from 'components/utils/utils';
 import DashboardStatWithContextSmall from 'components/pages/dashboard/navigate/DashboardStatWithContextSmall';
 import {getColor} from 'components/utils/colors';
 import {
@@ -78,7 +78,7 @@ export default class Navigate extends Component {
             Touched {objectiveNickname}
           </div>
           <div className={this.classes.channelTooltipValue}>
-            {formatNumber(influencedObjective)} ({totalInfluenced ? Math.round(influencedObjective / totalInfluenced * 100) : 0}%)
+            {formatNumber(influencedObjective)} ({percentageFormatter(influencedObjective, totalInfluenced)})
           </div>
         </div>
         <div className={this.classes.channelTooltipRow}>
@@ -86,7 +86,7 @@ export default class Navigate extends Component {
             Attributed {objectiveNickname}
           </div>
           <div className={this.classes.channelTooltipValue}>
-            {formatNumber(precisionFormat(attributedObjective))} ({totalAttributed ? Math.round(attributedObjective / totalAttributed * 100) : 0}%)
+            {formatNumber(precisionFormat(attributedObjective))} ({percentageFormatter(attributedObjective, totalAttributed)})
           </div>
         </div>
         <div className={this.classes.channelTooltipRow}>
@@ -190,20 +190,20 @@ export default class Navigate extends Component {
         <div className={this.classes.wrap}>
           <div className={this.classes.metrics}>
             <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'
-                                           stat={previousMonthBudget ? `${Math.round(monthlyBudget / previousMonthBudget * 100)}%` : null}
+                                           stat={previousMonthBudget ? percentageFormatter(monthlyBudget, previousMonthBudget) : null}
                                            isNegative={previousMonthBudget > monthlyBudget}/>
             <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'
-                                           stat={previousMonthLTV ? `${Math.round(actualIndicators.LTV / previousMonthLTV * 100)}%` : null}
+                                           stat={previousMonthLTV ? percentageFormatter(actualIndicators.LTV, previousMonthLTV) : null}
                                            isNegative={previousMonthLTV > actualIndicators.LTV}/>
             <DashboardStatWithContextSmall value={formatNumber(Math.round(actualIndicators.LTV / monthlyBudget * 100))}
                                            name='ROI'
                                            sign='%'
-                                           stat={(previousMonthBudget && previousMonthLTV) ? `${Math.round((actualIndicators.LTV / monthlyBudget) / (previousMonthLTV / previousMonthBudget) * 100)}%` : null}
+                                           stat={(previousMonthBudget && previousMonthLTV) ? percentageFormatter(actualIndicators.LTV / monthlyBudget, previousMonthLTV / previousMonthBudget) : null}
                                            isNegative={(previousMonthLTV / previousMonthBudget) > (actualIndicators.LTV / monthlyBudget)}/>
             <DashboardStatWithContextSmall value={formatNumber(actualIndicators[funnelFirstObjective])}
                                            name={getIndicatorNickname(funnelFirstObjective)}
                                            sign={getIndicatorDisplaySign(funnelFirstObjective)}
-                                           stat={previousMonthObjective ? `${Math.round(actualIndicators[funnelFirstObjective] / previousMonthObjective * 100)}%` : null}
+                                           stat={previousMonthObjective ? percentageFormatter(actualIndicators[funnelFirstObjective], previousMonthObjective) : null}
                                            isNegative={previousMonthObjective > actualIndicators[funnelFirstObjective]}/>
           </div>
           <div className={this.classes.objectives}>

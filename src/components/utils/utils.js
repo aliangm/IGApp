@@ -21,6 +21,10 @@ export function efficiencyFormatter(value, nickname) {
     efficiency + '/' + nickname;
 }
 
+export function percentageFormatter(value, total) {
+  return `${value ? Math.round(value / total * 100) : 0}%`;
+}
+
 export const newFunnelMapping = {
   newMCL: 'MCL',
   newMQL: 'MQL',
