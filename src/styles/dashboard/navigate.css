@@ -7,14 +7,26 @@
 
 .wrap {
     width: calc(100% - 668px);
+    max-width: 700px;
     position: relative;
     margin: 90px 40px 0;
 }
 
 .metrics {
-    margin: 54px 0;
     display: flex;
     justify-content: space-between;
+}
+
+.title-text {
+    font-size: 12px;
+    font-weight: bold;
+    color: #99a4c2;
+    text-transform: uppercase;
+}
+
+.metrics-title {
+    margin-bottom: 25px;
+    composes: title-text;
 }
 
 .objectives {
@@ -22,10 +34,7 @@
 }
 
 .objectives-title {
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #99a4c2;
+    composes: title-text;
 }
 
 .objectives-line {
@@ -34,11 +43,14 @@
 }
 
 .funnel {
-    height: 212px;
-    overflow: hidden;
+    height: 208px;
+    overflow-y: hidden;
+    overflow-x: auto;
     display: flex;
     justify-content: center;
-    margin: 20px 0;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 9px;
 }
 
 .chartWrapper {
