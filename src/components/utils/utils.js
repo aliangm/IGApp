@@ -1,3 +1,5 @@
+import {formatBudget} from 'components/utils/budget';
+
 export function getExtarpolateRatio(day, monthString) {
   const planDate = monthString.split('/');
   const date = new Date(planDate[1], planDate[0] - 1);
@@ -7,6 +9,16 @@ export function getExtarpolateRatio(day, monthString) {
 
 export function extractNumber(budget, defaultValue = 0) {
   return parseInt(budget.toString().replace(/\D+/g, '')) || defaultValue;
+}
+
+export function averageFormatter(value) {
+  return isFinite(value) ? formatBudget(value) : (isNaN(value) ? '0' : '-');
+}
+
+export function efficiencyFormatter(value, nickname) {
+  const efficiency = averageFormatter(value);
+  return efficiency === '0' || efficiency === '-' ? efficiency :
+    efficiency + '/' + nickname;
 }
 
 export const newFunnelMapping = {

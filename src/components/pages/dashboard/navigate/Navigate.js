@@ -6,7 +6,7 @@ import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {getChannelIcon, getNickname as getChannelNickname} from 'components/utils/channels';
 import {set, merge, sum, get} from 'lodash';
 import {formatBudget, formatBudgetShortened, formatNumber, getCommitedBudgets} from 'components/utils/budget';
-import {newFunnelMapping, influencedMapping} from 'components/utils/utils';
+import {newFunnelMapping, influencedMapping, efficiencyFormatter} from 'components/utils/utils';
 import DashboardStatWithContextSmall from 'components/pages/dashboard/navigate/DashboardStatWithContextSmall';
 import {getColor} from 'components/utils/colors';
 import {
@@ -48,13 +48,6 @@ export default class Navigate extends Component {
           target: obj.target
         };
       });
-  };
-
-  averageFormatter = (value) => isFinite(value) ? formatBudget(value) : (isNaN(value) ? '0' : '-');
-  efficiencyFormatter = (value, nickname) => {
-    const efficiency = this.averageFormatter(value);
-    return efficiency === '0' || efficiency === '-' ? efficiency :
-      efficiency + '/' + nickname;
   };
 
   renderChannelTooltip = ((channel, objectiveImpact, influencedObjectiveImpact, budgets, objectiveNickname, objectiveNameSingular) => {
@@ -101,7 +94,7 @@ export default class Navigate extends Component {
             Efficiency
           </div>
           <div className={this.classes.channelTooltipValue}>
-            {this.efficiencyFormatter(Math.round(channelCost / attributedObjective), objectiveNameSingular)}
+            {efficiencyFormatter(Math.round(channelCost / attributedObjective), objectiveNameSingular)}
           </div>
         </div>
       </div>
