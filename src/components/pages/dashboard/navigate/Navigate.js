@@ -29,14 +29,13 @@ export default class Navigate extends Component {
     super(props);
     this.state = {
       currentObjective: 0,
-      months: 2
+      months: 0
     };
   }
 
-  // componentDidMount() {
-  //   const objective = this.formatObjectives()[0];
-  //   this.setState({objective, months: objective.months + 1, currentObjective: 0});
-  // }
+  componentDidMount() {
+    this.setState({months: this.props.calculatedData.historyData.historyDataLength});
+  }
 
   formatObjectives = () => {
     const {collapsedObjectives, funnelObjectives} = this.props.calculatedData.objectives;
@@ -173,7 +172,7 @@ export default class Navigate extends Component {
 
     const committedBudgets = getCommitedBudgets(planBudgets);
     const presentBudgets = parseChannelsImpact(committedBudgets.slice(0, 1));
-    const channelFuture = parseChannelsImpact(committedBudgets.slice(1, months));
+    const channelFuture = parseChannelsImpact(committedBudgets.slice(1, 1 + months));
 
     const indicatorsProperties = getIndicatorsWithProps();
 
@@ -197,22 +196,22 @@ export default class Navigate extends Component {
             </div>
             <div className={this.classes.metrics}>
               <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'
-                                             stat={previousMonthBudget ? percentageFormatter(monthlyBudget, previousMonthBudget) : null}
+                                             stat={previousMonthBudget ? percentageFormatter(monthlyBudget - previousMonthBudget, previousMonthBudget) : null}
                                              isNegative={previousMonthBudget > monthlyBudget}/>
               <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'
-                                             stat={previousMonthLTV ? percentageFormatter(actualIndicators.LTV, previousMonthLTV) : null}
-                                             isNegative={previousMonthLTV > actualIndicators.LTV}/>
+                                             stat={previousMonthLTV ? percentageFormatter(actualIndicators.LTV - previousMonthLTV, previousMonthLTV) : null}
+                                             isNegative={previousMonthLTV >= actualIndicators.LTV}/>
               <DashboardStatWithContextSmall
                 value={formatNumber(Math.round(actualIndicators.LTV / monthlyBudget * 100))}
                 name='ROI'
                 sign='%'
-                stat={(previousMonthBudget && previousMonthLTV) ? percentageFormatter(actualIndicators.LTV / monthlyBudget, previousMonthLTV / previousMonthBudget) : null}
-                isNegative={(previousMonthLTV / previousMonthBudget) > (actualIndicators.LTV / monthlyBudget)}/>
+                stat={(previousMonthBudget && previousMonthLTV) ? `${formatNumber(Math.round(actualIndicators.LTV / monthlyBudget - previousMonthLTV / previousMonthBudget * 100))}%` : null}
+                isNegative={(previousMonthLTV / previousMonthBudget) >= (actualIndicators.LTV / monthlyBudget)}/>
               <DashboardStatWithContextSmall value={formatNumber(actualIndicators[funnelFirstObjective])}
                                              name={getIndicatorNickname(funnelFirstObjective)}
                                              sign={getIndicatorDisplaySign(funnelFirstObjective)}
-                                             stat={previousMonthObjective ? percentageFormatter(actualIndicators[funnelFirstObjective], previousMonthObjective) : null}
-                                             isNegative={previousMonthObjective > actualIndicators[funnelFirstObjective]}/>
+                                             stat={previousMonthObjective ? percentageFormatter(actualIndicators[funnelFirstObjective] - previousMonthObjective, previousMonthObjective) : null}
+                                             isNegative={previousMonthObjective >= actualIndicators[funnelFirstObjective]}/>
             </div>
           </div>
           <div className={this.classes.objectives}>
