@@ -59,6 +59,12 @@ export default class AttributionTable extends Component {
     const costColumn = {title: 'Cost', type: 'cost'};
     const efficiencyColumn = {title: 'Efficiency', type: 'efficiency'};
 
+    const nonEmptyRowDataTypes = ['stage-indicator',
+      'influenced-stage-indicator',
+      'pipeline',
+      'revenue',
+      'influenced-revenue'];
+
     const getIndicatorBaseDefinition = (indicator) => {
       return {
         name: pluralNickname(indicator),
@@ -157,7 +163,7 @@ export default class AttributionTable extends Component {
           return getItemTitle(item);
         }
         case 'cost':
-          return formatNumber(getItemCost(item));
+          return getItemCost(item);
         case 'stage-indicator':
           return getMetricNumber(item);
         case 'influenced-stage-indicator':
@@ -249,7 +255,9 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const sortedData = sortBy(data, item => getColumnRawData(item, sortByColumn));
+    const filteredData = data.filter(
+      item => nonEmptyRowDataTypes.some(columnType => getColumnRawData(item, columnType)));
+    const sortedData = sortBy(filteredData, item => getColumnRawData(item, sortByColumn));
     const reversedSortedData = isReverse ? [...sortedData].reverse() : sortedData;
 
     const stagesData = stages.map(stage => {

@@ -12,7 +12,7 @@ export function extractNumber(budget, defaultValue = 0) {
 }
 
 export function averageFormatter(value) {
-  return isFinite(value) ? formatBudget(value) : (isNaN(value) ? '0' : '-');
+  return isFinite(value) ? formatBudget(Math.round(value)) : (isNaN(value) ? '0' : '-');
 }
 
 export function efficiencyFormatter(value, nickname) {
