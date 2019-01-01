@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import style from 'styles/dashboard/top-x.css';
 import dashboardStyle from "styles/dashboard/dashboard.css";
 import icons from 'styles/icons/plan.css';
-import ReactTooltip from 'react-tooltip';
 
 export default class TopX extends Component {
 
@@ -19,7 +18,7 @@ export default class TopX extends Component {
         <div className={this.classes.row} key={index}>
           <div className={this.classes.left}>
             {item.icon ? <div className={dashboardStyle.locals.channelIcon} data-icon={item.icon}/> : null}
-            <div className={this.classes.text} data-tip={item.title}>
+            <div className={this.classes.text} data-tip={item.title} data-for="appTip">
               {item.title}
             </div>
           </div>
@@ -37,14 +36,13 @@ export default class TopX extends Component {
         <div className={this.classes.xTitle}>
           {this.props.title}
         </div>
-        <div className={this.classes.scoreTitle} data-tip="Total contribution across metrics, calculated with your objectives">
+        <div className={this.classes.scoreTitle} data-tip="Total contribution across metrics, calculated with your objectives" data-for="appTip">
           Attribution Score
         </div>
       </div>
       <div>
         {rows}
       </div>
-      <ReactTooltip/>
     </div>
   }
 
