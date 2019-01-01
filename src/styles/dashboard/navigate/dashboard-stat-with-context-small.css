@@ -25,5 +25,5 @@
 .stat-name {
     composes: grey-text;
     font-size: 14px;
-    margin-top: 10px;
+    margin-top: 7px;
 }

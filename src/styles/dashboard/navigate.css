@@ -378,5 +378,25 @@
 }
 
 .channelTooltipBody {
-    padding: 10px;
+    padding: 20px;
+}
+
+.channelTooltipRow {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.channelTooltipField {
+    width: 50%;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: #99a4c2;
+}
+
+.channelTooltipValue {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    color: #4d91fc;
 }
