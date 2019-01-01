@@ -9,7 +9,7 @@
 
 .line {
     height: 3px;
-    width: 798px;
+    width: calc(100% - 24px);
     background-color: #919191;
     position: absolute;
     margin-top: 259px;

@@ -130,8 +130,11 @@ export default class Navigate extends Component {
   };
 
   render() {
-    const {attribution: {channelsImpact}, actualIndicators, historyData: {channelsImpact: historyChannelsImpact, indicators, planBudgets: historyPlanBudgets, unknownChannels: historyUnknownChannels}, planBudgets, calculatedData: {monthlyBudget, committedForecasting, objectives: {collapsedObjectives, funnelFirstObjective}, historyData: {historyDataLength}}} = this.props;
+    const {attribution: {channelsImpact}, actualIndicators, historyData: {attribution, indicators, planBudgets: historyPlanBudgets, unknownChannels: historyUnknownChannels}, planBudgets, calculatedData: {monthlyBudget, committedForecasting, objectives: {collapsedObjectives, funnelFirstObjective}, historyData: {historyDataLength}}} = this.props;
     const {currentObjective, months} = this.state;
+
+    const historyChannelsImpact = attribution.map(item => get(item, ['channelsImpact'], {}));
+
     const parseChannelsImpact = (channelsImpact) => {
       const impact = {};
       let sum = 0;
@@ -163,9 +166,9 @@ export default class Navigate extends Component {
     const objectiveNickname = getIndicatorNickname(mapping);
     const objectiveNameSingular = getIndicatorNickname(mapping, true);
 
-    const getHistoryChannelsImpact = key => parseChannelsImpact(historyChannelsImpact.map(month => month[key]).slice(0, months));
+    const getHistoryChannelsImpact = key => parseChannelsImpact(historyChannelsImpact.map(month => get(month, [key], {})).slice(0, months));
 
-    const channelsPresent = parseChannelsImpact([channelsImpact[mapping]]);
+    const channelsPresent = parseChannelsImpact([get(channelsImpact, [mapping], {})]);
     const channelsPast = getHistoryChannelsImpact(mapping);
 
     const committedBudgets = getCommitedBudgets(planBudgets);
@@ -188,23 +191,29 @@ export default class Navigate extends Component {
     return (
       <div className={this.classes.container}>
         <div className={this.classes.wrap}>
-          <div className={this.classes.metrics}>
-            <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'
-                                           stat={previousMonthBudget ? percentageFormatter(monthlyBudget, previousMonthBudget) : null}
-                                           isNegative={previousMonthBudget > monthlyBudget}/>
-            <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'
-                                           stat={previousMonthLTV ? percentageFormatter(actualIndicators.LTV, previousMonthLTV) : null}
-                                           isNegative={previousMonthLTV > actualIndicators.LTV}/>
-            <DashboardStatWithContextSmall value={formatNumber(Math.round(actualIndicators.LTV / monthlyBudget * 100))}
-                                           name='ROI'
-                                           sign='%'
-                                           stat={(previousMonthBudget && previousMonthLTV) ? percentageFormatter(actualIndicators.LTV / monthlyBudget, previousMonthLTV / previousMonthBudget) : null}
-                                           isNegative={(previousMonthLTV / previousMonthBudget) > (actualIndicators.LTV / monthlyBudget)}/>
-            <DashboardStatWithContextSmall value={formatNumber(actualIndicators[funnelFirstObjective])}
-                                           name={getIndicatorNickname(funnelFirstObjective)}
-                                           sign={getIndicatorDisplaySign(funnelFirstObjective)}
-                                           stat={previousMonthObjective ? percentageFormatter(actualIndicators[funnelFirstObjective], previousMonthObjective) : null}
-                                           isNegative={previousMonthObjective > actualIndicators[funnelFirstObjective]}/>
+          <div style={{margin: '25px 0'}}>
+            <div className={this.classes.metricsTitle}>
+              This month
+            </div>
+            <div className={this.classes.metrics}>
+              <DashboardStatWithContextSmall value={formatBudgetShortened(monthlyBudget)} name='Budget' sign='$'
+                                             stat={previousMonthBudget ? percentageFormatter(monthlyBudget, previousMonthBudget) : null}
+                                             isNegative={previousMonthBudget > monthlyBudget}/>
+              <DashboardStatWithContextSmall value={formatBudgetShortened(actualIndicators.LTV)} name='LTV' sign='$'
+                                             stat={previousMonthLTV ? percentageFormatter(actualIndicators.LTV, previousMonthLTV) : null}
+                                             isNegative={previousMonthLTV > actualIndicators.LTV}/>
+              <DashboardStatWithContextSmall
+                value={formatNumber(Math.round(actualIndicators.LTV / monthlyBudget * 100))}
+                name='ROI'
+                sign='%'
+                stat={(previousMonthBudget && previousMonthLTV) ? percentageFormatter(actualIndicators.LTV / monthlyBudget, previousMonthLTV / previousMonthBudget) : null}
+                isNegative={(previousMonthLTV / previousMonthBudget) > (actualIndicators.LTV / monthlyBudget)}/>
+              <DashboardStatWithContextSmall value={formatNumber(actualIndicators[funnelFirstObjective])}
+                                             name={getIndicatorNickname(funnelFirstObjective)}
+                                             sign={getIndicatorDisplaySign(funnelFirstObjective)}
+                                             stat={previousMonthObjective ? percentageFormatter(actualIndicators[funnelFirstObjective], previousMonthObjective) : null}
+                                             isNegative={previousMonthObjective > actualIndicators[funnelFirstObjective]}/>
+            </div>
           </div>
           <div className={this.classes.objectives}>
             <div className={this.classes.objectivesTitle}>
@@ -232,17 +241,19 @@ export default class Navigate extends Component {
             </div>
           </div>
           <div className={this.classes.funnel}>
-            <Funnel {
-                      ...{
-                        MCL: actualIndicators.newMCL,
-                        MQL: actualIndicators.newMQL,
-                        SQL: actualIndicators.newSQL,
-                        opps: actualIndicators.newOpps,
-                        users: actualIndicators.newUsers
-                      }}
-                    columnHeight={179}
-                    columnWidth={66}
-                    titleStyle={{backgroundColor: '#F5F6FB'}}/>
+            <div style={{position: 'absolute', top: 0, left: 0}}>
+              <Funnel {
+                        ...{
+                          MCL: actualIndicators.newMCL,
+                          MQL: actualIndicators.newMQL,
+                          SQL: actualIndicators.newSQL,
+                          opps: actualIndicators.newOpps,
+                          users: actualIndicators.newUsers
+                        }}
+                      columnHeight={179}
+                      columnWidth={66}
+                      titleStyle={{backgroundColor: '#F5F6FB'}}/>
+            </div>
           </div>
         </div>
         <PathChart
@@ -258,7 +269,7 @@ export default class Navigate extends Component {
           tooltip={{
             future: (channel) => this.renderFutureTooltip(channel, channelFuture),
             past: (channel) => this.renderChannelTooltip(channel, channelsPast, getHistoryChannelsImpact(influencedMapping[mapping]), relevantHistoryBudgets, objectiveNickname, objectiveNameSingular),
-            present: (channel) => this.renderChannelTooltip(channel, channelsPresent, parseChannelsImpact([channelsImpact[influencedMapping[mapping]]]), presentBudgets, objectiveNickname, objectiveNameSingular)
+            present: (channel) => this.renderChannelTooltip(channel, channelsPresent, parseChannelsImpact([get(channelsImpact, [influencedMapping[mapping]], {})]), presentBudgets, objectiveNickname, objectiveNameSingular)
           }}
           handleMonthsChange={this.handleMonthsChange}
           handleObjectiveChange={this.handleObjectiveChange}
