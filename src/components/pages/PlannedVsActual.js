@@ -129,7 +129,7 @@ export default class PlannedVsActual extends Component {
   render() {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
-    const {channelsImpact: attributionChannelsImpact} = attribution[month];
+		const {channelsImpact: attributionChannelsImpact} = attribution[month] || { };
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
