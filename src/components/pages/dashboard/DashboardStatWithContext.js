@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/dashboard/dashboard-stat-with-context.css';
 import StatSquare from 'components/common/StatSquare';

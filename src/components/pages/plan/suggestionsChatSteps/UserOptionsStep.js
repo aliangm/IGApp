@@ -1,5 +1,6 @@
 import Component from 'components/Component';
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import style from 'styles/plan/plan-optimization-popup.css';
 import isNil from 'lodash/isNil';
 import Button from 'components/controls/Button';

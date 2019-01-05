@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import style from 'styles/plan/new-scenario-popup.css';

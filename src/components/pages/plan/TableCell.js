@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/plan/table-cell.css';
 import budgetsTableStyle from 'styles/plan/budget-table.css';

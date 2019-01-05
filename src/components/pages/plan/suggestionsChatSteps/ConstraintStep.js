@@ -1,6 +1,7 @@
 import Component from 'components/Component';
 import Textfield from 'components/controls/Textfield';
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import style from 'styles/plan/plan-optimization-popup.css';
 import MultiSelect from 'components/controls/MultiSelect';
 import {getNickname} from 'components/utils/channels';

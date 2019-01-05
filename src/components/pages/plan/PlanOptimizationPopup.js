@@ -1,6 +1,7 @@
 import Component from 'components/Component';
 import Page from 'components/Page';
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import ChatBot from 'react-simple-chatbot';
 import style from 'styles/plan/plan-optimization-popup.css';
 import ConstraintStep from 'components/pages/plan/suggestionsChatSteps/ConstraintStep';
