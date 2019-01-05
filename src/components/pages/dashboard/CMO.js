@@ -24,7 +24,6 @@ import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
-import ReactTooltip from 'react-tooltip';
 import StatSquare from 'components/common/StatSquare';
 
 export default class CMO extends Component {
@@ -91,16 +90,16 @@ export default class CMO extends Component {
     return null;
   }
 
-  handleMonthsChange = (months) => this.setState({ months })
+  handleMonthsChange = (months) => this.setState({months});
 
   render() {
     const {
-      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
+      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages},
       calculatedData: {
         committedBudgets,
         committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
-        annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
+        annualBudget, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
         historyData: {totalCost, historyDataWithCurrentMonth, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
@@ -349,7 +348,7 @@ export default class CMO extends Component {
                     maxMonths={historyDataLength}
                     onChange={this.handleMonthsChange}
                     getRef={ref => this.pastSettingsPopup = ref}
-                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
+                    style={{width: 'max-content', top: '20px', left: '-110px'}}
                   />
                 </div>
               </div>
@@ -567,7 +566,7 @@ export default class CMO extends Component {
                     maxMonths={historyDataLength}
                     onChange={this.handleMonthsChange}
                     getRef={ref => this.futureSettingsPopup = ref}
-                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
+                    style={{width: 'max-content', top: '20px', left: '-110px'}}
                   />
                 </div>
               </div>
@@ -765,7 +764,7 @@ export default class CMO extends Component {
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item} style={{height: '350px', width: '540px'}}>
             <div className={dashboardStyle.locals.text}
-                 data-tip="Total allocated budget for campaigns per defined focus">
+                 data-tip="Total allocated budget for campaigns per defined focus" data-for="appTip">
               Campaigns by Focus
             </div>
             <div className={dashboardStyle.locals.chart}>
@@ -852,7 +851,6 @@ export default class CMO extends Component {
           <TopX title='content' data={topContent}/>
         </div>
       </div>
-      <ReactTooltip/>
     </div>;
   }
 }

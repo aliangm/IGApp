@@ -21,6 +21,8 @@ export default class DashboardStatWithContextSmall extends Component {
         <div className={this.classes.statSign}>
           {sign}
         </div>
+      </div>
+      <div style={{marginTop: '5px'}}>
         <NumberWithArrow {...contextProps}/>
       </div>
       <div className={this.classes.statName}>

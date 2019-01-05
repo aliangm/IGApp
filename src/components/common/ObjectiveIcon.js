@@ -14,13 +14,13 @@ export default class ObjectiveIcon extends Component {
 
   render() {
     if (this.props.target <= this.props.value) {
-      return <div className={this.classes.reachedIcon} data-tip='Goal had been reached'/>;
+      return <div className={this.classes.reachedIcon} data-tip='Goal had been reached' data-for="appTip"/>;
     }
     else if (this.props.project >= this.props.target) {
-      return <div className={this.classes.alignedIcon} data-tip='You’re on-track to reach your goal'/>;
+      return <div className={this.classes.alignedIcon} data-tip='You’re on-track to reach your goal' data-for="appTip"/>;
     }
     else {
-      return <div className={this.classes.notAlignedIcon} data-tip='You’re off-track to reach your goal'/>;
+      return <div className={this.classes.notAlignedIcon} data-tip='You’re off-track to reach your goal' data-for="appTip"/>;
     }
   }
 }

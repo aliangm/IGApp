@@ -11,7 +11,6 @@ import {getChannelIcon, getNickname as getChannelNickname, isUnknownChannel} fro
 import {formatBudget, formatNumber, getCommitedBudgets} from 'components/utils/budget';
 import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
-import mapValues from 'lodash/mapValues';
 import icons from 'styles/icons/plan.css';
 import {extractNumber, newFunnelMapping} from 'components/utils/utils';
 import Table from 'components/controls/Table';
@@ -129,7 +128,7 @@ export default class PlannedVsActual extends Component {
   render() {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
-		const {channelsImpact: attributionChannelsImpact} = attribution[month] || { };
+    const attributionChannelsImpact =  get(attribution,[month, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 

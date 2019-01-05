@@ -317,7 +317,7 @@ export default class Product extends Component {
                           value: true
                         },
                           {
-                            text: 'Annualy',
+                            text: 'Annual',
                             value: false
                           }
                         ]}
