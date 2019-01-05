@@ -256,7 +256,7 @@ export default class IndicatorsGraph extends Component {
                     stroke="none"
                     key={index}
                     label={<CustomizedLabel/>}
-                    alwaysShow={true}
+                    ifOverflow="extendDomain"
                     isFront={true}/>
     );
 

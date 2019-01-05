@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import {WithOutContext as ReactTags} from 'react-tag-input';
+import { WithContext as ReactTags } from 'react-tag-input';
 import style from 'styles/controls/tags.css';
 
 export default class Tags extends Component {
