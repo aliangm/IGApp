@@ -53,7 +53,7 @@ export default class TableCell extends Component {
     cellKey: PropTypes.string
   };
 
-  defaultProps = {
+  static defaultProps = {
     secondaryValue: null,
     isConstraitsEnabled: false,
     isEditMode: false,

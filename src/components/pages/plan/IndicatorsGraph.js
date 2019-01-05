@@ -245,7 +245,7 @@ export default class IndicatorsGraph extends Component {
       />;
     });
 
-    const CustomizedLabel = ({viewBox}) => (
+    const CustomizedLabel = ({viewBox}) => viewBox.x >= 0 && viewBox.y >= 0 && (
       <image x={viewBox.x} y={viewBox.y} width="24" height="24" href="/assets/objective-dot.svg"/>
     );
 

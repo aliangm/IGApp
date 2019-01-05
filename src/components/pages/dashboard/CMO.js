@@ -343,13 +343,15 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.settings} onClick={() => {
                     this.pastSettingsPopup.open();
                   }}/>
-                  <MonthsPopup
-                    months={this.state.months}
-                    maxMonths={historyDataLength}
-                    onChange={this.handleMonthsChange}
-                    getRef={ref => this.pastSettingsPopup = ref}
-                    style={{width: 'max-content', top: '20px', left: '-110px'}}
-                  />
+                  {months !== undefined && (
+                    <MonthsPopup
+                      months={months}
+                      maxMonths={historyDataLength}
+                      onChange={this.handleMonthsChange}
+                      getRef={ref => this.pastSettingsPopup = ref}
+                      style={{width: 'max-content', top: '20px', left: '-110px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
@@ -561,13 +563,15 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.settings} onClick={() => {
                     this.futureSettingsPopup.open();
                   }}/>
-                  <MonthsPopup
-                    months={this.state.months}
-                    maxMonths={historyDataLength}
-                    onChange={this.handleMonthsChange}
-                    getRef={ref => this.futureSettingsPopup = ref}
-                    style={{width: 'max-content', top: '20px', left: '-110px'}}
-                  />
+                  {months !== undefined && (
+                    <MonthsPopup
+                      months={months}
+                      maxMonths={historyDataLength}
+                      onChange={this.handleMonthsChange}
+                      getRef={ref => this.futureSettingsPopup = ref}
+                      style={{width: 'max-content', top: '20px', left: '-110px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>

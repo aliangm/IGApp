@@ -10,8 +10,8 @@ export default class NumberWithArrow extends Component {
   static propTypes = {
     stat: PropTypes.any,
     isNegative: PropTypes.bool,
-    arrowStyle: PropTypes.string,
-    statStyle: PropTypes.string
+    arrowStyle: PropTypes.object,
+    statStyle: PropTypes.object
   };
 
   render() {

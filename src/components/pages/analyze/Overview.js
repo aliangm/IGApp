@@ -417,6 +417,7 @@ export default class Overview extends Component {
                       }}>
                         <Pie
                           data={channelCategories}
+                          dataKey="value"
                           cx='50%'
                           cy='50%'
                           labelLine={true}

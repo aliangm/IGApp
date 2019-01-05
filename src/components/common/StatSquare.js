@@ -7,7 +7,7 @@ export default class StatSquare extends Component {
 
   static propTypes = {
     title: PropTypes.string,
-    stat: PropTypes.string,
+    stat: PropTypes.node,
     contextStat: PropTypes.node,
     tooltipText: PropTypes.string,
     showEmptyStat: PropTypes.bool,

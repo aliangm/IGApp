@@ -14,8 +14,13 @@ export default class PayButton extends Component {
     pay: PropTypes.func
   };
 
+  static defaultProps = {
+    trialEnd: new Date().toDateString(),
+  }
+
   render() {
     const daysLeft = getNumberOfDaysBetweenDates(new Date(this.props.trialEnd));
+
     return !this.props.isPaid ?
       <div className={this.classes.inner}>
         Days left in trial

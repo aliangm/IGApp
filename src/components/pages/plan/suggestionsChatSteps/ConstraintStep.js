@@ -10,7 +10,6 @@ export default class ConstraintStep extends Component {
   style = style;
 
   static propTypes = {
-    onConstraintAdd: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
     getChannelsLockOptions: PropTypes.func
   };
