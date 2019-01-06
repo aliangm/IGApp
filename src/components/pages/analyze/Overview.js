@@ -23,7 +23,7 @@ import {getChannelsWithProps, getMetadata, getNickname as getChannelNickname} fr
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
-import {getDatesSpecific} from 'components/utils/date';
+import {getRawDatesSpecific} from 'components/utils/date';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
 import {getColor} from 'components/utils/colors';
 import sumBy from 'lodash/sumBy';
@@ -83,7 +83,8 @@ export default class Overview extends Component {
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
-      getDatesSpecific(planDate, objectives.length, 0),
+      getRawDatesSpecific(planDate, objectives.length, 0),
+      [], [],
       false);
 
     // Parse object to recharts format per indicator

@@ -1,4 +1,6 @@
 import {getEndOfMonthDate} from 'components/utils/date';
+import {isRefreshed} from 'components/utils/indicators';
+import {sumBy, concat, get} from 'lodash';
 
 export function timeFrameToDate(timeFrame) {
   /*
@@ -15,15 +17,30 @@ export function timeFrameToDate(timeFrame) {
 export function flattenObjectives(objectives,
                                   actualIndicators,
                                   dates,
+                                  historyIndicators,
+                                  historyDates,
                                   removeDuplicates = false) {
 
+  const actualIndicatorsWithHistory = concat(historyIndicators, actualIndicators);
+  const datesWithHistory = concat(historyDates, dates);
+
   const getObjectiveData = (indicator, objective, monthIndex) => {
+    let objectiveValue;
+    if(isRefreshed(indicator)){
+      const objectiveDate = new Date(objective.userInput.startDate);
+      const startMonthIndex = datesWithHistory.findIndex(date => date.getMonth() === objectiveDate.getMonth() && date.getFullYear() === objectiveDate.getFullYear());
+      objectiveValue = sumBy(actualIndicatorsWithHistory.slice(startMonthIndex, monthIndex + historyDates.length + 1), month => get(month, indicator, 0));
+    }
+    else{
+      objectiveValue = Array.isArray(actualIndicators) ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator];
+    }
+
     return {
       monthIndex: monthIndex,
       dueDate: getEndOfMonthDate(dates[monthIndex]),
       indicator: indicator,
       // in the case that objectives comes from historyData, indicators an array and needs special treatment
-      value: Array.isArray(actualIndicators) ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator],
+      value: objectiveValue,
       target: objective.target.value,
       priority: objective.target.priority,
       ...objective.userInput

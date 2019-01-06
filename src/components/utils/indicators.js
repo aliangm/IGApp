@@ -96,6 +96,10 @@ export function getIndicatorsWithNicknames() {
   }
 }
 
+export function isRefreshed(indicator) {
+  return getMetadata('isRefreshed', indicator);
+}
+
 export function getIndicatorsWithProps() {
   if (isInitialized) {
     return schema.properties;
