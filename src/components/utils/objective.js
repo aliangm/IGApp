@@ -15,17 +15,13 @@ export function timeFrameToDate(timeFrame) {
 }
 
 export function projectObjective(forecasting, objectiveData) {
-  let project;
-
   if(isRefreshed(objectiveData.indicator)){
-    project = objectiveData.value + sumBy(forecasting.slice(0, objectiveData.monthIndex + 1), month => month[objectiveData.indicator]);
+    return objectiveData.value + sumBy(forecasting.slice(0, objectiveData.monthIndex + 1), month => month[objectiveData.indicator]);
   }
   else {
-    project = forecasting[objectiveData.monthIndex] &&
+    return forecasting[objectiveData.monthIndex] &&
       forecasting[objectiveData.monthIndex][objectiveData.indicator];
   }
-
-  return project;
 }
 
 export function flattenObjectives(objectives,
