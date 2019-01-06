@@ -59,9 +59,12 @@ export default class Ideas extends Component {
       'Endorsements',
       ''
     ];
-    const rows = campaignIdeas.map((idea, i) => {
-      const member = this.props.teamMembers.find(member => member.userId === idea.owner);
-      return {
+
+
+    const rows = campaignIdeas
+      .map((idea) => ({ idea, member: this.props.teamMembers.find(member => member.userId === idea.owner) }))
+      .filter(({ member }) => !!member)
+      .map(({ idea, member }, i) => ({
         items: [
           <div className={PlannedVsActualstyle.locals.cellItem}>
             <Avatar member={member} className={commentStyle.locals.initials}/>
@@ -84,8 +87,8 @@ export default class Ideas extends Component {
           <div className={ideasStyle.locals.like} onClick={this.addLike.bind(this, member.userId, i)}
                data-disabled={idea.endorsements.includes(member.userId) ? true : null}/>
         ]
-      };
-    });
+      }))
+
     return <div>
       <Table headRowData={{items: headRow}}
              rowsData={rows}/>

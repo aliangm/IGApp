@@ -1,12 +1,13 @@
 import Component from 'components/Component';
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import style from 'styles/plan/plan-optimization-popup.css';
 import InsightItem from 'components/pages/plan/suggestionsChatSteps/InsightItem';
 
 export default class InsightStep extends Component {
   style = style;
 
-  static PropTypes = {
+  static propTypes = {
     getInsightData: PropTypes.func.isRequired,
     planDate: PropTypes.string.isRequired,
     getNumberOfPlanUpdates: PropTypes.func.isRequired
