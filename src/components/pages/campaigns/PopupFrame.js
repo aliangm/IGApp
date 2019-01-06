@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import Page from 'components/Page';
 import Title from 'components/onboarding/Title';

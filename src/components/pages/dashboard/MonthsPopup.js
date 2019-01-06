@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { NUMBER_OF_FUTURE_MONTHS } from 'components/utils/date'
 import PlanPopup, { TextContent as PopupTextContent } from 'components/pages/plan/Popup'
 import Select from 'components/controls/Select'

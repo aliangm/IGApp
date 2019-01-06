@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import {formatBudget, formatNumber} from 'components/utils/budget';
@@ -7,14 +8,7 @@ import StageSelector from 'components/pages/analyze/StageSelector';
 import style from 'styles/onboarding/onboarding.css';
 import {getNickname} from 'components/utils/indicators';
 import {precisionFormat} from 'utils';
-
-const influencedMapping = {
-  MCL: 'influencedMCL',
-  MQL: 'influencedMQL',
-  SQL: 'influencedSQL',
-  opps: 'influencedOpps',
-  users: 'influencedUsers'
-};
+import {averageFormatter, efficiencyFormatter, influencedMapping} from 'components/utils/utils';
 
 export default class AttributionTable extends Component {
 
@@ -196,20 +190,13 @@ export default class AttributionTable extends Component {
       }
     };
 
-    const averageFormatter = (value) => isFinite(value) ? formatBudget(Math.round(value)) : (isNaN(value) ? '0' : '-');
-    const efficiencyFormatter = (value) => {
-      const efficiency = averageFormatter(value);
-      return efficiency === '0' || efficiency === '-' ? efficiency :
-        efficiency + '/' + selectedStage.name;
-    };
-
     const formatColumnData =
       {
         'row-title': value => value,
         'cost': formatBudget,
         'stage-indicator': precisionFormat,
         'influenced-stage-indicator': Math.round,
-        'efficiency': efficiencyFormatter,
+        'efficiency': value => efficiencyFormatter(value, selectedStage.name),
         'revenue': formatBudget,
         'arpa': averageFormatter,
         'roi': averageFormatter,

@@ -4,31 +4,22 @@ import Component from 'components/Component';
 import calendarStyle from 'rc-calendar/assets/index.css';
 import RcCalendar from 'rc-calendar';
 import DatePicker from 'rc-calendar/lib/Picker';
-import DateTimeFormat from 'gregorian-calendar-format';
-import GregorianCalendar from 'gregorian-calendar';
+import moment from 'moment';
 import _CalendarLocale from 'rc-calendar/lib/locale/en_US';
-import assign from 'object-assign';
-
-import en_US from 'gregorian-calendar/lib/locale/en_US';
 
 import Textfield from 'components/controls/Textfield';
 
 import style from 'styles/controls/calendar.css';
+const format = 'MM-DD-YYYY';
 
-// Change locale
-const CalendarLocale = assign({}, _CalendarLocale, {
+const now = moment();
+
+const defaultCalendarValue = now.clone();
+defaultCalendarValue.add(-1, 'month');
+
+const CalendarLocale = Object.assign({ }, _CalendarLocale, {
   monthFormat: 'MMMM',
 });
-
-// const dateFormatter = new DateTimeFormat('MM/dd/yyyy');
-const dateFormatter = new DateTimeFormat('MM-dd-yyyy');
-
-// const defaultCalendarValue = new GregorianCalendar(en_US);
-// defaultCalendarValue.setTime(Date.now());
-// defaultCalendarValue.addMonth(-1);
-
-const defaultCalendarValue = new GregorianCalendar(en_US);
-defaultCalendarValue.setTime(Date.now());
 
 export default class Calendar extends Component {
   style = style;
@@ -45,8 +36,9 @@ export default class Calendar extends Component {
 
   onChange = (value) => {
     this.setState({ value });
+
     if (this.props.onChange) {
-      this.props.onChange(dateFormatter.format(value));
+      this.props.onChange(moment(value).format(format));
     }
   }
 
@@ -55,16 +47,18 @@ export default class Calendar extends Component {
   }
 
   render() {
-    const calendar = <RcCalendar
-      locale={ CalendarLocale }
-      style={{ zIndex: 1000 }}
-      formatter={ dateFormatter }
-      disabledTime={ null }
-      timePicker={ null }
-      defaultValue={ this.props.value ? dateFormatter.parse(this.props.value) : defaultCalendarValue }
-      showDateInput={ false }
-      disabledDate={ disabledDate }
-    />;
+    const calendar = (
+      <RcCalendar
+        locale={ CalendarLocale }
+        style={{ zIndex: 1000 }}
+        format={ format }
+        disabledTime={ null }
+        timePicker={ null }
+        defaultValue={ this.props.value ? moment(this.props.value, format) : defaultCalendarValue }
+        showDateInput={ false }
+        disabledDate={ disabledDate }
+      />
+    );
 
     let inputClassName = this.classes.input;
 
@@ -78,12 +72,11 @@ export default class Calendar extends Component {
         disabled={ this.props.disabled }
         calendar={ calendar }
         value={ this.state.value }
-        formatter={ dateFormatter }
         onChange={ this.onChange }
-        defaultValue={ this.props.value ? dateFormatter.parse(this.props.value) : defaultCalendarValue }
+        defaultValue={ this.props.value ? moment(this.props.value, format) : defaultCalendarValue }
       >
-        {({ value }) => {
-          return <Textfield
+        {() => (
+          <Textfield
             ref={ (t) => { this.textfield = t; } }
             className={ inputClassName }
             onClick={ this.openCalendar }
@@ -92,7 +85,7 @@ export default class Calendar extends Component {
             placeHolder={ this.props.placeholder }
             disabled={ this.props.disabled }
           />
-        }}
+        )}
       </DatePicker>
       <div className={ this.classes.icon } onClick={ this.openCalendar } />
     </div>
@@ -104,9 +97,8 @@ function disabledDate(current) {
     // allow empty select
     return false;
   }
-  const date = new Date();
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  return current.getYear() + 10 < date.getFullYear();  // can not select days before today
+
+  const now = moment({hour: 0, minute: 0, seconds: 0, milliseconds: 0});
+
+  return now.diff(current, 'years') > 10;  // can not select days before today
 }

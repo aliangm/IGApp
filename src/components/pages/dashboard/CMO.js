@@ -24,7 +24,6 @@ import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
-import ReactTooltip from 'react-tooltip';
 import StatSquare from 'components/common/StatSquare';
 
 export default class CMO extends Component {
@@ -91,7 +90,7 @@ export default class CMO extends Component {
     return null;
   }
 
-  handleMonthsChange = (months) => this.setState({ months })
+  handleMonthsChange = (months) => this.setState({months});
 
   render() {
     const {
@@ -344,13 +343,15 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.settings} onClick={() => {
                     this.pastSettingsPopup.open();
                   }}/>
-                  <MonthsPopup
-                    months={this.state.months}
-                    maxMonths={historyDataLength}
-                    onChange={this.handleMonthsChange}
-                    getRef={ref => this.pastSettingsPopup = ref}
-                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
-                  />
+                  {months !== undefined && (
+                    <MonthsPopup
+                      months={months}
+                      maxMonths={historyDataLength}
+                      onChange={this.handleMonthsChange}
+                      getRef={ref => this.pastSettingsPopup = ref}
+                      style={{width: 'max-content', top: '20px', left: '-110px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
@@ -446,7 +447,7 @@ export default class CMO extends Component {
             </div>
             <div className={dashboardStyle.locals.column} data-border={true}>
               <div className={dashboardStyle.locals.text}>
-                Snapshot
+                This Month
               </div>
               <div style={{padding: '15px'}}>
                 <div className={dashboardStyle.locals.miniFunnelRow}>
@@ -562,13 +563,15 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.settings} onClick={() => {
                     this.futureSettingsPopup.open();
                   }}/>
-                  <MonthsPopup
-                    months={this.state.months}
-                    maxMonths={historyDataLength}
-                    onChange={this.handleMonthsChange}
-                    getRef={ref => this.futureSettingsPopup = ref}
-                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
-                  />
+                  {months !== undefined && (
+                    <MonthsPopup
+                      months={months}
+                      maxMonths={historyDataLength}
+                      onChange={this.handleMonthsChange}
+                      getRef={ref => this.futureSettingsPopup = ref}
+                      style={{width: 'max-content', top: '20px', left: '-110px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
@@ -620,7 +623,7 @@ export default class CMO extends Component {
                 </div>
                 <div className={dashboardStyle.locals.quarter3}>
                   <div className={dashboardStyle.locals.quarterNumber}>
-                    {formatBudgetShortened(futureLTV)}
+                    ${formatBudgetShortened(futureLTV)}
                     <div className={dashboardStyle.locals.center} style={{
                       visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV - 1))
                         ? 'visible'
@@ -765,7 +768,7 @@ export default class CMO extends Component {
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item} style={{height: '350px', width: '540px'}}>
             <div className={dashboardStyle.locals.text}
-                 data-tip="Total allocated budget for campaigns per defined focus">
+                 data-tip="Total allocated budget for campaigns per defined focus" data-for="appTip">
               Campaigns by Focus
             </div>
             <div className={dashboardStyle.locals.chart}>
@@ -852,7 +855,6 @@ export default class CMO extends Component {
           <TopX title='content' data={topContent}/>
         </div>
       </div>
-      <ReactTooltip/>
     </div>;
   }
 }

@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/dashboard/navigate/dashboard-stat-with-context-small.css';
 import NumberWithArrow from 'components/NumberWithArrow';
@@ -21,6 +22,8 @@ export default class DashboardStatWithContextSmall extends Component {
         <div className={this.classes.statSign}>
           {sign}
         </div>
+      </div>
+      <div style={{marginTop: '5px'}}>
         <NumberWithArrow {...contextProps}/>
       </div>
       <div className={this.classes.statName}>

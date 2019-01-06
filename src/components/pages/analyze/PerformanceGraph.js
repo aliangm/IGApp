@@ -78,16 +78,15 @@ export default class PerformanceGraph extends Component {
         <div>{channelsProperties[channel].nickname}</div>
       </div>);
 
-    const CustomizedLabel = React.createClass({
-      render () {
-        const {x, y, width, height, "data-key": channel, index: monthIndex} = this.props;
-        return <RechartBarLabel x={x}
-                                y={y}
-                                width={width}
-                                height={height}
-                                label={'$' + formatBudgetShortened(data[monthIndex][channel])}/>
-      }
-    });
+    const CustomizedLabel = ({x, y, width, height, "data-key": channel, index: monthIndex}) => (
+      <RechartBarLabel
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        label={'$' + formatBudgetShortened(data[monthIndex][channel])}
+      />
+    );
 
     const bars = advancedChannels.map((channel, index) =>
       <Bar key={index} yAxisId="left" dataKey={channel} stackId="channels" fill={getColor(index)}>
