@@ -445,7 +445,7 @@ export default class CMO extends Component {
             </div>
             <div className={dashboardStyle.locals.column} data-border={true}>
               <div className={dashboardStyle.locals.text}>
-                Snapshot
+                This Month
               </div>
               <div style={{padding: '15px'}}>
                 <div className={dashboardStyle.locals.miniFunnelRow}>
@@ -619,7 +619,7 @@ export default class CMO extends Component {
                 </div>
                 <div className={dashboardStyle.locals.quarter3}>
                   <div className={dashboardStyle.locals.quarterNumber}>
-                    {formatBudgetShortened(futureLTV)}
+                    ${formatBudgetShortened(futureLTV)}
                     <div className={dashboardStyle.locals.center} style={{
                       visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV - 1))
                         ? 'visible'
