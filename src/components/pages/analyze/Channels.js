@@ -52,7 +52,7 @@ export default class Channels extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact, usersByEmail}, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions} = this.props;
+    const {attribution: {channelsImpact}, getMetricDataByMapping, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions} = this.props;
     const {firstObjective} = this.state;
 
     const getChannelTitle = ({value: channelKey, label}) => {
@@ -126,7 +126,9 @@ export default class Channels extends Component {
 
     const journeys = [];
     let journeysSum = 0;
-    usersByEmail.forEach(user => {
+
+    const metricData = getMetricDataByMapping(this.state.conversionIndicator);
+    metricData.forEach(user => {
       const journey = user.sessions
         .filter(item => item.channel && item.channel !== 'direct' && Object.keys(item.funnelStages).includes(this.state.conversionIndicator))
         .map(item => item.channel);
