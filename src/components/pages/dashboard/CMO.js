@@ -7,9 +7,7 @@ import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import {
   getIndicatorsWithProps,
-  getNickname as getIndicatorNickname,
-  isRefreshed
-} from 'components/utils/indicators';
+  getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
@@ -25,6 +23,7 @@ import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
 import StatSquare from 'components/common/StatSquare';
+import {projectObjective} from 'components/utils/objective';
 
 export default class CMO extends Component {
 
@@ -188,14 +187,8 @@ export default class CMO extends Component {
     const objectivesGauges = collapsedObjectives.map((objective, index) => {
       const target = objective.target;
 
-      let project;
-      if(isRefreshed(objective.indicator)){
-        project = objective.value + sumBy(committedForecasting.slice(0, objective.monthIndex + 1), month => month[objective.indicator]);
-      }
-      else {
-        project = committedForecasting[objective.monthIndex] &&
-          committedForecasting[objective.monthIndex][objective.indicator];
-      }
+      const project = projectObjective(committedForecasting, objective);
+
       return <Objective
         target={target}
         value={actualIndicators[objective.indicator]}

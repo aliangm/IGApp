@@ -13,6 +13,7 @@ import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
 import {getColor} from 'components/utils/colors';
+import {projectObjective} from 'components/utils/objective';
 
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
@@ -164,8 +165,7 @@ export default class IndicatorsGraph extends Component {
 
   getObjectiveIconFromData = (objectiveData) => {
     const {committedForecasting} = this.props.calculatedData;
-    const project = committedForecasting[objectiveData.monthIndex] &&
-      committedForecasting[objectiveData.monthIndex][objectiveData.indicator];
+    const project = projectObjective(committedForecasting, objectiveData);
     return <ObjectiveIcon target={objectiveData.target}
                           value={this.props.actualIndicators[objectiveData.indicator]}
                           project={project}/>;
