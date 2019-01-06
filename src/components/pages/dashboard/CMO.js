@@ -8,7 +8,7 @@ import Funnel from 'components/pages/dashboard/Funnel';
 import {
   getIndicatorsWithProps,
   getNickname as getIndicatorNickname,
-  getMetadata as getIndicatorMetadata
+  isRefreshed
 } from 'components/utils/indicators';
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
@@ -187,8 +187,15 @@ export default class CMO extends Component {
     const indicatorsProperties = getIndicatorsWithProps();
     const objectivesGauges = collapsedObjectives.map((objective, index) => {
       const target = objective.target;
-      const project = committedForecasting[objective.monthIndex] &&
-        committedForecasting[objective.monthIndex][objective.indicator];
+
+      let project;
+      if(isRefreshed(objective.indicator)){
+        project = objective.value + sumBy(committedForecasting.slice(0, objective.monthIndex + 1), month => month[objective.indicator]);
+      }
+      else {
+        project = committedForecasting[objective.monthIndex] &&
+          committedForecasting[objective.monthIndex][objective.indicator];
+      }
       return <Objective
         target={target}
         value={actualIndicators[objective.indicator]}
