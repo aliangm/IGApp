@@ -7,6 +7,7 @@ import {getChannelIcon, getChannelsWithProps, getNickname as getChannelNickname}
 import {groupBy, sortBy, uniq, set} from 'lodash';
 import SaveButton from 'components/pages/profile/SaveButton';
 import Button from 'components/controls/Button';
+import MappingRule from 'components/pages/settings/channels/tabs/common/MappingRule';
 
 const paramsOptions = [
   {value: 'source', label: 'source'},
@@ -52,25 +53,6 @@ export default class ChannelsTab extends Component {
     });
   };
 
-  getNewCondition = () => {
-    return {
-      param: '',
-      operation: '',
-      value: ''
-    };
-  };
-
-  addRule = (channel) => {
-    const {attributionMappingRules} = this.props;
-    attributionMappingRules.push({
-      conditions: [
-        {...this.getNewCondition()}
-      ],
-      channel
-    });
-    this.props.updateState({attributionMappingRules});
-  };
-
   updateRule = (ruleIndex, conditionIndex, key, value) => {
     const {attributionMappingRules} = this.props;
     attributionMappingRules[ruleIndex].conditions[conditionIndex][key] = value;
@@ -91,7 +73,7 @@ export default class ChannelsTab extends Component {
 
   addCondition = (ruleIndex) => {
     const {attributionMappingRules} = this.props;
-    attributionMappingRules[ruleIndex].conditions.push({...this.getNewCondition()});
+    attributionMappingRules[ruleIndex].conditions.push({...this.props.getNewCondition()});
 
     this.props.updateState({attributionMappingRules});
   };
@@ -192,28 +174,15 @@ export default class ChannelsTab extends Component {
                 <div key={rule.index}>
                   {
                     rule.conditions.map((condition, conditionIndex) =>
-                      <div className={this.classes.flexRow} key={`${rule.index}-${conditionIndex}`}>
-                        <Select select={{options: paramsOptions}} style={ruleSelectStyle}
-                                selected={condition.param}
-                                onChange={e => {
-                                  this.updateRule(rule.index, conditionIndex, 'param', e.value);
-                                }}/>
-                        <Select select={{options: operationOptions}} style={ruleSelectStyle}
-                                selected={condition.operation}
-                                onChange={e => {
-                                  this.updateRule(rule.index, conditionIndex, 'operation', e.value);
-                                }}/>
-                        <Textfield value={condition.value}
-                                   style={{marginRight: MARGIN_RIGHT}}
-                                   onChange={e => {
-                                     this.updateRule(rule.index, conditionIndex, 'value', e.target.value);
-                                   }}/>
-                        <div className={this.classes.rowIcons}>
-                          <div className={this.classes.minusIcon}
-                               onClick={() => this.deleteCondition(rule.index, conditionIndex)}/>
-                          <div className={this.classes.plusIcon} onClick={() => this.addCondition(rule.index)}/>
-                        </div>
-                      </div>)
+                      <MappingRule key={`${rule.index}-${conditionIndex}`}
+                                   updateValue={e => this.updateRule(rule.index, conditionIndex, 'value', e.target.value)}
+                                   updateParam={e => this.updateRule(rule.index, conditionIndex, 'param', e.value)}
+                                   updateOperation={e => this.updateRule(rule.index, conditionIndex, 'operation', e.value)}
+                                   value={condition.value}
+                                   param={condition.param}
+                                   operation={condition.operation}
+                                   handleAdd={() => this.addCondition(rule.index)}
+                                   handleDelete={() => this.deleteCondition(rule.index, conditionIndex)}/>)
                   }
                   <div className={this.classes.text} hidden={rule.index === channelRules.length - 1}>
                     OR
@@ -221,7 +190,7 @@ export default class ChannelsTab extends Component {
                 </div>)
             }
             <Button type="secondary" style={{width: 'fit-content', marginTop: '15px'}}
-                    onClick={() => this.addRule(selectedChannel)}>
+                    onClick={() => this.props.addRule(selectedChannel)}>
               OR
             </Button>
           </div>

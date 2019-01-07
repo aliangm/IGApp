@@ -55,6 +55,7 @@ import Expenses from 'components/pages/campaigns/Expenses';
 import AddExpensePopup from 'components/pages/campaigns/AddExpensePopup';
 import ChannelsSettings from 'components/pages/settings/channels/Channels';
 import ChannelsTab from 'components/pages/settings/channels/tabs/ChannelsTab';
+import UnmappedTab from 'components/pages/settings/channels/tabs/UnmappedTab';
 
 style.use();
 
@@ -153,6 +154,10 @@ ReactDOM.render(
                  component={ChannelsTab}
                  onEnter={requireAuth}
                  tabName='Channels'/>
+          <Route path="/settings/channels/unmapped"
+                 component={UnmappedTab}
+                 onEnter={requireAuth}
+                 tabName='Unmapped'/>
         </Route>
       </Route>
       <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>
