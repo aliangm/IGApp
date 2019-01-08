@@ -210,7 +210,7 @@ export default class AnnualTab extends Component {
       quarterOffset, annualOffset,
       item => getEndOfMonthString(item));
 
-    const objectiveAccumulatedData = dates && new Array(dates.length);
+    const objectiveAccumulatedData = dates && new Array(dates.length).fill(null);
     objectiveAccumulatedData && collapsedObjectives.filter(objective => isRefreshed(objective.indicator))
       .forEach(objective => {
         for (let i = 0 ; i < objective.monthIndex; i++) {
@@ -317,7 +317,7 @@ export default class AnnualTab extends Component {
                                labelDates={datesForGraphWithPeriodMonths || []}
                                preiodDates={datesWithAddition || []}
                                numberOfPastDates={numberOfPastDatesWithSumAddition || 0}
-                               objectiveAccumalativeData={objectiveAccumulatedDataWithAddedData}
+                               objectiveAccumulativeData={objectiveAccumulatedDataWithAddedData || []}
                                {...this.props}
               />
             </FloatingComponent>

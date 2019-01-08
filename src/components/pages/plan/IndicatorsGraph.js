@@ -9,6 +9,7 @@ import {formatBudgetShortened, formatNumber} from 'components/utils/budget';
 import isEqual from 'lodash/isEqual';
 import CustomCheckbox from 'components/controls/CustomCheckbox';
 import isNil from 'lodash/isNil';
+import get from 'lodash/get';
 import findIndex from 'lodash/findIndex';
 import {shouldUpdateComponent} from 'components/pages/plan/planUtil';
 import ObjectiveIcon from 'components/common/ObjectiveIcon';
@@ -18,6 +19,7 @@ import {projectObjective} from 'components/utils/objective';
 const DASHED_OPACITY = '0.7';
 const DASHED_KEY_SUFFIX = '_DASEHD';
 const TOOLTIP_VALUE_SUFFIX = '_TOOLTIP';
+const ACCUMULATIVE_VALUE_SUFFIX = '_ACCUM';
 
 export default class IndicatorsGraph extends Component {
 
@@ -110,6 +112,9 @@ export default class IndicatorsGraph extends Component {
     const mainFutureData = this.props.mainLineData.slice(numberOfPastDates);
     const pastIndicators = this.props.mainLineData.slice(0, numberOfPastDates);
     const dashedLineData = this.props.dashedLineData && this.props.dashedLineData.slice(numberOfPastDates);
+    const futureObjectiveAccumulative = this.props.objectiveAccumulativeData &&
+      this.props.objectiveAccumulativeData.slice(numberOfPastDates);
+
 
     const zeroedIndicators = {};
     Object.keys(getIndicatorsWithProps()).forEach(key => {
@@ -142,6 +147,9 @@ export default class IndicatorsGraph extends Component {
       Object.keys(month).forEach(key => {
         json[key] = month[key].graphValue;
         json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
+
+        const accumulativeObjectiveValue = get(futureObjectiveAccumulative, [monthIndex, key], null);
+        json[key + ACCUMULATIVE_VALUE_SUFFIX]= accumulativeObjectiveValue;
       });
 
       if (dashedLineData) {
@@ -276,10 +284,13 @@ export default class IndicatorsGraph extends Component {
             const tooltipValue = item.payload[item.dataKey + TOOLTIP_VALUE_SUFFIX];
             const secondaryTooltipValue = secondaryItem &&
               secondaryItem.payload[secondaryItem.dataKey + TOOLTIP_VALUE_SUFFIX];
+
+            const accumulativeObjectiveValue = item.payload[item.dataKey + ACCUMULATIVE_VALUE_SUFFIX];
             return {
               ...item,
               tooltipValue: tooltipValue,
-              secondaryTooltipValue: secondaryTooltipValue
+              secondaryTooltipValue: secondaryTooltipValue,
+              accumulativeObjectiveValue: accumulativeObjectiveValue
             };
           });
 
@@ -328,6 +339,10 @@ export default class IndicatorsGraph extends Component {
                       </div> : null
                     }
                   </div>
+                  {!isNil(item.accumulativeObjectiveValue) ?
+                    <div className={this.classes.customTooltipObjective}>
+                      Accumulative Objective: {formatNumber(item.accumulativeObjectiveValue)}
+                    </div> : null}
                   {parsedObjectives[indicator] !== undefined &&
                   parsedObjectives[indicator].x === data.label ?
                     <div className={this.classes.customTooltipObjective}>
