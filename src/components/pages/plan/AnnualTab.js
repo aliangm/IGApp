@@ -211,12 +211,18 @@ export default class AnnualTab extends Component {
       item => getEndOfMonthString(item));
 
     const objectiveAccumulatedData = dates && new Array(dates.length).fill(null);
-    objectiveAccumulatedData && collapsedObjectives.filter(objective => isRefreshed(objective.indicator))
+    objectiveAccumulatedData &&
+    orderBy(objectivesData.filter(objective => isRefreshed(objective.indicator)), objective => objective.monthIndex)
       .forEach(objective => {
-        for (let i = 0 ; i < objective.monthIndex; i++) {
-          set(objectiveAccumulatedData,
-            [numberOfPastDates + i, objective.indicator],
-            projectObjective(committedForecasting, objective, i));
+        for (let i = 0; i < objective.monthIndex; i++) {
+          // Only if accumulative data does not already exists for this objective then set it
+          if (get(objectiveAccumulatedData,
+            [numberOfPastDates + i, objective.indicator], null) === null) {
+
+            set(objectiveAccumulatedData,
+              [numberOfPastDates + i, objective.indicator],
+              projectObjective(committedForecasting, objective, i));
+          }
         }
       });
 
