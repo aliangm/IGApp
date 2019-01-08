@@ -25,6 +25,7 @@ import {getProfileSync} from 'components/utils/AuthService';
 import {userPermittedToPage} from 'utils';
 import {getMemberFullName} from 'components/utils/teamMembers';
 import Table from 'components/controls/Table';
+import {isEmpty} from 'lodash';
 
 const MEMBERS_TO_SKIP = 1;
 
@@ -81,6 +82,48 @@ export default class Welcome extends Component {
     update[parameter] = event.target.value;
     this.props.updateState({userAccount: update});
   }
+
+  updateSiteStructureIfNeeded = () => {
+    if (isEmpty(this.props.attribution.siteStructure)) {
+      const companyWebsite = this.props.userAccount.companyWebsite;
+
+      let landingPageURL;
+      if (companyWebsite) {
+        const websiteWithOutWWW = companyWebsite.replace('www.', '');
+        const indexOfProtocol = websiteWithOutWWW.indexOf('://');
+        if (indexOfProtocol > -1) {
+          const endIndexOfProtocol = indexOfProtocol + 3;
+          landingPageURL =
+            websiteWithOutWWW.slice(0, endIndexOfProtocol) + 'lp.' + websiteWithOutWWW.slice(endIndexOfProtocol);
+        }
+        else {
+          landingPageURL = 'lp.' + websiteWithOutWWW;
+        }
+
+      }
+
+
+
+      this.props.updateUserMonthPlan({
+        attribution: {
+          ...this.props.attribution,
+          siteStructure: {
+            homepage: companyWebsite + '/',
+            pricing: companyWebsite + '/pricing',
+            blog: companyWebsite + '/blog',
+            caseStudies: companyWebsite + '/case-studies',
+            contact: companyWebsite + '/contact',
+            aboutUs: companyWebsite + '/company',
+            presentations: companyWebsite + '/presentations',
+            eBooks: companyWebsite + '/e-books',
+            whitepapers: companyWebsite + '/whitepapers',
+            videos: companyWebsite + '/videos',
+            landingPages: landingPageURL
+          }
+        }
+      });
+    }
+  };
 
   handleChangeName(property, index, event) {
     let update = Object.assign({}, this.props.userAccount);
@@ -447,6 +490,7 @@ export default class Welcome extends Component {
             <SaveButton onClick={() => {
               this.setState({saveFail: false, saveSuccess: false});
               this.props.updateUserAccount(this.getUserAccountFields());
+              this.updateSiteStructureIfNeeded();
               this.setState({saveSuccess: true});
             }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
           </div>
