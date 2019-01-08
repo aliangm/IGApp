@@ -148,7 +148,7 @@ export default class AnnualTab extends Component {
       secondaryPlanForecastedIndicators.length > 0;
 
     const parsedObjectives = {};
-    objectivesData
+    collapsedObjectives
       .forEach(objective => {
         const target = objective.target;
         const date = objective.dueDate;
@@ -212,17 +212,12 @@ export default class AnnualTab extends Component {
 
     const objectiveAccumulatedData = dates && new Array(dates.length).fill(null);
     objectiveAccumulatedData &&
-    orderBy(objectivesData.filter(objective => isRefreshed(objective.indicator)), objective => objective.monthIndex)
+    collapsedObjectives.filter(objective => isRefreshed(objective.indicator))
       .forEach(objective => {
         for (let i = 0; i < objective.monthIndex; i++) {
-          // Only if accumulative data does not already exists for this objective then set it
-          if (get(objectiveAccumulatedData,
-            [numberOfPastDates + i, objective.indicator], null) === null) {
-
-            set(objectiveAccumulatedData,
-              [numberOfPastDates + i, objective.indicator],
-              projectObjective(committedForecasting, objective, i));
-          }
+          set(objectiveAccumulatedData,
+            [numberOfPastDates + i, objective.indicator],
+            projectObjective(committedForecasting, objective, i));
         }
       });
 
