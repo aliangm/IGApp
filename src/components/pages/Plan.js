@@ -80,7 +80,7 @@ export default class Plan extends Component {
       const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
         const {committedBudget, plannerBudget, isSoft, userBudgetConstraint, regions} = month[channelKey];
-        channelsObject[channelKey] = {
+        const channelObject = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: committedBudget,
           isConstraint: withConstraints ? !isNil(userBudgetConstraint) : false,
@@ -88,6 +88,11 @@ export default class Plan extends Component {
           isSoft: withConstraints ? isSoft : false,
           regions: regions
         };
+
+        if(channelObject.primaryBudget || channelObject.secondaryBudget){
+          channelsObject[channelKey] = channelObject;
+        }
+
       });
       return {channels: channelsObject, isHistory: false};
     });
@@ -95,9 +100,12 @@ export default class Plan extends Component {
       const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
         const {committedBudget} = month[channelKey];
-        channelsObject[channelKey] = {
-          primaryBudget: committedBudget
-        };
+
+        if(committedBudget){
+          channelsObject[channelKey] = {
+            primaryBudget: committedBudget
+          };
+        }
       });
       return {channels: channelsObject, isHistory: true};
     });
