@@ -22,7 +22,12 @@ export default class Analyze extends Component {
     const attributionModels = [
       {value: false, label: 'Full Journey'},
       {value: 'firsttouch', label: 'Introducer'},
-      {value: 'lasttouch', label: 'Converter'}
+      {value: 'lasttouch', label: 'Converter'},
+      {value: 'linear', label: 'Linear'},
+      {value: 'timeDecay', label: 'Time Decay'},
+      {value: 'uShaped', label: 'U-Shaped'},
+      {value: 'wShaped', label: 'W-Shaped'},
+      {value: 'zShaped', label: 'Full-Path (Z-Shaped)'},
     ];
 
     const selectOptions = [];
