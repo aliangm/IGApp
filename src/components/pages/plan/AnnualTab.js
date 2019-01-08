@@ -153,7 +153,7 @@ export default class AnnualTab extends Component {
         const target = objective.target;
         const date = objective.dueDate;
         const endOfMonth = getEndOfMonthString(date);
-        parsedObjectives[objective.indicator] = {x: endOfMonth, y: target};
+        parsedObjectives[objective.indicator] = {parsedData: {x: endOfMonth, y: target}, rawData: {...objective}};
       });
 
     const numberOfPastDates = budgetsData && budgetsData.filter((month) => month.isHistory).length;

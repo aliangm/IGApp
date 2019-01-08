@@ -149,7 +149,7 @@ export default class IndicatorsGraph extends Component {
         json[key + TOOLTIP_VALUE_SUFFIX] = month[key].tooltipValue;
 
         const accumulativeObjectiveValue = get(futureObjectiveAccumulative, [monthIndex, key], null);
-        json[key + ACCUMULATIVE_VALUE_SUFFIX]= accumulativeObjectiveValue;
+        json[key + ACCUMULATIVE_VALUE_SUFFIX] = accumulativeObjectiveValue;
       });
 
       if (dashedLineData) {
@@ -262,7 +262,7 @@ export default class IndicatorsGraph extends Component {
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
       parsedObjectives[indicator] &&
-      <ReferenceDot {...parsedObjectives[indicator]}
+      <ReferenceDot {...parsedObjectives[indicator].parsedData}
                     fill="none"
                     stroke="none"
                     key={index}
@@ -308,7 +308,7 @@ export default class IndicatorsGraph extends Component {
               const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
               const indicatorColor = getColor(colorIndex);
               if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
-                return <div key={index}>
+                return <div key={index} style={{display: "flex", flexDirection: "column"}}>
                   <div className={this.classes.customTooltipIndicator}>
                     {indicatorsMapping[indicator]}
                   </div>
@@ -341,12 +341,15 @@ export default class IndicatorsGraph extends Component {
                   </div>
                   {!isNil(item.accumulativeObjectiveValue) ?
                     <div className={this.classes.customTooltipObjective}>
-                      Accumulative Objective: {formatNumber(item.accumulativeObjectiveValue)}
+                      Objective Progress: {formatNumber(item.accumulativeObjectiveValue)}
                     </div> : null}
                   {parsedObjectives[indicator] !== undefined &&
-                  parsedObjectives[indicator].x === data.label ?
-                    <div className={this.classes.customTooltipObjective}>
-                      Objective: {formatNumber(parsedObjectives[indicator].y)}
+                  parsedObjectives[indicator].parsedData.x === data.label ?
+                    <div className={this.classes.customTooltipObjective} style={{display: "inline-flex" ,alignItems: "center"}}>
+                      <div >
+                        Objective: {formatNumber(parsedObjectives[indicator].parsedData.y)}
+                      </div>
+                      {this.getObjectiveIconFromData(parsedObjectives[indicator].rawData)}
                     </div>
                     : null}
                 </div>;
