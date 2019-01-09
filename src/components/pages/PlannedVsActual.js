@@ -55,6 +55,22 @@ export default class PlannedVsActual extends Component {
     this.setState({month: this.getCurrentMonthIndex()});
   }
 
+  initializeIfNeeded = (object, key) => {
+    if (!object[key]) {
+      object[key] = {};
+    }
+  };
+
+  getObjectToUpdate(currentMonthObject, historyData, historyDataKey) {
+    const isCurrentMonth = this.state.month === this.props.calculatedData.lastYearHistoryData.historyDataLength;
+    if (isCurrentMonth) {
+      return currentMonthObject;
+    }
+    else {
+      return get(historyData, [historyDataKey, this.state.month]);
+    }
+  }
+
   addChannel = (event) => {
     this.setState({showText: false});
     const channel = event.value;
@@ -63,9 +79,11 @@ export default class PlannedVsActual extends Component {
     }
     else {
       const actualChannelBudgets = {...this.props.actualChannelBudgets};
-      const {knownChannels = {}} = actualChannelBudgets;
-      knownChannels[channel] = 0;
-      this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, knownChannels: knownChannels}});
+      const historyData = {...this.props.historyData};
+      const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
+      this.initializeIfNeeded(objectToUpdate, 'knownChannels');
+      objectToUpdate.knownChannels[channel] = 0;
+      this.props.updateState({actualChannelBudgets, historyData});
     }
   };
 
@@ -74,28 +92,27 @@ export default class PlannedVsActual extends Component {
     this.props.addUnknownChannel(channel);
 
     const actualChannelBudgets = {...this.props.actualChannelBudgets};
-    const {unknownChannels = {}} = actualChannelBudgets;
-    unknownChannels[channel] = 0;
-    this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, unknownChannels: unknownChannels}});
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
+    this.initializeIfNeeded(objectToUpdate, 'unknownChannels');
+    objectToUpdate.unknownChannels[channel] = 0;
+    this.props.updateState({actualChannelBudgets, historyData});
 
   };
 
   updateActual = (channel, value) => {
     const actualChannelBudgets = {...this.props.actualChannelBudgets};
-    const {unknownChannels = {}, knownChannels = {}} = actualChannelBudgets;
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
     if (isUnknownChannel(channel)) {
-      unknownChannels[channel] = value;
+      this.initializeIfNeeded(objectToUpdate, 'unknownChannels');
+      objectToUpdate.unknownChannels[channel] = value;
     }
     else {
-      knownChannels[channel] = value;
+      this.initializeIfNeeded(objectToUpdate, 'knownChannels');
+      objectToUpdate.knownChannels[channel] = value;
     }
-    this.props.updateState({
-      actualChannelBudgets: {
-        ...actualChannelBudgets,
-        knownChannels: knownChannels,
-        unknownChannels: unknownChannels
-      }
-    });
+    this.props.updateState({actualChannelBudgets, historyData});
   };
 
   setMonth = diff => {
@@ -112,23 +129,23 @@ export default class PlannedVsActual extends Component {
 
   updateImpact = (channel, indicator, type, value) => {
     const channelsImpact = {...this.props.channelsImpact};
-    if (!channelsImpact[channel]) {
-      channelsImpact[channel] = {};
-    }
-    if (!channelsImpact[channel][indicator]) {
-      channelsImpact[channel][indicator] = {
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(channelsImpact, historyData, 'channelsImpact');
+    this.initializeIfNeeded(objectToUpdate, channel);
+    if (!objectToUpdate[channel][indicator]) {
+      objectToUpdate[channel][indicator] = {
         actual: 0,
         planned: 0
       };
     }
-    channelsImpact[channel][indicator][type] = value;
-    this.props.updateState({channelsImpact: channelsImpact});
+    objectToUpdate[channel][indicator][type] = value;
+    this.props.updateState({channelsImpact, historyData});
   };
 
   render() {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
-    const attributionChannelsImpact =  get(attribution,[month, 'channelsImpact'], {});
+    const attributionChannelsImpact = get(attribution, [month, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -282,6 +299,7 @@ export default class PlannedVsActual extends Component {
                     this.setState({saveFail: false, saveSuccess: false}, () => {
                       this.props.updateUserMonthPlan({
                         actualChannelBudgets: this.props.actualChannelBudgets,
+                        historyData: this.props.historyData,
                         userChannelsSchema: this.props.userChannelsSchema,
                         channelsImpact: this.props.channelsImpact
                       }, this.props.region, this.props.planDate);
