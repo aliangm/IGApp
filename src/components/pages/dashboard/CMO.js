@@ -322,6 +322,8 @@ export default class CMO extends Component {
       return 0;
     });
 
+    const getCohortTooltip = (firstStageNickname, secondStageNickname, value) => `Cohort-based ${firstStageNickname} to ${secondStageNickname} Conv. Rate - ${value}%`;
+
     return <div className={dashboardStyle.locals.wrap}>
       <div className={this.classes.cols}>
         <div className={this.classes.colLeft}>
@@ -458,7 +460,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelMcl}>
                       {actualIndicators.newMCL}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '157px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '157px'}}
+                         data-tip={getCohortTooltip(getIndicatorNickname('MCL', true), getIndicatorNickname('MQL', true), actualIndicators.leadToMQLConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newMCL, actualIndicators.newMQL)}%
                     </div>
@@ -472,7 +477,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelMql}>
                       {actualIndicators.newMQL}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '142px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '142px'}}
+                         data-tip={getCohortTooltip(getIndicatorNickname('MQL', true), getIndicatorNickname('SQL', true), actualIndicators.MQLToSQLConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newMQL, actualIndicators.newSQL)}%
                     </div>
@@ -486,7 +494,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelSql}>
                       {actualIndicators.newSQL}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '125px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '125px'}}
+                         data-tip={getCohortTooltip(getIndicatorNickname('SQL', true), getIndicatorNickname('opps', true), actualIndicators.SQLToOppConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newSQL, actualIndicators.newOpps)}%
                     </div>
@@ -500,7 +511,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelOpps}>
                       {actualIndicators.newOpps}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '109px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '109px'}}
+                         data-tip={getCohortTooltip(getIndicatorNickname('opps', true), getIndicatorNickname('users', true), actualIndicators.OppToAccountConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newOpps, actualIndicators.newUsers)}%
                     </div>
