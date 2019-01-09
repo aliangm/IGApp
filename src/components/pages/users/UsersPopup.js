@@ -116,7 +116,7 @@ export default class UsersPopup extends Component {
         eventsUI.push(<div className={this.classes.eventLine} key={`channel-${index}`}>
           <div className={this.classes.iconCircle} data-icon={'plan:' + item.channel}/>
           <div className={this.classes.eventText}>
-            Visited website through <b>{getChannelNickname(item.channel)}</b>
+            {item.isOffline ? 'Interacted' : 'Visited website'} through <b>{getChannelNickname(item.channel)}</b>
             <div className={this.classes.eventTime}>
               {this.stringifyDate(item.startTime)}
               {emails && emails.length > 1 ? ', ' + item.email : null}
