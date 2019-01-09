@@ -103,23 +103,19 @@ export default class Welcome extends Component {
       }
 
 
-
       this.props.updateUserMonthPlan({
-        attribution: {
-          ...this.props.attribution,
-          siteStructure: {
-            homepage: companyWebsite + '/',
-            pricing: companyWebsite + '/pricing',
-            blog: companyWebsite + '/blog',
-            caseStudies: companyWebsite + '/case-studies',
-            contact: companyWebsite + '/contact',
-            aboutUs: companyWebsite + '/company',
-            presentations: companyWebsite + '/presentations',
-            eBooks: companyWebsite + '/e-books',
-            whitepapers: companyWebsite + '/whitepapers',
-            videos: companyWebsite + '/videos',
-            landingPages: landingPageURL
-          }
+        'attribution.siteStructure': {
+          homepage: companyWebsite + '/',
+          pricing: companyWebsite + '/pricing',
+          blog: companyWebsite + '/blog',
+          caseStudies: companyWebsite + '/case-studies',
+          contact: companyWebsite + '/contact',
+          aboutUs: companyWebsite + '/company',
+          presentations: companyWebsite + '/presentations',
+          eBooks: companyWebsite + '/e-books',
+          whitepapers: companyWebsite + '/whitepapers',
+          videos: companyWebsite + '/videos',
+          landingPages: landingPageURL
         }
       });
     }
