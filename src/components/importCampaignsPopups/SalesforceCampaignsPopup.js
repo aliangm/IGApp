@@ -103,11 +103,11 @@ export default class SalesforceCampaigns extends Component {
     this.setState({selectedCampaigns: selectedCampaigns});
   }
 
-  handleChange(item, type, event) {
-    let campaignsMapping = this.state.campaignsMapping;
-    campaignsMapping[type][item] = event.value;
+  handleChange = (value, item, type) => {
+    const campaignsMapping = {...this.state.campaignsMapping};
+    campaignsMapping[type][item] = value;
     this.setState({campaignsMapping: campaignsMapping});
-  }
+  };
 
   open = () => {
     this.authPopup.open();
@@ -162,7 +162,7 @@ export default class SalesforceCampaigns extends Component {
           </div>
           <div className={this.classes.colRight}>
             <Select {...selects.owners} style={{width: '270px'}} selected={this.state.campaignsMapping.owners[owner.Id]}
-                    onChange={this.handleChange.bind(this, owner.Id, 'owners')}/>
+                    onChange={(e) => this.handleChange(e.value, owner.Id, 'owners')}/>
           </div>
         </div>
       </div>
@@ -179,8 +179,13 @@ export default class SalesforceCampaigns extends Component {
           <div className={this.classes.colRight}>
             <ChannelsSelect style={{width: '270px'}}
                             selected={this.state.campaignsMapping.types[type.Type]}
-                            onChange={this.handleChange.bind(this, type.Type, 'types')}
-                            ref={'type' + index}/>
+                            onChange={(e) => this.handleChange(e.value, type.Type, 'types')}
+                            ref={'type' + index}
+                            withOtherChannels={true}
+                            onNewOptionClick={({value: channel}) => {
+                              this.props.addUnknownChannel(channel);
+                              this.handleChange(channel, type.Type, 'types');
+                            }}/>
           </div>
         </div>
       </div>
@@ -197,7 +202,7 @@ export default class SalesforceCampaigns extends Component {
           <div className={this.classes.colRight}>
             <Select {...selects.statuses} style={{width: '270px'}}
                     selected={this.state.campaignsMapping.statuses[status.Status]}
-                    onChange={this.handleChange.bind(this, status.Status, 'statuses')}/>
+                    onChange={(e) => this.handleChange(e.value, status.Status, 'statuses')}/>
           </div>
         </div>
       </div>
