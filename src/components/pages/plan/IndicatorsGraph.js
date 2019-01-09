@@ -253,12 +253,9 @@ export default class IndicatorsGraph extends Component {
       />;
     });
 
-    const CustomizedLabel = React.createClass({
-      render() {
-        const {viewBox} = this.props;
-        return <image x={viewBox.x} y={viewBox.y} width="24" height="24" href="/assets/objective-dot.svg"/>;
-      }
-    });
+    const CustomizedLabel = ({viewBox}) => viewBox.x >= 0 && viewBox.y >= 0 && (
+      <image x={viewBox.x} y={viewBox.y} width="24" height="24" href="/assets/objective-dot.svg"/>
+    );
 
     const dots = this.state.checkedIndicators.map((indicator, index) =>
       parsedObjectives[indicator] &&
@@ -267,7 +264,7 @@ export default class IndicatorsGraph extends Component {
                     stroke="none"
                     key={index}
                     label={<CustomizedLabel/>}
-                    alwaysShow={true}
+                    ifOverflow="extendDomain"
                     isFront={true}/>
     );
 

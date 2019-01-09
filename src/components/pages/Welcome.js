@@ -236,7 +236,7 @@ export default class Welcome extends Component {
             {item.role}
           </div>,
           <div className={welcomeStyle.locals.center}>
-            <input type="checkbox" checked={!!item.isAdmin}/>
+            <input type="checkbox" checked={!!item.isAdmin} readOnly/>
           </div>,
           <ButtonWithSurePopup style={{background: '#e50000'}} onClick={this.removeMember.bind(this, i)}
                                buttonText="Remove"/>

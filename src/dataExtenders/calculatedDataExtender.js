@@ -121,7 +121,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
 
   const historyDataWithCurrentMonth = {};
   Object.keys(historyData).forEach(key => {
-    const sliceNumber = historyDataLength(historyData) - monthExceptThisMonth;
+    const sliceNumber = Math.max(historyDataLength(historyData) - monthExceptThisMonth, 0);
     // Indicators key in current month is ActualIndicators, that's why is has special treatment
     // TODO: generalize
     if (key === 'indicators') {

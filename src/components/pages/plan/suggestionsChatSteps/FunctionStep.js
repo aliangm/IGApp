@@ -1,9 +1,9 @@
 import Component from 'components/Component';
-import {PropTypes} from 'react';
+import PropTypes from 'prop-types'
 import React from 'react';
 
 export default class FunctionStep extends Component {
-  static PropTypes = {
+  static propTypes = {
     funcToRun: PropTypes.func.isRequired,
     textForUser: PropTypes.string.isRequired,
     nextStepId: PropTypes.string.isRequired
