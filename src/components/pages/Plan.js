@@ -89,7 +89,7 @@ export default class Plan extends Component {
           regions: regions
         };
 
-        if(channelObject.primaryBudget || channelObject.secondaryBudget){
+        if (channelObject.primaryBudget || channelObject.secondaryBudget) {
           channelsObject[channelKey] = channelObject;
         }
 
@@ -101,7 +101,7 @@ export default class Plan extends Component {
       Object.keys(month).forEach(channelKey => {
         const {committedBudget} = month[channelKey];
 
-        if(committedBudget){
+        if (committedBudget) {
           channelsObject[channelKey] = {
             primaryBudget: committedBudget
           };
@@ -133,7 +133,7 @@ export default class Plan extends Component {
     this.forecastAndUpdateUserMonthPlan({
       planBudgets: planBudgets,
       unknownChannels: this.getPlanBudgets(true),
-      userChannelsSchema: this.props.userChannelsSchema,
+      userChannelsSchema: this.props.userChannelsSchema
     }, this.state.primaryPlanForecastedIndicators);
   };
 
@@ -504,7 +504,8 @@ export default class Plan extends Component {
     const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
     const {planUnknownChannels, calculatedData: {annualBudget}} = this.props;
 
-    const annualBudgetLeftToPlan = this.state.budgetsData && getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
+    const annualBudgetLeftToPlan = this.state.budgetsData &&
+      getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
         return merge(object, item);
@@ -616,7 +617,7 @@ export default class Plan extends Component {
                   <div>
                     <Button type="primary"
                             style={{
-                              marginLeft: '15px',
+                              marginLeft: '15px'
                             }}
                             selected={showNewScenarioPopup ? true : null}
                             onClick={() => {
