@@ -21,7 +21,7 @@ export function formatBudget(budget, withSign = false) {
     sign = (budget > 0) ? '+' : (budget < 0 ? '-' : '');
 
   }
-  return `${sign}$${formatNumber(Math.abs(budget))}`;
+  return `${sign}$${formatNumber(Math.abs(Math.round(budget)))}`;
 }
 
 export function formatBudgetShortened(budget) {

@@ -116,7 +116,8 @@ class AppComponent extends Component {
       this.getRegions(),
       this.getIndicatorsMetadata(),
       this.getChannelsMetadata(),
-      this.getUserMonthPlan(localStorage.getItem('region'), null)
+      this.getUserMonthPlan(localStorage.getItem('region'), null),
+      this.getUnmappedUrls()
     ];
 
     Promise.all(tasks)
@@ -661,6 +662,28 @@ class AppComponent extends Component {
                 loaded: true,
                 monthsExceptThisMonth: monthsExceptThisMonth,
                 attributionModel: attributionModel
+              });
+              deferred.resolve();
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        deferred.reject();
+      });
+
+    return deferred.promise;
+  }
+
+  getUnmappedUrls() {
+    const deferred = q.defer();
+    serverCommunication.serverRequest('GET', 'getUnmappedUrls', null, localStorage.getItem('region'))
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((data) => {
+              this.setState({
+                unmappedUrls: data
               });
               deferred.resolve();
             });
