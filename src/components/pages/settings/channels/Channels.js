@@ -20,9 +20,32 @@ export default class Channels extends Component {
     });
   }
 
+  getNewCondition = () => {
+    return {
+      param: '',
+      operation: '',
+      value: ''
+    };
+  };
+
+  addRule = (channel, condition = this.getNewCondition(), callback) => {
+    const {attributionMappingRules} = this.props;
+    attributionMappingRules.push({
+      conditions: [
+        {...condition}
+      ],
+      channel
+    });
+    this.props.updateState({attributionMappingRules}, callback);
+  };
+
   render() {
     const childrenWithProps = React.Children.map(this.props.children,
-      (child) => React.cloneElement(child, {...this.props}));
+      (child) => React.cloneElement(child, {
+        ...this.props,
+        addRule: this.addRule,
+        getNewCondition: this.getNewCondition
+      }));
 
     return <div>
       <Page contentClassName={this.classes.content}
