@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
 import SaveButton from 'components/pages/profile/SaveButton';
-import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/plan/planned-actual-tab.css';
 import budgetsStyle from 'styles/plan/budget-table.css';
@@ -56,21 +55,15 @@ export default class PlannedVsActual extends Component {
   }
 
   addChannel = (event) => {
-    this.setState({showText: false});
     const channel = event.value;
-    if (channel === 'OTHER') {
-      this.setState({showText: true}, () => this.refs.other.focus());
-    }
-    else {
-      const actualChannelBudgets = {...this.props.actualChannelBudgets};
-      const {knownChannels = {}} = actualChannelBudgets;
-      knownChannels[channel] = 0;
-      this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, knownChannels: knownChannels}});
-    }
+    const actualChannelBudgets = {...this.props.actualChannelBudgets};
+    const {knownChannels = {}} = actualChannelBudgets;
+    knownChannels[channel] = 0;
+    this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, knownChannels: knownChannels}});
+
   };
 
-  addOtherChannel = () => {
-    const channel = this.state.otherChannel;
+  addOtherChannel = ({value: channel}) => {
     this.props.addUnknownChannel(channel);
 
     const actualChannelBudgets = {...this.props.actualChannelBudgets};
@@ -128,7 +121,7 @@ export default class PlannedVsActual extends Component {
   render() {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
-    const attributionChannelsImpact =  get(attribution,[month, 'channelsImpact'], {});
+    const attributionChannelsImpact = get(attribution, [month, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -253,30 +246,15 @@ export default class PlannedVsActual extends Component {
                   width: '460px'
                 }} className={this.classes.channelsRow}>
                   <ChannelsSelect className={this.classes.channelsSelect}
-                                  withOtherChannel={true}
+                                  withOtherChannels={true}
                                   selected={-1}
                                   isChannelDisabled={channel => Object.keys(channels).includes(channel)}
                                   onChange={this.addChannel}
+                                  onNewOptionClick={this.addOtherChannel}
                                   label={`Add a channel`}
                                   labelQuestion={['']}
                                   description={['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}/>
                 </div>
-                {this.state.showText ?
-                  <div className={this.classes.channelsRow}>
-                    <Textfield style={{
-                      width: '292px'
-                    }} onChange={(e) => {
-                      this.setState({otherChannel: e.target.value});
-                    }} ref='other'/>
-                    <Button type="primary" style={{
-                      width: '72px',
-                      margin: '0 20px'
-                    }} onClick={() => {
-                      this.addOtherChannel();
-                    }}> Enter
-                    </Button>
-                  </div>
-                  : null}
                 <div className={this.classes.footer} style={{marginTop: '150px'}}>
                   <SaveButton onClick={() => {
                     this.setState({saveFail: false, saveSuccess: false}, () => {
