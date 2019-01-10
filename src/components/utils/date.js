@@ -63,10 +63,12 @@ export function getDatesSpecific(dateStr, numberOfPast, numberOfFuture, isSystem
   return rawDates.map(date => formatSpecificDate(date, isSystemDates));
 }
 
-export function getEndOfMonthDate(dateStr) {
-  const [monthStr, year] = dateStr.split(' ');
-  const month = monthNames.indexOf(monthStr);
-  return new Date(parseInt(`20${year}`), month + 1, 0);
+export function getEndOfMonthDate(date) {
+  const endOfMonthDate = new Date(date);
+  endOfMonthDate.setDate(1);
+  endOfMonthDate.setMonth(endOfMonthDate.getMonth() + 1);
+  endOfMonthDate.setDate(0);
+  return endOfMonthDate;
 }
 
 export function getEndOfMonthString(date) {
