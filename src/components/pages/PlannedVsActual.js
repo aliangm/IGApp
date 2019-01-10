@@ -17,6 +17,7 @@ import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
 import get from 'lodash/get';
+import set from 'lodash/set';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 
 const channelPlatformMapping = {
@@ -55,12 +56,6 @@ export default class PlannedVsActual extends Component {
     this.setState({month: this.getCurrentMonthIndex()});
   }
 
-  initializeIfNeeded = (object, key) => {
-    if (!object[key]) {
-      object[key] = {};
-    }
-  };
-
   getObjectToUpdate(currentMonthObject, historyData, historyDataKey) {
     const isCurrentMonth = this.state.month === this.props.calculatedData.lastYearHistoryData.historyDataLength;
     if (isCurrentMonth) {
@@ -81,8 +76,7 @@ export default class PlannedVsActual extends Component {
       const actualChannelBudgets = {...this.props.actualChannelBudgets};
       const historyData = {...this.props.historyData};
       const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
-      this.initializeIfNeeded(objectToUpdate, 'knownChannels');
-      objectToUpdate.knownChannels[channel] = 0;
+      set(objectToUpdate, ['knownChannels', channel], 0);
       this.props.updateState({actualChannelBudgets, historyData});
     }
   };
@@ -94,8 +88,7 @@ export default class PlannedVsActual extends Component {
     const actualChannelBudgets = {...this.props.actualChannelBudgets};
     const historyData = {...this.props.historyData};
     const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
-    this.initializeIfNeeded(objectToUpdate, 'unknownChannels');
-    objectToUpdate.unknownChannels[channel] = 0;
+    set(objectToUpdate, ['unknownChannels', channel], 0);
     this.props.updateState({actualChannelBudgets, historyData});
 
   };
@@ -105,12 +98,10 @@ export default class PlannedVsActual extends Component {
     const historyData = {...this.props.historyData};
     const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
     if (isUnknownChannel(channel)) {
-      this.initializeIfNeeded(objectToUpdate, 'unknownChannels');
-      objectToUpdate.unknownChannels[channel] = value;
+      set(objectToUpdate, ['unknownChannels', channel], value);
     }
     else {
-      this.initializeIfNeeded(objectToUpdate, 'knownChannels');
-      objectToUpdate.knownChannels[channel] = value;
+      set(objectToUpdate, ['knownChannels', channel], value);
     }
     this.props.updateState({actualChannelBudgets, historyData});
   };
@@ -131,14 +122,7 @@ export default class PlannedVsActual extends Component {
     const channelsImpact = {...this.props.channelsImpact};
     const historyData = {...this.props.historyData};
     const objectToUpdate = this.getObjectToUpdate(channelsImpact, historyData, 'channelsImpact');
-    this.initializeIfNeeded(objectToUpdate, channel);
-    if (!objectToUpdate[channel][indicator]) {
-      objectToUpdate[channel][indicator] = {
-        actual: 0,
-        planned: 0
-      };
-    }
-    objectToUpdate[channel][indicator][type] = value;
+    set(objectToUpdate, [channel, indicator, type], value);
     this.props.updateState({channelsImpact, historyData});
   };
 
