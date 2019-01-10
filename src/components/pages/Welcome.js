@@ -100,24 +100,22 @@ export default class Welcome extends Component {
           landingPageURL = 'lp.' + websiteWithOutWWW;
         }
 
+        this.props.updateUserMonthPlan({
+          'attribution.siteStructure': {
+            homepage: companyWebsite + '/',
+            pricing: companyWebsite + '/pricing',
+            blog: companyWebsite + '/blog',
+            caseStudies: companyWebsite + '/case-studies',
+            contact: companyWebsite + '/contact',
+            aboutUs: companyWebsite + '/company',
+            presentations: companyWebsite + '/presentations',
+            eBooks: companyWebsite + '/e-books',
+            whitepapers: companyWebsite + '/whitepapers',
+            videos: companyWebsite + '/videos',
+            landingPages: landingPageURL
+          }
+        });
       }
-
-
-      this.props.updateUserMonthPlan({
-        'attribution.siteStructure': {
-          homepage: companyWebsite + '/',
-          pricing: companyWebsite + '/pricing',
-          blog: companyWebsite + '/blog',
-          caseStudies: companyWebsite + '/case-studies',
-          contact: companyWebsite + '/contact',
-          aboutUs: companyWebsite + '/company',
-          presentations: companyWebsite + '/presentations',
-          eBooks: companyWebsite + '/e-books',
-          whitepapers: companyWebsite + '/whitepapers',
-          videos: companyWebsite + '/videos',
-          landingPages: landingPageURL
-        }
-      });
     }
   };
 
