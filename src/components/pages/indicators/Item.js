@@ -27,8 +27,12 @@ export default class Item extends Component {
 
   initialState = (props) => {
     return {
-      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators ? 'auto' : 'manual')) : (props.defaultStatus === 0 ? (props.automaticIndicators ? 'auto' : 'inactive') : undefined),
-      status: props.defaultStatus <= 0 ? (props.automaticIndicators ? props.defaultStatus : '') : formatIndicatorDisplay(props.name, props.defaultStatus),
+      state: props.defaultStatus ? (props.defaultStatus === -2 ? 'irrelevant' : (props.automaticIndicators
+        ? 'auto'
+        : 'manual')) : (props.defaultStatus === 0 ? (props.automaticIndicators ? 'auto' : 'inactive') : undefined),
+      status: props.defaultStatus <= 0
+        ? (props.automaticIndicators ? props.defaultStatus : '')
+        : formatIndicatorDisplay(props.name, props.defaultStatus),
       menuShown: false,
       statusPopupHidden: true,
       name: props.name,
@@ -66,7 +70,8 @@ export default class Item extends Component {
         return value / this.state.maxValue;
       }
       value = parseInt(this.state.status) / this.state.maxValue || 0;
-    } else {
+    }
+    else {
       value = this.state.status / this.state.maxValue || 0;
     }
     if (this.props.isDirectionDown) {
@@ -142,8 +147,8 @@ export default class Item extends Component {
           height: 100%;
         }
       </style>
-      <base href="${ document.baseURI }">
-      <img src="${ url }" width="700">
+      <base href="${document.baseURI}">
+      <img src="${url}" width="700">
     `);
     win.document.close();
 
@@ -173,6 +178,9 @@ export default class Item extends Component {
               <div className={tooltipStyle.locals.ttSubText} style={{fontWeight: 'bold'}}>
                 {this.props.formula}
               </div>
+              {this.props.timeframe ? <div className={tooltipStyle.locals.ttSubText} style={{fontWeight: 'bold'}}>
+                Time Frame: {this.props.timeframe}
+              </div> : null}
             </div>
           </div>
         </div>;
