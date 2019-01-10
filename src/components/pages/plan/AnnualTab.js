@@ -7,9 +7,11 @@ import IndicatorsGraph from 'components/pages/plan/IndicatorsGraph';
 import BudgetsTable from 'components/pages/plan/BudgetsTable';
 import {getEndOfMonthString, getQuarterOffset, getRawDatesSpecific, formatSpecificDate, getAnnualOffset} from 'components/utils/date';
 import FloatingComponent from 'components/controls/FloatingComponent';
-import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isPlainObject, get, chunk, mapValues} from 'lodash';
+import {isNil, sumBy, union, last, orderBy, groupBy, isEmpty, isPlainObject, get, chunk, mapValues, set} from 'lodash';
 import {newFunnelMapping} from 'components/utils/utils';
 import Toggle from 'components/controls/Toggle';
+import {isRefreshed} from 'components/utils/indicators';
+import {projectObjective} from 'components/utils/objective';
 
 const CELL_WIDTH = 140;
 
@@ -140,18 +142,18 @@ export default class AnnualTab extends Component {
   };
 
   render() {
-    const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData}}, historyData: {indicators}} = this.props;
+    const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData, collapsedObjectives}, committedForecasting}, historyData: {indicators}} = this.props;
 
     const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators &&
       secondaryPlanForecastedIndicators.length > 0;
 
     const parsedObjectives = {};
-    objectivesData
+    collapsedObjectives
       .forEach(objective => {
         const target = objective.target;
         const date = objective.dueDate;
         const endOfMonth = getEndOfMonthString(date);
-        parsedObjectives[objective.indicator] = {x: endOfMonth, y: target};
+        parsedObjectives[objective.indicator] = {parsedData: {x: endOfMonth, y: target}, rawData: {...objective}};
       });
 
     const numberOfPastDates = budgetsData && budgetsData.filter((month) => month.isHistory).length;
@@ -207,6 +209,25 @@ export default class AnnualTab extends Component {
     const datesForGraphWithPeriodMonths = dates && this.addExtraSumDataAndFormatDates(dates,
       quarterOffset, annualOffset,
       item => getEndOfMonthString(item));
+
+    const objectiveAccumulatedData = dates && new Array(dates.length).fill(null);
+    objectiveAccumulatedData &&
+    collapsedObjectives.filter(objective => isRefreshed(objective.indicator))
+      .forEach(objective => {
+        for (let i = 0; i < objective.monthIndex; i++) {
+          set(objectiveAccumulatedData,
+            [numberOfPastDates + i, objective.indicator],
+            projectObjective(committedForecasting, objective, i));
+        }
+      });
+
+    const objectiveAccumulatedDataWithAddedData = objectiveAccumulatedData &&
+      this.addQuartersAndYearSumData(objectiveAccumulatedData,
+        quarterData => last(quarterData),
+        yearlyData => last(yearlyData),
+        quarterOffset,
+        annualOffset,
+        item => item);
 
     const forecastingDataForChunk = (chunk) => {
       const indicators = Object.keys(last(chunk));
@@ -297,6 +318,7 @@ export default class AnnualTab extends Component {
                                labelDates={datesForGraphWithPeriodMonths || []}
                                preiodDates={datesWithAddition || []}
                                numberOfPastDates={numberOfPastDatesWithSumAddition || 0}
+                               objectiveAccumulativeData={objectiveAccumulatedDataWithAddedData || []}
                                {...this.props}
               />
             </FloatingComponent>
