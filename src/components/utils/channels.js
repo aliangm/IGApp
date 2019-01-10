@@ -95,15 +95,17 @@ export function formatChannels(isDisabled = () => false, withOtherChannels = fal
   categories.forEach(category =>
     returnObject.push({label: category, options: []})
   );
-  Object.keys(schema.properties).forEach(channel => {
-    const isUnknownChannel = schema.properties[channel].isUnknownChannel;
-    if (!isUnknownChannel || withOtherChannels) {
+  Object.keys(schema.properties)
+    .filter(channel => {
+      const isUnknownChannel = schema.properties[channel].isUnknownChannel;
+      return !isUnknownChannel || withOtherChannels;
+    })
+    .forEach(channel => {
       const nickname = schema.properties[channel].nickname;
       const category = schema.properties[channel].category;
       const categoryObject = returnObject.find(item => item.label === category);
       categoryObject.options.push({label: nickname, value: channel, disabled: isDisabled(channel)});
-    }
-  });
+    });
   return returnObject;
 }
 
