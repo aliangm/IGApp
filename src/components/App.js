@@ -636,7 +636,7 @@ class AppComponent extends Component {
     });
   }
 
-  addUnknownChannel(channelKey, nickname = channelKey, category = channelKey) {
+  addUnknownChannel(channelKey, nickname = channelKey, category = 'Other') {
     const userChannelsSchema = {...this.state.userChannelsSchema};
     userChannelsSchema[channelKey] = {
       nickname: nickname,
