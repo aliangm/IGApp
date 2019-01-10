@@ -494,7 +494,9 @@ export default class Welcome extends Component {
       </Page>
       <RegionPopup hidden={!this.state.createNewVisible} close={() => {
         this.setState({createNewVisible: false});
-      }} createUserMonthPlan={this.props.createUserMonthPlan}/>
+      }} createUserMonthPlan={this.props.createUserMonthPlan}
+         created={this.updateSiteStructureIfNeeded}
+      />
       <ReasonPopup hidden={!this.state.showReasonPopup} updateUserAccount={this.props.updateUserAccount}
                    userAccount={this.props.userAccount} close={() => {
         this.setState({showReasonPopup: false, createNewVisible: true});

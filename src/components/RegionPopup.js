@@ -30,6 +30,7 @@ export default class RegionPopup extends Component {
         localStorage.setItem('region', this.state.regionName);
         temporaryEnablePopupMode();
         this.props.close();
+        this.props.created && this.props.created();
         history.push('/settings/profile/product');
       })
       .catch((err) => {
