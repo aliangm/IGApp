@@ -1,7 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
 import SaveButton from 'components/pages/profile/SaveButton';
-import Button from 'components/controls/Button';
 import Textfield from 'components/controls/Textfield';
 import style from 'styles/plan/planned-actual-tab.css';
 import budgetsStyle from 'styles/plan/budget-table.css';
@@ -17,6 +16,7 @@ import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
 import get from 'lodash/get';
+import set from 'lodash/set';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 
 const channelPlatformMapping = {
@@ -55,47 +55,47 @@ export default class PlannedVsActual extends Component {
     this.setState({month: this.getCurrentMonthIndex()});
   }
 
-  addChannel = (event) => {
-    this.setState({showText: false});
-    const channel = event.value;
-    if (channel === 'OTHER') {
-      this.setState({showText: true}, () => this.refs.other.focus());
+  getObjectToUpdate(currentMonthObject, historyData, historyDataKey) {
+    const isCurrentMonth = this.state.month === this.props.calculatedData.lastYearHistoryData.historyDataLength;
+    if (isCurrentMonth) {
+      return currentMonthObject;
     }
     else {
-      const actualChannelBudgets = {...this.props.actualChannelBudgets};
-      const {knownChannels = {}} = actualChannelBudgets;
-      knownChannels[channel] = 0;
-      this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, knownChannels: knownChannels}});
+      return get(historyData, [historyDataKey, this.state.month]);
     }
+  }
+
+  addChannel = (event) => {
+    const channel = event.value;
+    const actualChannelBudgets = {...this.props.actualChannelBudgets};
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
+    set(objectToUpdate, ['knownChannels', channel], 0);
+    this.props.updateState({actualChannelBudgets, historyData});
   };
 
-  addOtherChannel = () => {
-    const channel = this.state.otherChannel;
+  addOtherChannel = ({value: channel}) => {
     this.props.addUnknownChannel(channel);
 
     const actualChannelBudgets = {...this.props.actualChannelBudgets};
-    const {unknownChannels = {}} = actualChannelBudgets;
-    unknownChannels[channel] = 0;
-    this.props.updateState({actualChannelBudgets: {...actualChannelBudgets, unknownChannels: unknownChannels}});
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
+    set(objectToUpdate, ['unknownChannels', channel], 0);
+    this.props.updateState({actualChannelBudgets, historyData});
 
   };
 
   updateActual = (channel, value) => {
     const actualChannelBudgets = {...this.props.actualChannelBudgets};
-    const {unknownChannels = {}, knownChannels = {}} = actualChannelBudgets;
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(actualChannelBudgets, historyData, 'actualChannelBudgets');
     if (isUnknownChannel(channel)) {
-      unknownChannels[channel] = value;
+      set(objectToUpdate, ['unknownChannels', channel], value);
     }
     else {
-      knownChannels[channel] = value;
+      set(objectToUpdate, ['knownChannels', channel], value);
     }
-    this.props.updateState({
-      actualChannelBudgets: {
-        ...actualChannelBudgets,
-        knownChannels: knownChannels,
-        unknownChannels: unknownChannels
-      }
-    });
+    this.props.updateState({actualChannelBudgets, historyData});
   };
 
   setMonth = diff => {
@@ -112,23 +112,16 @@ export default class PlannedVsActual extends Component {
 
   updateImpact = (channel, indicator, type, value) => {
     const channelsImpact = {...this.props.channelsImpact};
-    if (!channelsImpact[channel]) {
-      channelsImpact[channel] = {};
-    }
-    if (!channelsImpact[channel][indicator]) {
-      channelsImpact[channel][indicator] = {
-        actual: 0,
-        planned: 0
-      };
-    }
-    channelsImpact[channel][indicator][type] = value;
-    this.props.updateState({channelsImpact: channelsImpact});
+    const historyData = {...this.props.historyData};
+    const objectToUpdate = this.getObjectToUpdate(channelsImpact, historyData, 'channelsImpact');
+    set(objectToUpdate, [channel, indicator, type], value);
+    this.props.updateState({channelsImpact, historyData});
   };
 
   render() {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
-    const attributionChannelsImpact =  get(attribution,[month, 'channelsImpact'], {});
+    const attributionChannelsImpact = get(attribution, [month, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -253,35 +246,21 @@ export default class PlannedVsActual extends Component {
                   width: '460px'
                 }} className={this.classes.channelsRow}>
                   <ChannelsSelect className={this.classes.channelsSelect}
-                                  withOtherChannel={true}
+                                  withOtherChannels={true}
                                   selected={-1}
                                   isChannelDisabled={channel => Object.keys(channels).includes(channel)}
                                   onChange={this.addChannel}
+                                  onNewOptionClick={this.addOtherChannel}
                                   label={`Add a channel`}
                                   labelQuestion={['']}
                                   description={['Are there any channels you invested in the last month that weren’t recommended by InfiniGrow? It is perfectly fine; it just needs to be validated so that InfiniGrow will optimize your planning effectively.\nPlease choose only a leaf channel (a channel that has no deeper hierarchy under it). If you can’t find the channel you’re looking for, please choose “other” at the bottom of the list, and write the channel name/description clearly.']}/>
                 </div>
-                {this.state.showText ?
-                  <div className={this.classes.channelsRow}>
-                    <Textfield style={{
-                      width: '292px'
-                    }} onChange={(e) => {
-                      this.setState({otherChannel: e.target.value});
-                    }} ref='other'/>
-                    <Button type="primary" style={{
-                      width: '72px',
-                      margin: '0 20px'
-                    }} onClick={() => {
-                      this.addOtherChannel();
-                    }}> Enter
-                    </Button>
-                  </div>
-                  : null}
                 <div className={this.classes.footer} style={{marginTop: '150px'}}>
                   <SaveButton onClick={() => {
                     this.setState({saveFail: false, saveSuccess: false}, () => {
                       this.props.updateUserMonthPlan({
                         actualChannelBudgets: this.props.actualChannelBudgets,
+                        historyData: this.props.historyData,
                         userChannelsSchema: this.props.userChannelsSchema,
                         channelsImpact: this.props.channelsImpact
                       }, this.props.region, this.props.planDate);

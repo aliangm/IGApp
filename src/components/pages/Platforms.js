@@ -50,8 +50,8 @@ const PLATFORM_INDICATORS_MAPPING = {
   'Facebook': ['facebookEngagement', 'facebookLikes'],
   'Twitter': ['twitterFollowers', 'twitterEngagement'],
   'Youtube': ['youtubeSubscribers', 'youtubeEngagement'],
-  'Stripe': ['MRR','ARR', 'LTV', 'churnRate'],
-  'Google Sheets': ['MRR','ARR', 'LTV', 'CAC', 'churnRate'],
+  'Stripe': ['MRR', 'ARR', 'LTV', 'churnRate'],
+  'Google Sheets': ['MRR', 'ARR', 'LTV', 'CAC', 'churnRate'],
   'Moz': ['domainAuthority']
 };
 
@@ -210,7 +210,8 @@ export default class Platforms extends Component {
                                     data={this.props.salesforceapi}
                                     userAccount={this.props.userAccount}
                                     loadingStarted={() => this.setLoading('salesForceCampaigns', true)}
-                                    loadingFinished={() => this.setLoading('salesForceCampaigns', false)}/>
+                                    loadingFinished={() => this.setLoading('salesForceCampaigns', false)}
+                                    addUnknownChannel={this.props.addUnknownChannel}/>
           <Button type="secondary" style={{
             width: '193px',
             marginLeft: 'auto'

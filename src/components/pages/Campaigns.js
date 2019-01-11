@@ -316,6 +316,9 @@ export default class Campaigns extends Component {
             adwordsapi={this.props.adwordsapi}
             facebookadsapi={this.props.facebookadsapi}
             userAccount={this.props.userAccount}
+            twitteradsapi={this.props.twitteradsapi}
+            linkedinadsapi={this.props.linkedinadsapi}
+            addUnknownChannel={this.props.addUnknownChannel}
           />
         </div>
       </Page>

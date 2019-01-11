@@ -8,20 +8,17 @@ export default class ChannelsSelect extends Component {
 
   static propTypes = {
     isChannelDisabled: PropTypes.func,
-    withOtherChannel: PropTypes.bool
+    withOtherChannels: PropTypes.bool
   };
 
   static defaultProps = {
-    withOtherChannel: false
+    withOtherChannels: false
   };
 
   render() {
-    const {isChannelDisabled, withOtherChannel, ...otherProps} = this.props;
+    const {isChannelDisabled, withOtherChannels, ...otherProps} = this.props;
 
-    const channelOptions = formatChannels(isChannelDisabled);
-    if (withOtherChannel) {
-      channelOptions.push({label: 'Other?', value: 'OTHER'});
-    }
+    const channelOptions = formatChannels(isChannelDisabled, withOtherChannels);
 
     const channels = {
       select: {
@@ -45,6 +42,8 @@ export default class ChannelsSelect extends Component {
       iconRendererOnValue={true}
       iconRendererOnOptions={true}
       iconFromValue={getChannelIcon}
+      allowCreate={withOtherChannels}
+      promptTextCreator={value => `Add ${value} as a channel`}
     />;
   }
 }

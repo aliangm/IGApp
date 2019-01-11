@@ -7,7 +7,7 @@ import Select from 'components/controls/Select';
 import Button from 'components/controls/Button';
 import serverCommunication from 'data/serverCommunication';
 import style from 'styles/users/users.css';
-import {getNickname as getIndicatorNickname, getMetadata as getIndicatorMetadata} from 'components/utils/indicators';
+import {getNickname as getIndicatorNickname, isRefreshed} from 'components/utils/indicators';
 import {getCommitedBudgets} from 'components/utils/budget';
 
 export default class Trustability extends Component {
@@ -77,7 +77,7 @@ export default class Trustability extends Component {
 
     const rows = this.state.indicatorsProjection && Object.keys(historyData.indicators[this.state.month])
       .map(indicator => {
-          const beginning = getIndicatorMetadata('isRefreshed', indicator) ? 0 : historyData.indicators[this.state.month -
+          const beginning = isRefreshed(indicator) ? 0 : historyData.indicators[this.state.month -
           1][indicator];
           const projected = this.state.indicatorsProjection[indicator];
           const actual = historyData.indicators[this.state.month][indicator];

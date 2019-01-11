@@ -31,6 +31,7 @@ export default class ImportCampaignsPopup extends Component {
               userAccount={this.props.userAccount}
               popupComponent={SalesforceCampaignsPopup}
               className={CRMStyle.locals.salesforce}
+              addUnknownChannel={this.props.addUnknownChannel}
             />
           </div>
           <div className={this.classes.row}>

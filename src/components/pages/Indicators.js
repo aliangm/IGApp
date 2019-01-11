@@ -309,6 +309,7 @@ export default class Indicators extends Component {
           isPercentage={properties[indicator].isPercentage}
           description={properties[indicator].description}
           formula={properties[indicator].formula}
+          timeframe={properties[indicator].timeframe}
           isDirectionDown={!properties[indicator].isDirectionUp}
           {... indicatorsSpecialProp[indicator]}
         />

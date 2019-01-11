@@ -3,7 +3,7 @@ import {timeFrameToDate} from 'components/utils/objective';
 import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {flattenObjectives} from 'components/utils/objective';
-import {getDates, getRawDatesSpecific, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
+import {getRawDatesSpecific, NUMBER_OF_FUTURE_MONTHS} from 'components/utils/date';
 import {getAnnualBudgetLeftToPlan, getCommitedBudgets, getPlanBudgetsData} from 'components/utils/budget';
 import {getDatesSpecific} from 'components/utils/date';
 import isNil from 'lodash/isNil';
@@ -32,9 +32,23 @@ export function calculatedDataExtender(data) {
     data.planDate);
   const extarpolateRatio = getExtarpolateRatio(new Date(), data.planDate);
 
-  const dates = getDates(data.planDate);
-  const objectivesData = flattenObjectives(data.objectives, data.actualIndicators, dates, false);
-  const collapsedObjectives = flattenObjectives(data.objectives, data.actualIndicators, dates, true);
+  const dates = getRawDatesSpecific(data.planDate, 0, NUMBER_OF_FUTURE_MONTHS);
+  const pastDates = getRawDatesSpecific(data.planDate, data.historyData.indicators.length, 0);
+  const pastIndicators = data.historyData.indicators;
+
+  const objectivesData = flattenObjectives(data.objectives,
+    data.actualIndicators,
+    dates,
+    pastIndicators,
+    pastDates,
+    false);
+  const collapsedObjectives = flattenObjectives(data.objectives,
+    data.actualIndicators,
+    dates,
+    pastIndicators,
+    pastDates,
+    true);
+
   const funnelPossibleObjectives = ['newMCL', 'newMQL', 'newSQL', 'newOpps', 'newUsers'];
   const prioritizedFunnelObjectives = ['newSQL', 'newOpps', 'newUsers', 'newMQL', 'newMCL'];
 
@@ -107,7 +121,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
 
   const historyDataWithCurrentMonth = {};
   Object.keys(historyData).forEach(key => {
-    const sliceNumber = historyDataLength(historyData) - monthExceptThisMonth;
+    const sliceNumber = Math.max(historyDataLength(historyData) - monthExceptThisMonth, 0);
     // Indicators key in current month is ActualIndicators, that's why is has special treatment
     // TODO: generalize
     if (key === 'indicators') {
