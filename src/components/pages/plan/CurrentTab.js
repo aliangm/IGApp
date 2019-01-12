@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import Masonry from 'react-masonry-component';
 import ChannelCube, {formatPrice} from 'components/pages/plan/ChannelCube';

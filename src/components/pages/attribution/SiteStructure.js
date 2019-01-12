@@ -27,25 +27,11 @@ export default class Setup extends Component {
     const {homepage, pricing, blog, caseStudies, contact, aboutUs, presentations, eBooks, whitepapers, videos, landingPages} = siteStructure;
     const labelStyle = {width: '110px', marginTop: '12px', textTransform: 'capitalize'};
 
-    let landingPageURL;
-    if (companyWebsite) {
-      const websiteWithOutWWW = companyWebsite.replace('www.', '');
-      const indexOfProtocol = websiteWithOutWWW.indexOf('://');
-      if(indexOfProtocol > -1) {
-        const endIndexOfProtocol = indexOfProtocol + 3;
-        landingPageURL = websiteWithOutWWW.slice(0, endIndexOfProtocol) + 'lp.' + websiteWithOutWWW.slice(endIndexOfProtocol);
-      }
-      else {
-        landingPageURL = "lp." + websiteWithOutWWW;
-      }
-
-    }
-
     return <div style={{ padding: '20px' }}>
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Homepage</Label>
         <Textfield
-          value={homepage || (companyWebsite + '/')}
+          value={homepage}
           onChange={ this.handleChange.bind(this, 'homepage') }
           style={{ width: '300px'}}
         />
@@ -53,7 +39,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Pricing</Label>
         <Textfield
-          value={pricing || (companyWebsite + '/pricing')}
+          value={pricing}
           onChange={ this.handleChange.bind(this, 'pricing') }
           style={{ width: '300px'}}
         />
@@ -61,7 +47,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Blog</Label>
         <Textfield
-          value={blog || (companyWebsite + '/blog')}
+          value={blog}
           onChange={ this.handleChange.bind(this, 'blog') }
           style={{ width: '300px'}}
         />
@@ -69,7 +55,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Case-studies</Label>
         <Textfield
-          value={caseStudies || (companyWebsite + '/case-studies')}
+          value={caseStudies}
           onChange={ this.handleChange.bind(this, 'caseStudies') }
           style={{ width: '300px'}}
         />
@@ -77,7 +63,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Contact us</Label>
         <Textfield
-          value={contact || (companyWebsite + '/contact')}
+          value={contact}
           onChange={ this.handleChange.bind(this, 'contact') }
           style={{ width: '300px'}}
         />
@@ -85,7 +71,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>About us</Label>
         <Textfield
-          value={aboutUs || (companyWebsite + '/company')}
+          value={aboutUs}
           onChange={ this.handleChange.bind(this, 'aboutUs') }
           style={{ width: '300px'}}
         />
@@ -93,7 +79,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Presentations</Label>
         <Textfield
-          value={presentations || (companyWebsite + '/presentations')}
+          value={presentations}
           onChange={ this.handleChange.bind(this, 'presentations') }
           style={{ width: '300px'}}
         />
@@ -101,7 +87,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>E-books</Label>
         <Textfield
-          value={eBooks || (companyWebsite + '/e-books')}
+          value={eBooks}
           onChange={ this.handleChange.bind(this, 'eBooks') }
           style={{ width: '300px'}}
         />
@@ -109,7 +95,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Whitepapers</Label>
         <Textfield
-          value={whitepapers || (companyWebsite + '/whitepapers')}
+          value={whitepapers}
           onChange={ this.handleChange.bind(this, 'whitepapers') }
           style={{ width: '300px'}}
         />
@@ -117,7 +103,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Videos</Label>
         <Textfield
-          value={videos || (companyWebsite + '/videos')}
+          value={videos}
           onChange={ this.handleChange.bind(this, 'videos') }
           style={{ width: '300px'}}
         />
@@ -125,7 +111,7 @@ export default class Setup extends Component {
       <div className={ this.classes.cell }>
         <Label style={labelStyle}>Landing Pages</Label>
         <Textfield
-          value={landingPages || landingPageURL}
+          value={landingPages}
           onChange={ this.handleChange.bind(this, 'landingPages') }
           style={{ width: '300px'}}
         />

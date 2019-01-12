@@ -64,8 +64,14 @@ export function getTitle(indicator) {
 export function getNickname(indicator, isSingular = false) {
   if (isInitialized) {
     const nickname = schema.properties[indicator].nickname;
-    if (isSingular && nickname.slice(-1) === 's') {
-      return nickname.slice(0, -1);
+    if (isSingular) {
+      if (nickname.slice(-1) === 's') {
+        return nickname.slice(0, -1);
+      }
+      else if (nickname.includes('s-')) {
+        return nickname.replace('s-', '-');
+      }
+      return nickname;
     }
     else {
       return nickname;
@@ -94,6 +100,10 @@ export function getIndicatorsWithNicknames() {
   else {
     console.error('indicators schema is not initialized');
   }
+}
+
+export function isRefreshed(indicator) {
+  return getMetadata('isRefreshed', indicator);
 }
 
 export function getIndicatorsWithProps() {

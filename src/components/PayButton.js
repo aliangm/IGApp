@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import Button from 'components/controls/Button';
 import style from 'styles/pay-button.css';
@@ -14,8 +15,13 @@ export default class PayButton extends Component {
     pay: PropTypes.func
   };
 
+  static defaultProps = {
+    trialEnd: new Date().toDateString(),
+  }
+
   render() {
     const daysLeft = getNumberOfDaysBetweenDates(new Date(this.props.trialEnd));
+
     return !this.props.isPaid ?
       <div className={this.classes.inner}>
         Days left in trial

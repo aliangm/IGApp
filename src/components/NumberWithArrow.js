@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/number-with-arrow.css';
 import {isNil} from 'lodash';
@@ -10,8 +11,8 @@ export default class NumberWithArrow extends Component {
   static propTypes = {
     stat: PropTypes.any,
     isNegative: PropTypes.bool,
-    arrowStyle: PropTypes.string,
-    statStyle: PropTypes.string
+    arrowStyle: PropTypes.object,
+    statStyle: PropTypes.object
   };
 
   render() {

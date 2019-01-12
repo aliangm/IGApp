@@ -55,6 +55,7 @@ import Expenses from 'components/pages/campaigns/Expenses';
 import AddExpensePopup from 'components/pages/campaigns/AddExpensePopup';
 import ChannelsSettings from 'components/pages/settings/channels/Channels';
 import ChannelsTab from 'components/pages/settings/channels/tabs/ChannelsTab';
+import UnmappedTab from 'components/pages/settings/channels/tabs/UnmappedTab';
 
 style.use();
 
@@ -99,7 +100,7 @@ ReactDOM.render(
     <Route path="/loginCallBack" onEnter={crossOriginVerification}/>
     <Route component={App} onEnter={requireAuth}>
       <Route component={Dashboard} onEnter={(...parameters) => requirePermission('dashboard', ...parameters)}>
-        {/*<Route path="/dashboard/navigate" component={Navigate} onEnter={requireAuth} tabName='Navigate'/>*/}
+        <Route path="/dashboard/navigate" component={Navigate} onEnter={requireAuth} tabName='Navigate'/>
         <Route path="/dashboard/CMO" component={CMO} onEnter={requireAuth} tabName='CMO'/>
         <Route path="/dashboard/metrics" component={Indicators} onEnter={requireAuth} tabName='Metrics'/>
       </Route>
@@ -153,6 +154,10 @@ ReactDOM.render(
                  component={ChannelsTab}
                  onEnter={requireAuth}
                  tabName='Channels'/>
+          <Route path="/settings/channels/unmapped"
+                 component={UnmappedTab}
+                 onEnter={requireAuth}
+                 tabName='Unmapped'/>
         </Route>
       </Route>
       <Route component={Analyze} onEnter={(...parameters) => requirePermission('analyze', ...parameters)}>

@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/stat-square.css';
 import ReactTooltip from 'react-tooltip';
@@ -7,7 +8,7 @@ export default class StatSquare extends Component {
 
   static propTypes = {
     title: PropTypes.string,
-    stat: PropTypes.string,
+    stat: PropTypes.node,
     contextStat: PropTypes.node,
     tooltipText: PropTypes.string,
     showEmptyStat: PropTypes.bool,

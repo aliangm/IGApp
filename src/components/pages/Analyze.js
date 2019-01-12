@@ -17,12 +17,17 @@ export default class Analyze extends Component {
   };
 
   render() {
-    const {attribution: {channelsImpact}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataLength}}} = this.props;
+    const {attribution: {channelsImpact, groupByMapping, usersByEmail, usersByAccount}, attributionModel, monthsExceptThisMonth, calculatedData: {historyData: {historyDataLength}}} = this.props;
 
     const attributionModels = [
       {value: false, label: 'Full Journey'},
       {value: 'firsttouch', label: 'Introducer'},
-      {value: 'lasttouch', label: 'Converter'}
+      {value: 'lasttouch', label: 'Converter'},
+      {value: 'linear', label: 'Linear'},
+      {value: 'timeDecay', label: 'Time Decay'},
+      {value: 'uShaped', label: 'U-Shaped'},
+      {value: 'wShaped', label: 'W-Shaped'},
+      {value: 'zShaped', label: 'Full-Path (Z-Shaped)'},
     ];
 
     const selectOptions = [];
@@ -43,6 +48,11 @@ export default class Analyze extends Component {
           label: object[key]
         };
       });
+    };
+
+    const getMetricDataByMapping = (metric) => {
+      const groupBy = groupByMapping[metric];
+      return groupBy === 'contacts' ? usersByEmail : usersByAccount;
     };
 
     const getMetrics = (isSingular = false) => {
@@ -100,7 +110,8 @@ export default class Analyze extends Component {
           metricsWithInfluencedSingular,
           metricsOptions,
           getTotalParam: getTotalParam,
-          totalRevenue: getTotalParam('revenue')
+          totalRevenue: getTotalParam('revenue'),
+          getMetricDataByMapping
         }));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">

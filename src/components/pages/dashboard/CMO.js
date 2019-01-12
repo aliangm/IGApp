@@ -7,9 +7,7 @@ import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import {
   getIndicatorsWithProps,
-  getNickname as getIndicatorNickname,
-  getMetadata as getIndicatorMetadata
-} from 'components/utils/indicators';
+  getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
@@ -24,8 +22,8 @@ import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
-import ReactTooltip from 'react-tooltip';
 import StatSquare from 'components/common/StatSquare';
+import {projectObjective} from 'components/utils/objective';
 
 export default class CMO extends Component {
 
@@ -91,16 +89,16 @@ export default class CMO extends Component {
     return null;
   }
 
-  handleMonthsChange = (months) => this.setState({ months })
+  handleMonthsChange = (months) => this.setState({months});
 
   render() {
     const {
-      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages}, annualBudget,
+      planDate, historyData, actualIndicators, campaigns, planUnknownChannels, attribution: {channelsImpact, campaigns: attributionCampaigns, pages},
       calculatedData: {
         committedBudgets,
         committedForecasting,
         objectives: {firstObjective, funnelObjectives, collapsedObjectives, funnelFirstObjective},
-        annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
+        annualBudget, annualBudgetLeftToPlan, monthlyBudget, monthlyBudgetLeftToInvest, monthlyExtarpolatedMoneySpent, monthlyExtapolatedTotalSpending,
         historyData: {totalCost, historyDataWithCurrentMonth, indicatorsDataPerMonth, historyDataLength}
       }
     } = this.props;
@@ -188,8 +186,9 @@ export default class CMO extends Component {
     const indicatorsProperties = getIndicatorsWithProps();
     const objectivesGauges = collapsedObjectives.map((objective, index) => {
       const target = objective.target;
-      const project = committedForecasting[objective.monthIndex] &&
-        committedForecasting[objective.monthIndex][objective.indicator];
+
+      const project = projectObjective(committedForecasting, objective);
+
       return <Objective
         target={target}
         value={actualIndicators[objective.indicator]}
@@ -323,6 +322,8 @@ export default class CMO extends Component {
       return 0;
     });
 
+    const getCohortTooltip = (firstFunnelStage, secondFunnelStage, value) => `Cohort-based ${getIndicatorNickname(firstFunnelStage, true)} to ${getIndicatorNickname(secondFunnelStage, true)} Conv. Rate - ${value}%`;
+
     return <div className={dashboardStyle.locals.wrap}>
       <div className={this.classes.cols}>
         <div className={this.classes.colLeft}>
@@ -344,13 +345,15 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.settings} onClick={() => {
                     this.pastSettingsPopup.open();
                   }}/>
-                  <MonthsPopup
-                    months={this.state.months}
-                    maxMonths={historyDataLength}
-                    onChange={this.handleMonthsChange}
-                    getRef={ref => this.pastSettingsPopup = ref}
-                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
-                  />
+                  {months !== undefined && (
+                    <MonthsPopup
+                      months={months}
+                      maxMonths={historyDataLength}
+                      onChange={this.handleMonthsChange}
+                      getRef={ref => this.pastSettingsPopup = ref}
+                      style={{width: 'max-content', top: '20px', left: '-110px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
@@ -446,7 +449,7 @@ export default class CMO extends Component {
             </div>
             <div className={dashboardStyle.locals.column} data-border={true}>
               <div className={dashboardStyle.locals.text}>
-                Snapshot
+                This Month
               </div>
               <div style={{padding: '15px'}}>
                 <div className={dashboardStyle.locals.miniFunnelRow}>
@@ -457,7 +460,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelMcl}>
                       {actualIndicators.newMCL}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '157px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '157px'}}
+                         data-tip={getCohortTooltip('MCL', 'MQL', actualIndicators.leadToMQLConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newMCL, actualIndicators.newMQL)}%
                     </div>
@@ -471,7 +477,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelMql}>
                       {actualIndicators.newMQL}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '142px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '142px'}}
+                         data-tip={getCohortTooltip('MQL', 'SQL', actualIndicators.MQLToSQLConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newMQL, actualIndicators.newSQL)}%
                     </div>
@@ -485,7 +494,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelSql}>
                       {actualIndicators.newSQL}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '125px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '125px'}}
+                         data-tip={getCohortTooltip('SQL', 'opps', actualIndicators.SQLToOppConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newSQL, actualIndicators.newOpps)}%
                     </div>
@@ -499,7 +511,10 @@ export default class CMO extends Component {
                     <div className={dashboardStyle.locals.miniFunnelOpps}>
                       {actualIndicators.newOpps}
                     </div>
-                    <div className={dashboardStyle.locals.miniFunnelConv} style={{left: '109px'}}>
+                    <div className={dashboardStyle.locals.miniFunnelConv}
+                         style={{left: '109px'}}
+                         data-tip={getCohortTooltip('opps', 'users', actualIndicators.OppToAccountConversionRate)}
+                         data-for="appTip">
                       <div className={dashboardStyle.locals.curvedArrow}/>
                       {calcConvRate(actualIndicators.newOpps, actualIndicators.newUsers)}%
                     </div>
@@ -562,13 +577,15 @@ export default class CMO extends Component {
                   <div className={dashboardStyle.locals.settings} onClick={() => {
                     this.futureSettingsPopup.open();
                   }}/>
-                  <MonthsPopup
-                    months={this.state.months}
-                    maxMonths={historyDataLength}
-                    onChange={this.handleMonthsChange}
-                    getRef={ref => this.futureSettingsPopup = ref}
-                    style={{ width: 'max-content', top: '20px', left: '-110px' }}
-                  />
+                  {months !== undefined && (
+                    <MonthsPopup
+                      months={months}
+                      maxMonths={historyDataLength}
+                      onChange={this.handleMonthsChange}
+                      getRef={ref => this.futureSettingsPopup = ref}
+                      style={{width: 'max-content', top: '20px', left: '-110px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div style={{marginTop: '18px'}}>
@@ -620,7 +637,7 @@ export default class CMO extends Component {
                 </div>
                 <div className={dashboardStyle.locals.quarter3}>
                   <div className={dashboardStyle.locals.quarterNumber}>
-                    {formatBudgetShortened(futureLTV)}
+                    ${formatBudgetShortened(futureLTV)}
                     <div className={dashboardStyle.locals.center} style={{
                       visibility: (pastLTV && isFinite(pastLTV) && (futureLTV / pastLTV - 1))
                         ? 'visible'
@@ -765,7 +782,7 @@ export default class CMO extends Component {
         <div className={this.classes.colLeft}>
           <div className={dashboardStyle.locals.item} style={{height: '350px', width: '540px'}}>
             <div className={dashboardStyle.locals.text}
-                 data-tip="Total allocated budget for campaigns per defined focus">
+                 data-tip="Total allocated budget for campaigns per defined focus" data-for="appTip">
               Campaigns by Focus
             </div>
             <div className={dashboardStyle.locals.chart}>
@@ -852,7 +869,6 @@ export default class CMO extends Component {
           <TopX title='content' data={topContent}/>
         </div>
       </div>
-      <ReactTooltip/>
     </div>;
   }
 }

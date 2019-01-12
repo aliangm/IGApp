@@ -15,7 +15,7 @@ export function initialize(channelsSchema, userChannelsSchema = {}) {
       ...props,
       title: `${category} / ${nickname}`,
       isUnknownChannel: !!isUnknownChannel
-    }
+    };
   });
   isInitialized = true;
 }
@@ -89,18 +89,23 @@ export function getChannelsWithProps() {
   }
 }
 
-export function formatChannels(isDisabled = () => false) {
+export function formatChannels(isDisabled = () => false, withOtherChannels = false) {
   let returnObject = [];
   const categories = Object.keys(schema.properties).map(channel => schema.properties[channel].category);
   categories.forEach(category =>
     returnObject.push({label: category, options: []})
   );
-  Object.keys(schema.properties).forEach(channel => {
-    const nickname = schema.properties[channel].nickname;
-    const category = schema.properties[channel].category;
-    const categoryObject = returnObject.find(item => item.label === category);
-    categoryObject.options.push({label: nickname, value: channel, disabled: isDisabled(channel)});
-  });
+  Object.keys(schema.properties)
+    .filter(channel => {
+      const isUnknownChannel = schema.properties[channel].isUnknownChannel;
+      return !isUnknownChannel || withOtherChannels;
+    })
+    .forEach(channel => {
+      const nickname = schema.properties[channel].nickname;
+      const category = schema.properties[channel].category;
+      const categoryObject = returnObject.find(item => item.label === category);
+      categoryObject.options.push({label: nickname, value: channel, disabled: isDisabled(channel)});
+    });
   return returnObject;
 }
 

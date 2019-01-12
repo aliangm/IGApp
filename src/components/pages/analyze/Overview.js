@@ -23,7 +23,7 @@ import {getChannelsWithProps, getMetadata, getNickname as getChannelNickname} fr
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
-import {getDatesSpecific} from 'components/utils/date';
+import {getRawDatesSpecific} from 'components/utils/date';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
 import {getColor} from 'components/utils/colors';
 import sumBy from 'lodash/sumBy';
@@ -79,11 +79,12 @@ export default class Overview extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsForDisplay, actualIndicatorsDaily}}}} = this.props;
+    const {totalRevenue, attribution: {channelsImpact, campaigns: attributionCampaigns, pages: attributionPages}, historyData: {objectives, indicators}, planDate, calculatedData: {historyData: {months, totalCost, historyDataWithCurrentMonth: {indicators: indicatorsWithCurrentMonth, actualIndicatorsDaily}}}} = this.props;
     const indicatorsOptions = getIndicatorsWithNicknames();
     const flattenHistoryObjectives = flattenObjectives(objectives,
       indicators,
-      getDatesSpecific(planDate, objectives.length, 0),
+      getRawDatesSpecific(planDate, objectives.length, 0),
+      [], [],
       false);
 
     // Parse object to recharts format per indicator
@@ -157,7 +158,9 @@ export default class Overview extends Component {
       };
     });
 
-    const revenueByCampaignRows = attributionCampaigns.map(campaign => {
+    const revenueByCampaignRows = attributionCampaigns
+      .filter(campaign => campaign.revenue || campaign.influencedRevenue)
+      .map(campaign => {
       return {
         items: [campaign.name, formatBudget(campaign.revenue), formatBudget(campaign.influencedRevenue)]
       };
@@ -194,7 +197,9 @@ export default class Overview extends Component {
       };
     });
 
-    const channelCategoriesPerMonth = indicatorsForDisplay.slice(this.props.monthsExceptThisMonth).map((month) => {
+    const indicatorsInRelevantMonths = indicatorsWithCurrentMonth.slice(this.props.monthsExceptThisMonth)
+
+    const channelCategoriesPerMonth = indicatorsInRelevantMonths.map((month) => {
       const mergedObject = {};
       const channelsWithProps = getChannelsWithProps();
       Object.keys(channelsWithProps).forEach(channel => {
@@ -289,7 +294,7 @@ export default class Overview extends Component {
     const costPerFunnel = {};
     Object.keys(newIndicatorMapping).map(indicator => {
       const newIndicator = newIndicatorMapping[indicator];
-      const indicatorSum = sumBy(indicatorsData[newIndicator], item => item.value || 0);
+      const indicatorSum = sumBy(indicatorsInRelevantMonths, item => item[newIndicator] || 0);
       costPerFunnel[indicator] = indicatorSum ? formatBudget(Math.round(totalCost / indicatorSum)) : '-';
     });
 
@@ -413,6 +418,7 @@ export default class Overview extends Component {
                       }}>
                         <Pie
                           data={channelCategories}
+                          dataKey="value"
                           cx='50%'
                           cy='50%'
                           labelLine={true}

@@ -80,7 +80,7 @@ export default class Plan extends Component {
       const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
         const {committedBudget, plannerBudget, isSoft, userBudgetConstraint, regions} = month[channelKey];
-        channelsObject[channelKey] = {
+        const channelObject = {
           primaryBudget: isPlannerPrimary ? plannerBudget : committedBudget,
           secondaryBudget: committedBudget,
           isConstraint: withConstraints ? !isNil(userBudgetConstraint) : false,
@@ -88,6 +88,11 @@ export default class Plan extends Component {
           isSoft: withConstraints ? isSoft : false,
           regions: regions
         };
+
+        if (channelObject.primaryBudget || channelObject.secondaryBudget) {
+          channelsObject[channelKey] = channelObject;
+        }
+
       });
       return {channels: channelsObject, isHistory: false};
     });
@@ -95,9 +100,12 @@ export default class Plan extends Component {
       const channelsObject = {};
       Object.keys(month).forEach(channelKey => {
         const {committedBudget} = month[channelKey];
-        channelsObject[channelKey] = {
-          primaryBudget: committedBudget
-        };
+
+        if (committedBudget) {
+          channelsObject[channelKey] = {
+            primaryBudget: committedBudget
+          };
+        }
       });
       return {channels: channelsObject, isHistory: true};
     });
@@ -125,7 +133,7 @@ export default class Plan extends Component {
     this.forecastAndUpdateUserMonthPlan({
       planBudgets: planBudgets,
       unknownChannels: this.getPlanBudgets(true),
-      userChannelsSchema: this.props.userChannelsSchema,
+      userChannelsSchema: this.props.userChannelsSchema
     }, this.state.primaryPlanForecastedIndicators);
   };
 
@@ -496,7 +504,8 @@ export default class Plan extends Component {
     const {interactiveMode, editMode, addChannelPopup, initialChannelToOpen, showNewScenarioPopup} = this.state;
     const {planUnknownChannels, calculatedData: {annualBudget}} = this.props;
 
-    const annualBudgetLeftToPlan = this.state.budgetsData && getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
+    const annualBudgetLeftToPlan = this.state.budgetsData &&
+      getAnnualBudgetLeftToPlan(annualBudget, this.getPlanBudgets(), planUnknownChannels);
 
     const planChannels = Object.keys(this.props.calculatedData.committedBudgets.reduce((object, item) => {
         return merge(object, item);
@@ -608,7 +617,7 @@ export default class Plan extends Component {
                   <div>
                     <Button type="primary"
                             style={{
-                              marginLeft: '15px',
+                              marginLeft: '15px'
                             }}
                             selected={showNewScenarioPopup ? true : null}
                             onClick={() => {
