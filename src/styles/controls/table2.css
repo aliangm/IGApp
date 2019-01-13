@@ -5,15 +5,24 @@
     overflow: auto;
 }
 
-.table {
+.table:global(.ReactTable) {
     width: 100%;
-    background: white;
+    border: 0;
+}
+
+.table * {
+    outline: none!important;
+}
+
+.foot {
+    box-shadow: none!important;
 }
 
 .headRow {
     min-height: 60px;
     border-radius: 2px;
     background-color: #65b7f3;
+    background-clip: padding-box;
     font-size: 16px;
     font-weight: 600;
     color: #ffffff;
@@ -23,16 +32,25 @@
     height: 60px;
     border-radius: 2px;
     background-color: #ffffff;
-    border-top: 5px solid #F5F6FB;
+    background-clip: padding-box;
+    border-top: 5px solid transparent;
     font-size: 14px;
     color: #354052;
 }
 
 .footRow {
-    composes: tableRow;
-    background-color: #33cc3478;
+    height: 60px;
+    border-radius: 2px;
+    border-top: 5px solid transparent;
+    font-size: 14px;
+    background-color: #65dc8a;
+    background-clip: padding-box;
     color: #354052;
     font-weight: 600;
+}
+
+.footRow .cellContent {
+    background-color: #65dc8a;
 }
 
 .cellItem {
@@ -44,15 +62,9 @@
 }
 
 .cell {
+    border: 0!important;
+    background-color: transparent!important;
     padding: 0!important;
-}
-
-.tableCell {
-    composes: cell;
-}
-
-.headCell {
-    composes: cell;
 }
 
 .cellContent {
@@ -62,4 +74,11 @@
     justify-content: flex-start;
     align-items: center;
     white-space: normal;
+    background-color: white;
+}
+
+.headCellContent {
+    composes: cellContent;
+    background-color: #65b7f3;
+    text-align: left;
 }
