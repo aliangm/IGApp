@@ -298,7 +298,7 @@ export default class PlannedVsActual extends Component {
               data={parsedChannels}
               defaultSorted={[{ id: "plannedBudget", desc: true }]}
               style={{ height: '400px' }}
-              duplicateFooterOnTop
+              showFootRowOnHeader
             />
             <div>
               <div className={this.classes.bottom}>

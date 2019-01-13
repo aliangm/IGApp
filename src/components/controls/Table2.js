@@ -96,6 +96,7 @@ export default class Table extends Component {
 		})),
 		data: PropTypes.arrayOf(PropTypes.object),
 		defaultMinWidth: PropTypes.number, // default min width of column
+		showFootRowOnHeader: PropTypes.bool,
 	}
 
 	static defaultProps = {
@@ -148,16 +149,16 @@ export default class Table extends Component {
 			data,
 			columns,
 			defaultMinWidth,
-			duplicateFooterOnTop,
+			showFootRowOnHeader,
 			...other
 		} = this.props
 
 		return (
 			<div className={classnames(tableStyles.wrap, className)}>
 				<ReactTableFixedColumns
-					ThComponent={duplicateFooterOnTop ? ThWithFooterCheckComponent : ThComponent}
+					ThComponent={showFootRowOnHeader ? ThWithFooterCheckComponent : ThComponent}
 					TdComponent={TdComponent}
-					TheadComponent={duplicateFooterOnTop ? TheadWithFooterRowComponent : TheadComponent}
+					TheadComponent={showFootRowOnHeader ? TheadWithFooterRowComponent : TheadComponent}
 					showPagination={false}
 					pageSize={data.length}
 					resizable={true}
@@ -169,7 +170,7 @@ export default class Table extends Component {
 						className: tableStyles.cell,
 						cellClassName,
 					})}
-					getTheadProps={() => (duplicateFooterOnTop ? {
+					getTheadProps={() => (showFootRowOnHeader ? {
 						headerClassName,
 						headRowClassName,
 						footRowClassName,
