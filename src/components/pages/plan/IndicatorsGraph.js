@@ -338,13 +338,13 @@ export default class IndicatorsGraph extends Component {
                   </div>
                   {!isNil(item.accumulativeObjectiveValue) ?
                     <div className={this.classes.customTooltipObjective}>
-                      Objective Progress: {formatNumber(item.accumulativeObjectiveValue)}
+                      Objective Progress: {formatIndicatorDisplay(indicator, item.accumulativeObjectiveValue)}
                     </div> : null}
                   {parsedObjectives[indicator] !== undefined &&
                   parsedObjectives[indicator].parsedData.x === data.label ?
                     <div className={this.classes.customTooltipObjective} style={{display: "inline-flex" ,alignItems: "center"}}>
                       <div >
-                        Objective: {formatNumber(parsedObjectives[indicator].parsedData.y)}
+                        Objective: {formatIndicatorDisplay(indicator, parsedObjectives[indicator].parsedData.y)}
                       </div>
                       {this.getObjectiveIconFromData(parsedObjectives[indicator].rawData)}
                     </div>
