@@ -117,7 +117,7 @@ class AppComponent extends Component {
       this.getIndicatorsMetadata(),
       this.getChannelsMetadata(),
       this.getUserMonthPlan(localStorage.getItem('region'), null),
-      this.getUnmappedUrls()
+      this.getUnmappedData()
     ];
 
     Promise.all(tasks)
@@ -675,7 +675,7 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  getUnmappedUrls() {
+  getUnmappedData() {
     const deferred = q.defer();
     serverCommunication.serverRequest('GET', 'getUnmappedData', null, localStorage.getItem('region'))
       .then((response) => {
