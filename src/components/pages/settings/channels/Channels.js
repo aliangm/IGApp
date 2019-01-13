@@ -28,12 +28,10 @@ export default class Channels extends Component {
     };
   };
 
-  addRule = (channel, condition = this.getNewCondition(), callback) => {
+  addRule = (channel, conditions = [this.getNewCondition()], callback) => {
     const {attributionMappingRules} = this.props;
     attributionMappingRules.push({
-      conditions: [
-        {...condition}
-      ],
+      conditions,
       channel
     });
     this.props.updateState({attributionMappingRules}, callback);

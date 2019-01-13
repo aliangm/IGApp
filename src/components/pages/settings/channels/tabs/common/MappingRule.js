@@ -19,34 +19,26 @@ const operationOptions = [
 const MARGIN_RIGHT = '15px';
 const ruleSelectStyle = {width: '131px', marginRight: MARGIN_RIGHT};
 
+// Allow empty value
+const getEnumValues = (valuesArray) => ['', ...valuesArray.map(item => item.value)];
+
 export default class MappingRule extends Component {
 
   style = style;
 
   static propTypes = {
-    param: PropTypes.oneOf(paramsOptions.map(item => item.value)),
-    operation: PropTypes.oneOf(operationOptions.map(item => item.value)),
+    param: PropTypes.oneOf(getEnumValues(paramsOptions)),
+    operation: PropTypes.oneOf(getEnumValues(operationOptions)),
     value: PropTypes.string,
     updateParam: PropTypes.func,
     updateOperation: PropTypes.func,
     updateValue: PropTypes.func,
-    withAddAndDelete: PropTypes.bool,
     handleDelete: PropTypes.func,
     handleAdd: PropTypes.func
   };
 
-  static defaultProps = {
-    withAddAndDelete: true
-  };
-
-  setRef = (ref) => {
-    if (this.props.getRef) {
-      this.props.getRef(ref);
-    }
-  };
-
   render() {
-    const {param, operation, value, updateParam, updateOperation, updateValue, withAddAndDelete, handleDelete, handleAdd} = this.props;
+    const {param, operation, value, updateParam, updateOperation, updateValue, handleDelete, handleAdd} = this.props;
     return <div className={this.classes.flexRow}>
       <Select select={{options: paramsOptions}} style={ruleSelectStyle}
               selected={param}
@@ -56,15 +48,12 @@ export default class MappingRule extends Component {
               onChange={updateOperation}/>
       <Textfield value={value}
                  style={{marginRight: MARGIN_RIGHT}}
-                 onChange={updateValue}
-                 ref={this.setRef}/>
-      {withAddAndDelete ?
-        <div className={this.classes.rowIcons}>
-          <div className={this.classes.minusIcon}
-               onClick={handleDelete}/>
-          <div className={this.classes.plusIcon} onClick={handleAdd}/>
-        </div>
-        : null}
+                 onChange={updateValue}/>
+      <div className={this.classes.rowIcons}>
+        <div className={this.classes.minusIcon}
+             onClick={handleDelete}/>
+        <div className={this.classes.plusIcon} onClick={handleAdd}/>
+      </div>
     </div>;
   }
 }
