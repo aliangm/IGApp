@@ -138,6 +138,14 @@
     composes: custom-tooltip-indicator;
     text-align: left;
     margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-tooltip-progress {
+    composes: custom-tooltip-objective;
+    flex-direction: row;
+    align-items: center;
 }
 
 .objective-dot {
