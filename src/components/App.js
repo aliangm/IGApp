@@ -677,13 +677,14 @@ class AppComponent extends Component {
 
   getUnmappedUrls() {
     const deferred = q.defer();
-    serverCommunication.serverRequest('GET', 'getUnmappedUrls', null, localStorage.getItem('region'))
+    serverCommunication.serverRequest('GET', 'getUnmappedData', null, localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
-            .then((data) => {
+            .then(([unmappedUrls, unmappedUtms]) => {
               this.setState({
-                unmappedUrls: data
+                unmappedUrls,
+                unmappedUtms
               });
               deferred.resolve();
             });
