@@ -82,10 +82,10 @@ export default class Table extends Component {
 		cellClassName: PropTypes.string,
 
 		columns: PropTypes.arrayOf(PropTypes.shape({
-			header: PropTypes.oneOfType(PropTypes.object, PropTypes.string),
+			header: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 			cell: PropTypes.func.isRequired, // (value, rowData) => React.Node,
-			footer: PropTypes.oneOfType(PropTypes.object, PropTypes.string),
-			accessor: PropTypes.oneOfType(PropTypes.func, PropTypes.string),
+			footer: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+			accessor: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
 			divider: PropTypes.bool,
 			fixed: PropTypes.oneOf(['left', 'right']),
 			sortable: PropTypes.bool,
