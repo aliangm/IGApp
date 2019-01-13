@@ -1,6 +1,6 @@
 import {getEndOfMonthDate} from 'components/utils/date';
 import {isRefreshed} from 'components/utils/indicators';
-import {sumBy, concat, get} from 'lodash';
+import {sumBy, concat, get, last} from 'lodash';
 
 export function timeFrameToDate(timeFrame) {
   /*
@@ -20,7 +20,7 @@ function sumIndicator(indicator, forecasting, startIndex, toIndex) {
 
 export function projectObjective(forecasting, objectiveData, monthIndex = objectiveData.monthIndex) {
   if (isRefreshed(objectiveData.indicator)) {
-    return objectiveData.value + sumIndicator(objectiveData.indicator, forecasting, 0, monthIndex);
+    return objectiveData.valueBeforeCurrentMonth + sumIndicator(objectiveData.indicator, forecasting, 0, monthIndex);
   }
   else {
     return forecasting[monthIndex] &&
@@ -35,21 +35,24 @@ export function flattenObjectives(objectives,
                                   historyDates,
                                   removeDuplicates = false) {
 
-  const actualIndicatorsWithHistory = concat(historyIndicators, actualIndicators);
   const datesWithHistory = concat(historyDates, dates);
 
   const getObjectiveData = (indicator, objective, monthIndex) => {
     let objectiveValue;
+    let valueBeforeCurrentMonth;
+
     if (isRefreshed(indicator)) {
       const objectiveDate = new Date(objective.userInput.startDate);
       const startMonthIndex = datesWithHistory.findIndex(
         date => date.getMonth() === objectiveDate.getMonth() && date.getFullYear() === objectiveDate.getFullYear());
-      objectiveValue = sumIndicator(indicator, actualIndicatorsWithHistory, startMonthIndex, monthIndex + historyDates.length);
+      valueBeforeCurrentMonth = sumIndicator(indicator, historyIndicators, startMonthIndex, monthIndex + historyDates.length);
+      objectiveValue = actualIndicators[indicator] + valueBeforeCurrentMonth;
     }
     else {
       // in the case that objectives comes from historyData, indicators an array and needs special treatment
       objectiveValue =
         Array.isArray(actualIndicators) ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator];
+      valueBeforeCurrentMonth = get(last(historyIndicators), indicator, 0);
     }
 
     return {
@@ -57,6 +60,7 @@ export function flattenObjectives(objectives,
       dueDate: getEndOfMonthDate(dates[monthIndex]),
       indicator: indicator,
       value: objectiveValue,
+      valueBeforeCurrentMonth: valueBeforeCurrentMonth,
       target: objective.target.value,
       priority: objective.target.priority,
       ...objective.userInput
