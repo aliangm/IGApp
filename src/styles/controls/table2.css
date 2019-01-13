@@ -2,7 +2,6 @@
     padding: 15px;
     border: 1px #e3e6f4;
     border-radius: 2px;
-    overflow: auto;
 }
 
 .table:global(.ReactTable) {
@@ -28,8 +27,41 @@
     color: #ffffff;
 }
 
+.headRow .cellContent {
+    background-color: #65b7f3;
+    text-align: left;
+}
+
+.headRow .divider {
+    border-right: 1px solid white!important;
+}
+
+.headRow .cell:global(.-sort-asc)::after,
+.headRow .cell:global(.-sort-desc)::after {
+    content: '';
+    position: absolute;
+    top: calc(50% - 2.5px);
+    right: 2px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+}
+
+.headRow .cell:global(.-sort-asc)::after {
+    border-top: 5px solid white;
+}
+
+.headRow .cell:global(.-sort-desc)::after {
+    border-bottom: 5px solid white;
+}
+
+.tableRowGroup {
+    border-bottom: 0!important;
+}
+
 .tableRow {
-    height: 60px;
+    min-height: 60px;
     border-radius: 2px;
     background-color: #ffffff;
     background-clip: padding-box;
@@ -38,8 +70,12 @@
     color: #354052;
 }
 
+.tableRow .divider {
+    border-right: 1px solid #b2bbd5!important;
+}
+
 .footRow {
-    height: 60px;
+    min-height: 60px;
     border-radius: 2px;
     border-top: 5px solid transparent;
     font-size: 14px;
@@ -51,20 +87,24 @@
 
 .footRow .cellContent {
     background-color: #65dc8a;
+    color: #354052;
 }
 
-.cellItem {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    -webkit-line-clamp: 1;
-    max-width: 300px;
+.footRow .divider {
+    border-right: 1px solid white!important;
 }
+
+.footRow .cell:global(.-sort-asc)::after,
+.footRow .cell:global(.-sort-desc)::after {
+    content: none;
+}
+
 
 .cell {
     border: 0!important;
     background-color: transparent!important;
     padding: 0!important;
+    box-shadow: none!important;
 }
 
 .cellContent {
@@ -77,8 +117,26 @@
     background-color: white;
 }
 
-.headCellContent {
-    composes: cellContent;
-    background-color: #65b7f3;
-    text-align: left;
+/* small table */
+
+.smallHeader {
+    box-shadow: none!important;
+}
+
+.smallRow {
+    min-height: 38px;
+    border-radius: 0;
+    background-color: transparent;
+    border-bottom: 1px solid #f2f2f2;
+    font-weight: 600;
+}
+
+.smallHeadRow {
+    composes: smallRow;
+}
+
+.smallHeadRow .smallCell {
+    font-size: 16px;
+    background-color: transparent;
+    color: #b2bbd5;
 }

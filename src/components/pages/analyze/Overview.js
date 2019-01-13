@@ -30,6 +30,7 @@ import sumBy from 'lodash/sumBy';
 import groupBy from 'lodash/groupBy';
 import mapValues from 'lodash/mapValues';
 import SmallTable from 'components/controls/SmallTable';
+import { SmallTable as SmallTable2 } from 'components/controls/Table2';
 import indicatorsGraphStyle from 'styles/plan/indicators-graph.css';
 import isEmpty from 'lodash/isEmpty';
 import StatSquare from 'components/common/StatSquare';
@@ -169,31 +170,6 @@ export default class Overview extends Component {
     const revenueByContentRows = attributionPages.map(page => {
       return {
         items: [page.title, formatBudget(page.revenue), formatBudget(page.influencedRevenue)]
-      };
-    });
-
-    const objectivesRows = flattenHistoryObjectives.map((objective, index) => {
-      const grow = Math.round(objective.value - objective.target);
-      return {
-        items: [
-          getIndicatorNickname(objective.indicator),
-          this.getObjectiveFormattedDate(objective.dueDate),
-          objective.target,
-          objective.value,
-          <div>
-            {grow ?
-              <div style={{display: 'flex'}}>
-                <div className={dashboardStyle.locals.historyArrow} data-decline={grow < 0 ? true : null}/>
-                <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
-                     style={{marginRight: '0'}}>
-                  {Math.abs(grow)}
-                </div>
-              </div>
-              :
-              <div className={dashboardStyle.locals.checkMark}/>
-            }
-          </div>
-        ]
       };
     });
 
@@ -519,8 +495,56 @@ export default class Overview extends Component {
                 <div className={dashboardStyle.locals.text}>
                   Objectives - planned vs actual
                 </div>
-                <SmallTable headRowData={{items: ['Objective', 'Date', 'Target', 'Actual', 'Delta']}}
-                            rowsData={objectivesRows}/>
+                <SmallTable2
+                  data={flattenHistoryObjectives}
+                  columns={[
+                    {
+                      id: 'Objective',
+                      header: 'Objective',
+                      cell: ({ indicator }) => getIndicatorNickname(indicator),
+                      minWidth: 100,
+                    },
+                    {
+                      id: 'Date',
+                      header: 'Date',
+                      cell: ({ dueDate }) => this.getObjectiveFormattedDate(dueDate),
+                    },
+                    {
+                      id: 'Target',
+                      header: 'Target',
+                      cell: ({ target }) => target,
+                    },
+                    {
+                      id: 'Actual',
+                      header: 'Actual',
+                      cell: ({ value }) => value,
+                    },
+                    {
+                      id: 'Delta',
+                      header: 'Delta',
+                      cell: ({ value, target }) => {
+                        const grow = Math.round(value - target)
+
+                        return (
+                          <div>
+                            {grow ?
+                              <div style={{display: 'flex'}}>
+                                <div className={dashboardStyle.locals.historyArrow}
+                                     data-decline={grow < 0 ? true : null}/>
+                                <div className={dashboardStyle.locals.historyGrow} data-decline={grow < 0 ? true : null}
+                                     style={{marginRight: '0'}}>
+                                  {Math.abs(grow)}
+                                </div>
+                              </div>
+                              :
+                              <div className={dashboardStyle.locals.checkMark}/>
+                            }
+                          </div>
+                        )
+                      }
+                    },
+                  ]}
+                />
               </div>
             </div>
           </div>

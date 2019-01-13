@@ -175,8 +175,7 @@ export default class PlannedVsActual extends Component {
         id: 'channel',
         header: 'Channel',
         footer: 'Total',
-        accessor: (item) => item.channel,
-        cell: ({ value: channel }) => (
+        cell: ({ channel }) => (
           <div className={this.classes.cellItem}>
             <div className={budgetsStyle.locals.rowIcon} data-icon={getChannelIcon(channel)}/>
             <div className={this.classes.channelName}>{getChannelNickname(channel)}</div>
@@ -190,16 +189,15 @@ export default class PlannedVsActual extends Component {
         id: 'plannedBudget',
         header: 'Planned Budget',
         footer: formatBudget(sumBy(parsedChannels, 'planned')),
-        accessor: 'planned',
-        cell: ({ value: planned }) => formatBudget(planned),
+        cell: ({ planned }) => formatBudget(planned),
         sortable: true,
-        sortMethod: (a, b) => a - b,
+        sortMethod: (a, b) => a.planned - b.planned,
       },
       {
         id: 'actualCost',
         header: 'Actual Cost',
         footer: formatBudget(sumBy(parsedChannels, 'actual')),
-        cell: ({ value: { actual, channel }}) =>
+        cell: ({ actual, channel }) =>
           getTextfieldItem(
             formatBudget(actual),
             e => this.updateActual(channel, extractNumber(e.target.value)),
@@ -210,21 +208,22 @@ export default class PlannedVsActual extends Component {
         id: 'planVsActual',
         header: 'Plan vs Actual',
         footer: formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-        accessor: ({ planned, actual }) => formatBudget(planned - actual, true),
+        cell: ({ planned, actual }) => formatBudget(planned - actual, true),
       },
       {
         id: 'pacingFor',
         header: 'Pacing for',
         footer: isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
-        accessor: ({ actual, isActualNotEmpty }) => isCurrentMonth
+        cell: ({ actual, isActualNotEmpty }) => isCurrentMonth
           ? formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
           : '-',
+        divider: true,
       },
       {
         id: 'plannedObjective',
         header: <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
         footer: formatNumber(totalPlannedFunnel),
-        cell: ({ value: { plannedFunnel, channel }}) =>
+        cell: ({ plannedFunnel, channel }) =>
           getTextfieldItem(
             formatNumber(plannedFunnel),
             e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))
@@ -234,7 +233,7 @@ export default class PlannedVsActual extends Component {
         id: 'actualObjective',
         header: `Actual ${firstFunnelObjectiveNickname}`,
         footer: formatNumber(totalActualFunnel),
-        cell: ({ value: { actualFunnel, channel }}) =>
+        cell: ({ actualFunnel, channel }) =>
           getTextfieldItem(
             formatNumber(actualFunnel),
               e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))
@@ -244,19 +243,20 @@ export default class PlannedVsActual extends Component {
         id: 'planVsActualFunnel',
         header: 'Plan vs Actual',
         footer: formatNumber(totalPlannedFunnel - totalActualFunnel),
-        accessor: ({ plannedFunnel, actualFunnel }) => formatNumber(plannedFunnel - actualFunnel),
+        cell: ({ plannedFunnel, actualFunnel }) => formatNumber(plannedFunnel - actualFunnel),
       },
       {
         id: 'pacingForFunnel',
         header: 'Pacing for',
         footer: isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualFunnel))) : '-',
-        accessor: ({ actualFunnel }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
+        cell: ({ actualFunnel }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
+        divider: true,
       },
       {
         id: 'plannedUser',
         header: <div data-tip="what's your expectation?">Planned {userNickname}</div>,
         footer: formatNumber(totalPlannedUsers),
-        cell: ({ value: { plannedUsers, channel }}) =>
+        cell: ({ plannedUsers, channel }) =>
           getTextfieldItem(
             formatNumber(plannedUsers),
             e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))
@@ -266,7 +266,7 @@ export default class PlannedVsActual extends Component {
         id: 'actualUser',
         header: `Actual ${userNickname}`,
         footer: formatNumber(totalActualUsers),
-        cell: ({ value: { actualUsers, channel }}) =>
+        cell: ({ actualUsers, channel }) =>
           getTextfieldItem(
             formatNumber(actualUsers),
             e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))
@@ -276,13 +276,13 @@ export default class PlannedVsActual extends Component {
         id: 'planVsActualUser',
         header: 'Plan vs Actual',
         footer: formatNumber(totalPlannedUsers - totalActualUsers),
-        accessor: ({ plannedUsers, actualUsers }) => formatNumber(plannedUsers - actualUsers),
+        cell: ({ plannedUsers, actualUsers }) => formatNumber(plannedUsers - actualUsers),
       },
       {
         id: 'pacingForUser',
         header: 'Pacing for',
         footer: isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualUsers))) : '-',
-        accessor: ({ actualUsers }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-',
+        cell: ({ actualUsers }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-',
       },
     ]
 
@@ -296,15 +296,8 @@ export default class PlannedVsActual extends Component {
             <Table
               columns={columns}
               data={parsedChannels}
-              defaultSorted={[
-                {
-                  id: "plannedBudget",
-                  desc: true
-                }
-              ]}
-              style={{
-                height: '600px',
-              }}
+              defaultSorted={[{ id: "plannedBudget", desc: true }]}
+              style={{ height: '400px' }}
               duplicateFooterOnTop
             />
             <div>
