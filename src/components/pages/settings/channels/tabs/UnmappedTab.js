@@ -11,11 +11,15 @@ export default class UnmappedTab extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = {...this.getInitialState(props)};
+  }
+
+  getInitialState = (props) => {
+    return {
       conditions: [props.getNewCondition()],
       channel: ''
     };
-  }
+  };
 
   updateCondition = (index, param, value) => {
     const conditions = [...this.state.conditions];
@@ -139,6 +143,7 @@ export default class UnmappedTab extends Component {
                         attributionMappingRules: this.props.attributionMappingRules
                       }, this.props.region, this.props.planDate);
                     });
+                    this.setState({...this.getInitialState(this.props)});
                   }} success={this.state.saveSuccess} fail={this.state.saveFail}/>
     </div>;
   }
