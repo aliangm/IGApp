@@ -191,7 +191,7 @@ export default class CMO extends Component {
 
       return <Objective
         target={target}
-        value={actualIndicators[objective.indicator]}
+        value={objective.value}
         title={indicatorsProperties[objective.indicator].nickname}
         project={project}
         key={index}

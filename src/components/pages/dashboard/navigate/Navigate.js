@@ -17,6 +17,7 @@ import {
 import Objective from 'components/pages/dashboard/Objective';
 import Funnel from 'components/pages/dashboard/Funnel';
 import {precisionFormat} from 'utils';
+import {projectObjective} from 'components/utils/objective';
 
 const MAX_CHANNELS_FOR_PERIOD = 5;
 
@@ -222,11 +223,11 @@ export default class Navigate extends Component {
               {
                 collapsedObjectives.slice(0, 2).map((objective, index) => {
                   const target = objective.target;
-                  const project = committedForecasting[objective.monthIndex] &&
-                    committedForecasting[objective.monthIndex][objective.indicator];
+                  const project = projectObjective(committedForecasting, objective);
+
                   return <Objective
                     target={target}
-                    value={actualIndicators[objective.indicator]}
+                    value={objective.value}
                     title={indicatorsProperties[objective.indicator].nickname}
                     project={project}
                     key={index}
