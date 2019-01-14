@@ -18,23 +18,24 @@ export default class UnmappedTab extends Component {
   }
 
   updateCondition = (index, param, value) => {
-    const {conditions} = this.state;
+    const {conditions} = {...this.state};
     conditions[index][param] = value;
     this.setState({conditions});
   };
 
   addCondition = () => {
-    const {conditions} = this.state;
+    const {conditions} = {...this.state};
     conditions.push(this.props.getNewCondition());
     this.setState({conditions});
   };
 
   deleteCondition = (index) => {
-    let {conditions} = this.state;
+    let {conditions} = {...this.state};
     if (index) {
       conditions.splice(index, 1);
     }
     else {
+      // Prevent user for deleting the first condition - initialize it instead
       conditions = [this.props.getNewCondition()];
     }
     this.setState({conditions});
