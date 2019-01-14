@@ -41,7 +41,6 @@ export default class ChannelsTab extends Component {
 
     this.props.updateState({userChannelsSchema: userChannelsSchema}, () => {
       this.props.updateUserMonthPlan({
-        userChannelsSchema: this.props.userChannelsSchema,
         attributionMappingRules: this.props.attributionMappingRules
       }, this.props.region, this.props.planDate);
       this.setState({
