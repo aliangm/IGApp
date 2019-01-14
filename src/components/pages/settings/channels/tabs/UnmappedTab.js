@@ -6,12 +6,13 @@ import MappingRule from 'components/pages/settings/channels/tabs/common/MappingR
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import SaveButton from 'components/pages/profile/SaveButton';
 import {isNil} from 'lodash';
+import Toggle from 'components/controls/Toggle';
 
 export default class UnmappedTab extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {...this.getInitialState(props)};
+    this.state = {...this.getInitialState(props), isURLsTab: true};
   }
 
   getInitialState = (props) => {
@@ -66,7 +67,7 @@ export default class UnmappedTab extends Component {
 
   render() {
     const {unmappedUrls, unmappedUtms} = this.props;
-    const {conditions, channel} = this.state;
+    const {conditions, channel, isURLsTab} = this.state;
     const unmappedUrlsRows = unmappedUrls && unmappedUrls.map(row => {
         return {
           items: [
@@ -115,10 +116,27 @@ export default class UnmappedTab extends Component {
     );
 
     return <div>
-      <Table headRowData={{items: ['Referrer', 'Count', '']}}
-             rowsData={unmappedUrlsRows}/>
-      <Table headRowData={{items: ['Source', 'Medium', 'Count', '']}}
-             rowsData={unmappedUtmsRows}/>
+      <Toggle
+        options={[{
+          text: 'URLs',
+          value: true
+        },
+          {
+            text: 'UTMs',
+            value: false
+          }
+        ]}
+        selectedValue={isURLsTab}
+        onClick={(value) => {
+          this.setState({isURLsTab: value});
+        }}/>
+      {isURLsTab ?
+        <Table headRowData={{items: ['Referrer', 'Count', '']}}
+               rowsData={unmappedUrlsRows}/>
+        :
+        <Table headRowData={{items: ['Source', 'Medium', 'Count', '']}}
+               rowsData={unmappedUtmsRows}/>
+      }
       {conditions.map((condition, index) =>
         <MappingRule key={index}
                      param={condition.param}
