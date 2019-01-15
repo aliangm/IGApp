@@ -148,7 +148,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
   const indicatorsDataPerMonth = months.map((month, monthIndex) => {
     return {
       name: months[monthIndex],
-      ...historyData.indicators[monthIndex],
+      ...historyDataWithCurrentMonth.indicators[monthIndex],
       ...committedBudgets[monthIndex],
       total: sumBy(Object.keys(committedBudgets[monthIndex]), (channelKey) => committedBudgets[monthIndex][channelKey])
     };

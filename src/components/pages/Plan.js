@@ -132,8 +132,7 @@ export default class Plan extends Component {
     const planBudgets = this.getPlanBudgets();
     this.forecastAndUpdateUserMonthPlan({
       planBudgets: planBudgets,
-      unknownChannels: this.getPlanBudgets(true),
-      userChannelsSchema: this.props.userChannelsSchema
+      unknownChannels: this.getPlanBudgets(true)
     }, this.state.primaryPlanForecastedIndicators);
   };
 
@@ -287,8 +286,7 @@ export default class Plan extends Component {
     if (!this.state.interactiveMode) {
       this.forecastAndUpdateUserMonthPlan({
         planBudgets: this.getPlanBudgets(),
-        unknownChannels: this.getPlanBudgets(true),
-        userChannelsSchema: this.props.userChannelsSchema
+        unknownChannels: this.getPlanBudgets(true)
       });
     }
   };

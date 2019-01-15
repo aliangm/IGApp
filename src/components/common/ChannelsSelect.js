@@ -15,6 +15,10 @@ export default class ChannelsSelect extends Component {
     withOtherChannels: false
   };
 
+  focus() {
+    this.refs.input.focus();
+  }
+
   render() {
     const {isChannelDisabled, withOtherChannels, ...otherProps} = this.props;
 
@@ -43,6 +47,7 @@ export default class ChannelsSelect extends Component {
       iconRendererOnOptions={true}
       iconFromValue={getChannelIcon}
       allowCreate={withOtherChannels}
+      ref='input'
       promptTextCreator={value => `Add ${value} as a channel`}
     />;
   }

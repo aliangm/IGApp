@@ -56,6 +56,8 @@ export default class AttributionTable extends Component {
     const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
     const pluralNickname = (indicator) => getNickname(indicator, false);
 
+    const stageEfficiency = (value) => efficiencyFormatter(value, selectedStage.name);
+
     const titleColumn = {title: titleColumnName, type: 'row-title'};
     const costColumn = {title: 'Cost', type: 'cost'};
     const efficiencyColumn = {title: 'Efficiency', type: 'efficiency'};
@@ -196,7 +198,7 @@ export default class AttributionTable extends Component {
         'cost': formatBudget,
         'stage-indicator': precisionFormat,
         'influenced-stage-indicator': Math.round,
-        'efficiency': value => efficiencyFormatter(value, selectedStage.name),
+        'efficiency': value => stageEfficiency(value),
         'revenue': formatBudget,
         'arpa': averageFormatter,
         'roi': averageFormatter,
@@ -236,7 +238,7 @@ export default class AttributionTable extends Component {
         case 'influenced-stage-indicator':
           return totalIndicatorGenerated(data, getInfluencedMetricNumber);
         case 'efficiency':
-          return efficiencyFormatter(getTotalCost() / totalMetric());
+          return stageEfficiency(getTotalCost() / totalMetric());
         case 'revenue':
           return formatBudget(totalRevenue());
         case 'arpa':

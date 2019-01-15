@@ -261,7 +261,6 @@ export default class PlannedVsActual extends Component {
                       this.props.updateUserMonthPlan({
                         actualChannelBudgets: this.props.actualChannelBudgets,
                         historyData: this.props.historyData,
-                        userChannelsSchema: this.props.userChannelsSchema,
                         channelsImpact: this.props.channelsImpact
                       }, this.props.region, this.props.planDate);
                       this.setState({saveSuccess: true});

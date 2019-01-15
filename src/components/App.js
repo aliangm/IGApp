@@ -117,7 +117,7 @@ class AppComponent extends Component {
       this.getIndicatorsMetadata(),
       this.getChannelsMetadata(),
       this.getUserMonthPlan(localStorage.getItem('region'), null),
-      this.getUnmappedUrls()
+      this.getUnmappedData()
     ];
 
     Promise.all(tasks)
@@ -410,6 +410,7 @@ class AppComponent extends Component {
   setDataAsState(data) {
     this.setState({
       dataUpdated: true,
+      userMonthPlan: data,
       userProfile: data.userProfile,
       targetAudience: data.targetAudience && data.targetAudience.length > 0 ? data.targetAudience : [{
         fields: {
@@ -621,7 +622,7 @@ class AppComponent extends Component {
   forecast(planBudgets) {
     return new Promise((resolve, reject) => {
       serverCommunication.serverRequest('POST', 'forecast', JSON.stringify({
-        ...this.state,
+        ...this.state.userMonthPlan,
         planBudgets: planBudgets
       }), this.state.region)
         .then((response) => {
@@ -643,7 +644,11 @@ class AppComponent extends Component {
       category: category,
       isUnknownChannel: true
     };
-    this.updateState({userChannelsSchema: userChannelsSchema});
+    this.updateState({userChannelsSchema: userChannelsSchema}, () => {
+      this.updateUserMonthPlan({
+        userChannelsSchema: this.state.userChannelsSchema,
+      }, this.state.region, this.state.planDate, true);
+    });
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
@@ -675,15 +680,16 @@ class AppComponent extends Component {
     return deferred.promise;
   }
 
-  getUnmappedUrls() {
+  getUnmappedData() {
     const deferred = q.defer();
-    serverCommunication.serverRequest('GET', 'getUnmappedUrls', null, localStorage.getItem('region'))
+    serverCommunication.serverRequest('GET', 'getUnmappedData', null, localStorage.getItem('region'))
       .then((response) => {
         if (response.ok) {
           response.json()
-            .then((data) => {
+            .then(([unmappedUrls, unmappedUtms]) => {
               this.setState({
-                unmappedUrls: data
+                unmappedUrls,
+                unmappedUtms
               });
               deferred.resolve();
             });

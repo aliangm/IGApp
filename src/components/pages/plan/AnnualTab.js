@@ -85,14 +85,14 @@ export default class AnnualTab extends Component {
 
       const mapChunk = (chunk) => chunk.map((chunk, index) => {
         return {
-          putAfter: (offset + index * itemsInChunk),
+          putAfter: (offset + index * itemsInChunk - 1),
           value: chunkAdditionFormatter && chunkAdditionFormatter(chunk),
           orderIndex: grouperIndex
         };
       });
 
       // If does not need to add to last chunk
-      if (array.length / itemsInChunk !== 0) {
+      if ((array.length - offset) % itemsInChunk !== 0) {
         return mapChunk(chunkSplit.slice(0, chunkSplit.length - 1));
       }
       else {
@@ -114,9 +114,9 @@ export default class AnnualTab extends Component {
       const additions = groupedAdditions[putAfter];
       const putAfterIndex = arrayWithAddition.findIndex(item => get(item, 'realIndex', null) == putAfter);
       arrayWithAddition =
-        [...arrayWithAddition.slice(0, putAfterIndex),
+        [...arrayWithAddition.slice(0, putAfterIndex + 1),
           ...additions.map(item => item.value),
-          ...arrayWithAddition.slice(putAfterIndex)];
+          ...arrayWithAddition.slice(putAfterIndex + 1)];
     });
 
     return arrayWithAddition;
