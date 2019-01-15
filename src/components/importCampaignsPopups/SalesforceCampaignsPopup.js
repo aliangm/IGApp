@@ -94,7 +94,7 @@ export default class SalesforceCampaigns extends Component {
 
   toggleTypeCheckbox = (type) => {
     const campaignsMapping = {...this.state.campaignsMapping};
-    if (has(campaignsMapping, ['types', type])) {
+    if (this.isTypeMapped(type)) {
       delete campaignsMapping.types[type];
     }
     else {
@@ -141,8 +141,11 @@ export default class SalesforceCampaigns extends Component {
 
   getAllMappedCampaigns = () => {
     return this.state.campaigns
-      .filter(campaign => has(this.state.campaignsMapping, ['types', campaign.Type]));
+      .filter(campaign => this.isTypeMapped(campaign.Type));
   };
+
+  isTypeMapped = type => has(this.state.campaignsMapping, ['types', type]);
+
 
   getAllMappedCampaignsIds = () => {
     return this.getAllMappedCampaigns()
@@ -194,7 +197,7 @@ export default class SalesforceCampaigns extends Component {
       <div className={this.classes.row} key={index}>
         <div className={this.classes.cols}>
           <div className={this.classes.colLeft} style={{flexGrow: 'initial'}}>
-            <Label checkbox={has(this.state.campaignsMapping, ['types', type.Type])}
+            <Label checkbox={this.isTypeMapped(type.Type)}
                    onChange={() => this.toggleTypeCheckbox(type.Type)}
                    className={salesForceStyle.locals.label}>{type.Type}
             </Label>
@@ -205,7 +208,7 @@ export default class SalesforceCampaigns extends Component {
           <div className={this.classes.colRight}>
             <ChannelsSelect style={{width: '270px'}}
                             selected={this.state.campaignsMapping.types[type.Type]}
-                            disabled={!has(this.state.campaignsMapping, ['types', type.Type])}
+                            disabled={!this.isTypeMapped(type.Type)}
                             onChange={(e) => this.handleChange(e.value, type.Type, 'types')}
                             ref={'type' + index}
                             withOtherChannels={true}
