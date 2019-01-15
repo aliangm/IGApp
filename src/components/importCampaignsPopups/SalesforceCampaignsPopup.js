@@ -45,7 +45,7 @@ export default class SalesforceCampaigns extends Component {
     this.setState({selectAll: !this.state.selectAll}, () => {
       let selectedCampaigns = [];
       if (this.state.selectAll) {
-        selectedCampaigns = this.getAllMappedCampaigns();
+        selectedCampaigns = this.getAllMappedCampaignsIds();
       }
       this.setState({selectedCampaigns: selectedCampaigns});
     });
@@ -134,14 +134,18 @@ export default class SalesforceCampaigns extends Component {
       return false;
     });
     if (!isEmpty) {
-      const selectedCampaigns = this.getAllMappedCampaigns();
+      const selectedCampaigns = this.getAllMappedCampaignsIds();
       this.setState({tab: 1, selectedCampaigns});
     }
   };
 
   getAllMappedCampaigns = () => {
     return this.state.campaigns
-      .filter(campaign => has(this.state.campaignsMapping, ['types', campaign.Type]))
+      .filter(campaign => has(this.state.campaignsMapping, ['types', campaign.Type]));
+  };
+
+  getAllMappedCampaignsIds = () => {
+    return this.getAllMappedCampaigns()
       .map(campaign => campaign.Id);
   };
 
@@ -230,8 +234,7 @@ export default class SalesforceCampaigns extends Component {
         </div>
       </div>
     );
-    const campaignsRows = this.state.campaigns
-      .filter(campaign => has(this.state.campaignsMapping, ['types', campaign.Type]))
+    const campaignsRows = this.getAllMappedCampaigns()
       .map((campaign, index) =>
         <Label
           key={index}
