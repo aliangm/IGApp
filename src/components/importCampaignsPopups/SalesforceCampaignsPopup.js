@@ -10,6 +10,7 @@ import CRMStyle from 'styles/indicators/crm-popup.css';
 import AuthorizationIntegrationPopup from 'components/common/AuthorizationIntegrationPopup';
 import {getTeamMembersOptions} from 'components/utils/teamMembers';
 import ChannelsSelect from 'components/common/ChannelsSelect';
+import {has} from 'lodash';
 
 export default class SalesforceCampaigns extends Component {
 
@@ -44,7 +45,7 @@ export default class SalesforceCampaigns extends Component {
     this.setState({selectAll: !this.state.selectAll}, () => {
       let selectedCampaigns = [];
       if (this.state.selectAll) {
-        selectedCampaigns = this.state.campaigns.map(campaign => campaign.Id);
+        selectedCampaigns = this.getAllMappedCampaignsIds();
       }
       this.setState({selectedCampaigns: selectedCampaigns});
     });
@@ -91,6 +92,17 @@ export default class SalesforceCampaigns extends Component {
     });
   };
 
+  toggleTypeCheckbox = (type) => {
+    const campaignsMapping = {...this.state.campaignsMapping};
+    if (this.isTypeMapped(type)) {
+      delete campaignsMapping.types[type];
+    }
+    else {
+      campaignsMapping.types[type] = '';
+    }
+    this.setState({campaignsMapping});
+  };
+
   toggleCheckbox(campaignId) {
     let selectedCampaigns = this.state.selectedCampaigns;
     const index = selectedCampaigns.indexOf(campaignId);
@@ -115,16 +127,28 @@ export default class SalesforceCampaigns extends Component {
 
   next = () => {
     const isEmpty = Object.keys(this.refs).some(ref => {
-      if (!this.refs[ref].props.selected) {
+      if (!this.refs[ref].props.selected && !this.refs[ref].props.disabled) {
         this.refs[ref].focus();
         return true;
       }
       return false;
     });
     if (!isEmpty) {
-      this.setState({tab: 1});
+      const selectedCampaigns = this.getAllMappedCampaignsIds();
+      this.setState({tab: 1, selectedCampaigns});
     }
   };
+
+  getAllMappedCampaigns = () =>
+    this.state.campaigns
+      .filter(campaign => this.isTypeMapped(campaign.Type));
+
+  isTypeMapped = type => has(this.state.campaignsMapping, ['types', type]);
+
+
+  getAllMappedCampaignsIds = () =>
+    this.getAllMappedCampaigns()
+      .map(campaign => campaign.Id);
 
   render() {
     const selects = {
@@ -171,7 +195,10 @@ export default class SalesforceCampaigns extends Component {
       <div className={this.classes.row} key={index}>
         <div className={this.classes.cols}>
           <div className={this.classes.colLeft} style={{flexGrow: 'initial'}}>
-            <Label className={salesForceStyle.locals.label}>{type.Type}</Label>
+            <Label checkbox={this.isTypeMapped(type.Type)}
+                   onChange={() => this.toggleTypeCheckbox(type.Type)}
+                   className={salesForceStyle.locals.label}>{type.Type}
+            </Label>
           </div>
           <div className={this.classes.colCenter} style={{flexGrow: 'initial', margin: 'initial'}}>
             <div className={salesForceStyle.locals.arrow}/>
@@ -179,6 +206,7 @@ export default class SalesforceCampaigns extends Component {
           <div className={this.classes.colRight}>
             <ChannelsSelect style={{width: '270px'}}
                             selected={this.state.campaignsMapping.types[type.Type]}
+                            disabled={!this.isTypeMapped(type.Type)}
                             onChange={(e) => this.handleChange(e.value, type.Type, 'types')}
                             ref={'type' + index}
                             withOtherChannels={true}
@@ -207,16 +235,17 @@ export default class SalesforceCampaigns extends Component {
         </div>
       </div>
     );
-    const campaignsRows = this.state.campaigns.map((campaign, index) =>
-      <Label
-        key={index}
-        style={{textTransform: 'capitalize'}}
-        checkbox={this.state.selectedCampaigns.includes(campaign.Id)}
-        onChange={this.toggleCheckbox.bind(this, campaign.Id)}
-      >
-        {campaign.Name}
-      </Label>
-    );
+    const campaignsRows = this.getAllMappedCampaigns()
+      .map((campaign, index) =>
+        <Label
+          key={index}
+          style={{textTransform: 'capitalize'}}
+          checkbox={this.state.selectedCampaigns.includes(campaign.Id)}
+          onChange={this.toggleCheckbox.bind(this, campaign.Id)}
+        >
+          {campaign.Name}
+        </Label>
+      );
     return <AuthorizationIntegrationPopup ref={ref => this.authPopup = ref}
                                           api='salesforceapi'
                                           afterAuthorizationApi='salesforcecampaignsapi'
