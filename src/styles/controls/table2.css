@@ -1,7 +1,9 @@
 .wrap {
     padding: 15px;
-    border: 1px #e3e6f4;
-    border-radius: 2px;
+}
+
+.noPadding {
+    padding: 0;
 }
 
 .table:global(.ReactTable) {

@@ -82,7 +82,6 @@ export default class Users extends Component {
   }
 
   render() {
-
     const {attribution: {usersByEmail, usersByAccount}} = this.props;
 
     const headRow = [

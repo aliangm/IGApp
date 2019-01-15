@@ -67,6 +67,8 @@ const TdComponent = ({ children, cellClassName, ...props }) => (
 )
 
 export default class Table extends Component {
+	style = style;
+
 	styles = [style, reactTableStyle];
 
 	static propTypes = {
@@ -82,10 +84,11 @@ export default class Table extends Component {
 		cellClassName: PropTypes.string,
 
 		columns: PropTypes.arrayOf(PropTypes.shape({
-			header: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-			cell: PropTypes.func.isRequired, // (value, rowData) => React.Node,
-			footer: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-			accessor: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+			id: PropTypes.string.isRequired,
+			header: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
+			// (value, rowData) => PropTypes.node,
+			cell: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
+			footer: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
 			divider: PropTypes.bool,
 			fixed: PropTypes.oneOf(['left', 'right']),
 			sortable: PropTypes.bool,
@@ -120,9 +123,11 @@ export default class Table extends Component {
 			footerClassName,
 			...other
 		}) => {
+
+
 			return {
 				id,
-				accessor,
+				accessor: typeof cell === 'string' ? cell : accessor,
 				sortable,
 				minWidth,
 				Cell: typeof cell === 'function' ? (row) => cell(row.value, row) : cell,
@@ -150,20 +155,23 @@ export default class Table extends Component {
 			columns,
 			defaultMinWidth,
 			showFootRowOnHeader,
+			noPadding,
 			...other
 		} = this.props
+		const tableData = data || []
 
 		return (
-			<div className={classnames(tableStyles.wrap, className)}>
+			<div className={classnames(tableStyles.wrap, noPadding && tableStyles.noPadding, className)}>
 				<ReactTableFixedColumns
 					ThComponent={showFootRowOnHeader ? ThWithFooterCheckComponent : ThComponent}
 					TdComponent={TdComponent}
 					TheadComponent={showFootRowOnHeader ? TheadWithFooterRowComponent : TheadComponent}
+					NoDataComponent={() => null} // turn it off for now
 					showPagination={false}
-					pageSize={data.length}
+					pageSize={tableData.length}
 					resizable={true}
 					className={classnames(tableStyles.table, tableClassName)}
-					data={data}
+					data={tableData}
 					columns={this.makeColumns()}
 					getTheadGroupTrProps={() => ({ className: classnames(tableStyles.headRow, headRowClassName) })}
 					getTheadGroupThProps={() => ({

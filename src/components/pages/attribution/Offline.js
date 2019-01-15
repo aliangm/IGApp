@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/users/users.css';
 import {getNickname} from 'components/utils/channels';
 import icons from 'styles/icons/plan.css';
-import Table from 'components/controls/Table';
+import Table from 'components/controls/Table2';
 
 export default class Offline extends Component {
 
@@ -24,32 +24,38 @@ export default class Offline extends Component {
   render() {
     const {attribution} = this.props;
     const {offline} = attribution;
-    const headRow = [
-      'Channel',
-      'Campaign',
-      'Start Date',
-      'End Date'
-    ];
-
-    const rows = offline && offline.map(item => {
-      return {
-        items: [
-          <div style={{display: 'flex'}}>
-            <div className={this.classes.icon} data-icon={'plan:' + item.channel}/>
-            {getNickname(item.channel)}
-          </div>,
-          item.campaigns.join(', '),
-          this.formatDate(item.startDate),
-          this.formatDate(item.endDate),
-          <div>
-          </div>
-        ]
-      };
-    });
 
     return <div>
-      <Table headRowData={{items: headRow}}
-             rowsData={rows}/>
+      <Table
+        data={offline}
+        columns={[
+          {
+            id: 'channel',
+            header: 'Channel',
+            cell: (item) => (
+              <div style={{display: 'flex'}}>
+                <div className={this.classes.icon} data-icon={'plan:' + item.channel}/>
+                {getNickname(item.channel)}
+              </div>
+            ),
+          },
+          {
+            id: 'campaign',
+            header: 'Campaign',
+            cell: (item) => item.campaigns.join(', '),
+          },
+          {
+            id: 'startDate',
+            header: 'Start Date',
+            cell: (item) => this.formatDate(item.startDate),
+          },
+          {
+            id: 'endDate',
+            header: 'End Date',
+            cell: (item) => this.formatDate(item.endDate),
+          },
+        ]}
+      />
     </div>;
   }
 }

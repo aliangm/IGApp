@@ -4,7 +4,7 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getDates} from 'components/utils/date';
 import taskStyle from 'styles/campaigns/task.css';
 import {formatExpenses} from 'components/utils/expenses';
-import Table from 'components/controls/Table';
+import Table from 'components/controls/Table2';
 import history from 'history';
 
 export default class Expenses extends Component {
@@ -17,58 +17,85 @@ export default class Expenses extends Component {
     this.props.updateUserMonthPlan({expenses}, this.props.region, this.props.planDate);
   };
 
+  editExpense = (expense, index) => {
+    history.push({
+      pathname: '/campaigns/add-expense',
+      state: {
+        ...expense,
+        index,
+        close: () => history.push({
+          pathname: '/campaigns/expenses'
+        })
+      }
+    });
+  };
+
   render() {
     const {expenses, planDate, calculatedData: {activeCampaigns}} = this.props;
+    const data = formatExpenses(expenses, getDates(planDate))
 
-    const headRow = [
-      '',
-      'Expense',
-      'Timeframe',
-      'Due date',
-      'Amount',
-      'Assigned in',
-      'Last Edit'
-    ];
+    return (
+      <Table
+        data={data}
+        columns={[
+          {
+            id: 'controls',
+            header: '',
+            cell: (expense, { index }) => (
+              <div style={{display: 'flex'}}>
+                <div
+                  className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
+                  style={{cursor: 'pointer'}}
+                />
+                <div
+                  className={taskStyle.locals.editIcon} onClick={() => this.editExpense(expense, index)}
+                  style={{cursor: 'pointer', marginLeft: '20px'}}
+                />
+              </div>
+            )
+          },
+          {
+            id: 'expense',
+            header: 'Expense',
+            cell: 'name',
+          },
+          {
+            id: 'timeframe',
+            header: 'Timeframe',
+            cell: 'formattedTimeframe',
+          },
+          {
+            id: 'dueDate',
+            header: 'Due date',
+            cell: 'dueDate',
+          },
+          {
+            id: 'amount',
+            header: 'Amount',
+            cell: 'formattedAmount',
+          },
+          {
+            id: 'assignedIn',
+            header: 'Assigned in',
+            cell: (expense) => {
+              if (expense.assignedTo.entityId) {
+                if (expense.assignedTo.entityType === 'campaign') {
+                  return activeCampaigns[expense.assignedTo.entityId].name
+                }
 
-    const rows = formatExpenses(expenses, getDates(planDate))
-      .map((expense, index) => {
+                return getChannelNickname(expense.assignedTo.entityId)
+              }
 
-        const assignedTo = expense.assignedTo.entityId ?
-          (expense.assignedTo.entityType === 'campaign' ?
-            activeCampaigns[expense.assignedTo.entityId].name
-            : getChannelNickname(expense.assignedTo.entityId))
-          : '';
-
-        return {
-          items: [
-            <div style={{display: 'flex'}}>
-              <div className={taskStyle.locals.deleteIcon} onClick={() => this.deleteExpense(index)}
-                   style={{cursor: 'pointer'}}/>
-              <div className={taskStyle.locals.editIcon} onClick={() => {
-                history.push({
-                  pathname: '/campaigns/add-expense',
-                  state: {
-                    ...expense,
-                    index,
-                    close: () => history.push({
-                      pathname: '/campaigns/expenses'
-                    })
-                  }
-                });
-              }}
-                   style={{cursor: 'pointer', marginLeft: '20px'}}/>
-            </div>,
-            expense.name,
-            expense.formattedTimeframe,
-            expense.dueDate,
-            expense.formattedAmount,
-            assignedTo,
-            expense.formattedTimestamp
-          ]
-        };
-      });
-
-    return <Table headRowData={{items: headRow}}
-                  rowsData={rows}/>;
+              return ''
+            },
+          },
+          {
+            id: 'lastEdit',
+            header: 'Last Edit',
+            cell: 'formattedTimestamp',
+          },
+        ]}
+      />
+    );
   }
 }

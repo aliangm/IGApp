@@ -294,10 +294,10 @@ export default class PlannedVsActual extends Component {
           </div>
           <div className={planStyles.locals.innerBox}>
             <Table
+              className={planStyles.locals.table}
               columns={columns}
               data={parsedChannels}
               defaultSorted={[{ id: "plannedBudget", desc: true }]}
-              style={{ height: '400px' }}
               showFootRowOnHeader
             />
             <div>

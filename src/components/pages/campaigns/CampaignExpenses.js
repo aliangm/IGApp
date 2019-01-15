@@ -4,31 +4,46 @@ import {getDates} from 'components/utils/date';
 import Button from 'components/controls/Button';
 import history from 'history';
 import {formatExpenses} from 'components/utils/expenses';
-import SmallTable from 'components/controls/SmallTable';
+import { SmallTable } from 'components/controls/Table2';
 
 export default class CampaignExpenses extends Component {
 
   render() {
     const {planDate, expenses} = this.props;
 
-    const campaignExpenses = expenses.filter(item => item.assignedTo && item.assignedTo.entityType === 'campaign' && item.assignedTo.entityId === this.props.campaign.index);
-
-    const rows = campaignExpenses && formatExpenses(campaignExpenses, getDates(planDate))
-      .map(expense => {
-          return {
-            items: [
-              expense.name,
-              expense.formattedTimeframe,
-              expense.dueDate,
-              expense.formattedAmount
-            ]
-          };
-        }
-      );
+    const campaignExpenses = expenses.filter(item =>
+      item.assignedTo
+      && item.assignedTo.entityType === 'campaign'
+      && item.assignedTo.entityId === this.props.campaign.index
+    );
+    const data = campaignExpenses && formatExpenses(campaignExpenses, getDates(planDate));
 
     return <div>
-      <SmallTable headRowData={{items: ['Expense', 'Timeframe', 'Due date', 'Amount']}}
-                  rowsData={rows}/>
+      <SmallTable
+        data={data}
+        columns={[
+          {
+            id: 'Expense',
+            header: 'Expense',
+            cell: 'name',
+          },
+          {
+            id: 'Timeframe',
+            header: 'Timeframe',
+            cell: 'formattedTimeframe',
+          },
+          {
+            id: 'DueDate',
+            header: 'Due date',
+            cell: 'dueDate',
+          },
+          {
+            id: 'Amount',
+            header: 'Amount',
+            cell: 'formattedAmount',
+          },
+        ]}
+      />
       <Button type="primary" style={{
         width: '123px',
         marginTop: '30px'

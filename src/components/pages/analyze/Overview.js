@@ -29,11 +29,23 @@ import {getColor} from 'components/utils/colors';
 import sumBy from 'lodash/sumBy';
 import groupBy from 'lodash/groupBy';
 import mapValues from 'lodash/mapValues';
-import SmallTable from 'components/controls/SmallTable';
-import { SmallTable as SmallTable2 } from 'components/controls/Table2';
+import { SmallTable } from 'components/controls/Table2';
 import indicatorsGraphStyle from 'styles/plan/indicators-graph.css';
 import isEmpty from 'lodash/isEmpty';
 import StatSquare from 'components/common/StatSquare';
+
+const StatTable = (props) => (
+	<SmallTable
+		noPadding
+		style={{
+			maxHeight: 330,
+			margin: '15px 0',
+		}}
+		headRowClassName={dashboardStyle.locals.itemTableHeader}
+		cellClassName={dashboardStyle.locals.itemTableHeaderCell}
+    {...props}
+  />
+)
 
 export default class Overview extends Component {
 
@@ -134,45 +146,11 @@ export default class Overview extends Component {
     const influencedRevenueByChannel = channelsImpact ? channelsImpact.influencedRevenue : {};
     delete revenueByChannel.direct;
 
-    const revenueByChannelRows = Object.keys(revenueByChannel).map(channel => {
-      return {
-        items: [getChannelNickname(channel),
-          formatBudget(revenueByChannel[channel]),
-          formatBudget(influencedRevenueByChannel[channel])]
-      };
-    });
-
     const channelsByCategories = groupBy(Object.keys(revenueByChannel), channel => getMetadata('category', channel));
     const revenueByCategory = mapValues(channelsByCategories,
       channels => sumBy(channels, channel => revenueByChannel[channel]));
     const influencedRevenueByCategory = mapValues(channelsByCategories,
       channels => sumBy(channels, channel => influencedRevenueByChannel[channel]));
-
-    const revenueByCategoryRows = Object.keys(revenueByCategory).map(category => {
-      return {
-        items: [
-          <div style={{textTransform: 'capitalize'}}>
-            {category}
-          </div>,
-          formatBudget(revenueByCategory[category]), formatBudget(influencedRevenueByCategory[category])
-        ]
-      };
-    });
-
-    const revenueByCampaignRows = attributionCampaigns
-      .filter(campaign => campaign.revenue || campaign.influencedRevenue)
-      .map(campaign => {
-      return {
-        items: [campaign.name, formatBudget(campaign.revenue), formatBudget(campaign.influencedRevenue)]
-      };
-    });
-
-    const revenueByContentRows = attributionPages.map(page => {
-      return {
-        items: [page.title, formatBudget(page.revenue), formatBudget(page.influencedRevenue)]
-      };
-    });
-
     const indicatorsInRelevantMonths = indicatorsWithCurrentMonth.slice(this.props.monthsExceptThisMonth)
 
     const channelCategoriesPerMonth = indicatorsInRelevantMonths.map((month) => {
@@ -281,20 +259,38 @@ export default class Overview extends Component {
       />
     );
 
-    const getRevenueByTableItem = (title, revenueByRows, key) =>
+    const getRevenueByTableItem = (title, revenueData, key) =>
       <div className={this.classes.colCenter} key={key}>
         <div className={dashboardStyle.locals.item}
              style={{display: 'inline-block', height: '412px', width: '540px', overflow: 'auto'}}>
           <div className={dashboardStyle.locals.text}>
             Revenue by {title}
           </div>
-          <SmallTable headRowData={{items: [title, 'Attributed Revenue', 'Touched Revenue']}}
-                      rowsData={revenueByRows}/>
+          <StatTable
+            data={revenueData}
+            columns={[
+              {
+                id: title,
+                header: title,
+                cell: 'title',
+              },
+              {
+                id: 'Attributed Revenue',
+                header: 'Attributed Revenue',
+                cell: 'attributedRevenue',
+              },
+              {
+                id: 'Touched Revenue',
+                header: 'Touched Revenue',
+                cell: 'touchedRevenue',
+              },
+            ]}
+          />
         </div>
       </div>;
 
     const getRevenueByRow = data => {
-      const items = data.map((dataItem, index) => getRevenueByTableItem(dataItem.title, dataItem.revenueByRows, index));
+      const items = data.map((dataItem, index) => getRevenueByTableItem(dataItem.title, dataItem.revenueData, index));
       return <div className={this.classes.cols} style={{width: '1110px'}}>
         {items}
       </div>;
@@ -426,17 +422,36 @@ export default class Overview extends Component {
           </div>
           {getRevenueByRow([{
             title: 'Category',
-            revenueByRows: revenueByCategoryRows
+            revenueData: Array.from(new Array(20), () => ({ title: 'a', attributedRevenue: 'b', touchedRevenue: 'c'}))
+            // Object.keys(revenueByCategory).map((category) => ({
+            //   title: category.toUpperCase(),
+            //   attributedRevenue: formatBudget(revenueByCategory[category]),
+            //   touchedRevenue: formatBudget(influencedRevenueByCategory[category]),
+            // })),
           }, {
             title: 'Channel',
-            revenueByRows: revenueByChannelRows
+            revenueData: Object.keys(revenueByChannel).map((channel) => ({
+              title: getChannelNickname(channel),
+              attributedRevenue: formatBudget(revenueByChannel[channel]),
+              touchedRevenue: formatBudget(influencedRevenueByChannel[channel]),
+            })),
           }])}
           {getRevenueByRow([{
             title: 'Campaign',
-            revenueByRows: revenueByCampaignRows
+            revenueData: attributionCampaigns
+              .filter(campaign => campaign.revenue || campaign.influencedRevenue)
+              .map((campaign) => ({
+                title: campaign.name,
+                attributedRevenue: formatBudget(campaign.revenue),
+                touchedRevenue: formatBudget(campaign.influencedRevenue),
+              })),
           }, {
             title: 'Content',
-            revenueByRows: revenueByContentRows
+            revenueData: attributionPages.map((page) => ({
+              title: page.title,
+              attributedRevenue: formatBudget(page.revenue),
+              touchedRevenue: formatBudget(page.influencedRevenue),
+            })),
           }])}
           <div className={this.classes.cols} style={{width: '1110px'}}>
             <div className={this.classes.colLeft}>
@@ -495,7 +510,7 @@ export default class Overview extends Component {
                 <div className={dashboardStyle.locals.text}>
                   Objectives - planned vs actual
                 </div>
-                <SmallTable2
+                <StatTable
                   data={flattenHistoryObjectives}
                   columns={[
                     {

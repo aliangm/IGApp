@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import Table from 'components/controls/Table';
+import Table from 'components/controls/Table2';
 import Button from 'components/controls/Button';
 import MappingRule from 'components/pages/settings/channels/tabs/common/MappingRule';
 import ChannelsSelect from 'components/common/ChannelsSelect';
@@ -21,29 +21,41 @@ export default class UnmappedTab extends Component {
   render() {
     const {unmappedUrls} = this.props;
     const {param, operation, value, channel} = this.state;
-    const rows = unmappedUrls && unmappedUrls.map(row => {
-        return {
-          items: [
-            row.referrer_url,
-            row.count,
-            <div>
-              <Button type="primary"
-                      style={{width: '102px'}}
-                      onClick={() => {
-                        this.setState({value: row.referrer_url});
-                        this.textfield.focus();
-                      }}>
-                Map
-              </Button>
-            </div>
-          ]
-        };
-      }
-    );
 
     return <div>
-      <Table headRowData={{items: ['Referrer', 'Count', '']}}
-             rowsData={rows}/>
+      <Table
+        data={unmappedUrls || []}
+        columns={[
+          {
+            id: 'Referrer',
+            header: 'Referrer',
+            cell: 'referrer_url',
+          },
+          {
+            id: 'Count',
+            header: 'Count',
+            cell: 'count',
+          },
+          {
+            id: 'map',
+            header: '',
+            cell: (row) => (
+              <div>
+                <Button
+                  type="primary"
+                  style={{width: '102px'}}
+                  onClick={() => {
+                    this.setState({ value: row.referrer_url });
+                    this.textfield.focus();
+                  }}
+                >
+                  Map
+                </Button>
+              </div>
+            )
+          },
+        ]}
+      />
       <MappingRule param={param}
                    operation={operation}
                    value={value}
