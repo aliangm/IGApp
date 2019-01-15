@@ -1,8 +1,7 @@
 import React from 'react';
 import Component from 'components/Component';
 import style from 'styles/preferences/objective-view.css';
-import {getNickname} from 'components/utils/indicators';
-import {timeFrameToDate} from 'components/utils/objective';
+import {formatIndicatorDisplay, getNickname} from 'components/utils/indicators';
 import {getColor} from 'components/utils/colors';
 import {getNumberOfDaysBetweenDates} from 'components/utils/date';
 
@@ -27,10 +26,10 @@ export default class ObjectiveView extends Component {
         </div>
         <div className={this.classes.end}>
           <div className={this.classes.textValue}>
-            {(this.props.value || 0) + ' / '}
+            {(formatIndicatorDisplay(this.props.indicator, this.props.value) || 0) + ' / '}
           </div>
           <div className={this.classes.target}>
-            {this.props.target}
+            {formatIndicatorDisplay(this.props.indicator, this.props.target)}
           </div>
           <div className={this.classes.textButton} style={{marginLeft: '20px'}} onClick={this.props.editObjective}>
             Edit

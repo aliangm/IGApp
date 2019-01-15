@@ -212,9 +212,9 @@ export default class AnnualTab extends Component {
 
     const objectiveAccumulatedData = dates && new Array(dates.length).fill(null);
     objectiveAccumulatedData &&
-    collapsedObjectives.filter(objective => isRefreshed(objective.indicator))
+    collapsedObjectives
       .forEach(objective => {
-        for (let i = 0; i < objective.monthIndex; i++) {
+        for (let i = 0; i <= objective.monthIndex; i++) {
           set(objectiveAccumulatedData,
             [numberOfPastDates + i, objective.indicator],
             projectObjective(committedForecasting, objective, i));
