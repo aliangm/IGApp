@@ -149,6 +149,7 @@ function calculateHistoryData(currentData, historyData, monthExceptThisMonth = 0
     return {
       name: months[monthIndex],
       ...historyDataWithCurrentMonth.indicators[monthIndex],
+      ...committedBudgets[monthIndex],
       total: sumBy(Object.keys(committedBudgets[monthIndex]), (channelKey) => committedBudgets[monthIndex][channelKey])
     };
   });
