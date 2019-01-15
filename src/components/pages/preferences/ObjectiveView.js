@@ -26,10 +26,10 @@ export default class ObjectiveView extends Component {
         </div>
         <div className={this.classes.end}>
           <div className={this.classes.textValue}>
-            {(formatIndicatorDisplay(this.props.indicator,this.props.value) || 0) + ' / '}
+            {(formatIndicatorDisplay(this.props.indicator, this.props.value) || 0) + ' / '}
           </div>
           <div className={this.classes.target}>
-            {formatIndicatorDisplay(this.props.indicator,this.props.target)}
+            {formatIndicatorDisplay(this.props.indicator, this.props.target)}
           </div>
           <div className={this.classes.textButton} style={{marginLeft: '20px'}} onClick={this.props.editObjective}>
             Edit
