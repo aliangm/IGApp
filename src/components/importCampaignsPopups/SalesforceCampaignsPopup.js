@@ -139,18 +139,16 @@ export default class SalesforceCampaigns extends Component {
     }
   };
 
-  getAllMappedCampaigns = () => {
-    return this.state.campaigns
+  getAllMappedCampaigns = () =>
+    this.state.campaigns
       .filter(campaign => this.isTypeMapped(campaign.Type));
-  };
 
   isTypeMapped = type => has(this.state.campaignsMapping, ['types', type]);
 
 
-  getAllMappedCampaignsIds = () => {
-    return this.getAllMappedCampaigns()
+  getAllMappedCampaignsIds = () =>
+    this.getAllMappedCampaigns()
       .map(campaign => campaign.Id);
-  };
 
   render() {
     const selects = {
