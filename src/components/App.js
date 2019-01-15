@@ -644,7 +644,11 @@ class AppComponent extends Component {
       category: category,
       isUnknownChannel: true
     };
-    this.updateState({userChannelsSchema: userChannelsSchema});
+    this.updateState({userChannelsSchema: userChannelsSchema}, () => {
+      this.updateUserMonthPlan({
+        userChannelsSchema: this.state.userChannelsSchema,
+      }, this.state.region, this.state.planDate, true);
+    });
   }
 
   calculateAttributionData(monthsExceptThisMonth, attributionModel) {
