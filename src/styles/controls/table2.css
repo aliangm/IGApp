@@ -51,11 +51,11 @@
 }
 
 .headRow .cell:global(.-sort-asc)::after {
-    border-top: 5px solid white;
+    border-bottom: 5px solid white;
 }
 
 .headRow .cell:global(.-sort-desc)::after {
-    border-bottom: 5px solid white;
+    border-top: 5px solid white;
 }
 
 .tableRowGroup {
@@ -70,6 +70,10 @@
     border-top: 5px solid transparent;
     font-size: 14px;
     color: #354052;
+}
+
+.tableRow.clickable {
+    cursor: pointer;
 }
 
 .tableRow .divider {

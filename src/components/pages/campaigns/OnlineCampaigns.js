@@ -6,7 +6,7 @@ import Select from 'components/controls/Select';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import Avatar from 'components/Avatar';
-import Table from 'components/controls/Table';
+import Table from 'components/controls/Table2';
 
 export default class OnlineCampaigns extends Component {
 
@@ -17,18 +17,7 @@ export default class OnlineCampaigns extends Component {
     this.state = {
       editMetric: false,
       selectedAttributionMetric: 'MCL',
-      soryBy: 'impressions',
-      isDesc: 1
     };
-  }
-
-  sortBy(param) {
-    if (this.state.sortBy === param) {
-      this.setState({isDesc: this.state.isDesc * -1});
-    }
-    else {
-      this.setState({sortBy: param});
-    }
   }
 
   render() {
@@ -47,56 +36,6 @@ export default class OnlineCampaigns extends Component {
       {value: 'revenue', label: 'Revenue'}
     ];
 
-    const headRow = [
-      'Status',
-      'Channel',
-      <div onClick={this.sortBy.bind(this, 'name')} style={{cursor: 'pointer'}}>
-        Campaign Name
-      </div>,
-      'Owner',
-      <div onClick={this.sortBy.bind(this, 'impressions')} style={{cursor: 'pointer'}}>
-        Impressions
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'clicks')} style={{cursor: 'pointer'}}>
-        Clicks
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'conversions')} style={{cursor: 'pointer'}}>
-        Conv.
-      </div>,
-      <div onClick={this.sortBy.bind(this, 'actualSpent')} style={{cursor: 'pointer'}}>
-        Ad Spend
-      </div>,
-      <div style={{display: 'inline-flex'}}>
-        {editMetric ?
-          <Select
-            selected={selectedAttributionMetric}
-            select={{
-              options: metrics
-            }}
-            onChange={(e) => {
-              this.setState({selectedAttributionMetric: e.value});
-            }}
-            style={{
-              width: '160px',
-              fontWeight: 'initial',
-              fontSize: 'initial',
-              color: 'initial',
-              textAlign: 'initial'
-            }}
-          />
-          :
-          <div onClick={this.sortBy.bind(this, selectedAttributionMetric)} style={{cursor: 'pointer'}}>
-            {metrics.find(item => item.value === selectedAttributionMetric).label}
-          </div>
-        }
-        <div className={this.classes.metricEdit} onClick={() => {
-          this.setState({editMetric: !editMetric});
-        }}>
-          {editMetric ? 'Done' : 'Edit'}
-        </div>
-      </div>
-    ];
-
     const campaignsWithAttribution = campaigns
       .map((campaign, index) => {
         const attributionData = attributionCampaigns && attributionCampaigns.find(item =>
@@ -107,54 +46,138 @@ export default class OnlineCampaigns extends Component {
         const impressionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === 'impressions');
         const conversionsObj = campaign.objectives.find(objective => objective.kpi.toLowerCase() === 'conversions');
         return {
-          impressions: impressionsObj ? impressionsObj.actualGrowth : 0,
-          clicks: clicksObj ? clicksObj.actualGrowth : 0,
-          conversions: conversionsObj ? conversionsObj.actualGrowth : 0,
+          impressions: impressionsObj ? Number(impressionsObj.actualGrowth) : 0,
+          clicks: clicksObj ? Number(clicksObj.actualGrowth) : 0,
+          conversions: conversionsObj ? Number(conversionsObj.actualGrowth) : 0,
           ...attributionData,
           ...campaign,
           user: user,
           platformIndex: index
         };
       })
-      .filter(campaign => campaign.adwordsId || campaign.facebookadsId || campaign.linkedinadsId || campaign.twitteradsId);
-
-    const rows = campaignsWithAttribution
-      .sort((item1, item2) =>
-        ((item2[this.state.sortBy] || 0) - (item1[this.state.sortBy] || 0)) * this.state.isDesc
-      )
-      .map((campaign, index) => {
-        return {
-          items: [
-            <div className={this.classes.statusIcon} data-icon={'status:' + campaign.status} title={campaign.status}/>,
-            <div>
-              {campaign.source.map(channel =>
-                <div key={channel} className={this.classes.channelIcon} data-icon={'plan:' + channel}
-                     title={getChannelNickname(channel)}/>
-              )}
-            </div>,
-            campaign.name,
-            <div title={campaign.user && campaign.user.name}>
-              <Avatar member={campaign.user} className={this.classes.icon}/>
-            </div>,
-            campaign.impressions,
-            campaign.clicks,
-            campaign.conversions,
-            '$' + formatNumber(campaign.actualSpent || 0),
-            campaign[selectedAttributionMetric] || 0
-          ],
-          props: {
-            key: index,
-            style: {cursor: 'pointer'},
-            onClick: () => {
-              this.props.openCampaign(campaign.platformIndex);
-            }
-          }
-        };
-      });
+      .filter((campaign) =>
+        campaign.adwordsId
+        || campaign.facebookadsId
+        || campaign.linkedinadsId
+        || campaign.twitteradsId
+      );
 
     return (
-      <Table headRowData={{items: headRow}}
-             rowsData={rows}/>
+      <Table
+        data={campaignsWithAttribution}
+        defaultSorted={[{ id: 'impressions', desc: true }]}
+        onRowClick={(campaign) => this.props.openCampaign(campaign.platformIndex)}
+        columns={[
+          {
+            id: 'status',
+            header: 'Status',
+            cell: ({ status }) => (
+              <div
+                className={this.classes.statusIcon}
+                data-icon={'status:' + status}
+                title={status}
+              />
+            ),
+            minWidth: 80,
+          },
+          {
+            id: 'channel',
+            header: 'Channel',
+            cell: ({ source }) => source.map((channel) => (
+              <div
+                key={channel} className={this.classes.channelIcon}
+                data-icon={'plan:' + channel}
+                title={getChannelNickname(channel)}
+              />
+            )),
+            minWidth: 100,
+          },
+          {
+            id: 'name',
+            header: 'Campaign Name',
+            cell: 'name',
+            sortable: true,
+            minWidth: 240,
+          },
+          {
+            id: 'owner',
+            header: 'Owner',
+            cell: ({ user }) => (
+              <div title={user && user.name}>
+                <Avatar member={user} className={this.classes.icon}/>
+              </div>
+            ),
+            minWidth: 80,
+          },
+          {
+            id: 'impressions',
+            header: 'Impressions',
+            cell: 'impressions',
+            sortable: true,
+          },
+          {
+            id: 'clicks',
+            header: 'Clicks',
+            cell: 'clicks',
+            sortable: true,
+            minWidth: 80,
+          },
+          {
+            id: 'conversions',
+            header: 'Conv.',
+            cell: 'conversions',
+            sortable: true,
+            minWidth: 80,
+          },
+          {
+            id: 'actualSpent',
+            header: 'Ad Spend',
+            cell: ({ actualSpent }) => '$' + formatNumber(actualSpent || 0),
+            sortable: true,
+            sortMethod: (a, b) => a.actualSpent - b.actualSpent,
+            minWidth: 80,
+          },
+          {
+            id: 'edit',
+            header: (
+              <div style={{display: 'inline-flex'}}>
+                {editMetric ?
+                  <Select
+                    selected={selectedAttributionMetric}
+                    select={{
+                      options: metrics
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      this.setState({selectedAttributionMetric: e.value});
+                    }}
+                    style={{
+                      width: '160px',
+                      fontWeight: 'initial',
+                      fontSize: 'initial',
+                      color: 'initial',
+                      textAlign: 'initial'
+                    }}
+                  />
+                  : metrics.find(item => item.value === selectedAttributionMetric).label
+                }
+                <div className={this.classes.metricEdit} onClick={(e) => {
+                  e.stopPropagation()
+                  this.setState({editMetric: !editMetric});
+                }}>
+                  {editMetric ? 'Done' : 'Edit'}
+                </div>
+              </div>
+            ),
+            cell: (campaign) => campaign[selectedAttributionMetric] || 0,
+            sortMethod: (a, b) => a[selectedAttributionMetric] - b[selectedAttributionMetric],
+            headerClassName: this.classes.metricHeader,
+            minWidth: editMetric ? 220 : 140,
+            sortable: true,
+            resizable: false,
+          }
+        ]}
+      />
     );
   }
 }

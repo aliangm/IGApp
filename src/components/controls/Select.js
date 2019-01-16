@@ -60,7 +60,7 @@ export default class Select extends Component {
 
     return <div style={this.props.style} className={this.props.className}>
       {label}
-      <div style={{display: 'flex', position: 'relative'}}>
+      <div style={{display: 'flex', position: 'relative'}} onClick={this.props.onClick}>
         <div style={{flex: 'auto'}}>
           <Select {...select}
                   promptTextCreator={this.props.promptTextCreator}

@@ -100,6 +100,7 @@ export default class Table extends Component {
 		data: PropTypes.arrayOf(PropTypes.object),
 		defaultMinWidth: PropTypes.number, // default min width of column
 		showFootRowOnHeader: PropTypes.bool,
+		onRowClick: PropTypes.func, // (item, index, event) => PropTypes.any
 	}
 
 	static defaultProps = {
@@ -156,6 +157,7 @@ export default class Table extends Component {
 			defaultMinWidth,
 			showFootRowOnHeader,
 			noPadding,
+			onRowClick,
 			...other
 		} = this.props
 		const tableData = data || []
@@ -192,7 +194,18 @@ export default class Table extends Component {
 						className: tableStyles.cell,
 						cellClassName,
 					})}
-					getTrProps={() => ({ className: classnames(tableStyles.tableRow, rowClassName) })}
+					getTrProps={(state, rowInfo, column) => ({
+						className: classnames(tableStyles.tableRow, rowClassName, onRowClick && tableStyles.clickable),
+						onClick: (e, handleOriginal) => {
+							if (onRowClick) {
+								onRowClick(rowInfo.original, rowInfo.index, e)
+							}
+
+							if (handleOriginal) {
+								handleOriginal();
+							}
+						},
+					})}
 					getTrGroupProps={() => ({ className: tableStyles.tableRowGroup })}
 					getTdProps={() => ({
 						className: tableStyles.cell,
