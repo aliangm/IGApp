@@ -12,7 +12,7 @@ import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
 import icons from 'styles/icons/plan.css';
 import {extractNumber, newFunnelMapping} from 'components/utils/utils';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
 import get from 'lodash/get';

@@ -4,7 +4,7 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getDates} from 'components/utils/date';
 import taskStyle from 'styles/campaigns/task.css';
 import {formatExpenses} from 'components/utils/expenses';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 import history from 'history';
 
 export default class Expenses extends Component {

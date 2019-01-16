@@ -6,7 +6,7 @@ import Select from 'components/controls/Select';
 import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import Avatar from 'components/Avatar';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 
 export default class OnlineCampaigns extends Component {
 

@@ -4,7 +4,7 @@ import {getDates} from 'components/utils/date';
 import Button from 'components/controls/Button';
 import history from 'history';
 import {formatExpenses} from 'components/utils/expenses';
-import { SmallTable } from 'components/controls/Table2';
+import { SmallTable } from 'components/controls/Table';
 
 export default class CampaignExpenses extends Component {
 

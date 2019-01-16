@@ -7,7 +7,7 @@ import icons from 'styles/icons/plan.css';
 import uniq from 'lodash/uniq';
 import UsersPopup from 'components/pages/users/UsersPopup';
 import Toggle from 'components/controls/Toggle';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 
 const GROUP_BY = {
   USERS: 0,

@@ -29,7 +29,7 @@ import {getColor} from 'components/utils/colors';
 import sumBy from 'lodash/sumBy';
 import groupBy from 'lodash/groupBy';
 import mapValues from 'lodash/mapValues';
-import { SmallTable } from 'components/controls/Table2';
+import { SmallTable } from 'components/controls/Table';
 import indicatorsGraphStyle from 'styles/plan/indicators-graph.css';
 import isEmpty from 'lodash/isEmpty';
 import StatSquare from 'components/common/StatSquare';
@@ -422,12 +422,11 @@ export default class Overview extends Component {
           </div>
           {getRevenueByRow([{
             title: 'Category',
-            revenueData: Array.from(new Array(20), () => ({ title: 'a', attributedRevenue: 'b', touchedRevenue: 'c'}))
-            // Object.keys(revenueByCategory).map((category) => ({
-            //   title: category.toUpperCase(),
-            //   attributedRevenue: formatBudget(revenueByCategory[category]),
-            //   touchedRevenue: formatBudget(influencedRevenueByCategory[category]),
-            // })),
+            revenueData: Object.keys(revenueByCategory).map((category) => ({
+              title: category.toUpperCase(),
+              attributedRevenue: formatBudget(revenueByCategory[category]),
+              touchedRevenue: formatBudget(influencedRevenueByCategory[category]),
+            })),
           }, {
             title: 'Channel',
             revenueData: Object.keys(revenueByChannel).map((channel) => ({

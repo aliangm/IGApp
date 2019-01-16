@@ -24,7 +24,7 @@ import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
 import {userPermittedToPage} from 'utils';
 import {getMemberFullName} from 'components/utils/teamMembers';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 import {isEmpty} from 'lodash';
 
 const MEMBERS_TO_SKIP = 1;

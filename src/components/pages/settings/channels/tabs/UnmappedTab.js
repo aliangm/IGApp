@@ -1,6 +1,6 @@
 import React from 'react';
 import Component from 'components/Component';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 import Button from 'components/controls/Button';
 import MappingRule from 'components/pages/settings/channels/tabs/common/MappingRule';
 import ChannelsSelect from 'components/common/ChannelsSelect';

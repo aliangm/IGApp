@@ -3,7 +3,7 @@ import Component from 'components/Component';
 import style from 'styles/users/users.css';
 import {getNickname} from 'components/utils/channels';
 import icons from 'styles/icons/plan.css';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 
 export default class Offline extends Component {
 

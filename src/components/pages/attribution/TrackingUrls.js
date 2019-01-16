@@ -5,7 +5,7 @@ import copy from 'copy-to-clipboard';
 import buttonsStyle from 'styles/onboarding/buttons.css';
 import trackingStyle from 'styles/campaigns/tracking.css';
 import Textfield from 'components/controls/Textfield';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 
 export default class TrackingPlan extends Component {
 

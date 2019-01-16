@@ -5,7 +5,7 @@ import style from 'styles/plan/planned-actual-tab.css';
 import setupStyle from 'styles/attribution/setup.css';
 import copy from 'copy-to-clipboard';
 import buttonsStyle from 'styles/onboarding/buttons.css';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 
 export default class TrackingPlan extends Component {
 

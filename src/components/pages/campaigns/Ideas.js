@@ -9,7 +9,7 @@ import commentStyle from 'styles/campaigns/comment.css';
 import Avatar from 'components/Avatar';
 import {getProfileSync} from 'components/utils/AuthService';
 import {formatTimestamp} from 'components/utils/date';
-import Table from 'components/controls/Table2';
+import Table from 'components/controls/Table';
 
 export default class Ideas extends Component {
 
