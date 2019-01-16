@@ -173,12 +173,18 @@ export default class PlannedVsActual extends Component {
 
     const extrapolatedValue = value => Math.round(value / extarpolateRatio);
 
-    const trend = (value, lastMonthValue) =>
-      <NumberWithArrow stat={value} isNegative={value < lastMonthValue} statStyle={{
-        fontSize: 'inherit',
-        color: 'inherit',
-        fontWeight: 'inherit'
-      }}/>;
+    const trend = (value, lastMonthValue) => {
+      if (value === lastMonthValue){
+        return value;
+      }
+      else {
+        return <NumberWithArrow stat={value} isNegative={value < lastMonthValue} statStyle={{
+          fontSize: 'inherit',
+          color: 'inherit',
+          fontWeight: 'inherit'
+        }}/>
+      }
+    };
 
     const rows = parsedChannels.map(item => {
       const {actual, planned, isActualNotEmpty, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers, lastMonthActualUsers, lastMonthActualFunnel} = item;
