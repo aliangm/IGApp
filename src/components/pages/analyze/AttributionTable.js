@@ -167,6 +167,8 @@ export default class AttributionTable extends Component {
     };
 
     const headRow = this.getTableRow(null, selectedStage.columns.map(({title, type}) => {
+      const tooltipData = toolTipTextMapping[type];
+
       return <div style={{cursor: 'pointer'}} onClick={() => {
         if (type === sortByColumn) {
           this.setState({isReverse: !isReverse});
@@ -174,7 +176,7 @@ export default class AttributionTable extends Component {
         else {
           this.setState({sortByColumn: type, isReverse: true});
         }
-      }} data-tip={toolTipTextMapping[type]} data-for="appTip">
+      }} data-tip={tooltipData ? tooltipData : null} data-for={tooltipData ? "appTip" : null}>
         {title}
       </div>;
     }), {className: dashboardStyle.locals.headRow});
