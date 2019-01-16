@@ -140,7 +140,7 @@ export default class Content extends Component {
                               data={attributionPages}
                               additionalColumns={additionalColumns}
                               formatAdditionColumn={formatAdditionColumn}
-                              titleColumnName='Content'
+                              dataNickname='Content'
                               getItemCost={() => ''}
                               getItemData={getPageItemData}
                               getItemTitle={getPageItemTitle}

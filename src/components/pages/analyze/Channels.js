@@ -180,7 +180,7 @@ export default class Channels extends Component {
           <FeatureToggle featureName="attribution">
             <AttributionTable data={channelsArray}
                               getItemCost={getChannelCost}
-                              titleColumnName='Channel'
+                              dataNickname='Channel'
                               getItemTitle={getChannelTitle}
                               getItemData={getItemData}/>
           </FeatureToggle>

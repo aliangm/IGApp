@@ -218,7 +218,7 @@ export default class Campaigns extends Component {
           <FeatureToggle featureName="attribution">
             <AttributionTable getItemData={getCampaignData} getItemTitle={getCampaignTitle}
                               getItemCost={getCampaignCost} data={attributionCampaigns}
-                              titleColumnName={'Campagin'}
+                              dataNickname='Campaign'
                               formatAdditionColumn={formatAdditionColumn}
                               formatAdditionColumnTotal={formatAdditionColumnTotal}
                               additionalColumns={additionalColumns}
