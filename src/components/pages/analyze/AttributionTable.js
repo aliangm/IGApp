@@ -177,7 +177,7 @@ export default class AttributionTable extends Component {
         else {
           this.setState({sortByColumn: type, isReverse: true});
         }
-      }} data-tip={tooltipData ? tooltipData : null} data-for={tooltipData ? "appTip" : null}>
+      }} data-tip={tooltipData ? tooltipData : null} data-for={tooltipData ? "appTip" : null} data-effect="float">
         {title}
       </div>;
     }), {className: dashboardStyle.locals.headRow});
