@@ -106,7 +106,7 @@ export default class Overview extends Component {
       const monthString = months[key];
       item.forEach((month, index) => {
         const displayDate = index ? `${index + 1} ${monthString}` : monthString;
-        Object.keys(month).forEach(indicator => {
+        month && Object.keys(month).forEach(indicator => {
           if (!indicatorsData[indicator]) {
             indicatorsData[indicator] = [];
           }

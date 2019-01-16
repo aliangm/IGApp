@@ -41,7 +41,6 @@ export default class ChannelsTab extends Component {
 
     this.props.updateState({userChannelsSchema: userChannelsSchema}, () => {
       this.props.updateUserMonthPlan({
-        userChannelsSchema: this.props.userChannelsSchema,
         attributionMappingRules: this.props.attributionMappingRules
       }, this.props.region, this.props.planDate);
       this.setState({
@@ -170,8 +169,8 @@ export default class ChannelsTab extends Component {
               Mapping
             </div>
             {
-              channelRules.map(rule =>
-                <div key={rule.index}>
+              channelRules.map((rule, index) =>
+                <div key={index}>
                   {
                     rule.conditions.map((condition, conditionIndex) =>
                       <MappingRule key={`${rule.index}-${conditionIndex}`}
@@ -184,7 +183,7 @@ export default class ChannelsTab extends Component {
                                    handleAdd={() => this.addCondition(rule.index)}
                                    handleDelete={() => this.deleteCondition(rule.index, conditionIndex)}/>)
                   }
-                  <div className={this.classes.text} hidden={rule.index === channelRules.length - 1}>
+                  <div className={this.classes.text} hidden={index === channelRules.length - 1}>
                     OR
                   </div>
                 </div>)

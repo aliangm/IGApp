@@ -17,7 +17,7 @@ export function initialize(indicatorsSchema, userMapping) {
 export function formatIndicatorDisplay(indicator, valueToDisplay) {
   if (isInitialized) {
     const displaySign = getIndicatorDisplaySign(indicator);
-    const formattedValue = formatNumber(valueToDisplay);
+    const formattedValue = formatNumber(Math.round(valueToDisplay));
     switch (schema.properties[indicator].displayType) {
       case 'percentage':
         return `${formattedValue}${displaySign}`;

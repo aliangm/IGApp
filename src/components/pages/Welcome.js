@@ -177,7 +177,9 @@ export default class Welcome extends Component {
     if (!this.props.userAccount.companyName) {
       errorFields.push('companyName');
     }
-
+    if (!this.props.userAccount.companyWebsite) {
+      errorFields.push('companyWebsite');
+    }
     // has errors
     if (errorFields && errorFields.length > 0) {
       // change order so user will be focused on first error
@@ -330,7 +332,9 @@ export default class Welcome extends Component {
       <div className={this.classes.row}>
         <Label>Company Website</Label>
         <Textfield value={this.props.userAccount.companyWebsite}
-                   onChange={this.handleChange.bind(this, 'companyWebsite')} withValidationError={true}/>
+                   ref={'companyWebsite'}
+                   onChange={this.handleChange.bind(this, 'companyWebsite')}
+                   withValidationError={true}/>
       </div>
       {!isPopupMode() ?
         <div className={this.classes.row}>
@@ -507,10 +511,12 @@ export default class Welcome extends Component {
           </div>
         }
       </Page>
-      <RegionPopup hidden={!this.state.createNewVisible} close={() => {
-        this.setState({createNewVisible: false});
-      }} createUserMonthPlan={this.props.createUserMonthPlan}
-         created={this.updateSiteStructureIfNeeded}
+      <RegionPopup hidden={!this.state.createNewVisible}
+                   close={() => {
+                     this.setState({createNewVisible: false});
+                   }}
+                   createUserMonthPlan={this.props.createUserMonthPlan}
+                   created={this.updateSiteStructureIfNeeded}
       />
       <ReasonPopup hidden={!this.state.showReasonPopup} updateUserAccount={this.props.updateUserAccount}
                    userAccount={this.props.userAccount} close={() => {

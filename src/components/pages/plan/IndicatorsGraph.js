@@ -171,12 +171,14 @@ export default class IndicatorsGraph extends Component {
     return forecastingData;
   };
 
-  getObjectiveIconFromData = (objectiveData) => {
+  getObjectiveIconFromData = (objectiveData, currentValue = objectiveData.value) => {
     const {committedForecasting} = this.props.calculatedData;
     const project = projectObjective(committedForecasting, objectiveData);
-    return <ObjectiveIcon target={objectiveData.target}
-                          value={this.props.actualIndicators[objectiveData.indicator]}
-                          project={project}/>;
+    return <div className={this.classes.objectiveIcon}>
+      <ObjectiveIcon target={objectiveData.target}
+                     value={currentValue}
+                     project={project}/>
+    </div>;
   };
 
   render() {
@@ -200,7 +202,7 @@ export default class IndicatorsGraph extends Component {
       });
 
       const objectiveIcon = objectiveIndex > -1
-        ? <div className={this.classes.objectiveIcon}>
+        ? <div>
           {this.getObjectiveIconFromData(collapsedObjectives[objectiveIndex])}
         </div>
         : null;
@@ -305,7 +307,7 @@ export default class IndicatorsGraph extends Component {
               const colorIndex = Object.keys(indicatorsMapping).indexOf(indicator);
               const indicatorColor = getColor(colorIndex);
               if (item.value && !item.dataKey.includes(DASHED_KEY_SUFFIX)) {
-                return <div key={index} style={{display: "flex", flexDirection: "column"}}>
+                return <div key={index} style={{display: 'flex', flexDirection: 'column'}}>
                   <div className={this.classes.customTooltipIndicator}>
                     {indicatorsMapping[indicator]}
                   </div>
@@ -338,17 +340,15 @@ export default class IndicatorsGraph extends Component {
                   </div>
                   {!isNil(item.accumulativeObjectiveValue) ?
                     <div className={this.classes.customTooltipObjective}>
-                      Objective Progress: {formatNumber(item.accumulativeObjectiveValue)}
-                    </div> : null}
-                  {parsedObjectives[indicator] !== undefined &&
-                  parsedObjectives[indicator].parsedData.x === data.label ?
-                    <div className={this.classes.customTooltipObjective} style={{display: "inline-flex" ,alignItems: "center"}}>
-                      <div >
-                        Objective: {formatNumber(parsedObjectives[indicator].parsedData.y)}
+                      Objective Progress:
+                      <div className={this.classes.customTooltipProgress}>
+                        {formatIndicatorDisplay(indicator, item.accumulativeObjectiveValue)} / {formatIndicatorDisplay(
+                        indicator,
+                        parsedObjectives[indicator].parsedData.y)}
+                        {this.getObjectiveIconFromData(parsedObjectives[indicator].rawData,
+                          item.accumulativeObjectiveValue)}
                       </div>
-                      {this.getObjectiveIconFromData(parsedObjectives[indicator].rawData)}
-                    </div>
-                    : null}
+                    </div> : null}
                 </div>;
               }
             })

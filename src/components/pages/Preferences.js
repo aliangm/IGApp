@@ -254,7 +254,7 @@ export default class Preferences extends Component {
               else {
                 targetValue = objectiveData.amount + value;
               }
-              recurrentArray[index] = targetValue;
+              recurrentArray[index] = Math.round(targetValue);
             }
           }
         }
