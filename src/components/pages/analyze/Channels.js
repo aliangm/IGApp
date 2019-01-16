@@ -52,7 +52,7 @@ export default class Channels extends Component {
   }
 
   render() {
-    const {attribution: {channelsImpact}, getMetricDataByMapping, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions} = this.props;
+    const {attributionModelLabel, attribution: {channelsImpact}, getMetricDataByMapping, calculatedData: {historyData: {sumBudgets, indicatorsDataPerMonth, months}}, metricsOptions} = this.props;
     const {firstObjective} = this.state;
 
     const getChannelTitle = ({value: channelKey, label}) => {
@@ -182,7 +182,9 @@ export default class Channels extends Component {
                               getItemCost={getChannelCost}
                               dataNickname='Channel'
                               getItemTitle={getChannelTitle}
-                              getItemData={getItemData}/>
+                              getItemData={getItemData}
+                              attributionModel={attributionModelLabel}
+            />
           </FeatureToggle>
           <FeatureToggle featureName="attribution">
             <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>

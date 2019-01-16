@@ -30,6 +30,9 @@ export default class Analyze extends Component {
       {value: 'zShaped', label: 'Full-Path (Z-Shaped)'},
     ];
 
+    const selectedModelIndex = attributionModels.findIndex(model => model.value === attributionModel);
+    const attributionModelLabel = attributionModels[(selectedModelIndex > -1 ? selectedModelIndex : 0)].label;
+
     const selectOptions = [];
     for (let i = 0; i < historyDataLength + 1; i++) {
       const lastXMonth = i;
@@ -111,7 +114,8 @@ export default class Analyze extends Component {
           metricsOptions,
           getTotalParam: getTotalParam,
           totalRevenue: getTotalParam('revenue'),
-          getMetricDataByMapping
+          getMetricDataByMapping,
+          attributionModelLabel
         }));
     return <div>
       <Page contentClassName={this.classes.content} innerClassName={this.classes.pageInner} width="100%">

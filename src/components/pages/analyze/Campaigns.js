@@ -39,7 +39,7 @@ export default class Campaigns extends Component {
   }
 
   render() {
-    const {attribution: {campaigns: attributionCampaigns}, getMetricDataByMapping, campaigns, metricsOptions} = this.props;
+    const {attributionModelLabel, attribution: {campaigns: attributionCampaigns}, getMetricDataByMapping, campaigns, metricsOptions} = this.props;
 
     const additionalColumns = [{title: 'Channels', type: 'channels'}];
     const additionalColumnValue = (item, columnType) => {
@@ -223,6 +223,7 @@ export default class Campaigns extends Component {
                               formatAdditionColumnTotal={formatAdditionColumnTotal}
                               additionalColumns={additionalColumns}
                               additionalColumnValue={additionalColumnValue}
+                              attributionModel={attributionModelLabel}
             />
           </FeatureToggle>
           <FeatureToggle featureName="attribution">
