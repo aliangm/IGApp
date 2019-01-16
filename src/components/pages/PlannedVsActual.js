@@ -18,6 +18,7 @@ import isNil from 'lodash/isNil';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import NumberWithArrow from 'components/NumberWithArrow';
 
 const channelPlatformMapping = {
   'advertising_socialAds_facebookAdvertising': 'isFacebookAdsAuto',
@@ -122,6 +123,7 @@ export default class PlannedVsActual extends Component {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
     const attributionChannelsImpact = get(attribution, [month, 'channelsImpact'], {});
+    const lastMonthChannelsImpact = get(attribution, [month - 1, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -139,6 +141,15 @@ export default class PlannedVsActual extends Component {
       const attributedFunnel = get(attributionChannelsImpact, [newFunnelMapping[funnelFirstObjective], channel], 0);
       const {planned: plannedUsers = 0, actual: actualUsers = 0} = channelImpact.newUsers || {};
       const attributedUsers = get(attributionChannelsImpact, ['users', channel], 0);
+
+      const lastMonthChannelImpact = get(channelsImpact, [month - 1, channel], {});
+      const {actual: lastMonthActualFunnel = 0} = lastMonthChannelImpact[funnelFirstObjective] || {};
+      const lastMonthAttributedFunnel = get(lastMonthChannelsImpact,
+        [newFunnelMapping[funnelFirstObjective], channel],
+        0);
+      const {actual: lastMonthActualUsers = 0} = lastMonthChannelImpact.newUsers || {};
+      const lastMonthAttributedUsers = get(lastMonthChannelsImpact, ['users', channel], 0);
+
       return {
         channel,
         isActualNotEmpty,
@@ -147,7 +158,9 @@ export default class PlannedVsActual extends Component {
         plannedFunnel,
         actualFunnel: actualFunnel || attributedFunnel,
         plannedUsers,
-        actualUsers: actualUsers || attributedUsers
+        actualUsers: actualUsers || attributedUsers,
+        lastMonthActualFunnel: lastMonthActualFunnel || lastMonthAttributedFunnel,
+        lastMonthActualUsers: lastMonthActualUsers || lastMonthAttributedUsers
       };
     });
 
@@ -160,8 +173,15 @@ export default class PlannedVsActual extends Component {
 
     const extrapolatedValue = value => Math.round(value / extarpolateRatio);
 
+    const trend = (value, lastMonthValue) =>
+      <NumberWithArrow stat={value} isNegative={value < lastMonthValue} statStyle={{
+        fontSize: 'inherit',
+        color: 'inherit',
+        fontWeight: 'inherit'
+      }}/>;
+
     const rows = parsedChannels.map(item => {
-      const {actual, planned, isActualNotEmpty, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers} = item;
+      const {actual, planned, isActualNotEmpty, channel, plannedFunnel, actualFunnel, plannedUsers, actualUsers, lastMonthActualUsers, lastMonthActualFunnel} = item;
       const isAutomatic = integrations[channelPlatformMapping[channel]];
       return {
         items: [
@@ -171,19 +191,25 @@ export default class PlannedVsActual extends Component {
             {isAutomatic ? <div className={this.classes.automaticLabel}>Auto</div> : null}
           </div>,
           formatBudget(planned),
-          getTextfieldItem(formatBudget(actual), e => this.updateActual(channel, extractNumber(e.target.value)), isAutomatic),
+          getTextfieldItem(formatBudget(actual),
+            e => this.updateActual(channel, extractNumber(e.target.value)),
+            isAutomatic),
           formatBudget(planned - actual, true),
           isCurrentMonth ?
             formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
             : '-',
-          getTextfieldItem(formatNumber(plannedFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
-          getTextfieldItem(formatNumber(actualFunnel), e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(plannedFunnel),
+            e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(actualFunnel),
+            e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))),
           formatNumber(plannedFunnel - actualFunnel),
-          isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
-          getTextfieldItem(formatNumber(plannedUsers), e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))),
-          getTextfieldItem(formatNumber(actualUsers), e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))),
+          isCurrentMonth ? trend(extrapolatedValue(actualFunnel), lastMonthActualFunnel) : '-',
+          getTextfieldItem(formatNumber(plannedUsers),
+            e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))),
+          getTextfieldItem(formatNumber(actualUsers),
+            e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))),
           formatNumber(plannedUsers - actualUsers),
-          isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-'
+          isCurrentMonth ? trend(extrapolatedValue(actualUsers), lastMonthActualUsers) : '-'
         ]
       };
     });
@@ -210,20 +236,25 @@ export default class PlannedVsActual extends Component {
     const totalActualFunnel = indicators[month][funnelFirstObjective];
     const totalPlannedUsers = sumBy(parsedChannels, 'plannedUsers');
     const totalActualUsers = indicators[month].newUsers;
+    const totalLastMonthActualFunnel = sumBy(parsedChannels, 'lastMonthActualFunnel');
+    const totalLastMonthActualUsers = sumBy(parsedChannels, 'lastMonthActualUsers');
     const footRow = [
       'Total',
       formatBudget(sumBy(parsedChannels, 'planned')),
       formatBudget(sumBy(parsedChannels, 'actual')),
       formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-      isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
+      isCurrentMonth ? formatBudget(sumBy(parsedChannels,
+        item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
       formatNumber(totalPlannedFunnel),
       formatNumber(totalActualFunnel),
       formatNumber(totalPlannedFunnel - totalActualFunnel),
-      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualFunnel))) : '-',
+      isCurrentMonth ? trend(sumBy(parsedChannels, item => extrapolatedValue(item.actualFunnel)),
+        totalLastMonthActualFunnel) : '-',
       formatNumber(totalPlannedUsers),
       formatNumber(totalActualUsers),
       formatNumber(totalPlannedUsers - totalActualUsers),
-      isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualUsers))) : '-'
+      isCurrentMonth ? trend(sumBy(parsedChannels, item => extrapolatedValue(item.actualUsers)),
+        totalLastMonthActualUsers) : '-'
     ];
 
     return <div>
