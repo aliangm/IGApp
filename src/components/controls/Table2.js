@@ -10,6 +10,8 @@ import reactTableStyle from 'react-table/react-table.css'
 const ReactTableFixedColumns = withFixedColumnsStickyPosition(ReactTable)
 
 const tableStyles = style.locals
+// https://reactjs.org/docs/context.html
+// this particular context is used in TheadWithFooterRowComponent to determine whether this row is header or footer
 const IsFooterRowContext = createContext(false)
 
 const TheadComponent = ({ children, className, headerClassName, ...props }) => (
@@ -89,6 +91,7 @@ export default class Table extends Component {
 			// (value, rowData) => PropTypes.node,
 			cell: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
 			footer: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
+			// adds right border to the column ('divider')
 			divider: PropTypes.bool,
 			fixed: PropTypes.oneOf(['left', 'right']),
 			sortable: PropTypes.bool,
@@ -115,8 +118,12 @@ export default class Table extends Component {
 			header,
 			cell,
 			footer,
+			// https://github.com/react-tools/react-table#accessors
+			// it is not recommended to use it directly
+			// in our case the default behavior for the accessor is to return the whole data item
 			accessor = (item) => item,
 			divider,
+			// by default columns aren't sortable, but you can change it passing `sortable: true`
 			sortable = false,
 			minWidth = defaultMinWidth,
 			className,
@@ -124,10 +131,11 @@ export default class Table extends Component {
 			footerClassName,
 			...other
 		}) => {
-
-
 			return {
 				id,
+				// if the `cell` property is given a string value it overrides accessor,
+				// so for example cell: 'domain' equals cell: (item) => item.domain
+				// cell: 'domain.name' equals cell: (item) => item.domain.name
 				accessor: typeof cell === 'string' ? cell : accessor,
 				sortable,
 				minWidth,
