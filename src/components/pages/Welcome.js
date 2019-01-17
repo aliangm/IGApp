@@ -248,40 +248,8 @@ export default class Welcome extends Component {
   };
 
   render() {
-    const headRow = [
-      'First Name',
-      'Last Name',
-      'Email',
-      'Role',
-      'Admin',
-      ''
-    ];
-
     const userPermittedToSettings = userPermittedToPage('settings');
-
-    const rows = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP).map((item, i) => {
-      return {
-        items: [
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {item.firstName}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {item.lastName}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {item.email}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {item.role}
-          </div>,
-          <div className={welcomeStyle.locals.center}>
-            <input type="checkbox" checked={!!item.isAdmin} readOnly/>
-          </div>,
-          <ButtonWithSurePopup style={{background: '#e50000'}} onClick={this.removeMember.bind(this, i)}
-                               buttonText="Remove"/>
-        ]
-      };
-    });
+    const tableData = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP)
     const selects = {
       role: {
         label: 'Your role',
@@ -371,8 +339,56 @@ export default class Welcome extends Component {
         <div className={this.classes.row}>
           <Label>Team Members</Label>
           <div className={welcomeStyle.locals.innerBox}>
-            <Table headRowData={{items: headRow}}
-                   rowsData={rows}/>
+            <Table
+              noPadding
+              data={tableData}
+              columns={[
+                {
+                  id: 'firstName',
+                  header: 'First Name',
+                  cell: 'firstName',
+                  minWidth: 80,
+                },
+                {
+                  id: 'lastName',
+                  header: 'Last Name',
+                  cell: 'lastName',
+                  minWidth: 80,
+                },
+                {
+                  id: 'email',
+                  header: 'Email',
+                  cell: 'email',
+                },
+                {
+                  id: 'role',
+                  header: 'Role',
+                  cell: 'role',
+                },
+                {
+                  id: 'admin',
+                  header: 'Admin',
+                  cell: (member) => (
+                    <input type="checkbox" checked={!!member.isAdmin} readOnly/>
+                  ),
+                  className: welcomeStyle.locals.center,
+                  minWidth: 60,
+                },
+                {
+                  id: 'remove',
+                  header: '',
+                  cell: (_, { index }) => (
+                    <ButtonWithSurePopup
+                      style={{ background: '#e50000' }}
+                      onClick={() => this.removeMember(index)}
+                      buttonText="Remove"
+                    />
+                  ),
+                  style: { overflow: 'visible' },
+                  minWidth: 80,
+                },
+              ]}
+            />
           </div>
           <div>
             <div className={welcomeStyle.locals.center}>

@@ -66,54 +66,77 @@ export default class UnmappedTab extends Component {
   };
 
   render() {
-    const {unmappedUrls, unmappedUtms} = this.props;
+    const {unmappedUrls = [], unmappedUtms = []} = this.props;
     const {conditions, channel, isURLsTab} = this.state;
-    const unmappedUrlsRows = unmappedUrls && unmappedUrls.map(row => {
-        return {
-          items: [
-            row.referrer_url,
-            row.count,
-            <div>
-              <Button type="primary"
-                      style={{width: '102px'}}
-                      onClick={() => {
-                        this.setState({
-                          conditions: [{
-                            value: row.referrer_url,
-                            param: 'referrer',
-                            operation: 'contains'
-                          }]
-                        });
-                        this.channelsSelect.focus();
-                      }}>
-                Map
-              </Button>
-            </div>
-          ]
-        };
-      }
-    );
 
-    const unmappedUtmsRows = unmappedUtms && unmappedUtms.map(row => {
-        return {
-          items: [
-            row.utm_source,
-            row.utm_medium,
-            row.count,
-            <div>
-              <Button type="primary"
-                      style={{width: '102px'}}
-                      onClick={() => {
-                        this.createUtmConditions(row.utm_source, row.utm_medium);
-                        this.channelsSelect.focus();
-                      }}>
-                Map
-              </Button>
-            </div>
-          ]
-        };
-      }
-    );
+    const unmappedUrlsColumns = [
+      {
+        id: 'Referrer',
+        header: 'Referrer',
+        cell: 'referrer_url',
+      },
+      {
+        id: 'Count',
+        header: 'Count',
+        cell: 'count',
+      },
+      {
+        id: 'map',
+        header: '',
+        cell: (row) => (
+          <div>
+            <Button type="primary"
+                    style={{width: '102px'}}
+                    onClick={() => {
+                      this.setState({
+                        conditions: [{
+                          value: row.referrer_url,
+                          param: 'referrer',
+                          operation: 'contains'
+                        }]
+                      });
+                      this.channelsSelect.focus();
+                    }}>
+              Map
+            </Button>
+          </div>
+        )
+      },
+    ]
+
+    const unmappedUtmsColumns = [
+      {
+        id: 'Source',
+        header: 'Source',
+        cell: 'utm_source',
+      },
+      {
+        id: 'Medium',
+        header: 'Medium',
+        cell: 'utm_medium',
+      },
+      {
+        id: 'Count',
+        header: 'Count',
+        cell: 'count',
+      },
+      {
+        id: 'map',
+        header: '',
+        cell: (row) => (
+          <div>
+            <Button type="primary"
+                    style={{width: '102px'}}
+                    onClick={() => {
+                      this.createUtmConditions(row.utm_source, row.utm_medium);
+                      this.channelsSelect.focus();
+                    }}>
+              Map
+            </Button>
+          </div>
+        )
+      },
+    ]
 
     return <div>
       <Toggle
@@ -130,13 +153,11 @@ export default class UnmappedTab extends Component {
         onClick={(value) => {
           this.setState({isURLsTab: value});
         }}/>
-      {isURLsTab ?
-        <Table headRowData={{items: ['Referrer', 'Count', '']}}
-               rowsData={unmappedUrlsRows}/>
-        :
-        <Table headRowData={{items: ['Source', 'Medium', 'Count', '']}}
-               rowsData={unmappedUtmsRows}/>
-      }
+      <Table
+        key={isURLsTab}
+        data={isURLsTab ? unmappedUrls : unmappedUtms}
+        columns={isURLsTab ? unmappedUrlsColumns : unmappedUtmsColumns}
+      />
       {conditions.map((condition, index) =>
         <MappingRule key={index}
                      param={condition.param}

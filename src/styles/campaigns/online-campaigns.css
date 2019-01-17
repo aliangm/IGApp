@@ -28,6 +28,10 @@
     min-height: 15px;
 }
 
+.metric-header {
+    overflow: visible!important;
+}
+
 .metric-edit {
     font-size: 12px;
     font-weight: 500;
