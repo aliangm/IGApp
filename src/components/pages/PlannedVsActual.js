@@ -18,6 +18,7 @@ import isNil from 'lodash/isNil';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
+import NumberWithArrow from 'components/NumberWithArrow';
 
 const channelPlatformMapping = {
   'advertising_socialAds_facebookAdvertising': 'isFacebookAdsAuto',
@@ -122,6 +123,7 @@ export default class PlannedVsActual extends Component {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
     const attributionChannelsImpact = get(attribution, [month, 'channelsImpact'], {});
+    const lastMonthAttributionChannelsImpact = get(attribution, [month - 1, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -139,6 +141,15 @@ export default class PlannedVsActual extends Component {
       const attributedFunnel = get(attributionChannelsImpact, [newFunnelMapping[funnelFirstObjective], channel], 0);
       const {planned: plannedUsers = 0, actual: actualUsers = 0} = channelImpact.newUsers || {};
       const attributedUsers = get(attributionChannelsImpact, ['users', channel], 0);
+
+      const lastMonthChannelImpact = get(channelsImpact, [month - 1, channel], {});
+      const {actual: lastMonthActualFunnel = 0} = lastMonthChannelImpact[funnelFirstObjective] || {};
+      const lastMonthAttributedFunnel = get(lastMonthAttributionChannelsImpact,
+        [newFunnelMapping[funnelFirstObjective], channel],
+        0);
+      const {actual: lastMonthActualUsers = 0} = lastMonthChannelImpact.newUsers || {};
+      const lastMonthAttributedUsers = get(lastMonthAttributionChannelsImpact, ['users', channel], 0);
+
       return {
         channel,
         isActualNotEmpty,
@@ -147,7 +158,9 @@ export default class PlannedVsActual extends Component {
         plannedFunnel,
         actualFunnel: actualFunnel || attributedFunnel,
         plannedUsers,
-        actualUsers: actualUsers || attributedUsers
+        actualUsers: actualUsers || attributedUsers,
+        lastMonthActualFunnel: lastMonthActualFunnel || lastMonthAttributedFunnel,
+        lastMonthActualUsers: lastMonthActualUsers || lastMonthAttributedUsers
       };
     });
 
@@ -159,11 +172,23 @@ export default class PlannedVsActual extends Component {
       </div>;
 
     const extrapolatedValue = value => Math.round(value / extarpolateRatio);
+    const trend = (value, lastMonthValue) => {
+      if (value === lastMonthValue) {
+        return value;
+      }
+      else {
+        return <NumberWithArrow stat={value} isNegative={value < lastMonthValue} statStyle={{
+          fontSize: 'inherit',
+          color: 'inherit',
+          fontWeight: 'inherit'
+        }}/>;
+      }
+    };
 
     const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
     const userNickname = getIndicatorNickname('newUsers');
 
-    const isAutomatic = (channel) => integrations[channelPlatformMapping[channel]]
+    const isAutomatic = (channel) => integrations[channelPlatformMapping[channel]];
 
     const totalPlannedFunnel = sumBy(parsedChannels, 'plannedFunnel');
     const totalActualFunnel = indicators[month][funnelFirstObjective];
@@ -175,7 +200,7 @@ export default class PlannedVsActual extends Component {
         id: 'channel',
         header: 'Channel',
         footer: 'Total',
-        cell: ({ channel }) => (
+        cell: ({channel}) => (
           <div className={this.classes.cellItem}>
             <div className={budgetsStyle.locals.rowIcon} data-icon={getChannelIcon(channel)}/>
             <div className={this.classes.channelName}>{getChannelNickname(channel)}</div>
@@ -183,108 +208,113 @@ export default class PlannedVsActual extends Component {
           </div>
         ),
         minWidth: 240,
-        fixed: 'left',
+        fixed: 'left'
       },
       {
         id: 'plannedBudget',
         header: 'Planned Budget',
         footer: formatBudget(sumBy(parsedChannels, 'planned')),
-        cell: ({ planned }) => formatBudget(planned),
+        cell: ({planned}) => formatBudget(planned),
         sortable: true,
-        sortMethod: (a, b) => a.planned - b.planned,
+        sortMethod: (a, b) => a.planned - b.planned
       },
       {
         id: 'actualCost',
         header: 'Actual Cost',
         footer: formatBudget(sumBy(parsedChannels, 'actual')),
-        cell: ({ actual, channel }) =>
+        cell: ({actual, channel}) =>
           getTextfieldItem(
             formatBudget(actual),
             e => this.updateActual(channel, extractNumber(e.target.value)),
             isAutomatic(channel)
-          ),
+          )
       },
       {
         id: 'planVsActual',
         header: 'Plan vs Actual',
         footer: formatBudget(sumBy(parsedChannels, item => item.planned - item.actual, true)),
-        cell: ({ planned, actual }) => formatBudget(planned - actual, true),
+        cell: ({planned, actual}) => formatBudget(planned - actual, true)
       },
       {
         id: 'pacingFor',
         header: 'Pacing for',
-        footer: isCurrentMonth ? formatBudget(sumBy(parsedChannels, item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
-        cell: ({ actual, isActualNotEmpty }) => isCurrentMonth
+        footer: isCurrentMonth ? formatBudget(sumBy(parsedChannels,
+          item => item.isActualNotEmpty ? extrapolatedValue(item.actual) : item.actual)) : '-',
+        cell: ({actual, isActualNotEmpty}) => isCurrentMonth
           ? formatBudget(isActualNotEmpty ? extrapolatedValue(actual) : actual)
           : '-',
-        divider: true,
+        divider: true
       },
       {
         id: 'plannedObjective',
         header: <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
         footer: formatNumber(totalPlannedFunnel),
-        cell: ({ plannedFunnel, channel }) =>
+        cell: ({plannedFunnel, channel}) =>
           getTextfieldItem(
             formatNumber(plannedFunnel),
             e => this.updateImpact(channel, funnelFirstObjective, 'planned', extractNumber(e.target.value))
-          ),
+          )
       },
       {
         id: 'actualObjective',
         header: `Actual ${firstFunnelObjectiveNickname}`,
         footer: formatNumber(totalActualFunnel),
-        cell: ({ actualFunnel, channel }) =>
+        cell: ({actualFunnel, channel}) =>
           getTextfieldItem(
             formatNumber(actualFunnel),
-              e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))
-          ),
+            e => this.updateImpact(channel, funnelFirstObjective, 'actual', extractNumber(e.target.value))
+          )
       },
       {
         id: 'planVsActualFunnel',
         header: 'Plan vs Actual',
         footer: formatNumber(totalPlannedFunnel - totalActualFunnel),
-        cell: ({ plannedFunnel, actualFunnel }) => formatNumber(plannedFunnel - actualFunnel),
+        cell: ({plannedFunnel, actualFunnel}) => formatNumber(plannedFunnel - actualFunnel)
       },
       {
         id: 'pacingForFunnel',
         header: 'Pacing for',
-        footer: isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualFunnel))) : '-',
-        cell: ({ actualFunnel }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualFunnel)) : '-',
-        divider: true,
+        footer: isCurrentMonth ? trend(sumBy(parsedChannels, item => extrapolatedValue(item.actualFunnel)),
+          sumBy(parsedChannels, item => item.lastMonthActualFunnel)) : '-',
+        cell: ({actualFunnel, lastMonthActualFunnel}) => isCurrentMonth ? trend(extrapolatedValue(actualFunnel),
+          lastMonthActualFunnel) : '-',
+        divider: true
       },
       {
         id: 'plannedUser',
         header: <div data-tip="what's your expectation?">Planned {userNickname}</div>,
         footer: formatNumber(totalPlannedUsers),
-        cell: ({ plannedUsers, channel }) =>
+        cell: ({plannedUsers, channel}) =>
           getTextfieldItem(
             formatNumber(plannedUsers),
             e => this.updateImpact(channel, 'newUsers', 'planned', extractNumber(e.target.value))
-          ),
+          )
       },
       {
         id: 'actualUser',
         header: `Actual ${userNickname}`,
         footer: formatNumber(totalActualUsers),
-        cell: ({ actualUsers, channel }) =>
+        cell: ({actualUsers, channel}) =>
           getTextfieldItem(
             formatNumber(actualUsers),
             e => this.updateImpact(channel, 'newUsers', 'actual', extractNumber(e.target.value))
-          ),
+          )
       },
       {
         id: 'planVsActualUser',
         header: 'Plan vs Actual',
         footer: formatNumber(totalPlannedUsers - totalActualUsers),
-        cell: ({ plannedUsers, actualUsers }) => formatNumber(plannedUsers - actualUsers),
+        cell: ({plannedUsers, actualUsers}) => formatNumber(plannedUsers - actualUsers)
       },
       {
         id: 'pacingForUser',
         header: 'Pacing for',
-        footer: isCurrentMonth ? formatNumber(sumBy(parsedChannels, item => extrapolatedValue(item.actualUsers))) : '-',
-        cell: ({ actualUsers }) => isCurrentMonth ? formatNumber(extrapolatedValue(actualUsers)) : '-',
-      },
-    ]
+        footer: isCurrentMonth ? trend(sumBy(parsedChannels, item => extrapolatedValue(item.actualUsers)),
+          sumBy(parsedChannels, item => item.lastMonthActualUsers)) : '-',
+        cell: ({actualUsers, lastMonthActualUsers}) => isCurrentMonth ? trend(extrapolatedValue(actualUsers),
+          lastMonthActualUsers) : '-'
+      }
+    ];
 
     return <div>
       <div className={this.classes.wrap}>
@@ -297,7 +327,7 @@ export default class PlannedVsActual extends Component {
               className={planStyles.locals.innerBox}
               columns={columns}
               data={parsedChannels}
-              defaultSorted={[{ id: "plannedBudget", desc: true }]}
+              defaultSorted={[{id: 'plannedBudget', desc: true}]}
               showFootRowOnHeader
             />
             <div>
