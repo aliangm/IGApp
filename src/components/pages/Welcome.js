@@ -194,7 +194,6 @@ export default class Welcome extends Component {
   }
 
   removeMember(index) {
-  	console.log('RM', index)
     let update = Object.assign({}, this.props.userAccount);
     const member = update.teamMembers.splice(index + MEMBERS_TO_SKIP, 1);
     this.props.updateState({userAccount: update});
