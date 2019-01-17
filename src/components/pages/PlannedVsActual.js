@@ -11,7 +11,7 @@ import {formatBudget, formatNumber, getCommitedBudgets} from 'components/utils/b
 import sumBy from 'lodash/sumBy';
 import merge from 'lodash/merge';
 import icons from 'styles/icons/plan.css';
-import {extractNumber, newFunnelMapping} from 'components/utils/utils';
+import {extractNumber, newFunnelMapping, percentageFormatter} from 'components/utils/utils';
 import Table from 'components/controls/Table';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import isNil from 'lodash/isNil';
@@ -173,16 +173,13 @@ export default class PlannedVsActual extends Component {
 
     const extrapolatedValue = value => Math.round(value / extarpolateRatio);
     const trend = (value, lastMonthValue) => {
-      if (value === lastMonthValue) {
-        return value;
-      }
-      else {
-        return <NumberWithArrow stat={value} isNegative={value < lastMonthValue} statStyle={{
-          fontSize: 'inherit',
-          color: 'inherit',
-          fontWeight: 'inherit'
-        }}/>;
-      }
+      const percentage = percentageFormatter(value - lastMonthValue, lastMonthValue);
+      return <div style={{display: 'inline-flex', alignItems: "center"}}>
+        {value}
+        {lastMonthValue && value !== lastMonthValue ? <div style={{marginLeft: '6px'}}>
+          <NumberWithArrow stat={percentage} isNegative={value < lastMonthValue}/>
+        </div> : null}
+      </div>;
     };
 
     const firstFunnelObjectiveNickname = getIndicatorNickname(funnelFirstObjective);
