@@ -123,7 +123,7 @@ export default class PlannedVsActual extends Component {
     const {month} = this.state;
     const {calculatedData: {objectives: {funnelFirstObjective}, extarpolateRatio, integrations, lastYearHistoryData: {historyDataLength, months, historyDataWithCurrentMonth: {channelsImpact, planBudgets, unknownChannels: planUnknownChannels, actualChannelBudgets, indicators, attribution}}}} = this.props;
     const attributionChannelsImpact = get(attribution, [month, 'channelsImpact'], {});
-    const lastMonthChannelsImpact = get(attribution, [month - 1, 'channelsImpact'], {});
+    const lastMonthAttributionChannelsImpact = get(attribution, [month - 1, 'channelsImpact'], {});
 
     const {knownChannels = {}, unknownChannels = {}} = actualChannelBudgets[month];
 
@@ -144,11 +144,11 @@ export default class PlannedVsActual extends Component {
 
       const lastMonthChannelImpact = get(channelsImpact, [month - 1, channel], {});
       const {actual: lastMonthActualFunnel = 0} = lastMonthChannelImpact[funnelFirstObjective] || {};
-      const lastMonthAttributedFunnel = get(lastMonthChannelsImpact,
+      const lastMonthAttributedFunnel = get(lastMonthAttributionChannelsImpact,
         [newFunnelMapping[funnelFirstObjective], channel],
         0);
       const {actual: lastMonthActualUsers = 0} = lastMonthChannelImpact.newUsers || {};
-      const lastMonthAttributedUsers = get(lastMonthChannelsImpact, ['users', channel], 0);
+      const lastMonthAttributedUsers = get(lastMonthAttributionChannelsImpact, ['users', channel], 0);
 
       return {
         channel,
