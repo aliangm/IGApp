@@ -56,16 +56,16 @@ export default class AttributionTable extends Component {
 
     const costDependentColumnTypes = ['cost', 'efficiency', 'roi', 'pipeline-roi'];
     const getNicknameForIndicator = (indicator, isSingular) => {
-      if(indicator === 'webVisits'){
-        if(isSingular){
-          return 'Visitor'
+      if (indicator === 'webVisits') {
+        if (isSingular) {
+          return 'Visitor';
         }
-        else{
-          return 'Visitors'
+        else {
+          return 'Visitors';
         }
       }
 
-      else{
+      else {
         return getNickname(indicator, isSingular);
       }
     };
@@ -178,7 +178,7 @@ export default class AttributionTable extends Component {
         else {
           this.setState({sortByColumn: type, isReverse: true});
         }
-      }} data-tip={tooltipData ? tooltipData : null} data-for={tooltipData ? "appTip" : null} data-effect="float">
+      }} data-tip={tooltipData ? tooltipData : null} data-for={tooltipData ? 'appTip' : null} data-effect="float">
         {title}
       </div>;
     }), {className: dashboardStyle.locals.headRow});
