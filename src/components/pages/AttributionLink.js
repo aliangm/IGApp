@@ -7,6 +7,6 @@ export default class Setup extends Component {
   render() {
     const {UID} = this.props.params;
 
-    return <AttributionSetup UID={UID} isPopup={false} isStaticPage={false}/>;
+    return <AttributionSetup UID={UID} isPopup={false} isStaticPage={true}/>;
   }
 }

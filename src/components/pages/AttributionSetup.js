@@ -76,7 +76,7 @@ export default class AttributionSetup extends Component {
                  innerClassName={onBoardingStyle.locals.pageInner}
                  width='100%'>
       {isPopup ? <Title title='Attribution'/> : null}
-      <TagManagerAutomaticPopup ref='popup' snippetScript={code}/>
+      {!isStaticPage ? <TagManagerAutomaticPopup ref='popup' snippetScript={code}/> : null}
       <div className={this.classes.title}>Add the tracking script to your website</div>
       <div className={this.classes.subTitle}>Setting up InfiniGrow’s tracking is easy and takes about a minute. This is
         the first and last time you'll be asked to use code.
@@ -128,7 +128,7 @@ export default class AttributionSetup extends Component {
               </div>
             </div>
             {
-              isStaticPage ? <div className={this.classes.firstStepCont}>
+              !isStaticPage ? <div className={this.classes.firstStepCont}>
                   <div className={this.classes.or}>OR</div>
                   <Button className={this.classes.secondaryButton} type='primary' onClick={() => {
                     this.refs.popup.open();
@@ -160,7 +160,7 @@ export default class AttributionSetup extends Component {
                   }}
           >
           </Toggle>
-          {this.state.tab === 1 && isStaticPage ?
+          {this.state.tab === 1 && !isStaticPage ?
             <div className={this.classes.secondStepContainer}>
               <Button className={this.classes.secondaryButton} type='primary' onClick={() => {
                 this.refs.popup.open();
