@@ -31,51 +31,78 @@ export default class TrackingPlan extends Component {
 
   render() {
     const {campaigns} = this.props;
-    let rows = [];
+    let data = [];
+
     campaigns
       .filter(campaign => campaign.isArchived !== true)
-      .forEach((campaign, campaignIndex) => {
+      .forEach((campaign) => {
         campaign.tracking && campaign.tracking.urls && campaign.tracking.urls.forEach((url, index) => {
-          const utm = campaign.tracking.utms[index];
-          rows.push(
+          data.push({
+            utm: campaign.tracking.utms[index],
+            campaign,
+            url,
+          })
+        })
+      })
+
+    return (
+      <div>
+        <Table
+          data={data}
+          columns={[
             {
-              items: [
-                campaign.name,
-                utm.source,
-                utm.medium,
+              id: 'CampaignName',
+              header: 'Campaign Name',
+              cell: 'campaign.name',
+              fixed: 'left',
+              minWidth: 200,
+            },
+            {
+              id: 'CampaignSource',
+              header: 'Campaign Source',
+              cell: 'utm.source',
+            },
+            {
+              id: 'CampaignMedium',
+              header: 'Campaign Medium',
+              cell: 'utm.medium',
+            },
+            {
+              id: 'ShortenedTrackingURL',
+              header: 'Shortened Tracking URL',
+              cell: ({ url }) => (
                 <div style={{padding: '0 5px', marginBottom: '7px'}}>
                   <Textfield inputClassName={trackingStyle.locals.urlTextbox} style={{width: '250px'}} value={url.short}
                              readOnly={true} onFocus={(e) => e.target.select()}/>
-                  <div className={trackingStyle.locals.copyToClipboard} onClick={this.copy.bind(this, url.short)}
+                  <div className={trackingStyle.locals.copyToClipboard} onClick={() => this.copy(url.short)}
                        style={{marginTop: '-26px', marginLeft: '221px'}}
                        data-checked={this.state.copied === url.short ? true : null}/>
-                </div>,
+                </div>
+              ),
+              minWidth: 270,
+            },
+            {
+              id: 'FullTrackingURL',
+              header: 'Full Tracking URL',
+              cell: ({ url }) => (
                 <div style={{padding: '0 5px', marginBottom: '7px'}}>
                   <Textfield inputClassName={trackingStyle.locals.urlTextbox} style={{width: '250px'}} value={url.long}
                              readOnly={true} onFocus={(e) => e.target.select()}/>
-                  <div className={trackingStyle.locals.copyToClipboard} onClick={this.copy.bind(this, url.long)}
+                  <div className={trackingStyle.locals.copyToClipboard} onClick={() => this.copy(url.long)}
                        style={{marginTop: '-26px', marginLeft: '221px'}}
                        data-checked={this.state.copied === url.long ? true : null}/>
-                </div>,
-                new Date(url.createDate).toLocaleDateString()
-              ]
-            }
-          );
-        });
-      });
-
-    const headRow = [
-      'Campaign Name',
-      'Campaign Source',
-      'Campaign Medium',
-      'Shortened Tracking URL',
-      'Full Tracking URL',
-      'Create Date'
-    ];
-
-    return <div>
-      <Table headRowData={{items: headRow}}
-             rowsData={rows}/>
-    </div>;
+                </div>
+              ),
+              minWidth: 270,
+            },
+            {
+              id: 'CreateDate',
+              header: 'Create Date',
+              cell: ({ url }) => new Date(url.createDate).toLocaleDateString()
+            },
+          ]}
+        />
+      </div>
+    );
   }
 }

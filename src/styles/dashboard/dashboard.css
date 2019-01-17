@@ -83,6 +83,10 @@
     text-transform: capitalize;
 }
 
+.itemTableHeader .itemTableHeaderCell {
+    background-color: white!important;
+}
+
 .number {
     margin-top: 45px;
     font-size: 36px;

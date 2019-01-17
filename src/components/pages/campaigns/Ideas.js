@@ -50,63 +50,81 @@ export default class Ideas extends Component {
 
   render() {
     const {campaignIdeas, auth} = this.props;
-    const headRow = [
-      'Owner',
-      'Date',
-      'Idea Name',
-      'Idea Description',
-      'Goal',
-      'Endorsements',
-      ''
-    ];
-
-
-    const rows = campaignIdeas
-      .map((idea) => ({ idea, member: this.props.teamMembers.find(member => member.userId === idea.owner) }))
-      .filter(({ member }) => !!member)
-      .map(({ idea, member }, i) => ({
-        items: [
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            <Avatar member={member} className={commentStyle.locals.initials}/>
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {formatTimestamp(idea.date)}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {idea.name}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem} style={{whiteSpace: 'pre-wrap'}}>
-            {idea.description}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {idea.goal}
-          </div>,
-          <div className={PlannedVsActualstyle.locals.cellItem}>
-            {idea.endorsements.length}
-          </div>,
-          <div className={ideasStyle.locals.like} onClick={this.addLike.bind(this, member.userId, i)}
-               data-disabled={idea.endorsements.includes(member.userId) ? true : null}/>
-        ]
+    const data = campaignIdeas
+      .map((idea) => ({
+        idea,
+        member: this.props.teamMembers.find(member => member.userId === idea.owner),
       }))
+      .filter(({ member }) => !!member)
 
-    return <div>
-      <Table headRowData={{items: headRow}}
-             rowsData={rows}/>
-      <div style={{justifyContent: 'center', display: 'flex'}}>
-        <Button
-          type="primary"
-          style={{width: '75px', marginTop: '20px'}}
-          onClick={() => {
-            this.setState({showAddIdeaPopup: true});
-          }}>+Add
-        </Button>
+    return (
+      <div>
+        <Table
+          data={data}
+          columns={[
+            {
+              id: 'Owner',
+              header: 'Owner',
+              cell: ({ member }) => (
+                <Avatar member={member} className={commentStyle.locals.initials}/>
+              ),
+              minWidth: 60,
+            },
+            {
+              id: 'Date',
+              header: 'Date',
+              cell: ({ idea }) => formatTimestamp(idea.date),
+            },
+            {
+              id: 'IdeaName',
+              header: 'Idea Name',
+              cell: 'idea.name',
+            },
+            {
+              id: 'IdeaDescription',
+              header: 'Idea Description',
+              cell: 'idea.description',
+            },
+            {
+              id: 'Goal',
+              header: 'Goal',
+              cell: 'idea.goal',
+            },
+            {
+              id: 'Endorsements',
+              header: 'Endorsements',
+              cell: 'idea.endorsements.length',
+            },
+            {
+              id: 'like',
+              header: '',
+              cell: ({ idea, member }, { index }) => (
+                <div
+                  className={ideasStyle.locals.like}
+                  onClick={() => this.addLike(member.userId, index)}
+                  data-disabled={idea.endorsements.includes(member.userId) ? true : null}
+                />
+              ),
+              minWidth: 60,
+            },
+          ]}
+        />
+        <div style={{justifyContent: 'center', display: 'flex'}}>
+          <Button
+            type="primary"
+            style={{width: '75px', marginTop: '20px'}}
+            onClick={() => {
+              this.setState({showAddIdeaPopup: true});
+            }}>+Add
+          </Button>
+        </div>
+        <AddIdeaPopup
+          hidden={!this.state.showAddIdeaPopup}
+          close={() => {
+            this.setState({showAddIdeaPopup: false});
+          }}
+          addIdea={this.addIdea}/>
       </div>
-      <AddIdeaPopup
-        hidden={!this.state.showAddIdeaPopup}
-        close={() => {
-          this.setState({showAddIdeaPopup: false});
-        }}
-        addIdea={this.addIdea}/>
-    </div>;
+    );
   }
 }

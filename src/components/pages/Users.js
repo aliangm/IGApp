@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Component from 'components/Component';
 import style from 'styles/users/users.css';
 import ReactCountryFlag from 'react-country-flag';
@@ -77,25 +77,15 @@ export default class Users extends Component {
     return maxEl;
   }
 
-  showPopup(user) {
-    this.setState({showPopup: true, selectedUser: user});
+  showPopup = (user) => {
+    this.setState({
+      showPopup: true,
+      selectedUser: user,
+    });
   }
 
   render() {
-
     const {attribution: {usersByEmail, usersByAccount}} = this.props;
-
-    const headRow = [
-      'User',
-      'Channels',
-      'Stage',
-      '# of sessions',
-      'Country',
-      'First touch',
-      'Last touch',
-      'Device'
-    ];
-
     const stagesOrder = {
       blogSubscribers: 0,
       MCL: 1,
@@ -107,13 +97,13 @@ export default class Users extends Component {
 
     const usersData = this.state.groupBy === GROUP_BY.USERS ? usersByEmail : usersByAccount;
 
-    const rows = usersData
+    const data = usersData
       .sort((user1, user2) => {
         const lastTouchPoint1 = new Date(user1.sessions[user1.sessions.length - 1].endTime);
         const lastTouchPoint2 = new Date(user2.sessions[user2.sessions.length - 1].endTime);
         return lastTouchPoint2 - lastTouchPoint1;
       })
-      .map((user, index) => {
+      .map((user) => {
         const getUniqNotEmpty = field => uniq(user.sessions.map(item => item[field]).filter(item => !!item));
         const firstTouchPoint = new Date(user.sessions[0].startTime);
         const lastTouchPoint = new Date(user.sessions[user.sessions.length - 1].endTime);
@@ -131,52 +121,21 @@ export default class Users extends Component {
         const domainIcon = 'url(https://logo.clearbit.com/' + domain + ')';
         const maxFunnelStageIndex = Math.max(... Object.keys(user.funnelStages).map(stage => stagesOrder[stage]));
         const funnelStage = Object.keys(stagesOrder)[maxFunnelStageIndex];
+        const stageNickname = getNickname(funnelStage, true);
+
         return {
-          items: [
-            <div className={this.classes.container}>
-              <div className={this.classes.icon} style={{
-                backgroundImage: domainIcon,
-                width: '25px',
-                height: '25px'
-              }}/>
-              <div className={this.classes.account}>
-                {displayName}
-                <div className={this.classes.email}>{emails.length <= 1 ? emails && emails[0] : 'multiple users'}</div>
-              </div>
-            </div>,
-            <div className={this.classes.container}>
-              {uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={'plan:' + item}/>)}
-            </div>,
-            getNickname(funnelStage, true),
-            user.sessions.length,
-            <div className={this.classes.container}>
-              {countries && countries.length > 0 && countries.map(item => <div key={item}
-                                                                               className={this.classes.container}>
-                <ReactCountryFlag code={item} svg/>
-                <div style={{marginLeft: '5px'}}>{item}</div>
-              </div>)}
-            </div>,
-            timeSinceFirst,
-            timeSinceLast,
-            <div className={this.classes.container}>
-              {devices && devices.length > 0 && devices.map(item => <div key={item} className={this.classes.icon}
-                                                                         data-icon={'device:' + item}/>)}
-            </div>
-          ], props: {
-            style: {cursor: 'pointer'},
-            onClick: this.showPopup.bind(this, {
-              ...user,
-              devices,
-              countries,
-              timeSinceFirst,
-              timeSinceLast,
-              emails,
-              displayName,
-              domainIcon
-            })
-          }
-        };
-      });
+          ...user,
+          devices,
+          countries,
+          timeSinceFirst,
+          timeSinceLast,
+          emails,
+          displayName,
+          domainIcon,
+          uniqChannels,
+          stageNickname
+        }
+      })
 
     return <div>
       <div className={this.classes.toggle}>
@@ -196,8 +155,80 @@ export default class Users extends Component {
           }}/>
       </div>
       <div className={this.classes.inner}>
-        <Table headRowData={{items: headRow}}
-               rowsData={rows}/>
+        <Table
+          data={data}
+          onRowClick={this.showPopup}
+          columns={[
+            {
+              id: 'User',
+              header: 'User',
+              cell: ({ emails, displayName, domainIcon }) => (
+                <Fragment>
+                  <div className={this.classes.icon} style={{
+                    backgroundImage: domainIcon,
+                    width: '25px',
+                    height: '25px',
+                    flexShrink: '0',
+                  }}/>
+                  <div className={this.classes.account}>
+                    {displayName}
+                    <div className={this.classes.email}>
+                      {emails.length <= 1 ? emails && emails[0] : 'multiple users'}
+                    </div>
+                  </div>
+                </Fragment>
+              ),
+              fixed: 'left',
+              minWidth: 200,
+            },
+            {
+              id: 'Channels',
+              header: 'Channels',
+              cell: ({ uniqChannels }) =>
+                uniqChannels.map(item => <div key={item} className={this.classes.icon} data-icon={'plan:' + item}/>),
+            },
+            {
+              id: 'Stage',
+              header: 'Stage',
+              cell: 'stageNickname',
+              minWidth: 80,
+            },
+            {
+              id: 'Sessions',
+              header: '# of sessions',
+              cell: 'sessions.length',
+            },
+            {
+              id: 'Country',
+              header: 'Country',
+              cell: ({ countries }) => countries && countries.length > 0 && countries.map((item) => (
+                <div key={item} className={this.classes.container}>
+                  <ReactCountryFlag code={item} svg/>
+                  <div style={{ marginLeft: '5px' }}>{item}</div>
+                </div>
+              )),
+              minWidth: 80,
+            },
+            {
+              id: 'FirstTouch',
+              header: 'First touch',
+              cell: 'timeSinceFirst',
+            },
+            {
+              id: 'LastTouch',
+              header: 'Last touch',
+              cell: 'timeSinceLast',
+            },
+            {
+              id: 'Device',
+              header: 'Device',
+              cell: ({ devices }) => devices && devices.length > 0 && devices.map((item) => (
+                <div key={item} className={this.classes.icon} data-icon={'device:' + item}/>
+              )),
+              minWidth: 80,
+            },
+          ]}
+        />
       </div>
       <div hidden={!this.state.showPopup}>
         <UsersPopup user={this.state.selectedUser} close={() => {
