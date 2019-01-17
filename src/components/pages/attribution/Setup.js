@@ -10,7 +10,7 @@ export default class Setup extends Component {
     const profile = getProfileSync();
 
     return <AttributionSetup UID={UID}
-                             isStaticPage={true}
+                             isStaticPage={false}
                              senderEmail={profile.email}
                              isPopup={isPopupMode()}
                              sendSnippetEmail={this.props.sendSnippetEmail}/>;
