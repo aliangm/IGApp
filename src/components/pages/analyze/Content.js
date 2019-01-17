@@ -39,7 +39,7 @@ export default class Content extends Component {
   }
 
   render() {
-    const {totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
+    const {attributionModelLabel, totalRevenue, attribution, calculatedData: {objectives: {funnelFirstObjective}, historyData: {historyDataWithCurrentMonth}}} = this.props;
     const attributionPages = attribution.pages || [];
 
     const additionalColumns = [{title: 'Read Ratio', type: 'read-ratio'},
@@ -140,12 +140,13 @@ export default class Content extends Component {
                               data={attributionPages}
                               additionalColumns={additionalColumns}
                               formatAdditionColumn={formatAdditionColumn}
-                              titleColumnName='Content'
+                              dataNickname='Content'
                               getItemCost={() => ''}
                               getItemData={getPageItemData}
                               getItemTitle={getPageItemTitle}
                               showTotalRow={false}
                               additionalColumnValue={additionalColumnValue}
+                              attributionModel={attributionModelLabel}
             />
           </FeatureToggle>
         </div>

@@ -20,7 +20,7 @@ export default class Component extends React.Component {
     this.styles.forEach(style => style.unuse());
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     ReactTooltip.rebuild();
   }
 }
