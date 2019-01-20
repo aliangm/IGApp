@@ -157,7 +157,7 @@ export default class Product extends Component {
       loyalty: {
         label: 'Loyalty',
         labelQuestion: [''],
-        description: ['What is the loyalty level of your customers? If a new/existing competitor offers a new similar product/service, what is the possibility that your user will move to his offer? Please take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you 😃).'],
+        description: ['If a competitor will offer the same product as yours at a lower pricing point, what is the likability that your user will switch to his offer? \nPlease take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you 😃).'],
         select: {
           name: 'loyalty',
           onChange: () => {
@@ -322,7 +322,7 @@ export default class Product extends Component {
             </div>
             <div className={this.classes.row}>
               <Label question={['']}
-                     description={['What is your main platform? If you’re using all platforms equally, please choose ‘Any’.']}>Platform</Label>
+                     description={['What is your main platform?']}>Platform</Label>
               <ButtonsSet buttons={[
                 {key: 'Mobile', text: 'Mobile', icon: 'buttons:mobile'},
                 {key: 'Web', text: 'Web', icon: 'buttons:web'},
