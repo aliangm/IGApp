@@ -260,13 +260,14 @@ export default class Product extends Component {
             </div>
             <div className={this.classes.row}>
               <Label question={['']}
-                     description={['What is your company’s business model? \n *On-prem is a shortcut for On-premises software.']}>Business
+                     description={['What is your company’s business model?']}>Business
                 Model</Label>
               <ButtonsSet buttons={[
                 {key: 'SaaS', text: 'Subscription', icon: 'buttons:SaaS'},
-                {key: 'On-prem', text: 'On-prem', icon: 'buttons:product'},
+                {key: 'On-prem', text: 'Purchased Product', icon: 'buttons:product'},
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
-                {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'}
+                {key: 'eCommerce', text: 'eCommerce', icon: 'buttons:freemium'},
+                {key: 'Other', text: 'Other', icon: 'buttons:other'}
               ]} selectedKey={this.props.userProfile.businessModel}
                           onChange={this.handleChangeButton.bind(this, 'businessModel')} ref='businessModel'/>
             </div>
