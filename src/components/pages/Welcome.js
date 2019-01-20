@@ -252,7 +252,7 @@ export default class Welcome extends Component {
     const tableData = this.props.userAccount.teamMembers.slice(MEMBERS_TO_SKIP)
     const selects = {
       role: {
-        label: 'Your role',
+        label: 'Role',
         labelQuestion: false,
         select: {
           menuTop: true,
