@@ -72,7 +72,7 @@ export default class AttributionTable extends Component {
 
     const pluralNickname = (indicator) => getNicknameForIndicator(indicator, false);
 
-    const stageEfficiency = (value) => efficiencyFormatter(value, selectedStage.name);
+    const stageEfficiency = (value) => efficiencyFormatter(value, singularIndicatorNickname);
 
     const titleColumn = {title: dataNickname, type: 'row-title'};
     const costColumn = {title: 'Cost', type: 'cost'};
