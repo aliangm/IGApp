@@ -154,21 +154,6 @@ export default class Product extends Component {
 
   render() {
     const selects = {
-      vertical: {
-        label: 'Vertical',
-        labelQuestion: [],
-        description: [],
-        select: {
-          name: 'vertical',
-          //onChange: () => {  },
-          options: [
-            {value: 'IT', label: 'IT'},
-            {value: 'Martech', label: 'Martech'},
-            {value: 'BI & Analytics', label: 'BI & Analytics'},
-            {value: 'Sales', label: 'Sales'}
-          ]
-        }
-      },
       loyalty: {
         label: 'Loyalty',
         labelQuestion: [''],
@@ -247,14 +232,9 @@ export default class Product extends Component {
         </div>
         <div className={this.classes.cols}>
           <div className={this.classes.colLeft}>
-            {/**<div className={ this.classes.row } style={{
-              width: '258px'
-            }}>
-             <Select required { ... selects.vertical } selected={ this.props.userProfile.vertical} onChange= { this.handleChangeSelect.bind(this, 'vertical') }/>
-             </div>**/}
             <div className={this.classes.row}>
               <Label question={['']}
-                     description={['Which vertical/industry does your company work in?']}>Vertical</Label>
+                     description={['What is your product\'s industry?']}>Vertical</Label>
               <ButtonsSet buttons={[
                 {key: 'Martech', text: 'Martech', icon: 'buttons:martech'},
                 {key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:bi'},
