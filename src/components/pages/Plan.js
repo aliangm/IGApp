@@ -324,10 +324,6 @@ export default class Plan extends Component {
     this[channel] = ref;
   };
 
-  forecastingGraphRef = ref => {
-    this.forecastingGraph = ref;
-  };
-
   applyLockOnChannels = (planBudgets, lockedChannels) => {
     return planBudgets.map((month) => {
       const newMonth = {...month};
@@ -515,7 +511,6 @@ export default class Plan extends Component {
         return React.cloneElement(child, merge({}, this.props, this.state, {
           whatIf: this.props.plan,
           setRef: this.setRef,
-          forecastingGraphRef: this.forecastingGraphRef,
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
@@ -573,15 +568,6 @@ export default class Plan extends Component {
           </div>
           <div className={this.classes.column} style={{justifyContent: 'flex-end'}}>
             <div className={this.classes.headPlan}>
-              {annualTabActive ?
-                <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
-                  const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
-                  if (domElement) {
-                    domElement.scrollIntoView({});
-                  }
-                }}/>
-                : null
-              }
               {annualTabActive && !this.state.editMode ?
                 interactiveMode ?
                   <div style={{display: 'flex'}}>
