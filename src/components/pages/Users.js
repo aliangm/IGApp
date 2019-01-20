@@ -98,11 +98,6 @@ export default class Users extends Component {
     const usersData = this.state.groupBy === GROUP_BY.USERS ? usersByEmail : usersByAccount;
 
     const data = usersData
-      .sort((user1, user2) => {
-        const lastTouchPoint1 = new Date(user1.sessions[user1.sessions.length - 1].endTime);
-        const lastTouchPoint2 = new Date(user2.sessions[user2.sessions.length - 1].endTime);
-        return lastTouchPoint2 - lastTouchPoint1;
-      })
       .map((user) => {
         const getUniqNotEmpty = field => uniq(user.sessions.map(item => item[field]).filter(item => !!item));
         const firstTouchPoint = new Date(user.sessions[0].startTime);
@@ -129,6 +124,7 @@ export default class Users extends Component {
           countries,
           timeSinceFirst,
           timeSinceLast,
+          lastTouchPoint,
           emails,
           displayName,
           domainIcon,
@@ -158,6 +154,7 @@ export default class Users extends Component {
         <Table
           data={data}
           onRowClick={this.showPopup}
+          defaultSorted={[{id: 'LastTouch', desc: true}]}
           columns={[
             {
               id: 'User',
@@ -217,7 +214,9 @@ export default class Users extends Component {
             {
               id: 'LastTouch',
               header: 'Last touch',
-              cell: 'timeSinceLast',
+              cell: ({ timeSinceLast }) => timeSinceLast,
+              sortable: true,
+              sortMethod: (a, b) => a.lastTouchPoint - b.lastTouchPoint,
             },
             {
               id: 'Device',
