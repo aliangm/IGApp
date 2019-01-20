@@ -4,14 +4,12 @@ import style from 'styles/onboarding/onboarding.css';
 import {PieChart, Pie, Cell} from 'recharts';
 import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Objective from 'components/pages/dashboard/Objective';
-import Funnel from 'components/pages/dashboard/Funnel';
 import {
   getIndicatorsWithProps,
   getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {getChannelsWithProps, getMetadata as getChannelMetadata} from 'components/utils/channels';
 import {formatNumber, formatBudgetShortened} from 'components/utils/budget';
 import CampaignsByFocus from 'components/pages/dashboard/CampaignsByFocus';
-import Label from 'components/ControlsLabel';
 import merge from 'lodash/merge';
 import {getDates} from 'components/utils/date';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
@@ -22,7 +20,6 @@ import {getExtarpolateRatio} from 'components/utils/utils';
 import sumBy from 'lodash/sumBy';
 import {getPlanBudgetsData} from 'components/utils/budget';
 import {getColor} from 'components/utils/colors';
-import StatSquare from 'components/common/StatSquare';
 import {projectObjective} from 'components/utils/objective';
 
 export default class CMO extends Component {
@@ -47,8 +44,7 @@ export default class CMO extends Component {
     super();
 
     this.state = {
-      activeIndex: void 0,
-      onlyThisMonth: true
+      activeIndex: void 0
     };
   }
 
@@ -161,27 +157,6 @@ export default class CMO extends Component {
         value: funnel[i + 1].value / funnel[i].value
       });
     }
-    const minRatio = Math.min(...funnelRatios.map(item => item.value));
-    const minRatioTitle = funnelRatios
-      .filter(item => item.value == minRatio)
-      .map(item => item.name);
-
-    const funnelMetricsValues = this.state.onlyThisMonth ?
-      {
-        MCL: actualIndicators.newMCL,
-        MQL: actualIndicators.newMQL,
-        SQL: actualIndicators.newSQL,
-        opps: actualIndicators.newOpps,
-        users: actualIndicators.newUsers
-      }
-      :
-      {
-        MCL: actualIndicators.MCL,
-        MQL: actualIndicators.MQL,
-        SQL: actualIndicators.SQL,
-        opps: actualIndicators.opps,
-        users: actualIndicators.users
-      };
 
     const indicatorsProperties = getIndicatorsWithProps();
     const objectivesGauges = collapsedObjectives.map((objective, index) => {
@@ -742,41 +717,6 @@ export default class CMO extends Component {
             statWithArrow={true}
           />
         </div>
-      </div>
-      <div className={this.classes.cols} style={{width: '825px'}}>
-        <div className={this.classes.colLeft}>
-          <div className={dashboardStyle.locals.item} style={{height: '412px', width: '825px'}}>
-            <div style={{display: 'flex', position: 'relative'}}>
-              <Label
-                checkbox={!this.state.onlyThisMonth}
-                onChange={() => {
-                  this.setState({onlyThisMonth: !this.state.onlyThisMonth});
-                }}
-                style={{
-                  margin: '0',
-                  alignSelf: 'center',
-                  textTransform: 'capitalize',
-                  fontSize: '12px',
-                  position: 'absolute'
-                }}
-              >
-                show all-time
-              </Label>
-              <div className={dashboardStyle.locals.text}>
-                Funnel
-              </div>
-            </div>
-            <div className={dashboardStyle.locals.chart} style={{justifyContent: 'center'}}>
-              <Funnel {...funnelMetricsValues}/>
-            </div>
-          </div>
-        </div>
-        <StatSquare
-          title={(minRatioTitle.length > 0 ? minRatioTitle : 'Funnel') + ' Ratio'}
-          stat={`${Math.round(minRatio * 10000) / 100}%`}
-          emptyStatMessage={'Oh… It seems that the relevant metrics (funnel metrics) are missing. Please update your data.'}
-          showEmptyStat={!(minRatio && isFinite(minRatio))}
-        />
       </div>
       <div className={this.classes.cols} style={{width: '825px'}}>
         <div className={this.classes.colLeft}>
