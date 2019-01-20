@@ -12,7 +12,6 @@ import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import {output, isUnknownChannel} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
-import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
@@ -529,7 +528,6 @@ export default class Plan extends Component {
     const annualTabActive = this.props.children ? this.props.children.type === AnnualTab : null;
 
     return <div>
-      <ReactTooltip/>
       <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
             width="100%" onPageScroll={this.state.scrollEvent}>
         <div className={this.classes.head}>
