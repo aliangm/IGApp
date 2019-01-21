@@ -142,7 +142,7 @@ export default class AnnualTab extends Component {
   };
 
   render() {
-    const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, forecastingGraphRef, calculatedData: {objectives: {objectivesData, collapsedObjectives}, committedForecasting}, historyData: {indicators}} = this.props;
+    const {budgetsData, editMode, interactiveMode, secondaryPlanForecastedIndicators, primaryPlanForecastedIndicators, calculatedData: {objectives: {objectivesData, collapsedObjectives}, committedForecasting}, historyData: {indicators}} = this.props;
 
     const showSecondaryIndicatorGraph = secondaryPlanForecastedIndicators &&
       secondaryPlanForecastedIndicators.length > 0;
@@ -304,8 +304,8 @@ export default class AnnualTab extends Component {
                         {...this.props}
           />
 
-          <div className={this.classes.indicatorsGraph} ref={forecastingGraphRef.bind(this)}>
-            <FloatingComponent popup={this.props.interactiveMode}>
+          <div className={this.classes.indicatorsGraph}>
+            <FloatingComponent popup={this.props.interactiveMode} shownText={'Forecast'}>
               <IndicatorsGraph parsedObjectives={parsedObjectives}
                                dimensions={this.state.graphDimensions}
                                changeScrollPosition={this.changeScrollPosition}

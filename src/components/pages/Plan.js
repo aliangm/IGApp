@@ -12,7 +12,6 @@ import events from 'data/events';
 import AddChannelPopup from 'components/pages/plan/AddChannelPopup';
 import {output, isUnknownChannel} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
-import ReactTooltip from 'react-tooltip';
 import NewScenarioPopup from 'components/pages/plan/NewScenarioPopup';
 import BudgetLeftToPlan from 'components/pages/plan/BudgetLeftToPlan';
 import isEqual from 'lodash/isEqual';
@@ -324,10 +323,6 @@ export default class Plan extends Component {
     this[channel] = ref;
   };
 
-  forecastingGraphRef = ref => {
-    this.forecastingGraph = ref;
-  };
-
   applyLockOnChannels = (planBudgets, lockedChannels) => {
     return planBudgets.map((month) => {
       const newMonth = {...month};
@@ -515,7 +510,6 @@ export default class Plan extends Component {
         return React.cloneElement(child, merge({}, this.props, this.state, {
           whatIf: this.props.plan,
           setRef: this.setRef,
-          forecastingGraphRef: this.forecastingGraphRef,
           editCommittedBudget: this.editCommittedBudget,
           changeBudgetConstraint: this.changeBudgetConstraint,
           deleteChannel: this.deleteChannel,
@@ -534,7 +528,6 @@ export default class Plan extends Component {
     const annualTabActive = this.props.children ? this.props.children.type === AnnualTab : null;
 
     return <div>
-      <ReactTooltip/>
       <Page popup={interactiveMode} contentClassName={this.classes.content} innerClassName={this.classes.pageInner}
             width="100%" onPageScroll={this.state.scrollEvent}>
         <div className={this.classes.head}>
@@ -573,15 +566,6 @@ export default class Plan extends Component {
           </div>
           <div className={this.classes.column} style={{justifyContent: 'flex-end'}}>
             <div className={this.classes.headPlan}>
-              {annualTabActive ?
-                <div className={this.classes.forecastButton} data-tip="forecasting" onClick={() => {
-                  const domElement = ReactDOM.findDOMNode(this.forecastingGraph);
-                  if (domElement) {
-                    domElement.scrollIntoView({});
-                  }
-                }}/>
-                : null
-              }
               {annualTabActive && !this.state.editMode ?
                 interactiveMode ?
                   <div style={{display: 'flex'}}>

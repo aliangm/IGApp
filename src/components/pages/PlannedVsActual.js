@@ -174,7 +174,7 @@ export default class PlannedVsActual extends Component {
     const extrapolatedValue = value => Math.round(value / extarpolateRatio);
     const trend = (value, lastMonthValue) => {
       const percentage = percentageFormatter(value - lastMonthValue, lastMonthValue);
-      return <div style={{display: 'inline-flex', alignItems: "center"}}>
+      return <div style={{display: 'inline-flex', alignItems: 'center'}}>
         {value}
         {lastMonthValue && value !== lastMonthValue ? <div style={{marginLeft: '6px'}}>
           <NumberWithArrow stat={percentage} isNegative={value < lastMonthValue}/>
@@ -244,7 +244,7 @@ export default class PlannedVsActual extends Component {
       },
       {
         id: 'plannedObjective',
-        header: <div data-tip="what's your expectation?">Planned {firstFunnelObjectiveNickname}</div>,
+        header: <div data-tip="what's your expectation?" data-for="appTip">Planned {firstFunnelObjectiveNickname}</div>,
         footer: formatNumber(totalPlannedFunnel),
         cell: ({plannedFunnel, channel}) =>
           getTextfieldItem(
@@ -279,7 +279,7 @@ export default class PlannedVsActual extends Component {
       },
       {
         id: 'plannedUser',
-        header: <div data-tip="what's your expectation?">Planned {userNickname}</div>,
+        header: <div data-tip="what's your expectation?" data-for="appTip">Planned {userNickname}</div>,
         footer: formatNumber(totalPlannedUsers),
         cell: ({plannedUsers, channel}) =>
           getTextfieldItem(

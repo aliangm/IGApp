@@ -272,14 +272,3 @@
   flex-grow: 1;
   flex-shrink: 0;
 }
-
-.forecast-button {
-  margin-left: 15px;
-  background: white url(/assets/forecast.svg) center center no-repeat;
-  background-size: 14px 14px;
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px 0 rgba(27, 35, 56, 0.08);
-}
