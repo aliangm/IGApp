@@ -154,25 +154,10 @@ export default class Product extends Component {
 
   render() {
     const selects = {
-      vertical: {
-        label: 'Vertical',
-        labelQuestion: [],
-        description: [],
-        select: {
-          name: 'vertical',
-          //onChange: () => {  },
-          options: [
-            {value: 'IT', label: 'IT'},
-            {value: 'Martech', label: 'Martech'},
-            {value: 'BI & Analytics', label: 'BI & Analytics'},
-            {value: 'Sales', label: 'Sales'}
-          ]
-        }
-      },
       loyalty: {
         label: 'Loyalty',
         labelQuestion: [''],
-        description: ['What is the loyalty level of your customers? If a new/existing competitor offers a new similar product/service, what is the possibility that your user will move to his offer? Please take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you 😃).'],
+        description: ['If a competitor will offer the same product as yours at a lower pricing point, what is the likability that your user will switch to his offer? \nPlease take into consideration: the user dependency on your company in terms of data, how loyal the user is in terms of comfortability, regulation, agreements, network effect and general loyalty (just because your user really likes you 😃).'],
         select: {
           name: 'loyalty',
           onChange: () => {
@@ -247,14 +232,9 @@ export default class Product extends Component {
         </div>
         <div className={this.classes.cols}>
           <div className={this.classes.colLeft}>
-            {/**<div className={ this.classes.row } style={{
-              width: '258px'
-            }}>
-             <Select required { ... selects.vertical } selected={ this.props.userProfile.vertical} onChange= { this.handleChangeSelect.bind(this, 'vertical') }/>
-             </div>**/}
             <div className={this.classes.row}>
               <Label question={['']}
-                     description={['Which vertical/industry does your company work in?']}>Vertical</Label>
+                     description={['What is your product\'s industry?']}>Vertical</Label>
               <ButtonsSet buttons={[
                 {key: 'Martech', text: 'Martech', icon: 'buttons:martech'},
                 {key: 'BI & Analytics', text: 'BI & Analytics', icon: 'buttons:bi'},
@@ -280,20 +260,21 @@ export default class Product extends Component {
             </div>
             <div className={this.classes.row}>
               <Label question={['']}
-                     description={['What is your company’s business model? \n *On-prem is a shortcut for On-premises software.']}>Business
+                     description={['What is your company’s business model?']}>Business
                 Model</Label>
               <ButtonsSet buttons={[
                 {key: 'SaaS', text: 'Subscription', icon: 'buttons:SaaS'},
-                {key: 'On-prem', text: 'On-prem', icon: 'buttons:product'},
+                {key: 'On-prem', text: 'Purchased Product', icon: 'buttons:product'},
                 {key: 'Marketplace', text: 'Marketplace', icon: 'buttons:marketplace'},
-                {key: 'Freemium', text: 'Freemium', icon: 'buttons:freemium'}
+                {key: 'eCommerce', text: 'eCommerce', icon: 'buttons:freemium'},
+                {key: 'Other', text: 'Other', icon: 'buttons:other'}
               ]} selectedKey={this.props.userProfile.businessModel}
                           onChange={this.handleChangeButton.bind(this, 'businessModel')} ref='businessModel'/>
             </div>
             <div className={this.classes.row}>
               <Label ref='price' style={{marginBottom: '12px', fontWeight: '600'}} question={['']}
-                     description={['What is your main pricing point? \nIn case of SaaS, which annual subscription option is the most popular?']}>
-                Price
+                     description={['What are your main pricing tiers/points?']}>
+                Pricing
               </Label>
               <MultiRow numOfRows={this.props.pricingTiers.length || 1} rowRemoved={this.pricingTierRemove}>
                 {({index, data, update, removeButton}) => {
@@ -341,7 +322,7 @@ export default class Product extends Component {
             </div>
             <div className={this.classes.row}>
               <Label question={['']}
-                     description={['What is your main platform? If you’re using all platforms equally, please choose ‘Any’.']}>Platform</Label>
+                     description={['What is your main platform?']}>Platform</Label>
               <ButtonsSet buttons={[
                 {key: 'Mobile', text: 'Mobile', icon: 'buttons:mobile'},
                 {key: 'Web', text: 'Web', icon: 'buttons:web'},
