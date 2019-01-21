@@ -58,10 +58,10 @@ export default class AttributionTable extends Component {
     const getNicknameForIndicator = (indicator, isSingular) => {
       if (indicator === 'webVisits') {
         if (isSingular) {
-          return 'Visitor';
+          return 'Identified Visitor';
         }
         else {
-          return 'Visitors';
+          return 'Identified Visitors';
         }
       }
 
@@ -72,7 +72,7 @@ export default class AttributionTable extends Component {
 
     const pluralNickname = (indicator) => getNicknameForIndicator(indicator, false);
 
-    const stageEfficiency = (value) => efficiencyFormatter(value, selectedStage.name);
+    const stageEfficiency = (value) => efficiencyFormatter(value, singularIndicatorNickname);
 
     const titleColumn = {title: dataNickname, type: 'row-title'};
     const costColumn = {title: 'Cost', type: 'cost'};
@@ -123,12 +123,12 @@ export default class AttributionTable extends Component {
 
     const basicStages = [
       {
-        name: 'Visitors',
+        name: 'Identified Visitors',
         dataKey: 'webVisits',
         columns: [
           {...titleColumn},
           {...costColumn},
-          {title: 'Web Visitors', type: 'stage-indicator'},
+          {title: 'Identified Visitors', type: 'stage-indicator'},
           {...efficiencyColumn}
         ]
       },
