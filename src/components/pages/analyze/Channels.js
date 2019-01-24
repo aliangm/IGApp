@@ -5,7 +5,6 @@ import dashboardStyle from 'styles/dashboard/dashboard.css';
 import Select from 'components/controls/Select';
 import {getChannelsWithNicknames, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
-import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import PerformanceGraph from 'components/pages/analyze/PerformanceGraph';
 import {get} from 'lodash';
@@ -158,7 +157,7 @@ export default class Channels extends Component {
                 return <div className={dashboardStyle.locals.channelBox} key={index}>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + channel}
                        style={{margin: '0 5px'}}/>
-                  <div className={dashboardStyle.locals.channelText} data-tip={channelNickname}>
+                  <div className={dashboardStyle.locals.channelText} data-tip={channelNickname} data-for='appTip'>
                     {channelNickname}
                   </div>
                 </div>;
@@ -248,7 +247,6 @@ export default class Channels extends Component {
                             defaultIndicator={firstObjective}/>
         </div>
       </div>
-      <ReactTooltip/>
     </div>;
   }
 

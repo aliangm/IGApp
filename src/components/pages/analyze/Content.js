@@ -7,7 +7,6 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
 import {FeatureToggle} from 'react-feature-toggles';
 import icons from 'styles/icons/plan.css';
-import ReactTooltip from 'react-tooltip';
 import {newFunnelMapping} from 'components/utils/utils';
 import StatSquare from 'components/common/StatSquare';
 import AttributionTable from 'components/pages/analyze/AttributionTable';
@@ -48,7 +47,7 @@ export default class Content extends Component {
     const getPageItemData = (page, dataKey) => get(page, dataKey, 0);
     const getPageItemTitle = (page) => {
       const {title} = page;
-      return <div className={dashboardStyle.locals.contentTitle} data-tip={title}>
+      return <div className={dashboardStyle.locals.contentTitle} data-tip={title} data-for='appTip'>
         {title}
       </div>;
     };
@@ -113,7 +112,6 @@ export default class Content extends Component {
     const outOfTotalRevenue = Math.round((revenue / totalRevenue) * 100);
 
     return <div>
-      <ReactTooltip/>
       <div className={this.classes.wrap}>
         <div className={this.classes.cols} style={{width: '825px'}}>
           <StatSquare title='Content-Influenced Revenue'

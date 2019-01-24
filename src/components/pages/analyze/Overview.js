@@ -21,7 +21,6 @@ import {getIndicatorsWithNicknames} from 'components/utils/indicators';
 import {formatBudget, formatBudgetShortened, formatNumber, formatNumberWithDecimalPoint} from 'components/utils/budget';
 import {getChannelsWithProps, getMetadata, getNickname as getChannelNickname} from 'components/utils/channels';
 import {getNickname as getIndicatorNickname} from 'components/utils/indicators';
-import ReactTooltip from 'react-tooltip';
 import {flattenObjectives} from 'components/utils/objective';
 import {getRawDatesSpecific} from 'components/utils/date';
 import RechartBarLabel from 'components/controls/RechartBarLabel';
@@ -29,23 +28,23 @@ import {getColor} from 'components/utils/colors';
 import sumBy from 'lodash/sumBy';
 import groupBy from 'lodash/groupBy';
 import mapValues from 'lodash/mapValues';
-import { SmallTable } from 'components/controls/Table';
+import {SmallTable} from 'components/controls/Table';
 import indicatorsGraphStyle from 'styles/plan/indicators-graph.css';
 import isEmpty from 'lodash/isEmpty';
 import StatSquare from 'components/common/StatSquare';
 
 const StatTable = (props) => (
-	<SmallTable
-		noPadding
-		style={{
-			maxHeight: 330,
-			margin: '15px 0',
-		}}
-		headRowClassName={dashboardStyle.locals.itemTableHeader}
-		cellClassName={dashboardStyle.locals.itemTableHeaderCell}
+  <SmallTable
+    noPadding
+    style={{
+      maxHeight: 330,
+      margin: '15px 0'
+    }}
+    headRowClassName={dashboardStyle.locals.itemTableHeader}
+    cellClassName={dashboardStyle.locals.itemTableHeaderCell}
     {...props}
   />
-)
+);
 
 export default class Overview extends Component {
 
@@ -151,7 +150,7 @@ export default class Overview extends Component {
       channels => sumBy(channels, channel => revenueByChannel[channel]));
     const influencedRevenueByCategory = mapValues(channelsByCategories,
       channels => sumBy(channels, channel => influencedRevenueByChannel[channel]));
-    const indicatorsInRelevantMonths = indicatorsWithCurrentMonth.slice(this.props.monthsExceptThisMonth)
+    const indicatorsInRelevantMonths = indicatorsWithCurrentMonth.slice(this.props.monthsExceptThisMonth);
 
     const channelCategoriesPerMonth = indicatorsInRelevantMonths.map((month) => {
       const mergedObject = {};
@@ -272,18 +271,18 @@ export default class Overview extends Component {
               {
                 id: title,
                 header: title,
-                cell: 'title',
+                cell: 'title'
               },
               {
                 id: 'Attributed Revenue',
                 header: 'Attributed Revenue',
-                cell: 'attributedRevenue',
+                cell: 'attributedRevenue'
               },
               {
                 id: 'Touched Revenue',
                 header: 'Touched Revenue',
-                cell: 'touchedRevenue',
-              },
+                cell: 'touchedRevenue'
+              }
             ]}
           />
         </div>
@@ -343,7 +342,8 @@ export default class Overview extends Component {
             <div className={this.classes.colLeft}>
               <div className={dashboardStyle.locals.item} style={{height: '387px', width: '1110px'}}>
                 <div className={dashboardStyle.locals.text}
-                     data-tip="(Estimated) Impact across funnel. Sum of each funnel stage X the likability to convert to a paying account X estimated LTV.">
+                     data-tip="(Estimated) Impact across funnel. Sum of each funnel stage X the likability to convert to a paying account X estimated LTV."
+                     data-for='appTip'>
                   Marketing-Generated Business Impact
                 </div>
                 <div style={{display: 'flex'}}>
@@ -373,7 +373,8 @@ export default class Overview extends Component {
                                 {element.name}
                               </div>
                               <div style={{fontSize: '14px', fontWeight: '600', width: '30px'}}
-                                   data-tip={'$' + formatBudgetShortened(element.value)}>
+                                   data-tip={'$' + formatBudgetShortened(element.value)}
+                                   data-for='appTip'>
                                 {Math.round(element.value / channelCategoriesSum * 100)}%
                               </div>
                             </div>
@@ -425,15 +426,15 @@ export default class Overview extends Component {
             revenueData: Object.keys(revenueByCategory).map((category) => ({
               title: category.toUpperCase(),
               attributedRevenue: formatBudget(revenueByCategory[category]),
-              touchedRevenue: formatBudget(influencedRevenueByCategory[category]),
-            })),
+              touchedRevenue: formatBudget(influencedRevenueByCategory[category])
+            }))
           }, {
             title: 'Channel',
             revenueData: Object.keys(revenueByChannel).map((channel) => ({
               title: getChannelNickname(channel),
               attributedRevenue: formatBudget(revenueByChannel[channel]),
-              touchedRevenue: formatBudget(influencedRevenueByChannel[channel]),
-            })),
+              touchedRevenue: formatBudget(influencedRevenueByChannel[channel])
+            }))
           }])}
           {getRevenueByRow([{
             title: 'Campaign',
@@ -442,15 +443,15 @@ export default class Overview extends Component {
               .map((campaign) => ({
                 title: campaign.name,
                 attributedRevenue: formatBudget(campaign.revenue),
-                touchedRevenue: formatBudget(campaign.influencedRevenue),
-              })),
+                touchedRevenue: formatBudget(campaign.influencedRevenue)
+              }))
           }, {
             title: 'Content',
             revenueData: attributionPages.map((page) => ({
               title: page.title,
               attributedRevenue: formatBudget(page.revenue),
-              touchedRevenue: formatBudget(page.influencedRevenue),
-            })),
+              touchedRevenue: formatBudget(page.influencedRevenue)
+            }))
           }])}
           <div className={this.classes.cols} style={{width: '1110px'}}>
             <div className={this.classes.colLeft}>
@@ -515,29 +516,29 @@ export default class Overview extends Component {
                     {
                       id: 'Objective',
                       header: 'Objective',
-                      cell: ({ indicator }) => getIndicatorNickname(indicator),
-                      minWidth: 100,
+                      cell: ({indicator}) => getIndicatorNickname(indicator),
+                      minWidth: 100
                     },
                     {
                       id: 'Date',
                       header: 'Date',
-                      cell: ({ dueDate }) => this.getObjectiveFormattedDate(dueDate),
+                      cell: ({dueDate}) => this.getObjectiveFormattedDate(dueDate)
                     },
                     {
                       id: 'Target',
                       header: 'Target',
-                      cell: ({ target }) => target,
+                      cell: ({target}) => target
                     },
                     {
                       id: 'Actual',
                       header: 'Actual',
-                      cell: ({ value }) => value,
+                      cell: ({value}) => value
                     },
                     {
                       id: 'Delta',
                       header: 'Delta',
-                      cell: ({ value, target }) => {
-                        const grow = Math.round(value - target)
+                      cell: ({value, target}) => {
+                        const grow = Math.round(value - target);
 
                         return (
                           <div>
@@ -554,9 +555,9 @@ export default class Overview extends Component {
                               <div className={dashboardStyle.locals.checkMark}/>
                             }
                           </div>
-                        )
+                        );
                       }
-                    },
+                    }
                   ]}
                 />
               </div>
@@ -564,7 +565,6 @@ export default class Overview extends Component {
           </div>
         </div>
       </div>
-      <ReactTooltip/>
     </div>;
   }
 }

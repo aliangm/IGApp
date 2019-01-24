@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/dashboard/dashboard-stat-with-context.css';
 import StatSquare from 'components/common/StatSquare';
-import ReactTooltip from 'react-tooltip';
 import NumberWithArrow from 'components/NumberWithArrow';
 
 export default class DashboardStatWithContext extends Component {
@@ -28,17 +27,12 @@ export default class DashboardStatWithContext extends Component {
     contextText: ''
   };
 
-  constructor(props) {
-    super(props);
-    this.uniqueID = Math.random().toString(36).substr(2, 9);
-  }
-
   style = style;
 
   render() {
     const stat = <div style={{display: 'inline-flex'}}
                       data-tip={this.props.contextStatTooltipText}
-                      data-for={this.uniqueID}>
+                      data-for='appTip'>
       {this.props.contextStat ?
         this.props.statWithArrow ?
           <NumberWithArrow stat={this.props.contextStat}
@@ -55,7 +49,6 @@ export default class DashboardStatWithContext extends Component {
     </div>;
 
     return <div>
-      <ReactTooltip place='bottom' effect='solid' id={this.uniqueID}/>
       <StatSquare {...this.props} contextStat={stat}/>
     </div>;
   }

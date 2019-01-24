@@ -21,7 +21,6 @@ import GoogleSheetsAutomaticPopup from 'components/pages/indicators/GoogleSheets
 import MozAutomaticPopup from 'components/pages/indicators/MozAutomaticPopup';
 import ReactDOM from 'react-dom';
 import Button from 'components/controls/Button';
-import ReactTooltip from 'react-tooltip';
 import remove from 'lodash/remove';
 import FacebookCampaignsPopup from 'components/importCampaignsPopups/FacebookCampaignsPopup';
 import AdwordsCampaignsPopup from 'components/importCampaignsPopups/AdwordsCampaignsPopup';
@@ -120,7 +119,6 @@ export default class Platforms extends Component {
             contentClassName={this.classes.content}
             innerClassName={this.classes.pageInner}
             width='100%'>
-        <ReactTooltip place='right' effect='solid' id='platforms' html={true}/>
         <Title title="Integrations"/>
         <div>
           <SalesforceAutomaticPopup setDataAsState={this.props.setDataAsState}
