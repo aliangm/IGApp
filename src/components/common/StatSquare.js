@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Component from 'components/Component';
 import style from 'styles/stat-square.css';
-import ReactTooltip from 'react-tooltip';
 
 export default class StatSquare extends Component {
 
@@ -17,20 +16,14 @@ export default class StatSquare extends Component {
 
   static defaultProps = {
     tooltipText: '',
-    showEmptyStat: false,
+    showEmptyStat: false
   };
-
-  constructor(props) {
-    super(props);
-    this.uniqueID = Math.random().toString(36).substr(2, 9);
-  }
 
   style = style;
 
   render() {
     return <div>
-      <ReactTooltip id={this.uniqueID}/>
-      <div className={this.classes.col} data-for={this.uniqueID} data-tip={this.props.tooltipText}>
+      <div className={this.classes.col} data-for='appTip' data-tip={this.props.tooltipText}>
         <div className={this.classes.item}>
           <div className={this.classes.text}>{this.props.title}</div>
           {this.props.showEmptyStat ?

@@ -38,8 +38,9 @@ export default class Platform extends Component {
                                      className={this.classes.defaultDimensions}/>
         : <div className={this.classes.square} hidden={this.props.hidden}
                data-connected={this.props.connected ? true : null}>
-          <div className={this.classes.platformIcon} data-tip={this.getTooltipHtml()}
-               data-for='platforms'
+          <div className={this.classes.platformIcon}
+               data-tip={this.getTooltipHtml()}
+               data-for='appTip'
                data-icon={this.props.icon}/>
           <div className={this.classes.platformText}>
             {this.props.title}

@@ -3,7 +3,6 @@ import Component from 'components/Component';
 import style from 'styles/onboarding/buttons.css';
 import Button from 'components/controls/Button';
 import planStyle from 'styles/plan/plan.css';
-import ReactTooltip from 'react-tooltip';
 import planButtonStyle from 'styles/plan/plan-button.css';
 
 export default class PlanButton extends Component {
@@ -22,7 +21,9 @@ export default class PlanButton extends Component {
 
     return <div style={{display: 'flex', position: 'relative'}}
                 data-tip={disabled ? this.tooltipHtml : null}
-                data-for='plan-button'>
+                data-for='appTip'
+                data-class={planButtonStyle.locals.tooltipClass}
+                data-delay-hide={1000}>
       <Button type='primary'
               disabled={disabled}
               onClick={this.props.onClick}
@@ -36,7 +37,6 @@ export default class PlanButton extends Component {
             : null
         }
       </Button>
-      <ReactTooltip effect='solid' place='bottom' html={true} delayHide={1000} id='plan-button' className={planButtonStyle.locals.tooltipClass}/>
     </div>;
   }
 }

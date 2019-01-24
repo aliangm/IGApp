@@ -7,7 +7,6 @@ import {getNickname as getChannelNickname} from 'components/utils/channels';
 import {FeatureToggle} from 'react-feature-toggles';
 import {timeFrameToDate} from 'components/utils/objective';
 import history from 'history';
-import ReactTooltip from 'react-tooltip';
 import icons from 'styles/icons/plan.css';
 import {get} from 'lodash';
 import AttributionTable from 'components/pages/analyze/AttributionTable';
@@ -47,9 +46,11 @@ export default class Campaigns extends Component {
     };
     const formatAdditionColumn = (value, columnType) => {
       return <div style={{display: 'flex'}}>
-        <ReactTooltip/>
         {value.map(channel =>
-          <div key={channel} data-tip={getChannelNickname(channel)} className={dashboardStyle.locals.channelIcon}
+          <div key={channel}
+               data-tip={getChannelNickname(channel)}
+               className={dashboardStyle.locals.channelIcon}
+               data-for='appTip'
                data-icon={'plan:' + channel}/>
         )}
       </div>;
@@ -175,7 +176,8 @@ export default class Campaigns extends Component {
             <div className={dashboardStyle.locals.journey}>
               {item.journey.map((journeyItem, index) => {
                 const journeyText = journeyItem.campaign;
-                return <div className={dashboardStyle.locals.channelBox} key={index} data-tip={journeyText}>
+                return <div className={dashboardStyle.locals.channelBox} key={index} data-tip={journeyText}
+                            data-for='appTip'>
                   <div className={dashboardStyle.locals.channelIcon} data-icon={'plan:' + journeyItem.channel}
                        style={{margin: '0 5px'}}/>
                   <div className={dashboardStyle.locals.channelText}>
@@ -284,7 +286,6 @@ export default class Campaigns extends Component {
           </FeatureToggle>
         </div>
       </div>
-      <ReactTooltip/>
     </div>;
   }
 

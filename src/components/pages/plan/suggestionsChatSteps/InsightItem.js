@@ -124,8 +124,10 @@ export class ChannelItem extends Component {
         <div className={this.classes.date}>
           {month}
         </div>
-        <div className={this.classes.channelIcon} data-icon={`plan:${channel}`} data-tip={getChannelNickname(channel)}
-             data-for='insightItem'/>
+        <div className={this.classes.channelIcon}
+             data-icon={`plan:${channel}`}
+             data-tip={getChannelNickname(channel)}
+             data-for='appTip'/>
         <div className={this.classes.budgets}>
           <div className={this.classes.fromBudget}>
             {formatBudget(fromBudget)}
