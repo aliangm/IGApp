@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip';
 
 // import Styles from 'components/mixins/Styles';
 
-export default class Component extends React.Component {
+export default class Component extends React.PureComponent {
   styles = [];
 
   get classes() {
@@ -20,7 +20,8 @@ export default class Component extends React.Component {
     this.styles.forEach(style => style.unuse());
   }
 
-  componentDidUpdate() {
-    ReactTooltip.rebuild();
-  }
+  //
+  // componentDidUpdate() {
+  //   ReactTooltip.rebuild();
+  // }
 }
