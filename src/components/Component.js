@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip';
 
 // import Styles from 'components/mixins/Styles';
 
-export default class Component extends React.PureComponent {
+export default class Component extends React.Component {
   styles = [];
 
   get classes() {
