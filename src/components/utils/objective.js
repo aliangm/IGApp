@@ -40,7 +40,6 @@ export function flattenObjectives(objectives,
   const getObjectiveData = (indicator, objective, monthIndex) => {
     let objectiveValue;
     let valueBeforeCurrentMonth;
-
     if (isRefreshed(indicator)) {
       const objectiveDate = new Date(objective.userInput.startDate);
       const startMonthIndex = datesWithHistory.findIndex(
@@ -54,7 +53,6 @@ export function flattenObjectives(objectives,
         Array.isArray(actualIndicators) ? actualIndicators[monthIndex][indicator] : actualIndicators[indicator];
       valueBeforeCurrentMonth = get(last(historyIndicators), indicator, 0);
     }
-
     return {
       monthIndex: monthIndex,
       dueDate: getEndOfMonthDate(dates[monthIndex]),
@@ -93,7 +91,7 @@ export function flattenObjectives(objectives,
     objectivesData = [].concat(...objectivesData.map(monthData =>
       Object.keys(monthData).map(objectiveKey => monthData[objectiveKey])));
   }
-
+  
   return objectivesData;
 }
 

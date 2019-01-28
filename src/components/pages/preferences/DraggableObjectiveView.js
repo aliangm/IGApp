@@ -1,0 +1,81 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { findDOMNode } from 'react-dom';
+import { DragSource } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
+import Component from 'components/Component';
+
+import ObjectiveView from './ObjectiveView';
+
+function getStyles(isDragging) {
+  return {
+    opacity: isDragging ? 0 : 1
+  };
+}
+
+const objectiveSource = {
+  beginDrag(props, monitor, component) {
+    const {item} = props;
+    return item;
+  },
+  endDrag(props, monitor) {
+  },
+  isDragging(props, monitor){
+    return props.item.indicator && props.item.indicator === monitor.getItem().indicator && props.item.recurrentType === monitor.getItem().recurrentType;
+  }
+};
+
+const OPTIONS = {
+  card: {
+    arePropsEqual(props, otherProps) {
+      return props.item.id === otherProps.item.id &&
+        props.item.status === otherProps.item.status &&
+        props.item.campaigns === otherProps.item.campaigns &&
+        props.x === otherProps.x &&
+        props.y === otherProps.y
+    }
+  },
+  campaignCard: {
+    arePropsEqual(props, otherProps) {
+      return props.item === otherProps.item &&
+        props.x === otherProps.x &&
+        props.y === otherProps.y &&
+        props.first === otherProps.first &&
+        props.last === otherProps.last;
+    }
+  },
+};
+
+function collectDragSource(connectDragSource, monitor) {
+  return {
+    connectDragSource: connectDragSource.dragSource(),
+    connectDragPreview: connectDragSource.dragPreview(),
+    isDragging: monitor.isDragging(),
+  };
+}
+class DraggableObjectiveView extends Component{
+    static propTypes = {
+      item: PropTypes.object,
+      connectDragSource: PropTypes.func.isRequired,
+      connectDragPreview: PropTypes.func.isRequired,
+      isDragging: PropTypes.bool.isRequired,
+			first: PropTypes.bool,
+      last: PropTypes.bool,
+    }
+
+    componentDidMount() {
+			this.props.connectDragPreview(getEmptyImage(), {
+				captureDraggingState: true
+			});
+		}
+
+    render() {
+      const {isDragging, connectDragSource, connectDragPreview, item, ...otherProps} = this.props;
+			return connectDragSource(
+        <div style={getStyles(isDragging)}>
+          <ObjectiveView {...item} {...otherProps} />
+        </div>
+			);
+		}
+}
+export default DragSource('objective', objectiveSource, collectDragSource)(DraggableObjectiveView);

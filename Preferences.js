@@ -27,7 +27,6 @@ import sortBy from 'lodash/sortBy';
 import ChannelsSelect from 'components/common/ChannelsSelect';
 import DraggableObjectiveView from './preferences/DraggableObjectiveView';
 import CustomDragLayer from './preferences/CustomDragLayer';
-import Objectives from './preferences/Objectives';
 
 export default class Preferences extends Component {
 
@@ -67,7 +66,6 @@ export default class Preferences extends Component {
         objectiveEdit: false
       }
     };
-
     this.blockedChannelRemove = this.blockedChannelRemove.bind(this);
     this.inHouseChannelRemove = this.inHouseChannelRemove.bind(this);
     this.budgetConstraintRemove = this.budgetConstraintRemove.bind(this);
@@ -205,17 +203,6 @@ export default class Preferences extends Component {
     this.props.updateState({budgetConstraints: budgetConstraints});
   }
 
-  objectiveEdit = (item) => {
-    this.setState({
-      objectivePopupData: {
-        hidden: false,
-        objectiveMonth: item.monthIndex,
-        objective: item.indicator,
-        objectiveEdit: true
-      }
-    });
-  }
-
   objectiveRemove = (objective, monthIndex) => {
     let objectives = [...this.props.objectives];
     if (objectives[monthIndex][objective]) {
@@ -345,10 +332,6 @@ export default class Preferences extends Component {
     }
   };
 
-  updateObjectives = (objectives) => {
-    this.props.updateState({objectives: objectives});
-  }
-
   monthBudgets() {
     const datesArray = getDates(this.props.planDate);
     return datesArray.map((month, index) => {
@@ -433,6 +416,26 @@ export default class Preferences extends Component {
 
     const dates = getDates(this.props.planDate);
 
+    const objectiveViews = objectivesData
+      .sort((item1, item2) => item1.priority - item2.priority)
+      .map((item, index) =>
+        <DraggableObjectiveView key={index}
+                       index={index}
+                       item={item}
+                       editObjective={() => {
+                         this.setState({
+                           objectivePopupData: {
+                             hidden: false,
+                             objectiveMonth: item.monthIndex,
+                             objective: item.indicator,
+                             objectiveEdit: true
+                           }
+                         });
+                       }}
+                       deleteObjective={() => {
+                         this.objectiveRemove(item.indicator, item.monthIndex);
+                       }}/>);
+
     const indicatorsWithProps = getIndicatorsWithProps();
     const filteredObjectives = Object.keys(indicatorsWithProps)
       .filter(indicatorKey => indicatorsWithProps[indicatorKey].isObjective &&
@@ -511,9 +514,8 @@ export default class Preferences extends Component {
                 fontWeight: '600'
               }} question={['']}
                      description={['Define your objectives / targets for marketing. The objectives should be:\n- Specific\n- Measurable\n- Attainable\n- Realistic\n- Time-Bound']}>Objectives</Label>
-              <Objectives objectivesData={objectivesData.sort((item1, item2) => item1.priority - item2.priority)} deleteObjective={this.objectiveRemove} editObjective={this.objectiveEdit} updateState={this.props.updateState} objectives={this.props.objectives}/>
-              <CustomDragLayer/>
-              
+              <CustomDragLayer />
+              {objectiveViews}
               <div className={preferencesStyle.locals.addObjective} onClick={() => {
                 this.setState({
                   objectivePopupData: {
