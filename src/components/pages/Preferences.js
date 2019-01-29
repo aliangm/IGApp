@@ -225,6 +225,7 @@ export default class Preferences extends Component {
   };
 
   createOrUpdateObjective = (objectiveData, originalMonthIndex, originalObjective) => {
+    console.log(objectiveData);
     let monthIndex = objectiveData.monthIndex;
     const objective = objectiveData.indicator;
     if (objective) {

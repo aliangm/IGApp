@@ -27,7 +27,8 @@ const specs = {
     const itemOffset = monitor.getClientOffset();
     const itemIndex = Math.floor((itemOffset.y - findDOMNode(component).getBoundingClientRect().y) / OBJECTIVE_HEIGHT);
 
-    if(itemIndex !== flag){
+    if(itemIndex !== flag && itemIndex < props.objectivesData.length){
+      console.log(itemIndex);
       let objectivesData = [...component.state.objectivesData]
       let previousItemIndex = objectivesData.indexOf(objectivesData.find(objective => objective.indicator === monitor.getItem().indicator));
       if(objectivesData[itemIndex] === undefined)
@@ -40,7 +41,6 @@ const specs = {
       objectivesData[previousItemIndex].priority = temp;
 
       component.setState({objectivesData});
-
       flag = itemIndex;
     }
   }
@@ -77,11 +77,22 @@ class Objectives extends Component {
       this.elementRect = this.element.getBoundingClientRect()
     }
   }
-
+  componentWillReceiveProps(nextProps) {
+    const {objectivesData} = nextProps;
+    const objectivesDataInState = this.state.objectivesData.sort((item1, item2) => item1.priority - item2.priority);
+    let i = 0;
+    for(;i < objectivesData.length;i ++){
+      if(objectivesData[i].indicator !== objectivesDataInState[i].indicator)
+        break;
+    }
+    if(i !== objectivesData.length)
+      this.setState({objectivesData});
+  }
   render() {
     const {editObjective, deleteObjective, connectDropTarget} = this.props
     const {objectivesData} = this.state;
     const objectiveViews = objectivesData
+      .sort((item1, item2) => item1.priority - item2.priority)
       .map((item, index) =>
         <DraggableObjectiveView key={index}
                        index={index}
