@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { DragLayer } from 'react-dnd';
-import ObjectiveView from './ObjectiveView';
-import { findDOMNode } from 'react-dom';
-
+import ObjectiveView from 'components/pages/preferences/ObjectiveView';
+import Component from 'components/Component';
  
 function getItemStyles(props) {
   const { initialOffset, currentOffset } = props;
@@ -15,22 +14,12 @@ function getItemStyles(props) {
 
   let { x, y } = currentOffset;
 
-  if (props.snapToGrid) {
-		// x -= initialOffset.x;
-		// y -= initialOffset.y;
-    [x, y] = snapToGrid(x, y);
-    x += initialOffset.x;
-    y += initialOffset.y;
-  }
-
   const transform = `translate(${initialOffset.x}px, ${y}px)`;
   return {
     WebkitTransform: transform,
     transform
   };
 }
-
-
 
 class CustomDragLayer extends Component {
 
@@ -48,10 +37,7 @@ class CustomDragLayer extends Component {
     isDragging: PropTypes.bool.isRequired,
   };
 
-
-  layerStyles = () => {
-    
-    return{
+  layerStyles =  {
     position: 'fixed',
     top: 0,
     left: 0,
@@ -59,26 +45,7 @@ class CustomDragLayer extends Component {
     right: 0,
     pointerEvents: 'none',
     zIndex: 100000
-    }
   };
-  
-  componentDidMount(){
-  }
-
-  renderItem(type, item) {
-    switch (type) {
-      case 'card':
-        return (
-          <ChannelCardDragPreview card={item} />
-        );
-			case 'campaignCard':
-				return (
-          <CampaignCardDragPreview card={item} />
-				);
-      default:
-        return null;
-    }
-  }
 
   render() {
     const { item, isDragging, } = this.props;
@@ -87,9 +54,8 @@ class CustomDragLayer extends Component {
       return null;
     }
 
-
     return (
-      <div style={this.layerStyles()}>
+      <div style={this.layerStyles}>
         <div style={getItemStyles(this.props)}>
           <ObjectiveView {...item} />
         </div>

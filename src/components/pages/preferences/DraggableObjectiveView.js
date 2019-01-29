@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 import { DragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import Component from 'components/Component';
 
-import ObjectiveView from './ObjectiveView';
+import ObjectiveView from 'components/pages/preferences/ObjectiveView';
 
 function getStyles(isDragging) {
   return {
@@ -18,32 +17,10 @@ const objectiveSource = {
     const {item} = props;
     return item;
   },
-  endDrag(props, monitor) {
-  },
+  
   isDragging(props, monitor){
     return props.item.indicator && props.item.indicator === monitor.getItem().indicator && props.item.recurrentType === monitor.getItem().recurrentType;
   }
-};
-
-const OPTIONS = {
-  card: {
-    arePropsEqual(props, otherProps) {
-      return props.item.id === otherProps.item.id &&
-        props.item.status === otherProps.item.status &&
-        props.item.campaigns === otherProps.item.campaigns &&
-        props.x === otherProps.x &&
-        props.y === otherProps.y
-    }
-  },
-  campaignCard: {
-    arePropsEqual(props, otherProps) {
-      return props.item === otherProps.item &&
-        props.x === otherProps.x &&
-        props.y === otherProps.y &&
-        props.first === otherProps.first &&
-        props.last === otherProps.last;
-    }
-  },
 };
 
 function collectDragSource(connectDragSource, monitor) {
@@ -66,7 +43,7 @@ class DraggableObjectiveView extends Component{
     componentDidMount() {
 			this.props.connectDragPreview(getEmptyImage(), {
 				captureDraggingState: true
-			});
+			}); 
 		}
 
     render() {

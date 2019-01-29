@@ -25,9 +25,9 @@ import {getDates} from 'components/utils/date';
 import isNil from 'lodash/isNil';
 import sortBy from 'lodash/sortBy';
 import ChannelsSelect from 'components/common/ChannelsSelect';
-import DraggableObjectiveView from './preferences/DraggableObjectiveView';
-import CustomDragLayer from './preferences/CustomDragLayer';
-import Objectives from './preferences/Objectives';
+import DraggableObjectiveView from 'components/pages/preferences/DraggableObjectiveView';
+import CustomDragLayer from 'components/pages/preferences/CustomDragLayer';
+import Objectives from 'components/pages/preferences/Objectives';
 
 export default class Preferences extends Component {
 
@@ -225,7 +225,6 @@ export default class Preferences extends Component {
   };
 
   createOrUpdateObjective = (objectiveData, originalMonthIndex, originalObjective) => {
-    console.log(objectiveData);
     let monthIndex = objectiveData.monthIndex;
     const objective = objectiveData.indicator;
     if (objective) {

@@ -52,5 +52,4 @@ export default class ObjectiveView extends Component {
       </div>
     </div>;
   }
-
 }
