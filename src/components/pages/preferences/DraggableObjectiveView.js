@@ -19,7 +19,7 @@ const objectiveSource = {
   },
   
   isDragging(props, monitor){
-    return props.item.indicator && props.item.indicator === monitor.getItem().indicator && props.item.recurrentType === monitor.getItem().recurrentType;
+    return props.item.indicator && props.item.indicator === monitor.getItem().indicator;
   }
 };
 

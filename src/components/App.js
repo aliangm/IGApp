@@ -117,7 +117,6 @@ class AppComponent extends Component {
       this.getIndicatorsMetadata(),
       this.getChannelsMetadata(),
       this.getUserMonthPlan(localStorage.getItem('region'), null),
-      this.getUnmappedData(),
     ];
 
     Promise.all(tasks)

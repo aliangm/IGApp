@@ -19,14 +19,14 @@ const specs = {
     setTimeout(() => props.updateState({objectives}), 500);
   },
   hover(props, monitor, component) {
-    
+
     const itemOffset = monitor.getClientOffset();
     const itemIndex = Math.floor((itemOffset.y - findDOMNode(component).getBoundingClientRect().y) / OBJECTIVE_HEIGHT);
 
     if(itemIndex !== previousIndex && itemIndex < props.objectivesData.length && itemIndex >= 0){
       let objectivesData = [...component.state.objectivesData]
       let previousItemIndex = objectivesData.indexOf(objectivesData.find(objective => objective.indicator === monitor.getItem().indicator));
-      
+
       let temp = objectivesData[itemIndex].priority;
       objectivesData[itemIndex].priority = objectivesData[previousItemIndex].priority;
       objectivesData[previousItemIndex].priority = temp;
@@ -76,7 +76,7 @@ class Objectives extends Component {
                        deleteObjective={() => {
                          deleteObjective(item.indicator, item.monthIndex);
                        }}/>);
-   
+
     return connectDropTarget(
       <div>
         {objectiveViews}
